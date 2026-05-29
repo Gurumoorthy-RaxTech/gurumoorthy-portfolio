@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Gurumoorthy M – .NET Developer | ASP.NET Core | Web API | Microservices | SQL Server | MongoDB | Docker" />
+  <title>Gurumoorthy M | .NET Developer Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    /* ===================== RESET & BASE ===================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-primary: #050d1a;
+      --bg-secondary: #0d1b2e;
+      --bg-card: rgba(255,255,255,0.04);
+      --bg-card-hover: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.08);
+      --border-glow: rgba(99,102,241,0.4);
+      --accent: #6366f1;
+      --accent2: #22d3ee;
+      --accent3: #a78bfa;
+      --accent4: #f472b6;
+      --text-primary: #f0f4ff;
+      --text-secondary: #8892a4;
+      --text-muted: #4a5568;
+      --gradient: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
+      --gradient2: linear-gradient(135deg, #a78bfa 0%, #6366f1 100%);
+      --shadow: 0 20px 60px rgba(0,0,0,0.5);
+      --shadow-glow: 0 0 40px rgba(99,102,241,0.2);
+      --radius: 16px;
+      --radius-sm: 8px;
+      --nav-h: 70px;
+    }
+    [data-theme="light"] {
+      --bg-primary: #f0f4ff;
+      --bg-secondary: #e8edf8;
+      --bg-card: rgba(255,255,255,0.8);
+      --bg-card-hover: rgba(255,255,255,0.95);
+      --border: rgba(0,0,0,0.08);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --shadow: 0 20px 60px rgba(0,0,0,0.12);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; }
+    section { padding: 100px 0; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* ===================== SCROLLBAR ===================== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+    /* ===================== PRELOADER ===================== */
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg-primary);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; }
+    .loader {
+      width: 60px; height: 60px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-right-color: var(--accent2);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===================== NAVBAR ===================== */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+      background: rgba(5,13,26,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    [data-theme="light"] #navbar { background: rgba(240,244,255,0.85); }
+    #navbar.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.3); }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px;
+    }
+    .nav-logo {
+      font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px;
+      background: var(--gradient); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);
+      transition: color 0.2s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 2px; background: var(--gradient);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+    .theme-toggle {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-secondary); font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .theme-toggle:hover { background: var(--accent); color: white; border-color: var(--accent); }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px; background: none; border: none;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--text-primary); border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    /* ===================== HERO ===================== */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center;
+      position: relative; overflow: hidden; padding-top: var(--nav-h);
+    }
+    #particles-canvas {
+      position: absolute; inset: 0; pointer-events: none;
+    }
+    .hero-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: center; position: relative; z-index: 1;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3);
+      color: var(--accent2); padding: 6px 16px; border-radius: 50px;
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 20px;
+      animation: fadeInDown 0.8s ease;
+    }
+    .hero-badge i { font-size: 0.7rem; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .hero-name {
+      font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900;
+      line-height: 1.1; letter-spacing: -2px; margin-bottom: 12px;
+      animation: fadeInUp 0.8s ease 0.1s both;
+    }
+    .hero-name span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-typing {
+      font-size: clamp(1rem, 2.5vw, 1.3rem); font-weight: 500;
+      color: var(--text-secondary); margin-bottom: 20px;
+      font-family: 'Fira Code', monospace; min-height: 2em;
+      animation: fadeInUp 0.8s ease 0.2s both;
+    }
+    .hero-typing .cursor {
+      display: inline-block; width: 2px; height: 1em;
+      background: var(--accent2); margin-left: 2px;
+      animation: blink 0.7s step-end infinite;
+      vertical-align: text-bottom;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .hero-summary {
+      color: var(--text-secondary); font-size: 0.95rem; max-width: 500px;
+      margin-bottom: 36px; animation: fadeInUp 0.8s ease 0.3s both;
+    }
+    .hero-btns {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease 0.4s both;
+    }
+    .btn {
+      padding: 12px 28px; border-radius: 50px; font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; border: none;
+      transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px;
+      letter-spacing: 0.3px;
+    }
+    .btn-primary {
+      background: var(--gradient); color: white;
+      box-shadow: 0 8px 30px rgba(99,102,241,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(99,102,241,0.5); }
+    .btn-outline {
+      background: transparent; color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { background: var(--bg-card-hover); border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .hero-stats {
+      display: flex; gap: 32px; margin-top: 40px;
+      animation: fadeInUp 0.8s ease 0.5s both;
+    }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-size: 1.8rem; font-weight: 900; letter-spacing: -1px;
+      background: var(--gradient); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    .hero-visual {
+      display: flex; align-items: center; justify-content: center;
+      animation: fadeInRight 0.8s ease 0.3s both;
+    }
+    .code-window {
+      background: #0d1b2e; border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow), var(--shadow-glow);
+      width: 100%; max-width: 480px;
+    }
+    .code-header {
+      display: flex; align-items: center; gap: 8px; padding: 14px 16px;
+      background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: #ff5f57; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #28c840; }
+    .code-title { font-size: 0.78rem; color: var(--text-muted); margin-left: auto; font-family: 'Fira Code', monospace; }
+    .code-body { padding: 20px 24px; font-family: 'Fira Code', monospace; font-size: 0.82rem; line-height: 1.8; }
+    .code-line { display: flex; gap: 12px; }
+    .ln { color: var(--text-muted); user-select: none; min-width: 20px; text-align: right; }
+    .kw { color: #c792ea; }
+    .cl { color: #ffcb6b; }
+    .st { color: #c3e88d; }
+    .cm { color: #546e7a; font-style: italic; }
+    .pr { color: #82aaff; }
+    .vl { color: #f78c6c; }
+    .br { color: #89ddff; }
+    @keyframes fadeInDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeInRight { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    /* ===================== SECTION HEADER ===================== */
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-tag {
+      display: inline-block; background: rgba(99,102,241,0.1);
+      color: var(--accent2); font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase; padding: 6px 16px;
+      border-radius: 50px; border: 1px solid rgba(34,211,238,0.2);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800;
+      letter-spacing: -1px; margin-bottom: 16px; line-height: 1.2;
+    }
+    .section-title span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .section-desc { color: var(--text-secondary); max-width: 560px; margin: 0 auto; font-size: 0.95rem; }
+    .divider {
+      width: 60px; height: 4px; background: var(--gradient);
+      border-radius: 2px; margin: 16px auto 0;
+    }
+
+    /* ===================== ABOUT ===================== */
+    #about { background: var(--bg-secondary); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: center; }
+    .about-avatar {
+      position: relative; display: flex; align-items: center; justify-content: center;
+    }
+    .avatar-box {
+      width: 280px; height: 280px; border-radius: 30px;
+      background: linear-gradient(135deg, #6366f1, #22d3ee);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8rem; position: relative; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(99,102,241,0.3);
+    }
+    .avatar-ring {
+      position: absolute; inset: -8px; border-radius: 38px;
+      border: 2px dashed rgba(99,102,241,0.4);
+      animation: rotateSlow 20s linear infinite;
+    }
+    @keyframes rotateSlow { to { transform: rotate(360deg); } }
+    .avatar-badge {
+      position: absolute; bottom: -16px; right: -16px;
+      background: var(--gradient); color: white; padding: 10px 18px;
+      border-radius: 50px; font-size: 0.8rem; font-weight: 700;
+      box-shadow: 0 8px 20px rgba(99,102,241,0.4);
+      white-space: nowrap;
+    }
+    .about-content h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: 16px; }
+    .about-content p { color: var(--text-secondary); margin-bottom: 16px; font-size: 0.95rem; }
+    .about-highlights { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 28px 0; }
+    .highlight-item {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 16px;
+      display: flex; gap: 12px; align-items: flex-start;
+      transition: all 0.3s;
+    }
+    .highlight-item:hover { background: var(--bg-card-hover); border-color: var(--accent); transform: translateY(-2px); }
+    .hi-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: rgba(99,102,241,0.15); display: flex; align-items: center;
+      justify-content: center; color: var(--accent2); font-size: 0.9rem; flex-shrink: 0;
+    }
+    .hi-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .hi-value { font-size: 0.9rem; font-weight: 600; margin-top: 2px; }
+
+    /* ===================== SKILLS ===================== */
+    .skills-wrapper { display: grid; grid-template-columns: repeat(2, 1fr); gap: 48px; }
+    .skill-category h4 {
+      font-size: 1rem; font-weight: 700; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 10px; color: var(--accent2);
+    }
+    .skill-item { margin-bottom: 20px; }
+    .skill-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.875rem; font-weight: 500; }
+    .skill-pct { color: var(--text-muted); font-family: 'Fira Code', monospace; font-size: 0.8rem; }
+    .skill-bar {
+      height: 8px; background: var(--bg-card); border-radius: 4px; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .skill-fill {
+      height: 100%; border-radius: 4px; background: var(--gradient);
+      width: 0; transition: width 1.4s cubic-bezier(0.4,0,0.2,1);
+      position: relative;
+    }
+    .skill-fill::after {
+      content: ''; position: absolute; top: 0; right: 0;
+      width: 20px; height: 100%; background: rgba(255,255,255,0.3);
+      border-radius: 4px;
+    }
+    .tech-cloud { display: flex; flex-wrap: wrap; gap: 10px; }
+    .tech-tag {
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-secondary); padding: 6px 14px; border-radius: 50px;
+      font-size: 0.8rem; font-weight: 500; transition: all 0.2s; cursor: default;
+    }
+    .tech-tag:hover { background: rgba(99,102,241,0.15); border-color: var(--accent); color: var(--accent2); transform: translateY(-2px); }
+
+    /* ===================== EXPERIENCE ===================== */
+    #experience { background: var(--bg-secondary); }
+    .timeline { position: relative; max-width: 800px; margin: 0 auto; }
+    .timeline::before {
+      content: ''; position: absolute; left: 30px; top: 0; bottom: 0;
+      width: 2px; background: linear-gradient(to bottom, var(--accent), var(--accent2));
+    }
+    .timeline-item { display: flex; gap: 32px; margin-bottom: 48px; padding-left: 80px; position: relative; }
+    .timeline-dot {
+      position: absolute; left: 22px; top: 8px; width: 18px; height: 18px;
+      border-radius: 50%; background: var(--gradient); z-index: 1;
+      box-shadow: 0 0 0 4px var(--bg-secondary), 0 0 16px rgba(99,102,241,0.5);
+    }
+    .exp-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px; flex: 1;
+      transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .exp-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 4px; height: 100%; background: var(--gradient);
+    }
+    .exp-card:hover { background: var(--bg-card-hover); transform: translateX(4px); box-shadow: var(--shadow-glow); }
+    .exp-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+    .exp-role { font-size: 1.1rem; font-weight: 700; }
+    .exp-period {
+      background: rgba(99,102,241,0.12); color: var(--accent2);
+      padding: 4px 12px; border-radius: 50px; font-size: 0.78rem;
+      font-weight: 600; border: 1px solid rgba(34,211,238,0.2); white-space: nowrap;
+    }
+    .exp-company { color: var(--accent); font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+    .exp-location { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 16px; }
+    .exp-desc { color: var(--text-secondary); font-size: 0.875rem; }
+    .exp-desc li { margin-bottom: 6px; padding-left: 0; list-style: none; display: flex; gap: 8px; }
+    .exp-desc li::before { content: '▸'; color: var(--accent2); flex-shrink: 0; }
+    .exp-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .exp-tag {
+      background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2);
+      color: var(--accent3); padding: 3px 10px; border-radius: 4px;
+      font-size: 0.75rem; font-weight: 500;
+    }
+
+    /* ===================== PROJECTS ===================== */
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
+    .project-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; transition: all 0.35s;
+      position: relative;
+    }
+    .project-card:hover {
+      transform: translateY(-8px); background: var(--bg-card-hover);
+      border-color: rgba(99,102,241,0.4);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3), 0 0 40px rgba(99,102,241,0.12);
+    }
+    .project-banner {
+      height: 200px; display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem; position: relative; overflow: hidden;
+    }
+    .project-banner::before {
+      content: ''; position: absolute; inset: 0;
+      background: inherit; filter: brightness(0.6);
+    }
+    .project-banner > span { position: relative; z-index: 1; }
+    .banner-1 { background: linear-gradient(135deg, #1a1a3e, #2d1b69); }
+    .banner-2 { background: linear-gradient(135deg, #0f2027, #203a43); }
+    .banner-3 { background: linear-gradient(135deg, #1a0533, #3d0068); }
+    .banner-4 { background: linear-gradient(135deg, #0d2137, #1a4a6e); }
+    .banner-5 { background: linear-gradient(135deg, #1a2a0a, #2d4a1a); }
+    .banner-6 { background: linear-gradient(135deg, #2a0a1a, #4a1a2d); }
+    .project-badge {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--gradient); color: white;
+      padding: 4px 12px; border-radius: 50px; font-size: 0.7rem;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .project-content { padding: 24px; }
+    .project-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .project-desc { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; margin-bottom: 16px; }
+    .project-stack { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+    .stack-tag {
+      background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.15);
+      color: var(--accent2); padding: 3px 10px; border-radius: 4px;
+      font-size: 0.73rem; font-weight: 500;
+    }
+    .project-meta { display: flex; justify-content: space-between; align-items: center; }
+    .project-features { color: var(--text-muted); font-size: 0.78rem; }
+    .project-links { display: flex; gap: 8px; }
+    .proj-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-secondary); font-size: 0.85rem; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .proj-btn:hover { background: var(--accent); border-color: var(--accent); color: white; }
+
+    /* ===================== SERVICES ===================== */
+    #services { background: var(--bg-secondary); }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
+    .service-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px 24px; text-align: center;
+      transition: all 0.35s; cursor: default; position: relative; overflow: hidden;
+    }
+    .service-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; background: var(--gradient); opacity: 0; transition: opacity 0.3s;
+    }
+    .service-card:hover { transform: translateY(-6px); background: var(--bg-card-hover); box-shadow: var(--shadow-glow); }
+    .service-card:hover::before { opacity: 1; }
+    .service-icon {
+      width: 64px; height: 64px; border-radius: 16px; margin: 0 auto 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; background: rgba(99,102,241,0.12);
+      color: var(--accent2); border: 1px solid rgba(99,102,241,0.2);
+      transition: all 0.3s;
+    }
+    .service-card:hover .service-icon { background: var(--gradient); color: white; border-color: transparent; transform: scale(1.05); }
+    .service-title { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+    .service-desc { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; }
+
+    /* ===================== ACHIEVEMENTS ===================== */
+    .achievements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .achievement-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px;
+      transition: all 0.3s; display: flex; gap: 16px; align-items: flex-start;
+    }
+    .achievement-card:hover { background: var(--bg-card-hover); transform: translateY(-4px); box-shadow: var(--shadow-glow); border-color: var(--border-glow); }
+    .ach-icon {
+      width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; background: var(--gradient); color: white;
+    }
+    .ach-num { font-size: 1.8rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .ach-title { font-weight: 700; margin: 2px 0; }
+    .ach-desc { color: var(--text-secondary); font-size: 0.82rem; }
+
+    /* ===================== EDUCATION ===================== */
+    #education { background: var(--bg-secondary); }
+    .edu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+    .edu-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px; transition: all 0.3s;
+    }
+    .edu-card:hover { background: var(--bg-card-hover); border-color: var(--border-glow); transform: translateY(-4px); }
+    .edu-year {
+      display: inline-block; background: rgba(99,102,241,0.12);
+      color: var(--accent); padding: 4px 12px; border-radius: 50px;
+      font-size: 0.78rem; font-weight: 700; margin-bottom: 14px;
+      border: 1px solid rgba(99,102,241,0.2);
+    }
+    .edu-degree { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .edu-inst { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 10px; }
+    .edu-score {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--accent2); font-weight: 700; font-size: 1rem;
+    }
+    .edu-score i { font-size: 0.85rem; }
+
+    /* ===================== CERTIFICATIONS ===================== */
+    .certs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .cert-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+      display: flex; gap: 16px; align-items: center;
+      transition: all 0.3s;
+    }
+    .cert-card:hover { background: var(--bg-card-hover); border-color: rgba(99,102,241,0.4); transform: translateX(4px); }
+    .cert-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(99,102,241,0.12); display: flex; align-items: center;
+      justify-content: center; color: var(--accent); font-size: 1.1rem; flex-shrink: 0;
+    }
+    .cert-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+    .cert-provider { color: var(--text-muted); font-size: 0.78rem; }
+    .cert-status {
+      margin-left: auto; padding: 3px 10px; border-radius: 50px;
+      font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+    }
+    .status-done { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+    .status-prog { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+
+    /* ===================== CONTACT ===================== */
+    #contact { background: var(--bg-secondary); }
+    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.4fr; gap: 48px; }
+    .contact-info h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; }
+    .contact-info p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 32px; }
+    .contact-items { display: flex; flex-direction: column; gap: 16px; }
+    .contact-item {
+      display: flex; gap: 16px; align-items: center;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 16px 20px;
+      transition: all 0.2s; text-decoration: none;
+    }
+    .contact-item:hover { background: var(--bg-card-hover); border-color: var(--border-glow); color: inherit; }
+    .ci-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: rgba(99,102,241,0.15); display: flex; align-items: center;
+      justify-content: center; color: var(--accent2); font-size: 1rem; flex-shrink: 0;
+    }
+    .ci-label { font-size: 0.75rem; color: var(--text-muted); }
+    .ci-value { font-weight: 600; font-size: 0.9rem; }
+    .contact-form { display: flex; flex-direction: column; gap: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
+    .form-group input, .form-group textarea, .form-group select {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 12px 16px;
+      color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 0.875rem;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+      resize: vertical;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+    .form-group textarea { min-height: 120px; }
+    .form-msg { padding: 12px 16px; border-radius: var(--radius-sm); font-size: 0.875rem; display: none; }
+    .form-msg.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; }
+
+    /* ===================== FOOTER ===================== */
+    footer {
+      background: var(--bg-primary); border-top: 1px solid var(--border);
+      padding: 40px 0; text-align: center;
+    }
+    .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    .footer-logo { font-size: 1.3rem; font-weight: 800; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .footer-social { display: flex; gap: 12px; }
+    .social-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-secondary); font-size: 0.9rem; cursor: pointer;
+      transition: all 0.2s; text-decoration: none;
+    }
+    .social-btn:hover { background: var(--accent); border-color: var(--accent); color: white; transform: translateY(-3px); }
+    .footer-copy { color: var(--text-muted); font-size: 0.82rem; }
+
+    /* ===================== MOBILE NAV ===================== */
+    .mobile-nav {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(5,13,26,0.95); backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border); padding: 8px 0; z-index: 1000;
+    }
+    .mobile-nav-inner { display: flex; justify-content: space-around; }
+    .mob-nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      color: var(--text-muted); font-size: 0.65rem; font-weight: 600;
+      cursor: pointer; padding: 4px 8px; border-radius: 8px;
+      transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .mob-nav-item i { font-size: 1.1rem; }
+    .mob-nav-item.active, .mob-nav-item:hover { color: var(--accent2); }
+    .back-to-top {
+      position: fixed; bottom: 80px; right: 24px;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--gradient); color: white; border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem;
+      box-shadow: 0 8px 20px rgba(99,102,241,0.4);
+      transition: all 0.3s; opacity: 0; pointer-events: none; z-index: 999;
+    }
+    .back-to-top.visible { opacity: 1; pointer-events: all; }
+    .back-to-top:hover { transform: translateY(-3px); }
+
+    /* ===================== SCROLL REVEAL ===================== */
+    .reveal {
+      opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.revealed { opacity: 1; transform: translateY(0); }
+
+    /* ===================== COUNTERS ===================== */
+    .counters-strip {
+      background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(34,211,238,0.05));
+      border: 1px solid var(--border); border-radius: var(--radius);
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0; overflow: hidden; margin: 48px 0 0;
+    }
+    .counter-item {
+      padding: 32px 24px; text-align: center; position: relative;
+    }
+    .counter-item:not(:last-child)::after {
+      content: ''; position: absolute; right: 0; top: 20%; bottom: 20%;
+      width: 1px; background: var(--border);
+    }
+    .counter-num { font-size: 2.2rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .counter-label { color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .about-grid { grid-template-columns: 1fr; }
+      .about-avatar { justify-content: center; }
+      .skills-wrapper { grid-template-columns: 1fr; }
+      .contact-wrapper { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      section { padding: 72px 0; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .mobile-nav { display: block; }
+      body { padding-bottom: 70px; }
+      .counters-strip { grid-template-columns: repeat(2, 1fr); }
+      .form-row { grid-template-columns: 1fr; }
+      .about-highlights { grid-template-columns: 1fr; }
+      .hero-stats { gap: 24px; }
+    }
+    @media (max-width: 480px) {
+      .counters-strip { grid-template-columns: 1fr 1fr; }
+      .hero-btns { flex-direction: column; }
+      .btn { justify-content: center; }
+      .projects-grid { grid-template-columns: 1fr; }
+    }
+    /* Mobile nav open */
+    .nav-links.open {
+      display: flex; flex-direction: column; position: fixed;
+      top: var(--nav-h); left: 0; right: 0;
+      background: rgba(5,13,26,0.97); backdrop-filter: blur(20px);
+      padding: 24px; gap: 16px; border-bottom: 1px solid var(--border);
+    }
+    .nav-links.open a { font-size: 1rem; }
+
+    /* Animated gradient bg */
+    .hero-bg {
+      position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+    }
+    .hero-glow-1 {
+      position: absolute; width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+      top: -100px; left: -100px; animation: float1 8s ease-in-out infinite;
+    }
+    .hero-glow-2 {
+      position: absolute; width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(34,211,238,0.1) 0%, transparent 70%);
+      bottom: 0; right: 0; animation: float2 10s ease-in-out infinite;
+    }
+    @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,40px)} }
+    @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,-30px)} }
+  </style>
+</head>
+
+<body>
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="loader"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">&lt;GM /&gt;</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fas fa-moon"></i></button>
+        <a href="Gurumoorthy_Resume_ATS_Optimized.pdf" download class="btn btn-primary" style="padding:8px 20px;font-size:0.82rem;"><i class="fas fa-download"></i> Resume</a>
+        <button class="hamburger" id="hamburger">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero">
+    <canvas id="particles-canvas"></canvas>
+    <div class="hero-bg">
+      <div class="hero-glow-1"></div>
+      <div class="hero-glow-2"></div>
+    </div>
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <div class="hero-badge"><i class="fas fa-circle"></i> Available for Opportunities</div>
+          <h1 class="hero-name">Gurumoorthy <span>M</span></h1>
+          <div class="hero-typing">
+            <span id="typingText"></span><span class="cursor"></span>
+          </div>
+          <p class="hero-summary">
+            Results-driven .NET Developer with <strong>3+ years</strong> crafting enterprise-grade web applications,
+            microservices, and RESTful APIs. Passionate about clean architecture, performance optimization, and scalable systems.
+          </p>
+          <div class="hero-btns">
+            <a href="#projects" class="btn btn-primary"><i class="fas fa-rocket"></i> View Projects</a>
+            <a href="#contact" class="btn btn-outline"><i class="fas fa-envelope"></i> Get In Touch</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-num" data-count="3">0</div>
+              <div class="stat-label">Years Exp</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num" data-count="6">0</div>
+              <div class="stat-label">Projects</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num" data-count="40">0</div>
+              <div class="stat-label">% Perf Gain</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num" data-count="90">0</div>
+              <div class="stat-label">% Code Coverage</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="code-window">
+            <div class="code-header">
+              <div class="dot dot-red"></div>
+              <div class="dot dot-yellow"></div>
+              <div class="dot dot-green"></div>
+              <div class="code-title">DeveloperProfile.cs</div>
+            </div>
+            <div class="code-body">
+              <div class="code-line"><span class="ln">1</span><span class="cm">// .NET Developer Profile</span></div>
+              <div class="code-line"><span class="ln">2</span></div>
+              <div class="code-line"><span class="ln">3</span><span class="kw">public class</span> <span class="cl">Developer</span></div>
+              <div class="code-line"><span class="ln">4</span><span class="br">{</span></div>
+              <div class="code-line"><span class="ln">5</span>&nbsp;&nbsp;<span class="kw">public string</span> <span class="pr">Name</span> <span class="br">{ get; }</span> <span class="br">=</span></div>
+              <div class="code-line"><span class="ln">6</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="st">"Gurumoorthy M"</span><span class="br">;</span></div>
+              <div class="code-line"><span class="ln">7</span>&nbsp;&nbsp;<span class="kw">public string</span> <span class="pr">Role</span> <span class="br">{ get; }</span> <span class="br">=</span></div>
+              <div class="code-line"><span class="ln">8</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="st">".NET Full Stack Developer"</span><span class="br">;</span></div>
+              <div class="code-line"><span class="ln">9</span>&nbsp;&nbsp;<span class="kw">public int</span> <span class="pr">Experience</span> <span class="br">{ get; }</span> <span class="br">=</span> <span class="vl">3</span><span class="br">;</span></div>
+              <div class="code-line"><span class="ln">10</span>&nbsp;&nbsp;<span class="kw">public string[]</span> <span class="pr">Stack</span> <span class="br">=</span></div>
+              <div class="code-line"><span class="ln">11</span>&nbsp;&nbsp;<span class="br">{</span> <span class="st">"ASP.NET Core"</span><span class="br">,</span> <span class="st">"Web API"</span><span class="br">,</span></div>
+              <div class="code-line"><span class="ln">12</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="st">"Microservices"</span><span class="br">,</span> <span class="st">"Docker"</span><span class="br">,</span></div>
+              <div class="code-line"><span class="ln">13</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="st">"SQL Server"</span><span class="br">,</span> <span class="st">"MongoDB"</span> <span class="br">};</span></div>
+              <div class="code-line"><span class="ln">14</span>&nbsp;&nbsp;<span class="kw">public bool</span> <span class="pr">OpenToWork</span> <span class="br">=</span> <span class="kw">true</span><span class="br">;</span></div>
+              <div class="code-line"><span class="ln">15</span><span class="br">}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">About Me</div>
+        <h2 class="section-title">Passionate <span>Developer</span> & Problem Solver</h2>
+        <div class="divider"></div>
+      </div>
+      <div class="about-grid">
+        <div class="about-avatar reveal">
+          <div class="avatar-ring"></div>
+          <div class="avatar-box">
+            <span style="z-index:1;position:relative;">👨‍💻</span>
+          </div>
+          <div class="avatar-badge"><i class="fas fa-map-marker-alt"></i> Chennai, India</div>
+        </div>
+        <div class="about-content reveal">
+          <h3>Hi, I'm Gurumoorthy M <span style="font-size:1.4rem;">👋</span></h3>
+          <p>
+            A dedicated <strong>.NET Full Stack Developer</strong> with <strong>3 years and 3 months</strong> of progressive
+            experience at <strong>RAX Tech International</strong>, Chennai. I specialize in designing and delivering
+            high-performance, enterprise-grade web applications and RESTful APIs.
+          </p>
+          <p>
+            I've successfully architected microservices solutions, optimized database performance by up to <strong>40%</strong>,
+            and implemented secure authentication frameworks. I'm passionate about clean code, scalable architectures,
+            and delivering measurable business value.
+          </p>
+          <div class="about-highlights">
+            <div class="highlight-item">
+              <div class="hi-icon"><i class="fas fa-briefcase"></i></div>
+              <div>
+                <div class="hi-label">Current Role</div>
+                <div class="hi-value">Software Developer (.NET)</div>
+              </div>
+            </div>
+            <div class="highlight-item">
+              <div class="hi-icon"><i class="fas fa-building"></i></div>
+              <div>
+                <div class="hi-label">Company</div>
+                <div class="hi-value">RAX Tech International</div>
+              </div>
+            </div>
+            <div class="highlight-item">
+              <div class="hi-icon"><i class="fas fa-graduation-cap"></i></div>
+              <div>
+                <div class="hi-label">Education</div>
+                <div class="hi-value">B.Tech – ECE, Pondicherry University</div>
+              </div>
+            </div>
+            <div class="highlight-item">
+              <div class="hi-icon"><i class="fas fa-clock"></i></div>
+              <div>
+                <div class="hi-label">Availability</div>
+                <div class="hi-value">60 Days Notice Period</div>
+              </div>
+            </div>
+            <div class="highlight-item">
+              <div class="hi-icon"><i class="fas fa-envelope"></i></div>
+              <div>
+                <div class="hi-label">Email</div>
+                <div class="hi-value" style="font-size:0.8rem;">gurumoorthymurugan@gmail.com</div>
+              </div>
+            </div>
+            <div class="highlight-item">
+              <div class="hi-icon"><i class="fas fa-phone"></i></div>
+              <div>
+                <div class="hi-label">Phone</div>
+                <div class="hi-value">+91 8122448785</div>
+              </div>
+            </div>
+          </div>
+          <a href="#contact" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Let's Connect</a>
+        </div>
+      </div>
+
+      <div class="counters-strip reveal">
+        <div class="counter-item">
+          <div class="counter-num" data-count="3">0</div>
+          <div class="counter-label">Years Experience</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-num" data-count="40">0</div>
+          <div class="counter-label">% DB Performance Gain</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-num" data-count="35">0</div>
+          <div class="counter-label">% Faster Incident Resolution</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-num" data-count="1000">0</div>
+          <div class="counter-label">+ Concurrent Users Served</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">Technical Skills</div>
+        <h2 class="section-title">Tools & <span>Technologies</span></h2>
+        <p class="section-desc">A comprehensive arsenal of modern technologies I've mastered over years of professional development.</p>
+        <div class="divider"></div>
+      </div>
+      <div class="skills-wrapper reveal">
+        <div class="skill-category">
+          <h4><i class="fas fa-server"></i> Backend Development</h4>
+          <div class="skill-item"><div class="skill-header"><span>ASP.NET Core (v5/6/8)</span><span class="skill-pct">95%</span></div><div class="skill-bar"><div class="skill-fill" data-width="95"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>Web API / REST</span><span class="skill-pct">95%</span></div><div class="skill-bar"><div class="skill-fill" data-width="95"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>Microservices Architecture</span><span class="skill-pct">88%</span></div><div class="skill-bar"><div class="skill-fill" data-width="88"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>Ocelot API Gateway</span><span class="skill-pct">85%</span></div><div class="skill-bar"><div class="skill-fill" data-width="85"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>C# / .NET Framework</span><span class="skill-pct">95%</span></div><div class="skill-bar"><div class="skill-fill" data-width="95"></div></div></div>
+        </div>
+        <div class="skill-category">
+          <h4><i class="fas fa-database"></i> Data & ORM</h4>
+          <div class="skill-item"><div class="skill-header"><span>SQL Server (2016+)</span><span class="skill-pct">92%</span></div><div class="skill-bar"><div class="skill-fill" data-width="92"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>Dapper</span><span class="skill-pct">90%</span></div><div class="skill-bar"><div class="skill-fill" data-width="90"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>Entity Framework Core</span><span class="skill-pct">88%</span></div><div class="skill-bar"><div class="skill-fill" data-width="88"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>MongoDB (NoSQL)</span><span class="skill-pct">80%</span></div><div class="skill-bar"><div class="skill-fill" data-width="80"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>MySQL (v8)</span><span class="skill-pct">78%</span></div><div class="skill-bar"><div class="skill-fill" data-width="78"></div></div></div>
+        </div>
+        <div class="skill-category">
+          <h4><i class="fas fa-palette"></i> Frontend & UI</h4>
+          <div class="skill-item"><div class="skill-header"><span>HTML5 / CSS3</span><span class="skill-pct">88%</span></div><div class="skill-bar"><div class="skill-fill" data-width="88"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>JavaScript / jQuery</span><span class="skill-pct">85%</span></div><div class="skill-bar"><div class="skill-fill" data-width="85"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>Bootstrap 4/5</span><span class="skill-pct">90%</span></div><div class="skill-bar"><div class="skill-fill" data-width="90"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>AJAX / Fetch API</span><span class="skill-pct">85%</span></div><div class="skill-bar"><div class="skill-fill" data-width="85"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>PWA Development</span><span class="skill-pct">75%</span></div><div class="skill-bar"><div class="skill-fill" data-width="75"></div></div></div>
+        </div>
+        <div class="skill-category">
+          <h4><i class="fas fa-tools"></i> DevOps & Tools</h4>
+          <div class="skill-item"><div class="skill-header"><span>Docker / Docker Compose</span><span class="skill-pct">82%</span></div><div class="skill-bar"><div class="skill-fill" data-width="82"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>Git (GitHub / GitLab)</span><span class="skill-pct">88%</span></div><div class="skill-bar"><div class="skill-fill" data-width="88"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>JWT / Auth Security</span><span class="skill-pct">90%</span></div><div class="skill-bar"><div class="skill-fill" data-width="90"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>Visual Studio 2022</span><span class="skill-pct">92%</span></div><div class="skill-bar"><div class="skill-fill" data-width="92"></div></div></div>
+          <div class="skill-item"><div class="skill-header"><span>Postman / Swagger</span><span class="skill-pct">88%</span></div><div class="skill-bar"><div class="skill-fill" data-width="88"></div></div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:56px;" class="reveal">
+        <h4 style="font-size:1rem;font-weight:700;color:var(--accent2);margin-bottom:20px;"><i class="fas fa-code"></i>&nbsp; All Technologies</h4>
+        <div class="tech-cloud">
+          <span class="tech-tag">C#</span><span class="tech-tag">ASP.NET Core</span><span class="tech-tag">Web API</span>
+          <span class="tech-tag">Microservices</span><span class="tech-tag">Ocelot Gateway</span><span class="tech-tag">Dapper</span>
+          <span class="tech-tag">EF Core</span><span class="tech-tag">ADO.NET</span><span class="tech-tag">SQL Server</span>
+          <span class="tech-tag">MongoDB</span><span class="tech-tag">MySQL</span><span class="tech-tag">Docker</span>
+          <span class="tech-tag">Docker Compose</span><span class="tech-tag">JWT Auth</span><span class="tech-tag">Bootstrap 5</span>
+          <span class="tech-tag">jQuery</span><span class="tech-tag">JavaScript</span><span class="tech-tag">HTML5</span>
+          <span class="tech-tag">CSS3</span><span class="tech-tag">AJAX</span><span class="tech-tag">Git</span>
+          <span class="tech-tag">GitHub</span><span class="tech-tag">GitLab</span><span class="tech-tag">TFS</span>
+          <span class="tech-tag">WinForms</span><span class="tech-tag">WCF</span><span class="tech-tag">TCP Socket</span>
+          <span class="tech-tag">SMS Gateway</span><span class="tech-tag">Postman</span><span class="tech-tag">Swagger</span>
+          <span class="tech-tag">Jira</span><span class="tech-tag">Agile/Scrum</span><span class="tech-tag">Azure (AZ-900)</span>
+          <span class="tech-tag">PWA</span><span class="tech-tag">DevExpress</span><span class="tech-tag">SignalR</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience -->
+  <section id="experience">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">Experience</div>
+        <h2 class="section-title">Professional <span>Journey</span></h2>
+        <p class="section-desc">Building enterprise solutions and driving technical excellence since 2023.</p>
+        <div class="divider"></div>
+      </div>
+      <div class="timeline reveal">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="exp-card">
+            <div class="exp-header">
+              <div class="exp-role">Software Developer (.NET)</div>
+              <div class="exp-period"><i class="fas fa-calendar"></i> Feb 2023 – Present</div>
+            </div>
+            <div class="exp-company"><i class="fas fa-building"></i> RAX Tech International</div>
+            <div class="exp-location"><i class="fas fa-map-marker-alt"></i> Chennai, India &nbsp;·&nbsp; 3 Years 3 Months</div>
+            <ul class="exp-desc">
+              <li>Designed and developed enterprise-grade ASP.NET Core Web API solutions following microservices architecture, serving 1,000+ concurrent users</li>
+              <li>Configured and managed Ocelot API Gateway for request routing, load balancing, and rate limiting across distributed microservices</li>
+              <li>Authored optimized Dapper and Entity Framework Core data-access layers, reducing average query execution time by <strong>40%</strong></li>
+              <li>Integrated MongoDB as a NoSQL data store for unstructured and high-volume data scenarios with real-time analytics</li>
+              <li>Containerized microservices using Docker and Docker Compose, enabling consistent deployments across environments</li>
+              <li>Implemented JWT-based authentication and role-based authorization across all API endpoints</li>
+              <li>Developed centralized logging and structured exception-handling middleware, reducing production incident resolution time by <strong>35%</strong></li>
+              <li>Integrated third-party SMS gateway APIs for OTP-based secure authentication in a bank locker access-control system</li>
+              <li>Implemented TCP socket communication for real-time bi-directional data exchange between IoT locker devices and backend</li>
+              <li>Built dynamic, responsive front-end modules using Bootstrap, jQuery, and JavaScript</li>
+              <li>Led module development for payment processing, report generation (PDF/Excel), dynamic form builders, and real-time dashboards</li>
+              <li>Supported and maintained C# WinForms desktop applications alongside modern web API projects</li>
+              <li>Participated in Agile sprint cycles, code reviews, and unit testing; maintained &gt;90% code coverage on critical modules</li>
+            </ul>
+            <div class="exp-tags">
+              <span class="exp-tag">ASP.NET Core</span><span class="exp-tag">Microservices</span>
+              <span class="exp-tag">Ocelot Gateway</span><span class="exp-tag">Dapper</span>
+              <span class="exp-tag">SQL Server</span><span class="exp-tag">MongoDB</span>
+              <span class="exp-tag">Docker</span><span class="exp-tag">JWT</span>
+              <span class="exp-tag">Bootstrap</span><span class="exp-tag">Agile</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">Projects</div>
+        <h2 class="section-title">Featured <span>Work</span></h2>
+        <p class="section-desc">Enterprise-grade solutions I've architected and delivered throughout my career.</p>
+        <div class="divider"></div>
+      </div>
+      <div class="projects-grid">
+
+        <div class="project-card reveal">
+          <div class="project-banner banner-1">
+            <span>🏫</span>
+            <div class="project-badge">Live</div>
+          </div>
+          <div class="project-content">
+            <div class="project-title">SmartSchool-Web (ZenCampus)</div>
+            <div class="project-desc">
+              Enterprise School ERP platform with microservices architecture. Comprehensive modules for student admissions,
+              attendance, billing, payroll, and real-time dashboards serving educational institutions.
+            </div>
+            <div class="project-stack">
+              <span class="stack-tag">ASP.NET Core</span><span class="stack-tag">Microservices</span>
+              <span class="stack-tag">Ocelot Gateway</span><span class="stack-tag">Dapper</span>
+              <span class="stack-tag">SQL Server</span><span class="stack-tag">MongoDB</span>
+              <span class="stack-tag">Docker</span><span class="stack-tag">Bootstrap</span>
+            </div>
+            <div class="project-meta">
+              <div class="project-features">Aug 2023 – Present</div>
+              <div class="project-links">
+                <div class="proj-btn" title="School ERP"><i class="fas fa-graduation-cap"></i></div>
+                <div class="proj-btn" title="Enterprise"><i class="fas fa-building"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card reveal">
+          <div class="project-banner banner-2">
+            <span>🔒</span>
+            <div class="project-badge">Production</div>
+          </div>
+          <div class="project-content">
+            <div class="project-title">DoorBox – Bank Locker OTP Auth</div>
+            <div class="project-desc">
+              Secure bank locker access-control system with OTP-based multi-factor authentication.
+              TCP socket communication for real-time IoT device interaction, zero unauthorized access incidents post-deployment.
+            </div>
+            <div class="project-stack">
+              <span class="stack-tag">.NET Framework</span><span class="stack-tag">REST API</span>
+              <span class="stack-tag">Entity Framework</span><span class="stack-tag">Dapper</span>
+              <span class="stack-tag">TCP Socket</span><span class="stack-tag">SMS Gateway</span>
+              <span class="stack-tag">SQL Server</span>
+            </div>
+            <div class="project-meta">
+              <div class="project-features">Feb 2023 – Jan 2024</div>
+              <div class="project-links">
+                <div class="proj-btn" title="Security"><i class="fas fa-shield-alt"></i></div>
+                <div class="proj-btn" title="IoT"><i class="fas fa-microchip"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card reveal">
+          <div class="project-banner banner-3">
+            <span>📊</span>
+            <div class="project-badge">ERP</div>
+          </div>
+          <div class="project-content">
+            <div class="project-title">SSMSWeb – School Management System</div>
+            <div class="project-desc">
+              Full-featured school management web application with student records, attendance tracking,
+              exam management, fee collection, transport, hostel, and reporting modules.
+            </div>
+            <div class="project-stack">
+              <span class="stack-tag">ASP.NET Core MVC</span><span class="stack-tag">Web API</span>
+              <span class="stack-tag">SQL Server</span><span class="stack-tag">Bootstrap</span>
+              <span class="stack-tag">jQuery</span><span class="stack-tag">AJAX</span>
+              <span class="stack-tag">DevExpress</span>
+            </div>
+            <div class="project-meta">
+              <div class="project-features">Multi-module ERP</div>
+              <div class="project-links">
+                <div class="proj-btn" title="Dashboard"><i class="fas fa-chart-bar"></i></div>
+                <div class="proj-btn" title="Reports"><i class="fas fa-file-alt"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card reveal">
+          <div class="project-banner banner-4">
+            <span>📦</span>
+            <div class="project-badge">Live</div>
+          </div>
+          <div class="project-content">
+            <div class="project-title">CMMS – Maintenance Management</div>
+            <div class="project-desc">
+              Computerized Maintenance Management System for tracking equipment, work orders,
+              preventive maintenance schedules, inventory, and asset lifecycle management.
+            </div>
+            <div class="project-stack">
+              <span class="stack-tag">ASP.NET Core</span><span class="stack-tag">Web API</span>
+              <span class="stack-tag">SQL Server</span><span class="stack-tag">EF Core</span>
+              <span class="stack-tag">Bootstrap 5</span><span class="stack-tag">JavaScript</span>
+            </div>
+            <div class="project-meta">
+              <div class="project-features">Asset Management</div>
+              <div class="project-links">
+                <div class="proj-btn" title="Maintenance"><i class="fas fa-wrench"></i></div>
+                <div class="proj-btn" title="Inventory"><i class="fas fa-boxes"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card reveal">
+          <div class="project-banner banner-5">
+            <span>📹</span>
+            <div class="project-badge">Streaming</div>
+          </div>
+          <div class="project-content">
+            <div class="project-title">DVR Camera Streaming Integration</div>
+            <div class="project-desc">
+              Real-time DVR and IP camera streaming integration within the school ERP.
+              Live video feed monitoring, recording playback, and security camera dashboard
+              for campus surveillance management.
+            </div>
+            <div class="project-stack">
+              <span class="stack-tag">ASP.NET Core</span><span class="stack-tag">WebSocket</span>
+              <span class="stack-tag">RTSP/HLS</span><span class="stack-tag">JavaScript</span>
+              <span class="stack-tag">HTML5 Video</span><span class="stack-tag">SQL Server</span>
+            </div>
+            <div class="project-meta">
+              <div class="project-features">Live Streaming</div>
+              <div class="project-links">
+                <div class="proj-btn" title="Video"><i class="fas fa-video"></i></div>
+                <div class="proj-btn" title="Security"><i class="fas fa-eye"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card reveal">
+          <div class="project-banner banner-6">
+            <span>🔑</span>
+            <div class="project-badge">SaaS</div>
+          </div>
+          <div class="project-content">
+            <div class="project-title">License Management System</div>
+            <div class="project-desc">
+              Software license management system for tracking, generating, and validating product licenses.
+              Includes activation workflows, expiry notifications, multi-tenant support, and audit logging.
+            </div>
+            <div class="project-stack">
+              <span class="stack-tag">ASP.NET Core</span><span class="stack-tag">Web API</span>
+              <span class="stack-tag">SQL Server</span><span class="stack-tag">JWT</span>
+              <span class="stack-tag">Dapper</span><span class="stack-tag">Bootstrap</span>
+            </div>
+            <div class="project-meta">
+              <div class="project-features">Multi-tenant</div>
+              <div class="project-links">
+                <div class="proj-btn" title="License"><i class="fas fa-key"></i></div>
+                <div class="proj-btn" title="SaaS"><i class="fas fa-cloud"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">Services</div>
+        <h2 class="section-title">What I <span>Offer</span></h2>
+        <p class="section-desc">End-to-end development expertise from architecture design to production deployment.</p>
+        <div class="divider"></div>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <div class="service-icon"><i class="fas fa-server"></i></div>
+          <div class="service-title">Backend API Development</div>
+          <div class="service-desc">Enterprise-grade RESTful APIs with ASP.NET Core, clean architecture, JWT security, and comprehensive documentation.</div>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><i class="fas fa-cubes"></i></div>
+          <div class="service-title">Microservices Architecture</div>
+          <div class="service-desc">Scalable microservices with Ocelot API Gateway, service discovery, load balancing, and independent deployment pipelines.</div>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><i class="fas fa-database"></i></div>
+          <div class="service-title">Database Optimization</div>
+          <div class="service-desc">SQL Server query tuning, indexing strategies, stored procedures, and Dapper/EF Core optimization delivering up to 40% performance gains.</div>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><i class="fas fa-school"></i></div>
+          <div class="service-title">ERP / School Management</div>
+          <div class="service-desc">Full-featured school ERP platforms covering admissions, attendance, billing, payroll, exams, hostel, transport, and reporting.</div>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><i class="fas fa-mobile-alt"></i></div>
+          <div class="service-title">Responsive UI Development</div>
+          <div class="service-desc">Modern, mobile-first web interfaces using Bootstrap, jQuery, AJAX, and PWA techniques with cross-browser compatibility.</div>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><i class="fas fa-docker" style="font-family:sans-serif;font-style:normal;">🐳</span></div>
+          <div class="service-title">Docker Containerization</div>
+          <div class="service-desc">Containerizing .NET applications with Docker and Docker Compose for consistent, repeatable cross-environment deployments.</div>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><i class="fas fa-video"></i></div>
+          <div class="service-title">DVR / Camera Streaming</div>
+          <div class="service-desc">Integration of DVR systems and IP cameras into web applications with live streaming, playback, and security dashboards.</div>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><i class="fas fa-shield-alt"></i></div>
+          <div class="service-title">Security & Authentication</div>
+          <div class="service-desc">JWT authentication, OTP-based MFA, role-based authorization, SQL injection prevention, and HTTPS security implementation.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Achievements -->
+  <section id="achievements">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">Achievements</div>
+        <h2 class="section-title">Key <span>Accomplishments</span></h2>
+        <div class="divider"></div>
+      </div>
+      <div class="achievements-grid">
+        <div class="achievement-card reveal">
+          <div class="ach-icon"><i class="fas fa-tachometer-alt"></i></div>
+          <div>
+            <div class="ach-num">40%</div>
+            <div class="ach-title">Performance Improvement</div>
+            <div class="ach-desc">Boosted application performance through query optimization, caching strategies, and efficient concurrent database management.</div>
+          </div>
+        </div>
+        <div class="achievement-card reveal">
+          <div class="ach-icon"><i class="fas fa-bolt"></i></div>
+          <div>
+            <div class="ach-num">35%</div>
+            <div class="ach-title">Faster Incident Resolution</div>
+            <div class="ach-desc">Centralized logging and structured exception-handling middleware reduced production incident resolution time significantly.</div>
+          </div>
+        </div>
+        <div class="achievement-card reveal">
+          <div class="ach-icon"><i class="fas fa-database"></i></div>
+          <div>
+            <div class="ach-num">50%</div>
+            <div class="ach-title">OTP Validation Speed</div>
+            <div class="ach-desc">Dapper-optimized database operations reduced OTP validation response time by 50% compared to baseline implementation.</div>
+          </div>
+        </div>
+        <div class="achievement-card reveal">
+          <div class="ach-icon"><i class="fas fa-users"></i></div>
+          <div>
+            <div class="ach-num">1000+</div>
+            <div class="ach-title">Concurrent Users</div>
+            <div class="ach-desc">Designed and delivered enterprise-grade Web API solutions successfully serving 1,000+ concurrent users.</div>
+          </div>
+        </div>
+        <div class="achievement-card reveal">
+          <div class="ach-icon"><i class="fas fa-check-circle"></i></div>
+          <div>
+            <div class="ach-num">90%+</div>
+            <div class="ach-title">Code Coverage</div>
+            <div class="ach-desc">Maintained greater than 90% code coverage on critical modules through rigorous unit testing and code reviews.</div>
+          </div>
+        </div>
+        <div class="achievement-card reveal">
+          <div class="ach-icon"><i class="fas fa-lock"></i></div>
+          <div>
+            <div class="ach-num">Zero</div>
+            <div class="ach-title">Security Incidents</div>
+            <div class="ach-desc">Achieved zero unauthorized access incidents post-deployment in the bank locker OTP authentication system.</div>
+          </div>
+        </div>
+        <div class="achievement-card reveal">
+          <div class="ach-icon"><i class="fas fa-sms"></i></div>
+          <div>
+            <div class="ach-num">&lt;3s</div>
+            <div class="ach-title">SMS Delivery Latency</div>
+            <div class="ach-desc">Integrated third-party SMS gateway achieving sub-3-second message delivery latency for OTP authentication.</div>
+          </div>
+        </div>
+        <div class="achievement-card reveal">
+          <div class="ach-icon"><i class="fas fa-project-diagram"></i></div>
+          <div>
+            <div class="ach-num">6+</div>
+            <div class="ach-title">Enterprise Projects</div>
+            <div class="ach-desc">Successfully delivered multiple production-grade enterprise applications across healthcare, education, and finance domains.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Education -->
+  <section id="education">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">Education</div>
+        <h2 class="section-title">Academic <span>Background</span></h2>
+        <div class="divider"></div>
+      </div>
+      <div class="edu-grid reveal">
+        <div class="edu-card">
+          <div class="edu-year">2014 – 2018</div>
+          <div class="edu-degree">Bachelor of Technology (B.Tech)</div>
+          <div style="color:var(--accent2);font-weight:600;font-size:0.85rem;margin-bottom:6px;">Electronics & Communication Engineering</div>
+          <div class="edu-inst"><i class="fas fa-university"></i> Pondicherry University Affiliated Institution, Tamil Nadu</div>
+          <div class="edu-score"><i class="fas fa-star"></i> CGPA: 7.8 / 10.0</div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-year">2014</div>
+          <div class="edu-degree">Higher Secondary Certificate (HSC)</div>
+          <div style="color:var(--accent2);font-weight:600;font-size:0.85rem;margin-bottom:6px;">Science Stream</div>
+          <div class="edu-inst"><i class="fas fa-school"></i> Tamil Nadu State Board</div>
+          <div class="edu-score"><i class="fas fa-star"></i> Score: 72.5%</div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-year">2012</div>
+          <div class="edu-degree">Secondary School Leaving Certificate (SSLC)</div>
+          <div style="color:var(--accent2);font-weight:600;font-size:0.85rem;margin-bottom:6px;">&nbsp;</div>
+          <div class="edu-inst"><i class="fas fa-school"></i> Tamil Nadu State Board</div>
+          <div class="edu-score"><i class="fas fa-star"></i> Score: 83.6%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Certifications -->
+  <section id="certifications">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">Certifications</div>
+        <h2 class="section-title">Professional <span>Development</span></h2>
+        <div class="divider"></div>
+      </div>
+      <div class="certs-grid reveal">
+        <div class="cert-card">
+          <div class="cert-icon"><i class="fab fa-microsoft"></i></div>
+          <div>
+            <div class="cert-name">Azure Fundamentals (AZ-900)</div>
+            <div class="cert-provider">Microsoft Certified</div>
+          </div>
+          <div class="cert-status status-prog">In Progress</div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-icon"><i class="fas fa-code"></i></div>
+          <div>
+            <div class="cert-name">ASP.NET Core Web API Development</div>
+            <div class="cert-provider">Udemy / Coursera</div>
+          </div>
+          <div class="cert-status status-done">Completed</div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-icon"><i class="fas fa-cubes"></i></div>
+          <div>
+            <div class="cert-name">Microservices Architecture with .NET</div>
+            <div class="cert-provider">Online Professional Course</div>
+          </div>
+          <div class="cert-status status-done">Completed</div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-icon"><i class="fab fa-docker"></i></div>
+          <div>
+            <div class="cert-name">Docker for .NET Developers</div>
+            <div class="cert-provider">Online Professional Course</div>
+          </div>
+          <div class="cert-status status-done">Completed</div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-icon"><i class="fas fa-leaf"></i></div>
+          <div>
+            <div class="cert-name">MongoDB for Developers</div>
+            <div class="cert-provider">MongoDB University</div>
+          </div>
+          <div class="cert-status status-done">Completed</div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-icon"><i class="fas fa-database"></i></div>
+          <div>
+            <div class="cert-name">SQL Server Performance Tuning</div>
+            <div class="cert-provider">Pluralsight</div>
+          </div>
+          <div class="cert-status status-done">Completed</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">Contact</div>
+        <h2 class="section-title">Let's <span>Connect</span></h2>
+        <p class="section-desc">Open to exciting opportunities, collaborations, and conversations about technology.</p>
+        <div class="divider"></div>
+      </div>
+      <div class="contact-wrapper">
+        <div class="contact-info reveal">
+          <h3>Get In Touch</h3>
+          <p>Whether you have an opportunity, a project idea, or just want to say hi — my inbox is always open. I'll get back to you as soon as possible!</p>
+          <div class="contact-items">
+            <a href="mailto:gurumoorthymurugan@gmail.com" class="contact-item">
+              <div class="ci-icon"><i class="fas fa-envelope"></i></div>
+              <div>
+                <div class="ci-label">Email</div>
+                <div class="ci-value">gurumoorthymurugan@gmail.com</div>
+              </div>
+            </a>
+            <a href="tel:+918122448785" class="contact-item">
+              <div class="ci-icon"><i class="fas fa-phone"></i></div>
+              <div>
+                <div class="ci-label">Phone</div>
+                <div class="ci-value">+91 8122448785</div>
+              </div>
+            </a>
+            <div class="contact-item">
+              <div class="ci-icon"><i class="fas fa-map-marker-alt"></i></div>
+              <div>
+                <div class="ci-label">Location</div>
+                <div class="ci-value">Ramapuram, Chennai – 600089, Tamil Nadu</div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="ci-icon"><i class="fas fa-clock"></i></div>
+              <div>
+                <div class="ci-label">Availability</div>
+                <div class="ci-value">60 Days Notice Period</div>
+              </div>
+            </div>
+            <a href="https://www.linkedin.com/in/gurumoorthy-m-s2166445/" target="_blank" class="contact-item">
+              <div class="ci-icon"><i class="fab fa-linkedin-in"></i></div>
+              <div>
+                <div class="ci-label">LinkedIn</div>
+                <div class="ci-value">linkedin.com/in/gurumoorthy-m-s2166445</div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="reveal">
+          <form class="contact-form" id="contactForm" onsubmit="handleSubmit(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" placeholder="John Doe" required />
+              </div>
+              <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" placeholder="john@example.com" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Subject</label>
+              <input type="text" placeholder="Job Opportunity / Project Inquiry / Collaboration" required />
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea placeholder="Tell me about your opportunity or project..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
+              <i class="fas fa-paper-plane"></i> Send Message
+            </button>
+            <div class="form-msg success" id="formMsg">
+              <i class="fas fa-check-circle"></i> Message sent successfully! I'll get back to you soon.
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">&lt;Gurumoorthy M /&gt;</div>
+        <div class="footer-social">
+          <a href="mailto:gurumoorthymurugan@gmail.com" class="social-btn" title="Email"><i class="fas fa-envelope"></i></a>
+          <a href="tel:+918122448785" class="social-btn" title="Phone"><i class="fas fa-phone"></i></a>
+          <a href="https://www.linkedin.com/in/gurumoorthy-m-s2166445/" target="_blank" class="social-btn" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://github.com/" target="_blank" class="social-btn" title="GitHub"><i class="fab fa-github"></i></a>
+        </div>
+        <div class="footer-copy">
+          © 2025 Gurumoorthy M &nbsp;·&nbsp; .NET Developer &nbsp;·&nbsp; Chennai, India
+          <br>Built with ❤ using HTML5, CSS3 & Vanilla JavaScript
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Nav -->
+  <nav class="mobile-nav">
+    <div class="mobile-nav-inner">
+      <a href="#hero" class="mob-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+      <a href="#about" class="mob-nav-item"><i class="fas fa-user"></i><span>About</span></a>
+      <a href="#skills" class="mob-nav-item"><i class="fas fa-code"></i><span>Skills</span></a>
+      <a href="#projects" class="mob-nav-item"><i class="fas fa-rocket"></i><span>Projects</span></a>
+      <a href="#contact" class="mob-nav-item"><i class="fas fa-envelope"></i><span>Contact</span></a>
+    </div>
+  </nav>
+
+  <!-- Back to Top -->
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <script>
+    // ===================== PRELOADER =====================
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('preloader').classList.add('hidden');
+        startAnimations();
+      }, 600);
+    });
+
+    // ===================== THEME TOGGLE =====================
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    let isDark = true;
+    themeToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      html.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      themeToggle.innerHTML = isDark ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+    });
+
+    // ===================== NAVBAR =====================
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 50);
+      document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 400);
+      updateActiveNav();
+    });
+
+    function updateActiveNav() {
+      const sections = document.querySelectorAll('section[id]');
+      const links = document.querySelectorAll('.nav-links a');
+      let current = '';
+      sections.forEach(sec => {
+        if (window.scrollY >= sec.offsetTop - 100) current = sec.id;
+      });
+      links.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    }
+
+    // ===================== HAMBURGER =====================
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+    navLinks.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+
+    // ===================== TYPING EFFECT =====================
+    const roles = [
+      '.NET Full Stack Developer',
+      'ASP.NET Core Specialist',
+      'Microservices Architect',
+      'Web API Engineer',
+      'SQL Server Expert',
+      'Docker Enthusiast',
+    ];
+    let roleIdx = 0, charIdx = 0, deleting = false;
+    const typingEl = document.getElementById('typingText');
+    function type() {
+      const current = roles[roleIdx];
+      if (!deleting) {
+        typingEl.textContent = current.slice(0, ++charIdx);
+        if (charIdx === current.length) { deleting = true; setTimeout(type, 1800); return; }
+      } else {
+        typingEl.textContent = current.slice(0, --charIdx);
+        if (charIdx === 0) { deleting = false; roleIdx = (roleIdx + 1) % roles.length; }
+      }
+      setTimeout(type, deleting ? 60 : 90);
+    }
+    setTimeout(type, 800);
+
+    // ===================== PARTICLES =====================
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = (Math.random() - 0.5) * 0.4;
+        this.r = Math.random() * 2 + 0.5;
+        this.a = Math.random() * 0.5 + 0.1;
+      }
+      update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(99,102,241,${this.a})`;
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 80; i++) particles.push(new Particle());
+    function drawConnections() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(99,102,241,${0.12 * (1 - dist/120)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+    function animParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      drawConnections();
+      requestAnimationFrame(animParticles);
+    }
+    animParticles();
+
+    // ===================== SCROLL REVEAL =====================
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('revealed');
+          animateIfNeeded(e.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ===================== SKILL BARS =====================
+    function animateIfNeeded(container) {
+      container.querySelectorAll('.skill-fill[data-width]').forEach(bar => {
+        if (!bar.dataset.animated) {
+          bar.dataset.animated = '1';
+          setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 200);
+        }
+      });
+      container.querySelectorAll('[data-count]').forEach(el => {
+        if (!el.dataset.animated) {
+          el.dataset.animated = '1';
+          animateCounter(el);
+        }
+      });
+    }
+
+    // ===================== COUNTERS =====================
+    function animateCounter(el) {
+      const target = parseInt(el.dataset.count);
+      const duration = 1800;
+      const start = performance.now();
+      function step(now) {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.floor(eased * target);
+        if (p < 1) requestAnimationFrame(step);
+        else el.textContent = target;
+      }
+      requestAnimationFrame(step);
+    }
+
+    // ===================== START ANIMATIONS =====================
+    function startAnimations() {
+      document.querySelectorAll('.hero-stats [data-count]').forEach(animateCounter);
+    }
+
+    // ===================== CONTACT FORM =====================
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type=submit]');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
+        btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
+        document.getElementById('formMsg').style.display = 'block';
+        e.target.reset();
+        setTimeout(() => {
+          btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+          btn.style.background = '';
+          btn.disabled = false;
+          document.getElementById('formMsg').style.display = 'none';
+        }, 4000);
+      }, 1500);
+    }
+
+    // resume download handled by anchor tag directly
+  </script>
+</body>
+</html>
