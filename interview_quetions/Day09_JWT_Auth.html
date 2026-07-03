@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 9 – JWT Auth + Security | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#0d001a,#1a0030,#0d001a);padding:36px 20px;text-align:center;border-bottom:3px solid #7c3aed}
+header h1{font-size:2em;color:#a78bfa;text-shadow:0 0 20px #7c3aed55}
+header p{color:#b0a0c0;margin-top:6px}
+.badge{display:inline-block;background:#7c3aed22;border:1px solid #7c3aed55;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#7c3aed;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.c-kw{color:#569cd6}.c-type{color:#4ec9b0}.c-str{color:#ce9178}.c-num{color:#b5cea8}.c-cmt{color:#6a9955;font-style:italic}.c-prop{color:#9cdcfe}.c-method{color:#dcdcaa}.c-attr{color:#c586c0}
+code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#0d001a;border-left:4px solid #9b59b6;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#c39bd3;font-size:0.9em;margin-top:4px}
+.tip{background:#1a1500;border-left:4px solid #f9ca24;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#f9ca24;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#f0dc82;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.critical{background:#200010;border:2px solid #e74c3c;border-radius:10px;padding:16px;margin:14px 0}
+.critical .c-t{color:#ff4757;font-weight:bold;font-size:0.9em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.critical p{color:#f1948a;font-size:0.9em}
+.security{background:#0a0a20;border-left:4px solid #3498db;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.security p{color:#85c1e9;font-size:0.9em}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-card.critical-card{border-color:#e74c3c55;background:#150010}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.s-num{background:#7c3aed;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.s-num.crit{background:#e74c3c}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#2a0a4a;color:#a855f7}
+.real{background:#0a1a2a;color:#3498db;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.crit-badge{background:#3a0010;color:#ff4757;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #e74c3c55}
+.sec-badge{background:#0a2a1a;color:#2ecc71;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#0d001a;border:1px solid #7c3aed;color:#a78bfa;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#7c3aed;color:#fff}
+.reveal-btn.crit-btn{border-color:#e74c3c;color:#ff6b6b}
+.reveal-btn.crit-btn:hover{background:#e74c3c;color:#fff}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #0d001a}
+.answer.shown{display:block}
+.answer .a-label{color:#a78bfa;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.answer .a-label.crit{color:#ff4757}
+.gold{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:700px){.comparison,.two-col{grid-template-columns:1fr}}
+.bad-box{background:#1f0a0a;border:1px solid #e74c3c44;border-radius:8px;padding:14px}
+.good-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:8px;padding:14px}
+.box-label{font-size:0.78em;font-weight:bold;margin-bottom:8px}
+.bad-box .box-label{color:#e74c3c}.good-box .box-label{color:#2ecc71}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#0d001a;color:#a78bfa;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a1a35}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.blue{color:#3498db}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#7c3aed;color:#a78bfa}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#a78bfa}
+h3{color:#c4b5fd;margin:16px 0 8px;font-size:1em}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#c4b5fd;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #0d001a}
+.sticky-nav a:hover{background:#0d001a}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#7c3aed,#a855f7)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+.jwt-visual{background:#0a0a1a;border:1px solid #2a2a5a;border-radius:10px;padding:18px;margin:14px 0;font-family:'Consolas',monospace;font-size:0.85em}
+.jwt-h{color:#ef4444}.jwt-p{color:#22c55e}.jwt-s{color:#3b82f6}
+.jwt-dot{color:#888}
+.flow-box{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;align-items:center}
+.flow-step{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:8px 14px;font-size:0.82em;color:#c0c8e0;text-align:center;min-width:90px}
+.flow-step.active{border-color:#7c3aed;color:#a78bfa}
+.flow-step.danger{border-color:#e74c3c;color:#f1948a}
+.flow-arr{color:#888;font-size:1.2em}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">📅 Day 9 of 60 | Phase 1: Advanced C#</div>
+  <h1>🔐 JWT Auth + Refresh Tokens + Security</h1>
+  <p>JWT Structure · Access/Refresh Tokens · Role-based · Claims · Critical Security Scenarios</p>
+  <div style="margin-top:12px">
+    <span class="badge">JWT</span><span class="badge">Refresh Token</span><span class="badge">Roles</span>
+    <span class="badge">Claims Policy</span><span class="badge">Token Theft</span><span class="badge">Security</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#jwt">🔑 JWT</a>
+  <a href="#setup">⚙️ Setup</a>
+  <a href="#refresh">🔄 Refresh</a>
+  <a href="#roles">👑 Roles</a>
+  <a href="#claims">📋 Claims</a>
+  <a href="#security">🛡️ Security</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SECTION 1: JWT STRUCTURE -->
+<div class="section" id="jwt">
+  <div class="section-title"><span class="num">1</span> JWT Structure — Header.Payload.Signature</div>
+
+  <div class="movie">
+    <span class="film">🎬 Baasha — ID card with photo, details, stamp. Fake card = stamp mismatch!</span>
+    <p>JWT = digital ID card. Header = card type. Payload = your details (name, role, school). Signature = tamper-proof stamp. Server validates stamp — fake card immediately caught. Signature wrong = reject!</p>
+  </div>
+
+  <div class="jwt-visual">
+    <div style="margin-bottom:10px;color:#888;font-size:0.9em">A real JWT token (Base64 encoded):</div>
+    <span class="jwt-h">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</span><span class="jwt-dot">.</span><span class="jwt-p">eyJzdWIiOiJ0ZWFjaGVyMDEiLCJyb2xlIjoiVGVhY2hlciIsInNjaG9vbElkIjoiNDIiLCJleHAiOjE3MTk4MjM2MDB9</span><span class="jwt-dot">.</span><span class="jwt-s">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span>
+    <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:0.82em">
+      <div style="background:#1a0a0a;padding:10px;border-radius:6px;border-top:2px solid #ef4444">
+        <div style="color:#ef4444;font-weight:bold;margin-bottom:6px">HEADER (Red)</div>
+        <div style="color:#aaa">alg: HS256</div>
+        <div style="color:#aaa">typ: JWT</div>
+      </div>
+      <div style="background:#0a1a0a;padding:10px;border-radius:6px;border-top:2px solid #22c55e">
+        <div style="color:#22c55e;font-weight:bold;margin-bottom:6px">PAYLOAD (Green)</div>
+        <div style="color:#aaa">sub: teacher01</div>
+        <div style="color:#aaa">role: Teacher</div>
+        <div style="color:#aaa">schoolId: 42</div>
+        <div style="color:#aaa">exp: 1719823600</div>
+      </div>
+      <div style="background:#0a0a1a;padding:10px;border-radius:6px;border-top:2px solid #3b82f6">
+        <div style="color:#3b82f6;font-weight:bold;margin-bottom:6px">SIGNATURE (Blue)</div>
+        <div style="color:#aaa">HMACSHA256(</div>
+        <div style="color:#aaa"> base64(H) +</div>
+        <div style="color:#aaa"> base64(P),</div>
+        <div style="color:#aaa"> SECRET_KEY)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="danger">
+    <div class="d-label">⚠️ Payload is NOT encrypted — only Base64 encoded!</div>
+    <p>Anyone can decode Payload (jwt.io). NEVER put passwords, Aadhaar, credit card in JWT. Only put: userId, role, schoolId, expiry. Signature ensures it wasn't TAMPERED — not that it's SECRET.</p>
+  </div>
+
+  <pre><span class="c-cmt">// Decode payload manually (no secret needed!)</span>
+<span class="c-kw">var</span> <span class="c-prop">handler</span>  = <span class="c-kw">new</span> <span class="c-type">JwtSecurityTokenHandler</span>();
+<span class="c-kw">var</span> <span class="c-prop">jwtToken</span> = <span class="c-prop">handler</span>.<span class="c-method">ReadJwtToken</span>(<span class="c-prop">tokenString</span>);
+
+<span class="c-kw">var</span> <span class="c-prop">role</span>     = <span class="c-prop">jwtToken</span>.<span class="c-prop">Claims</span>.<span class="c-method">First</span>(<span class="c-prop">c</span> => <span class="c-prop">c</span>.<span class="c-prop">Type</span> == <span class="c-str">"role"</span>).<span class="c-prop">Value</span>;
+<span class="c-kw">var</span> <span class="c-prop">schoolId</span> = <span class="c-prop">jwtToken</span>.<span class="c-prop">Claims</span>.<span class="c-method">First</span>(<span class="c-prop">c</span> => <span class="c-prop">c</span>.<span class="c-prop">Type</span> == <span class="c-str">"schoolId"</span>).<span class="c-prop">Value</span>;
+<span class="c-kw">var</span> <span class="c-prop">expiry</span>   = <span class="c-prop">jwtToken</span>.<span class="c-prop">ValidTo</span>; <span class="c-cmt">// DateTime</span></pre>
+</div>
+
+<!-- SECTION 2: SETUP -->
+<div class="section" id="setup">
+  <div class="section-title"><span class="num">2</span> JWT Setup — Generate + Validate</div>
+
+  <pre><span class="c-cmt">// appsettings.json — NEVER commit secret to git!</span>
+<span class="c-str">"JwtSettings"</span>: {
+  <span class="c-str">"Secret"</span>:        <span class="c-str">"ZenCampus-Prod-256bit-Secret-Key-NEVER-SHARE"</span>,
+  <span class="c-str">"Issuer"</span>:        <span class="c-str">"https://api.zencampus.in"</span>,
+  <span class="c-str">"Audience"</span>:      <span class="c-str">"https://app.zencampus.in"</span>,
+  <span class="c-str">"AccessTokenExp"</span>: <span class="c-num">15</span>,  <span class="c-cmt">// minutes</span>
+  <span class="c-str">"RefreshTokenExp"</span>: <span class="c-num">7</span>   <span class="c-cmt">// days</span>
+}</pre>
+
+  <pre><span class="c-cmt">// Token generation service — ZenCampus</span>
+<span class="c-kw">public class</span> <span class="c-type">TokenService</span> : <span class="c-type">ITokenService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">JwtSettings</span> <span class="c-prop">_cfg</span>;
+
+    <span class="c-kw">public string</span> <span class="c-method">GenerateAccessToken</span>(<span class="c-type">AppUser</span> <span class="c-prop">user</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">key</span> = <span class="c-kw">new</span> <span class="c-type">SymmetricSecurityKey</span>(
+            <span class="c-type">Encoding</span>.<span class="c-prop">UTF8</span>.<span class="c-method">GetBytes</span>(<span class="c-prop">_cfg</span>.<span class="c-prop">Secret</span>));
+
+        <span class="c-kw">var</span> <span class="c-prop">claims</span> = <span class="c-kw">new</span>[]
+        {
+            <span class="c-kw">new</span> <span class="c-type">Claim</span>(<span class="c-type">ClaimTypes</span>.<span class="c-prop">NameIdentifier</span>, <span class="c-prop">user</span>.<span class="c-prop">Id</span>.<span class="c-method">ToString</span>()),
+            <span class="c-kw">new</span> <span class="c-type">Claim</span>(<span class="c-type">ClaimTypes</span>.<span class="c-prop">Name</span>,           <span class="c-prop">user</span>.<span class="c-prop">Username</span>),
+            <span class="c-kw">new</span> <span class="c-type">Claim</span>(<span class="c-type">ClaimTypes</span>.<span class="c-prop">Role</span>,           <span class="c-prop">user</span>.<span class="c-prop">Role</span>),      <span class="c-cmt">// Teacher/Admin</span>
+            <span class="c-kw">new</span> <span class="c-type">Claim</span>(<span class="c-str">"schoolId"</span>,               <span class="c-prop">user</span>.<span class="c-prop">SchoolId</span>.<span class="c-method">ToString</span>()),
+            <span class="c-kw">new</span> <span class="c-type">Claim</span>(<span class="c-str">"tenantId"</span>,               <span class="c-prop">user</span>.<span class="c-prop">TenantId</span>.<span class="c-method">ToString</span>()),
+            <span class="c-kw">new</span> <span class="c-type">Claim</span>(<span class="c-type">JwtRegisteredClaimNames</span>.<span class="c-prop">Jti</span>, <span class="c-type">Guid</span>.<span class="c-method">NewGuid</span>().<span class="c-method">ToString</span>()), <span class="c-cmt">// unique!</span>
+        };
+
+        <span class="c-kw">var</span> <span class="c-prop">token</span> = <span class="c-kw">new</span> <span class="c-type">JwtSecurityToken</span>(
+            <span class="c-prop">issuer</span>:             <span class="c-prop">_cfg</span>.<span class="c-prop">Issuer</span>,
+            <span class="c-prop">audience</span>:           <span class="c-prop">_cfg</span>.<span class="c-prop">Audience</span>,
+            <span class="c-prop">claims</span>:             <span class="c-prop">claims</span>,
+            <span class="c-prop">notBefore</span>:          <span class="c-type">DateTime</span>.<span class="c-prop">UtcNow</span>,
+            <span class="c-prop">expires</span>:            <span class="c-type">DateTime</span>.<span class="c-prop">UtcNow</span>.<span class="c-method">AddMinutes</span>(<span class="c-prop">_cfg</span>.<span class="c-prop">AccessTokenExp</span>),
+            <span class="c-prop">signingCredentials</span>: <span class="c-kw">new</span> <span class="c-type">SigningCredentials</span>(<span class="c-prop">key</span>, <span class="c-type">SecurityAlgorithms</span>.<span class="c-prop">HmacSha256</span>)
+        );
+
+        <span class="c-kw">return new</span> <span class="c-type">JwtSecurityTokenHandler</span>().<span class="c-method">WriteToken</span>(<span class="c-prop">token</span>);
+    }
+
+    <span class="c-kw">public string</span> <span class="c-method">GenerateRefreshToken</span>()
+    {
+        <span class="c-kw">var</span> <span class="c-prop">bytes</span> = <span class="c-type">RandomNumberGenerator</span>.<span class="c-method">GetBytes</span>(<span class="c-num">64</span>);
+        <span class="c-kw">return</span> <span class="c-type">Convert</span>.<span class="c-method">ToBase64String</span>(<span class="c-prop">bytes</span>); <span class="c-cmt">// 64-byte cryptographic random!</span>
+    }
+}
+
+<span class="c-cmt">// Program.cs — JWT validation setup</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddAuthentication</span>(<span class="c-type">JwtBearerDefaults</span>.<span class="c-prop">AuthenticationScheme</span>)
+    .<span class="c-method">AddJwtBearer</span>(<span class="c-prop">opts</span> =>
+    {
+        <span class="c-prop">opts</span>.<span class="c-prop">TokenValidationParameters</span> = <span class="c-kw">new</span> <span class="c-type">TokenValidationParameters</span>
+        {
+            <span class="c-prop">ValidateIssuer</span>           = <span class="c-kw">true</span>,
+            <span class="c-prop">ValidateAudience</span>         = <span class="c-kw">true</span>,
+            <span class="c-prop">ValidateLifetime</span>         = <span class="c-kw">true</span>,  <span class="c-cmt">// check expiry!</span>
+            <span class="c-prop">ValidateIssuerSigningKey</span>  = <span class="c-kw">true</span>,  <span class="c-cmt">// verify signature!</span>
+            <span class="c-prop">ValidIssuer</span>              = <span class="c-prop">jwtCfg</span>.<span class="c-prop">Issuer</span>,
+            <span class="c-prop">ValidAudience</span>            = <span class="c-prop">jwtCfg</span>.<span class="c-prop">Audience</span>,
+            <span class="c-prop">IssuerSigningKey</span>         = <span class="c-kw">new</span> <span class="c-type">SymmetricSecurityKey</span>(
+                <span class="c-type">Encoding</span>.<span class="c-prop">UTF8</span>.<span class="c-method">GetBytes</span>(<span class="c-prop">jwtCfg</span>.<span class="c-prop">Secret</span>)),
+            <span class="c-prop">ClockSkew</span>                = <span class="c-type">TimeSpan</span>.<span class="c-method">FromSeconds</span>(<span class="c-num">30</span>) <span class="c-cmt">// 30s tolerance</span>
+        };
+
+        <span class="c-cmt">// SignalR / WebSocket — token in query string</span>
+        <span class="c-prop">opts</span>.<span class="c-prop">Events</span> = <span class="c-kw">new</span> <span class="c-type">JwtBearerEvents</span>
+        {
+            <span class="c-prop">OnMessageReceived</span> = <span class="c-prop">ctx</span> =>
+            {
+                <span class="c-kw">var</span> <span class="c-prop">token</span> = <span class="c-prop">ctx</span>.<span class="c-prop">Request</span>.<span class="c-prop">Query</span>[<span class="c-str">"access_token"</span>];
+                <span class="c-kw">if</span> (!<span class="c-type">string</span>.<span class="c-method">IsNullOrEmpty</span>(<span class="c-prop">token</span>))
+                    <span class="c-prop">ctx</span>.<span class="c-prop">Token</span> = <span class="c-prop">token</span>;
+                <span class="c-kw">return</span> <span class="c-type">Task</span>.<span class="c-prop">CompletedTask</span>;
+            }
+        };
+    });</pre>
+</div>
+
+<!-- SECTION 3: REFRESH TOKENS -->
+<div class="section" id="refresh">
+  <div class="section-title"><span class="num">3</span> Refresh Tokens — Why 15 Minutes? Full Flow</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram — Short-term mission pass (access token) + long-term clearance (refresh token)</span>
+    <p>Mission pass = 15 min validity (access token). Long-term clearance = 7 days (refresh token). Pass expire ஆனா — clearance show பண்ணி new pass வாங்கு. Clearance compromise ஆனா — revoke பண்ணலாம். That's JWT auth design!</p>
+  </div>
+
+  <div class="flow-box">
+    <div class="flow-step active">Login</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step active">Access Token (15min) + Refresh Token (7d) → Client</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step">API calls with Access Token</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step danger">401 (Expired!)</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step active">POST /refresh with Refresh Token</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step active">New Access + New Refresh Token</div>
+  </div>
+
+  <pre><span class="c-cmt">// Refresh Token DB entity</span>
+<span class="c-kw">public class</span> <span class="c-type">RefreshToken</span>
+{
+    <span class="c-kw">public int</span>      <span class="c-prop">Id</span>          { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public string</span>  <span class="c-prop">Token</span>       { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>; <span class="c-cmt">// 64-byte random</span>
+    <span class="c-kw">public int</span>      <span class="c-prop">UserId</span>      { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public</span> <span class="c-type">DateTime</span> <span class="c-prop">ExpiresAt</span>   { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public</span> <span class="c-type">DateTime</span>? <span class="c-prop">UsedAt</span>     { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } <span class="c-cmt">// one-time use!</span>
+    <span class="c-kw">public</span> <span class="c-type">DateTime</span>? <span class="c-prop">RevokedAt</span>  { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public string</span>?  <span class="c-prop">ReplacedBy</span>  { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } <span class="c-cmt">// chain tracking!</span>
+    <span class="c-kw">public string</span>   <span class="c-prop">DeviceInfo</span>  { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>;
+
+    <span class="c-kw">public bool</span> <span class="c-prop">IsActive</span> => <span class="c-prop">RevokedAt</span> == <span class="c-kw">null</span> &&
+                              <span class="c-prop">UsedAt</span>    == <span class="c-kw">null</span> &&
+                              <span class="c-prop">ExpiresAt</span>  > <span class="c-type">DateTime</span>.<span class="c-prop">UtcNow</span>;
+}
+
+<span class="c-cmt">// Auth Service — login flow</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">AuthResponse</span>&gt; <span class="c-method">LoginAsync</span>(<span class="c-type">LoginDto</span> <span class="c-prop">dto</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">user</span> = <span class="c-kw">await</span> <span class="c-prop">_userRepo</span>.<span class="c-method">GetByUsernameAsync</span>(<span class="c-prop">dto</span>.<span class="c-prop">Username</span>)
+        ?? <span class="c-kw">throw new</span> <span class="c-type">UnauthorizedAccessException</span>(<span class="c-str">"Invalid credentials"</span>);
+
+    <span class="c-kw">if</span> (!<span class="c-type">BCrypt</span>.<span class="c-method">Verify</span>(<span class="c-prop">dto</span>.<span class="c-prop">Password</span>, <span class="c-prop">user</span>.<span class="c-prop">PasswordHash</span>))
+        <span class="c-kw">throw new</span> <span class="c-type">UnauthorizedAccessException</span>(<span class="c-str">"Invalid credentials"</span>);
+
+    <span class="c-kw">var</span> <span class="c-prop">accessToken</span>  = <span class="c-prop">_tokenSvc</span>.<span class="c-method">GenerateAccessToken</span>(<span class="c-prop">user</span>);
+    <span class="c-kw">var</span> <span class="c-prop">refreshToken</span> = <span class="c-kw">new</span> <span class="c-type">RefreshToken</span>
+    {
+        <span class="c-prop">Token</span>      = <span class="c-prop">_tokenSvc</span>.<span class="c-method">GenerateRefreshToken</span>(),
+        <span class="c-prop">UserId</span>     = <span class="c-prop">user</span>.<span class="c-prop">Id</span>,
+        <span class="c-prop">ExpiresAt</span>  = <span class="c-type">DateTime</span>.<span class="c-prop">UtcNow</span>.<span class="c-method">AddDays</span>(<span class="c-num">7</span>),
+        <span class="c-prop">DeviceInfo</span> = <span class="c-prop">dto</span>.<span class="c-prop">DeviceInfo</span> ?? <span class="c-str">"Unknown"</span>
+    };
+
+    <span class="c-kw">await</span> <span class="c-prop">_tokenRepo</span>.<span class="c-method">SaveAsync</span>(<span class="c-prop">refreshToken</span>);
+    <span class="c-kw">return new</span> <span class="c-type">AuthResponse</span>
+    {
+        <span class="c-prop">AccessToken</span>  = <span class="c-prop">accessToken</span>,
+        <span class="c-prop">RefreshToken</span> = <span class="c-prop">refreshToken</span>.<span class="c-prop">Token</span>,
+        <span class="c-prop">ExpiresAt</span>    = <span class="c-type">DateTime</span>.<span class="c-prop">UtcNow</span>.<span class="c-method">AddMinutes</span>(<span class="c-num">15</span>)
+    };
+}
+
+<span class="c-cmt">// Refresh endpoint — rotate token (one-time use!)</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">AuthResponse</span>&gt; <span class="c-method">RefreshAsync</span>(<span class="c-kw">string</span> <span class="c-prop">refreshToken</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">stored</span> = <span class="c-kw">await</span> <span class="c-prop">_tokenRepo</span>.<span class="c-method">GetByTokenAsync</span>(<span class="c-prop">refreshToken</span>)
+        ?? <span class="c-kw">throw new</span> <span class="c-type">UnauthorizedAccessException</span>(<span class="c-str">"Invalid token"</span>);
+
+    <span class="c-kw">if</span> (!<span class="c-prop">stored</span>.<span class="c-prop">IsActive</span>)
+    {
+        <span class="c-cmt">// SECURITY: Used token reuse = theft detected! Revoke ALL tokens for user!</span>
+        <span class="c-kw">if</span> (<span class="c-prop">stored</span>.<span class="c-prop">UsedAt</span> != <span class="c-kw">null</span>)
+            <span class="c-kw">await</span> <span class="c-prop">_tokenRepo</span>.<span class="c-method">RevokeAllForUserAsync</span>(<span class="c-prop">stored</span>.<span class="c-prop">UserId</span>);
+        <span class="c-kw">throw new</span> <span class="c-type">UnauthorizedAccessException</span>(<span class="c-str">"Token already used or expired"</span>);
+    }
+
+    <span class="c-cmt">// Rotate — mark old used, create new</span>
+    <span class="c-prop">stored</span>.<span class="c-prop">UsedAt</span>     = <span class="c-type">DateTime</span>.<span class="c-prop">UtcNow</span>;
+    <span class="c-kw">var</span> <span class="c-prop">newRefresh</span> = <span class="c-kw">new</span> <span class="c-type">RefreshToken</span>
+    {
+        <span class="c-prop">Token</span>      = <span class="c-prop">_tokenSvc</span>.<span class="c-method">GenerateRefreshToken</span>(),
+        <span class="c-prop">UserId</span>     = <span class="c-prop">stored</span>.<span class="c-prop">UserId</span>,
+        <span class="c-prop">ExpiresAt</span>  = <span class="c-type">DateTime</span>.<span class="c-prop">UtcNow</span>.<span class="c-method">AddDays</span>(<span class="c-num">7</span>),
+        <span class="c-prop">DeviceInfo</span> = <span class="c-prop">stored</span>.<span class="c-prop">DeviceInfo</span>
+    };
+    <span class="c-prop">stored</span>.<span class="c-prop">ReplacedBy</span> = <span class="c-prop">newRefresh</span>.<span class="c-prop">Token</span>;
+    <span class="c-kw">await</span> <span class="c-prop">_tokenRepo</span>.<span class="c-method">SaveAsync</span>(<span class="c-prop">newRefresh</span>);
+    <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">SaveChangesAsync</span>();
+
+    <span class="c-kw">var</span> <span class="c-prop">user</span> = <span class="c-kw">await</span> <span class="c-prop">_userRepo</span>.<span class="c-method">GetByIdAsync</span>(<span class="c-prop">stored</span>.<span class="c-prop">UserId</span>);
+    <span class="c-kw">return new</span> <span class="c-type">AuthResponse</span>
+    {
+        <span class="c-prop">AccessToken</span>  = <span class="c-prop">_tokenSvc</span>.<span class="c-method">GenerateAccessToken</span>(<span class="c-prop">user</span>!),
+        <span class="c-prop">RefreshToken</span> = <span class="c-prop">newRefresh</span>.<span class="c-prop">Token</span>
+    };
+}</pre>
+</div>
+
+<!-- SECTION 4: ROLES -->
+<div class="section" id="roles">
+  <div class="section-title"><span class="num">4</span> Role-Based Authorization — ZenCampus Roles</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram — Each agent different clearance level. Amar sees everything. Vikram = field ops only.</span>
+    <p>SuperAdmin = Amar (all access). SchoolAdmin = school level. Teacher = class level. Parent = read-only child. Roles decide what doors open!</p>
+  </div>
+
+  <pre><span class="c-cmt">// ZenCampus Roles enum</span>
+<span class="c-kw">public static class</span> <span class="c-type">Roles</span>
+{
+    <span class="c-kw">public const string</span> <span class="c-prop">SuperAdmin</span>   = <span class="c-str">"SuperAdmin"</span>;   <span class="c-cmt">// Rax-Tech staff</span>
+    <span class="c-kw">public const string</span> <span class="c-prop">SchoolAdmin</span>  = <span class="c-str">"SchoolAdmin"</span>;  <span class="c-cmt">// Principal</span>
+    <span class="c-kw">public const string</span> <span class="c-prop">Teacher</span>     = <span class="c-str">"Teacher"</span>;     <span class="c-cmt">// Class teacher</span>
+    <span class="c-kw">public const string</span> <span class="c-prop">Parent</span>      = <span class="c-str">"Parent"</span>;      <span class="c-cmt">// Read-only</span>
+    <span class="c-kw">public const string</span> <span class="c-prop">Accountant</span>  = <span class="c-str">"Accountant"</span>;  <span class="c-cmt">// Fee module only</span>
+}
+
+<span class="c-cmt">// Controller — role-based access</span>
+[<span class="c-attr">Authorize</span>(<span class="c-prop">Roles</span> = <span class="c-str">"SuperAdmin,SchoolAdmin"</span>)]  <span class="c-cmt">// multiple roles</span>
+[<span class="c-attr">HttpPost</span>]
+<span class="c-kw">public</span> <span class="c-type">IActionResult</span> <span class="c-method">CreateStudent</span>(...) { }
+
+[<span class="c-attr">Authorize</span>(<span class="c-prop">Roles</span> = <span class="c-str">"SuperAdmin,SchoolAdmin,Teacher"</span>)]
+[<span class="c-attr">HttpGet</span>]
+<span class="c-kw">public</span> <span class="c-type">IActionResult</span> <span class="c-method">GetStudents</span>(...) { }
+
+[<span class="c-attr">Authorize</span>(<span class="c-prop">Roles</span> = <span class="c-str">"Parent"</span>)]
+[<span class="c-attr">HttpGet</span>(<span class="c-str">"my-children"</span>)]
+<span class="c-kw">public</span> <span class="c-type">IActionResult</span> <span class="c-method">GetMyChildren</span>(...) { } <span class="c-cmt">// parent can only see own</span>
+
+[<span class="c-attr">Authorize</span>(<span class="c-prop">Roles</span> = <span class="c-str">"SuperAdmin,Accountant"</span>)]
+[<span class="c-attr">HttpPost</span>(<span class="c-str">"fees/collect"</span>)]
+<span class="c-kw">public</span> <span class="c-type">IActionResult</span> <span class="c-method">CollectFee</span>(...) { }
+
+<span class="c-cmt">// Read role in action method</span>
+<span class="c-kw">var</span> <span class="c-prop">role</span>     = <span class="c-prop">User</span>.<span class="c-method">FindFirst</span>(<span class="c-type">ClaimTypes</span>.<span class="c-prop">Role</span>)?.<span class="c-prop">Value</span>;
+<span class="c-kw">var</span> <span class="c-prop">userId</span>   = <span class="c-prop">User</span>.<span class="c-method">FindFirst</span>(<span class="c-type">ClaimTypes</span>.<span class="c-prop">NameIdentifier</span>)?.<span class="c-prop">Value</span>;
+<span class="c-kw">var</span> <span class="c-prop">schoolId</span> = <span class="c-prop">User</span>.<span class="c-method">FindFirst</span>(<span class="c-str">"schoolId"</span>)?.<span class="c-prop">Value</span>;
+<span class="c-kw">var</span> <span class="c-prop">isAdmin</span>  = <span class="c-prop">User</span>.<span class="c-method">IsInRole</span>(<span class="c-type">Roles</span>.<span class="c-prop">SuperAdmin</span>);</pre>
+</div>
+
+<!-- SECTION 5: CLAIMS POLICY -->
+<div class="section" id="claims">
+  <div class="section-title"><span class="num">5</span> Claims-Based Policy — Fine-Grained Control</div>
+
+  <pre><span class="c-cmt">// Policy setup — beyond simple roles</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddAuthorization</span>(<span class="c-prop">opts</span> =>
+{
+    <span class="c-cmt">// Policy 1: Must have verified school</span>
+    <span class="c-prop">opts</span>.<span class="c-method">AddPolicy</span>(<span class="c-str">"VerifiedSchool"</span>, <span class="c-prop">p</span> =>
+        <span class="c-prop">p</span>.<span class="c-method">RequireClaim</span>(<span class="c-str">"schoolId"</span>)       <span class="c-cmt">// must have schoolId claim</span>
+         .<span class="c-method">RequireAuthenticatedUser</span>());
+
+    <span class="c-cmt">// Policy 2: Senior teacher (role + min experience claim)</span>
+    <span class="c-prop">opts</span>.<span class="c-method">AddPolicy</span>(<span class="c-str">"SeniorTeacher"</span>, <span class="c-prop">p</span> =>
+        <span class="c-prop">p</span>.<span class="c-method">RequireRole</span>(<span class="c-type">Roles</span>.<span class="c-prop">Teacher</span>)
+         .<span class="c-method">RequireClaim</span>(<span class="c-str">"experienceYears"</span>, <span class="c-str">"5"</span>, <span class="c-str">"6"</span>, <span class="c-str">"7"</span>, <span class="c-str">"8"</span>, <span class="c-str">"9"</span>, <span class="c-str">"10"</span>));
+
+    <span class="c-cmt">// Policy 3: Custom requirement handler</span>
+    <span class="c-prop">opts</span>.<span class="c-method">AddPolicy</span>(<span class="c-str">"SameSchoolOnly"</span>, <span class="c-prop">p</span> =>
+        <span class="c-prop">p</span>.<span class="c-method">AddRequirements</span>(<span class="c-kw">new</span> <span class="c-type">SameSchoolRequirement</span>()));
+
+    <span class="c-cmt">// Policy 4: Fee module — role + permission claim</span>
+    <span class="c-prop">opts</span>.<span class="c-method">AddPolicy</span>(<span class="c-str">"FeeModule"</span>, <span class="c-prop">p</span> =>
+        <span class="c-prop">p</span>.<span class="c-method">RequireAssertion</span>(<span class="c-prop">ctx</span> =>
+            <span class="c-prop">ctx</span>.<span class="c-prop">User</span>.<span class="c-method">IsInRole</span>(<span class="c-type">Roles</span>.<span class="c-prop">SuperAdmin</span>) ||
+            <span class="c-prop">ctx</span>.<span class="c-prop">User</span>.<span class="c-method">IsInRole</span>(<span class="c-type">Roles</span>.<span class="c-prop">Accountant</span>) ||
+            (<span class="c-prop">ctx</span>.<span class="c-prop">User</span>.<span class="c-method">IsInRole</span>(<span class="c-type">Roles</span>.<span class="c-prop">SchoolAdmin</span>) &&
+             <span class="c-prop">ctx</span>.<span class="c-prop">User</span>.<span class="c-method">HasClaim</span>(<span class="c-str">"canAccessFees"</span>, <span class="c-str">"true"</span>))));
+});
+
+<span class="c-cmt">// Usage</span>
+[<span class="c-attr">Authorize</span>(<span class="c-prop">Policy</span> = <span class="c-str">"FeeModule"</span>)]
+[<span class="c-attr">HttpGet</span>(<span class="c-str">"fee-reports"</span>)]
+<span class="c-kw">public</span> <span class="c-type">IActionResult</span> <span class="c-method">FeeReports</span>() { }</pre>
+</div>
+
+<!-- SECTION 6: SECURITY -->
+<div class="section" id="security">
+  <div class="section-title"><span class="num">6</span> 🛡️ JWT Security — What Can Go Wrong</div>
+
+  <div class="critical">
+    <div class="c-t">🚨 CRITICAL: JWT Secret Leaked</div>
+    <p>If secret key leaked → attacker generates valid tokens for ANY user, ANY role. Immediate action: rotate secret → all existing tokens invalid → all users re-login. Use Azure Key Vault / AWS Secrets Manager — never appsettings.json in git!</p>
+  </div>
+
+  <table>
+    <tr><th>Attack</th><th>How it happens</th><th>Defense</th></tr>
+    <tr><td><span class="red">Token Theft</span></td><td>XSS steals localStorage token</td><td>HttpOnly cookie for refresh token, short access token TTL</td></tr>
+    <tr><td><span class="red">Secret Leak</span></td><td>Key committed to git</td><td>Azure Key Vault, env vars, secret scanning</td></tr>
+    <tr><td><span class="red">None Algorithm</span></td><td>alg:none — no signature validation</td><td>Always specify ValidAlgorithms, reject alg:none</td></tr>
+    <tr><td><span class="red">Token Replay</span></td><td>Stolen token reused</td><td>Short TTL + Refresh rotation + JTI blacklist</td></tr>
+    <tr><td><span class="red">JWT in URL</span></td><td>Token in query string logged</td><td>Always Authorization header, NEVER query string for auth</td></tr>
+    <tr><td><span class="yellow">Payload Tampering</span></td><td>Decoded, role changed, encoded</td><td>Signature validation — signature breaks if payload changed</td></tr>
+  </table>
+
+  <pre><span class="c-cmt">// Security hardening — ValidAlgorithms prevents alg:none attack!</span>
+<span class="c-prop">opts</span>.<span class="c-prop">TokenValidationParameters</span> = <span class="c-kw">new</span> <span class="c-type">TokenValidationParameters</span>
+{
+    <span class="c-prop">ValidAlgorithms</span>   = <span class="c-kw">new</span>[] { <span class="c-type">SecurityAlgorithms</span>.<span class="c-prop">HmacSha256</span> }, <span class="c-cmt">// NO alg:none!</span>
+    <span class="c-prop">ValidateLifetime</span>  = <span class="c-kw">true</span>,
+    <span class="c-prop">ClockSkew</span>         = <span class="c-type">TimeSpan</span>.<span class="c-method">FromSeconds</span>(<span class="c-num">30</span>), <span class="c-cmt">// not TimeSpan.Zero!</span>
+};
+
+<span class="c-cmt">// HttpOnly cookie for refresh token — XSS cannot steal it!</span>
+<span class="c-kw">var</span> <span class="c-prop">cookieOpts</span> = <span class="c-kw">new</span> <span class="c-type">CookieOptions</span>
+{
+    <span class="c-prop">HttpOnly</span> = <span class="c-kw">true</span>,  <span class="c-cmt">// JS cannot access!</span>
+    <span class="c-prop">Secure</span>   = <span class="c-kw">true</span>,  <span class="c-cmt">// HTTPS only!</span>
+    <span class="c-prop">SameSite</span> = <span class="c-type">SameSiteMode</span>.<span class="c-prop">Strict</span>, <span class="c-cmt">// CSRF protection!</span>
+    <span class="c-prop">Expires</span>  = <span class="c-type">DateTimeOffset</span>.<span class="c-prop">UtcNow</span>.<span class="c-method">AddDays</span>(<span class="c-num">7</span>)
+};
+<span class="c-prop">Response</span>.<span class="c-prop">Cookies</span>.<span class="c-method">Append</span>(<span class="c-str">"refreshToken"</span>, <span class="c-prop">refreshToken</span>, <span class="c-prop">cookieOpts</span>);</pre>
+
+  <div class="tip">
+    <div class="t-label">💡 Access Token Storage — Where?</div>
+    <p><strong>Memory (JS variable):</strong> Most secure — XSS can't steal, but lost on page refresh.<br>
+    <strong>HttpOnly Cookie:</strong> XSS safe, CSRF risk (mitigate with SameSite=Strict + CSRF token).<br>
+    <strong>localStorage:</strong> Persistent but XSS steals it — risky!<br>
+    <strong>ZenCampus:</strong> Access token in memory, refresh token in HttpOnly cookie.</p>
+  </div>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">7</span> 🎯 Scenario + Critical Situation + Security Questions</div>
+
+  <!-- S1 -->
+  <div class="scenario-card critical-card">
+    <div class="scenario-header">
+      <div class="s-num crit">1</div>
+      <div>
+        <div class="scenario-title">JWT token stolen — Attacker impersonates teacher <span class="crit-badge">🚨 Critical</span> <span class="diff senior">Senior</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Production alert — ZenCampus teacher's JWT access token stolen via XSS vulnerability (localStorage use பண்ணிருந்தோம்). Attacker இப்போ teacher-ா impersonate பண்ணிக்கிட்டு student data access பண்றான். Immediate action என்ன? Future prevention?"
+    </div>
+    <button class="reveal-btn crit-btn" onclick="toggle(this)">🚨 Critical Answer</button>
+    <div class="answer">
+      <div class="a-label crit">🚨 CRITICAL SITUATION RESPONSE</div>
+      <div style="background:#1a0010;padding:14px;border-radius:8px;font-size:0.9em;line-height:1.9;margin-bottom:10px">
+        <p><strong style="color:#ff4757">Immediate (Next 30 mins):</strong></p>
+        <p>1. Revoke ALL refresh tokens for that user in DB immediately (<code>RevokedAt = DateTime.UtcNow</code>)</p>
+        <p>2. Access token can't be revoked (stateless) — wait 15 minutes to expire OR maintain JTI blacklist in Redis</p>
+        <p>3. Force re-login for the affected user</p>
+        <p>4. Check audit logs — what data did attacker access? (CorrelationId + UserId filter)</p>
+        <p>5. Patch XSS vulnerability that allowed token theft</p>
+        <p><strong style="color:#f39c12">Root Cause Fix:</strong></p>
+        <p>Move token from localStorage → HttpOnly cookie. localStorage = accessible by any JS = XSS vector!</p>
+      </div>
+      <pre><span class="c-cmt">// Emergency: revoke all tokens for user</span>
+<span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">RefreshTokens</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">t</span> => <span class="c-prop">t</span>.<span class="c-prop">UserId</span> == <span class="c-prop">userId</span> && <span class="c-prop">t</span>.<span class="c-prop">RevokedAt</span> == <span class="c-kw">null</span>)
+    .<span class="c-method">ExecuteUpdateAsync</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>
+        .<span class="c-method">SetProperty</span>(<span class="c-prop">t</span> => <span class="c-prop">t</span>.<span class="c-prop">RevokedAt</span>, <span class="c-type">DateTime</span>.<span class="c-prop">UtcNow</span>)
+        .<span class="c-method">SetProperty</span>(<span class="c-prop">t</span> => <span class="c-prop">t</span>.<span class="c-prop">RevokedReason</span>, <span class="c-str">"Security: Token theft suspected"</span>));
+
+<span class="c-cmt">// JTI Blacklist (Redis) — for immediate access token invalidation!</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">BlacklistJtiAsync</span>(<span class="c-kw">string</span> <span class="c-prop">jti</span>, <span class="c-type">TimeSpan</span> <span class="c-prop">ttl</span>)
+    => <span class="c-kw">await</span> <span class="c-prop">_redis</span>.<span class="c-method">SetAsync</span>(<span class="c-str">$"blacklist:{jti}"</span>, <span class="c-str">"revoked"</span>, <span class="c-prop">ttl</span>);
+
+<span class="c-cmt">// In JWT validation event — check blacklist!</span>
+<span class="c-prop">opts</span>.<span class="c-prop">Events</span>.<span class="c-prop">OnTokenValidated</span> = <span class="c-kw">async</span> <span class="c-prop">ctx</span> =>
+{
+    <span class="c-kw">var</span> <span class="c-prop">jti</span> = <span class="c-prop">ctx</span>.<span class="c-prop">Principal</span>!.<span class="c-method">FindFirst</span>(<span class="c-type">JwtRegisteredClaimNames</span>.<span class="c-prop">Jti</span>)!.<span class="c-prop">Value</span>;
+    <span class="c-kw">if</span> (<span class="c-kw">await</span> <span class="c-prop">_redis</span>.<span class="c-method">ExistsAsync</span>(<span class="c-str">$"blacklist:{jti}"</span>))
+        <span class="c-prop">ctx</span>.<span class="c-method">Fail</span>(<span class="c-str">"Token has been revoked"</span>);
+};</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Senior Prevention Strategy</div>
+        <p>"After incident: access token in memory (not storage), refresh token in HttpOnly+Secure+SameSite=Strict cookie, Content-Security-Policy header to prevent XSS, token binding to device fingerprint. JTI blacklist in Redis for instant invalidation."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div>
+        <div class="scenario-title">401 vanthuchu — User logout aagudhu instead of silent refresh <span class="diff real">Real Interview</span> <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus React app-la user fee entry பண்றான். 15 minutes-la access token expire ஆகுது. 401 response varuthu. User logout ஆகிடுவான். Bad UX! Transparent refresh implement பண்ணு."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Axios Interceptor Pattern</div>
+      <pre><span class="c-cmt">// Frontend — Axios interceptor for silent refresh</span>
+<span class="c-cmt">// (JavaScript — understanding the client side)</span>
+
+<span class="c-kw">let</span> <span class="c-prop">isRefreshing</span> = <span class="c-kw">false</span>;
+<span class="c-kw">let</span> <span class="c-prop">failedQueue</span>  = [];
+
+<span class="c-prop">axios</span>.<span class="c-prop">interceptors</span>.<span class="c-prop">response</span>.<span class="c-method">use</span>(
+    <span class="c-prop">response</span> => <span class="c-prop">response</span>,
+    <span class="c-kw">async</span> <span class="c-prop">error</span> => {
+        <span class="c-kw">const</span> <span class="c-prop">original</span> = <span class="c-prop">error</span>.<span class="c-prop">config</span>;
+
+        <span class="c-kw">if</span> (<span class="c-prop">error</span>.<span class="c-prop">response</span>?.<span class="c-prop">status</span> === <span class="c-num">401</span> && !<span class="c-prop">original</span>.<span class="c-prop">_retry</span>) {
+            <span class="c-prop">original</span>.<span class="c-prop">_retry</span> = <span class="c-kw">true</span>;
+
+            <span class="c-kw">if</span> (<span class="c-prop">isRefreshing</span>) {
+                <span class="c-cmt">// Queue concurrent requests during refresh</span>
+                <span class="c-kw">return new</span> <span class="c-type">Promise</span>((<span class="c-prop">res</span>, <span class="c-prop">rej</span>) =>
+                    <span class="c-prop">failedQueue</span>.<span class="c-method">push</span>({ <span class="c-prop">res</span>, <span class="c-prop">rej</span> }));
+            }
+
+            <span class="c-prop">isRefreshing</span> = <span class="c-kw">true</span>;
+            <span class="c-kw">try</span> {
+                <span class="c-cmt">// Refresh token in HttpOnly cookie — sent automatically!</span>
+                <span class="c-kw">const</span> { <span class="c-prop">data</span> } = <span class="c-kw">await</span> <span class="c-prop">axios</span>.<span class="c-method">post</span>(<span class="c-str">'/api/auth/refresh'</span>);
+                <span class="c-prop">accessToken</span> = <span class="c-prop">data</span>.<span class="c-prop">accessToken</span>; <span class="c-cmt">// store in memory!</span>
+                <span class="c-prop">processQueue</span>(<span class="c-kw">null</span>, <span class="c-prop">accessToken</span>);
+                <span class="c-kw">return</span> <span class="c-prop">axios</span>(<span class="c-prop">original</span>); <span class="c-cmt">// retry original request!</span>
+            } <span class="c-kw">catch</span> {
+                <span class="c-prop">processQueue</span>(<span class="c-kw">new</span> <span class="c-type">Error</span>(<span class="c-str">'Refresh failed'</span>));
+                <span class="c-prop">window</span>.<span class="c-method">location</span>.<span class="c-method">href</span> = <span class="c-str">'/login'</span>; <span class="c-cmt">// only now logout!</span>
+            } <span class="c-kw">finally</span> {
+                <span class="c-prop">isRefreshing</span> = <span class="c-kw">false</span>;
+            }
+        }
+        <span class="c-kw">return</span> <span class="c-type">Promise</span>.<span class="c-method">reject</span>(<span class="c-prop">error</span>);
+    }
+);</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Backend refresh endpoint</div>
+        <p>Refresh token comes from HttpOnly cookie automatically (no JS reads it). Backend validates, issues new tokens, sets new HttpOnly cookie. Zero user friction — fee entry continues seamlessly!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card critical-card">
+    <div class="scenario-header">
+      <div class="s-num crit">3</div>
+      <div>
+        <div class="scenario-title">JWT Secret key — git commit aachu! <span class="crit-badge">🚨 Critical Security</span> <span class="diff senior">Senior</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Junior developer ZenCampus appsettings.Production.json-la JWT secret key வச்சு GitHub-la push பண்ணிட்டான். Public repository! 3 hours later team notice பண்ணாங்க. What do you do? Step-by-step."
+    </div>
+    <button class="reveal-btn crit-btn" onclick="toggle(this)">🚨 Critical Answer</button>
+    <div class="answer">
+      <div class="a-label crit">🚨 CRITICAL: Secret Exposure — Incident Response</div>
+      <div style="background:#1a0010;padding:14px;border-radius:8px;font-size:0.9em;line-height:1.9;margin-bottom:10px">
+        <p><strong style="color:#ff4757">Step 1 — Assume compromised:</strong> 3 hours = attackers already crawling GitHub. Treat as breached immediately.</p>
+        <p><strong style="color:#f39c12">Step 2 — Rotate secret NOW:</strong> Change JWT secret key in production (Azure Key Vault / Env var). ALL existing tokens immediately invalid — all 50,000 users re-login. Acceptable vs security breach.</p>
+        <p><strong style="color:#3498db">Step 3 — Audit logs:</strong> Check for anomalous JWT usage — unknown IPs, unusual hours, bulk data access. Attacker may have already harvested data.</p>
+        <p><strong style="color:#2ecc71">Step 4 — Git cleanup:</strong> Remove from git history using BFG Repo Cleaner. But remember — GitHub cached it, anyone who cloned has it. Secret is compromised forever. Rotation is the only fix.</p>
+        <p><strong style="color:#a78bfa">Step 5 — Prevention:</strong> Add appsettings.Production.json to .gitignore. Use Azure Key Vault. Setup git-secrets or GitGuardian pre-commit hook.</p>
+      </div>
+      <pre><span class="c-cmt">// NEVER in appsettings.json committed to git!</span>
+<span class="c-str">"JwtSettings"</span>: { <span class="c-str">"Secret"</span>: <span class="c-str">"my-secret"</span> }  <span class="c-cmt">// ❌ WRONG!</span>
+
+<span class="c-cmt">// ✅ Azure Key Vault</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Configuration</span>.<span class="c-method">AddAzureKeyVault</span>(
+    <span class="c-kw">new</span> <span class="c-type">Uri</span>(<span class="c-str">$"https://zencampus-kv.vault.azure.net/"</span>),
+    <span class="c-kw">new</span> <span class="c-type">DefaultAzureCredential</span>());
+<span class="c-cmt">// JWT secret stored as "JwtSettings--Secret" in Key Vault</span>
+
+<span class="c-cmt">// ✅ Environment variables (Docker/K8s)</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Configuration</span>.<span class="c-method">AddEnvironmentVariables</span>();
+<span class="c-cmt">// Set JWT__SECRET env var on server, never in code!</span>
+
+<span class="c-cmt">// .gitignore — always!</span>
+appsettings.Production.json
+*.secrets.json
+.env</pre>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div>
+        <div class="scenario-title">Teacher role revoke — JWT still valid 14 more minutes <span class="diff hard">Hard</span> <span class="diff real">Real Interview</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Teacher resign பண்ணான். Admin portal-la role revoke பண்ணாங்க. ஆனா teacher's JWT access token still 14 minutes valid. அந்த 14 minutes-la student data access பண்ணலாம். How to handle immediate revocation?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — 3 Strategies</div>
+      <pre><span class="c-cmt">// Strategy 1: JTI Blacklist in Redis (fastest — production grade!)</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">RevokeUserAsync</span>(<span class="c-kw">int</span> <span class="c-prop">userId</span>)
+{
+    <span class="c-cmt">// Get all active JTIs for user from DB</span>
+    <span class="c-kw">var</span> <span class="c-prop">activeJtis</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">UserTokenJtis</span>
+        .<span class="c-method">Where</span>(<span class="c-prop">j</span> => <span class="c-prop">j</span>.<span class="c-prop">UserId</span> == <span class="c-prop">userId</span> && <span class="c-prop">j</span>.<span class="c-prop">ExpiresAt</span> > <span class="c-type">DateTime</span>.<span class="c-prop">UtcNow</span>)
+        .<span class="c-method">ToListAsync</span>();
+
+    <span class="c-cmt">// Blacklist each JTI in Redis with TTL = token expiry</span>
+    <span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">jti</span> <span class="c-kw">in</span> <span class="c-prop">activeJtis</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">ttl</span> = <span class="c-prop">jti</span>.<span class="c-prop">ExpiresAt</span> - <span class="c-type">DateTime</span>.<span class="c-prop">UtcNow</span>;
+        <span class="c-kw">await</span> <span class="c-prop">_redis</span>.<span class="c-method">SetAsync</span>(<span class="c-str">$"blacklist:{jti.Value}"</span>, <span class="c-str">"1"</span>, <span class="c-prop">ttl</span>);
+    }
+    <span class="c-cmt">// Revoke refresh tokens too</span>
+    <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">RefreshTokens</span>
+        .<span class="c-method">Where</span>(<span class="c-prop">t</span> => <span class="c-prop">t</span>.<span class="c-prop">UserId</span> == <span class="c-prop">userId</span>)
+        .<span class="c-method">ExecuteUpdateAsync</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-method">SetProperty</span>(<span class="c-prop">t</span> => <span class="c-prop">t</span>.<span class="c-prop">RevokedAt</span>, <span class="c-type">DateTime</span>.<span class="c-prop">UtcNow</span>));
+}</pre>
+      <table style="font-size:0.83em">
+        <tr><th>Strategy</th><th>Immediate?</th><th>Cost</th><th>Best for</th></tr>
+        <tr><td>JTI Blacklist (Redis)</td><td class="green">Yes — milliseconds</td><td class="yellow">Redis dependency</td><td class="green">Production critical</td></tr>
+        <tr><td>Short TTL (5 min)</td><td class="yellow">5 min max gap</td><td class="green">Zero infra</td><td class="yellow">Low-risk apps</td></tr>
+        <tr><td>DB check per request</td><td class="green">Yes</td><td class="red">DB hit every request!</td><td class="red">Avoid at scale</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card critical-card">
+    <div class="scenario-header">
+      <div class="s-num crit">5</div>
+      <div>
+        <div class="scenario-title">Concurrent refresh — race condition, double tokens issued <span class="crit-badge">🚨 Security Bug</span> <span class="diff senior">Senior</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Mobile app + Web app both simultaneously 401 hit பண்றாங்க, both same refresh token-a use பண்ணி /refresh call பண்றாங்க. Race condition — two valid access tokens issued to same user from different devices. Security issue?"
+    </div>
+    <button class="reveal-btn crit-btn" onclick="toggle(this)">🚨 Critical Answer</button>
+    <div class="answer">
+      <div class="a-label crit">🚨 RACE CONDITION FIX</div>
+      <pre><span class="c-cmt">// Problem: Two simultaneous /refresh calls with same token
+// Both read token as "active", both issue new tokens = double access!</span>
+
+<span class="c-cmt">// Fix 1: Database Optimistic Concurrency on RefreshToken</span>
+<span class="c-kw">public class</span> <span class="c-type">RefreshToken</span>
+{
+    [<span class="c-attr">Timestamp</span>]   <span class="c-cmt">// RowVersion for concurrency</span>
+    <span class="c-kw">public byte</span>[] <span class="c-prop">RowVersion</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = [];
+}
+
+<span class="c-cmt">// If two requests try to update same row simultaneously,
+// second one gets DbUpdateConcurrencyException → returns 401!</span>
+<span class="c-kw">try</span>
+{
+    <span class="c-prop">stored</span>.<span class="c-prop">UsedAt</span> = <span class="c-type">DateTime</span>.<span class="c-prop">UtcNow</span>;
+    <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">SaveChangesAsync</span>(); <span class="c-cmt">// concurrent update → throws!</span>
+}
+<span class="c-kw">catch</span> (<span class="c-type">DbUpdateConcurrencyException</span>)
+{
+    <span class="c-kw">throw new</span> <span class="c-type">UnauthorizedAccessException</span>(<span class="c-str">"Concurrent refresh detected"</span>);
+}
+
+<span class="c-cmt">// Fix 2: Distributed lock (Redis) — pessimistic approach</span>
+<span class="c-kw">await using var</span> <span class="c-prop">lock</span> = <span class="c-kw">await</span> <span class="c-prop">_redisLock</span>.<span class="c-method">AcquireAsync</span>(
+    <span class="c-str">$"refresh:{refreshToken}"</span>,
+    <span class="c-prop">expiry</span>: <span class="c-type">TimeSpan</span>.<span class="c-method">FromSeconds</span>(<span class="c-num">5</span>));
+
+<span class="c-kw">if</span> (<span class="c-prop">lock</span> == <span class="c-kw">null</span>)
+    <span class="c-kw">throw new</span> <span class="c-type">UnauthorizedAccessException</span>(<span class="c-str">"Token in use"</span>);
+
+<span class="c-cmt">// Only ONE request gets lock, other waits/fails</span></pre>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div>
+        <div class="scenario-title">School A teacher accessing School B students — data isolation <span class="diff hard">Hard</span> <span class="sec-badge">🛡️ Security</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus-la 200 schools. School A teacher JWT வச்சு Postman-la School B-ன் student ID-a try பண்றான். Role check pass ஆகுது (both Teacher role). School isolation enforce பண்ணு."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — JWT Claim + Service Layer Validation</div>
+      <pre><span class="c-cmt">// JWT has schoolId claim — extract and validate!</span>
+<span class="c-kw">public class</span> <span class="c-type">CurrentUserService</span> : <span class="c-type">ICurrentUserService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IHttpContextAccessor</span> <span class="c-prop">_http</span>;
+
+    <span class="c-kw">public int</span> <span class="c-prop">UserId</span>   => <span class="c-kw">int</span>.<span class="c-method">Parse</span>(<span class="c-prop">_http</span>.<span class="c-prop">HttpContext</span>!.<span class="c-prop">User</span>
+        .<span class="c-method">FindFirst</span>(<span class="c-type">ClaimTypes</span>.<span class="c-prop">NameIdentifier</span>)!.<span class="c-prop">Value</span>);
+
+    <span class="c-kw">public int</span> <span class="c-prop">SchoolId</span> => <span class="c-kw">int</span>.<span class="c-method">Parse</span>(<span class="c-prop">_http</span>.<span class="c-prop">HttpContext</span>!.<span class="c-prop">User</span>
+        .<span class="c-method">FindFirst</span>(<span class="c-str">"schoolId"</span>)!.<span class="c-prop">Value</span>);
+
+    <span class="c-kw">public bool</span> <span class="c-prop">IsSuperAdmin</span> =>
+        <span class="c-prop">_http</span>.<span class="c-prop">HttpContext</span>!.<span class="c-prop">User</span>.<span class="c-method">IsInRole</span>(<span class="c-type">Roles</span>.<span class="c-prop">SuperAdmin</span>);
+}
+
+<span class="c-cmt">// Service layer — ALWAYS validate school ownership!</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">StudentDto</span>&gt; <span class="c-method">GetStudentAsync</span>(<span class="c-kw">int</span> <span class="c-prop">studentId</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetByIdAsync</span>(<span class="c-prop">studentId</span>)
+        ?? <span class="c-kw">throw new</span> <span class="c-type">StudentNotFoundException</span>(<span class="c-prop">studentId</span>);
+
+    <span class="c-cmt">// School isolation — SuperAdmin sees all, others see own school only!</span>
+    <span class="c-kw">if</span> (!<span class="c-prop">_currentUser</span>.<span class="c-prop">IsSuperAdmin</span> &&
+         <span class="c-prop">student</span>.<span class="c-prop">SchoolId</span> != <span class="c-prop">_currentUser</span>.<span class="c-prop">SchoolId</span>)
+    {
+        <span class="c-kw">throw new</span> <span class="c-type">UnauthorizedAccessException</span>(
+            <span class="c-str">"Access denied: Student belongs to different school"</span>);
+        <span class="c-cmt">// Returns 403, NOT 404 — important for audit!</span>
+    }
+
+    <span class="c-kw">return</span> <span class="c-prop">_mapper</span>.<span class="c-method">Map</span>&lt;<span class="c-type">StudentDto</span>&gt;(<span class="c-prop">student</span>);
+}
+
+<span class="c-cmt">// Global query filter — NEVER forget where filter!</span>
+<span class="c-prop">mb</span>.<span class="c-method">Entity</span>&lt;<span class="c-type">Student</span>&gt;()
+  .<span class="c-method">HasQueryFilter</span>(<span class="c-prop">s</span> =>
+      <span class="c-prop">_currentUserService</span>.<span class="c-prop">IsSuperAdmin</span> ||
+      <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span> == <span class="c-prop">_currentUserService</span>.<span class="c-prop">SchoolId</span>);
+<span class="c-cmt">// EF adds WHERE SchoolId = @currentSchoolId to ALL queries automatically!</span></pre>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div>
+        <div class="scenario-title">Role tamper — user change JWT payload-la role=Admin panna mudiyuma? <span class="diff easy">Easy</span> <span class="sec-badge">🛡️ Security</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Interviewer kekuran: 'Teacher JWT payload decode பண்ணி role=Admin-a change பண்ணி modified token use பண்ணினா — API access kidekkumaa?' Answer with explanation."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Signature Validation prevents this!</div>
+      <div style="background:#0a1a0a;padding:14px;border-radius:8px;font-size:0.9em;line-height:1.9;margin-bottom:10px">
+        <p><strong style="color:#2ecc71">No — impossible without the secret key!</strong></p>
+        <p>JWT signature = HMACSHA256(Base64(Header) + "." + Base64(Payload), SECRET_KEY)</p>
+        <p>Attacker decodes payload (Base64, not encrypted), changes role to "Admin", re-encodes. But signature was computed with ORIGINAL payload. New payload = new signature needed = needs SECRET_KEY!</p>
+        <p>Without secret key → can't generate valid signature → API returns 401 "Invalid signature".</p>
+      </div>
+      <pre><span class="c-cmt">// Tampered token flow:</span>
+<span class="c-cmt">// Original:  header.{role:Teacher}.VALID_SIGNATURE</span>
+<span class="c-cmt">// Tampered:  header.{role:Admin}.ORIGINAL_SIGNATURE  ← signature mismatch!</span>
+<span class="c-cmt">// API: ValidateIssuerSigningKey=true → HMACSHA256 recomputed
+//      recomputed ≠ ORIGINAL_SIGNATURE → 401 Unauthorized!</span>
+
+<span class="c-cmt">// That's WHY ValidateIssuerSigningKey must always be TRUE!</span>
+<span class="c-prop">opts</span>.<span class="c-prop">TokenValidationParameters</span> = <span class="c-kw">new</span>
+{
+    <span class="c-prop">ValidateIssuerSigningKey</span> = <span class="c-kw">true</span>, <span class="c-cmt">// NEVER false in production!</span>
+    <span class="c-prop">IssuerSigningKey</span> = <span class="c-prop">_signingKey</span>
+};</pre>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div>
+        <div class="scenario-title">Parent login — only see own child, not other students <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus parent portal: Parent Mr. Ramesh has 2 kids in school. Login பண்றான். Only his kids' attendance, fee see பண்ணணும். Other students data கிடைக்கக் கூடாது. JWT + Authorization design பண்ணு."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Parent Claims + Resource Authorization</div>
+      <pre><span class="c-cmt">// JWT claims for parent — embed child IDs!</span>
+<span class="c-kw">var</span> <span class="c-prop">claims</span> = <span class="c-kw">new</span> <span class="c-type">List</span>&lt;<span class="c-type">Claim</span>&gt;
+{
+    <span class="c-kw">new</span>(<span class="c-type">ClaimTypes</span>.<span class="c-prop">Role</span>,  <span class="c-str">"Parent"</span>),
+    <span class="c-kw">new</span>(<span class="c-str">"parentId"</span>,         <span class="c-prop">parent</span>.<span class="c-prop">Id</span>.<span class="c-method">ToString</span>()),
+    <span class="c-kw">new</span>(<span class="c-str">"schoolId"</span>,         <span class="c-prop">parent</span>.<span class="c-prop">SchoolId</span>.<span class="c-method">ToString</span>()),
+};
+<span class="c-cmt">// Add each child as a claim</span>
+<span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">child</span> <span class="c-kw">in</span> <span class="c-prop">parent</span>.<span class="c-prop">Children</span>)
+    <span class="c-prop">claims</span>.<span class="c-method">Add</span>(<span class="c-kw">new</span> <span class="c-type">Claim</span>(<span class="c-str">"childId"</span>, <span class="c-prop">child</span>.<span class="c-prop">Id</span>.<span class="c-method">ToString</span>()));
+
+<span class="c-cmt">// Service — validate child belongs to this parent!</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">AttendanceDto</span>&gt; <span class="c-method">GetChildAttendanceAsync</span>(<span class="c-kw">int</span> <span class="c-prop">studentId</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">allowedChildren</span> = <span class="c-prop">_currentUser</span>.<span class="c-prop">HttpContext</span>!.<span class="c-prop">User</span>
+        .<span class="c-method">FindAll</span>(<span class="c-str">"childId"</span>)
+        .<span class="c-method">Select</span>(<span class="c-prop">c</span> => <span class="c-kw">int</span>.<span class="c-method">Parse</span>(<span class="c-prop">c</span>.<span class="c-prop">Value</span>))
+        .<span class="c-method">ToHashSet</span>();
+
+    <span class="c-kw">if</span> (!<span class="c-prop">allowedChildren</span>.<span class="c-method">Contains</span>(<span class="c-prop">studentId</span>))
+        <span class="c-kw">throw new</span> <span class="c-type">ForbiddenException</span>(<span class="c-str">"Not your child!"</span>); <span class="c-cmt">// 403!</span>
+
+    <span class="c-kw">return await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetAttendanceAsync</span>(<span class="c-prop">studentId</span>);
+}</pre>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card critical-card">
+    <div class="scenario-header">
+      <div class="s-num crit">9</div>
+      <div>
+        <div class="scenario-title">HTTP (no S) — JWT intercepted! MITM attack <span class="crit-badge">🚨 Critical</span> <span class="sec-badge">🛡️ Security</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus staging server HTTP-la run ஆகுது (no SSL). Network sniffing tool-la JWT token plain-text-a capture பண்ணிட்டாங்க! Man-in-the-middle attack. Explain what happened and fix."
+    </div>
+    <button class="reveal-btn crit-btn" onclick="toggle(this)">🚨 Critical Answer</button>
+    <div class="answer">
+      <div class="a-label crit">🚨 MITM — JWT in plaintext over HTTP</div>
+      <div style="background:#1a0010;padding:14px;border-radius:8px;font-size:0.9em;line-height:1.9;margin-bottom:10px">
+        <p><strong style="color:#ff4757">What happened:</strong> HTTP = no encryption. Authorization header = "Bearer {token}" sent as plain text. Network sniffer on same WiFi captures the JWT. Attacker replays it = full access.</p>
+        <p><strong style="color:#f39c12">JWT signature doesn't help:</strong> Signature proves integrity (not tampered). Doesn't help against replay of VALID stolen token.</p>
+        <p><strong style="color:#2ecc71">Fix — HTTPS mandatory:</strong></p>
+      </div>
+      <pre><span class="c-cmt">// 1. Force HTTPS everywhere</span>
+<span class="c-prop">app</span>.<span class="c-method">UseHttpsRedirection</span>(); <span class="c-cmt">// redirect HTTP → HTTPS</span>
+<span class="c-prop">app</span>.<span class="c-method">UseHsts</span>();            <span class="c-cmt">// tell browser to ONLY use HTTPS (HSTS header)</span>
+
+<span class="c-cmt">// 2. HSTS header — browser remembers for 1 year</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddHsts</span>(<span class="c-prop">opts</span> =>
+{
+    <span class="c-prop">opts</span>.<span class="c-prop">MaxAge</span>            = <span class="c-type">TimeSpan</span>.<span class="c-method">FromDays</span>(<span class="c-num">365</span>);
+    <span class="c-prop">opts</span>.<span class="c-prop">IncludeSubDomains</span> = <span class="c-kw">true</span>;
+});
+
+<span class="c-cmt">// 3. Secure cookie attribute — token only sent over HTTPS</span>
+<span class="c-kw">new</span> <span class="c-type">CookieOptions</span> { <span class="c-prop">Secure</span> = <span class="c-kw">true</span> } <span class="c-cmt">// browser sends only on HTTPS!</span>
+
+<span class="c-cmt">// 4. Certificate pinning in mobile app — prevent fake cert MITM</span>
+
+<span class="c-cmt">// 5. Production checklist</span>
+<span class="c-cmt">// ✅ SSL certificate (Let's Encrypt free or Azure managed)</span>
+<span class="c-cmt">// ✅ UseHttpsRedirection</span>
+<span class="c-cmt">// ✅ HSTS header</span>
+<span class="c-cmt">// ✅ Secure cookie flag</span>
+<span class="c-cmt">// ✅ Short access token TTL (15 min) — stolen token usable shorter!</span></pre>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div>
+        <div class="scenario-title">"Auth + Security experience sollu" — Complete Interview Answer <span class="diff senior">Senior</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "JWT, refresh tokens, security — ZenCampus-la how did you implement? Any security issues you faced and fixed?" — Full structured answer.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE INTERVIEW ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p>"ZenCampus — 50,000 students, 200 schools, multi-tenant. ASP.NET Core 8 + JWT."</p>
+        <p><strong>Auth flow:</strong> Login → BCrypt password verify → JWT access token (15 min, HS256) + refresh token (7 days, 64-byte random). Access token in memory (React), refresh token in HttpOnly+Secure+SameSite=Strict cookie — XSS cannot steal it. Silent refresh via Axios interceptor — 401 → auto refresh → retry. User never sees logout.</p>
+        <p><strong>JWT Claims:</strong> userId, role (SuperAdmin/SchoolAdmin/Teacher/Parent/Accountant), schoolId, tenantId, JTI. Claims-based policies for fee module — role + canAccessFees claim combination.</p>
+        <p><strong>Multi-tenant isolation:</strong> EF Core global query filter on all entities — schoolId auto-appended to every query. Service layer double-checks. SuperAdmin bypasses filter.</p>
+        <p><strong>Security incident:</strong> Found teacher using Postman to access other school's student (valid JWT, different schoolId in URL). Fixed with service-layer school validation — student.SchoolId != currentUser.SchoolId → 403.</p>
+        <p><strong>Refresh rotation:</strong> One-time use refresh tokens. Reuse detected → revoke ALL user tokens (theft indicator). DbUpdateConcurrencyException handles concurrent refresh race condition.</p>
+        <p><strong>Secrets:</strong> JWT secret in Azure Key Vault — never in appsettings.json. Pre-commit hooks with git-secrets to prevent accidental commits.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">8</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: JWT payload-la password store பண்ணலாமா?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Yes — it's Base64 encoded so secure</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) No — payload is only Base64, anyone can decode it. Never store sensitive data.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Yes — if using HS512</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Only if payload is encrypted separately</div>
+    <div class="quiz-fb ok">✅ JWT payload = Base64 encoded (NOT encrypted). Visit jwt.io — paste any token, see payload immediately without secret! Only put: userId, role, schoolId. NEVER password, Aadhaar, sensitive data!</div>
+    <div class="quiz-fb nope">❌ Base64 ≠ encryption! Anyone can decode. jwt.io decodes without secret. Payload is for identity claims only — never secrets!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: Access token 15 minutes மட்டும் valid — why not 7 days?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Server performance</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Short TTL = if stolen, attacker has only 15 min. Long TTL = stolen token usable for days.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) JWT specification limit</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Database optimization</div>
+    <div class="quiz-fb ok">✅ JWT access token is STATELESS — can't be revoked (no DB check). Stolen token = usable until expiry. 15 min = theft window. 7 days = disaster. Refresh token (DB stored) can be revoked anytime!</div>
+    <div class="quiz-fb nope">❌ Security reason! JWT = stateless = can't revoke. Short TTL limits damage window. Refresh token (DB stored, revokable) handles "remember me" long sessions!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: Refresh token reuse detected (used token used again) — what should happen?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Just return 401</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Revoke ALL tokens for that user — reuse indicates token theft, force re-login everywhere</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Issue new token anyway</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Lock account permanently</div>
+    <div class="quiz-fb ok">✅ Refresh token reuse = security red flag. Either attacker used it, or legitimate user's device is compromised. Safest: revoke ALL refresh tokens for that user — forces re-login on all devices. Attacker kicked out!</div>
+    <div class="quiz-fb nope">❌ Reuse = possible token theft! Revoke ALL sessions for that user. This is "refresh token rotation + reuse detection" — industry best practice. All devices re-login = attacker loses access!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: ValidateIssuerSigningKey = false set பண்ணினா?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Performance improves</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Still secure — other validations protect</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) Anyone can forge JWT with any role — critical security hole!</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Only development safe, production fine</div>
+    <div class="quiz-fb ok">✅ ValidateIssuerSigningKey=false = NO signature check = anyone generates JWT with role=SuperAdmin and accesses everything. This is the alg:none vulnerability! ALWAYS true in production!</div>
+    <div class="quiz-fb nope">❌ Critical security hole! Without signature validation, any fake JWT accepted. Attacker sets role=SuperAdmin, accesses all data. ALWAYS ValidateIssuerSigningKey=true!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">9</span> ✅ Day 9 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory (50 min)</h3>
+      <ul class="check-list">
+        <li>JWT structure — Header.Payload.Signature</li>
+        <li>Payload = Base64 not encrypted</li>
+        <li>Access token (15 min) + Refresh token (7d)</li>
+        <li>Token rotation — one-time use</li>
+        <li>Reuse detection → revoke all</li>
+        <li>Role-based + Claims-based policies</li>
+        <li>JTI blacklist for immediate revocation</li>
+        <li>HttpOnly cookie for refresh token</li>
+      </ul>
+    </div>
+    <div>
+      <h3>💻 Hands-On (60 min)</h3>
+      <ul class="check-list">
+        <li>TokenService — GenerateAccessToken</li>
+        <li>RefreshToken entity + repository</li>
+        <li>Login + Refresh endpoints</li>
+        <li>JWT validation in Program.cs</li>
+        <li>CurrentUserService from HttpContext</li>
+        <li>School isolation — EF global filter</li>
+        <li>Role-based [Authorize] on controllers</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🚨 Critical Scenarios</h3>
+      <ul class="check-list">
+        <li>S1: Token stolen → JTI blacklist</li>
+        <li>S3: Secret leaked → Key Vault + rotate</li>
+        <li>S5: Race condition refresh → RowVersion</li>
+        <li>S9: HTTP MITM → HTTPS + HSTS</li>
+        <li>S4: Role revoke → Redis blacklist</li>
+        <li>S6: Cross-school access → global filter</li>
+      </ul>
+    </div>
+    <div>
+      <h3>⭐ Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"JWT payload = Base64 not encrypted"</li>
+        <li>"15 min access token = limit theft window"</li>
+        <li>"Refresh rotation = one-time use"</li>
+        <li>"Reuse detected = revoke ALL sessions"</li>
+        <li>"HttpOnly cookie = XSS can't steal"</li>
+        <li>"ValidateIssuerSigningKey = always true"</li>
+        <li>"Secret in Key Vault, never in git"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#0d001a,#0a0a1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🔐 Day 9 Motivation</div>
+    <p style="color:#a78bfa;font-style:italic">"Baasha ID card fake பண்ண முடியாது — stamp (signature) இருக்கு. JWT role tamper பண்ண முடியாது — signature இருக்கு. ஆனா card stolen ஆனா? Short expiry + refresh rotation — அதுதான் real security! <strong>Interview-la 'JWT stolen scenario-a handle பண்ணினேன் — JTI blacklist in Redis, HttpOnly cookie switch, 15 min TTL' சொன்னா — security engineer level confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 9/60 ✅ | Tomorrow: SQL Server — Indexes, Query Optimization, Stored Procedures, Transactions</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:15%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">9 of 60 days (15%) — Security mastered!</div>
+  </div>
+</div>
+</div>
+
+<footer>
+  <p>Day 9 – JWT Auth + Refresh Tokens + Security | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🔐 "Baasha = JWT signature. Vikram = role clearance. HttpOnly cookie = XSS shield. Short TTL = theft window. Key Vault = no secrets in git!"</p>
+</footer>
+
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent=btn.classList.contains('crit-btn')?'🚨 Critical Answer':'💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

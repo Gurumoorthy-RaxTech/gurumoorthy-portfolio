@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 19 – Design Patterns | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#1a0010,#0d0d1a,#1a0010);padding:36px 20px;text-align:center;border-bottom:3px solid #ec4899}
+header h1{font-size:2em;color:#f9a8d4;text-shadow:0 0 20px #ec489955}
+header p{color:#fbcfe8;margin-top:6px}
+.badge{display:inline-block;background:#ec489922;border:1px solid #ec489955;color:#f9a8d4;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#f9a8d4;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#ec4899;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.kw{color:#569cd6}.tp{color:#4ec9b0}.st{color:#ce9178}.nm{color:#b5cea8}.cm{color:#6a9955}.pr{color:#9cdcfe}.mt{color:#dcdcaa}.at{color:#c586c0}
+code{background:#1a1a2e;color:#ec4899;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#1a0015;border-left:4px solid #ec4899;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#fbcfe8;font-size:0.9em;margin-top:4px}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:700px){.comparison,.two-col{grid-template-columns:1fr}}
+.bad-box{background:#1f0a0a;border:1px solid #e74c3c44;border-radius:8px;padding:14px}
+.good-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:8px;padding:14px}
+.box-label{font-size:0.78em;font-weight:bold;margin-bottom:8px}
+.bad-box .box-label{color:#e74c3c}.good-box .box-label{color:#2ecc71}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#1a0015;color:#f9a8d4;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#0a0a2a}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.pink{color:#f9a8d4}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-card.hot{border-color:#ec489955;background:#1a0010}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.s-num{background:#ec4899;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#1a0015;color:#f9a8d4}
+.real{background:#1a0015;color:#f9a8d4;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #ec489955}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#1a0015;border:1px solid #ec4899;color:#f9a8d4;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#ec4899;color:#fff}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1e1e3a}
+.answer.shown{display:block}
+.answer .a-label{color:#f9a8d4;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.gold-box{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#ec4899;color:#f9a8d4}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#ec4899}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#f9a8d4;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1e1e3a}
+.sticky-nav a:hover{background:#1a0015}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#ec4899,#f9a8d4)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+h3{color:#fbcfe8;margin:16px 0 8px;font-size:1em}
+.pattern-badge{display:inline-block;background:#ec489922;border:1px solid #ec489955;color:#f9a8d4;padding:2px 10px;border-radius:4px;font-size:0.78em;font-weight:bold;margin-right:8px}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#f9a8d4;font-size:0.85em;margin-bottom:6px">📅 Day 19 of 60 | Phase 1: Core .NET Mastery</div>
+  <h1>🏗️ Design Patterns — Repository · CQRS · Strategy · Factory · Decorator</h1>
+  <p>Gang of Four + Enterprise patterns — ZenCampus real implementation</p>
+  <div style="margin-top:12px">
+    <span class="badge">Repository Pattern</span><span class="badge">CQRS + MediatR</span><span class="badge">Strategy Pattern</span>
+    <span class="badge">Factory Pattern</span><span class="badge">Decorator Pattern</span><span class="badge">Unit of Work</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#repo">📦 Repository</a>
+  <a href="#cqrs">⚡ CQRS</a>
+  <a href="#strategy">🎯 Strategy</a>
+  <a href="#factory">🏭 Factory</a>
+  <a href="#decorator">🎁 Decorator</a>
+  <a href="#scenarios">🎬 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- REPOSITORY -->
+<div class="section" id="repo">
+  <div class="section-title"><span class="num">1</span> Repository + Unit of Work Pattern</div>
+
+  <div class="movie">
+    <span class="film">🎬 Baasha — Manickam says "Naan oru thadava sonna, nooru thadava sonna maari" (once I say it, it's done 100 times). Repository = same. Write data access logic once → use everywhere. Controller doesn't know if it's EF Core, Dapper, or API. Change DB → change only repository.</span>
+    <p>ZenCampus problem WITHOUT Repository: StudentController does DbContext.Students.Where(...).ToList() directly. Now if we add caching, logging, change from EF to Dapper — we edit EVERY controller. Repository = single place for data access. Controllers talk only to interfaces.</p>
+  </div>
+
+  <pre><span class="cm">// Generic repository interface</span>
+<span class="kw">public interface</span> <span class="tp">IRepository</span>&lt;<span class="tp">T</span>&gt; <span class="kw">where</span> <span class="tp">T</span> : <span class="kw">class</span>
+{
+    <span class="tp">Task</span>&lt;<span class="tp">T</span>?&gt;              <span class="mt">GetByIdAsync</span>(<span class="kw">int</span> <span class="pr">id</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>);
+    <span class="tp">Task</span>&lt;<span class="tp">IReadOnlyList</span>&lt;<span class="tp">T</span>&gt;&gt; <span class="mt">GetAllAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>);
+    <span class="tp">Task</span>&lt;<span class="tp">T</span>&gt;              <span class="mt">AddAsync</span>(<span class="tp">T</span> <span class="pr">entity</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>);
+    <span class="tp">Task</span>                 <span class="mt">UpdateAsync</span>(<span class="tp">T</span> <span class="pr">entity</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>);
+    <span class="tp">Task</span>                 <span class="mt">DeleteAsync</span>(<span class="kw">int</span> <span class="pr">id</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>);
+}
+
+<span class="cm">// Specific interface extends generic — add domain-specific queries</span>
+<span class="kw">public interface</span> <span class="tp">IStudentRepository</span> : <span class="tp">IRepository</span>&lt;<span class="tp">Student</span>&gt;
+{
+    <span class="tp">Task</span>&lt;<span class="tp">IReadOnlyList</span>&lt;<span class="tp">Student</span>&gt;&gt; <span class="mt">GetBySchoolAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>);
+    <span class="tp">Task</span>&lt;<span class="tp">IReadOnlyList</span>&lt;<span class="tp">Student</span>&gt;&gt; <span class="mt">SearchAsync</span>(<span class="kw">string</span> <span class="pr">name</span>, <span class="kw">int</span> <span class="pr">schoolId</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>);
+    <span class="tp">Task</span>&lt;<span class="kw">bool</span>&gt;                     <span class="mt">IsParentOfStudentAsync</span>(<span class="kw">int</span> <span class="pr">parentId</span>, <span class="kw">int</span> <span class="pr">studentId</span>);
+}
+
+<span class="cm">// EF Core implementation</span>
+<span class="kw">public class</span> <span class="tp">StudentRepository</span>(<span class="tp">ZenCampusDbContext</span> <span class="pr">ctx</span>) : <span class="tp">IStudentRepository</span>
+{
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">Student</span>?&gt; <span class="mt">GetByIdAsync</span>(<span class="kw">int</span> <span class="pr">id</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>) =>
+        <span class="kw">await</span> <span class="pr">ctx</span>.<span class="pr">Students</span>.<span class="mt">AsNoTracking</span>().<span class="mt">FirstOrDefaultAsync</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Id</span> == <span class="pr">id</span>, <span class="pr">ct</span>);
+
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IReadOnlyList</span>&lt;<span class="tp">Student</span>&gt;&gt; <span class="mt">GetBySchoolAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>) =>
+        <span class="kw">await</span> <span class="pr">ctx</span>.<span class="pr">Students</span>
+            .<span class="mt">Where</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">SchoolId</span> == <span class="pr">schoolId</span> && <span class="pr">s</span>.<span class="pr">IsActive</span>)
+            .<span class="mt">AsNoTracking</span>()
+            .<span class="mt">ToListAsync</span>(<span class="pr">ct</span>);
+
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IReadOnlyList</span>&lt;<span class="tp">Student</span>&gt;&gt; <span class="mt">SearchAsync</span>(<span class="kw">string</span> <span class="pr">name</span>, <span class="kw">int</span> <span class="pr">schoolId</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>) =>
+        <span class="kw">await</span> <span class="pr">ctx</span>.<span class="pr">Students</span>
+            .<span class="mt">Where</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">SchoolId</span> == <span class="pr">schoolId</span> &&
+                        <span class="tp">EF</span>.<span class="mt">Functions</span>.<span class="mt">Like</span>(<span class="pr">s</span>.<span class="pr">Name</span>, <span class="st">$"%{name}%"</span>))
+            .<span class="mt">AsNoTracking</span>()
+            .<span class="mt">ToListAsync</span>(<span class="pr">ct</span>);
+
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">Student</span>&gt; <span class="mt">AddAsync</span>(<span class="tp">Student</span> <span class="pr">s</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>)
+    {
+        <span class="pr">ctx</span>.<span class="pr">Students</span>.<span class="mt">Add</span>(<span class="pr">s</span>);
+        <span class="kw">await</span> <span class="pr">ctx</span>.<span class="mt">SaveChangesAsync</span>(<span class="pr">ct</span>);
+        <span class="kw">return</span> <span class="pr">s</span>;
+    }
+}
+
+<span class="cm">// Unit of Work — wrap multiple repositories in one transaction</span>
+<span class="kw">public interface</span> <span class="tp">IUnitOfWork</span> : <span class="tp">IAsyncDisposable</span>
+{
+    <span class="tp">IStudentRepository</span> <span class="pr">Students</span>  { <span class="kw">get</span>; }
+    <span class="tp">IFeeRepository</span>     <span class="pr">Fees</span>      { <span class="kw">get</span>; }
+    <span class="tp">ISchoolRepository</span>  <span class="pr">Schools</span>   { <span class="kw">get</span>; }
+    <span class="tp">Task</span>&lt;<span class="kw">int</span>&gt;           <span class="mt">SaveChangesAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>);
+}
+
+<span class="kw">public class</span> <span class="tp">UnitOfWork</span>(<span class="tp">ZenCampusDbContext</span> <span class="pr">ctx</span>) : <span class="tp">IUnitOfWork</span>
+{
+    <span class="kw">public</span> <span class="tp">IStudentRepository</span> <span class="pr">Students</span> { <span class="kw">get</span>; } = <span class="kw">new</span> <span class="tp">StudentRepository</span>(<span class="pr">ctx</span>);
+    <span class="kw">public</span> <span class="tp">IFeeRepository</span>     <span class="pr">Fees</span>     { <span class="kw">get</span>; } = <span class="kw">new</span> <span class="tp">FeeRepository</span>(<span class="pr">ctx</span>);
+    <span class="kw">public</span> <span class="tp">ISchoolRepository</span>  <span class="pr">Schools</span>  { <span class="kw">get</span>; } = <span class="kw">new</span> <span class="tp">SchoolRepository</span>(<span class="pr">ctx</span>);
+    <span class="kw">public</span> <span class="tp">Task</span>&lt;<span class="kw">int</span>&gt; <span class="mt">SaveChangesAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>) =>
+        <span class="pr">ctx</span>.<span class="mt">SaveChangesAsync</span>(<span class="pr">ct</span>);
+    <span class="kw">public</span> <span class="tp">ValueTask</span> <span class="mt">DisposeAsync</span>() => <span class="pr">ctx</span>.<span class="mt">DisposeAsync</span>();
+}
+
+<span class="cm">// Usage — admit new student + create fee record in one transaction</span>
+<span class="kw">public class</span> <span class="tp">StudentAdmissionService</span>(<span class="tp">IUnitOfWork</span> <span class="pr">uow</span>)
+{
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">int</span>&gt; <span class="mt">AdmitStudentAsync</span>(<span class="tp">StudentAdmissionDto</span> <span class="pr">dto</span>)
+    {
+        <span class="kw">var</span> <span class="pr">student</span>    = <span class="kw">new</span> <span class="tp">Student</span> { <span class="pr">Name</span> = <span class="pr">dto</span>.<span class="pr">Name</span>, <span class="pr">SchoolId</span> = <span class="pr">dto</span>.<span class="pr">SchoolId</span> };
+        <span class="kw">await</span> <span class="pr">uow</span>.<span class="pr">Students</span>.<span class="mt">AddAsync</span>(<span class="pr">student</span>);
+
+        <span class="kw">var</span> <span class="pr">feeRecord</span>  = <span class="kw">new</span> <span class="tp">FeeRecord</span> { <span class="pr">StudentId</span> = <span class="pr">student</span>.<span class="pr">Id</span>, <span class="pr">Amount</span> = <span class="pr">dto</span>.<span class="pr">AnnualFee</span> };
+        <span class="kw">await</span> <span class="pr">uow</span>.<span class="pr">Fees</span>.<span class="mt">AddAsync</span>(<span class="pr">feeRecord</span>);
+
+        <span class="kw">await</span> <span class="pr">uow</span>.<span class="mt">SaveChangesAsync</span>(); <span class="cm">// ONE transaction — both succeed or both fail!</span>
+        <span class="kw">return</span> <span class="pr">student</span>.<span class="pr">Id</span>;
+    }
+}</pre>
+
+  <table>
+    <tr><th>Without Repository</th><th>With Repository</th></tr>
+    <tr><td class="red">DbContext in controllers — tight coupling</td><td class="green">Interface in controllers — loose coupling</td></tr>
+    <tr><td class="red">Change DB = change all controllers</td><td class="green">Change DB = change only repository impl</td></tr>
+    <tr><td class="red">Can't unit test (real DB needed)</td><td class="green">Mock IStudentRepository — test without DB</td></tr>
+    <tr><td class="red">Duplicate queries everywhere</td><td class="green">SearchAsync() defined once, used everywhere</td></tr>
+  </table>
+</div>
+
+<!-- CQRS -->
+<div class="section" id="cqrs">
+  <div class="section-title"><span class="num">2</span> CQRS + MediatR Pattern</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram Vedha — Vikram (cop, queries/reads) and Vedha (action, commands/writes) — two different people for two different jobs! CQRS = Commands (write, change state) go one way. Queries (read, return data) go another. Never mix them!</span>
+    <p>ZenCampus benefit: Fee collection command validates, saves, sends SMS, publishes event. Student list query just reads — no locks, no validation, can use cache. Mixing them: every fee query runs validation overhead. Separating: queries can be read-replicas (10x faster), commands have full business logic.</p>
+  </div>
+
+  <pre><span class="cm">// NuGet: MediatR, MediatR.Extensions.Microsoft.DependencyInjection</span>
+
+<span class="cm">// COMMAND — changes state, returns result</span>
+<span class="kw">public record</span> <span class="tp">CollectFeeCommand</span>(
+    <span class="kw">int</span>     <span class="pr">StudentId</span>,
+    <span class="kw">decimal</span> <span class="pr">Amount</span>,
+    <span class="kw">string</span>  <span class="pr">PaymentMode</span>
+) : <span class="tp">IRequest</span>&lt;<span class="tp">CollectFeeResult</span>&gt;;
+
+<span class="kw">public record</span> <span class="tp">CollectFeeResult</span>(<span class="kw">int</span> <span class="pr">ReceiptNo</span>, <span class="tp">DateTime</span> <span class="pr">PaidAt</span>);
+
+<span class="cm">// Command Handler — all business logic here</span>
+<span class="kw">public class</span> <span class="tp">CollectFeeCommandHandler</span>(
+    <span class="tp">IFeeRepository</span>  <span class="pr">_feeRepo</span>,
+    <span class="tp">ISmsService</span>     <span class="pr">_sms</span>,
+    <span class="tp">IPublisher</span>      <span class="pr">_publisher</span>)
+    : <span class="tp">IRequestHandler</span>&lt;<span class="tp">CollectFeeCommand</span>, <span class="tp">CollectFeeResult</span>&gt;
+{
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">CollectFeeResult</span>&gt; <span class="mt">Handle</span>(<span class="tp">CollectFeeCommand</span> <span class="pr">cmd</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="kw">if</span> (<span class="pr">cmd</span>.<span class="pr">Amount</span> <= <span class="nm">0</span>) <span class="kw">throw new</span> <span class="tp">ValidationException</span>(<span class="st">"Amount must be positive"</span>);
+
+        <span class="kw">var</span> <span class="pr">receipt</span> = <span class="kw">new</span> <span class="tp">FeeReceipt</span>
+        {
+            <span class="pr">StudentId</span>  = <span class="pr">cmd</span>.<span class="pr">StudentId</span>,
+            <span class="pr">Amount</span>     = <span class="pr">cmd</span>.<span class="pr">Amount</span>,
+            <span class="pr">PaidAt</span>     = <span class="tp">DateTime</span>.<span class="pr">UtcNow</span>,
+            <span class="pr">PaymentMode</span> = <span class="pr">cmd</span>.<span class="pr">PaymentMode</span>
+        };
+        <span class="kw">await</span> <span class="pr">_feeRepo</span>.<span class="mt">SaveReceiptAsync</span>(<span class="pr">receipt</span>, <span class="pr">ct</span>);
+        <span class="kw">await</span> <span class="pr">_sms</span>.<span class="mt">SendReceiptAsync</span>(<span class="pr">receipt</span>.<span class="pr">ReceiptNo</span>, <span class="pr">cmd</span>.<span class="pr">Amount</span>, <span class="pr">ct</span>);
+        <span class="kw">await</span> <span class="pr">_publisher</span>.<span class="mt">Publish</span>(<span class="kw">new</span> <span class="tp">FeeCollectedEvent</span>(<span class="pr">receipt</span>.<span class="pr">ReceiptNo</span>), <span class="pr">ct</span>);
+
+        <span class="kw">return new</span> <span class="tp">CollectFeeResult</span>(<span class="pr">receipt</span>.<span class="pr">ReceiptNo</span>, <span class="pr">receipt</span>.<span class="pr">PaidAt</span>);
+    }
+}
+
+<span class="cm">// QUERY — read only, no side effects!</span>
+<span class="kw">public record</span> <span class="tp">GetStudentsBySchoolQuery</span>(<span class="kw">int</span> <span class="pr">SchoolId</span>, <span class="kw">string</span>? <span class="pr">Search</span> = <span class="kw">null</span>)
+    : <span class="tp">IRequest</span>&lt;<span class="tp">IReadOnlyList</span>&lt;<span class="tp">StudentDto</span>&gt;&gt;;
+
+<span class="kw">public class</span> <span class="tp">GetStudentsBySchoolQueryHandler</span>(<span class="tp">IStudentRepository</span> <span class="pr">_repo</span>)
+    : <span class="tp">IRequestHandler</span>&lt;<span class="tp">GetStudentsBySchoolQuery</span>, <span class="tp">IReadOnlyList</span>&lt;<span class="tp">StudentDto</span>&gt;&gt;
+{
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IReadOnlyList</span>&lt;<span class="tp">StudentDto</span>&gt;&gt; <span class="mt">Handle</span>(
+        <span class="tp">GetStudentsBySchoolQuery</span> <span class="pr">qry</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="kw">var</span> <span class="pr">students</span> = <span class="kw">string</span>.<span class="mt">IsNullOrEmpty</span>(<span class="pr">qry</span>.<span class="pr">Search</span>)
+            ? <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">GetBySchoolAsync</span>(<span class="pr">qry</span>.<span class="pr">SchoolId</span>, <span class="pr">ct</span>)
+            : <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">SearchAsync</span>(<span class="pr">qry</span>.<span class="pr">Search</span>, <span class="pr">qry</span>.<span class="pr">SchoolId</span>, <span class="pr">ct</span>);
+
+        <span class="kw">return</span> <span class="pr">students</span>.<span class="mt">Select</span>(<span class="pr">s</span> => <span class="kw">new</span> <span class="tp">StudentDto</span>(<span class="pr">s</span>.<span class="pr">Id</span>, <span class="pr">s</span>.<span class="pr">Name</span>, <span class="pr">s</span>.<span class="pr">Class</span>))
+                       .<span class="mt">ToList</span>().<span class="mt">AsReadOnly</span>();
+    }
+}
+
+<span class="cm">// Controller — thin! Just dispatch via mediator</span>
+[<span class="at">ApiController</span>, <span class="at">Route</span>(<span class="st">"api/[controller]"</span>)]
+<span class="kw">public class</span> <span class="tp">FeesController</span>(<span class="tp">IMediator</span> <span class="pr">_mediator</span>) : <span class="tp">ControllerBase</span>
+{
+    [<span class="at">HttpPost</span>]
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="mt">CollectFee</span>([<span class="at">FromBody</span>] <span class="tp">CollectFeeCommand</span> <span class="pr">cmd</span>) =>
+        <span class="mt">Ok</span>(<span class="kw">await</span> <span class="pr">_mediator</span>.<span class="mt">Send</span>(<span class="pr">cmd</span>));  <span class="cm">// controller is dumb, handler is smart</span>
+
+    [<span class="at">HttpGet</span>(<span class="st">"school/{schoolId}"</span>)]
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="mt">GetBySchool</span>(<span class="kw">int</span> <span class="pr">schoolId</span>, [<span class="at">FromQuery</span>] <span class="kw">string</span>? <span class="pr">search</span>) =>
+        <span class="mt">Ok</span>(<span class="kw">await</span> <span class="pr">_mediator</span>.<span class="mt">Send</span>(<span class="kw">new</span> <span class="tp">GetStudentsBySchoolQuery</span>(<span class="pr">schoolId</span>, <span class="pr">search</span>)));
+}
+
+<span class="cm">// MediatR Pipeline Behavior — cross-cutting concerns (logging, validation)</span>
+<span class="kw">public class</span> <span class="tp">LoggingBehavior</span>&lt;<span class="tp">TRequest</span>, <span class="tp">TResponse</span>&gt;(<span class="tp">ILogger</span>&lt;<span class="tp">LoggingBehavior</span>&lt;<span class="tp">TRequest</span>, <span class="tp">TResponse</span>&gt;&gt; <span class="pr">_log</span>)
+    : <span class="tp">IPipelineBehavior</span>&lt;<span class="tp">TRequest</span>, <span class="tp">TResponse</span>&gt; <span class="kw">where</span> <span class="tp">TRequest</span> : <span class="kw">notnull</span>
+{
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">TResponse</span>&gt; <span class="mt">Handle</span>(
+        <span class="tp">TRequest</span> <span class="pr">request</span>, <span class="tp">RequestHandlerDelegate</span>&lt;<span class="tp">TResponse</span>&gt; <span class="pr">next</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"Handling {RequestType}"</span>, <span class="kw">typeof</span>(<span class="tp">TRequest</span>).<span class="pr">Name</span>);
+        <span class="kw">var</span> <span class="pr">result</span> = <span class="kw">await</span> <span class="mt">next</span>();  <span class="cm">// call actual handler</span>
+        <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"Handled {RequestType}"</span>, <span class="kw">typeof</span>(<span class="tp">TRequest</span>).<span class="pr">Name</span>);
+        <span class="kw">return</span> <span class="pr">result</span>;
+    }
+}
+
+<span class="cm">// Register: builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+// builder.Services.AddTransient(typeof(IPipelineBehavior&lt;,&gt;), typeof(LoggingBehavior&lt;,&gt;));</span></pre>
+</div>
+
+<!-- STRATEGY -->
+<div class="section" id="strategy">
+  <div class="section-title"><span class="num">3</span> Strategy Pattern</div>
+
+  <div class="movie">
+    <span class="film">🎬 Thuppakki — Vijay switches between different combat strategies based on the situation. Same goal (defeat enemy), different approach each time. Strategy pattern = same interface, swappable algorithms. ZenCampus fee calculation: different strategy for each school type (CBSE/state board/international)!</span>
+  </div>
+
+  <pre><span class="cm">// Problem: Fee discount calculation differs per school type
+// Without strategy: giant if-else/switch in service — violates Open/Closed Principle</span>
+
+<span class="cm">// Strategy interface</span>
+<span class="kw">public interface</span> <span class="tp">IFeeDiscountStrategy</span>
+{
+    <span class="kw">decimal</span> <span class="mt">CalculateDiscount</span>(<span class="tp">Student</span> <span class="pr">student</span>, <span class="kw">decimal</span> <span class="pr">baseFee</span>);
+}
+
+<span class="cm">// Concrete strategies</span>
+<span class="kw">public class</span> <span class="tp">StaffChildDiscountStrategy</span> : <span class="tp">IFeeDiscountStrategy</span>
+{
+    <span class="kw">public decimal</span> <span class="mt">CalculateDiscount</span>(<span class="tp">Student</span> <span class="pr">s</span>, <span class="kw">decimal</span> <span class="pr">fee</span>) =>
+        <span class="pr">s</span>.<span class="pr">IsStaffChild</span> ? <span class="pr">fee</span> * <span class="nm">0.50m</span> : <span class="nm">0m</span>;   <span class="cm">// 50% for staff children</span>
+}
+
+<span class="kw">public class</span> <span class="tp">SiblingDiscountStrategy</span> : <span class="tp">IFeeDiscountStrategy</span>
+{
+    <span class="kw">public decimal</span> <span class="mt">CalculateDiscount</span>(<span class="tp">Student</span> <span class="pr">s</span>, <span class="kw">decimal</span> <span class="pr">fee</span>) =>
+        <span class="pr">s</span>.<span class="pr">SiblingCount</span> > <span class="nm">0</span> ? <span class="pr">fee</span> * (<span class="nm">0.10m</span> * <span class="pr">s</span>.<span class="pr">SiblingCount</span>) : <span class="nm">0m</span>; <span class="cm">// 10% per sibling</span>
+}
+
+<span class="kw">public class</span> <span class="tp">MeritScholarshipStrategy</span> : <span class="tp">IFeeDiscountStrategy</span>
+{
+    <span class="kw">public decimal</span> <span class="mt">CalculateDiscount</span>(<span class="tp">Student</span> <span class="pr">s</span>, <span class="kw">decimal</span> <span class="pr">fee</span>) =>
+        <span class="pr">s</span>.<span class="pr">Rank</span> == <span class="nm">1</span> ? <span class="pr">fee</span> * <span class="nm">0.75m</span> :   <span class="cm">// rank 1 → 75% off</span>
+        <span class="pr">s</span>.<span class="pr">Rank</span> <= <span class="nm">5</span> ? <span class="pr">fee</span> * <span class="nm">0.50m</span> :   <span class="cm">// top 5 → 50% off</span>
+        <span class="pr">s</span>.<span class="pr">Rank</span> <= <span class="nm">10</span> ? <span class="pr">fee</span> * <span class="nm">0.25m</span> :  <span class="cm">// top 10 → 25% off</span>
+        <span class="nm">0m</span>;
+
+}
+
+<span class="kw">public class</span> <span class="tp">NoDiscountStrategy</span> : <span class="tp">IFeeDiscountStrategy</span>
+{
+    <span class="kw">public decimal</span> <span class="mt">CalculateDiscount</span>(<span class="tp">Student</span> <span class="pr">s</span>, <span class="kw">decimal</span> <span class="pr">fee</span>) => <span class="nm">0m</span>;
+}
+
+<span class="cm">// Context — uses strategy</span>
+<span class="kw">public class</span> <span class="tp">FeeCalculationService</span>
+{
+    <span class="kw">public decimal</span> <span class="mt">CalculateNetFee</span>(<span class="tp">Student</span> <span class="pr">student</span>, <span class="kw">decimal</span> <span class="pr">baseFee</span>,
+        <span class="tp">IFeeDiscountStrategy</span> <span class="pr">strategy</span>)
+    {
+        <span class="kw">var</span> <span class="pr">discount</span> = <span class="pr">strategy</span>.<span class="mt">CalculateDiscount</span>(<span class="pr">student</span>, <span class="pr">baseFee</span>);
+        <span class="kw">return</span> <span class="tp">Math</span>.<span class="mt">Max</span>(<span class="nm">0</span>, <span class="pr">baseFee</span> - <span class="pr">discount</span>);
+    }
+}
+
+<span class="cm">// Strategy selector — chooses right strategy based on student</span>
+<span class="kw">public class</span> <span class="tp">DiscountStrategySelector</span>
+{
+    <span class="kw">public</span> <span class="tp">IFeeDiscountStrategy</span> <span class="mt">SelectFor</span>(<span class="tp">Student</span> <span class="pr">student</span>)
+    {
+        <span class="kw">if</span> (<span class="pr">student</span>.<span class="pr">IsStaffChild</span>)    <span class="kw">return new</span> <span class="tp">StaffChildDiscountStrategy</span>();
+        <span class="kw">if</span> (<span class="pr">student</span>.<span class="pr">Rank</span> <= <span class="nm">10</span>)       <span class="kw">return new</span> <span class="tp">MeritScholarshipStrategy</span>();
+        <span class="kw">if</span> (<span class="pr">student</span>.<span class="pr">SiblingCount</span> > <span class="nm">0</span>) <span class="kw">return new</span> <span class="tp">SiblingDiscountStrategy</span>();
+        <span class="kw">return new</span> <span class="tp">NoDiscountStrategy</span>();
+    }
+}
+
+<span class="cm">// Adding new discount type: create new class implementing IFeeDiscountStrategy
+// Don't touch existing code = Open/Closed Principle ✅</span></pre>
+</div>
+
+<!-- FACTORY -->
+<div class="section" id="factory">
+  <div class="section-title"><span class="num">4</span> Factory Pattern</div>
+
+  <div class="movie">
+    <span class="film">🎬 Enthiran — Vaseegaran creates different robot versions in the factory without the outside world knowing the internals. Factory pattern = you request an object, factory creates the right concrete type. ZenCampus: "create SMS notification" → factory decides: Twilio/MSG91/WhatsApp based on config.</span>
+  </div>
+
+  <pre><span class="cm">// Problem: ZenCampus sends notifications via different providers
+// School A: MSG91 (cheap), School B: Twilio (international), School C: WhatsApp API</span>
+
+<span class="cm">// Common interface</span>
+<span class="kw">public interface</span> <span class="tp">INotificationService</span>
+{
+    <span class="tp">Task</span>&lt;<span class="kw">bool</span>&gt; <span class="mt">SendAsync</span>(<span class="kw">string</span> <span class="pr">to</span>, <span class="kw">string</span> <span class="pr">message</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span> = <span class="kw">default</span>);
+    <span class="kw">string</span>     <span class="pr">ProviderName</span> { <span class="kw">get</span>; }
+}
+
+<span class="cm">// Concrete implementations</span>
+<span class="kw">public class</span> <span class="tp">Msg91SmsService</span>(<span class="tp">IConfiguration</span> <span class="pr">cfg</span>) : <span class="tp">INotificationService</span>
+{
+    <span class="kw">public string</span> <span class="pr">ProviderName</span> => <span class="st">"MSG91"</span>;
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">bool</span>&gt; <span class="mt">SendAsync</span>(<span class="kw">string</span> <span class="pr">to</span>, <span class="kw">string</span> <span class="pr">msg</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="cm">// MSG91 API call with cfg["MSG91:ApiKey"]</span>
+        <span class="kw">return true</span>;
+    }
+}
+
+<span class="kw">public class</span> <span class="tp">TwilioSmsService</span>(<span class="tp">IConfiguration</span> <span class="pr">cfg</span>) : <span class="tp">INotificationService</span>
+{
+    <span class="kw">public string</span> <span class="pr">ProviderName</span> => <span class="st">"Twilio"</span>;
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">bool</span>&gt; <span class="mt">SendAsync</span>(<span class="kw">string</span> <span class="pr">to</span>, <span class="kw">string</span> <span class="pr">msg</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="cm">// Twilio SDK call</span>
+        <span class="kw">return true</span>;
+    }
+}
+
+<span class="kw">public class</span> <span class="tp">WhatsAppService</span>(<span class="tp">IConfiguration</span> <span class="pr">cfg</span>) : <span class="tp">INotificationService</span>
+{
+    <span class="kw">public string</span> <span class="pr">ProviderName</span> => <span class="st">"WhatsApp"</span>;
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">bool</span>&gt; <span class="mt">SendAsync</span>(<span class="kw">string</span> <span class="pr">to</span>, <span class="kw">string</span> <span class="pr">msg</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="cm">// WhatsApp Business API call</span>
+        <span class="kw">return true</span>;
+    }
+}
+
+<span class="cm">// Factory — creates right provider per school</span>
+<span class="kw">public interface</span> <span class="tp">INotificationServiceFactory</span>
+{
+    <span class="tp">INotificationService</span> <span class="mt">Create</span>(<span class="kw">string</span> <span class="pr">provider</span>);
+}
+
+<span class="kw">public class</span> <span class="tp">NotificationServiceFactory</span>(<span class="tp">IServiceProvider</span> <span class="pr">sp</span>) : <span class="tp">INotificationServiceFactory</span>
+{
+    <span class="kw">public</span> <span class="tp">INotificationService</span> <span class="mt">Create</span>(<span class="kw">string</span> <span class="pr">provider</span>) => <span class="pr">provider</span>.<span class="mt">ToUpper</span>() <span class="kw">switch</span>
+    {
+        <span class="st">"MSG91"</span>    => <span class="pr">sp</span>.<span class="mt">GetRequiredService</span>&lt;<span class="tp">Msg91SmsService</span>&gt;(),
+        <span class="st">"TWILIO"</span>   => <span class="pr">sp</span>.<span class="mt">GetRequiredService</span>&lt;<span class="tp">TwilioSmsService</span>&gt;(),
+        <span class="st">"WHATSAPP"</span> => <span class="pr">sp</span>.<span class="mt">GetRequiredService</span>&lt;<span class="tp">WhatsAppService</span>&gt;(),
+        _          => <span class="kw">throw new</span> <span class="tp">ArgumentException</span>(<span class="st">$"Unknown provider: {provider}"</span>)
+    };
+}
+
+<span class="cm">// Usage — fee service picks provider from school config</span>
+<span class="kw">public class</span> <span class="tp">FeeNotificationService</span>(<span class="tp">ISchoolRepository</span> <span class="pr">_schools</span>, <span class="tp">INotificationServiceFactory</span> <span class="pr">_factory</span>)
+{
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">SendReceiptAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>, <span class="kw">string</span> <span class="pr">phone</span>, <span class="kw">string</span> <span class="pr">message</span>)
+    {
+        <span class="kw">var</span> <span class="pr">school</span>   = <span class="kw">await</span> <span class="pr">_schools</span>.<span class="mt">GetByIdAsync</span>(<span class="pr">schoolId</span>);
+        <span class="kw">var</span> <span class="pr">service</span>  = <span class="pr">_factory</span>.<span class="mt">Create</span>(<span class="pr">school</span>!.<span class="pr">SmsProvider</span>); <span class="cm">// MSG91/Twilio/WhatsApp</span>
+        <span class="kw">await</span> <span class="pr">service</span>.<span class="mt">SendAsync</span>(<span class="pr">phone</span>, <span class="pr">message</span>);
+        <span class="cm">// caller doesn't know or care which SMS provider ran!</span>
+    }
+}
+
+<span class="cm">// Register all concrete types, factory decides at runtime:
+// builder.Services.AddTransient&lt;Msg91SmsService&gt;();
+// builder.Services.AddTransient&lt;TwilioSmsService&gt;();
+// builder.Services.AddSingleton&lt;INotificationServiceFactory, NotificationServiceFactory&gt;();</span></pre>
+</div>
+
+<!-- DECORATOR -->
+<div class="section" id="decorator">
+  <div class="section-title"><span class="num">5</span> Decorator Pattern</div>
+
+  <div class="movie">
+    <span class="film">🎬 7aum Arivu — Aravind goes through layers of training: memory → combat → virus resistance. Each layer wraps the previous and adds capability. Decorator pattern = same. Wrap a service with caching → wrap that with logging → same interface, stacked behaviors!</span>
+    <p>ZenCampus use: IStudentRepository (base) → wrap with CachedStudentRepository (adds Redis) → wrap with LoggedStudentRepository (adds timing). Controller uses IStudentRepository — doesn't know it's cached and logged!</p>
+  </div>
+
+  <pre><span class="cm">// Base decorator wraps a real implementation</span>
+<span class="kw">public class</span> <span class="tp">CachedStudentRepository</span>(<span class="tp">IStudentRepository</span> <span class="pr">_inner</span>, <span class="tp">IMemoryCache</span> <span class="pr">_cache</span>)
+    : <span class="tp">IStudentRepository</span>  <span class="cm">// ← implements SAME interface as what it wraps!</span>
+{
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IReadOnlyList</span>&lt;<span class="tp">Student</span>&gt;&gt; <span class="mt">GetBySchoolAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="kw">var</span> <span class="pr">key</span> = <span class="st">$"students:school:{schoolId}"</span>;
+        <span class="kw">return await</span> <span class="pr">_cache</span>.<span class="mt">GetOrCreateAsync</span>(<span class="pr">key</span>, <span class="kw">async</span> <span class="pr">entry</span> =>
+        {
+            <span class="pr">entry</span>.<span class="pr">AbsoluteExpirationRelativeToNow</span> = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">5</span>);
+            <span class="kw">return await</span> <span class="pr">_inner</span>.<span class="mt">GetBySchoolAsync</span>(<span class="pr">schoolId</span>, <span class="pr">ct</span>); <span class="cm">// delegate to real repo</span>
+        }) ?? [];
+    }
+
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">Student</span>&gt; <span class="mt">AddAsync</span>(<span class="tp">Student</span> <span class="pr">s</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="kw">var</span> <span class="pr">result</span> = <span class="kw">await</span> <span class="pr">_inner</span>.<span class="mt">AddAsync</span>(<span class="pr">s</span>, <span class="pr">ct</span>);       <span class="cm">// delegate write</span>
+        <span class="pr">_cache</span>.<span class="mt">Remove</span>(<span class="st">$"students:school:{s.SchoolId}"</span>); <span class="cm">// invalidate cache!</span>
+        <span class="kw">return</span> <span class="pr">result</span>;
+    }
+
+    <span class="cm">// All other methods delegate to _inner (no caching needed for search etc.)</span>
+    <span class="kw">public</span> <span class="tp">Task</span>&lt;<span class="tp">Student</span>?&gt; <span class="mt">GetByIdAsync</span>(<span class="kw">int</span> <span class="pr">id</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>) =>
+        <span class="pr">_inner</span>.<span class="mt">GetByIdAsync</span>(<span class="pr">id</span>, <span class="pr">ct</span>);
+
+    <span class="kw">public</span> <span class="tp">Task</span>&lt;<span class="tp">IReadOnlyList</span>&lt;<span class="tp">Student</span>&gt;&gt; <span class="mt">SearchAsync</span>(<span class="kw">string</span> <span class="pr">name</span>, <span class="kw">int</span> <span class="pr">schoolId</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>) =>
+        <span class="pr">_inner</span>.<span class="mt">SearchAsync</span>(<span class="pr">name</span>, <span class="pr">schoolId</span>, <span class="pr">ct</span>);
+
+    <span class="kw">public</span> <span class="tp">Task</span>&lt;<span class="kw">bool</span>&gt; <span class="mt">IsParentOfStudentAsync</span>(<span class="kw">int</span> <span class="pr">p</span>, <span class="kw">int</span> <span class="pr">s</span>) =>
+        <span class="pr">_inner</span>.<span class="mt">IsParentOfStudentAsync</span>(<span class="pr">p</span>, <span class="pr">s</span>);
+
+    <span class="kw">public</span> <span class="tp">Task</span>&lt;<span class="tp">IReadOnlyList</span>&lt;<span class="tp">Student</span>&gt;&gt; <span class="mt">GetAllAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span>) =>
+        <span class="pr">_inner</span>.<span class="mt">GetAllAsync</span>(<span class="pr">ct</span>);
+
+    <span class="kw">public</span> <span class="tp">Task</span> <span class="mt">UpdateAsync</span>(<span class="tp">Student</span> <span class="pr">s</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>) => <span class="pr">_inner</span>.<span class="mt">UpdateAsync</span>(<span class="pr">s</span>, <span class="pr">ct</span>);
+    <span class="kw">public</span> <span class="tp">Task</span> <span class="mt">DeleteAsync</span>(<span class="kw">int</span> <span class="pr">id</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>) => <span class="pr">_inner</span>.<span class="mt">DeleteAsync</span>(<span class="pr">id</span>, <span class="pr">ct</span>);
+}
+
+<span class="cm">// Logging decorator wraps cached decorator — layer 2!</span>
+<span class="kw">public class</span> <span class="tp">LoggedStudentRepository</span>(<span class="tp">IStudentRepository</span> <span class="pr">_inner</span>,
+    <span class="tp">ILogger</span>&lt;<span class="tp">LoggedStudentRepository</span>&gt; <span class="pr">_log</span>) : <span class="tp">IStudentRepository</span>
+{
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IReadOnlyList</span>&lt;<span class="tp">Student</span>&gt;&gt; <span class="mt">GetBySchoolAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="kw">var</span> <span class="pr">sw</span> = <span class="tp">Stopwatch</span>.<span class="mt">StartNew</span>();
+        <span class="kw">var</span> <span class="pr">result</span> = <span class="kw">await</span> <span class="pr">_inner</span>.<span class="mt">GetBySchoolAsync</span>(<span class="pr">schoolId</span>, <span class="pr">ct</span>);
+        <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"GetBySchool {SchoolId}: {Count} students in {Ms}ms"</span>,
+            <span class="pr">schoolId</span>, <span class="pr">result</span>.<span class="pr">Count</span>, <span class="pr">sw</span>.<span class="pr">ElapsedMilliseconds</span>);
+        <span class="kw">return</span> <span class="pr">result</span>;
+    }
+    <span class="cm">// ... other methods delegate to _inner</span>
+}
+
+<span class="cm">// DI registration — wire up the chain (Scrutor NuGet makes this easier)
+// Layer: Controller → LoggedRepo → CachedRepo → StudentRepository (real EF Core)</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddScoped</span>&lt;<span class="tp">StudentRepository</span>&gt;();  <span class="cm">// concrete</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddScoped</span>&lt;<span class="tp">IStudentRepository</span>&gt;(<span class="pr">sp</span> =>
+    <span class="kw">new</span> <span class="tp">LoggedStudentRepository</span>(
+        <span class="kw">new</span> <span class="tp">CachedStudentRepository</span>(
+            <span class="pr">sp</span>.<span class="mt">GetRequiredService</span>&lt;<span class="tp">StudentRepository</span>&gt;(),
+            <span class="pr">sp</span>.<span class="mt">GetRequiredService</span>&lt;<span class="tp">IMemoryCache</span>&gt;()),
+        <span class="pr">sp</span>.<span class="mt">GetRequiredService</span>&lt;<span class="tp">ILogger</span>&lt;<span class="tp">LoggedStudentRepository</span>&gt;&gt;()));
+
+<span class="cm">// With Scrutor (cleaner):
+// builder.Services.AddScoped&lt;IStudentRepository, StudentRepository&gt;();
+// builder.Services.Decorate&lt;IStudentRepository, CachedStudentRepository&gt;();
+// builder.Services.Decorate&lt;IStudentRepository, LoggedStudentRepository&gt;();
+// Scrutor wires them in order automatically!</span></pre>
+
+  <table>
+    <tr><th>Pattern</th><th>Intent</th><th>ZenCampus Use</th><th>Open/Closed</th></tr>
+    <tr><td class="pink">Repository</td><td>Abstract data access</td><td>IStudentRepository, IFeeRepository</td><td>✅</td></tr>
+    <tr><td class="pink">CQRS</td><td>Separate read/write</td><td>CollectFeeCommand / GetStudentsQuery</td><td>✅</td></tr>
+    <tr><td class="pink">Strategy</td><td>Swap algorithms</td><td>Fee discount per student type</td><td>✅</td></tr>
+    <tr><td class="pink">Factory</td><td>Create correct concrete type</td><td>SMS provider per school (MSG91/Twilio)</td><td>✅</td></tr>
+    <tr><td class="pink">Decorator</td><td>Add behavior without subclassing</td><td>Caching + Logging on repositories</td><td>✅</td></tr>
+  </table>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">6</span> 🎯 Scenarios — Design Patterns Interview Questions</div>
+
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">1</div>
+      <div><div class="scenario-title">Why Repository over direct DbContext in controllers? <span class="diff medium">Medium</span> <span class="real">Most Asked</span></div></div>
+    </div>
+    <div class="scenario-q">📋 Controller-la directly DbContext use pannrom. "What's wrong with that, and when would you add a Repository layer?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ TESTABILITY + SINGLE RESPONSIBILITY</div>
+      <pre><span class="cm">// Direct DbContext in controller — 3 problems:
+
+// 1. TIGHT COUPLING: Controller depends on EF Core. Swap to Dapper/API → rewrite controller.
+// 2. NOT TESTABLE: Unit test needs real SQL Server running. TestContainers helps but slow.
+// 3. DUPLICATION: ctx.Students.Where(s => s.SchoolId == id && s.IsActive) scattered everywhere.
+
+// Repository solves all 3:
+// 1. Controller depends on IStudentRepository (interface) — swap impl anytime
+// 2. Unit test: var mockRepo = new Mock&lt;IStudentRepository&gt;() — no DB needed!
+// 3. GetBySchoolAsync() defined once — DRY
+
+// WHEN NOT to add Repository (pragmatic answer):
+// - Small CRUD app with no complex queries — EF Core IS the repository
+// - Quick prototype — add it when tests become painful
+// - Generic Repository (IRepository&lt;T&gt;) is often over-engineering for CRUD
+
+// ZenCampus answer: "We added Repository because StudentController tests ran
+// 45 seconds (SQL Server startup). After mocking IStudentRepository, same tests
+// run in 2 seconds. Also changed attendance module from EF to Dapper for reports —
+// only AttendanceRepository changed, zero controller changes."</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div><div class="scenario-title">CQRS vs traditional service — when to use? <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "Interview-la: Describe CQRS and explain when you wouldn't use it. What problem does MediatR solve?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ CQRS TRADEOFFS — HONEST ANSWER WINS</div>
+      <pre><span class="cm">// CQRS benefit: Commands and Queries have different needs
+// Command (CollectFee): validate → save → SMS → event → audit log → complex
+// Query (GetStudents): just read → fast → can cache → can use read replica DB
+// Mixing them: every read goes through validation overhead. 50,000 students × overhead = slow!
+
+// MediatR problem: Controller knows about every service it needs:
+// public class FeeController(IFeeService _fee, ISmsService _sms, IAuditService _audit,
+//     IEventBus _events) — constructor bloat!
+// MediatR: Controller knows only IMediator. Handler knows specific services.
+// Thin controller, fat handler — separation of concerns!
+
+// Pipeline Behaviors solve cross-cutting concerns:
+// Every request → LoggingBehavior → ValidationBehavior → Handler → LoggingBehavior
+// No duplicate try-catch in every handler!
+
+// WHEN NOT to use CQRS:
+// - Simple CRUD app (Todo list, basic admin) — massive over-engineering
+// - Small team: CQRS adds 2-3 files per operation. 50 endpoints = 150+ files!
+// - No read/write performance difference — pointless separation
+
+// ZenCampus answer: "Used CQRS for fee module (complex writes + read-heavy reports).
+// Did NOT use for school/class CRUD — simple EF Core service sufficient.
+// Added MediatR pipeline: LoggingBehavior catches handler timing, ValidationBehavior
+// runs FluentValidation before every command — zero duplicate code!"</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div><div class="scenario-title">Strategy pattern — new discount type without changing existing code <span class="diff medium">Medium</span> <span class="real">SOLID Principle</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "You have if-else chains for fee discount calculation. Product team adds 5 new discount types per month. How do you design this?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ OPEN/CLOSED PRINCIPLE via STRATEGY</div>
+      <pre><span class="cm">// BAD: switch statement in service
+public decimal Calculate(Student s, decimal fee, string type)
+{
+    return type switch
+    {
+        "staff"    => fee * 0.50m,
+        "merit"    => fee * 0.25m,
+        "sibling"  => fee * 0.10m * s.SiblingCount,
+        // New requirement: add case here → MODIFY existing code → risk regression!
+        _ => 0m
+    };
+}
+
+// GOOD: Strategy pattern
+// New discount type = new class, zero existing code changed
+public class EarlyBirdDiscountStrategy : IFeeDiscountStrategy
+{
+    public decimal CalculateDiscount(Student s, decimal fee)
+        => s.AdmissionDate.Month <= 3 ? fee * 0.15m : 0m; // 15% if admitted Jan-Mar
+}
+
+// Add to selector: if (student.AdmissionDate.Month <= 3) return new EarlyBirdDiscountStrategy();
+// Only change: DiscountStrategySelector.SelectFor() — single place, low risk!
+
+// Interview follow-up — composing discounts?
+// What if student is staff child AND sibling? Apply multiple strategies!
+public class CompositeDiscountStrategy(IEnumerable&lt;IFeeDiscountStrategy&gt; strategies)
+    : IFeeDiscountStrategy
+{
+    public decimal CalculateDiscount(Student s, decimal fee)
+        => strategies.Sum(strategy => strategy.CalculateDiscount(s, fee));
+    // All applicable discounts applied — max discount capped at 90% of fee separately
+}</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div><div class="scenario-title">Decorator vs Inheritance for caching <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "Why use Decorator pattern for adding cache to repository instead of inheriting from StudentRepository and overriding methods?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPOSITION OVER INHERITANCE</div>
+      <pre><span class="cm">// Inheritance approach:
+public class CachedStudentRepository : StudentRepository  // inherits concrete class
+{
+    public override async Task&lt;IReadOnlyList&lt;Student&gt;&gt; GetBySchoolAsync(int id, CancellationToken ct)
+    {
+        // problem: now tightly coupled to StudentRepository (EF Core impl)
+        // if StudentRepository changes (internal fields, constructor) → CachedRepo breaks!
+    }
+}
+
+// Problems with inheritance:
+// 1. Tightly coupled to specific EF Core impl — can't cache a Dapper repo
+// 2. Can't add BOTH caching AND logging by inheriting — diamond problem!
+// 3. Fragile base class: StudentRepository adds new method → CachedRepo must override or misses it
+
+// Decorator approach:
+// CachedStudentRepository(IStudentRepository _inner) — depends on INTERFACE
+// Works with EF repo, Dapper repo, InMemory test repo — any implementation!
+// Stack: Logged(Cached(EFCore)) or Logged(Cached(Dapper)) — mix freely
+
+// Real ZenCampus example:
+// Dev: IStudentRepository → InMemoryStudentRepository (instant)
+// Test: IStudentRepository → StudentRepository (TestContainers SQL)
+// Staging: IStudentRepository → Cached(StudentRepository) (5 min cache)
+// Prod: IStudentRepository → Logged(Cached(StudentRepository)) (timing + cache)
+// Zero change to controllers — just DI registration changes per environment!</span></pre>
+      <div class="gold-box"><div class="gold-label">⭐ SOLID Principle</div><p>"Favor composition over inheritance — that's the Gang of Four's most important lesson. Decorator is composition: wrap any implementation of the interface. Inheritance couples you to a specific class. When interview asks 'composition vs inheritance' — use Decorator + real example!"</p></div>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div><div class="scenario-title">Unit of Work — why? When does it fail? <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "Student admission saves student + creates fee record. Without Unit of Work, what can go wrong? How does UoW fix it?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ATOMICITY — ONE TRANSACTION</div>
+      <pre><span class="cm">// Without UoW — partial failure:
+var student = await _studentRepo.AddAsync(dto);  // SaveChanges() here → student saved!
+// CRASH / timeout here (SMS service down, DB timeout, exception)
+// FeeRecord never created → student exists, but no fee record!
+// Data inconsistency! Admission officer sees student, accountant sees no fee due.
+
+// With UoW — all-or-nothing:
+var student    = studentRepo.AddAsync(dto);       // NO SaveChanges yet
+var feeRecord  = feeRepo.AddAsync(new FeeRecord(student.Id, dto.AnnualFee));
+await uow.SaveChangesAsync();  // ONE SaveChanges → ONE transaction → both or neither!
+
+// When UoW is already done for you:
+// EF Core DbContext IS a Unit of Work!
+// context.Students.Add(student);
+// context.FeeRecords.Add(feeRecord);
+// await context.SaveChangesAsync();  // both in one transaction — you had UoW all along!
+
+// Add Repository pattern on top of EF UoW:
+// UnitOfWork wraps DbContext → shares same DbContext across repositories
+// = single transaction across multiple repositories!</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div><div class="scenario-title">Factory vs Dependency Injection — when factory? <span class="diff hard">Hard</span> <span class="real">Senior Question</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "When would you use Factory pattern instead of just registering all services in DI container?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ RUNTIME DECISION vs COMPILE-TIME DECISION</div>
+      <pre><span class="cm">// DI: compile-time decision — "always use MSG91"
+builder.Services.AddScoped&lt;INotificationService, Msg91SmsService&gt;();
+// Every injection gets MSG91. No runtime choice. Good for single implementation.
+
+// Factory: RUNTIME decision — "which school uses which provider?"
+// School 42 → MSG91, School 99 → Twilio, School 150 → WhatsApp
+// Can't know at startup time! Data-driven decision at runtime.
+
+// Use Factory when:
+// 1. Which implementation depends on RUNTIME DATA (user, tenant, config from DB)
+// 2. New instances needed per operation (new SomethingExpensive() each call)
+// 3. Multiple implementations need to coexist (not just swap globally)
+
+// ZenCampus: NotificationServiceFactory.Create(school.SmsProvider)
+// school.SmsProvider comes from DB at runtime — DI can't resolve this at startup!
+
+// Another ZenCampus factory: Report generation
+public interface IReportStrategy { Task&lt;byte[]&gt; GenerateAsync(ReportData data); }
+public class PdfReportStrategy   : IReportStrategy { ... }
+public class ExcelReportStrategy : IReportStrategy { ... }
+public class CsvReportStrategy   : IReportStrategy { ... }
+
+// User clicks "Export as PDF/Excel/CSV" → runtime decision → Factory!
+public IReportStrategy Create(string format) =&gt; format switch
+{
+    "pdf"   =&gt; sp.GetRequiredService&lt;PdfReportStrategy&gt;(),
+    "excel" =&gt; sp.GetRequiredService&lt;ExcelReportStrategy&gt;(),
+    "csv"   =&gt; sp.GetRequiredService&lt;CsvReportStrategy&gt;(),
+    _ =&gt; throw new ArgumentException($"Unknown format: {format}")
+};</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div><div class="scenario-title">MediatR Pipeline Behavior — validation for all commands <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "Every command handler starts with if (amount <= 0) throw... duplicate code. How to centralize validation?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ PIPELINE BEHAVIOR = AOP FOR HANDLERS</div>
+      <pre><span class="cm">// Validation Pipeline Behavior — runs BEFORE every command handler</span>
+<span class="kw">public class</span> <span class="tp">ValidationBehavior</span>&lt;<span class="tp">TRequest</span>, <span class="tp">TResponse</span>&gt;(
+    <span class="tp">IEnumerable</span>&lt;<span class="tp">IValidator</span>&lt;<span class="tp">TRequest</span>&gt;&gt; <span class="pr">_validators</span>)
+    : <span class="tp">IPipelineBehavior</span>&lt;<span class="tp">TRequest</span>, <span class="tp">TResponse</span>&gt; <span class="kw">where</span> <span class="tp">TRequest</span> : <span class="kw">notnull</span>
+{
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">TResponse</span>&gt; <span class="mt">Handle</span>(
+        <span class="tp">TRequest</span> <span class="pr">req</span>, <span class="tp">RequestHandlerDelegate</span>&lt;<span class="tp">TResponse</span>&gt; <span class="pr">next</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="kw">if</span> (!<span class="pr">_validators</span>.<span class="mt">Any</span>()) <span class="kw">return await</span> <span class="mt">next</span>();
+
+        <span class="kw">var</span> <span class="pr">context</span> = <span class="kw">new</span> <span class="tp">ValidationContext</span>&lt;<span class="tp">TRequest</span>&gt;(<span class="pr">req</span>);
+        <span class="kw">var</span> <span class="pr">failures</span> = <span class="pr">_validators</span>
+            .<span class="mt">Select</span>(<span class="pr">v</span> => <span class="pr">v</span>.<span class="mt">Validate</span>(<span class="pr">context</span>))
+            .<span class="mt">SelectMany</span>(<span class="pr">r</span> => <span class="pr">r</span>.<span class="pr">Errors</span>)
+            .<span class="mt">Where</span>(<span class="pr">f</span> => <span class="pr">f</span> <span class="kw">is not null</span>)
+            .<span class="mt">ToList</span>();
+
+        <span class="kw">if</span> (<span class="pr">failures</span>.<span class="mt">Count</span> > <span class="nm">0</span>)
+            <span class="kw">throw new</span> <span class="tp">ValidationException</span>(<span class="pr">failures</span>); <span class="cm">// stops pipeline, 400 auto</span>
+
+        <span class="kw">return await</span> <span class="mt">next</span>(); <span class="cm">// validation passed → call real handler</span>
+    }
+}
+<span class="cm">// Register:
+// builder.Services.AddTransient(typeof(IPipelineBehavior&lt;,&gt;), typeof(ValidationBehavior&lt;,&gt;));
+// builder.Services.AddValidatorsFromAssemblyContaining&lt;CollectFeeCommandValidator&gt;();
+// Now ALL commands with a validator get validated automatically — zero duplication!</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div><div class="scenario-title">Observer / Domain Events pattern <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "When fee is collected, we need to: update outstanding balance, send SMS, print receipt, update analytics. CollectFeeService shouldn't know about all of these. How?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ DOMAIN EVENTS + MediatR INotification</div>
+      <pre><span class="cm">// Domain Event — published after fee collected</span>
+<span class="kw">public record</span> <span class="tp">FeeCollectedEvent</span>(<span class="kw">int</span> <span class="pr">StudentId</span>, <span class="kw">decimal</span> <span class="pr">Amount</span>, <span class="kw">int</span> <span class="pr">ReceiptNo</span>)
+    : <span class="tp">INotification</span>;  <span class="cm">// MediatR notification (not IRequest — no response needed)</span>
+
+<span class="cm">// Multiple handlers react to the SAME event — decoupled!</span>
+<span class="kw">public class</span> <span class="tp">UpdateBalanceOnFeeCollected</span> : <span class="tp">INotificationHandler</span>&lt;<span class="tp">FeeCollectedEvent</span>&gt;
+{
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">Handle</span>(<span class="tp">FeeCollectedEvent</span> <span class="pr">e</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>) =>
+        <span class="kw">await</span> <span class="pr">_balanceRepo</span>.<span class="mt">DeductAsync</span>(<span class="pr">e</span>.<span class="pr">StudentId</span>, <span class="pr">e</span>.<span class="pr">Amount</span>, <span class="pr">ct</span>);
+}
+
+<span class="kw">public class</span> <span class="tp">SendSmsOnFeeCollected</span> : <span class="tp">INotificationHandler</span>&lt;<span class="tp">FeeCollectedEvent</span>&gt;
+{
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">Handle</span>(<span class="tp">FeeCollectedEvent</span> <span class="pr">e</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>) =>
+        <span class="kw">await</span> <span class="pr">_sms</span>.<span class="mt">SendReceiptAsync</span>(<span class="pr">e</span>.<span class="pr">StudentId</span>, <span class="pr">e</span>.<span class="pr">ReceiptNo</span>, <span class="pr">ct</span>);
+}
+
+<span class="kw">public class</span> <span class="tp">UpdateAnalyticsOnFeeCollected</span> : <span class="tp">INotificationHandler</span>&lt;<span class="tp">FeeCollectedEvent</span>&gt;
+{
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">Handle</span>(<span class="tp">FeeCollectedEvent</span> <span class="pr">e</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>) =>
+        <span class="kw">await</span> <span class="pr">_analytics</span>.<span class="mt">TrackFeeAsync</span>(<span class="pr">e</span>.<span class="pr">Amount</span>, <span class="pr">ct</span>);
+}
+
+<span class="cm">// CollectFeeCommand handler — publishes event, knows NOTHING about handlers!</span>
+<span class="kw">await</span> <span class="pr">_publisher</span>.<span class="mt">Publish</span>(<span class="kw">new</span> <span class="tp">FeeCollectedEvent</span>(<span class="pr">cmd</span>.<span class="pr">StudentId</span>, <span class="pr">cmd</span>.<span class="pr">Amount</span>, <span class="pr">receipt</span>.<span class="pr">Id</span>), <span class="pr">ct</span>);
+<span class="cm">// MediatR fans out to ALL INotificationHandler&lt;FeeCollectedEvent&gt; automatically!
+// Add new handler (print receipt) = zero changes to CollectFeeCommandHandler!</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div><div class="scenario-title">Generic vs Specific Repository — which to choose? <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "IRepository&lt;T&gt; with GetById, Add, Delete — is this good design? Or should each entity get its own repository?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ HYBRID — GENERIC BASE + SPECIFIC EXTENSION</div>
+      <pre><span class="cm">// Pure Generic Repository — IRepository&lt;T&gt; only:
+// Problem: StudentRepository.GetBySchoolAndClass() where does this go?
+// Can't add to generic interface without making it less generic.
+// Service layer leaks query logic: _repo.GetAll().Where(s =&gt; s.SchoolId == id) — repo bypassed!
+
+// Pure Specific Repository — every method in specific interface:
+// IStudentRepository { GetById, Add, Update, Delete, GetBySchool, Search, ... }
+// Problem: duplicate GetById/Add/Delete in every interface!
+
+// BEST: Generic base + specific extension
+public interface IRepository&lt;T&gt; where T : class       // common CRUD
+{
+    Task&lt;T?&gt;  GetByIdAsync(int id, ...);
+    Task&lt;T&gt;   AddAsync(T entity, ...);
+    Task      UpdateAsync(T entity, ...);
+    Task      DeleteAsync(int id, ...);
+}
+
+public interface IStudentRepository : IRepository&lt;Student&gt;  // domain-specific queries
+{
+    Task&lt;IReadOnlyList&lt;Student&gt;&gt; GetBySchoolAsync(int schoolId, ...);
+    Task&lt;IReadOnlyList&lt;Student&gt;&gt; SearchAsync(string name, int schoolId, ...);
+    // FeeController only needs this — not generic repo
+}
+
+// Concrete:
+public class StudentRepository(DbContext ctx) : IStudentRepository
+{
+    // implement all IRepository&lt;Student&gt; + IStudentRepository methods
+}
+
+// Interview answer: "Used hybrid in ZenCampus. Generic base for common CRUD —
+// reduces duplication. Specific interface for domain queries — expresses intent clearly.
+// Service depends on IStudentRepository (specific) not IRepository&lt;Student&gt; (too generic)."</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div><div class="scenario-title">"Design patterns explain panna" — complete answer <span class="diff senior">Senior</span> <span class="real">ZenCampus Story</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>"Walk me through all the design patterns you've used in your ZenCampus project and why."</strong></div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE STORY — PATTERN + PROBLEM + RESULT</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong>Repository + Unit of Work:</strong> Controllers were calling DbContext directly. Unit tests needed SQL Server — 45 seconds startup. Added IStudentRepository, IFeeRepository behind UnitOfWork. Tests mocked with Moq — 2 seconds. Student admission (save student + create fee record) wrapped in UoW.SaveChangesAsync() — one transaction, no partial failures.</p>
+        <p><strong>CQRS + MediatR:</strong> FeeController had 7 constructor dependencies (ISmsService, IEventBus, IAuditLog...). Split into CollectFeeCommand (writes: validate → save → SMS → publish event) and GetFeeReportQuery (reads: Dapper, cached). Added LoggingBehavior + ValidationBehavior as pipeline — zero duplicate try-catch. Controller has only IMediator now.</p>
+        <p><strong>Strategy:</strong> Fee discount had switch statement. Product team added 3 new discount types in one sprint — every new type edited the switch, regression risk. Extracted IFeeDiscountStrategy: StaffChild (50%), Merit (75%/50%/25%), Sibling (10% per sibling), EarlyBird (15%). New discount = new class, zero existing code change.</p>
+        <p><strong>Factory:</strong> 200 schools, 3 SMS providers. School.SmsProvider from DB = "MSG91"/"Twilio"/"WhatsApp". DI can't resolve this at compile time. NotificationServiceFactory.Create(school.SmsProvider) → correct provider at runtime. Same pattern for report formats (PDF/Excel/CSV).</p>
+        <p><strong>Decorator:</strong> Added IMemoryCache caching to StudentRepository without modifying existing class. CachedStudentRepository wraps StudentRepository, same IStudentRepository interface. Scrutor wires it: Decorate&lt;IStudentRepository, CachedStudentRepository&gt;(). Added LoggedStudentRepository on top — timing logs for every query. Zero controller changes.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">7</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: CQRS-la Commands and Queries separate பண்றோம். Main benefit என்ன?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Commands are faster than Queries by default</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Queries can be independently scaled/cached/read-replica optimized while Commands have full business logic. Different performance and complexity needs, different code paths.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) CQRS reduces the number of classes in a project</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Commands don't need validation because they write data</div>
+    <div class="quiz-fb ok">✅ CQRS reads and writes have different profiles. Reads: high frequency, can be stale (cache), can use read replica, no side effects. Writes: low frequency, need validation, save, emit events, send notifications. Mixing them: query overhead from write-side logic. ZenCampus: fee report query uses Dapper + Redis cache (milliseconds). Fee collection command validates + SMS + event (200ms). Right tool per job!</div>
+    <div class="quiz-fb nope">❌ CQRS separates READ concerns from WRITE concerns. Benefit: queries can be cached, use read replicas, have no validation overhead. Commands have full business logic, validation, event publishing. Separately they're optimized for their use cases. In ZenCampus: GetStudentsQuery returns cached list in 5ms. CollectFeeCommand validates + saves + sends SMS in 200ms. Same service would compromise both!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: Decorator pattern — what's the key structural rule?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Decorator must inherit from the class it decorates</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Decorator implements the SAME interface as the decorated class AND holds a reference to it. This allows transparent wrapping and stacking.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Decorator replaces the original implementation completely</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Only one Decorator can wrap a class at a time</div>
+    <div class="quiz-fb ok">✅ CachedStudentRepository : IStudentRepository (same interface) + takes IStudentRepository _inner in constructor (wraps it). Calling code sees IStudentRepository — can't tell it's cached. Stacking: Logged(Cached(EFCore)) — all three implement IStudentRepository, each wraps the previous. Composition over inheritance!</div>
+    <div class="quiz-fb nope">❌ Decorator pattern rule: implement the SAME interface AND hold a reference to the wrapped object. CachedStudentRepository implements IStudentRepository AND takes IStudentRepository _inner. This means callers can't distinguish decorator from real impl. Multiple decorators can be stacked: Logged(Cached(EFCore)) — all implement same interface!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: Unit of Work pattern solves what specific problem?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Makes repositories faster with caching</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Allows multiple databases to be queried simultaneously</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) Ensures multiple repository operations (student save + fee record create) happen in ONE database transaction — all succeed or all fail atomically.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Prevents N+1 query problems</div>
+    <div class="quiz-fb ok">✅ Without UoW: _studentRepo.AddAsync() calls SaveChanges internally → student saved. Exception hits → fee record never created → partial data corruption! With UoW: both Add() calls without SaveChanges, then uow.SaveChangesAsync() once → one transaction → atomic. EF Core DbContext already IS a UoW — UoW pattern wraps it to share across repositories!</div>
+    <div class="quiz-fb nope">❌ Unit of Work solves atomicity across multiple repositories. Without it: StudentRepo.Add() + SaveChanges → done. FeeRepo.Add() crashes → student exists but no fee record = data inconsistency! With UoW: track all changes across repos, ONE SaveChanges = ONE transaction. All succeed or all rollback. EF Core's DbContext is a built-in Unit of Work!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: Strategy pattern vs if-else switch — when does Strategy pay off?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Strategy is always better than if-else regardless of complexity</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) When new variants are added frequently and you need Open/Closed Principle — add new strategy class without modifying existing code. Switch with 2-3 stable cases: keep the switch!</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Strategy is used when you have more than 10 if conditions</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Strategy should replace all boolean flags in the codebase</div>
+    <div class="quiz-fb ok">✅ Strategy shines when: (1) algorithms vary and are added frequently, (2) Open/Closed Principle needed — add without modifying, (3) algorithms need to be testable in isolation. ZenCampus: new discount type every sprint → if-else becomes a merge conflict nightmare. Strategy: new class, new test, zero existing code change. For stable 2-3 cases → switch is simpler!</div>
+    <div class="quiz-fb nope">❌ Strategy pays off when: new variants are added frequently (Open/Closed Principle), algorithms need independent testing, multiple algorithms need to coexist. ZenCampus discount: product team adds 5 types per sprint. Switch = risky edits every sprint. Strategy = new class per sprint, zero existing code touched. But 2-3 stable types → switch is simpler and less over-engineering!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">8</span> ✅ Day 19 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Patterns Mastered</h3>
+      <ul class="check-list">
+        <li>Repository: IStudentRepository + StudentRepository</li>
+        <li>Unit of Work: share DbContext, one SaveChanges</li>
+        <li>Generic + Specific repo — hybrid approach</li>
+        <li>CQRS: Command (write+validate) vs Query (read+cache)</li>
+        <li>MediatR: IRequest, IRequestHandler, IMediator.Send()</li>
+        <li>Pipeline Behavior: logging + validation for all handlers</li>
+        <li>Domain Events: INotification + INotificationHandler</li>
+        <li>Strategy: IFeeDiscountStrategy — swappable algorithms</li>
+        <li>Composite strategy — multiple discounts combined</li>
+        <li>Factory: runtime decision, SMS provider per school</li>
+        <li>Decorator: CachedRepo wraps EFCoreRepo (same interface)</li>
+        <li>Decorator stacking: Logged(Cached(Real)) with Scrutor</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"Repository → mock IStudentRepository → 45s→2s tests"</li>
+        <li>"UoW → student+fee in ONE transaction, atomic"</li>
+        <li>"CQRS → thin controller, IMediator.Send() only"</li>
+        <li>"MediatR Pipeline → ValidationBehavior, zero duplication"</li>
+        <li>"Domain Events → INotification, publisher.Publish()"</li>
+        <li>"Strategy → new discount = new class, OCP respected"</li>
+        <li>"Factory → runtime decision, school.SmsProvider from DB"</li>
+        <li>"Decorator → same interface wraps inner, Scrutor.Decorate()"</li>
+        <li>"Composition over inheritance — Decorator vs subclassing"</li>
+        <li>"Scrutor: Decorate&lt;IStudentRepository, CachedStudentRepository&gt;()"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#1a0010,#0d0d1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🏗️ Day 19 Motivation</div>
+    <p style="color:#f9a8d4;font-style:italic">"Baasha-la 'naan oru thadava sonna nooru thadava sonna maari' — Repository pattern same. Write data access logic one time, use everywhere. Vikram Vedha-la two separate people for two separate jobs — CQRS same. Thuppakki-la Vijay switches strategies — Strategy pattern. Enthiran-la Vaseegaran creates robots in factory — Factory pattern. 7aum Arivu-la Aravind trained in layers — Decorator pattern. <strong>Interview-la 'ZenCampus-la Repository mock panni test time 45s-la irundhu 2s-ku reduce panni, CQRS-la fee command-la validation+SMS+event all separate, Strategy-la new discount type add every sprint zero existing code change' — Senior developer confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 19/60 ✅ | Tomorrow: Day 20 — API Design (REST, Versioning, OpenAPI, Problem Details, Pagination)</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:31.7%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">19 of 60 days (31.7%) — Phase 1 strong! 5 core design patterns locked in with ZenCampus examples!</div>
+  </div>
+</div>
+
+</div>
+<footer>
+  <p>Day 19 – Design Patterns | ZenCampus | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🏗️ "Repository testability + UoW atomicity + CQRS separation + Strategy extensibility + Factory runtime decision + Decorator composition = clean architecture foundation!"</p>
+</footer>
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent='🔒 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>50 Problems · Part 3 — SQL Classic Problems</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0f0f1a;color:#e0e0e0;line-height:1.7}
+header{background:linear-gradient(135deg,#2e1a0a,#3e2010,#301500);padding:26px 20px;text-align:center;border-bottom:3px solid #f39c12}
+header h1{font-size:1.8em;color:#f39c12}
+header p{color:#c0a080;margin-top:5px}
+.nav-pills{display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.nav-pills a{background:#3e2010;color:#f39c12;padding:5px 14px;border-radius:20px;text-decoration:none;font-size:.8em}
+.nav-pills a:hover{background:#f39c12;color:#000}
+.container{max-width:1060px;margin:0 auto;padding:20px}
+.toc{background:#13132a;border:1px solid #2a2a4a;border-radius:10px;padding:16px 20px;margin:16px 0}
+.toc h3{color:#f39c12;margin-bottom:8px;font-size:.95em}
+.toc a{color:#74b9ff;text-decoration:none;font-size:.82em;margin-right:14px;line-height:2}
+.toc a:hover{color:#f39c12}
+.q-card{background:#13132a;border-radius:12px;margin:22px 0;border:1px solid #2a2a4a;overflow:hidden}
+.q-hdr{padding:13px 20px;display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#1a1000,#2a1500)}
+.q-num{background:#f39c12;color:#000;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.85em;flex-shrink:0}
+.q-title{font-size:1em;font-weight:bold;color:#fff}
+.tag{font-size:.7em;padding:2px 8px;border-radius:12px;font-weight:bold}
+.easy{background:#0a2010;color:#2ecc71;border:1px solid #2ecc71}
+.med{background:#1a1000;color:#f39c12;border:1px solid #f39c12}
+.hard{background:#1a0000;color:#e74c3c;border:1px solid #e74c3c}
+.q-body{padding:16px 20px}
+.method-lbl{font-size:.75em;color:#f39c12;font-weight:bold;text-transform:uppercase;letter-spacing:1px;margin:12px 0 5px}
+.mbox{background:#0d1117;border-radius:7px;padding:13px;margin:7px 0;border-left:4px solid #f39c12}
+.mbox.m2{border-left-color:#e94560}.mbox.m3{border-left-color:#27ae60}.mbox.m4{border-left-color:#8e44ad}
+.mtitle{font-size:.8em;font-weight:bold;color:#74b9ff;margin-bottom:5px}
+pre{background:#080c12;border-radius:5px;padding:11px;overflow-x:auto;font-size:.78em;font-family:'Consolas',monospace;color:#e0e0e0;margin:6px 0;border:1px solid #1e2a3a;line-height:1.8}
+.sqk{color:#569cd6}.sqf{color:#dcdcaa}.str{color:#ce9178}.cm{color:#6a9955}.num{color:#b5cea8}.prop{color:#9cdcfe}
+.exp{background:#0a2010;border-radius:6px;padding:11px 14px;margin:10px 0;border-left:3px solid #2ecc71}
+.exp .lbl{color:#2ecc71;font-size:.75em;font-weight:bold;margin-bottom:3px}
+.hint{background:#1a1000;border-radius:6px;padding:10px 14px;margin:8px 0;border-left:3px solid #f39c12}
+.hint .lbl{color:#f39c12;font-size:.75em;font-weight:bold;margin-bottom:3px}
+.cx{display:flex;gap:8px;margin:7px 0;flex-wrap:wrap}
+.c{background:#0d1117;border:1px solid #2a2a4a;border-radius:3px;padding:3px 9px;font-size:.76em}
+.c span{color:#f39c12;font-weight:bold}
+table{width:100%;border-collapse:collapse;font-size:.8em;margin:10px 0}
+th{background:#1e3a5f;color:#74b9ff;padding:7px 10px;text-align:left}
+td{padding:6px 10px;border-bottom:1px solid #2a2a4a;color:#c0c0c0}
+tr:hover td{background:#1a1a35}
+.sec-div{background:linear-gradient(90deg,#1a0a00,#2a1500);border-radius:10px;padding:12px 18px;margin:26px 0 10px;border-left:4px solid #e94560}
+footer{text-align:center;padding:22px;color:#555;border-top:1px solid #2a2a4a;margin-top:30px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🗄️ 50 Problems — Part 3: SQL Classic &amp; Advanced</h1>
+  <p>Q35–Q50 · Second Highest · Window Functions · CTE · Joins · Pivoting · ZenCampus Context</p>
+  <div class="nav-pills">
+    <a href="PS_Part1_CSharp_StringNumbers.html">← Part 1: String &amp; Number</a>
+    <a href="PS_Part2_CSharp_Arrays_LINQ.html">← Part 2: Arrays &amp; LINQ</a>
+    <a href="#">Part 3: SQL (You are here)</a>
+  </div>
+</header>
+<div class="container">
+
+<div class="toc">
+  <h3>📋 Q35–Q50 Jump</h3>
+  <a href="#q35">35. 2nd Highest Salary (6 methods)</a>
+  <a href="#q36">36. Nth Highest SP</a>
+  <a href="#q37">37. Find Duplicates</a>
+  <a href="#q38">38. Delete Duplicates</a>
+  <a href="#q39">39. Emp Above Avg</a>
+  <a href="#q40">40. Top N per Dept</a>
+  <a href="#q41">41. Running Total</a>
+  <a href="#q42">42. No-Fee Students</a>
+  <a href="#q43">43. Self Join Manager</a>
+  <a href="#q44">44. Consecutive Dates</a>
+  <a href="#q45">45. Pivot Table</a>
+  <a href="#q46">46. YoY Growth LAG</a>
+  <a href="#q47">47. Recursive CTE Tree</a>
+  <a href="#q48">48. Gaps in Sequence</a>
+  <a href="#q49">49. First Purchase</a>
+  <a href="#q50">50. Monthly Trend</a>
+</div>
+
+<!-- ===== Q35 SECOND HIGHEST ===== -->
+<div class="q-card" id="q35">
+  <div class="q-hdr"><div class="q-num">35</div><div class="q-title">Second Highest Salary — 6 Different Methods!</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="hint"><div class="lbl">📋 Table: Employees (Id, Name, Salary, DeptId)</div>Data: 90000, 80000, 70000, 80000 → Answer: 80000</div>
+
+    <div class="method-lbl">Method 1 — OFFSET FETCH (Modern SQL Server)</div>
+    <div class="mbox">
+      <div class="mtitle">✅ Method 1: OFFSET FETCH — Cleanest</div>
+<pre><span class="sqk">SELECT DISTINCT</span> <span class="prop">Salary</span>
+<span class="sqk">FROM</span>   <span class="prop">Employees</span>
+<span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">DESC</span>
+<span class="sqk">OFFSET</span> <span class="num">1</span> <span class="sqk">ROWS FETCH NEXT</span> <span class="num">1</span> <span class="sqk">ROWS ONLY</span>;
+<span class="cm">-- DISTINCT: handles duplicate salaries
+-- OFFSET 1: skip the highest
+-- FETCH 1:  take one (= 2nd highest)</span></pre>
+    </div>
+
+    <div class="method-lbl">Method 2 — MAX excluding highest (Most popular in interviews)</div>
+    <div class="mbox m2">
+      <div class="mtitle">✅ Method 2: MAX with subquery</div>
+<pre><span class="sqk">SELECT MAX</span>(<span class="prop">Salary</span>) <span class="sqk">AS</span> <span class="prop">SecondHighest</span>
+<span class="sqk">FROM</span>   <span class="prop">Employees</span>
+<span class="sqk">WHERE</span>  <span class="prop">Salary</span> &lt; (<span class="sqk">SELECT MAX</span>(<span class="prop">Salary</span>) <span class="sqk">FROM</span> <span class="prop">Employees</span>);
+<span class="cm">-- Inner: MAX=90000
+-- Outer: MAX of all &lt;90000 → 80000 ✅</span></pre>
+    </div>
+
+    <div class="method-lbl">Method 3 — DENSE_RANK (Best for generalizing to Nth)</div>
+    <div class="mbox m3">
+      <div class="mtitle">✅ Method 3: DENSE_RANK — Works for ANY Nth!</div>
+<pre><span class="sqk">WITH</span> <span class="prop">Ranked</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span> <span class="prop">Salary</span>,
+           <span class="sqf">DENSE_RANK</span>() <span class="sqk">OVER</span>
+               (<span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">DESC</span>) <span class="sqk">AS</span> <span class="prop">Rnk</span>
+    <span class="sqk">FROM</span>   <span class="prop">Employees</span>
+)
+<span class="sqk">SELECT DISTINCT</span> <span class="prop">Salary</span>
+<span class="sqk">FROM</span>   <span class="prop">Ranked</span>
+<span class="sqk">WHERE</span>  <span class="prop">Rnk</span> = <span class="num">2</span>;    <span class="cm">-- change for Nth!</span>
+<span class="cm">-- 90000→Rnk1, 80000→Rnk2 (both 80000s!), 70000→Rnk3</span></pre>
+    </div>
+
+    <div class="method-lbl">Method 4 — NOT IN Subquery</div>
+    <div class="mbox m4">
+      <div class="mtitle">Method 4: NOT IN</div>
+<pre><span class="sqk">SELECT MAX</span>(<span class="prop">Salary</span>)
+<span class="sqk">FROM</span>   <span class="prop">Employees</span>
+<span class="sqk">WHERE</span>  <span class="prop">Salary</span> <span class="sqk">NOT IN</span>
+           (<span class="sqk">SELECT MAX</span>(<span class="prop">Salary</span>) <span class="sqk">FROM</span> <span class="prop">Employees</span>);</pre>
+    </div>
+
+    <div class="method-lbl">Method 5 — TOP 1 from TOP 2</div>
+    <div class="mbox">
+      <div class="mtitle">Method 5: TOP 1 from TOP 2 (Classic SQL Server)</div>
+<pre><span class="sqk">SELECT TOP</span> <span class="num">1</span> <span class="prop">Salary</span>
+<span class="sqk">FROM</span> (
+    <span class="sqk">SELECT DISTINCT TOP</span> <span class="num">2</span> <span class="prop">Salary</span>
+    <span class="sqk">FROM</span>   <span class="prop">Employees</span>
+    <span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">DESC</span>
+) <span class="sqk">T</span>
+<span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">ASC</span>;
+<span class="cm">-- Inner: {90000,80000}. Outer: smallest = 80000</span></pre>
+    </div>
+
+    <div class="method-lbl">Method 6 — NULL-safe production version</div>
+    <div class="mbox m3">
+      <div class="mtitle">✅ Method 6: NULL safe (returns NULL if no 2nd salary)</div>
+<pre><span class="sqk">SELECT</span> <span class="sqf">ISNULL</span>(
+    (<span class="sqk">SELECT DISTINCT TOP</span> <span class="num">1</span> <span class="prop">Salary</span>
+     <span class="sqk">FROM</span> (
+         <span class="sqk">SELECT DISTINCT TOP</span> <span class="num">2</span> <span class="prop">Salary</span>
+         <span class="sqk">FROM</span>   <span class="prop">Employees</span>
+         <span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">DESC</span>
+     ) <span class="sqk">T</span>
+     <span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">ASC</span>),
+    <span class="sqk">NULL</span>
+) <span class="sqk">AS</span> <span class="prop">SecondHighest</span>;
+<span class="cm">-- If only 1 unique salary → returns NULL gracefully</span></pre>
+    </div>
+
+    <div class="exp"><div class="lbl">🎤 Complete Senior Dev Answer</div>"I present 5+ approaches for this classic question:
+<br>1. OFFSET FETCH — cleanest syntax, SQL Server 2012+
+<br>2. MAX subquery — simplest, universally understood
+<br>3. DENSE_RANK — most flexible: change '2' to any N for Nth salary. Also handles ties correctly — two employees with same salary both get same rank
+<br>4. NOT IN — simple but watch out: if salary column has NULLs, NOT IN returns empty set!
+<br>5. TOP 1 from TOP 2 — classic SQL Server pattern
+<br><br>Production recommendation: DENSE_RANK because (a) generalizes to Nth without rewrite, (b) handles duplicate salaries correctly, (c) explicit about intent. Also add ISNULL wrapper for NULL safety when table has only one distinct salary."</div>
+  </div>
+</div>
+
+<!-- ===== Q36 NTH HIGHEST SP ===== -->
+<div class="q-card" id="q36">
+  <div class="q-hdr"><div class="q-num">36</div><div class="q-title">Nth Highest Salary — Generic Stored Procedure with @N</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="sqk">CREATE PROCEDURE</span> <span class="prop">usp_GetNthHighestSalary</span>
+    @<span class="prop">N</span> <span class="sqk">INT</span>
+<span class="sqk">AS</span>
+<span class="sqk">BEGIN</span>
+    <span class="sqk">SET NOCOUNT ON</span>;
+
+    <span class="sqk">IF</span> @<span class="prop">N</span> &lt; <span class="num">1</span>
+    <span class="sqk">BEGIN</span>
+        <span class="sqk">RAISERROR</span>(<span class="str">'N must be >= 1'</span>, <span class="num">16</span>, <span class="num">1</span>);
+        <span class="sqk">RETURN</span>;
+    <span class="sqk">END</span>;
+
+    <span class="sqk">WITH</span> <span class="prop">Ranked</span> <span class="sqk">AS</span> (
+        <span class="sqk">SELECT</span> <span class="prop">Salary</span>,
+               <span class="sqf">DENSE_RANK</span>() <span class="sqk">OVER</span>
+                   (<span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">DESC</span>) <span class="sqk">AS</span> <span class="prop">Rnk</span>
+        <span class="sqk">FROM</span>   <span class="prop">Employees</span>
+    )
+    <span class="sqk">SELECT DISTINCT</span>
+           <span class="sqf">ISNULL</span>(
+               (<span class="sqk">SELECT DISTINCT</span> <span class="prop">Salary</span>
+                <span class="sqk">FROM</span>  <span class="prop">Ranked</span>
+                <span class="sqk">WHERE</span> <span class="prop">Rnk</span> = @<span class="prop">N</span>),
+               <span class="sqk">NULL</span>
+           ) <span class="sqk">AS</span> <span class="prop">NthHighest</span>;
+<span class="sqk">END</span>;
+
+<span class="cm">-- EXEC usp_GetNthHighestSalary @N = 1   → 90000
+-- EXEC usp_GetNthHighestSalary @N = 2   → 80000
+-- EXEC usp_GetNthHighestSalary @N = 3   → 70000
+-- EXEC usp_GetNthHighestSalary @N = 99  → NULL</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Points</div>"SET NOCOUNT ON prevents 'rows affected' messages from cluttering result sets. Input validation with RAISERROR before proceeding. ISNULL handles when N exceeds distinct salary count. In SQL Server, stored procedures are preferred for parameterized repeated queries — execution plan cached, security via EXECUTE permission (not direct table access)."</div>
+  </div>
+</div>
+
+<!-- ===== Q37 FIND DUPLICATES ===== -->
+<div class="q-card" id="q37">
+  <div class="q-hdr"><div class="q-num">37</div><div class="q-title">Find Duplicate Records in Students Table</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+      <div class="mtitle">✅ Method 1: GROUP BY HAVING COUNT > 1</div>
+<pre><span class="cm">-- Find duplicate phone numbers</span>
+<span class="sqk">SELECT</span>   <span class="prop">PhoneNo</span>,
+         <span class="sqf">COUNT</span>(*) <span class="sqk">AS</span> <span class="prop">OccurrenceCount</span>
+<span class="sqk">FROM</span>     <span class="prop">Students</span>
+<span class="sqk">GROUP BY</span> <span class="prop">PhoneNo</span>
+<span class="sqk">HAVING</span>   <span class="sqf">COUNT</span>(*) &gt; <span class="num">1</span>
+<span class="sqk">ORDER BY</span> <span class="prop">OccurrenceCount</span> <span class="sqk">DESC</span>;
+
+<span class="cm">-- Find duplicates on multiple columns
+-- (same student admitted twice in same school)</span>
+<span class="sqk">SELECT</span>   <span class="prop">RollNo</span>, <span class="prop">SchoolId</span>,
+         <span class="sqf">COUNT</span>(*) <span class="sqk">AS</span> <span class="prop">Cnt</span>
+<span class="sqk">FROM</span>     <span class="prop">Students</span>
+<span class="sqk">GROUP BY</span> <span class="prop">RollNo</span>, <span class="prop">SchoolId</span>
+<span class="sqk">HAVING</span>   <span class="sqf">COUNT</span>(*) &gt; <span class="num">1</span>;</pre>
+    </div>
+    <div class="mbox m2"><div class="mtitle">✅ Method 2: Show FULL duplicate rows with ROW_NUMBER</div>
+<pre><span class="sqk">WITH</span> <span class="prop">Dups</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span> *,
+           <span class="sqf">ROW_NUMBER</span>() <span class="sqk">OVER</span> (
+               <span class="sqk">PARTITION BY</span> <span class="prop">RollNo</span>, <span class="prop">SchoolId</span>
+               <span class="sqk">ORDER BY</span>     <span class="prop">Id</span>
+           ) <span class="sqk">AS</span> <span class="prop">Rn</span>
+    <span class="sqk">FROM</span>   <span class="prop">Students</span>
+)
+<span class="sqk">SELECT</span> * <span class="sqk">FROM</span> <span class="prop">Dups</span>
+<span class="sqk">WHERE</span>  <span class="prop">Rn</span> &gt; <span class="num">1</span>;  <span class="cm">-- Rn=1 is "original", Rn>1 are copies</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"GROUP BY HAVING finds WHICH values are duplicated. But to see the full duplicate rows (all columns), use ROW_NUMBER PARTITION BY the duplicate key columns. Rn=1 is the first occurrence (keep), Rn>1 are duplicates. This pattern is also used for deletion. ZenCampus: prevents a student being admitted twice, catches data entry errors."</div>
+  </div>
+</div>
+
+<!-- ===== Q38 DELETE DUPLICATES ===== -->
+<div class="q-card" id="q38">
+  <div class="q-hdr"><div class="q-num">38</div><div class="q-title">Delete Duplicate Rows — Keep only one record</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="cm">-- Safe pattern: SELECT first, then DELETE</span>
+
+<span class="cm">-- Step 1: Preview what will be deleted</span>
+<span class="sqk">WITH</span> <span class="prop">Dups</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span> *,
+           <span class="sqf">ROW_NUMBER</span>() <span class="sqk">OVER</span> (
+               <span class="sqk">PARTITION BY</span> <span class="prop">RollNo</span>, <span class="prop">SchoolId</span>
+               <span class="sqk">ORDER BY</span>     <span class="prop">CreatedDate</span> <span class="sqk">ASC</span>
+           ) <span class="sqk">AS</span> <span class="prop">Rn</span>   <span class="cm">-- order by date keeps OLDEST</span>
+    <span class="sqk">FROM</span>   <span class="prop">Students</span>
+)
+<span class="sqk">SELECT</span> * <span class="sqk">FROM</span> <span class="prop">Dups</span> <span class="sqk">WHERE</span> <span class="prop">Rn</span> &gt; <span class="num">1</span>; <span class="cm">-- preview</span>
+
+<span class="cm">-- Step 2: Delete after confirming</span>
+<span class="sqk">WITH</span> <span class="prop">Dups</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span> *,
+           <span class="sqf">ROW_NUMBER</span>() <span class="sqk">OVER</span> (
+               <span class="sqk">PARTITION BY</span> <span class="prop">RollNo</span>, <span class="prop">SchoolId</span>
+               <span class="sqk">ORDER BY</span>     <span class="prop">CreatedDate</span> <span class="sqk">ASC</span>
+           ) <span class="sqk">AS</span> <span class="prop">Rn</span>
+    <span class="sqk">FROM</span>   <span class="prop">Students</span>
+)
+<span class="sqk">DELETE FROM</span> <span class="prop">Dups</span> <span class="sqk">WHERE</span> <span class="prop">Rn</span> &gt; <span class="num">1</span>;
+<span class="cm">-- SQL Server allows DELETE from CTE — deletes from base table!</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer — Safety First!</div>"ALWAYS preview with SELECT before running DELETE — change only the final statement. ORDER BY in PARTITION BY controls which copy to KEEP: ORDER BY Id ASC keeps oldest (smallest Id), ORDER BY CreatedDate DESC keeps newest. SQL Server allows DELETE directly from a CTE — it targets the underlying base table. Wrap in a transaction (BEGIN TRAN ... COMMIT/ROLLBACK) for extra safety in production."</div>
+  </div>
+</div>
+
+<!-- ===== Q39 ABOVE AVERAGE ===== -->
+<div class="q-card" id="q39">
+  <div class="q-hdr"><div class="q-num">39</div><div class="q-title">Employees Earning Above Department Average</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox"><div class="mtitle">✅ Method 1: CTE with AVG per Dept</div>
+<pre><span class="sqk">WITH</span> <span class="prop">DeptAvg</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span>   <span class="prop">DeptId</span>,
+             <span class="sqf">AVG</span>(<span class="prop">Salary</span> * <span class="num">1.0</span>) <span class="sqk">AS</span> <span class="prop">AvgSalary</span>
+    <span class="sqk">FROM</span>     <span class="prop">Employees</span>
+    <span class="sqk">GROUP BY</span> <span class="prop">DeptId</span>
+)
+<span class="sqk">SELECT</span> <span class="prop">e</span>.<span class="prop">Name</span>, <span class="prop">e</span>.<span class="prop">Salary</span>, <span class="prop">e</span>.<span class="prop">DeptId</span>,
+       <span class="sqf">ROUND</span>(<span class="prop">da</span>.<span class="prop">AvgSalary</span>, <span class="num">2</span>) <span class="sqk">AS</span> <span class="prop">DeptAvg</span>
+<span class="sqk">FROM</span>   <span class="prop">Employees</span>  <span class="prop">e</span>
+<span class="sqk">JOIN</span>   <span class="prop">DeptAvg</span>    <span class="prop">da</span>
+    <span class="sqk">ON</span> <span class="prop">da</span>.<span class="prop">DeptId</span> = <span class="prop">e</span>.<span class="prop">DeptId</span>
+<span class="sqk">WHERE</span>  <span class="prop">e</span>.<span class="prop">Salary</span> &gt; <span class="prop">da</span>.<span class="prop">AvgSalary</span>
+<span class="sqk">ORDER BY</span> <span class="prop">e</span>.<span class="prop">DeptId</span>, <span class="prop">e</span>.<span class="prop">Salary</span> <span class="sqk">DESC</span>;
+
+<span class="cm">-- Salary*1.0: force decimal division (int/int = int in SQL!)</span></pre>
+    </div>
+    <div class="mbox m2"><div class="mtitle">Method 2: Window AVG (no join needed)</div>
+<pre><span class="sqk">SELECT</span> <span class="prop">Name</span>, <span class="prop">Salary</span>, <span class="prop">DeptId</span>,
+       <span class="sqf">AVG</span>(<span class="prop">Salary</span> * <span class="num">1.0</span>) <span class="sqk">OVER</span>
+           (<span class="sqk">PARTITION BY</span> <span class="prop">DeptId</span>) <span class="sqk">AS</span> <span class="prop">DeptAvg</span>
+<span class="sqk">FROM</span>   <span class="prop">Employees</span>
+<span class="sqk">WHERE</span>  <span class="prop">Salary</span> &gt;
+    (<span class="sqk">SELECT</span> <span class="sqf">AVG</span>(<span class="prop">Salary</span>) <span class="sqk">FROM</span> <span class="prop">Employees</span> <span class="prop">e2</span>
+     <span class="sqk">WHERE</span> <span class="prop">e2</span>.<span class="prop">DeptId</span> = <span class="prop">Employees</span>.<span class="prop">DeptId</span>);
+
+<span class="cm">-- Cannot filter on window function in WHERE — use CTE method above
+-- Window version: shows the average alongside each row (for display)</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Trap — Integer Division!</div>"In SQL, integer ÷ integer = integer (5/2 = 2, not 2.5!). Always use Salary * 1.0 or CAST(Salary AS DECIMAL) to force floating-point division. Critical: cannot use window functions in WHERE clause — window functions evaluated AFTER WHERE. Use CTE or subquery to pre-compute department averages, then JOIN/filter."</div>
+  </div>
+</div>
+
+<!-- ===== Q40 TOP N PER DEPT ===== -->
+<div class="q-card" id="q40">
+  <div class="q-hdr"><div class="q-num">40</div><div class="q-title">Top 3 Students by Marks Per Class — PARTITION BY</div><span class="tag hard">Hard</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="sqk">WITH</span> <span class="prop">ClassRanked</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span>
+        <span class="prop">s</span>.<span class="prop">Name</span>,
+        <span class="prop">s</span>.<span class="prop">Class</span>,
+        <span class="prop">s</span>.<span class="prop">Section</span>,
+        <span class="prop">e</span>.<span class="prop">Marks</span>,
+        <span class="sqf">DENSE_RANK</span>() <span class="sqk">OVER</span> (
+            <span class="sqk">PARTITION BY</span> <span class="prop">s</span>.<span class="prop">Class</span>   <span class="cm">-- reset rank per class</span>
+            <span class="sqk">ORDER BY</span>     <span class="prop">e</span>.<span class="prop">Marks</span> <span class="sqk">DESC</span>
+        ) <span class="sqk">AS</span> <span class="prop">ClassRank</span>
+    <span class="sqk">FROM</span>     <span class="prop">Students</span>    <span class="prop">s</span>
+    <span class="sqk">JOIN</span>     <span class="prop">ExamResults</span> <span class="prop">e</span>
+        <span class="sqk">ON</span>   <span class="prop">e</span>.<span class="prop">StudentId</span> = <span class="prop">s</span>.<span class="prop">Id</span>
+    <span class="sqk">WHERE</span>    <span class="prop">e</span>.<span class="prop">AcademicYear</span> = <span class="str">'2025-26'</span>
+    <span class="sqk">AND</span>      <span class="prop">e</span>.<span class="prop">Term</span>         = <span class="str">'Term1'</span>
+)
+<span class="sqk">SELECT</span>   <span class="prop">Class</span>, <span class="prop">ClassRank</span>, <span class="prop">Name</span>, <span class="prop">Marks</span>
+<span class="sqk">FROM</span>     <span class="prop">ClassRanked</span>
+<span class="sqk">WHERE</span>    <span class="prop">ClassRank</span> &lt;= <span class="num">3</span>
+<span class="sqk">ORDER BY</span> <span class="prop">Class</span>, <span class="prop">ClassRank</span>, <span class="prop">Name</span>;
+
+<span class="cm">-- ROW_NUMBER vs RANK vs DENSE_RANK for ties:
+-- Two students with 95 marks, then one with 90:
+-- ROW_NUMBER:  1, 2, 3  (arbitrary tie-break — UNFAIR!)
+-- RANK:        1, 1, 3  (gap after tie — position 2 unused)
+-- DENSE_RANK:  1, 1, 2  (no gap — FAIR for merit lists!)
+
+-- Change ClassRank <= 3 to <= 5 for top 5
+-- Change PARTITION BY Class to PARTITION BY Class,Section for section-wise</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 ROW_NUMBER vs RANK vs DENSE_RANK — Must know this!</div>"PARTITION BY resets the rank counter for each partition (class). This is the key difference from just ORDER BY which ranks globally. DENSE_RANK is the right choice for merit lists — if two students share 2nd place, both get rank 2 and the next gets rank 3 (no gaps). ROW_NUMBER would arbitrarily decide who is 2nd and 3rd — unfair. RANK gives gaps (1,1,3) — position 2 is 'unused'."</div>
+  </div>
+</div>
+
+<!-- ===== Q41 RUNNING TOTAL ===== -->
+<div class="q-card" id="q41">
+  <div class="q-hdr"><div class="q-num">41</div><div class="q-title">Running Total (Cumulative Sum) — Month-wise Fee Collection</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="sqk">WITH</span> <span class="prop">Monthly</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span>
+        <span class="sqf">FORMAT</span>(<span class="prop">PaidDate</span>, <span class="str">'yyyy-MM'</span>) <span class="sqk">AS</span> <span class="prop">Month</span>,
+        <span class="sqf">SUM</span>(<span class="prop">Amount</span>)                  <span class="sqk">AS</span> <span class="prop">MonthlyTotal</span>
+    <span class="sqk">FROM</span>     <span class="prop">Fees</span>
+    <span class="sqk">WHERE</span>    <span class="prop">IsPaid</span> = <span class="num">1</span>
+    <span class="sqk">GROUP BY</span> <span class="sqf">FORMAT</span>(<span class="prop">PaidDate</span>, <span class="str">'yyyy-MM'</span>)
+)
+<span class="sqk">SELECT</span>
+    <span class="prop">Month</span>,
+    <span class="prop">MonthlyTotal</span>,
+    <span class="sqf">SUM</span>(<span class="prop">MonthlyTotal</span>) <span class="sqk">OVER</span> (
+        <span class="sqk">ORDER BY</span> <span class="prop">Month</span>
+        <span class="sqk">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+    ) <span class="sqk">AS</span> <span class="prop">RunningTotal</span>
+<span class="sqk">FROM</span>   <span class="prop">Monthly</span>
+<span class="sqk">ORDER BY</span> <span class="prop">Month</span>;
+
+<span class="cm">-- Month    MonthlyTotal  RunningTotal
+-- 2026-01  50000         50000
+-- 2026-02  75000         125000
+-- 2026-03  60000         185000
+-- 2026-04  80000         265000</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"SUM() OVER (ORDER BY) is a window aggregate — adds all values from first row up to current row (ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — this is the default when you specify ORDER BY). The inner GROUP BY collapses daily payments to monthly totals. ZenCampus finance dashboard: shows how total fee collection grows month-over-month through the academic year. Add PARTITION BY SchoolId for per-school running totals."</div>
+  </div>
+</div>
+
+<!-- ===== Q42 NO-FEE STUDENTS ===== -->
+<div class="q-card" id="q42">
+  <div class="q-hdr"><div class="q-num">42</div><div class="q-title">Students Without Fee Records — LEFT JOIN Anti-Join Pattern</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox"><div class="mtitle">✅ Method 1: LEFT JOIN + WHERE NULL (Fastest)</div>
+<pre><span class="sqk">SELECT</span>   <span class="prop">s</span>.<span class="prop">Id</span>, <span class="prop">s</span>.<span class="prop">Name</span>, <span class="prop">s</span>.<span class="prop">Class</span>,
+         <span class="prop">s</span>.<span class="prop">AdmissionNo</span>
+<span class="sqk">FROM</span>     <span class="prop">Students</span>  <span class="prop">s</span>
+<span class="sqk">LEFT JOIN</span>   <span class="prop">Fees</span>  <span class="prop">f</span>
+    <span class="sqk">ON</span>   <span class="prop">f</span>.<span class="prop">StudentId</span> = <span class="prop">s</span>.<span class="prop">Id</span>
+<span class="sqk">WHERE</span>    <span class="prop">f</span>.<span class="prop">Id</span> <span class="sqk">IS NULL</span>   <span class="cm">-- no fee record at all</span>
+<span class="sqk">ORDER BY</span> <span class="prop">s</span>.<span class="prop">Class</span>, <span class="prop">s</span>.<span class="prop">Name</span>;</pre>
+    </div>
+    <div class="mbox m2"><div class="mtitle">Method 2: NOT EXISTS (Semantic, short-circuits)</div>
+<pre><span class="sqk">SELECT</span> <span class="prop">Id</span>, <span class="prop">Name</span>, <span class="prop">Class</span>
+<span class="sqk">FROM</span>   <span class="prop">Students</span> <span class="prop">s</span>
+<span class="sqk">WHERE NOT EXISTS</span> (
+    <span class="sqk">SELECT</span> <span class="num">1</span>    <span class="cm">-- SELECT 1 is intentional (no columns needed)</span>
+    <span class="sqk">FROM</span>   <span class="prop">Fees</span>
+    <span class="sqk">WHERE</span>  <span class="prop">StudentId</span> = <span class="prop">s</span>.<span class="prop">Id</span>
+);</pre>
+    </div>
+    <div class="mbox m3"><div class="mtitle">⚠️ Method 3: NOT IN — DANGEROUS with NULLs!</div>
+<pre><span class="sqk">SELECT</span> <span class="prop">Id</span>, <span class="prop">Name</span>
+<span class="sqk">FROM</span>   <span class="prop">Students</span>
+<span class="sqk">WHERE</span>  <span class="prop">Id</span> <span class="sqk">NOT IN</span> (
+    <span class="sqk">SELECT StudentId</span>
+    <span class="sqk">FROM</span>   <span class="prop">Fees</span>
+    <span class="sqk">WHERE</span>  <span class="prop">StudentId</span> <span class="sqk">IS NOT NULL</span>  <span class="cm">-- CRITICAL!</span>
+);
+<span class="cm">-- WARNING: If ANY StudentId is NULL in Fees,
+-- NOT IN returns ZERO rows! SQL NULL logic (UNKNOWN).
+-- Always add WHERE StudentId IS NOT NULL</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer — NULL Trap!</div>"Three approaches. LEFT JOIN + WHERE NULL is the 'anti-join' pattern — fastest in most cases. NOT EXISTS is semantically clearest and short-circuits on first match. NOT IN is the dangerous one — if the subquery returns even ONE NULL, the entire NOT IN result is empty! SQL three-valued logic: any comparison with NULL = UNKNOWN, and WHERE UNKNOWN = nothing. Always add WHERE StudentId IS NOT NULL in NOT IN subqueries. I always prefer LEFT JOIN or NOT EXISTS in production."</div>
+  </div>
+</div>
+
+<!-- ===== Q43 SELF JOIN ===== -->
+<div class="q-card" id="q43">
+  <div class="q-hdr"><div class="q-num">43</div><div class="q-title">Self Join — Show Employee with their Manager</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="cm">-- Employees table has ManagerId (FK to same table)</span>
+<span class="sqk">SELECT</span>
+    <span class="prop">e</span>.<span class="prop">Name</span>          <span class="sqk">AS</span> <span class="prop">EmployeeName</span>,
+    <span class="prop">e</span>.<span class="prop">Salary</span>        <span class="sqk">AS</span> <span class="prop">EmployeeSalary</span>,
+    <span class="sqf">ISNULL</span>(<span class="prop">m</span>.<span class="prop">Name</span>, <span class="str">'[CEO]'</span>) <span class="sqk">AS</span> <span class="prop">ManagerName</span>
+<span class="sqk">FROM</span>      <span class="prop">Employees</span> <span class="prop">e</span>
+<span class="sqk">LEFT JOIN</span> <span class="prop">Employees</span> <span class="prop">m</span>       <span class="cm">-- same table, different alias</span>
+    <span class="sqk">ON</span>    <span class="prop">m</span>.<span class="prop">Id</span>  = <span class="prop">e</span>.<span class="prop">ManagerId</span>
+<span class="sqk">ORDER BY</span>  <span class="prop">e</span>.<span class="prop">Name</span>;
+
+<span class="cm">-- LEFT JOIN: CEO has no manager (ManagerId=NULL) → shows as [CEO]
+-- INNER JOIN would exclude the CEO from results
+
+-- Find employees earning MORE than their manager</span>
+<span class="sqk">SELECT</span> <span class="prop">e</span>.<span class="prop">Name</span> <span class="sqk">AS</span> <span class="prop">Employee</span>,
+       <span class="prop">e</span>.<span class="prop">Salary</span>,
+       <span class="prop">m</span>.<span class="prop">Name</span>   <span class="sqk">AS</span> <span class="prop">Manager</span>,
+       <span class="prop">m</span>.<span class="prop">Salary</span> <span class="sqk">AS</span> <span class="prop">ManagerSalary</span>
+<span class="sqk">FROM</span>   <span class="prop">Employees</span> <span class="prop">e</span>
+<span class="sqk">JOIN</span>   <span class="prop">Employees</span> <span class="prop">m</span>
+    <span class="sqk">ON</span> <span class="prop">m</span>.<span class="prop">Id</span> = <span class="prop">e</span>.<span class="prop">ManagerId</span>
+<span class="sqk">WHERE</span>  <span class="prop">e</span>.<span class="prop">Salary</span> &gt; <span class="prop">m</span>.<span class="prop">Salary</span>;</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Self join joins a table to itself using different aliases — same physical table, two logical roles. 'e' = employee, 'm' = manager. LEFT JOIN includes root nodes (CEO with no manager). Common in org charts, category hierarchies, parent-child relationships. ZenCampus: class teacher → subject teacher → HOD hierarchy all in one Staff table."</div>
+  </div>
+</div>
+
+<!-- ===== Q44 CONSECUTIVE DATES ===== -->
+<div class="q-card" id="q44">
+  <div class="q-hdr"><div class="q-num">44</div><div class="q-title">Find Consecutive Attendance Streaks — Islands and Gaps</div><span class="tag hard">Hard</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="cm">-- Attendance: StudentId, AttendanceDate, IsPresent
+-- Find longest consecutive present streak per student</span>
+<span class="sqk">WITH</span> <span class="prop">Numbered</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span>
+        <span class="prop">StudentId</span>,
+        <span class="prop">AttendanceDate</span>,
+        <span class="sqf">ROW_NUMBER</span>() <span class="sqk">OVER</span> (
+            <span class="sqk">PARTITION BY</span> <span class="prop">StudentId</span>
+            <span class="sqk">ORDER BY</span>     <span class="prop">AttendanceDate</span>
+        ) <span class="sqk">AS</span> <span class="prop">Rn</span>
+    <span class="sqk">FROM</span>   <span class="prop">Attendance</span>
+    <span class="sqk">WHERE</span>  <span class="prop">IsPresent</span> = <span class="num">1</span>  <span class="cm">-- only present days</span>
+),
+<span class="prop">Islands</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span>
+        <span class="prop">StudentId</span>,
+        <span class="prop">AttendanceDate</span>,
+        <span class="cm">-- Key trick: date - row_number = constant for consecutive dates!</span>
+        <span class="sqf">DATEADD</span>(<span class="sqk">day</span>, -<span class="prop">Rn</span>, <span class="prop">AttendanceDate</span>) <span class="sqk">AS</span> <span class="prop">GroupDate</span>
+    <span class="sqk">FROM</span>   <span class="prop">Numbered</span>
+)
+<span class="sqk">SELECT</span>
+    <span class="prop">StudentId</span>,
+    <span class="sqf">MIN</span>(<span class="prop">AttendanceDate</span>) <span class="sqk">AS</span> <span class="prop">StreakStart</span>,
+    <span class="sqf">MAX</span>(<span class="prop">AttendanceDate</span>) <span class="sqk">AS</span> <span class="prop">StreakEnd</span>,
+    <span class="sqf">COUNT</span>(*)            <span class="sqk">AS</span> <span class="prop">ConsecutiveDays</span>
+<span class="sqk">FROM</span>     <span class="prop">Islands</span>
+<span class="sqk">GROUP BY</span> <span class="prop">StudentId</span>, <span class="prop">GroupDate</span>
+<span class="sqk">ORDER BY</span> <span class="prop">ConsecutiveDays</span> <span class="sqk">DESC</span>;</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 The Island Trick — Key insight!</div>"The island-and-gaps technique: Date - RowNumber = constant for consecutive dates (because both increment by 1 each day). If a day is missing, the date jumps by 2 but row number by 1, so the result changes — new 'island' starts. GROUP BY this constant 'GroupDate' groups each consecutive streak. Brilliant O(n log n) solution. ZenCampus: find students with 100% attendance streaks for awards."</div>
+  </div>
+</div>
+
+<!-- ===== Q45 PIVOT ===== -->
+<div class="q-card" id="q45">
+  <div class="q-hdr"><div class="q-num">45</div><div class="q-title">Pivot Table — Class-wise Subject Marks as Columns</div><span class="tag hard">Hard</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="cm">-- Input: StudentId, Subject, Marks
+-- Output: StudentId | Maths | Science | English
+
+-- Static PIVOT (known subjects)</span>
+<span class="sqk">SELECT</span> <span class="prop">StudentId</span>, <span class="prop">Maths</span>, <span class="prop">Science</span>, <span class="prop">English</span>
+<span class="sqk">FROM</span> (
+    <span class="sqk">SELECT</span> <span class="prop">StudentId</span>, <span class="prop">Subject</span>, <span class="prop">Marks</span>
+    <span class="sqk">FROM</span>   <span class="prop">ExamResults</span>
+) <span class="sqk">AS</span> <span class="prop">src</span>
+<span class="sqk">PIVOT</span> (
+    <span class="sqf">MAX</span>(<span class="prop">Marks</span>)
+    <span class="sqk">FOR</span> <span class="prop">Subject</span> <span class="sqk">IN</span> ([<span class="prop">Maths</span>], [<span class="prop">Science</span>], [<span class="prop">English</span>])
+) <span class="sqk">AS</span> <span class="prop">pvt</span>;
+
+<span class="cm">-- CONDITIONAL AGGREGATION (works in all DBs, more flexible)</span>
+<span class="sqk">SELECT</span>
+    <span class="prop">StudentId</span>,
+    <span class="sqf">MAX</span>(<span class="sqk">CASE WHEN</span> <span class="prop">Subject</span> = <span class="str">'Maths'</span>   <span class="sqk">THEN</span> <span class="prop">Marks</span> <span class="sqk">END</span>) <span class="sqk">AS</span> <span class="prop">Maths</span>,
+    <span class="sqf">MAX</span>(<span class="sqk">CASE WHEN</span> <span class="prop">Subject</span> = <span class="str">'Science'</span> <span class="sqk">THEN</span> <span class="prop">Marks</span> <span class="sqk">END</span>) <span class="sqk">AS</span> <span class="prop">Science</span>,
+    <span class="sqf">MAX</span>(<span class="sqk">CASE WHEN</span> <span class="prop">Subject</span> = <span class="str">'English'</span> <span class="sqk">THEN</span> <span class="prop">Marks</span> <span class="sqk">END</span>) <span class="sqk">AS</span> <span class="prop">English</span>
+<span class="sqk">FROM</span>     <span class="prop">ExamResults</span>
+<span class="sqk">GROUP BY</span> <span class="prop">StudentId</span>;</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 PIVOT vs CASE WHEN</div>"SQL Server PIVOT syntax is concise but rigid — you must know column values at query-write time. CASE WHEN approach works in all databases (MySQL, PostgreSQL, Oracle) and is more readable. For dynamic subjects (unknown at query time), use Dynamic SQL — build the column list as a string, then EXEC. ZenCampus: report cards with all subjects as columns use this pivot pattern."</div>
+  </div>
+</div>
+
+<!-- ===== Q46 YOY GROWTH ===== -->
+<div class="q-card" id="q46">
+  <div class="q-hdr"><div class="q-num">46</div><div class="q-title">Year-over-Year Growth using LAG() Window Function</div><span class="tag hard">Hard</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="sqk">WITH</span> <span class="prop">YearlyRevenue</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span>
+        <span class="sqf">YEAR</span>(<span class="prop">PaidDate</span>)  <span class="sqk">AS</span> <span class="prop">Yr</span>,
+        <span class="sqf">SUM</span>(<span class="prop">Amount</span>)    <span class="sqk">AS</span> <span class="prop">TotalFees</span>
+    <span class="sqk">FROM</span>     <span class="prop">Fees</span>
+    <span class="sqk">WHERE</span>    <span class="prop">IsPaid</span> = <span class="num">1</span>
+    <span class="sqk">GROUP BY</span> <span class="sqf">YEAR</span>(<span class="prop">PaidDate</span>)
+)
+<span class="sqk">SELECT</span>
+    <span class="prop">Yr</span>,
+    <span class="prop">TotalFees</span>,
+    <span class="sqf">LAG</span>(<span class="prop">TotalFees</span>, <span class="num">1</span>, <span class="num">0</span>) <span class="sqk">OVER</span>
+        (<span class="sqk">ORDER BY</span> <span class="prop">Yr</span>)     <span class="sqk">AS</span> <span class="prop">PrevYearFees</span>,
+    <span class="prop">TotalFees</span>
+        - <span class="sqf">LAG</span>(<span class="prop">TotalFees</span>, <span class="num">1</span>, <span class="num">0</span>) <span class="sqk">OVER</span>
+            (<span class="sqk">ORDER BY</span> <span class="prop">Yr</span>) <span class="sqk">AS</span> <span class="prop">GrowthAmt</span>,
+    <span class="sqf">ROUND</span>(
+        (<span class="prop">TotalFees</span>
+            - <span class="sqf">LAG</span>(<span class="prop">TotalFees</span>) <span class="sqk">OVER</span>(<span class="sqk">ORDER BY</span> <span class="prop">Yr</span>))
+        * <span class="num">100.0</span>
+        / <span class="sqf">NULLIF</span>(<span class="sqf">LAG</span>(<span class="prop">TotalFees</span>) <span class="sqk">OVER</span>(<span class="sqk">ORDER BY</span> <span class="prop">Yr</span>), <span class="num">0</span>),
+    <span class="num">2</span>) <span class="sqk">AS</span> <span class="prop">GrowthPct</span>
+<span class="sqk">FROM</span>   <span class="prop">YearlyRevenue</span>
+<span class="sqk">ORDER BY</span> <span class="prop">Yr</span>;
+
+<span class="cm">-- Yr    TotalFees  PrevYearFees  GrowthAmt  GrowthPct
+-- 2024  800000     0             800000     NULL
+-- 2025  950000     800000        150000     18.75
+-- 2026  1100000    950000        150000     15.79
+
+-- LAG(col, 1, 0): 1=look 1 row back, 0=default if no prev row
+-- NULLIF(val, 0): returns NULL if val=0, prevents divide-by-zero!</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"LAG(column, N, default) gets the value N rows before the current row. First row returns default (I use 0). LEAD() does opposite — looks forward. NULLIF(expr, 0) is the elegant divide-by-zero guard — returns NULL instead of error, and NULL in arithmetic produces NULL (not error). ZenCampus management uses this for annual revenue growth KPIs. Same pattern for month-over-month, or PARTITION BY SchoolId for per-school trends."</div>
+  </div>
+</div>
+
+<!-- ===== Q47 RECURSIVE CTE ===== -->
+<div class="q-card" id="q47">
+  <div class="q-hdr"><div class="q-num">47</div><div class="q-title">Recursive CTE — Organization Hierarchy (CEO to staff)</div><span class="tag hard">Hard</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="sqk">WITH</span> <span class="prop">OrgHierarchy</span> <span class="sqk">AS</span> (
+    <span class="cm">-- Anchor: top level (no manager)</span>
+    <span class="sqk">SELECT</span>  <span class="prop">Id</span>, <span class="prop">Name</span>, <span class="prop">ManagerId</span>, <span class="prop">Designation</span>,
+            <span class="num">0</span>              <span class="sqk">AS</span> <span class="prop">Level</span>,
+            <span class="prop">Name</span>           <span class="sqk">AS</span> <span class="prop">Path</span>
+    <span class="sqk">FROM</span>    <span class="prop">Staff</span>
+    <span class="sqk">WHERE</span>   <span class="prop">ManagerId</span> <span class="sqk">IS NULL</span>  <span class="cm">-- root (Principal)</span>
+
+    <span class="sqk">UNION ALL</span>
+
+    <span class="cm">-- Recursive: join children to their parent</span>
+    <span class="sqk">SELECT</span>  <span class="prop">s</span>.<span class="prop">Id</span>, <span class="prop">s</span>.<span class="prop">Name</span>, <span class="prop">s</span>.<span class="prop">ManagerId</span>, <span class="prop">s</span>.<span class="prop">Designation</span>,
+            <span class="prop">h</span>.<span class="prop">Level</span> + <span class="num">1</span>,
+            <span class="prop">h</span>.<span class="prop">Path</span> + <span class="str">' → '</span> + <span class="prop">s</span>.<span class="prop">Name</span>
+    <span class="sqk">FROM</span>    <span class="prop">Staff</span>          <span class="prop">s</span>
+    <span class="sqk">JOIN</span>    <span class="prop">OrgHierarchy</span>   <span class="prop">h</span>
+        <span class="sqk">ON</span>  <span class="prop">h</span>.<span class="prop">Id</span> = <span class="prop">s</span>.<span class="prop">ManagerId</span>
+)
+<span class="sqk">SELECT</span>
+    <span class="prop">Level</span>,
+    <span class="sqf">REPLICATE</span>(<span class="str">'  '</span>, <span class="prop">Level</span>) + <span class="prop">Name</span> <span class="sqk">AS</span> <span class="prop">IndentedName</span>,
+    <span class="prop">Designation</span>,
+    <span class="prop">Path</span>
+<span class="sqk">FROM</span>   <span class="prop">OrgHierarchy</span>
+<span class="sqk">ORDER BY</span> <span class="prop">Path</span>;
+
+<span class="cm">-- Output:
+-- Level  IndentedName          Designation
+-- 0      Principal             Principal
+-- 1        HOD-Science         Head of Dept
+-- 2          Teacher-Phy       Physics Teacher
+-- 2          Teacher-Chem      Chemistry Teacher
+-- 1        HOD-Maths           Head of Dept</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Recursive CTE has two parts: ANCHOR (base case — root nodes, no parent) and RECURSIVE MEMBER (joins children to parent, increments level). SQL Server adds MAXRECURSION option to prevent infinite loops (circular references). REPLICATE(' ',Level) indents each level visually. Path column traces the full chain. ZenCampus: renders org chart, calculates leave approval hierarchy, shows who reports to whom."</div>
+  </div>
+</div>
+
+<!-- ===== Q48 GAPS IN SEQUENCE ===== -->
+<div class="q-card" id="q48">
+  <div class="q-hdr"><div class="q-num">48</div><div class="q-title">Find Gaps in Roll Number Sequence</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="cm">-- Find missing roll numbers in a class
+-- Roll numbers should be 1,2,3,...N with no gaps</span>
+
+<span class="sqk">WITH</span> <span class="prop">Expected</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span>  <span class="sqf">MIN</span>(<span class="prop">RollNo</span>)                     <span class="sqk">AS</span> <span class="prop">StartRoll</span>,
+            <span class="sqf">MAX</span>(<span class="prop">RollNo</span>)                     <span class="sqk">AS</span> <span class="prop">EndRoll</span>
+    <span class="sqk">FROM</span>    <span class="prop">Students</span> <span class="sqk">WHERE</span> <span class="prop">ClassId</span> = <span class="num">5</span>
+),
+<span class="prop">Numbers</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT TOP</span> (<span class="sqk">SELECT</span> <span class="prop">EndRoll</span>-<span class="prop">StartRoll</span>+<span class="num">1</span> <span class="sqk">FROM</span> <span class="prop">Expected</span>)
+           <span class="sqf">ROW_NUMBER</span>() <span class="sqk">OVER</span> (<span class="sqk">ORDER BY</span> (<span class="sqk">SELECT NULL</span>))
+             + (<span class="sqk">SELECT</span> <span class="prop">StartRoll</span>-<span class="num">1</span> <span class="sqk">FROM</span> <span class="prop">Expected</span>) <span class="sqk">AS</span> <span class="prop">Num</span>
+    <span class="sqk">FROM</span>    <span class="prop">sys</span>.<span class="prop">objects</span> <span class="prop">a</span>
+    <span class="sqk">CROSS JOIN</span> <span class="prop">sys</span>.<span class="prop">objects</span> <span class="prop">b</span>
+)
+<span class="sqk">SELECT</span> <span class="prop">Num</span> <span class="sqk">AS</span> <span class="prop">MissingRollNo</span>
+<span class="sqk">FROM</span>   <span class="prop">Numbers</span>
+<span class="sqk">WHERE</span>  <span class="prop">Num</span> <span class="sqk">NOT IN</span>
+    (<span class="sqk">SELECT</span> <span class="prop">RollNo</span> <span class="sqk">FROM</span> <span class="prop">Students</span>
+     <span class="sqk">WHERE</span>  <span class="prop">ClassId</span> = <span class="num">5</span>
+     <span class="sqk">AND</span>    <span class="prop">RollNo</span> <span class="sqk">IS NOT NULL</span>);
+
+<span class="cm">-- ZenCampus: detect missing roll numbers in a class
+-- Same pattern for missing invoice numbers, ticket IDs</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Pattern</div>"Generate a complete sequence (using row_number over sys.objects cross join — a tally table trick), then LEFT JOIN or NOT IN to find what's missing. Alternative: use LAG() to compare each roll number with the previous — if gap > 1, the numbers in between are missing. ZenCampus: audit roll number assignment, find invoice gaps for compliance."</div>
+  </div>
+</div>
+
+<!-- ===== Q49 FIRST PURCHASE ===== -->
+<div class="q-card" id="q49">
+  <div class="q-hdr"><div class="q-num">49</div><div class="q-title">First Fee Payment per Student — ROW_NUMBER Pattern</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="cm">-- Find each student's FIRST fee payment</span>
+<span class="sqk">WITH</span> <span class="prop">FirstPayment</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span>
+        <span class="prop">StudentId</span>,
+        <span class="prop">Amount</span>,
+        <span class="prop">PaidDate</span>,
+        <span class="prop">ReceiptNo</span>,
+        <span class="sqf">ROW_NUMBER</span>() <span class="sqk">OVER</span> (
+            <span class="sqk">PARTITION BY</span> <span class="prop">StudentId</span>
+            <span class="sqk">ORDER BY</span>     <span class="prop">PaidDate</span> <span class="sqk">ASC</span>
+        ) <span class="sqk">AS</span> <span class="prop">Rn</span>
+    <span class="sqk">FROM</span>   <span class="prop">Fees</span>
+    <span class="sqk">WHERE</span>  <span class="prop">IsPaid</span> = <span class="num">1</span>
+)
+<span class="sqk">SELECT</span>
+    <span class="prop">s</span>.<span class="prop">Name</span>,
+    <span class="prop">fp</span>.<span class="prop">Amount</span>   <span class="sqk">AS</span> <span class="prop">FirstPaymentAmt</span>,
+    <span class="prop">fp</span>.<span class="prop">PaidDate</span> <span class="sqk">AS</span> <span class="prop">FirstPaymentDate</span>,
+    <span class="prop">fp</span>.<span class="prop">ReceiptNo</span>
+<span class="sqk">FROM</span>   <span class="prop">FirstPayment</span> <span class="prop">fp</span>
+<span class="sqk">JOIN</span>   <span class="prop">Students</span>     <span class="prop">s</span>
+    <span class="sqk">ON</span> <span class="prop">s</span>.<span class="prop">Id</span> = <span class="prop">fp</span>.<span class="prop">StudentId</span>
+<span class="sqk">WHERE</span>  <span class="prop">fp</span>.<span class="prop">Rn</span> = <span class="num">1</span>   <span class="cm">-- only first payment</span>
+<span class="sqk">ORDER BY</span> <span class="prop">fp</span>.<span class="prop">PaidDate</span>;
+
+<span class="cm">-- Change Rn = 1 to Rn = 2 for second payment
+-- Change ASC to DESC for LATEST payment</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"PARTITION BY StudentId + ORDER BY PaidDate ASC + ROW_NUMBER gives sequential numbers within each student's payments. Rn=1 = first. This is far better than a correlated subquery (SELECT MIN(PaidDate)...) because it returns ALL columns of the first row, not just the date. Classic pattern for 'first purchase', 'last login', 'most recent order'."</div>
+  </div>
+</div>
+
+<!-- ===== Q50 MONTHLY TREND ===== -->
+<div class="q-card" id="q50">
+  <div class="q-hdr"><div class="q-num">50</div><div class="q-title">Monthly Admission Trend with Moving Average</div><span class="tag hard">Hard</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="sqk">WITH</span> <span class="prop">MonthlyAdm</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span>
+        <span class="sqf">FORMAT</span>(<span class="prop">AdmissionDate</span>, <span class="str">'yyyy-MM'</span>) <span class="sqk">AS</span> <span class="prop">Mon</span>,
+        <span class="sqf">COUNT</span>(*)                           <span class="sqk">AS</span> <span class="prop">NewStudents</span>
+    <span class="sqk">FROM</span>     <span class="prop">Students</span>
+    <span class="sqk">WHERE</span>    <span class="sqf">YEAR</span>(<span class="prop">AdmissionDate</span>) = <span class="num">2026</span>
+    <span class="sqk">GROUP BY</span> <span class="sqf">FORMAT</span>(<span class="prop">AdmissionDate</span>, <span class="str">'yyyy-MM'</span>)
+)
+<span class="sqk">SELECT</span>
+    <span class="prop">Mon</span>,
+    <span class="prop">NewStudents</span>,
+    <span class="sqf">SUM</span>(<span class="prop">NewStudents</span>) <span class="sqk">OVER</span>
+        (<span class="sqk">ORDER BY</span> <span class="prop">Mon</span>)             <span class="sqk">AS</span> <span class="prop">CumulativeTotal</span>,
+    <span class="sqf">AVG</span>(<span class="prop">NewStudents</span> * <span class="num">1.0</span>) <span class="sqk">OVER</span> (
+        <span class="sqk">ORDER BY</span> <span class="prop">Mon</span>
+        <span class="sqk">ROWS BETWEEN</span> <span class="num">2</span> <span class="sqk">PRECEDING AND CURRENT ROW</span>
+    )                              <span class="sqk">AS</span> <span class="prop">MovingAvg3Month</span>
+<span class="sqk">FROM</span>   <span class="prop">MonthlyAdm</span>
+<span class="sqk">ORDER BY</span> <span class="prop">Mon</span>;
+
+<span class="cm">-- Mon      NewStudents  Cumulative  MovingAvg3
+-- 2026-01  120          120         120.00
+-- 2026-02  85           205         102.50
+-- 2026-03  140          345         115.00  ← avg of 120,85,140
+-- 2026-04  90           435         105.00  ← avg of 85,140,90
+
+-- ROWS BETWEEN 2 PRECEDING AND CURRENT ROW = 3-month window
+-- Change 2 to 5 for 6-month moving average</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer — Window Frame!</div>"ROWS BETWEEN N PRECEDING AND CURRENT ROW defines the window frame size. This gives a rolling 3-month average — smooths out seasonal spikes. CumulativeTotal uses default frame (UNBOUNDED PRECEDING to CURRENT ROW). Moving average is a common business analytics pattern — used in finance, attendance, enrollment trends. ZenCampus management dashboard: shows if admission numbers are growing or declining, identifies seasonal patterns."</div>
+  </div>
+</div>
+
+<!-- SUMMARY TABLE -->
+<div style="background:#13132a;border-radius:12px;padding:22px;margin:30px 0;border:1px solid #2a2a4a">
+  <h2 style="color:#f39c12;margin-bottom:14px">📊 Complete 50 Problems — All 3 Parts Summary</h2>
+  <table>
+    <tr><th>Part</th><th>Topic</th><th>Questions</th><th>Key Concepts</th></tr>
+    <tr><td style="color:#74b9ff">Part 1</td><td>C# String &amp; Numbers</td><td>Q1–Q17</td><td>Palindrome, Reverse, Anagram, Fibonacci, Prime, Sieve, Pattern</td></tr>
+    <tr><td style="color:#2ecc71">Part 2</td><td>Arrays, LINQ &amp; OOP</td><td>Q18–Q34</td><td>TwoSum, Kadane, Stack, Queue, LINQ GroupBy, Generic Repo, Builder</td></tr>
+    <tr><td style="color:#f39c12">Part 3</td><td>SQL Classic</td><td>Q35–Q50</td><td>2nd Highest (6 methods!), Window Fns, CTE, Running Total, Gaps, Pivot</td></tr>
+  </table>
+
+  <div style="margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+    <div style="background:#1a1000;border-radius:8px;padding:12px;border:1px solid #f39c12">
+      <div style="color:#f39c12;font-weight:bold;font-size:.85em">🔑 C# Key Patterns</div>
+      <div style="font-size:.78em;margin-top:6px;color:#c0c0c0">Two Pointer • HashSet O(n) • Memoization • yield return • StringBuilder over string concat • Tuple swap</div>
+    </div>
+    <div style="background:#0a2010;border-radius:8px;padding:12px;border:1px solid #2ecc71">
+      <div style="color:#2ecc71;font-weight:bold;font-size:.85em">🔑 LINQ Patterns</div>
+      <div style="font-size:.78em;margin-top:6px;color:#c0c0c0">GroupBy+Aggregate • SelectMany • OrderBy+ThenBy • MaxBy • FirstOrDefault • Any/All</div>
+    </div>
+    <div style="background:#001a0a;border-radius:8px;padding:12px;border:1px solid #74b9ff">
+      <div style="color:#74b9ff;font-weight:bold;font-size:.85em">🔑 SQL Key Patterns</div>
+      <div style="font-size:.78em;margin-top:6px;color:#c0c0c0">DENSE_RANK • PARTITION BY • Anti-join • Island-Gap • NULLIF • LAG/LEAD • Recursive CTE</div>
+    </div>
+  </div>
+</div>
+
+</div>
+<footer>
+  <p>Part 3 of 3 · Q35–Q50 · SQL Classic &amp; Advanced Window Functions</p>
+  <p style="margin-top:4px"><a href="PS_Part1_CSharp_StringNumbers.html" style="color:#e94560">← Part 1: String &amp; Number</a> &nbsp;|&nbsp; <a href="PS_Part2_CSharp_Arrays_LINQ.html" style="color:#2ecc71">← Part 2: Arrays &amp; LINQ</a></p>
+</footer>
+</body>
+</html>

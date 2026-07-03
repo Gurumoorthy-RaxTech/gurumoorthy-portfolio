@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASP.NET MVC Basics — Controllers, Views, Models, Routing | ZenCampus</title>
+<style>
+  :root{--accent:#be185d;--accent-dim:#9d174d;--accent-subtle:rgba(190,24,93,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(190,24,93,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.05rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}.at{color:#ffcb6b;}
+  .movie{background:linear-gradient(135deg,rgba(190,24,93,.12),rgba(190,24,93,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.9rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.5rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .flow{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;padding:1rem;background:var(--bg3);border-radius:10px;margin:.8rem 0;}
+  .fb{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.4rem .8rem;border-radius:8px;font-size:.8rem;font-weight:700;}
+  .fa{color:var(--muted);font-size:1.2rem;}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">ASP.NET MVC</span>
+  <a href="#mvc">MVC Pattern</a><a href="#controller">Controller</a><a href="#model">Model</a>
+  <a href="#view">View</a><a href="#routing">Routing</a><a href="#scenarios">Interview Q</a>
+</nav>
+<div class="hero">
+  <h1>ASP.NET MVC Basics</h1>
+  <p>Controllers · Views · Models · Routing · ViewBag · TempData · Model Binding · Validation</p>
+  <div class="tags">
+    <span class="tag">MVC Pattern</span><span class="tag">Razor Views</span><span class="tag">Model Binding</span>
+    <span class="tag">Data Annotations</span>
+    <span class="tag" style="background:rgba(190,24,93,.2);border-color:#be185d;color:#be185d;">Pink #be185d</span>
+  </div>
+</div>
+<main>
+
+<section id="mvc">
+  <h2>🏗️ MVC Pattern — Request Flow</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Kaaka Muttai (2015) — 3 roles, one mission</div>
+    <div class="mb">Kaaka Muttai-la characters different roles play pannuvaanga — oru direction, oru execution, oru display. MVC same: Model = data/business rules (epdi irukku), Controller = logic handler (yenna pannaNum), View = HTML display (user-ku epdi kaatanum). Client request → Controller handles → Model data pull → View render → Response return. Separation of concerns!</div></div>
+  </div>
+  <div class="flow">
+    <div class="fb">Browser Request</div><div class="fa">→</div>
+    <div class="fb">Router (URL match)</div><div class="fa">→</div>
+    <div class="fb">Controller Action</div><div class="fa">→</div>
+    <div class="fb">Model (Data + Logic)</div><div class="fa">→</div>
+    <div class="fb">View (Razor HTML)</div><div class="fa">→</div>
+    <div class="fb">HTTP Response</div>
+  </div>
+  <table>
+    <tr><th>Layer</th><th>Responsibility</th><th>ZenCampus Example</th></tr>
+    <tr><td>Model</td><td>Data + Validation rules + Business logic</td><td>Student.cs, Fee.cs, StudentCreateDto.cs</td></tr>
+    <tr><td>View</td><td>Display HTML using Razor syntax</td><td>Index.cshtml, Create.cshtml, Details.cshtml</td></tr>
+    <tr><td>Controller</td><td>Handle HTTP requests, orchestrate Model+View</td><td>StudentController.cs, FeeController.cs</td></tr>
+  </table>
+</section>
+
+<section id="controller">
+  <h2>⚡ Controllers — Handle HTTP Requests</h2>
+  <pre><code><span class="at">[Route("students")]</span>
+<span class="kw">public class</span> <span class="cl">StudentController</span> : <span class="cl">Controller</span>
+{
+    <span class="kw">private readonly</span> <span class="cl">IStudentService</span> _service;
+
+    <span class="kw">public</span> <span class="cl">StudentController</span>(<span class="cl">IStudentService</span> service)
+        =&gt; _service = service;  <span class="cm">// dependency injection</span>
+
+    <span class="cm">// GET /students — list all students</span>
+    <span class="at">[HttpGet]</span>
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">IActionResult</span>&gt; Index(<span class="kw">int</span> schoolId)
+    {
+        <span class="kw">var</span> students = <span class="kw">await</span> _service.GetAllAsync(schoolId);
+        <span class="kw">return</span> View(students);  <span class="cm">// pass model to View</span>
+    }
+
+    <span class="cm">// GET /students/5 — show single student</span>
+    <span class="at">[HttpGet("{id:int}")]</span>
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">IActionResult</span>&gt; Details(<span class="kw">int</span> id)
+    {
+        <span class="kw">var</span> student = <span class="kw">await</span> _service.GetByIdAsync(id);
+        <span class="kw">if</span> (student <span class="kw">is null</span>) <span class="kw">return</span> NotFound();  <span class="cm">// 404</span>
+        <span class="kw">return</span> View(student);
+    }
+
+    <span class="cm">// GET /students/create — show empty form</span>
+    <span class="at">[HttpGet("create")]</span>
+    <span class="kw">public</span> <span class="cl">IActionResult</span> Create() =&gt; View();
+
+    <span class="cm">// POST /students/create — process form submission</span>
+    <span class="at">[HttpPost("create")]</span>
+    <span class="at">[ValidateAntiForgeryToken]</span>  <span class="cm">// CSRF protection</span>
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">IActionResult</span>&gt; Create(<span class="cl">CreateStudentViewModel</span> model)
+    {
+        <span class="kw">if</span> (!ModelState.IsValid)    <span class="cm">// check validation annotations</span>
+            <span class="kw">return</span> View(model);       <span class="cm">// re-show form with errors</span>
+
+        <span class="kw">await</span> _service.CreateAsync(model);
+
+        TempData[<span class="str">"Success"</span>] = <span class="str">"Student admitted successfully!"</span>;
+        <span class="kw">return</span> RedirectToAction(<span class="kw">nameof</span>(Index));  <span class="cm">// POST-REDIRECT-GET</span>
+    }
+
+    <span class="cm">// DELETE /students/5 — AJAX delete</span>
+    <span class="at">[HttpPost("{id}/delete")]</span>
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">IActionResult</span>&gt; Delete(<span class="kw">int</span> id)
+    {
+        <span class="kw">await</span> _service.DeleteAsync(id);
+        <span class="kw">return</span> Json(<span class="kw">new</span> { success = <span class="kw">true</span> });  <span class="cm">// JSON for AJAX</span>
+    }
+}</code></pre>
+
+  <h3>IActionResult Return Types</h3>
+  <pre><code><span class="kw">return</span> View();                        <span class="cm">// render View/ControllerName/ActionName.cshtml</span>
+<span class="kw">return</span> View(<span class="str">"CustomView"</span>, model);    <span class="cm">// specify view name + model</span>
+<span class="kw">return</span> RedirectToAction(<span class="str">"Index"</span>);    <span class="cm">// 302 redirect to action</span>
+<span class="kw">return</span> RedirectToAction(<span class="str">"Details"</span>, <span class="kw">new</span> { id = student.Id }); <span class="cm">// with route data</span>
+<span class="kw">return</span> NotFound();                    <span class="cm">// 404</span>
+<span class="kw">return</span> BadRequest(<span class="str">"Invalid data"</span>);   <span class="cm">// 400</span>
+<span class="kw">return</span> Unauthorized();               <span class="cm">// 401</span>
+<span class="kw">return</span> Json(data);                   <span class="cm">// JSON response (for AJAX)</span>
+<span class="kw">return</span> Content(<span class="str">"Hello"</span>);            <span class="cm">// plain text</span>
+<span class="kw">return</span> File(bytes, <span class="str">"application/pdf"</span>, <span class="str">"report.pdf"</span>); <span class="cm">// file download</span></code></pre>
+</section>
+
+<section id="model">
+  <h2>📋 Models and Data Annotations</h2>
+  <pre><code><span class="kw">public class</span> <span class="cl">CreateStudentViewModel</span>
+{
+    <span class="at">[Required(ErrorMessage = "Student name is required")]</span>
+    <span class="at">[StringLength(100, MinimumLength = 2)]</span>
+    <span class="kw">public string</span> Name { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="kw">string</span>.Empty;
+
+    <span class="at">[Required]</span>
+    <span class="at">[Range(1, 12, ErrorMessage = "Class must be 1 to 12")]</span>
+    <span class="kw">public int</span> ClassId { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    <span class="at">[EmailAddress(ErrorMessage = "Invalid email format")]</span>
+    <span class="kw">public string?</span> Email { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    <span class="at">[Phone]</span>
+    <span class="at">[Required(ErrorMessage = "Parent mobile required")]</span>
+    <span class="kw">public string</span> ParentMobile { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="kw">string</span>.Empty;
+
+    <span class="at">[DataType(DataType.Date)]</span>
+    <span class="at">[DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}")]</span>
+    <span class="kw">public</span> <span class="cl">DateTime</span> DateOfBirth { <span class="kw">get</span>; <span class="kw">set</span>; }
+}
+
+<span class="cm">// ViewBag — dynamic, one-way Controller → View (NOT across redirects)</span>
+ViewBag.PageTitle = <span class="str">"Student List"</span>;
+ViewBag.TotalCount = students.Count;
+<span class="cm">// In Razor: @ViewBag.PageTitle</span>
+
+<span class="cm">// ViewData — dictionary version (string key)</span>
+ViewData[<span class="str">"Title"</span>] = <span class="str">"Admission Form"</span>;
+
+<span class="cm">// TempData — persists across ONE redirect (POST-Redirect-GET pattern)</span>
+TempData[<span class="str">"SuccessMessage"</span>] = <span class="str">"Student admitted!"</span>;
+<span class="kw">return</span> RedirectToAction(<span class="str">"Index"</span>);
+<span class="cm">// In Index view: @TempData["SuccessMessage"] — shows message after redirect</span>
+
+<span class="cm">// SelectList — for dropdowns in forms</span>
+ViewBag.Classes = <span class="kw">new</span> <span class="cl">SelectList</span>(
+    <span class="kw">await</span> _classService.GetAllAsync(schoolId),
+    <span class="str">"Id"</span>,       <span class="cm">// value field</span>
+    <span class="str">"ClassName"</span> <span class="cm">// display field</span>
+);</code></pre>
+</section>
+
+<section id="view">
+  <h2>🖥️ Razor Views — HTML + C#</h2>
+  <pre><code><span class="cm">&lt;!-- Views/Student/Index.cshtml --&gt;</span>
+@model <span class="cl">IEnumerable</span>&lt;<span class="cl">Student</span>&gt;
+@{
+    ViewData[<span class="str">"Title"</span>] = <span class="str">"Students"</span>;
+    <span class="kw">var</span> totalCount = Model.Count();
+}
+
+<span class="cm">&lt;!-- Display TempData message --&gt;</span>
+@<span class="kw">if</span> (TempData[<span class="str">"Success"</span>] <span class="kw">is</span> <span class="kw">string</span> msg)
+{
+    &lt;div <span class="kw">class</span>=<span class="str">"alert alert-success"</span>&gt;@msg&lt;/div&gt;
+}
+
+&lt;h1&gt;Students (@totalCount)&lt;/h1&gt;
+
+<span class="cm">&lt;!-- Tag Helpers for links/actions --&gt;</span>
+&lt;a asp-action=<span class="str">"Create"</span>&gt;+ Add Student&lt;/a&gt;
+
+&lt;table&gt;
+@<span class="kw">foreach</span> (<span class="kw">var</span> student <span class="kw">in</span> Model)
+{
+    &lt;tr&gt;
+        &lt;td&gt;@student.Name&lt;/td&gt;
+        &lt;td&gt;@student.AdmNo&lt;/td&gt;
+        &lt;td&gt;
+            &lt;a asp-action=<span class="str">"Details"</span> asp-route-id=<span class="str">"@student.Id"</span>&gt;View&lt;/a&gt;
+            &lt;a asp-action=<span class="str">"Edit"</span> asp-route-id=<span class="str">"@student.Id"</span>&gt;Edit&lt;/a&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+}
+&lt;/table&gt;
+
+<span class="cm">&lt;!-- Create.cshtml — Form with Tag Helpers --&gt;</span>
+@model <span class="cl">CreateStudentViewModel</span>
+&lt;form asp-action=<span class="str">"Create"</span> method=<span class="str">"post"</span>&gt;
+    &lt;div <span class="kw">class</span>=<span class="str">"form-group"</span>&gt;
+        &lt;label asp-for=<span class="str">"Name"</span>&gt;&lt;/label&gt;
+        &lt;input asp-for=<span class="str">"Name"</span> <span class="kw">class</span>=<span class="str">"form-control"</span> /&gt;
+        &lt;span asp-validation-for=<span class="str">"Name"</span> <span class="kw">class</span>=<span class="str">"text-danger"</span>&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div <span class="kw">class</span>=<span class="str">"form-group"</span>&gt;
+        &lt;label asp-for=<span class="str">"ClassId"</span>&gt;&lt;/label&gt;
+        &lt;select asp-for=<span class="str">"ClassId"</span> asp-items=<span class="str">"ViewBag.Classes"</span> <span class="kw">class</span>=<span class="str">"form-control"</span>&gt;
+            &lt;option value=<span class="str">""</span>&gt;-- Select Class --&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+    &lt;button type=<span class="str">"submit"</span>&gt;Admit Student&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+</section>
+
+<section id="routing">
+  <h2>🛣️ Routing — URL to Action Mapping</h2>
+  <pre><code><span class="cm">// Attribute routing (PREFERRED in .NET Core)</span>
+<span class="at">[Route("school/{schoolId}/students")]</span>
+<span class="kw">public class</span> <span class="cl">StudentController</span> : <span class="cl">Controller</span>
+{
+    <span class="at">[HttpGet]</span>
+    <span class="kw">public</span> <span class="cl">IActionResult</span> Index(<span class="kw">int</span> schoolId) { ... }  <span class="cm">// GET /school/1/students</span>
+
+    <span class="at">[HttpGet("{id:int}")]</span>
+    <span class="kw">public</span> <span class="cl">IActionResult</span> Details(<span class="kw">int</span> id) { ... }       <span class="cm">// GET /school/1/students/5</span>
+
+    <span class="at">[HttpGet("search")]</span>
+    <span class="kw">public</span> <span class="cl">IActionResult</span> Search(<span class="kw">string</span> q) { ... }      <span class="cm">// GET /school/1/students/search?q=basha</span>
+}
+
+<span class="cm">// Route constraints</span>
+<span class="at">[HttpGet("{id:int}")]</span>          <span class="cm">// only integers</span>
+<span class="at">[HttpGet("{name:alpha}")]</span>      <span class="cm">// only letters</span>
+<span class="at">[HttpGet("{admNo:regex(^ADM)}")]</span> <span class="cm">// regex pattern</span>
+
+<span class="cm">// Convention routing (program.cs)</span>
+app.MapControllerRoute(
+    name: <span class="str">"default"</span>,
+    pattern: <span class="str">"{controller=Home}/{action=Index}/{id?}"</span>);
+<span class="cm">// /Student/Details/5 → StudentController.Details(id: 5)</span>
+
+<span class="cm">// Model Binding — auto-binds from route/query/form</span>
+<span class="kw">public</span> <span class="cl">IActionResult</span> Index(
+    <span class="kw">int</span> schoolId,     <span class="cm">// from route: /students?schoolId=1</span>
+    <span class="kw">string?</span> search,   <span class="cm">// from query: ?search=basha</span>
+    <span class="kw">int</span> page = <span class="num">1</span>     <span class="cm">// default value if not provided</span>
+) { ... }
+
+<span class="cm">// [FromBody] — for JSON/API controllers</span>
+<span class="at">[HttpPost]</span>
+<span class="kw">public</span> <span class="cl">IActionResult</span> Create(<span class="at">[FromBody]</span> <span class="cl">CreateStudentDto</span> dto) { ... }</code></pre>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">Explain the MVC pattern and what each part does.</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Model: holds data and business rules. Defines what data looks like and validation. Student.cs, StudentCreateDto.cs. View: renders HTML to user. Razor .cshtml files. Knows nothing about where data came from. Controller: receives HTTP request, reads data from Model, passes to View. Orchestrates Model + View. No business logic should live here. Separation of concerns means: change DB schema → update Model only. Change HTML layout → update View only. Change URL structure → update Controller/Routing only.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What is the difference between ViewBag, ViewData, and TempData?</span><span class="st">Data Passing</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>ViewBag: dynamic property bag. ViewBag.Title = "Students". Accessed in View as @ViewBag.Title. Lost after redirect. ViewData: dictionary version. ViewData["Title"] = "Students". @ViewData["Title"]. Same limitations. TempData: stored in session, survives ONE redirect. Used for POST-Redirect-GET pattern: after form submit → redirect → show success message. TempData["Success"] = "Saved!"; RedirectToAction → next page shows message. After one render, TempData is cleared. Use TempData.Keep("key") if needed beyond first read.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is the POST-Redirect-GET pattern and why use it?</span><span class="st">Pattern</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Problem: After POST form submit → return View directly. User presses F5 (refresh) → re-submits form → duplicate student created! Solution: POST form → process → RedirectToAction (GET) → show result page. Now F5 refreshes the GET page, not re-submits POST. ZenCampus: [HttpPost] Create() → save student → TempData["Success"] → RedirectToAction("Index"). Index GET action shows students + reads TempData success message.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">How does Model validation work in ASP.NET MVC?</span><span class="st">Validation</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>1) Annotate ViewModel with [Required], [StringLength], [Range], [EmailAddress], etc. 2) In controller: if (!ModelState.IsValid) return View(model) — re-shows form with errors. 3) In Razor view: asp-validation-for="PropertyName" renders error messages. 4) Client-side: jQuery Unobtrusive Validation script validates in browser before submit. Data annotations are checked on both client AND server. Never skip server-side check — client can be bypassed with curl/Postman.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">What is a ViewModel vs a Model/Entity?</span><span class="st">Architecture</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Entity/Model: maps to DB table. Has all fields. Student.cs with Id, Name, SchoolId, etc. ViewModel: tailored for a specific View. Contains EXACTLY what the view needs — no more. Advantages: 1) Don't expose sensitive entity fields (passwords, internal IDs). 2) Add computed/display-only fields not in DB (Age calculated from DOB, FormattedFee). 3) Combine multiple entities: StudentDetailsViewModel = Student + List&lt;Fee&gt; + List&lt;Attendance&gt;. Never pass raw entities to views — use ViewModels.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">What is model binding and how does it work?</span><span class="st">Binding</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Model binding: ASP.NET Core automatically maps HTTP request data to action method parameters. Sources (checked in order): 1) Route data (/students/5 → id=5). 2) Query string (?page=2 → page=2). 3) Form body (POST form fields → ViewModel properties). 4) JSON body ([FromBody]). 5) HTTP headers ([FromHeader]). For complex types: each property matched by name. [BindNever] to exclude properties. [BindRequired] to enforce required. ZenCampus: Create(CreateStudentViewModel model) — MVC populates all model properties from form POST.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">What is [ValidateAntiForgeryToken] and why is it needed?</span><span class="st">Security</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Protects against CSRF (Cross-Site Request Forgery). Without it: attacker's website can make a POST to your site using the logged-in user's cookies. [ValidateAntiForgeryToken] on POST actions validates a hidden form field token generated by @Html.AntiForgeryToken() (or asp-action tag helper does it automatically). If token missing or mismatched → 400 error. Always add to POST, PUT, DELETE actions that change data. AntiForgery token included automatically when using form asp-action tag helper.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">Explain the difference between Controller and ApiController.</span><span class="st">Architecture</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Controller (inherits Controller): for MVC — returns IActionResult, Views, ViewBag. For browser-rendered HTML pages. ApiController ([ApiController] attribute + inherits ControllerBase): for REST APIs — returns JSON/XML. Automatic model validation (400 if invalid, no manual ModelState.IsValid check). [FromBody] assumed for complex types. Returns ActionResult&lt;T&gt;. ZenCampus: StudentController : Controller for web pages (admission forms). StudentsApiController : ControllerBase for mobile app / React frontend API calls.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">What are Tag Helpers and how are they different from HTML Helpers?</span><span class="st">Views</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>HTML Helpers (old): @Html.TextBoxFor(m => m.Name), @Html.ActionLink("Details", "Student", new { id = 1 }) — C# method calls embedded in HTML. Tag Helpers (modern): &lt;input asp-for="Name" /&gt;, &lt;a asp-action="Details" asp-route-id="1"&gt; — look like HTML attributes. More readable, IntelliSense support, designer-friendly. Tag helpers generate correct HTML including name, id, validation attributes automatically. Prefer tag helpers in new projects — they're the ASP.NET Core way.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">How do you handle AJAX calls from MVC views?</span><span class="st">AJAX</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>// Controller returns JSON for AJAX
+[HttpPost("{id}/delete")]
+public async Task<IActionResult> Delete(int id)
+{
+    await _service.DeleteAsync(id);
+    return Json(new { success = true, message = "Deleted" });
+}
+
+// OR return IActionResult with status code
+return Ok(new { success = true });
+return BadRequest(new { error = "Not found" });
+
+// JavaScript in View
+fetch('/students/5/delete', {
+    method: 'POST',
+    headers: {
+        'RequestVerificationToken': document.querySelector('[name="__RequestVerificationToken"]').value
+    }
+})
+.then(r => r.json())
+.then(data => {
+    if (data.success) row.remove();
+});</code></pre></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. What is the correct order of layers in the MVC request flow?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','View is the output layer — it doesn\'t receive the HTTP request first.')">View → Controller → Model</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Browser → Router matches URL to Controller action → Controller calls Model/Service for data → Model data passed to View → Razor renders HTML → Browser displays response.')">Browser → Router → Controller → Model → View → Response</button>
+    <button class="qb" onclick="ans(this,'wrong','Model doesn\'t receive the browser request.')">Model → View → Controller</button>
+    <button class="qb" onclick="ans(this,'wrong','Controller doesn\'t send directly to browser — it goes through View.')">Controller → Browser → View → Model</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. When should you use TempData instead of ViewBag?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','ViewBag survives across redirects — incorrect. It\'s lost after redirect.')">When you need data to survive a page refresh</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! TempData uses session to persist data across ONE redirect. Perfect for POST-Redirect-GET pattern: form submit → save → redirect → show success message. ViewBag/ViewData only works within the same request — lost on redirect.')">When you need data to survive one redirect (POST-Redirect-GET)</button>
+    <button class="qb" onclick="ans(this,'wrong','TempData can hold any object, not just strings.')">When you need to pass a string value</button>
+    <button class="qb" onclick="ans(this,'wrong','TempData is stored server-side in session — not faster than ViewBag for same-request data.')">When you need faster data access</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. What does ModelState.IsValid check?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','ModelState.IsValid doesn\'t check database — it validates against data annotations only.')">Whether the data exists in the database</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! ModelState.IsValid returns true if all posted data passes the Data Annotations rules ([Required], [Range], [EmailAddress], etc.) on the ViewModel. Returns false if any rule is violated — then you return View(model) to re-show form with error messages.')">Whether all data annotation validation rules pass</button>
+    <button class="qb" onclick="ans(this,'wrong','ModelState.IsValid doesn\'t check view existence.')">Whether the View file exists</button>
+    <button class="qb" onclick="ans(this,'wrong','Authentication is separate — [Authorize] attribute handles that.')">Whether the user is authenticated</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. What is the purpose of [ValidateAntiForgeryToken]?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','[ValidateAntiForgeryToken] prevents CSRF, not XSS. Use textContent/encoding for XSS.')">Prevents XSS (Cross-Site Scripting)</button>
+    <button class="qb" onclick="ans(this,'wrong','It validates model data — data annotations handle that.')">Validates model data annotations</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! CSRF: attacker tricks logged-in user into submitting a malicious form to your site. [ValidateAntiForgeryToken] validates a hidden token in the form that the attacker cannot know, blocking the attack.')">Prevents CSRF (Cross-Site Request Forgery) attacks</button>
+    <button class="qb" onclick="ans(this,'wrong','HTTPS and SSL handle encryption — not this attribute.')">Encrypts form data during transmission</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can explain MVC — what each layer does</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write a Controller with GET and POST actions</li>
+    <li onclick="ck(this)"><input type="checkbox">I know all IActionResult return types</li>
+    <li onclick="ck(this)"><input type="checkbox">I use Data Annotations for model validation</li>
+    <li onclick="ck(this)"><input type="checkbox">I know ViewBag vs ViewData vs TempData</li>
+    <li onclick="ck(this)"><input type="checkbox">I implement POST-Redirect-GET with TempData</li>
+    <li onclick="ck(this)"><input type="checkbox">I use Tag Helpers in Razor views</li>
+    <li onclick="ck(this)"><input type="checkbox">I add [ValidateAntiForgeryToken] to POST actions</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">ASP.NET MVC Basics Complete ✓ — Controllers, Views, Models, Routing!</p>
+  <p>Accent: Pink #be185d · Next: SQL Basics</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

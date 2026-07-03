@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 25 - Dependency Injection Deep Dive | .NET Interview Prep</title>
+    <style>
+        :root {
+            --accent: #6366f1;
+            --accent-light: #a5b4fc;
+            --accent-mid: #818cf8;
+            --accent-dark: #312e81;
+            --bg: #0d0d1a;
+            --bg3: #07071a;
+            --card2: #111827;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --text-bright: #eef2ff;
+            --border: #312e81;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; line-height:1.6; }
+        .progress-bar { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-light)); width:0%; z-index:200; transition:width 0.1s; }
+        nav { position:sticky; top:0; z-index:100; background:rgba(13,13,26,0.96); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); padding:0.75rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+        .nav-brand { font-size:0.9rem; font-weight:700; color:var(--accent-light); }
+        .nav-links { display:flex; gap:1rem; list-style:none; }
+        .nav-links a { color:var(--text-dim); text-decoration:none; font-size:0.8rem; transition:color 0.2s; }
+        .nav-links a:hover { color:var(--accent-light); }
+        .hero { padding:4rem 2rem 2rem; text-align:center; background:radial-gradient(ellipse at top,rgba(99,102,241,0.14) 0%,transparent 70%); }
+        .day-badge { display:inline-block; background:linear-gradient(135deg,var(--accent),var(--accent-light)); color:#eef2ff; padding:0.3rem 1rem; border-radius:2rem; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; margin-bottom:1rem; }
+        .hero h1 { font-size:2.5rem; font-weight:800; background:linear-gradient(135deg,var(--accent-light),#fff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:0.5rem; }
+        .hero-sub { color:var(--text-dim); font-size:1rem; max-width:640px; margin:0 auto 1.5rem; }
+        .hero-tags { display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap; }
+        .tag { background:rgba(99,102,241,0.14); border:1px solid rgba(99,102,241,0.4); color:var(--accent-light); padding:0.25rem 0.75rem; border-radius:1rem; font-size:0.75rem; }
+        .container { max-width:1100px; margin:0 auto; padding:0 1.5rem; }
+        .section-title { font-size:1.5rem; font-weight:700; color:var(--accent-light); margin:2.5rem 0 1rem; display:flex; align-items:center; gap:0.5rem; }
+        .section-title::before { content:''; display:inline-block; width:4px; height:1.5rem; background:linear-gradient(180deg,var(--accent),var(--accent-light)); border-radius:2px; }
+        .concept-card { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; position:relative; overflow:hidden; }
+        .concept-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-light)); }
+        .concept-title { font-size:1.1rem; font-weight:700; color:var(--text-bright); margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+        pre { background:#040418; border:1px solid var(--border); border-radius:8px; padding:1rem 1.25rem; overflow-x:auto; font-family:'Cascadia Code','Fira Code',monospace; font-size:0.82rem; line-height:1.7; margin:0.75rem 0; }
+        .kw { color:#60a5fa; } .str { color:#86efac; } .num { color:#fcd34d; }
+        .cmt { color:#4b5563; } .attr { color:#f9a8d4; } .mth { color:#a5b4fc; } .cls { color:#fde68a; }
+        .info-box { background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.4); border-left:4px solid var(--accent); border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .warn-box { background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.4); border-left:4px solid #f59e0b; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .danger-box { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .good-box { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.3); border-left:4px solid #22c55e; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        table { width:100%; border-collapse:collapse; margin:0.75rem 0; font-size:0.85rem; }
+        th { background:var(--bg3); color:var(--accent-light); padding:0.6rem 0.8rem; text-align:left; border:1px solid var(--border); font-weight:600; }
+        td { padding:0.6rem 0.8rem; border:1px solid var(--border); vertical-align:top; }
+        tr:nth-child(even) td { background:rgba(255,255,255,0.02); }
+        .movie-box { background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(165,180,252,0.03)); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; display:flex; gap:1rem; align-items:flex-start; }
+        .movie-icon { font-size:2rem; flex-shrink:0; }
+        .movie-content h4 { color:var(--accent-light); font-size:0.9rem; font-weight:700; margin-bottom:0.3rem; }
+        .movie-content p { color:var(--text-dim); font-size:0.85rem; }
+        .scenario-card { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .scenario-header { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+        .scenario-q { font-size:0.95rem; font-weight:600; color:var(--text-bright); flex:1; }
+        .scenario-type { font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:1rem; font-weight:600; white-space:nowrap; flex-shrink:0; }
+        .type-prod { background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.3); }
+        .type-design { background:rgba(99,102,241,0.2); color:#a5b4fc; border:1px solid rgba(99,102,241,0.3); }
+        .type-concept { background:rgba(168,85,247,0.2); color:#d8b4fe; border:1px solid rgba(168,85,247,0.3); }
+        .type-exp { background:rgba(34,197,94,0.2); color:#86efac; border:1px solid rgba(34,197,94,0.3); }
+        .reveal-btn { background:none; border:1px solid var(--border); color:var(--accent-light); padding:0.4rem 0.9rem; border-radius:6px; cursor:pointer; font-size:0.8rem; margin-top:0.75rem; transition:all 0.2s; display:block; }
+        .reveal-btn:hover { background:var(--accent); border-color:var(--accent); color:#eef2ff; font-weight:600; }
+        .answer { display:none; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); font-size:0.88rem; line-height:1.7; }
+        .answer.visible { display:block; }
+        .answer pre { font-size:0.78rem; }
+        .quiz-card { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .quiz-q { font-size:0.95rem; font-weight:600; color:var(--text-bright); margin-bottom:0.75rem; }
+        .quiz-options { display:grid; gap:0.5rem; }
+        .quiz-opt { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.9rem; cursor:pointer; font-size:0.85rem; color:var(--text); text-align:left; transition:all 0.2s; }
+        .quiz-opt:hover:not(:disabled) { border-color:var(--accent); }
+        .quiz-opt.correct { background:rgba(34,197,94,0.15); border-color:#22c55e; color:#86efac; }
+        .quiz-opt.wrong { background:rgba(239,68,68,0.15); border-color:#ef4444; color:#fca5a5; }
+        .quiz-feedback { display:none; margin-top:0.5rem; font-size:0.82rem; padding:0.5rem 0.75rem; border-radius:6px; }
+        .quiz-feedback.show { display:block; }
+        .checklist { list-style:none; display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:0.5rem; margin:1rem 0; }
+        .checklist li { display:flex; align-items:flex-start; gap:0.5rem; font-size:0.85rem; }
+        .checklist input[type="checkbox"] { accent-color:var(--accent-light); width:16px; height:16px; cursor:pointer; flex-shrink:0; margin-top:2px; }
+        .checklist label { cursor:pointer; color:var(--text-dim); }
+        .checklist input:checked + label { color:var(--text); text-decoration:line-through; }
+        .two-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        code { background:rgba(99,102,241,0.14); border:1px solid rgba(99,102,241,0.35); border-radius:4px; padding:0.1rem 0.4rem; font-family:'Cascadia Code',monospace; font-size:0.85em; color:var(--accent-light); }
+        .tanglish { color:var(--accent-light); font-style:italic; }
+        .lt-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:0.75rem 0; }
+        .lt-box { border-radius:10px; padding:1rem; text-align:center; border:1px solid; }
+        .lt-t { background:rgba(34,197,94,0.08); border-color:rgba(34,197,94,0.35); }
+        .lt-s { background:rgba(99,102,241,0.08); border-color:rgba(99,102,241,0.35); }
+        .lt-sg { background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.35); }
+        .lt-title { font-weight:700; font-size:0.9rem; margin-bottom:0.4rem; }
+        .lt-t .lt-title { color:#86efac; }
+        .lt-s .lt-title { color:#a5b4fc; }
+        .lt-sg .lt-title { color:#fca5a5; }
+        .lt-sub { font-size:0.75rem; color:var(--text-dim); }
+        footer { text-align:center; padding:2rem; color:var(--text-dim); font-size:0.8rem; border-top:1px solid var(--border); margin-top:3rem; }
+        @media (max-width:768px) { .two-col,.lt-grid { grid-template-columns:1fr; } .hero h1 { font-size:1.8rem; } nav { padding:0.75rem 1rem; } .nav-links { display:none; } }
+    </style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<nav>
+    <div class="nav-brand">&#127891; Day 25 / 60 &mdash; Dependency Injection Deep Dive</div>
+    <ul class="nav-links">
+        <li><a href="#lifetimes">Lifetimes</a></li>
+        <li><a href="#captive">Captive</a></li>
+        <li><a href="#keyed">Keyed Services</a></li>
+        <li><a href="#factory">Factory</a></li>
+        <li><a href="#options">Options</a></li>
+        <li><a href="#validate">Validate</a></li>
+        <li><a href="#antipattern">Anti-Pattern</a></li>
+        <li><a href="#scenarios">Scenarios</a></li>
+    </ul>
+</nav>
+
+<div class="hero">
+    <div class="day-badge">DAY 25 OF 60</div>
+    <h1>Dependency Injection Deep Dive</h1>
+    <p class="hero-sub">Lifetimes, Captive Dependencies, IServiceProvider, Keyed Services, Factory Pattern, Options Pattern &mdash; ZenCampus wiring for 200 schools</p>
+    <div class="hero-tags">
+        <span class="tag">Transient / Scoped / Singleton</span>
+        <span class="tag">Captive Dependency</span>
+        <span class="tag">Keyed Services</span>
+        <span class="tag">Factory Pattern</span>
+        <span class="tag">IOptions / IOptionsSnapshot</span>
+        <span class="tag">ValidateOnBuild</span>
+        <span class="tag">Decorator</span>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- LIFETIMES -->
+<h2 class="section-title" id="lifetimes">The 3 DI Lifetimes</h2>
+<div class="concept-card">
+    <div class="concept-title"><span>&#9203;</span> When is a new instance created? That is the lifetime question.</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Wrong lifetime register pannombodhu</span> &mdash; data leak between requests, DbContext reused across threads, stale data. Most common source of hard-to-reproduce bugs in .NET apps.</p>
+    <div class="lt-grid">
+        <div class="lt-box lt-t">
+            <div class="lt-title">TRANSIENT</div>
+            <div style="font-size:0.8rem;color:#86efac;margin:0.3rem 0">New instance every GetService call</div>
+            <div class="lt-sub">Safest but most allocations. Use for lightweight stateless services.</div>
+            <div style="font-size:0.75rem;color:#86efac;margin-top:0.5rem">AddTransient&lt;T&gt;()</div>
+        </div>
+        <div class="lt-box lt-s">
+            <div class="lt-title">SCOPED</div>
+            <div style="font-size:0.8rem;color:#a5b4fc;margin:0.3rem 0">New instance per HTTP request</div>
+            <div class="lt-sub">Same object within one request. Different requests get different instances.</div>
+            <div style="font-size:0.75rem;color:#a5b4fc;margin-top:0.5rem">AddScoped&lt;T&gt;()</div>
+        </div>
+        <div class="lt-box lt-sg">
+            <div class="lt-title">SINGLETON</div>
+            <div style="font-size:0.8rem;color:#fca5a5;margin:0.3rem 0">One instance for app lifetime</div>
+            <div class="lt-sub">Shared by ALL requests. Must be thread-safe. Created at first resolve.</div>
+            <div style="font-size:0.75rem;color:#fca5a5;margin-top:0.5rem">AddSingleton&lt;T&gt;()</div>
+        </div>
+    </div>
+    <table>
+        <tr><th>ZenCampus Service</th><th>Lifetime</th><th>Reason</th></tr>
+        <tr><td><code>ZenCampusDbContext</code></td><td style="color:#a5b4fc">Scoped</td><td>One DB connection per request, tracks changes for that request only</td></tr>
+        <tr><td><code>IStudentRepository</code></td><td style="color:#a5b4fc">Scoped</td><td>Uses DbContext &mdash; must match its lifetime (dependency chain rule)</td></tr>
+        <tr><td><code>IFeeService</code></td><td style="color:#a5b4fc">Scoped</td><td>Uses IStudentRepository &mdash; match the whole chain</td></tr>
+        <tr><td><code>ILogger&lt;T&gt;</code></td><td style="color:#fca5a5">Singleton</td><td>Thread-safe, stateless, expensive to create once</td></tr>
+        <tr><td><code>IMemoryCache</code></td><td style="color:#fca5a5">Singleton</td><td>Must be shared across all requests to be useful</td></tr>
+        <tr><td><code>ISmsValidator</code> (stateless)</td><td style="color:#fca5a5">Singleton</td><td>No state, pure functions &mdash; safe to share</td></tr>
+        <tr><td><code>IHttpClientFactory</code></td><td style="color:#fca5a5">Singleton</td><td>Manages pooled socket handlers; typed clients are transient</td></tr>
+        <tr><td><code>AuditEntry</code> (per-operation)</td><td style="color:#86efac">Transient</td><td>Unique mutable state per service call, not per request</td></tr>
+    </table>
+    <pre><span class="cmt">// Program.cs -- correct ZenCampus registrations</span>
+builder.Services.<span class="mth">AddDbContext</span>&lt;<span class="cls">ZenCampusDbContext</span>&gt;(opts =&gt;
+    opts.<span class="mth">UseSqlServer</span>(builder.Configuration.<span class="mth">GetConnectionString</span>(<span class="str">"ZenCampusDb"</span>)));
+
+builder.Services.<span class="mth">AddScoped</span>&lt;<span class="cls">IStudentRepository</span>, <span class="cls">StudentRepository</span>&gt;();
+builder.Services.<span class="mth">AddScoped</span>&lt;<span class="cls">IFeeService</span>,         <span class="cls">FeeService</span>&gt;();
+builder.Services.<span class="mth">AddScoped</span>&lt;<span class="cls">IAdmissionService</span>,   <span class="cls">AdmissionService</span>&gt;();
+
+builder.Services.<span class="mth">AddSingleton</span>&lt;<span class="cls">ISmsValidator</span>,       <span class="cls">SmsValidator</span>&gt;();
+builder.Services.<span class="mth">AddSingleton</span>&lt;<span class="cls">IDateTimeProvider</span>,  <span class="cls">SystemDateTimeProvider</span>&gt;();
+
+builder.Services.<span class="mth">AddHttpClient</span>&lt;<span class="cls">IMsg91Client</span>, <span class="cls">Msg91Client</span>&gt;(c =&gt;
+    c.BaseAddress = <span class="kw">new</span> <span class="cls">Uri</span>(builder.Configuration[<span class="str">"Msg91:BaseUrl"</span>]!));
+<span class="cmt">// Typed HttpClient is transient; AddHttpClient manages socket pooling via singleton handler</span></pre>
+</div>
+
+<!-- CAPTIVE DEPENDENCY -->
+<h2 class="section-title" id="captive">Captive Dependency &mdash; The Silent Data Leak</h2>
+<div class="concept-card">
+    <div class="concept-title"><span>&#128290;</span> Singleton holding Scoped = scoped object lives forever = data corruption</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Singleton-la scoped service inject panna</span> &mdash; scoped object singleton-oda lifetime-la live pannum &mdash; app lifetime! Same DbContext forever. Request 1 student data, request 2 reads stale change-tracked state. Cross-user data leak &mdash; serious GDPR violation.</p>
+    <div class="danger-box">
+        <strong>The ZenCampus Captive Dependency Bug:</strong><br>
+        SmsNotificationService (Singleton) injects IStudentRepository (Scoped)<br>
+        Same DbContext held for the entire app lifetime<br>
+        Request A and Request B share the same change-tracking context<br>
+        Parent B receives Parent A's fee receipt &mdash; data breach!
+    </div>
+    <pre><span class="cmt">// WRONG -- Singleton capturing a Scoped dependency</span>
+<span class="kw">public class</span> <span class="cls">SmsNotificationService</span>(
+    <span class="cls">IStudentRepository</span> _repo,   <span class="cmt">// Scoped -- injected into Singleton!</span>
+    <span class="cls">IMsg91Client</span> _msg91)        <span class="cmt">// Transient -- also captured forever</span>
+    : <span class="cls">ISmsNotificationService</span>
+{
+    <span class="kw">public async</span> Task <span class="mth">SendReceiptAsync</span>(<span class="kw">int</span> studentId)
+    {
+        <span class="kw">var</span> student = <span class="kw">await</span> _repo.<span class="mth">GetByIdAsync</span>(studentId);
+        <span class="cmt">// _repo.DbContext is from the FIRST request that triggered this singleton's creation</span>
+        <span class="cmt">// ALL subsequent requests share this same DbContext -- not thread-safe!</span>
+    }
+}
+builder.Services.<span class="mth">AddSingleton</span>&lt;<span class="cls">ISmsNotificationService</span>, <span class="cls">SmsNotificationService</span>&gt;(); <span class="cmt">// BUG</span>
+
+<span class="cmt">// FIX 1: Change lifetime to Scoped (simplest)</span>
+builder.Services.<span class="mth">AddScoped</span>&lt;<span class="cls">ISmsNotificationService</span>, <span class="cls">SmsNotificationService</span>&gt;();
+
+<span class="cmt">// FIX 2: Keep Singleton, create a scope per operation via IServiceScopeFactory</span>
+<span class="kw">public class</span> <span class="cls">SmsNotificationService</span>(<span class="cls">IServiceScopeFactory</span> _factory, <span class="cls">IMsg91Client</span> _msg91)
+    : <span class="cls">ISmsNotificationService</span>
+{
+    <span class="kw">public async</span> Task <span class="mth">SendReceiptAsync</span>(<span class="kw">int</span> studentId, <span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">await using var</span> scope = _factory.<span class="mth">CreateAsyncScope</span>();
+        <span class="kw">var</span> repo    = scope.ServiceProvider.<span class="mth">GetRequiredService</span>&lt;<span class="cls">IStudentRepository</span>&gt;();
+        <span class="kw">var</span> student = <span class="kw">await</span> repo.<span class="mth">GetByIdAsync</span>(studentId, ct);
+        <span class="kw">await</span> _msg91.<span class="mth">SendSmsAsync</span>(student.ParentPhone, <span class="str">"Fee collected"</span>, ct);
+        <span class="cmt">// scope disposed here -- fresh DbContext per call -- thread-safe</span>
+    }
+}
+builder.Services.<span class="mth">AddSingleton</span>&lt;<span class="cls">ISmsNotificationService</span>, <span class="cls">SmsNotificationService</span>&gt;(); <span class="cmt">// Now safe</span>
+<span class="cmt">// IServiceScopeFactory is itself Singleton -- always safe to inject into Singleton</span></pre>
+    <div class="info-box">
+        <strong>Captive Dependency Rules (memorise):</strong><br>
+        Singleton &rarr; Singleton: safe &nbsp;|&nbsp; Singleton &rarr; Transient (stateless): safe<br>
+        Scoped &rarr; Scoped: safe &nbsp;|&nbsp; Scoped &rarr; Transient: safe &nbsp;|&nbsp; Transient &rarr; anything: safe<br>
+        <strong>Singleton &rarr; Scoped: CAPTIVE DEPENDENCY BUG</strong><br>
+        General rule: never inject a shorter-lifetime service into a longer-lifetime consumer.
+    </div>
+    <pre><span class="cmt">// Catch captive dependencies at startup -- not at runtime under load</span>
+builder.Host.<span class="mth">UseDefaultServiceProvider</span>(opts =&gt;
+{
+    opts.ValidateScopes  = <span class="kw">true</span>;  <span class="cmt">// Singleton-&gt;Scoped detected at Build() time</span>
+    opts.ValidateOnBuild = <span class="kw">true</span>;  <span class="cmt">// Missing registrations detected at Build() time</span>
+});
+<span class="cmt">// Development mode already enables ValidateScopes by default in ASP.NET Core
+// In Production it is disabled (performance) -- but fix issues in Development first</span></pre>
+</div>
+
+<!-- KEYED SERVICES -->
+<h2 class="section-title" id="keyed">Keyed Services &mdash; .NET 8+</h2>
+<div class="concept-card">
+    <div class="concept-title"><span>&#128273;</span> Multiple implementations of same interface &mdash; resolve by string/enum key</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">ZenCampus-la multiple notification channels irukku</span> &mdash; SMS (fee receipts), Email (teachers), Push (parent app). Same interface, different implementations. Before .NET 8: dictionary hack or factory. Now: <code>AddKeyedScoped</code> and <code>[FromKeyedServices]</code>.</p>
+    <pre><span class="cmt">// Common interface</span>
+<span class="kw">public interface</span> <span class="cls">INotificationChannel</span>
+{
+    Task <span class="mth">SendAsync</span>(<span class="kw">string</span> recipient, <span class="kw">string</span> message, <span class="cls">CancellationToken</span> ct);
+}
+
+<span class="kw">public class</span> <span class="cls">SmsChannel</span>   : <span class="cls">INotificationChannel</span> { <span class="cmt">/* Msg91 */</span> }
+<span class="kw">public class</span> <span class="cls">EmailChannel</span> : <span class="cls">INotificationChannel</span> { <span class="cmt">/* SendGrid */</span> }
+<span class="kw">public class</span> <span class="cls">PushChannel</span>  : <span class="cls">INotificationChannel</span> { <span class="cmt">/* Firebase FCM */</span> }
+
+<span class="cmt">// Program.cs -- register with keys</span>
+builder.Services.<span class="mth">AddKeyedScoped</span>&lt;<span class="cls">INotificationChannel</span>, <span class="cls">SmsChannel</span>&gt;(<span class="str">"sms"</span>);
+builder.Services.<span class="mth">AddKeyedScoped</span>&lt;<span class="cls">INotificationChannel</span>, <span class="cls">EmailChannel</span>&gt;(<span class="str">"email"</span>);
+builder.Services.<span class="mth">AddKeyedScoped</span>&lt;<span class="cls">INotificationChannel</span>, <span class="cls">PushChannel</span>&gt;(<span class="str">"push"</span>);
+
+<span class="cmt">// Inject by key -- [FromKeyedServices] attribute on constructor parameter</span>
+<span class="kw">public class</span> <span class="cls">FeeCollectionService</span>(
+    [<span class="attr">FromKeyedServices</span>(<span class="str">"sms"</span>)]   <span class="cls">INotificationChannel</span> _sms,
+    [<span class="attr">FromKeyedServices</span>(<span class="str">"email"</span>)] <span class="cls">INotificationChannel</span> _email)
+{
+    <span class="kw">public async</span> Task <span class="mth">CollectAsync</span>(<span class="cls">FeeCommand</span> cmd, <span class="cls">CancellationToken</span> ct)
+    {
+        <span class="cmt">// save fee to DB...</span>
+        <span class="kw">await</span> _sms.<span class="mth">SendAsync</span>(cmd.ParentPhone, <span class="str">"Fee received: Rs.{Amount}"</span>, ct);
+        <span class="kw">await</span> _email.<span class="mth">SendAsync</span>(cmd.TeacherEmail, <span class="str">"Fee collected notification"</span>, ct);
+    }
+}
+
+<span class="cmt">// Runtime key resolution -- school config says which channel to use</span>
+<span class="kw">public class</span> <span class="cls">NotificationDispatcher</span>(<span class="cls">IServiceProvider</span> _sp)
+{
+    <span class="kw">public</span> <span class="cls">INotificationChannel</span> <span class="mth">GetForSchool</span>(<span class="cls">School</span> school)
+    {
+        <span class="kw">var</span> key = school.PreferredChannel; <span class="cmt">// "sms" | "email" | "push" from DB</span>
+        <span class="kw">return</span> _sp.<span class="mth">GetRequiredKeyedService</span>&lt;<span class="cls">INotificationChannel</span>&gt;(key);
+    }
+}</pre>
+    <div class="info-box"><strong>Before .NET 8 workaround:</strong> Dictionary pattern &mdash; <code>AddSingleton&lt;IDictionary&lt;string, INotificationChannel&gt;&gt;(sp => new Dictionary ... { ["sms"] = sp.GetRequiredService&lt;SmsChannel&gt;() })</code>. Keyed services is the clean replacement &mdash; mention both in interviews to show awareness of evolution.</div>
+</div>
+
+<!-- FACTORY PATTERN -->
+<h2 class="section-title" id="factory">Factory Pattern in DI</h2>
+<div class="concept-card">
+    <div class="concept-title"><span>&#127981;</span> When you need to create services at runtime with dynamic parameters</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Factory pattern = runtime-la decide panna</span> &mdash; school A different DB connection, school B different fee calculator. DI container compile-time-la register panna mudiyathu &mdash; factory use pannrom.</p>
+    <pre><span class="cmt">// Func&lt;T&gt; factory -- simplest form</span>
+builder.Services.<span class="mth">AddScoped</span>&lt;<span class="cls">IFeeCalculator</span>&gt;(sp =&gt;
+{
+    <span class="kw">var</span> config  = sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">ISchoolConfigService</span>&gt;();
+    <span class="kw">var</span> schoolId = sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">IHttpContextAccessor</span>&gt;()
+                     .HttpContext?.User.<span class="mth">FindFirst</span>(<span class="str">"schoolId"</span>)?.Value;
+    <span class="kw">return</span> config.IsStateBoard(schoolId)
+        ? sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">StateBoardFeeCalculator</span>&gt;()
+        : sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">CbseFeeCalculator</span>&gt;();
+});
+<span class="cmt">// Different fee calculation rules per board type -- resolved at request time</span></pre>
+    <pre><span class="cmt">// Abstract factory -- create DbContext with school-specific connection string</span>
+<span class="kw">public interface</span> <span class="cls">ISchoolDbContextFactory</span>
+{
+    <span class="cls">ZenCampusDbContext</span> <span class="mth">CreateForSchool</span>(<span class="kw">int</span> schoolId);
+}
+
+<span class="kw">public class</span> <span class="cls">SchoolDbContextFactory</span>(<span class="cls">ISchoolConnectionResolver</span> _resolver)
+    : <span class="cls">ISchoolDbContextFactory</span>
+{
+    <span class="kw">public</span> <span class="cls">ZenCampusDbContext</span> <span class="mth">CreateForSchool</span>(<span class="kw">int</span> schoolId)
+    {
+        <span class="kw">var</span> connStr = _resolver.<span class="mth">GetConnectionString</span>(schoolId);
+        <span class="kw">var</span> opts    = <span class="kw">new</span> <span class="cls">DbContextOptionsBuilder</span>&lt;<span class="cls">ZenCampusDbContext</span>&gt;()
+                         .<span class="mth">UseSqlServer</span>(connStr)
+                         .<span class="mth">Options</span>;
+        <span class="kw">return new</span> <span class="cls">ZenCampusDbContext</span>(opts);
+    }
+}
+<span class="cmt">// Usage: using var ctx = _factory.CreateForSchool(schoolId); -- caller owns lifetime</span></pre>
+    <pre><span class="cmt">// IServiceProvider.GetService vs GetRequiredService</span>
+<span class="kw">var</span> service = sp.<span class="mth">GetService</span>&lt;<span class="cls">IOptionalFeature</span>&gt;();      <span class="cmt">// returns null if not registered</span>
+<span class="kw">var</span> service = sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">IFeeService</span>&gt;();   <span class="cmt">// throws if not registered</span>
+<span class="cmt">// Always prefer GetRequiredService -- fail fast at startup, not at runtime under load</span></pre>
+</div>
+
+<!-- OPTIONS PATTERN -->
+<h2 class="section-title" id="options">Options Pattern &mdash; IOptions / IOptionsSnapshot / IOptionsMonitor</h2>
+<div class="concept-card">
+    <div class="concept-title"><span>&#9881;</span> Strongly-typed, validated configuration &mdash; no more magic strings</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Configuration["Msg91:ApiKey"] everywhere pannadheenga</span> &mdash; refactor pannum bodhu miss aagum. Options pattern use pannunga &mdash; strongly typed, validated at startup, testable.</p>
+    <pre><span class="cmt">// Settings classes -- one per logical section</span>
+<span class="kw">public class</span> <span class="cls">Msg91Settings</span>
+{
+    <span class="kw">public const string</span> SectionName = <span class="str">"Msg91"</span>;
+
+    [<span class="attr">Required</span>]
+    <span class="kw">public string</span> ApiKey    { <span class="kw">get</span>; <span class="kw">init</span>; } = <span class="kw">string</span>.Empty;
+
+    [<span class="attr">Required</span>]
+    <span class="kw">public string</span> SenderId  { <span class="kw">get</span>; <span class="kw">init</span>; } = <span class="kw">string</span>.Empty;
+
+    [<span class="attr">Range</span>(<span class="num">1</span>, <span class="num">5</span>)]
+    <span class="kw">public int</span>    MaxRetries { <span class="kw">get</span>; <span class="kw">init</span>; } = <span class="num">3</span>;
+}
+
+<span class="kw">public class</span> <span class="cls">PaymentGatewaySettings</span>
+{
+    <span class="kw">public const string</span> SectionName = <span class="str">"PaymentGateway"</span>;
+    [<span class="attr">Required</span>] <span class="kw">public string</span> MerchantId  { <span class="kw">get</span>; <span class="kw">init</span>; } = <span class="kw">string</span>.Empty;
+    [<span class="attr">Required</span>] <span class="kw">public string</span> SecretKey   { <span class="kw">get</span>; <span class="kw">init</span>; } = <span class="kw">string</span>.Empty;
+    <span class="kw">public bool</span>              IsSandbox   { <span class="kw">get</span>; <span class="kw">init</span>; }
+}
+
+<span class="cmt">// Program.cs -- register with validation</span>
+builder.Services
+    .<span class="mth">AddOptions</span>&lt;<span class="cls">Msg91Settings</span>&gt;()
+    .<span class="mth">BindConfiguration</span>(<span class="cls">Msg91Settings</span>.SectionName)
+    .<span class="mth">ValidateDataAnnotations</span>()          <span class="cmt">// [Required], [Range] validated</span>
+    .<span class="mth">ValidateOnStart</span>();                  <span class="cmt">// Fail at startup, not first SMS send!</span>
+
+builder.Services
+    .<span class="mth">AddOptions</span>&lt;<span class="cls">PaymentGatewaySettings</span>&gt;()
+    .<span class="mth">BindConfiguration</span>(<span class="cls">PaymentGatewaySettings</span>.SectionName)
+    .<span class="mth">ValidateDataAnnotations</span>()
+    .<span class="mth">Validate</span>(s =&gt; !s.IsSandbox || !<span class="kw">string</span>.<span class="mth">IsNullOrEmpty</span>(s.SecretKey),
+               <span class="str">"SecretKey required when not in Sandbox mode"</span>)
+    .<span class="mth">ValidateOnStart</span>();</pre>
+    <pre><span class="cmt">// Three IOptions variants -- critical interview topic</span>
+<span class="kw">public class</span> <span class="cls">Msg91Client</span>(
+    <span class="cls">IOptions</span>&lt;<span class="cls">Msg91Settings</span>&gt;         _opts,       <span class="cmt">// Singleton: config read ONCE at startup</span>
+    <span class="cls">IOptionsSnapshot</span>&lt;<span class="cls">Msg91Settings</span>&gt; _snapshot,   <span class="cmt">// Scoped: reloads per request (dev reload)</span>
+    <span class="cls">IOptionsMonitor</span>&lt;<span class="cls">Msg91Settings</span>&gt;  _monitor)    <span class="cmt">// Singleton + change notification</span>
+{
+    <span class="kw">public async</span> Task <span class="mth">SendAsync</span>(<span class="kw">string</span> phone, <span class="kw">string</span> msg, <span class="cls">CancellationToken</span> ct)
+    {
+        <span class="cmt">// Use IOptions for production -- config doesn't change at runtime</span>
+        <span class="kw">var</span> key = _opts.Value.ApiKey;
+
+        <span class="cmt">// IOptionsMonitor.CurrentValue -- always latest (useful for feature flags)</span>
+        <span class="kw">var</span> retries = _monitor.CurrentValue.MaxRetries;
+    }
+}
+
+<span class="cmt">// IOptionsMonitor -- react to config changes (Azure App Config, hot reload)</span>
+<span class="kw">public class</span> <span class="cls">FeatureFlagService</span>(<span class="cls">IOptionsMonitor</span>&lt;<span class="cls">FeatureFlags</span>&gt; _monitor)
+{
+    <span class="kw">private</span> <span class="cls">FeatureFlags</span> _current = <span class="kw">default</span>!;
+
+    <span class="kw">public</span> <span class="cls">FeatureFlagService</span>(<span class="cls">IOptionsMonitor</span>&lt;<span class="cls">FeatureFlags</span>&gt; monitor)
+    {
+        _monitor = monitor;
+        _current = monitor.CurrentValue;
+        monitor.<span class="mth">OnChange</span>(updated =&gt; _current = updated); <span class="cmt">// live reload without restart</span>
+    }
+    <span class="kw">public bool</span> IsEnabled(<span class="kw">string</span> flag) =&gt; _current.EnabledFlags.<span class="mth">Contains</span>(flag);
+}</pre>
+    <table>
+        <tr><th>Interface</th><th>Lifetime</th><th>Reloads?</th><th>Use When</th></tr>
+        <tr><td><code>IOptions&lt;T&gt;</code></td><td>Singleton</td><td>No</td><td>Standard config that won't change at runtime (DB connection, API keys)</td></tr>
+        <tr><td><code>IOptionsSnapshot&lt;T&gt;</code></td><td>Scoped</td><td>Per request</td><td>Dev scenarios, per-request config experiments (cannot inject into Singleton)</td></tr>
+        <tr><td><code>IOptionsMonitor&lt;T&gt;</code></td><td>Singleton</td><td>Yes (live)</td><td>Feature flags, rate limits, thresholds that change without restart</td></tr>
+    </table>
+</div>
+
+<!-- VALIDATE ON BUILD -->
+<h2 class="section-title" id="validate">Decorator Pattern in DI</h2>
+<div class="concept-card">
+    <div class="concept-title"><span>&#127912;</span> Wrap an existing implementation to add cross-cutting behaviour</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Decorator pattern = existing service-a wrap panrom</span> &mdash; logging, caching, retry &mdash; original code touch pannama. ZenCampus: <code>CachedStudentRepository</code> wraps <code>StudentRepository</code> &mdash; cache check before every DB call.</p>
+    <pre><span class="cmt">// Original implementation</span>
+<span class="kw">public class</span> <span class="cls">StudentRepository</span>(<span class="cls">ZenCampusDbContext</span> _db) : <span class="cls">IStudentRepository</span>
+{
+    <span class="kw">public async</span> Task&lt;<span class="cls">Student</span>?&gt; <span class="mth">GetByIdAsync</span>(<span class="kw">int</span> id, <span class="cls">CancellationToken</span> ct)
+        =&gt; <span class="kw">await</span> _db.Students.<span class="mth">FindAsync</span>([id], ct);
+}
+
+<span class="cmt">// Decorator -- adds caching without changing StudentRepository</span>
+<span class="kw">public class</span> <span class="cls">CachedStudentRepository</span>(
+    <span class="cls">IStudentRepository</span> _inner,   <span class="cmt">// wraps the real repository</span>
+    <span class="cls">IDistributedCache</span>  _cache) : <span class="cls">IStudentRepository</span>
+{
+    <span class="kw">public async</span> Task&lt;<span class="cls">Student</span>?&gt; <span class="mth">GetByIdAsync</span>(<span class="kw">int</span> id, <span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">var</span> key    = <span class="str">$"student:{id}"</span>;
+        <span class="kw">var</span> cached = <span class="kw">await</span> _cache.<span class="mth">GetStringAsync</span>(key, ct);
+        <span class="kw">if</span> (cached <span class="kw">is not null</span>) <span class="kw">return</span> <span class="cls">JsonSerializer</span>.<span class="mth">Deserialize</span>&lt;<span class="cls">Student</span>&gt;(cached);
+
+        <span class="kw">var</span> student = <span class="kw">await</span> _inner.<span class="mth">GetByIdAsync</span>(id, ct); <span class="cmt">// delegate to real repo</span>
+        <span class="kw">if</span> (student <span class="kw">is not null</span>)
+            <span class="kw">await</span> _cache.<span class="mth">SetStringAsync</span>(key, <span class="cls">JsonSerializer</span>.<span class="mth">Serialize</span>(student),
+                <span class="kw">new</span>() { AbsoluteExpirationRelativeToNow = TimeSpan.<span class="mth">FromMinutes</span>(<span class="num">10</span>) }, ct);
+        <span class="kw">return</span> student;
+    }
+}
+
+<span class="cmt">// Program.cs -- register decorator manually (no built-in AddDecorator)</span>
+builder.Services.<span class="mth">AddScoped</span>&lt;<span class="cls">StudentRepository</span>&gt;();   <span class="cmt">// register concrete</span>
+builder.Services.<span class="mth">AddScoped</span>&lt;<span class="cls">IStudentRepository</span>&gt;(sp =&gt;
+    <span class="kw">new</span> <span class="cls">CachedStudentRepository</span>(
+        sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">StudentRepository</span>&gt;(),   <span class="cmt">// inner</span>
+        sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">IDistributedCache</span>&gt;()));  <span class="cmt">// cache</span>
+<span class="cmt">// Or use Scrutor NuGet: services.Decorate&lt;IStudentRepository, CachedStudentRepository&gt;()</span></pre>
+</div>
+
+<!-- ANTI-PATTERN -->
+<h2 class="section-title" id="antipattern">Service Locator Anti-Pattern</h2>
+<div class="concept-card">
+    <div class="concept-title"><span>&#128683;</span> Injecting IServiceProvider everywhere = hiding dependencies</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">IServiceProvider everywhere inject panna</span> &mdash; class-oda dependencies hidden aagum, tests mock panna mudiyathu, DI container-la validate aagaadhu. Legitimate use: middleware InvokeAsync parameter, abstract factory, BackgroundService (Day 21).</p>
+    <div class="two-col">
+        <div>
+            <div class="danger-box">
+                <strong>Anti-pattern (Service Locator)</strong>
+<pre style="font-size:0.78rem;margin-top:0.5rem"><span class="kw">public class</span> <span class="cls">FeeService</span>(<span class="cls">IServiceProvider</span> _sp)
+{
+    <span class="kw">public async</span> Task <span class="mth">CollectAsync</span>(...)
+    {
+        <span class="cmt">// Dependencies hidden inside method</span>
+        <span class="kw">var</span> repo = _sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">IFeeRepo</span>&gt;();
+        <span class="kw">var</span> sms  = _sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">ISmsClient</span>&gt;();
+        <span class="cmt">// Unit test can't see these deps</span>
+        <span class="cmt">// ValidateOnBuild won't catch missing reg</span>
+    }
+}</pre>
+            </div>
+        </div>
+        <div>
+            <div class="good-box">
+                <strong>Constructor injection (correct)</strong>
+<pre style="font-size:0.78rem;margin-top:0.5rem"><span class="kw">public class</span> <span class="cls">FeeService</span>(
+    <span class="cls">IFeeRepository</span> _repo,
+    <span class="cls">ISmsClient</span>     _sms)
+{
+    <span class="kw">public async</span> Task <span class="mth">CollectAsync</span>(...)
+    {
+        <span class="cmt">// Dependencies visible at a glance</span>
+        <span class="cmt">// Mockable in unit tests</span>
+        <span class="cmt">// ValidateOnBuild checks them</span>
+        <span class="cmt">// DI graph fully analysable</span>
+    }
+}</pre>
+            </div>
+        </div>
+    </div>
+    <div class="info-box"><strong>Legitimate IServiceProvider uses:</strong> Middleware (IMiddleware pattern or InvokeAsync param), abstract factory (runtime key resolution), BackgroundService (IServiceScopeFactory to create scope per job), extension methods bootstrapping DI itself. Outside these cases &mdash; always prefer constructor injection.</div>
+</div>
+
+<!-- MOVIE REFS -->
+<h2 class="section-title" id="movies">&#127916; Tamil Movie Memory Anchors</h2>
+<div class="movie-box">
+    <div class="movie-icon">&#127775;</div>
+    <div class="movie-content">
+        <h4>Transient &mdash; "Kaala" (2018)</h4>
+        <p>Kaala-la every encounter is fresh &mdash; each time Karikaalan faces an opponent, new energy, new stance. Transient same: every call to GetService creates a brand new instance. No memory of previous calls. Perfect for lightweight, stateless operations like validators or mappers where you want zero shared state.</p>
+    </div>
+</div>
+<div class="movie-box">
+    <div class="movie-icon">&#128218;</div>
+    <div class="movie-content">
+        <h4>Scoped &mdash; "96" (2018)</h4>
+        <p>96-la Ram and Janu share one unforgettable journey together &mdash; memories built during that single train trip, complete when the journey ends. Scoped lifetime same: one HTTP request = one scope = one shared journey. All services in that request share the same DbContext, see the same change-tracked entities. Request ends &mdash; scope disposed &mdash; memories gone.</p>
+    </div>
+</div>
+<div class="movie-box">
+    <div class="movie-icon">&#11088;</div>
+    <div class="movie-content">
+        <h4>Singleton &mdash; "Superstar" Rajinikanth</h4>
+        <p>One Rajinikanth for all of Tamil Nadu &mdash; same person, same energy, everyone references the same superstar. Singleton same: one IMemoryCache, one ILogger factory, one SchoolCodeGenerator &mdash; created once, shared by 50,000 students across 200 schools. Must be thread-safe because thousands hit it simultaneously!</p>
+    </div>
+</div>
+<div class="movie-box">
+    <div class="movie-icon">&#128290;</div>
+    <div class="movie-content">
+        <h4>Captive Dependency &mdash; "Mersal" (2017)</h4>
+        <p>Mersal-la villain captures someone and holds them prisoner beyond their time. Captive dependency same: Singleton captures a Scoped DbContext and holds it for the entire app lifetime. The DbContext was meant to live for one request, now it is a prisoner of the singleton. All requests share the same captive DbContext &mdash; data leaks between them &mdash; just like a prisoner who can never leave.</p>
+    </div>
+</div>
+<div class="movie-box">
+    <div class="movie-icon">&#127917;</div>
+    <div class="movie-content">
+        <h4>Keyed Services &mdash; "Dasavathaaram" (2008)</h4>
+        <p>Dasavathaaram-la one Kamal Haasan, 10 different avatars, each called by a specific role. Keyed services same: one INotificationChannel interface, three implementations. Call with key "sms" &rarr; get SmsChannel (Msg91 avatar). Call with key "push" &rarr; get PushChannel (Firebase avatar). Same interface, resolved by key &mdash; polymorphism + DI combined.</p>
+    </div>
+</div>
+
+<!-- SCENARIOS -->
+<h2 class="section-title" id="scenarios">&#127919; 10 Interview Scenarios</h2>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q1. What are the three DI lifetimes? Give a ZenCampus example for each.</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Transient</strong> &mdash; new instance every time GetService is called. ZenCampus: <code>PhoneNumberFormatter</code> (pure function, no state, called from multiple places &mdash; new instance each call is cheapest to reason about).</p>
+        <p style="margin-top:0.5rem"><strong>Scoped</strong> &mdash; new instance per HTTP request. All services within that request share the same instance. ZenCampus: <code>ZenCampusDbContext</code> (one DB connection and change-tracker per request), <code>IStudentRepository</code>, <code>IFeeService</code> (anything that uses DbContext must be scoped).</p>
+        <p style="margin-top:0.5rem"><strong>Singleton</strong> &mdash; one instance for the app lifetime, shared across all requests and threads. ZenCampus: <code>IMemoryCache</code> (must be shared to be useful), <code>ILogger&lt;T&gt;</code> (thread-safe by design, expensive to create), <code>ISchoolCodeGenerator</code> (stateless, thread-safe utility).</p>
+        <p style="margin-top:0.5rem"><strong>Rule of thumb:</strong> start with Scoped. Move to Singleton only when you need app-wide state and can prove thread safety. Use Transient for stateful helpers that must not be shared.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q2. PRODUCTION BUG: Random students getting wrong school's data. No pattern, intermittent. What is the root cause?</div>
+        <span class="scenario-type type-prod">Production Bug</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Root cause: Captive Dependency.</strong> A Singleton service holds a Scoped <code>IStudentRepository</code> (and therefore a Scoped <code>ZenCampusDbContext</code>). The DbContext was created for one request and captured for the app lifetime. Concurrent requests from different schools share the same DbContext instance, which is not thread-safe and leaks change-tracked entities across requests.</p>
+        <pre><span class="cmt">// Diagnosis: enable ValidateScopes in Development</span>
+builder.Host.<span class="mth">UseDefaultServiceProvider</span>(opts =&gt; opts.ValidateScopes = <span class="kw">true</span>);
+<span class="cmt">// This throws at startup: "Cannot consume scoped service IStudentRepository
+// from singleton SomeService" -- catches bug before it hits production</span>
+
+<span class="cmt">// Fix: IServiceScopeFactory in the Singleton</span>
+<span class="kw">public async</span> Task <span class="mth">DoWorkAsync</span>(<span class="kw">int</span> schoolId, <span class="cls">CancellationToken</span> ct)
+{
+    <span class="kw">await using var</span> scope = _factory.<span class="mth">CreateAsyncScope</span>();
+    <span class="kw">var</span> repo = scope.ServiceProvider.<span class="mth">GetRequiredService</span>&lt;<span class="cls">IStudentRepository</span>&gt;();
+    <span class="cmt">// fresh DbContext per operation -- thread-safe, no cross-request leak</span>
+}</pre>
+        <p><strong>Key lesson:</strong> <code>ValidateScopes = true</code> should ALWAYS be on in Development. It turns a runtime data-corruption bug into a startup exception.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q3. IOptions vs IOptionsSnapshot vs IOptionsMonitor &mdash; when do you use each?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>IOptions&lt;T&gt;</strong>: Singleton. Config read once at startup, never refreshes. Use for settings that cannot change without a restart &mdash; DB connection strings, API keys. <em>Cannot inject into Scoped or Transient services without concern (it is singleton).</em></p>
+        <p style="margin-top:0.5rem"><strong>IOptionsSnapshot&lt;T&gt;</strong>: Scoped. Re-reads config each HTTP request. Use in dev when you want hot-reload without restarting the app, or for per-request config experiments. <em>Cannot inject into Singleton &mdash; captive dependency trap!</em></p>
+        <p style="margin-top:0.5rem"><strong>IOptionsMonitor&lt;T&gt;</strong>: Singleton. Live refresh via <code>OnChange</code> callback. Use for feature flags, rate limits, dynamic thresholds that ops team needs to change without deploying. ZenCampus: <code>IOptionsMonitor&lt;FeatureFlags&gt;</code> &mdash; ops flips "EnableNewAdmissionFlow" in Azure App Config, it propagates without restart within seconds.</p>
+        <p style="margin-top:0.5rem"><strong>ZenCampus defaults:</strong> IOptions for Msg91Settings and PaymentGatewaySettings (secrets, can't change without rotation). IOptionsMonitor for FeatureFlags and rate limit thresholds.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q4. ZenCampus needs SMS for fee receipts and Email for teachers from the same code path. How do you resolve multiple implementations of INotificationChannel?</div>
+        <span class="scenario-type type-design">Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>.NET 8+ Keyed Services (preferred):</strong></p>
+        <pre><span class="cmt">// Register</span>
+builder.Services.<span class="mth">AddKeyedScoped</span>&lt;<span class="cls">INotificationChannel</span>, <span class="cls">SmsChannel</span>&gt;(<span class="str">"sms"</span>);
+builder.Services.<span class="mth">AddKeyedScoped</span>&lt;<span class="cls">INotificationChannel</span>, <span class="cls">EmailChannel</span>&gt;(<span class="str">"email"</span>);
+
+<span class="cmt">// Inject</span>
+<span class="kw">public class</span> <span class="cls">FeeService</span>(
+    [<span class="attr">FromKeyedServices</span>(<span class="str">"sms"</span>)]   <span class="cls">INotificationChannel</span> _sms,
+    [<span class="attr">FromKeyedServices</span>(<span class="str">"email"</span>)] <span class="cls">INotificationChannel</span> _email)</pre>
+        <p style="margin-top:0.5rem"><strong>Pre-.NET 8 alternative (IEnumerable resolve):</strong></p>
+        <pre><span class="cmt">// Register all without key</span>
+builder.Services.<span class="mth">AddScoped</span>&lt;<span class="cls">INotificationChannel</span>, <span class="cls">SmsChannel</span>&gt;();
+builder.Services.<span class="mth">AddScoped</span>&lt;<span class="cls">INotificationChannel</span>, <span class="cls">EmailChannel</span>&gt;();
+
+<span class="cmt">// Inject IEnumerable -- gets ALL registered implementations</span>
+<span class="kw">public class</span> <span class="cls">FeeService</span>(<span class="cls">IEnumerable</span>&lt;<span class="cls">INotificationChannel</span>&gt; _channels)
+{
+    <span class="kw">private</span> <span class="cls">INotificationChannel</span> <span class="mth">GetSms</span>()
+        =&gt; _channels.<span class="mth">OfType</span>&lt;<span class="cls">SmsChannel</span>&gt;().<span class="mth">First</span>();
+}</pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q5. What is the Service Locator anti-pattern? Why is it bad?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Service Locator</strong> = injecting IServiceProvider and calling GetService&lt;T&gt;() inside methods instead of declaring dependencies in the constructor.</p>
+        <p style="margin-top:0.5rem"><strong>Problems:</strong></p>
+        <ol style="margin-left:1.5rem">
+            <li>Dependencies are hidden inside method bodies &mdash; a class with 10 GetService calls looks like it has zero dependencies from the outside</li>
+            <li>Unit tests cannot mock the dependencies easily &mdash; must set up a full DI container or mock IServiceProvider (painful)</li>
+            <li>ValidateOnBuild cannot detect missing registrations for services resolved this way</li>
+            <li>DI graph cannot be analysed by tools &mdash; no dependency visualisation, no cycle detection</li>
+        </ol>
+        <p style="margin-top:0.5rem"><strong>Legitimate uses:</strong> Middleware InvokeAsync parameters, abstract factory that resolves by runtime key, BackgroundService with IServiceScopeFactory. Outside these patterns &mdash; always use constructor injection.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q6. How do you validate all DI registrations and configuration at startup instead of getting runtime errors?</div>
+        <span class="scenario-type type-design">Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <pre><span class="cmt">// 1. ValidateOnBuild -- detects missing service registrations at Build() time</span>
+builder.Host.<span class="mth">UseDefaultServiceProvider</span>(opts =&gt;
+{
+    opts.ValidateOnBuild = <span class="kw">true</span>; <span class="cmt">// throws if any registered service can't be resolved</span>
+    opts.ValidateScopes  = <span class="kw">true</span>; <span class="cmt">// throws on Singleton-&gt;Scoped captive dependency</span>
+});
+
+<span class="cmt">// 2. ValidateOnStart -- Options validation at startup, not first use</span>
+builder.Services
+    .<span class="mth">AddOptions</span>&lt;<span class="cls">Msg91Settings</span>&gt;()
+    .<span class="mth">BindConfiguration</span>(<span class="str">"Msg91"</span>)
+    .<span class="mth">ValidateDataAnnotations</span>()  <span class="cmt">// [Required], [Range] validated</span>
+    .<span class="mth">ValidateOnStart</span>();          <span class="cmt">// Msg91:ApiKey missing? App crashes at startup, not at 2AM SMS</span>
+
+<span class="cmt">// 3. IStartupFilter or IHostedService for custom startup checks</span>
+<span class="kw">public class</span> <span class="cls">StartupValidationService</span>(<span class="cls">ZenCampusDbContext</span> _db) : <span class="cls">IHostedService</span>
+{
+    <span class="kw">public async</span> Task <span class="mth">StartAsync</span>(<span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">var</span> canConnect = <span class="kw">await</span> _db.Database.<span class="mth">CanConnectAsync</span>(ct);
+        <span class="kw">if</span> (!canConnect)
+            <span class="kw">throw new</span> <span class="cls">InvalidOperationException</span>(<span class="str">"Cannot connect to ZenCampus database. Check connection string."</span>);
+    }
+    <span class="kw">public</span> Task <span class="mth">StopAsync</span>(<span class="cls">CancellationToken</span> ct) =&gt; Task.<span class="cls">CompletedTask</span>;
+}</pre>
+        <p><strong>Philosophy:</strong> "Fail fast at startup." Every minute of running with wrong config is a minute where SMS is silently failing or DB is being hit with wrong credentials. Startup validation converts 2 AM production incidents into deployment failures that block bad config from reaching production.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q7. BackgroundService (IHostedService) needs to use DbContext every 5 minutes. How?</div>
+        <span class="scenario-type type-design">Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>BackgroundService is a Singleton</strong> (registered by the framework). DbContext is Scoped. Cannot inject DbContext in constructor &mdash; captive dependency. Must create a scope for each operation.</p>
+        <pre><span class="kw">public class</span> <span class="cls">AttendanceSyncService</span>(<span class="cls">IServiceScopeFactory</span> _factory, <span class="cls">ILogger</span>&lt;<span class="cls">AttendanceSyncService</span>&gt; _log)
+    : <span class="cls">BackgroundService</span>
+{
+    <span class="kw">protected override async</span> Task <span class="mth">ExecuteAsync</span>(<span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">while</span> (!ct.IsCancellationRequested)
+        {
+            <span class="kw">try</span>
+            {
+                <span class="kw">await using var</span> scope = _factory.<span class="mth">CreateAsyncScope</span>();  <span class="cmt">// fresh scope per tick</span>
+                <span class="kw">var</span> db      = scope.ServiceProvider.<span class="mth">GetRequiredService</span>&lt;<span class="cls">ZenCampusDbContext</span>&gt;();
+                <span class="kw">var</span> service = scope.ServiceProvider.<span class="mth">GetRequiredService</span>&lt;<span class="cls">IAttendanceService</span>&gt;();
+                <span class="kw">await</span> service.<span class="mth">SyncAllSchoolsAsync</span>(ct);
+                <span class="cmt">// scope disposed here -- DbContext lifetime correctly bounded to this tick</span>
+            }
+            <span class="kw">catch</span> (<span class="cls">Exception</span> ex) <span class="kw">when</span> (ex <span class="kw">is not</span> <span class="cls">OperationCanceledException</span>)
+            {
+                _log.<span class="mth">LogError</span>(ex, <span class="str">"Attendance sync failed"</span>);
+            }
+            <span class="kw">await</span> Task.<span class="mth">Delay</span>(TimeSpan.<span class="mth">FromMinutes</span>(<span class="num">5</span>), ct);
+        }
+    }
+}
+<span class="cmt">// IServiceScopeFactory is registered by the framework as Singleton -- always safe to inject</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q8. You have three fee calculators (CBSE, StateBoard, International). Selection depends on runtime school data. How to implement with DI?</div>
+        <span class="scenario-type type-design">Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Abstract Factory pattern with keyed services or factory delegate:</strong></p>
+        <pre><span class="cmt">// Option 1: Keyed services + dispatcher</span>
+builder.Services.<span class="mth">AddKeyedScoped</span>&lt;<span class="cls">IFeeCalculator</span>, <span class="cls">CbseFeeCalculator</span>&gt;(<span class="str">"CBSE"</span>);
+builder.Services.<span class="mth">AddKeyedScoped</span>&lt;<span class="cls">IFeeCalculator</span>, <span class="cls">StateBoardFeeCalculator</span>&gt;(<span class="str">"StateBoard"</span>);
+builder.Services.<span class="mth">AddKeyedScoped</span>&lt;<span class="cls">IFeeCalculator</span>, <span class="cls">InternationalFeeCalculator</span>&gt;(<span class="str">"International"</span>);
+
+<span class="kw">public class</span> <span class="cls">FeeCalculatorFactory</span>(<span class="cls">IServiceProvider</span> _sp)
+{
+    <span class="kw">public</span> <span class="cls">IFeeCalculator</span> <span class="mth">GetForSchool</span>(<span class="cls">School</span> school)
+        =&gt; _sp.<span class="mth">GetRequiredKeyedService</span>&lt;<span class="cls">IFeeCalculator</span>&gt;(school.BoardType);
+}
+
+<span class="cmt">// Option 2: Func&lt;string, IFeeCalculator&gt; delegate registered in DI</span>
+builder.Services.<span class="mth">AddScoped</span>&lt;Func&lt;<span class="kw">string</span>, <span class="cls">IFeeCalculator</span>&gt;&gt;(sp =&gt;
+    boardType =&gt; boardType <span class="kw">switch</span>
+    {
+        <span class="str">"CBSE"</span>          =&gt; sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">CbseFeeCalculator</span>&gt;(),
+        <span class="str">"StateBoard"</span>    =&gt; sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">StateBoardFeeCalculator</span>&gt;(),
+        <span class="str">"International"</span> =&gt; sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">InternationalFeeCalculator</span>&gt;(),
+        _               =&gt; <span class="kw">throw new</span> <span class="cls">ArgumentException</span>(<span class="str">$"Unknown board: {boardType}"</span>)
+    });
+
+<span class="cmt">// Usage</span>
+<span class="kw">public class</span> <span class="cls">FeeService</span>(Func&lt;<span class="kw">string</span>, <span class="cls">IFeeCalculator</span>&gt; _calculatorFactory)
+{
+    <span class="kw">public</span> <span class="cls">decimal</span> <span class="mth">CalculateFee</span>(<span class="cls">School</span> school, <span class="cls">FeeCategory</span> cat)
+        =&gt; _calculatorFactory(school.BoardType).<span class="mth">Calculate</span>(cat);
+}</pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q9. How do you add caching to IStudentRepository without modifying its source code?</div>
+        <span class="scenario-type type-design">Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Decorator pattern</strong> &mdash; create a wrapper that implements the same interface and delegates to the real implementation:</p>
+        <pre><span class="kw">public class</span> <span class="cls">CachedStudentRepository</span>(
+    <span class="cls">IStudentRepository</span> _inner,
+    <span class="cls">IDistributedCache</span>  _cache,
+    <span class="cls">ILogger</span>&lt;<span class="cls">CachedStudentRepository</span>&gt; _log) : <span class="cls">IStudentRepository</span>
+{
+    <span class="kw">public async</span> Task&lt;<span class="cls">Student</span>?&gt; <span class="mth">GetByIdAsync</span>(<span class="kw">int</span> id, <span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">var</span> key    = <span class="str">$"student:{id}"</span>;
+        <span class="kw">var</span> cached = <span class="kw">await</span> _cache.<span class="mth">GetStringAsync</span>(key, ct);
+        <span class="kw">if</span> (cached <span class="kw">is not null</span>)
+        {
+            _log.<span class="mth">LogDebug</span>(<span class="str">"Cache HIT {Key}"</span>, key);
+            <span class="kw">return</span> <span class="cls">JsonSerializer</span>.<span class="mth">Deserialize</span>&lt;<span class="cls">Student</span>&gt;(cached);
+        }
+        <span class="kw">var</span> student = <span class="kw">await</span> _inner.<span class="mth">GetByIdAsync</span>(id, ct);
+        <span class="kw">if</span> (student <span class="kw">is not null</span>)
+            <span class="kw">await</span> _cache.<span class="mth">SetStringAsync</span>(key, <span class="cls">JsonSerializer</span>.<span class="mth">Serialize</span>(student),
+                <span class="kw">new</span>() { AbsoluteExpirationRelativeToNow = TimeSpan.<span class="mth">FromMinutes</span>(<span class="num">10</span>) }, ct);
+        <span class="kw">return</span> student;
+    }
+    <span class="cmt">// other IStudentRepository methods delegate to _inner similarly</span>
+}
+
+<span class="cmt">// Registration</span>
+builder.Services.<span class="mth">AddScoped</span>&lt;<span class="cls">StudentRepository</span>&gt;();
+builder.Services.<span class="mth">AddScoped</span>&lt;<span class="cls">IStudentRepository</span>&gt;(sp =&gt;
+    <span class="kw">new</span> <span class="cls">CachedStudentRepository</span>(
+        sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">StudentRepository</span>&gt;(),
+        sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">IDistributedCache</span>&gt;(),
+        sp.<span class="mth">GetRequiredService</span>&lt;<span class="cls">ILogger</span>&lt;<span class="cls">CachedStudentRepository</span>&gt;&gt;()));
+<span class="cmt">// Scrutor NuGet: services.Decorate&lt;IStudentRepository, CachedStudentRepository&gt;()</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q10. "Tell me about your DI experience in ZenCampus." &mdash; Full structured answer</div>
+        <span class="scenario-type type-exp">Experience</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p>"In ZenCampus we serve 200 schools and 50,000 students across 3 load-balanced API instances, so getting DI lifetimes right is critical for both correctness and performance.</p>
+        <p style="margin-top:0.5rem"><strong>Lifetime discipline:</strong> All services that touch DbContext are registered as Scoped &mdash; repositories, services, command handlers. Stateless utilities like phone validators and code generators are Singleton. We follow the chain rule: if you depend on something Scoped, you must also be Scoped or create a new scope per operation.</p>
+        <p style="margin-top:0.5rem"><strong>Captive dependency incident:</strong> Early on, our background notification service was registered as Singleton and accidentally held a Scoped IStudentRepository. This went undetected until load testing &mdash; concurrent requests started getting mixed data. We fixed it using IServiceScopeFactory to create a fresh scope per notification job. We also turned on ValidateScopes = true in Development, which now catches this class of bug at startup, not at runtime.</p>
+        <p style="margin-top:0.5rem"><strong>Keyed services:</strong> We have SMS, Email, and Push notification channels implementing INotificationChannel. Using .NET 8 keyed services &mdash; <code>AddKeyedScoped</code> with "sms", "email", "push" keys &mdash; and a NotificationDispatcher that resolves by school preference stored in the DB.</p>
+        <p style="margin-top:0.5rem"><strong>Options pattern:</strong> All external API settings (Msg91, payment gateway) use <code>AddOptions + ValidateDataAnnotations + ValidateOnStart</code>. Missing API key means the app crashes at deployment, not at 2 AM when the first fee SMS fails.</p>
+        <p style="margin-top:0.5rem"><strong>Decorator:</strong> CachedStudentRepository wraps StudentRepository &mdash; added Redis caching across the codebase with zero changes to existing service code."</p>
+    </div>
+</div>
+
+<!-- QUIZ -->
+<h2 class="section-title" id="quiz">&#129504; Quick Quiz</h2>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q1. SmsNotificationService is registered as Singleton. It needs ZenCampusDbContext (Scoped). What is the safest fix?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Register ZenCampusDbContext as Singleton too</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">B) Inject IServiceScopeFactory into the Singleton and create a scope per SMS operation</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) Inject IServiceProvider and call GetService&lt;ZenCampusDbContext&gt;() each time</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Use a static DbContext shared across all SMS sends</button>
+    </div>
+    <div class="quiz-feedback">IServiceScopeFactory &mdash; it is itself a Singleton, safe to inject into a Singleton. Each SMS send creates a fresh scope via CreateAsyncScope(), resolves a fresh DbContext from that scope, and disposes it when done. Making DbContext Singleton would break all EF Core change-tracking (it holds state). IServiceProvider resolves from the root scope = same captive dependency bug. Static DbContext = guaranteed concurrency bugs.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q2. IOptionsSnapshot&lt;Msg91Settings&gt; is injected into a Singleton class. What happens?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Works fine &mdash; options are read-only so sharing is safe</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">B) IOptionsSnapshot reloads every call so it is safe in Singleton</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">C) Captive dependency &mdash; IOptionsSnapshot is Scoped, captured by Singleton; throws with ValidateScopes enabled</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) IOptionsSnapshot automatically detects the Singleton and upgrades its own lifetime</button>
+    </div>
+    <div class="quiz-feedback">IOptionsSnapshot is Scoped &mdash; injecting it into a Singleton is a captive dependency bug. With ValidateScopes=true it throws at startup. Use IOptions (Singleton, static config) or IOptionsMonitor (Singleton + live change notification) inside Singleton services. IOptionsSnapshot is for Scoped/Transient services that want per-request config reload.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q3. ZenCampus needs to pick between SmsChannel and PushChannel at runtime based on each school's preference stored in DB. Best DI approach?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Register both, inject IEnumerable and use .GetType() to pick</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">B) Keyed services (.NET 8) &mdash; AddKeyedScoped by channel name, resolve via GetRequiredKeyedService at runtime</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) Use switch statement in the controller to new() the right channel</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Register both as Singleton and inject both, choose with if/else</button>
+    </div>
+    <div class="quiz-feedback">Keyed services (.NET 8) is the clean solution: register SmsChannel with key "sms", PushChannel with key "push". A NotificationDispatcher resolves GetRequiredKeyedService&lt;INotificationChannel&gt;(school.PreferredChannel) at runtime. IEnumerable + GetType() works but is fragile. new() in controller bypasses DI entirely. Injecting both and using if/else works but scales poorly (10 channels = 10 injected parameters).</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q4. ValidateOnBuild = true is set. A new IReportService is added to a controller but never registered in Program.cs. When does the error surface?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) At runtime when the first request hits the controller</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">B) At compile time &mdash; C# catches missing DI registrations</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">C) At app startup when builder.Build() is called &mdash; before any request is served</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Never &mdash; ASP.NET Core skips unresolvable services silently</button>
+    </div>
+    <div class="quiz-feedback">ValidateOnBuild causes builder.Build() to resolve all registered controllers and validate their dependency graphs. Missing IReportService registration throws InvalidOperationException during startup &mdash; the app never starts. Without ValidateOnBuild, the error only surfaces when a request hits that specific controller action, potentially hours or days after deployment.</div>
+</div>
+
+<!-- CHECKLIST -->
+<h2 class="section-title">&#9989; Day 25 Mastery Checklist</h2>
+<ul class="checklist">
+    <li><input type="checkbox" id="c1"><label for="c1">Transient: new every GetService. Scoped: new per HTTP request. Singleton: one for app lifetime.</label></li>
+    <li><input type="checkbox" id="c2"><label for="c2">DbContext = Scoped. Anything that uses DbContext = Scoped. ILogger, IMemoryCache = Singleton.</label></li>
+    <li><input type="checkbox" id="c3"><label for="c3">Captive dependency: Singleton holding Scoped = scoped lives forever = data corruption across requests.</label></li>
+    <li><input type="checkbox" id="c4"><label for="c4">Fix captive dependency: change to Scoped, OR inject IServiceScopeFactory + CreateAsyncScope() per operation.</label></li>
+    <li><input type="checkbox" id="c5"><label for="c5">IServiceScopeFactory is Singleton &mdash; always safe to inject into Singleton services.</label></li>
+    <li><input type="checkbox" id="c6"><label for="c6">ValidateScopes=true catches Singleton&rarr;Scoped at startup. ValidateOnBuild catches missing registrations.</label></li>
+    <li><input type="checkbox" id="c7"><label for="c7">Keyed services (.NET 8): AddKeyedScoped + [FromKeyedServices] + GetRequiredKeyedService.</label></li>
+    <li><input type="checkbox" id="c8"><label for="c8">IOptions (Singleton, no reload), IOptionsSnapshot (Scoped, per-request), IOptionsMonitor (Singleton, live OnChange).</label></li>
+    <li><input type="checkbox" id="c9"><label for="c9">ValidateDataAnnotations() + ValidateOnStart() = config errors crash at startup, not at 2 AM production.</label></li>
+    <li><input type="checkbox" id="c10"><label for="c10">Decorator: new class implements same interface, wraps inner, adds behaviour without touching original.</label></li>
+    <li><input type="checkbox" id="c11"><label for="c11">Service Locator anti-pattern: hidden deps, untestable, not validated by container. Use constructor injection.</label></li>
+    <li><input type="checkbox" id="c12"><label for="c12">Factory delegate: register Func&lt;string, IFeeCalculator&gt; for runtime-keyed resolution without IServiceProvider leak.</label></li>
+</ul>
+
+<div style="text-align:center;margin:2rem 0;padding:1.5rem;background:var(--card2);border-radius:12px;border:1px solid var(--border);">
+    <div style="font-size:1.5rem;font-weight:800;color:var(--accent-light)">Day 25 Complete! &#127919;</div>
+    <div style="color:var(--text-dim);margin-top:0.5rem">41.7% of the 60-day journey done &mdash; halfway approaches!</div>
+    <div style="color:var(--text-dim);font-size:0.85rem;margin-top:0.25rem">Tomorrow: Day 26 &mdash; Entity Framework Core Deep Dive (Query Optimisation, N+1, Migrations, Owned Types, Raw SQL, Concurrency)</div>
+</div>
+
+</div>
+
+<footer>
+    <div>Day 25 / 60 &mdash; Dependency Injection Deep Dive | ZenCampus .NET Interview Prep</div>
+    <div style="margin-top:0.25rem;color:var(--accent)">Accent: Periwinkle #6366f1 | Days 1&ndash;25 colors all unique &#10003;</div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const p = (doc.scrollTop || document.body.scrollTop) / (doc.scrollHeight - doc.clientHeight) * 100;
+    document.getElementById('progressBar').style.width = p + '%';
+});
+function toggle(btn) {
+    const a = btn.nextElementSibling;
+    a.classList.toggle('visible');
+    btn.textContent = a.classList.contains('visible') ? 'Hide Answer' : 'Reveal Answer';
+}
+function quiz(btn, correct) {
+    const card = btn.closest('.quiz-card');
+    card.querySelectorAll('.quiz-opt').forEach(o => o.disabled = true);
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    if (!correct)
+        card.querySelectorAll('.quiz-opt').forEach(o => {
+            if (o.getAttribute('onclick').includes('true')) o.classList.add('correct');
+        });
+    const fb = card.querySelector('.quiz-feedback');
+    fb.classList.add('show');
+    fb.style.cssText = `background:${correct?'rgba(34,197,94,0.1)':'rgba(239,68,68,0.1)'};color:${correct?'#86efac':'#fca5a5'};border:1px solid ${correct?'rgba(34,197,94,0.3)':'rgba(239,68,68,0.3)'};`;
+}
+</script>
+</body>
+</html>

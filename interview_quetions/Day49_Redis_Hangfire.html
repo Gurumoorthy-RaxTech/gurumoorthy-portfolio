@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 49 — Redis + Hangfire Background Jobs | ZenCampus Interview Prep</title>
+<style>
+  :root{--accent:#991b1b;--accent-dim:#7f1d1d;--accent-subtle:rgba(153,27,27,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(153,27,27,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.1rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .movie{background:linear-gradient(135deg,rgba(153,27,27,.12),rgba(153,27,27,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;}
+  .warn-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">DAY 49-50</span>
+  <a href="#redis">Redis Patterns</a><a href="#hangfire">Hangfire</a><a href="#jobs">ZenCampus Jobs</a>
+  <a href="#scenarios">Interview Q</a><a href="#quiz">Quiz</a>
+</nav>
+<div class="hero">
+  <h1>Redis + Hangfire Background Jobs</h1>
+  <p>IDistributedCache · Cache-Aside · RecurringJob · BackgroundJob · Outbox Pattern</p>
+  <div class="tags">
+    <span class="tag">Redis</span><span class="tag">Hangfire</span><span class="tag">Cache-Aside</span>
+    <span class="tag">Day 49–50 / 60</span>
+    <span class="tag" style="background:rgba(153,27,27,.2);border-color:#991b1b;color:#991b1b;">Dark Crimson #991b1b</span>
+  </div>
+</div>
+<main>
+
+<section id="redis">
+  <h2>⚡ Redis — Cache-Aside Pattern in ZenCampus</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Kaithi (2019) — Speed without compromise</div>
+    <div class="mb">Kaithi-la Dilli, phone illama, information-a memory-la vachukitu fast action edukkarar. Redis same way: ZenCampus student data bar dabase hit pannama cache-la irunthu serve panniduvom — 50,000 students attendance check panna DB-ku pogama Redis-la irunthu 5ms-la respond pannalaam!</div></div>
+  </div>
+  <pre><code><span class="cm">// ZenCampus Cache-Aside pattern with IDistributedCache (Redis)</span>
+<span class="kw">public class</span> <span class="cl">CachedStudentRepository</span>(<span class="cl">EfStudentRepository</span> _inner,
+    <span class="cl">IDistributedCache</span> _cache,
+    <span class="cl">ILogger</span>&lt;<span class="cl">CachedStudentRepository</span>&gt; _log) : <span class="cl">IStudentRepository</span>
+{
+    <span class="kw">private static readonly</span> <span class="cl">TimeSpan</span> StudentCacheDuration = <span class="cl">TimeSpan</span>.FromMinutes(<span class="num">30</span>);
+
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">Student</span>?&gt; GetByIdAsync(<span class="kw">int</span> id, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>)
+    {
+        <span class="kw">var</span> key = CacheKeys.Student(id);
+
+        <span class="cm">// 1. Try cache first</span>
+        <span class="kw">var</span> cached = <span class="kw">await</span> _cache.GetStringAsync(key, ct);
+        <span class="kw">if</span> (cached <span class="kw">is not null</span>)
+        {
+            _log.LogDebug(<span class="str">"Cache HIT for student {Id}"</span>, id);
+            <span class="kw">return</span> <span class="cl">JsonSerializer</span>.Deserialize&lt;<span class="cl">Student</span>&gt;(cached);
+        }
+
+        <span class="cm">// 2. Cache MISS — get from DB</span>
+        _log.LogDebug(<span class="str">"Cache MISS for student {Id}"</span>, id);
+        <span class="kw">var</span> student = <span class="kw">await</span> _inner.GetByIdAsync(id, ct);
+        <span class="kw">if</span> (student <span class="kw">is null</span>) <span class="kw">return null</span>;
+
+        <span class="cm">// 3. Populate cache</span>
+        <span class="kw">await</span> _cache.SetStringAsync(key, <span class="cl">JsonSerializer</span>.Serialize(student),
+            <span class="kw">new</span> <span class="cl">DistributedCacheEntryOptions</span>
+            {
+                AbsoluteExpirationRelativeToNow = StudentCacheDuration,
+                SlidingExpiration = <span class="cl">TimeSpan</span>.FromMinutes(<span class="num">5</span>)  <span class="cm">// extend on access</span>
+            }, ct);
+        <span class="kw">return</span> student;
+    }
+
+    <span class="kw">public async</span> <span class="cl">Task</span> UpdateAsync(<span class="cl">Student</span> student, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>)
+    {
+        <span class="kw">await</span> _inner.UpdateAsync(student, ct);
+        <span class="cm">// Invalidate cache on write</span>
+        <span class="kw">await</span> _cache.RemoveAsync(CacheKeys.Student(student.Id), ct);
+    }
+
+    <span class="kw">public async</span> <span class="cl">Task</span> DeleteAsync(<span class="kw">int</span> id, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>)
+    {
+        <span class="kw">await</span> _inner.DeleteAsync(id, ct);
+        <span class="kw">await</span> _cache.RemoveAsync(CacheKeys.Student(id), ct); <span class="cm">// evict</span>
+    }
+}
+
+<span class="kw">public static class</span> <span class="cl">CacheKeys</span>
+{
+    <span class="kw">public static string</span> Student(<span class="kw">int</span> id)      =&gt; <span class="str">$"student:v1:{id}"</span>;
+    <span class="kw">public static string</span> SchoolStudents(<span class="kw">int</span> schoolId, <span class="kw">int</span> page) =&gt; <span class="str">$"school:{schoolId}:students:p{page}"</span>;
+    <span class="kw">public static string</span> FeeStructure(<span class="kw">int</span> schoolId, <span class="kw">int</span> classId) =&gt; <span class="str">$"fee:{schoolId}:{classId}"</span>;
+}
+
+<span class="cm">// Registration — Decorator pattern wires Redis cache over EF</span>
+builder.Services.AddStackExchangeRedisCache(opts =&gt;
+{
+    opts.Configuration = builder.Configuration[<span class="str">"Redis:ConnectionString"</span>];
+    opts.InstanceName  = <span class="str">"ZenCampus:"</span>;  <span class="cm">// prefix all keys</span>
+});
+builder.Services.AddScoped&lt;<span class="cl">EfStudentRepository</span>&gt;();
+builder.Services.AddScoped&lt;<span class="cl">IStudentRepository</span>&gt;(sp =&gt;
+    <span class="kw">new</span> <span class="cl">CachedStudentRepository</span>(
+        sp.GetRequiredService&lt;<span class="cl">EfStudentRepository</span>&gt;(),
+        sp.GetRequiredService&lt;<span class="cl">IDistributedCache</span>&gt;(),
+        sp.GetRequiredService&lt;<span class="cl">ILogger</span>&lt;<span class="cl">CachedStudentRepository</span>&gt;&gt;()));</code></pre>
+</section>
+
+<section id="hangfire">
+  <h2>⚙️ Hangfire — Background Job Processing</h2>
+  <pre><code><span class="cm">// NuGet: Hangfire, Hangfire.AspNetCore, Hangfire.SqlServer</span>
+
+<span class="cm">// Program.cs setup</span>
+builder.Services.AddHangfire(config =&gt;
+    config.SetDataCompatibilityLevel(<span class="cl">CompatibilityLevel</span>.Version_180)
+          .UseSimpleAssemblyNameTypeSerializer()
+          .UseRecommendedSerializerSettings()
+          .UseSqlServerStorage(builder.Configuration.GetConnectionString(<span class="str">"HangfireDb"</span>)));
+
+builder.Services.AddHangfireServer(opts =&gt;
+{
+    opts.WorkerCount = <span class="cl">Environment</span>.ProcessorCount * <span class="num">2</span>;
+    opts.Queues = [<span class="str">"critical"</span>, <span class="str">"default"</span>, <span class="str">"low"</span>];
+});
+
+<span class="cm">// app.UseEndpoints</span>
+app.MapHangfireDashboard(<span class="str">"/hangfire"</span>, <span class="kw">new</span> <span class="cl">DashboardOptions</span>
+{
+    Authorization = [<span class="kw">new</span> <span class="cl">HangfireAdminAuthFilter</span>()], <span class="cm">// restrict to admins</span>
+    DashboardTitle = <span class="str">"ZenCampus Job Dashboard"</span>
+});</code></pre>
+  <pre><code><span class="cm">// ZenCampus background jobs</span>
+<span class="kw">public class</span> <span class="cl">ZenCampusJobScheduler</span>
+{
+    <span class="cm">// Recurring — runs on CRON schedule</span>
+    <span class="kw">public static void</span> RegisterRecurringJobs()
+    {
+        <span class="cm">// Daily attendance SMS to parents at 6 PM</span>
+        <span class="cl">RecurringJob</span>.AddOrUpdate&lt;<span class="cl">AttendanceSmsJob</span>&gt;(
+            <span class="str">"daily-attendance-sms"</span>,
+            job =&gt; job.SendAttendanceSmsToParentsAsync(),
+            <span class="str">"0 18 * * *"</span>);  <span class="cm">// 6 PM every day</span>
+
+        <span class="cm">// Monthly fee reminder on 1st of each month</span>
+        <span class="cl">RecurringJob</span>.AddOrUpdate&lt;<span class="cl">FeeReminderJob</span>&gt;(
+            <span class="str">"monthly-fee-reminder"</span>,
+            job =&gt; job.SendFeeRemindersAsync(),
+            <span class="str">"0 9 1 * *"</span>);   <span class="cm">// 9 AM on 1st of every month</span>
+
+        <span class="cm">// Daily report generation at 11 PM</span>
+        <span class="cl">RecurringJob</span>.AddOrUpdate&lt;<span class="cl">DailyReportJob</span>&gt;(
+            <span class="str">"daily-reports"</span>,
+            job =&gt; job.GenerateAllSchoolReportsAsync(),
+            <span class="str">"0 23 * * *"</span>);
+    }
+
+    <span class="cm">// Fire-and-forget — triggered on demand</span>
+    <span class="kw">public static void</span> EnqueueWelcomeSms(<span class="kw">int</span> studentId)
+    {
+        <span class="cl">BackgroundJob</span>.Enqueue&lt;<span class="cl">SmsService</span>&gt;(
+            svc =&gt; svc.SendWelcomeSmsAsync(studentId),
+            <span class="str">"critical"</span>);    <span class="cm">// high priority queue</span>
+    }
+
+    <span class="cm">// Delayed — runs after a delay</span>
+    <span class="kw">public static void</span> ScheduleFeeReminder(<span class="kw">int</span> studentId, <span class="cl">DateTimeOffset</span> dueDate)
+    {
+        <span class="cl">BackgroundJob</span>.Schedule&lt;<span class="cl">FeeReminderJob</span>&gt;(
+            job =&gt; job.SendFeeReminderAsync(studentId),
+            dueDate.AddDays(<span class="num">-3</span>));   <span class="cm">// 3 days before due date</span>
+    }
+
+    <span class="cm">// Continuations — run after another job completes</span>
+    <span class="kw">public static void</span> EnqueueAdmissionWorkflow(<span class="kw">int</span> studentId)
+    {
+        <span class="kw">var</span> admitJobId = <span class="cl">BackgroundJob</span>.Enqueue&lt;<span class="cl">AdmissionJob</span>&gt;(
+            j =&gt; j.ProcessAdmissionAsync(studentId));
+        <span class="cm">// Only send welcome SMS after admission processing completes</span>
+        <span class="cl">BackgroundJob</span>.ContinueJobWith&lt;<span class="cl">SmsService</span>&gt;(admitJobId,
+            svc =&gt; svc.SendWelcomeSmsAsync(studentId));
+    }
+}</code></pre>
+</section>
+
+<section id="jobs">
+  <h2>🏫 Real ZenCampus Hangfire Jobs</h2>
+  <table>
+    <tr><th>Job</th><th>Type</th><th>Schedule</th><th>Action</th></tr>
+    <tr><td>AttendanceSmsJob</td><td>RecurringJob</td><td>0 18 * * * (6 PM daily)</td><td>Send attendance SMS to all parents</td></tr>
+    <tr><td>FeeReminderJob</td><td>RecurringJob</td><td>0 9 1 * * (1st of month)</td><td>Send fee due reminders</td></tr>
+    <tr><td>DailyReportJob</td><td>RecurringJob</td><td>0 23 * * * (11 PM)</td><td>Generate all school reports</td></tr>
+    <tr><td>StudentAdmissionWelcome</td><td>BackgroundJob</td><td>On admission</td><td>Send welcome SMS + create portal login</td></tr>
+    <tr><td>FeeReceiptEmail</td><td>BackgroundJob</td><td>On payment</td><td>Email fee receipt PDF to parent</td></tr>
+    <tr><td>ReportCardGenerate</td><td>BackgroundJob</td><td>After exam results</td><td>Generate PDF report cards for all students</td></tr>
+  </table>
+  <div class="good-box">
+    <strong>Why Hangfire for ZenCampus?</strong> 200 schools × 50,000 students = sending SMS synchronously in the HTTP request would timeout. Hangfire: enqueue SMS job, return 200 OK in &lt;50ms, Hangfire workers send 50,000 SMS in background. If SMS service is down, Hangfire retries automatically (default: 10 retries with exponential backoff).
+  </div>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">Explain the cache-aside pattern vs read-through cache.</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Cache-aside (lazy loading): app checks cache, if miss → fetch DB → populate cache. App manages cache explicitly. Read-through: cache sits in front of DB — app asks cache, cache fetches DB automatically if miss, then returns. Cache-aside: more control, works with IDistributedCache. Read-through: needs special cache libraries. For ZenCampus: cache-aside used in CachedStudentRepository — check Redis, miss → EF query → Redis set.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What is cache stampede and how do you prevent it?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Cache stampede: popular key expires. Hundreds of simultaneous requests all see cache miss, all hit DB at once, DB overwhelmed. Prevention: 1) SemaphoreSlim per key — only first request populates, others wait. 2) Probabilistic early expiration — randomly re-populate before expiry when under load. 3) Background refresh — never expire hot keys, refresh in background. For ZenCampus: school's fee structure for 5,000 students — use SemaphoreSlim to prevent stampede.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is the difference between BackgroundJob.Enqueue and RecurringJob.AddOrUpdate?</span><span class="st">Hangfire</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>BackgroundJob.Enqueue: fire-and-forget. Runs once, as soon as a worker is available. Use for: sending welcome SMS on student admission, generating fee receipt after payment. RecurringJob.AddOrUpdate: runs on CRON schedule repeatedly. Use for: daily attendance SMS (6 PM every day), monthly fee reminders (1st of month), nightly report generation. Both: durable, survive restarts, retry on failure.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">Why should long-running operations like sending 50,000 SMS be moved to Hangfire?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>HTTP requests have timeouts (typically 30–120 seconds). Sending 50,000 SMS synchronously would take minutes — guaranteed timeout and bad UX. Hangfire: enqueue job in &lt;5ms, return 200 OK to the client immediately. Workers send SMS in background with automatic retry if SMS provider is down. Dashboard shows progress. Teachers don't wait — they get instant response, SMS sends in background.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">What happens when a Hangfire job throws an exception?</span><span class="st">Hangfire</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Hangfire: automatic retry with exponential backoff. Default: 10 retries. After each failure, job moves to "Failed" state temporarily. Next retry at: 1min, 5min, 10min, 15min, 30min, 1hr, 2hr, 5hr, 10hr, 24hr. After 10 failures: moves to Failed permanently — visible in dashboard. Admin can manually retry from dashboard. For ZenCampus: SMS provider down at 6 PM → Hangfire retries, SMS eventually sent when provider recovers.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">How is IMemoryCache different from IDistributedCache?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>IMemoryCache: in-process, per-server RAM. Invisible to other servers. Data not shared. If you have 3 App Service instances, each has its own cache — inconsistency possible. IDistributedCache (Redis): external, all servers share same cache. Redis restart survives (append-only file). ZenCampus with 3 instances: student data cached in Redis once, all instances serve from same cache. No cache duplication, always consistent.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">What is BackgroundJob.ContinueJobWith?</span><span class="st">Hangfire</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Job continuation: run Job B only after Job A completes successfully. For ZenCampus: ProcessAdmission job completes → only then SendWelcomeSms runs. If admission processing fails, welcome SMS is not sent. This is a job DAG (directed acyclic graph) in Hangfire. Prevents sending welcome to student whose admission failed. ContinueJobWith takes the parent job ID and registers the continuation.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">What is the Outbox Pattern and when would ZenCampus use it?</span><span class="st">Architecture</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Problem: admit student (DB save) + send SMS — what if SMS enqueue fails after DB save? Or DB transaction fails after SMS enqueue? Outbox: save StudentAdmitted event to outbox table in same DB transaction. Hangfire job reads outbox table, sends SMS, marks outbox entry processed. Both operations atomic with DB — if DB fails, nothing happens. If SMS fails, job retries. Guarantees at-least-once SMS delivery for every admission.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">How do you prevent a Hangfire job from running more than once at a time (prevent overlap)?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Hangfire: add [DisableConcurrentExecution(timeoutInSeconds: 30)] attribute on the job method. If previous run is still in progress when next trigger fires, new run waits (up to timeout) before proceeding. For ZenCampus daily report generation: if previous night's job is still generating reports when midnight arrives, don't start a new one simultaneously — [DisableConcurrentExecution] prevents double-generation.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">How would you add rate limiting to Redis cache key to prevent hot-key abuse?</span><span class="st">Advanced</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Redis INCR + EXPIRE for sliding window rate limit: INCR "ratelimit:api:{ip}:{minute}" → returns current count. If count > 100 → reject. EXPIRE "ratelimit:api:{ip}:{minute}" 60 → auto-expires. Or use ASP.NET Core Rate Limiting middleware (.NET 7+) with Redis backing. For ZenCampus: parent portal — max 60 fee-check requests per minute per parent. Redis atomic INCR makes this thread-safe across multiple API instances.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. What is the main problem solved by cache-aside pattern?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Encryption is handled by Redis TLS configuration, not cache-aside.')">Encrypting sensitive data</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Cache-aside reduces DB load by serving repeated reads from fast in-memory Redis. DB only hit on cache miss. For ZenCampus: 50,000 students loading fee info — Redis handles 95% of reads.')">Reducing database load by serving repeated reads from fast in-memory cache</button>
+    <button class="qb" onclick="ans(this,'wrong','Distributed transactions use two-phase commit, not cache-aside.')">Handling distributed transactions</button>
+    <button class="qb" onclick="ans(this,'wrong','Load balancing is handled by the infrastructure layer.')">Load balancing between servers</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. Which Hangfire job type would you use to send 50,000 attendance SMS at 6 PM daily?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','BackgroundJob.Enqueue fires once, not on a schedule.')">BackgroundJob.Enqueue</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! RecurringJob.AddOrUpdate with CRON "0 18 * * *" runs every day at 6 PM. Set it once on startup, runs forever.')">RecurringJob.AddOrUpdate with CRON "0 18 * * *"</button>
+    <button class="qb" onclick="ans(this,'wrong','BackgroundJob.Schedule is for one-time delayed execution, not recurring.')">BackgroundJob.Schedule</button>
+    <button class="qb" onclick="ans(this,'wrong','ContinueJobWith runs after another job, not on a CRON schedule.')">BackgroundJob.ContinueJobWith</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. Why is IDistributedCache (Redis) better than IMemoryCache for a 3-instance App Service?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Redis doesn\'t directly compress data sizes.')">Redis compresses data automatically</button>
+    <button class="qb" onclick="ans(this,'wrong','Redis performance can be slower than in-process memory — but consistency wins.')">Redis is faster than in-process memory</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! IMemoryCache is per-server — 3 instances = 3 separate caches, each with different data. Redis is shared — all instances read and write the same cache. No stale data inconsistency.')">All server instances share the same cache — consistent data across all instances</button>
+    <button class="qb" onclick="ans(this,'wrong','Redis doesn\'t auto-scale the App Service.')">Redis auto-scales the App Service</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. What happens when a Hangfire job fails after all retry attempts?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Hangfire doesn\'t automatically restart the entire API.')">The API restarts automatically</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Job moves to "Failed" state in the Hangfire database. Visible on dashboard with full exception details. Admin can manually retry or delete. No automatic data loss — job definition and argument preserved.')">Job moves to Failed state — visible in dashboard, can be manually retried by admin</button>
+    <button class="qb" onclick="ans(this,'wrong','Failed jobs are not deleted — they remain for review.')">Job is automatically deleted</button>
+    <button class="qb" onclick="ans(this,'wrong','Failed Hangfire jobs don\'t trigger emails by default.')">An alert email is automatically sent</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can implement cache-aside with IDistributedCache</li>
+    <li onclick="ck(this)"><input type="checkbox">I know CacheKeys naming pattern with version prefix</li>
+    <li onclick="ck(this)"><input type="checkbox">I can configure Hangfire with SQL Server and multiple queues</li>
+    <li onclick="ck(this)"><input type="checkbox">I know when to use Enqueue vs Schedule vs RecurringJob</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand cache stampede and prevention strategies</li>
+    <li onclick="ck(this)"><input type="checkbox">I know IMemoryCache vs IDistributedCache trade-offs</li>
+    <li onclick="ck(this)"><input type="checkbox">I can use BackgroundJob.ContinueJobWith for job chaining</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand the Outbox Pattern for reliable messaging</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Day 49–50 Complete ✓ — Redis Cache-Aside + Hangfire Background Jobs</p>
+  <p>Accent: Dark Crimson #991b1b · Next: Day 51 — React Fundamentals for .NET Developers</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

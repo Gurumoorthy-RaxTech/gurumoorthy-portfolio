@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Docker Guide - What & Why</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, #1a56db, #0e9f6e);
+      padding: 60px 20px;
+      text-align: center;
+    }
+    header .logo {
+      font-size: 64px;
+      margin-bottom: 10px;
+    }
+    header h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    header p {
+      font-size: 1.1rem;
+      color: #d1fae5;
+      margin-top: 8px;
+    }
+
+    /* SECTIONS */
+    .section {
+      max-width: 960px;
+      margin: 50px auto;
+      padding: 0 20px;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-title span.badge {
+      background: #1a56db;
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* CARD */
+    .card {
+      background: #1e2130;
+      border: 1px solid #2d3250;
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+    }
+    .card h3 {
+      font-size: 1.2rem;
+      color: #60a5fa;
+      margin-bottom: 10px;
+    }
+    .card p {
+      color: #cbd5e1;
+      font-size: 0.97rem;
+    }
+
+    /* ANALOGY BOX */
+    .analogy {
+      background: linear-gradient(135deg, #1e3a5f, #1a3a2f);
+      border-left: 4px solid #0e9f6e;
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+    }
+    .analogy .emoji { font-size: 2rem; margin-bottom: 8px; display: block; }
+    .analogy h3 { color: #6ee7b7; font-size: 1.1rem; margin-bottom: 8px; }
+    .analogy p { color: #a7f3d0; font-size: 0.95rem; }
+
+    /* COMPARISON TABLE */
+    .table-wrap { overflow-x: auto; border-radius: 12px; margin-bottom: 20px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1e2130;
+    }
+    thead { background: #1a56db; }
+    thead th {
+      padding: 14px 20px;
+      font-size: 0.9rem;
+      text-align: left;
+      color: #fff;
+      font-weight: 700;
+    }
+    tbody tr { border-bottom: 1px solid #2d3250; }
+    tbody tr:hover { background: #252840; }
+    tbody td {
+      padding: 13px 20px;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+    .green { color: #6ee7b7; font-weight: 600; }
+    .red   { color: #f87171; font-weight: 600; }
+
+    /* FEATURE GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+    .feature-card {
+      background: #1e2130;
+      border: 1px solid #2d3250;
+      border-radius: 14px;
+      padding: 24px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: #1a56db;
+    }
+    .feature-card .icon { font-size: 2rem; margin-bottom: 12px; }
+    .feature-card h4 { color: #60a5fa; font-size: 1rem; margin-bottom: 8px; }
+    .feature-card p { color: #94a3b8; font-size: 0.88rem; }
+
+    /* CODE BLOCK */
+    .code-block {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 16px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.88rem;
+      overflow-x: auto;
+      position: relative;
+    }
+    .code-block .comment { color: #6a737d; }
+    .code-block .keyword { color: #ff7b72; }
+    .code-block .string  { color: #a5d6ff; }
+    .code-block .cmd     { color: #79c0ff; }
+    .code-block .output  { color: #7ee787; }
+
+    /* Q&A SECTION */
+    .qa-item {
+      background: #1e2130;
+      border: 1px solid #2d3250;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .qa-question {
+      background: #252840;
+      padding: 18px 24px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      transition: background 0.2s;
+    }
+    .qa-question:hover { background: #2d3250; }
+    .qa-question h4 {
+      font-size: 0.97rem;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .qa-question h4 .q-num {
+      background: #1a56db;
+      color: #fff;
+      font-size: 0.75rem;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; flex-shrink: 0;
+    }
+    .qa-question .arrow {
+      color: #60a5fa;
+      font-size: 1.1rem;
+      transition: transform 0.3s;
+    }
+    .qa-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s;
+    }
+    .qa-answer.open {
+      max-height: 800px;
+      padding: 20px 24px;
+    }
+    .qa-answer p  { color: #cbd5e1; font-size: 0.93rem; margin-bottom: 10px; }
+    .qa-answer ul { padding-left: 20px; color: #94a3b8; font-size: 0.9rem; }
+    .qa-answer ul li { margin-bottom: 6px; }
+    .qa-answer .highlight {
+      background: #1a3a5f;
+      border-left: 3px solid #60a5fa;
+      padding: 10px 16px;
+      border-radius: 6px;
+      margin-top: 10px;
+      color: #bfdbfe;
+      font-size: 0.9rem;
+    }
+    .arrow.open { transform: rotate(180deg); }
+
+    /* FLOW DIAGRAM */
+    .flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0;
+      margin: 24px 0;
+    }
+    .flow-box {
+      background: #252840;
+      border: 2px solid #1a56db;
+      border-radius: 10px;
+      padding: 14px 20px;
+      text-align: center;
+      min-width: 130px;
+    }
+    .flow-box .icon { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+    .flow-box span { font-size: 0.82rem; color: #94a3b8; display: block; }
+    .flow-box strong { font-size: 0.9rem; color: #e2e8f0; }
+    .flow-arrow {
+      font-size: 1.5rem;
+      color: #1a56db;
+      padding: 0 8px;
+    }
+
+    /* BADGE TAGS */
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .tag {
+      background: #1a3a5f;
+      color: #60a5fa;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid #1e4a8a;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #4b5563;
+      font-size: 0.85rem;
+      border-top: 1px solid #1e2130;
+      margin-top: 60px;
+    }
+
+    /* PROGRESS BAR */
+    .progress-wrap { margin-top: 40px; }
+    .progress-item { margin-bottom: 16px; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 0.88rem;
+      color: #94a3b8;
+    }
+    .progress-bar {
+      background: #2d3250;
+      border-radius: 10px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #1a56db, #0e9f6e);
+      transition: width 1.5s ease;
+      width: 0;
+    }
+
+    /* SCROLL TO TOP */
+    #scrollTop {
+      position: fixed;
+      bottom: 30px; right: 30px;
+      background: #1a56db;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px; height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      box-shadow: 0 4px 12px rgba(26,86,219,0.4);
+    }
+    #scrollTop:hover { background: #1e429f; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">🐳</div>
+  <h1>Docker - Complete Guide</h1>
+  <p>What is Docker · Why Use Docker · Interview Q&A</p>
+</header>
+
+<!-- SECTION 1: WHAT IS DOCKER -->
+<div class="section">
+  <div class="section-title">
+    🐳 What is Docker?
+    <span class="badge">CONCEPT</span>
+  </div>
+
+  <div class="analogy">
+    <span class="emoji">🚢</span>
+    <h3>Real World Analogy</h3>
+    <p>
+      Docker = <strong>Shipping Container</strong> மாதிரி. ஒரு ship-ல different types of goods (electronics, food, clothes)
+      — எல்லாத்தையும் separate container-ல pack பண்ணி ship பண்றோம்.
+      எங்கே போனாலும் (Chennai, Singapore, USA) container same ஆ இருக்கும்.<br><br>
+      Docker-லயும் உன் app + dependencies எல்லாத்தையும் ஒரு container-ல pack பண்ணி
+      எந்த machine-லயும் run பண்ணலாம்!
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Simple Definition</h3>
+    <p>
+      Docker is an <strong style="color:#60a5fa">open-source platform</strong> that allows you to
+      <strong style="color:#6ee7b7">package, ship, and run</strong> applications inside lightweight,
+      isolated environments called <strong style="color:#f472b6">containers</strong>.<br><br>
+      Container-ல உன் app-க்கு தேவையான எல்லாமே இருக்கும் — code, runtime, libraries, config எல்லாம்.
+    </p>
+    <div class="tags">
+      <span class="tag">Open Source</span>
+      <span class="tag">Containerization</span>
+      <span class="tag">Platform Independent</span>
+      <span class="tag">Lightweight</span>
+    </div>
+  </div>
+
+  <div class="flow">
+    <div class="flow-box">
+      <span class="icon">💻</span>
+      <strong>Your Code</strong>
+      <span>App + Dependencies</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">
+      <span class="icon">📄</span>
+      <strong>Dockerfile</strong>
+      <span>Instructions</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">
+      <span class="icon">🖼️</span>
+      <strong>Image</strong>
+      <span>Blueprint</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">
+      <span class="icon">📦</span>
+      <strong>Container</strong>
+      <span>Running App</span>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: WHY DOCKER -->
+<div class="section">
+  <div class="section-title">
+    ❓ Why Use Docker?
+    <span class="badge">REASON</span>
+  </div>
+
+  <div class="card" style="border-left: 4px solid #f87171; margin-bottom: 10px;">
+    <h3>❌ Problem Without Docker</h3>
+    <p>
+      Dev machine-ல perfectly work பண்றது → Test server-ல போட்டா crash 😤<br>
+      <strong style="color:#f87171">"It works on my machine!"</strong> — இது மிகவும் common problem.
+    </p>
+    <div class="code-block">
+      <span class="comment"># Dev machine: .NET 8, SQL Server 2022</span><br>
+      <span class="comment"># Test server: .NET 6, SQL Server 2019</span><br>
+      <span class="red" style="color:#f87171"># Result: App crashes! 💥</span>
+    </div>
+  </div>
+
+  <div class="card" style="border-left: 4px solid #6ee7b7;">
+    <h3>✅ Solution With Docker</h3>
+    <p>
+      Docker container-ல எல்லாமே include ஆகும் → எந்த machine-லயும் same ஆ run ஆகும்!
+    </p>
+    <div class="code-block">
+      <span class="comment"># Docker container: .NET 8 + SQL Server 2022 — fixed versions</span><br>
+      <span class="output"># Dev machine ✅ + Test server ✅ + Production ✅</span><br>
+      <span class="output"># Same container → Same result everywhere! 🎉</span>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top: 24px;">
+    <div class="feature-card">
+      <div class="icon">⚡</div>
+      <h4>Consistency</h4>
+      <p>Dev, Test, Prod — எல்லா இடத்திலயும் same environment. "Works on my machine" problem இல்லவே இல்ல.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🚀</div>
+      <h4>Fast Deployment</h4>
+      <p>Minutes-ல build பண்ணி deploy பண்ணலாம். VM மாதிரி hours wait பண்ண வேண்டாம்.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📦</div>
+      <h4>Isolation</h4>
+      <p>ஒவ்வொரு app-உம் separate container-ல. ஒண்ணு crash ஆனாலும் மத்தவை affect ஆகாது.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📈</div>
+      <h4>Scalability</h4>
+      <p>Traffic அதிகம் வந்தா containers இன்னும் add பண்ணலாம். Kubernetes-உடன் auto-scale.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">💰</div>
+      <h4>Cost Saving</h4>
+      <p>VM-விட lightweight. ஒரே server-ல நிறைய containers run பண்ணலாம் → cost குறையும்.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🔄</div>
+      <h4>Version Control</h4>
+      <p>Image versions manage பண்ணலாம். Problem வந்தா previous version-க்கு rollback easy.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: DOCKER vs VM -->
+<div class="section">
+  <div class="section-title">
+    ⚖️ Docker vs Virtual Machine
+    <span class="badge">COMPARISON</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>🐳 Docker Container</th>
+          <th>💻 Virtual Machine</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>OS</td>
+          <td class="green">Host OS kernel share பண்ணும்</td>
+          <td class="red">Full Guest OS தேவை</td>
+        </tr>
+        <tr>
+          <td>Size</td>
+          <td class="green">MB (lightweight)</td>
+          <td class="red">GB (heavy)</td>
+        </tr>
+        <tr>
+          <td>Start Time</td>
+          <td class="green">Seconds</td>
+          <td class="red">Minutes</td>
+        </tr>
+        <tr>
+          <td>Performance</td>
+          <td class="green">Near-native</td>
+          <td class="red">Overhead உண்டு</td>
+        </tr>
+        <tr>
+          <td>Isolation</td>
+          <td>Process-level</td>
+          <td class="green">Full hardware isolation</td>
+        </tr>
+        <tr>
+          <td>Portability</td>
+          <td class="green">Very High</td>
+          <td>Medium</td>
+        </tr>
+        <tr>
+          <td>Resource Usage</td>
+          <td class="green">Low</td>
+          <td class="red">High</td>
+        </tr>
+        <tr>
+          <td>Security</td>
+          <td>Good (with config)</td>
+          <td class="green">Better (full isolation)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SECTION 4: KEY CONCEPTS -->
+<div class="section">
+  <div class="section-title">
+    🔑 Key Concepts
+    <span class="badge">CORE</span>
+  </div>
+
+  <div class="grid">
+    <div class="feature-card">
+      <div class="icon">📄</div>
+      <h4>Dockerfile</h4>
+      <p>Image build பண்ண instructions எழுதுற file. Step-by-step recipe மாதிரி.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🖼️</div>
+      <h4>Image</h4>
+      <p>App-ஓட read-only blueprint. C#-ல class definition மாதிரி.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📦</div>
+      <h4>Container</h4>
+      <p>Image-ஓட running instance. C#-ல object மாதிரி. Multiple containers from one image.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🏪</div>
+      <h4>Registry</h4>
+      <p>Docker Hub = images store பண்ற இடம். GitHub-மாதிரி but images-க்கு.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">💾</div>
+      <h4>Volume</h4>
+      <p>Container delete ஆனாலும் data survive ஆக. Database files-க்கு essential.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🌐</div>
+      <h4>Network</h4>
+      <p>Containers-க்கு இடையே communication. Web app → Database connect ஆக.</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <span class="comment"># Dockerfile example — ASP.NET Core app</span><br><br>
+    <span class="keyword">FROM</span> <span class="string">mcr.microsoft.com/dotnet/aspnet:8.0</span> <span class="keyword">AS</span> base<br>
+    <span class="keyword">WORKDIR</span> /app<br>
+    <span class="keyword">EXPOSE</span> 80<br><br>
+    <span class="keyword">FROM</span> <span class="string">mcr.microsoft.com/dotnet/sdk:8.0</span> <span class="keyword">AS</span> build<br>
+    <span class="keyword">WORKDIR</span> /src<br>
+    <span class="keyword">COPY</span> . .<br>
+    <span class="keyword">RUN</span> dotnet publish -c Release -o /app/publish<br><br>
+    <span class="keyword">FROM</span> base <span class="keyword">AS</span> final<br>
+    <span class="keyword">COPY</span> --from=build /app/publish .<br>
+    <span class="keyword">ENTRYPOINT</span> [<span class="string">"dotnet"</span>, <span class="string">"ZenCampusWeb.dll"</span>]
+  </div>
+</div>
+
+<!-- SECTION 5: INTERVIEW Q&A -->
+<div class="section">
+  <div class="section-title">
+    🎯 Interview Questions & Answers
+    <span class="badge">Q&A</span>
+  </div>
+
+  <!-- Q1 -->
+  <div class="qa-item">
+    <div class="qa-question" onclick="toggleQA(this)">
+      <h4><span class="q-num">1</span> Docker என்ன? Simple-ஆ explain பண்ணுங்க.</h4>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>Docker is an open-source containerization platform that packages an application and all its dependencies together into a standardized unit called a <strong>container</strong>.</p>
+      <p>Container-ல app-க்கு தேவையான எல்லாமே இருக்கும் — code, runtime, libraries, config. இதனால எந்த machine-லயும் consistently run ஆகும்.</p>
+      <div class="highlight">
+        💡 One liner: "Docker lets you package your application with all its dependencies so it runs the same everywhere — dev, test, or production."
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="qa-item">
+    <div class="qa-question" onclick="toggleQA(this)">
+      <h4><span class="q-num">2</span> Docker Image vs Container — difference என்ன?</h4>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong style="color:#60a5fa">Image</strong> = Read-only blueprint / template (C#-ல class மாதிரி)</p>
+      <p><strong style="color:#6ee7b7">Container</strong> = Image-ஓட running instance (C#-ல object மாதிரி)</p>
+      <ul>
+        <li>ஒரே image-ல இருந்து multiple containers create பண்ணலாம்</li>
+        <li>Image immutable — change ஆகாது</li>
+        <li>Container mutable — runtime-ல change ஆகும்</li>
+      </ul>
+      <div class="highlight">
+        💡 "Image is like a class definition, container is like an object created from that class."
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="qa-item">
+    <div class="qa-question" onclick="toggleQA(this)">
+      <h4><span class="q-num">3</span> Docker VS Virtual Machine — என்ன difference?</h4>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>VM:</strong> Full OS தேவை → Heavy (GBs), slow to start (minutes)</p>
+      <p><strong>Docker:</strong> Host OS kernel share → Lightweight (MBs), fast (seconds)</p>
+      <ul>
+        <li>Docker containers share the host OS kernel</li>
+        <li>VMs have their own complete OS</li>
+        <li>Docker is more efficient with resources</li>
+        <li>VMs provide stronger isolation</li>
+      </ul>
+      <div class="highlight">
+        💡 "Docker containers are like apartments in a building (shared structure, separate spaces). VMs are like separate houses (completely independent)."
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="qa-item">
+    <div class="qa-question" onclick="toggleQA(this)">
+      <h4><span class="q-num">4</span> Why Docker? Real world benefit என்ன?</h4>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <ul>
+        <li><strong style="color:#60a5fa">Consistency</strong> — "Works on my machine" problem solve பண்ணும்</li>
+        <li><strong style="color:#6ee7b7">Portability</strong> — எந்த OS-லயும், cloud-லயும் run ஆகும்</li>
+        <li><strong style="color:#f472b6">Isolation</strong> — ஒவ்வொரு app தனியா run ஆகும்</li>
+        <li><strong style="color:#fbbf24">Scalability</strong> — Kubernetes-உடன் auto-scale பண்ணலாம்</li>
+        <li><strong style="color:#a78bfa">Speed</strong> — Fast deployment, seconds-ல start</li>
+        <li><strong style="color:#fb923c">Cost</strong> — VM-விட resource efficient</li>
+      </ul>
+      <div class="highlight">
+        💡 Real example: ZenCampus app-ஐ Docker-ல run பண்ணினா — dev laptop-லயும், Azure-லயும் exact same ஆ behave ஆகும்.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="qa-item">
+    <div class="qa-question" onclick="toggleQA(this)">
+      <h4><span class="q-num">5</span> Dockerfile என்ன? Key instructions என்னென்ன?</h4>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>Dockerfile = Docker image build பண்ண step-by-step instructions எழுதுற text file.</p>
+      <ul>
+        <li><strong style="color:#ff7b72">FROM</strong> — Base image specify பண்ணு</li>
+        <li><strong style="color:#ff7b72">WORKDIR</strong> — Working directory set பண்ணு</li>
+        <li><strong style="color:#ff7b72">COPY</strong> — Files copy பண்ணு</li>
+        <li><strong style="color:#ff7b72">RUN</strong> — Command execute பண்ணு (build time)</li>
+        <li><strong style="color:#ff7b72">EXPOSE</strong> — Port expose பண்ணு</li>
+        <li><strong style="color:#ff7b72">ENTRYPOINT</strong> — Container start ஆகும்போது run ஆகற command</li>
+        <li><strong style="color:#ff7b72">ENV</strong> — Environment variables set பண்ணு</li>
+      </ul>
+      <div class="highlight">
+        💡 "Dockerfile is like a recipe — FROM gives the base ingredient, RUN adds steps, ENTRYPOINT defines how to serve it."
+      </div>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="qa-item">
+    <div class="qa-question" onclick="toggleQA(this)">
+      <h4><span class="q-num">6</span> Docker Volume என்ன? எப்போ use பண்ணுவீங்க?</h4>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>Container delete ஆனாலும் data survive ஆக <strong>Volumes</strong> use பண்றோம்.</p>
+      <p>Container filesystem by default ephemeral — container போனா data போயிடும்.</p>
+      <ul>
+        <li><strong>Named Volume</strong> — Docker manage பண்ணும் (recommended)</li>
+        <li><strong>Bind Mount</strong> — Host folder map பண்ணும்</li>
+      </ul>
+      <div class="highlight">
+        💡 Use case: SQL Server data files, uploaded images, log files — container restart ஆனாலும் data safe-ஆ இருக்கணும்னா Volume use பண்ணு.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="qa-item">
+    <div class="qa-question" onclick="toggleQA(this)">
+      <h4><span class="q-num">7</span> Docker Compose என்ன?</h4>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>Multiple containers-ஐ ஒரே YAML file-ல define பண்ணி, single command-ல manage பண்ண Docker Compose use பண்றோம்.</p>
+      <p>Example: ZenCampus = Web App + SQL Server + Redis → 3 containers → 1 compose file</p>
+      <ul>
+        <li><strong>docker-compose up</strong> — All services start</li>
+        <li><strong>docker-compose down</strong> — All services stop</li>
+        <li><strong>docker-compose logs</strong> — All logs பாரு</li>
+      </ul>
+      <div class="highlight">
+        💡 "Docker Compose is like an orchestra conductor — it starts all your services (instruments) in the right order at once."
+      </div>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="qa-item">
+    <div class="qa-question" onclick="toggleQA(this)">
+      <h4><span class="q-num">8</span> Multi-stage build என்ன? Why important?</h4>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>Build artifacts-ஐ final image-ல include பண்ணாம, only runtime files மட்டும் போடுவது.</p>
+      <ul>
+        <li>Stage 1 (Build): SDK use பண்ணி compile பண்ணு (~700MB)</li>
+        <li>Stage 2 (Final): Only runtime use பண்ணு (~200MB)</li>
+      </ul>
+      <div class="highlight">
+        💡 Benefit: Final image size ~70% குறையும். Smaller image = faster deployment + less storage cost.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="qa-item">
+    <div class="qa-question" onclick="toggleQA(this)">
+      <h4><span class="q-num">9</span> Docker Hub என்ன?</h4>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>Docker Hub = Docker images-க்கான public cloud registry. GitHub-மாதிரி but code-க்கு பதிலா images.</p>
+      <ul>
+        <li>Official images: nginx, mysql, mcr.microsoft.com/dotnet/aspnet</li>
+        <li>உன் custom images push பண்ணலாம்</li>
+        <li>Private registry alternatives: AWS ECR, Azure ACR</li>
+      </ul>
+      <div class="highlight">
+        💡 "Docker Hub is like GitHub for Docker images — pull existing ones, push your own."
+      </div>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="qa-item">
+    <div class="qa-question" onclick="toggleQA(this)">
+      <h4><span class="q-num">10</span> Docker-ல containerize பண்ண steps என்னென்ன?</h4>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <ul>
+        <li><strong>Step 1:</strong> Dockerfile எழுது (FROM, COPY, RUN, ENTRYPOINT)</li>
+        <li><strong>Step 2:</strong> <code>docker build -t myapp:v1 .</code> — Image build பண்ணு</li>
+        <li><strong>Step 3:</strong> <code>docker run -d -p 8080:80 myapp:v1</code> — Container run பண்ணு</li>
+        <li><strong>Step 4:</strong> <code>docker push myrepo/myapp:v1</code> — Registry-ல push பண்ணு</li>
+        <li><strong>Step 5:</strong> Server-ல <code>docker pull</code> பண்ணி deploy</li>
+      </ul>
+      <div class="highlight">
+        💡 Complete flow: Code → Dockerfile → Image → Container → Registry → Production
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 6: COMMON COMMANDS -->
+<div class="section">
+  <div class="section-title">
+    ⌨️ Must-Know Commands
+    <span class="badge">COMMANDS</span>
+  </div>
+
+  <div class="code-block">
+    <span class="comment"># ====== IMAGE COMMANDS ======</span><br>
+    <span class="cmd">docker build</span> -t myapp:v1 .          <span class="comment"># Image build பண்ணு</span><br>
+    <span class="cmd">docker images</span>                        <span class="comment"># All images list</span><br>
+    <span class="cmd">docker pull</span> nginx                     <span class="comment"># Registry-ல இருந்து pull</span><br>
+    <span class="cmd">docker push</span> username/myapp:v1         <span class="comment"># Registry-க்கு push</span><br>
+    <span class="cmd">docker rmi</span> myapp:v1                   <span class="comment"># Image delete</span><br><br>
+    <span class="comment"># ====== CONTAINER COMMANDS ======</span><br>
+    <span class="cmd">docker run</span> -d -p 8080:80 myapp:v1   <span class="comment"># Container start (detached)</span><br>
+    <span class="cmd">docker ps</span>                             <span class="comment"># Running containers</span><br>
+    <span class="cmd">docker ps -a</span>                          <span class="comment"># All containers</span><br>
+    <span class="cmd">docker stop</span> container_id              <span class="comment"># Container stop</span><br>
+    <span class="cmd">docker rm</span> container_id                <span class="comment"># Container delete</span><br>
+    <span class="cmd">docker logs</span> container_id              <span class="comment"># Logs பாரு</span><br>
+    <span class="cmd">docker exec -it</span> container_id bash    <span class="comment"># Container-க்குள்ள enter</span><br><br>
+    <span class="comment"># ====== COMPOSE COMMANDS ======</span><br>
+    <span class="cmd">docker-compose up -d</span>                  <span class="comment"># All services start</span><br>
+    <span class="cmd">docker-compose down</span>                   <span class="comment"># All services stop</span><br>
+    <span class="cmd">docker-compose logs</span>                   <span class="comment"># All logs</span>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>🐳 Docker Guide — ZenCampus Learning Series</p>
+  <p style="margin-top:8px">Prepared for: Basha | Goal: Senior Full Stack Cloud + AI Developer</p>
+</footer>
+
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // Toggle Q&A
+  function toggleQA(el) {
+    const answer = el.nextElementSibling;
+    const arrow  = el.querySelector('.arrow');
+    const isOpen = answer.classList.contains('open');
+
+    document.querySelectorAll('.qa-answer.open').forEach(a => a.classList.remove('open'));
+    document.querySelectorAll('.arrow.open').forEach(a => a.classList.remove('open'));
+
+    if (!isOpen) {
+      answer.classList.add('open');
+      arrow.classList.add('open');
+    }
+  }
+
+  // Scroll to top button
+  window.addEventListener('scroll', () => {
+    const btn = document.getElementById('scrollTop');
+    btn.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+
+  // Animate progress bars on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.progress-fill').forEach(bar => {
+          bar.style.width = bar.getAttribute('data-width');
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.progress-wrap').forEach(el => observer.observe(el));
+
+  // Open first Q&A by default
+  document.querySelector('.qa-question').click();
+</script>
+
+</body>
+</html>

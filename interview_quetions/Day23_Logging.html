@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 23 - Logging & Observability | .NET Interview Prep</title>
+    <style>
+        :root {
+            --accent: #16a34a;
+            --accent-light: #4ade80;
+            --accent-mid: #22c55e;
+            --accent-dark: #14532d;
+            --accent-glow: rgba(22,163,74,0.3);
+            --bg: #0d0d1a;
+            --bg3: #061408;
+            --card: #0d1f12;
+            --card2: #111827;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --text-bright: #f0fdf4;
+            --border: #14532d;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; line-height:1.6; }
+        .progress-bar { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-light)); width:0%; z-index:200; transition:width 0.1s; }
+        nav { position:sticky; top:0; z-index:100; background:rgba(13,13,26,0.96); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); padding:0.75rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+        .nav-brand { font-size:0.9rem; font-weight:700; color:var(--accent-light); }
+        .nav-links { display:flex; gap:1rem; list-style:none; }
+        .nav-links a { color:var(--text-dim); text-decoration:none; font-size:0.8rem; transition:color 0.2s; }
+        .nav-links a:hover { color:var(--accent-light); }
+        .hero { padding:4rem 2rem 2rem; text-align:center; background:radial-gradient(ellipse at top,rgba(22,163,74,0.13) 0%,transparent 70%); }
+        .day-badge { display:inline-block; background:linear-gradient(135deg,var(--accent),var(--accent-light)); color:#052e16; padding:0.3rem 1rem; border-radius:2rem; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; margin-bottom:1rem; }
+        .hero h1 { font-size:2.5rem; font-weight:800; background:linear-gradient(135deg,var(--accent-light),#fff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:0.5rem; }
+        .hero-sub { color:var(--text-dim); font-size:1rem; max-width:620px; margin:0 auto 1.5rem; }
+        .hero-tags { display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap; }
+        .tag { background:rgba(22,163,74,0.12); border:1px solid rgba(22,163,74,0.35); color:var(--accent-light); padding:0.25rem 0.75rem; border-radius:1rem; font-size:0.75rem; }
+        .container { max-width:1100px; margin:0 auto; padding:0 1.5rem; }
+        .section-title { font-size:1.5rem; font-weight:700; color:var(--accent-light); margin:2.5rem 0 1rem; display:flex; align-items:center; gap:0.5rem; }
+        .section-title::before { content:''; display:inline-block; width:4px; height:1.5rem; background:linear-gradient(180deg,var(--accent),var(--accent-light)); border-radius:2px; }
+        .concept-card { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; position:relative; overflow:hidden; }
+        .concept-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-light)); }
+        .concept-title { font-size:1.1rem; font-weight:700; color:var(--text-bright); margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+        pre { background:#020b04; border:1px solid var(--border); border-radius:8px; padding:1rem 1.25rem; overflow-x:auto; font-family:'Cascadia Code','Fira Code',monospace; font-size:0.82rem; line-height:1.7; margin:0.75rem 0; }
+        .kw { color:#60a5fa; } .kw2 { color:#c084fc; } .str { color:#86efac; } .num { color:#fcd34d; }
+        .cmt { color:#4b7c56; } .attr { color:#f9a8d4; } .mth { color:#4ade80; } .cls { color:#fde68a; }
+        .info-box { background:rgba(22,163,74,0.1); border:1px solid rgba(22,163,74,0.4); border-left:4px solid var(--accent); border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .warn-box { background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.4); border-left:4px solid #f59e0b; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .danger-box { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .good-box { background:rgba(22,163,74,0.08); border:1px solid rgba(22,163,74,0.3); border-left:4px solid var(--accent-mid); border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        table { width:100%; border-collapse:collapse; margin:0.75rem 0; font-size:0.85rem; }
+        th { background:var(--bg3); color:var(--accent-light); padding:0.6rem 0.8rem; text-align:left; border:1px solid var(--border); font-weight:600; }
+        td { padding:0.6rem 0.8rem; border:1px solid var(--border); vertical-align:top; }
+        tr:nth-child(even) td { background:rgba(255,255,255,0.02); }
+        .movie-box { background:linear-gradient(135deg,rgba(22,163,74,0.1),rgba(74,222,128,0.03)); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; display:flex; gap:1rem; align-items:flex-start; }
+        .movie-icon { font-size:2rem; flex-shrink:0; }
+        .movie-content h4 { color:var(--accent-light); font-size:0.9rem; font-weight:700; margin-bottom:0.3rem; }
+        .movie-content p { color:var(--text-dim); font-size:0.85rem; }
+        .scenario-card { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .scenario-header { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+        .scenario-q { font-size:0.95rem; font-weight:600; color:var(--text-bright); flex:1; }
+        .scenario-type { font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:1rem; font-weight:600; white-space:nowrap; flex-shrink:0; }
+        .type-prod { background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.3); }
+        .type-design { background:rgba(22,163,74,0.2); color:#86efac; border:1px solid rgba(22,163,74,0.3); }
+        .type-perf { background:rgba(245,158,11,0.2); color:#fcd34d; border:1px solid rgba(245,158,11,0.3); }
+        .type-concept { background:rgba(168,85,247,0.2); color:#d8b4fe; border:1px solid rgba(168,85,247,0.3); }
+        .type-exp { background:rgba(34,197,94,0.2); color:#86efac; border:1px solid rgba(34,197,94,0.3); }
+        .reveal-btn { background:none; border:1px solid var(--border); color:var(--accent-light); padding:0.4rem 0.9rem; border-radius:6px; cursor:pointer; font-size:0.8rem; margin-top:0.75rem; transition:all 0.2s; display:block; }
+        .reveal-btn:hover { background:var(--accent); border-color:var(--accent); color:#052e16; font-weight:600; }
+        .answer { display:none; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); font-size:0.88rem; line-height:1.7; color:var(--text); }
+        .answer.visible { display:block; }
+        .answer pre { font-size:0.78rem; }
+        .quiz-card { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .quiz-q { font-size:0.95rem; font-weight:600; color:var(--text-bright); margin-bottom:0.75rem; }
+        .quiz-options { display:grid; gap:0.5rem; }
+        .quiz-opt { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.9rem; cursor:pointer; font-size:0.85rem; color:var(--text); text-align:left; transition:all 0.2s; }
+        .quiz-opt:hover:not(:disabled) { border-color:var(--accent); }
+        .quiz-opt.correct { background:rgba(34,197,94,0.15); border-color:#22c55e; color:#86efac; }
+        .quiz-opt.wrong { background:rgba(239,68,68,0.15); border-color:#ef4444; color:#fca5a5; }
+        .quiz-feedback { display:none; margin-top:0.5rem; font-size:0.82rem; padding:0.5rem 0.75rem; border-radius:6px; }
+        .quiz-feedback.show { display:block; }
+        .checklist { list-style:none; display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:0.5rem; margin:1rem 0; }
+        .checklist li { display:flex; align-items:flex-start; gap:0.5rem; font-size:0.85rem; }
+        .checklist input[type="checkbox"] { accent-color:var(--accent-light); width:16px; height:16px; cursor:pointer; flex-shrink:0; margin-top:2px; }
+        .checklist label { cursor:pointer; color:var(--text-dim); }
+        .checklist input:checked + label { color:var(--text); text-decoration:line-through; }
+        .two-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        code { background:rgba(22,163,74,0.12); border:1px solid rgba(22,163,74,0.3); border-radius:4px; padding:0.1rem 0.4rem; font-family:'Cascadia Code',monospace; font-size:0.85em; color:var(--accent-light); }
+        .tanglish { color:var(--accent-light); font-style:italic; }
+        .log-level { display:inline-block; padding:0.15rem 0.5rem; border-radius:4px; font-family:monospace; font-size:0.8rem; font-weight:700; }
+        .lvl-vrb { background:rgba(148,163,184,0.15); color:#94a3b8; }
+        .lvl-dbg { background:rgba(96,165,250,0.15); color:#60a5fa; }
+        .lvl-inf { background:rgba(74,222,128,0.15); color:#4ade80; }
+        .lvl-wrn { background:rgba(251,191,36,0.15); color:#fbbf24; }
+        .lvl-err { background:rgba(248,113,113,0.15); color:#f87171; }
+        .lvl-ftl { background:rgba(220,38,38,0.2); color:#fca5a5; border:1px solid rgba(220,38,38,0.3); }
+        footer { text-align:center; padding:2rem; color:var(--text-dim); font-size:0.8rem; border-top:1px solid var(--border); margin-top:3rem; }
+        @media (max-width:768px) { .two-col { grid-template-columns:1fr; } .hero h1 { font-size:1.8rem; } nav { padding:0.75rem 1rem; } .nav-links { display:none; } }
+    </style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<nav>
+    <div class="nav-brand">🎓 Day 23 / 60 — Logging & Observability</div>
+    <ul class="nav-links">
+        <li><a href="#why">Why Structured</a></li>
+        <li><a href="#serilog">Serilog</a></li>
+        <li><a href="#levels">Log Levels</a></li>
+        <li><a href="#correlation">Correlation ID</a></li>
+        <li><a href="#health">Health Checks</a></li>
+        <li><a href="#appinsights">App Insights</a></li>
+        <li><a href="#scenarios">Scenarios</a></li>
+        <li><a href="#quiz">Quiz</a></li>
+    </ul>
+</nav>
+
+<div class="hero">
+    <div class="day-badge">DAY 23 OF 60</div>
+    <h1>Logging & Observability</h1>
+    <p class="hero-sub">Serilog, Structured Logging, Correlation IDs, Health Checks, Application Insights — ZenCampus production debugging with 50,000 students</p>
+    <div class="hero-tags">
+        <span class="tag">Serilog</span>
+        <span class="tag">Structured Logging</span>
+        <span class="tag">Correlation ID</span>
+        <span class="tag">Log Enrichers</span>
+        <span class="tag">Health Checks</span>
+        <span class="tag">App Insights</span>
+        <span class="tag">OpenTelemetry</span>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- WHY STRUCTURED LOGGING -->
+<h2 class="section-title" id="why">Why Structured Logging?</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>📋</span> String logs vs Structured logs — searchable vs noise</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Parent call panranga — "fee payment failed" — log-la search pannrom</span>. String log-la? 50,000 lines grep panna vendum. Structured log-la? <code>StudentId = 42, SchoolId = 7</code> directly query panna mudiyum. Night and day difference in production debugging.</p>
+
+    <div class="two-col">
+        <div>
+            <div class="danger-box">❌ <strong>String logging (unstructured)</strong>
+<pre style="margin-top:0.5rem;font-size:0.78rem"><span class="cmt">// Can't query "all failures for school 7"</span>
+_log.<span class="mth">LogError</span>(
+  <span class="str">"Fee payment failed for student "</span>
+  + studentId + <span class="str">" in school "</span>
+  + schoolId);
+
+<span class="cmt">// App Insights stores as raw string:</span>
+<span class="cmt">// "Fee payment failed for student 42 in school 7"</span>
+<span class="cmt">// → grep-only, no filtering by property</span></pre>
+            </div>
+        </div>
+        <div>
+            <div class="good-box">✅ <strong>Structured logging</strong>
+<pre style="margin-top:0.5rem;font-size:0.78rem"><span class="cmt">// Query: StudentId = 42 OR SchoolId = 7</span>
+_log.<span class="mth">LogError</span>(
+  <span class="str">"Fee payment failed for {StudentId} in {SchoolId}"</span>,
+  studentId, schoolId);
+
+<span class="cmt">// Stored as JSON object:</span>
+<span class="cmt">// { "StudentId": 42, "SchoolId": 7,</span>
+<span class="cmt">//   "Level": "Error", "Timestamp": "..." }</span>
+<span class="cmt">// → filter, aggregate, alert on properties</span></pre>
+            </div>
+        </div>
+    </div>
+    <div class="info-box"><strong>The Pillars of Observability:</strong><br>
+    <strong>Logs</strong> — discrete events ("fee collected", "student admitted") — what happened<br>
+    <strong>Metrics</strong> — numeric measurements over time (request count, error rate, latency) — how much<br>
+    <strong>Traces</strong> — end-to-end request journey across services (correlation ID) — where and how long<br>
+    <em>ZenCampus uses all three: Serilog (logs), App Insights (metrics + traces), Health Checks (probes)</em></div>
+</div>
+
+<!-- SERILOG -->
+<h2 class="section-title" id="serilog">Serilog Setup</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>📝</span> Serilog — structured logging with multiple sinks</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">ILogger interface Microsoft-oda</span> — but Serilog-a provider-a use pannrom. NuGet packages install panna, Program.cs-la configure panna — done. All <code>ILogger&lt;T&gt;</code> calls automatically go through Serilog.</p>
+
+    <pre><span class="cmt">// NuGet: Serilog.AspNetCore, Serilog.Sinks.Console, Serilog.Sinks.File,
+//        Serilog.Sinks.ApplicationInsights, Serilog.Enrichers.Environment,
+//        Serilog.Enrichers.Thread, Serilog.Expressions</span>
+
+<span class="cmt">// Program.cs — before builder.Build()</span>
+builder.Host.<span class="mth">UseSerilog</span>((ctx, services, config) => config
+    .<span class="mth">ReadFrom</span>.<span class="mth">Configuration</span>(ctx.Configuration)  <span class="cmt">// appsettings.json overrides</span>
+    .<span class="mth">ReadFrom</span>.<span class="mth">Services</span>(services)              <span class="cmt">// DI-injected enrichers</span>
+    .<span class="mth">Enrich</span>.<span class="mth">FromLogContext</span>()                   <span class="cmt">// LogContext.PushProperty() support</span>
+    .<span class="mth">Enrich</span>.<span class="mth">WithMachineName</span>()                  <span class="cmt">// Which server (Server1 vs Server2)</span>
+    .<span class="mth">Enrich</span>.<span class="mth">WithEnvironmentName</span>()              <span class="cmt">// Production / Staging</span>
+    .<span class="mth">Enrich</span>.<span class="mth">WithProperty</span>(<span class="str">"Application"</span>, <span class="str">"ZenCampusAPI"</span>)  <span class="cmt">// App tag on every log</span>
+    .<span class="mth">MinimumLevel</span>.<span class="mth">Information</span>()               <span class="cmt">// Global minimum</span>
+    .<span class="mth">MinimumLevel</span>.<span class="mth">Override</span>(<span class="str">"Microsoft"</span>, LogEventLevel.Warning)     <span class="cmt">// Reduce MS noise</span>
+    .<span class="mth">MinimumLevel</span>.<span class="mth">Override</span>(<span class="str">"System"</span>, LogEventLevel.Warning)         <span class="cmt">// Reduce system noise</span>
+    .<span class="mth">MinimumLevel</span>.<span class="mth">Override</span>(<span class="str">"Microsoft.EntityFrameworkCore"</span>, LogEventLevel.Warning)
+    .<span class="mth">WriteTo</span>.<span class="mth">Console</span>(outputTemplate:
+        <span class="str">"[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj} {Properties}{NewLine}{Exception}"</span>)
+    .<span class="mth">WriteTo</span>.<span class="mth">File</span>(
+        path:          <span class="str">"logs/zencampus-.log"</span>,
+        rollingInterval: RollingInterval.Day,          <span class="cmt">// New file each day</span>
+        retainedFileCountLimit: <span class="num">30</span>,                  <span class="cmt">// Keep 30 days</span>
+        outputTemplate: <span class="str">"{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj} {Properties}{NewLine}{Exception}"</span>)
+    .<span class="mth">WriteTo</span>.<span class="mth">ApplicationInsights</span>(
+        services.<span class="mth">GetRequiredService</span>&lt;<span class="cls">TelemetryConfiguration</span>&gt;(),
+        TelemetryConverter.Traces));</pre>
+
+    <pre><span class="cmt">// appsettings.json — control log levels per namespace (no rebuild needed)</span>
+{
+  <span class="str">"Serilog"</span>: {
+    <span class="str">"MinimumLevel"</span>: {
+      <span class="str">"Default"</span>:      <span class="str">"Information"</span>,
+      <span class="str">"Override"</span>: {
+        <span class="str">"Microsoft"</span>:                          <span class="str">"Warning"</span>,
+        <span class="str">"ZenCampus.Features.FeeCollection"</span>:   <span class="str">"Debug"</span>,  <span class="cmt">// Debug fee module only</span>
+        <span class="str">"ZenCampus.Features.StudentAdmission"</span>: <span class="str">"Information"</span>
+      }
+    }
+  }
+}</pre>
+
+    <pre><span class="cmt">// Custom enricher — adds SchoolId from JWT to every log in that request</span>
+<span class="kw">public class</span> <span class="cls">SchoolContextEnricher</span> : <span class="cls">ILogEventEnricher</span>
+{
+    <span class="kw">private readonly</span> <span class="cls">IHttpContextAccessor</span> _http;
+
+    <span class="kw">public void</span> <span class="mth">Enrich</span>(<span class="cls">LogEvent</span> logEvent, <span class="cls">ILogEventPropertyFactory</span> factory)
+    {
+        <span class="kw">var</span> user = _http.HttpContext?.User;
+        <span class="kw">if</span> (user?.<span class="mth">FindFirst</span>(<span class="str">"schoolId"</span>)?.Value <span class="kw">is</span> { } schoolId)
+            logEvent.<span class="mth">AddPropertyIfAbsent</span>(factory.<span class="mth">CreateProperty</span>(<span class="str">"SchoolId"</span>, schoolId));
+        <span class="kw">if</span> (user?.<span class="mth">FindFirst</span>(ClaimTypes.NameIdentifier)?.Value <span class="kw">is</span> { } userId)
+            logEvent.<span class="mth">AddPropertyIfAbsent</span>(factory.<span class="mth">CreateProperty</span>(<span class="str">"UserId"</span>, userId));
+    }
+}
+<span class="cmt">// Result: every log line in that request automatically includes SchoolId + UserId</span>
+<span class="cmt">// Query: WHERE SchoolId = 7 AND Level = "Error" → all school 7 errors instantly</span></pre>
+</div>
+
+<!-- LOG LEVELS -->
+<h2 class="section-title" id="levels">Log Levels — What Goes Where</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🎚️</span> 6 levels — use the right one or logs become noise</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Everything-a Information-la log panna</span> — 50,000 students, 200 schools — log file enormous aagum. Right level use pannoma — signal from noise separate pannuvom.</p>
+
+    <table>
+        <tr><th>Level</th><th>When to Use</th><th>ZenCampus Example</th><th>Production?</th></tr>
+        <tr><td><span class="log-level lvl-vrb">VERBOSE</span></td><td>Extremely detailed, every step</td><td>EF Core SQL queries, loop iterations</td><td>❌ Never</td></tr>
+        <tr><td><span class="log-level lvl-dbg">DEBUG</span></td><td>Developer diagnostic info</td><td>Cache hit/miss, method entry/exit</td><td>Dev/Staging only</td></tr>
+        <tr><td><span class="log-level lvl-inf">INFO</span></td><td>Normal business events</td><td>Student admitted, fee collected, login</td><td>✅ Yes</td></tr>
+        <tr><td><span class="log-level lvl-wrn">WARN</span></td><td>Unexpected but handled, degraded</td><td>Cache miss fallback, retry attempt, slow query (&gt;500ms)</td><td>✅ Yes</td></tr>
+        <tr><td><span class="log-level lvl-err">ERROR</span></td><td>Operation failed, user impacted</td><td>Fee payment failed, DB exception, SMS not sent</td><td>✅ + Alert</td></tr>
+        <tr><td><span class="log-level lvl-ftl">FATAL</span></td><td>App cannot continue</td><td>DB connection string wrong, startup failure</td><td>✅ Page on-call</td></tr>
+    </table>
+
+    <pre><span class="cmt">// Correct log level usage in ZenCampus</span>
+<span class="kw">public class</span> <span class="cls">CollectFeeCommandHandler</span>
+{
+    <span class="kw">public async</span> Task&lt;<span class="cls">CollectFeeResult</span>&gt; <span class="mth">Handle</span>(<span class="cls">CollectFeeCommand</span> cmd, <span class="cls">CancellationToken</span> ct)
+    {
+        _log.<span class="mth">LogDebug</span>(<span class="str">"Processing fee for {StudentId}, amount {Amount}"</span>, cmd.StudentId, cmd.Amount);
+        <span class="cmt">// ↑ DEBUG: internal processing detail, Dev/Staging only</span>
+
+        <span class="kw">var</span> receipt = <span class="kw">await</span> _repo.<span class="mth">SaveReceiptAsync</span>(cmd, ct);
+        _log.<span class="mth">LogInformation</span>(
+            <span class="str">"Fee collected: ReceiptNo={ReceiptNo} StudentId={StudentId} Amount={Amount} SchoolId={SchoolId}"</span>,
+            receipt.ReceiptNo, cmd.StudentId, cmd.Amount, cmd.SchoolId);
+        <span class="cmt">// ↑ INFO: business event — always log successful collections</span>
+
+        <span class="kw">try</span>
+        {
+            <span class="kw">await</span> _sms.<span class="mth">SendReceiptAsync</span>(receipt);
+        }
+        <span class="kw">catch</span> (<span class="cls">SmsDeliveryException</span> ex)
+        {
+            _log.<span class="mth">LogWarning</span>(ex,
+                <span class="str">"SMS receipt not sent for {ReceiptNo} — will retry via Hangfire"</span>,
+                receipt.ReceiptNo);
+            <span class="cmt">// ↑ WARNING: SMS failed but fee is saved — degraded, not failed</span>
+            <span class="cls">BackgroundJob</span>.<span class="mth">Enqueue</span>(() => _sms.<span class="mth">SendReceiptAsync</span>(receipt));
+        }
+        <span class="kw">catch</span> (<span class="cls">Exception</span> ex)
+        {
+            _log.<span class="mth">LogError</span>(ex,
+                <span class="str">"Fee collection failed for {StudentId} Amount={Amount}"</span>,
+                cmd.StudentId, cmd.Amount);
+            <span class="cmt">// ↑ ERROR: fee not saved — user impacted — alert fires</span>
+            <span class="kw">throw</span>;
+        }
+        <span class="kw">return new</span> <span class="cls">CollectFeeResult</span>(receipt.ReceiptNo);
+    }
+}</pre>
+
+    <div class="warn-box"><strong>Never log:</strong> passwords, JWT tokens, full credit card numbers, Aadhaar, parent phone (mask: <code>+91******7890</code>), student health records, salary data. Logs are often less secured than the DB — GDPR/data protection applies!</div>
+</div>
+
+<!-- CORRELATION ID -->
+<h2 class="section-title" id="correlation">Correlation ID — Trace Requests End-to-End</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🔗</span> One ID connects all log lines for one request</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Parent call pannuvanga — "10 nimisham munnaadi fee pay panna try pannean, failed"</span>. Without correlation ID — 50,000 log lines from 200 schools — needle in haystack. With CorrelationId? One query, all logs for that exact request — controller, service, DB, SMS — all visible.</p>
+
+    <pre><span class="cmt">// Correlation ID Middleware — generates/propagates ID for every request</span>
+<span class="kw">public class</span> <span class="cls">CorrelationIdMiddleware</span>(<span class="cls">RequestDelegate</span> _next)
+{
+    <span class="kw">private const string</span> HeaderName = <span class="str">"X-Correlation-Id"</span>;
+
+    <span class="kw">public async</span> Task <span class="mth">InvokeAsync</span>(<span class="cls">HttpContext</span> ctx)
+    {
+        <span class="cmt">// Accept from client (mobile app passing its own ID) or generate new</span>
+        <span class="kw">var</span> correlationId = ctx.Request.Headers[HeaderName].FirstOrDefault()
+                         ?? Activity.Current?.Id           <span class="cmt">// From W3C trace context</span>
+                         ?? <span class="cls">Guid</span>.<span class="mth">NewGuid</span>().<span class="mth">ToString</span>(<span class="str">"N"</span>);
+
+        ctx.Items[HeaderName] = correlationId;
+        ctx.Response.Headers.<span class="mth">Append</span>(HeaderName, correlationId); <span class="cmt">// Echo back to client</span>
+
+        <span class="cmt">// Push into Serilog's LogContext — all logs in this request get this property</span>
+        <span class="kw">using</span> (<span class="cls">LogContext</span>.<span class="mth">PushProperty</span>(<span class="str">"CorrelationId"</span>, correlationId))
+        <span class="kw">using</span> (<span class="cls">LogContext</span>.<span class="mth">PushProperty</span>(<span class="str">"RequestPath"</span>, ctx.Request.Path))
+        {
+            <span class="kw">await</span> _next(ctx);
+        }
+    }
+}
+
+<span class="cmt">// Program.cs — register BEFORE all other middleware</span>
+app.<span class="mth">UseMiddleware</span>&lt;<span class="cls">CorrelationIdMiddleware</span>&gt;();
+app.<span class="mth">UseSerilogRequestLogging</span>(opts =>
+{
+    opts.MessageTemplate =
+        <span class="str">"HTTP {RequestMethod} {RequestPath} → {StatusCode} in {Elapsed:0.0}ms | {CorrelationId}"</span>;
+    opts.EnrichDiagnosticContext = (diag, http) =>
+    {
+        diag.<span class="mth">Set</span>(<span class="str">"SchoolId"</span>,   http.User.<span class="mth">FindFirst</span>(<span class="str">"schoolId"</span>)?.Value);
+        diag.<span class="mth">Set</span>(<span class="str">"UserAgent"</span>, http.Request.Headers.UserAgent.ToString());
+    };
+});</pre>
+
+    <pre><span class="cmt">// Every log line now includes CorrelationId automatically:</span>
+<span class="cmt">// [14:23:07 INF] HTTP POST /api/v1/students/42/fee-payments → 201 in 112ms | a3f9c2d1</span>
+<span class="cmt">// [14:23:07 INF] Fee collected: ReceiptNo=ZC-2024-0042 Amount=5000 | CorrelationId=a3f9c2d1</span>
+<span class="cmt">// [14:23:07 DBG] Cache MISS: fees:balance:student:42 | CorrelationId=a3f9c2d1</span>
+<span class="cmt">// [14:23:07 WRN] SMS receipt not sent for ZC-2024-0042 — retry queued | CorrelationId=a3f9c2d1</span>
+
+<span class="cmt">// Support query in App Insights: customDimensions.CorrelationId = "a3f9c2d1"</span>
+<span class="cmt">// → ALL 4 lines surface immediately — trace the whole story</span>
+
+<span class="cmt">// Pass CorrelationId to downstream HTTP calls (Service Bus already propagates it)</span>
+<span class="kw">public class</span> <span class="cls">CorrelationIdDelegatingHandler</span>(<span class="cls">IHttpContextAccessor</span> _http) : <span class="cls">DelegatingHandler</span>
+{
+    <span class="kw">protected override</span> Task&lt;<span class="cls">HttpResponseMessage</span>&gt; <span class="mth">SendAsync</span>(
+        <span class="cls">HttpRequestMessage</span> req, <span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">if</span> (_http.HttpContext?.Items[<span class="str">"X-Correlation-Id"</span>] <span class="kw">is string</span> id)
+            req.Headers.<span class="mth">TryAddWithoutValidation</span>(<span class="str">"X-Correlation-Id"</span>, id);
+        <span class="kw">return base</span>.<span class="mth">SendAsync</span>(req, ct);
+    }
+}
+<span class="cmt">// Register: builder.Services.AddHttpClient("Msg91").AddHttpMessageHandler&lt;CorrelationIdDelegatingHandler&gt;()</span></pre>
+</div>
+
+<!-- HEALTH CHECKS -->
+<h2 class="section-title" id="health">Health Checks</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>💚</span> /health — is ZenCampus alive and ready?</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Azure load balancer / Kubernetes-la</span> — healthy pod-ku traffic route pannuvom, unhealthy pod-ku route pannoma. Health check = "can this instance serve traffic?" DB down aana — unhealthy return pannuvom — traffic automatically shifted to other pods.</p>
+
+    <pre><span class="cmt">// NuGet: AspNetCore.HealthChecks.SqlServer, AspNetCore.HealthChecks.Redis,
+//        AspNetCore.HealthChecks.UI</span>
+
+<span class="cmt">// Program.cs</span>
+builder.Services.<span class="mth">AddHealthChecks</span>()
+    <span class="cmt">// Liveness — is the app running?</span>
+    .<span class="mth">AddCheck</span>(<span class="str">"self"</span>, () => HealthCheckResult.Healthy(), tags: [<span class="str">"live"</span>])
+    <span class="cmt">// Readiness — can it serve traffic?</span>
+    .<span class="mth">AddSqlServer</span>(
+        connectionString: builder.Configuration.<span class="mth">GetConnectionString</span>(<span class="str">"ZenCampusDb"</span>)!,
+        name:             <span class="str">"sql-db"</span>,
+        failureStatus:    HealthStatus.Unhealthy,
+        tags:             [<span class="str">"ready"</span>, <span class="str">"db"</span>])
+    .<span class="mth">AddRedis</span>(
+        redisConnectionString: builder.Configuration[<span class="str">"Redis:ConnectionString"</span>]!,
+        name:          <span class="str">"redis-cache"</span>,
+        failureStatus: HealthStatus.Degraded,      <span class="cmt">// Redis down = degraded (not unhealthy)</span>
+        tags:          [<span class="str">"ready"</span>, <span class="str">"cache"</span>])
+    .<span class="mth">AddCheck</span>&lt;<span class="cls">Msg91HealthCheck</span>&gt;(<span class="str">"sms-provider"</span>, tags: [<span class="str">"ready"</span>, <span class="str">"external"</span>]);
+
+<span class="cmt">// Map endpoints</span>
+app.<span class="mth">MapHealthChecks</span>(<span class="str">"/health/live"</span>, <span class="kw">new</span>() { Predicate = c => c.Tags.<span class="mth">Contains</span>(<span class="str">"live"</span>) });
+app.<span class="mth">MapHealthChecks</span>(<span class="str">"/health/ready"</span>, <span class="kw">new</span>()
+{
+    Predicate       = c => c.Tags.<span class="mth">Contains</span>(<span class="str">"ready"</span>),
+    ResponseWriter  = UIResponseWriter.<span class="mth">WriteHealthCheckUIResponse</span>  <span class="cmt">// JSON detail</span>
+});</pre>
+
+    <pre><span class="cmt">// Custom health check — ping Msg91 SMS provider</span>
+<span class="kw">public class</span> <span class="cls">Msg91HealthCheck</span>(<span class="cls">IMsg91Client</span> _client) : <span class="cls">IHealthCheck</span>
+{
+    <span class="kw">public async</span> Task&lt;<span class="cls">HealthCheckResult</span>&gt; <span class="mth">CheckHealthAsync</span>(
+        <span class="cls">HealthCheckContext</span> ctx, <span class="cls">CancellationToken</span> ct = <span class="kw">default</span>)
+    {
+        <span class="kw">try</span>
+        {
+            <span class="kw">var</span> sw = Stopwatch.<span class="mth">StartNew</span>();
+            <span class="kw">var</span> ok = <span class="kw">await</span> _client.<span class="mth">PingAsync</span>(ct);
+            sw.<span class="mth">Stop</span>();
+
+            <span class="kw">if</span> (!ok)
+                <span class="kw">return</span> HealthCheckResult.<span class="mth">Degraded</span>(<span class="str">"Msg91 ping returned unhealthy"</span>);
+
+            <span class="kw">return</span> HealthCheckResult.<span class="mth">Healthy</span>(<span class="str">$"Msg91 OK in {sw.ElapsedMilliseconds}ms"</span>);
+        }
+        <span class="kw">catch</span> (<span class="cls">Exception</span> ex)
+        {
+            <span class="kw">return</span> HealthCheckResult.<span class="mth">Unhealthy</span>(<span class="str">"Msg91 unreachable"</span>, ex);
+        }
+    }
+}</pre>
+
+    <pre><span class="cmt">// /health/ready response (HealthChecks.UI format):</span>
+{
+  <span class="str">"status"</span>:   <span class="str">"Degraded"</span>,
+  <span class="str">"totalDuration"</span>: <span class="str">"00:00:00.0432"</span>,
+  <span class="str">"entries"</span>: {
+    <span class="str">"sql-db"</span>:      { <span class="str">"status"</span>: <span class="str">"Healthy"</span>,  <span class="str">"duration"</span>: <span class="str">"00:00:00.0310"</span> },
+    <span class="str">"redis-cache"</span>: { <span class="str">"status"</span>: <span class="str">"Degraded"</span>, <span class="str">"duration"</span>: <span class="str">"00:00:00.0089"</span>,
+                     <span class="str">"description"</span>: <span class="str">"Redis timeout after 1s"</span> },
+    <span class="str">"sms-provider"</span>: { <span class="str">"status"</span>: <span class="str">"Healthy"</span>,  <span class="str">"duration"</span>: <span class="str">"00:00:00.0033"</span> }
+  }
+}
+<span class="cmt">// Kubernetes: /health/live → liveness probe, /health/ready → readiness probe</span></pre>
+
+    <div class="info-box"><strong>Healthy vs Degraded vs Unhealthy:</strong><br>
+    <strong>Healthy</strong> — all checks pass, serve traffic normally<br>
+    <strong>Degraded</strong> — Redis down (Day 22 fallback to DB!) — still serve traffic but at reduced performance<br>
+    <strong>Unhealthy</strong> — DB down — cannot serve meaningful traffic → load balancer removes from rotation</div>
+</div>
+
+<!-- APPLICATION INSIGHTS -->
+<h2 class="section-title" id="appinsights">Azure Application Insights</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>📊</span> Auto telemetry + custom events + distributed traces</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">App Insights-la automatic-a track aagum</span> — HTTP requests, DB queries, exceptions, dependencies (Redis, SMS API). Plus custom events pannom — "FeeCollected" with amount and school dimensions — KubaQuery-la analyze panna mudiyum.</p>
+
+    <pre><span class="cmt">// NuGet: Microsoft.ApplicationInsights.AspNetCore</span>
+<span class="cmt">// Program.cs</span>
+builder.Services.<span class="mth">AddApplicationInsightsTelemetry</span>(opts =>
+{
+    opts.ConnectionString = builder.Configuration[<span class="str">"ApplicationInsights:ConnectionString"</span>];
+    opts.EnableAdaptiveSampling = <span class="kw">true</span>;   <span class="cmt">// Auto-sample high-volume requests</span>
+});
+
+<span class="cmt">// Configure telemetry: filter out health check noise</span>
+builder.Services.<span class="mth">AddApplicationInsightsTelemetryProcessor</span>&lt;<span class="cls">HealthCheckFilter</span>&gt;();
+
+<span class="kw">public class</span> <span class="cls">HealthCheckFilter</span>(<span class="cls">ITelemetryProcessor</span> next) : <span class="cls">ITelemetryProcessor</span>
+{
+    <span class="kw">public void</span> <span class="mth">Process</span>(<span class="cls">ITelemetry</span> item)
+    {
+        <span class="kw">if</span> (item <span class="kw">is</span> <span class="cls">RequestTelemetry</span> req &&
+            req.Url?.AbsolutePath.<span class="mth">StartsWith</span>(<span class="str">"/health"</span>) == <span class="kw">true</span>)
+            <span class="kw">return</span>; <span class="cmt">// Drop health check requests — they pollute metrics</span>
+        next.<span class="mth">Process</span>(item);
+    }
+}</pre>
+
+    <pre><span class="cmt">// Custom events + metrics in command handlers</span>
+<span class="kw">public class</span> <span class="cls">CollectFeeCommandHandler</span>(<span class="cls">TelemetryClient</span> _telemetry)
+{
+    <span class="kw">public async</span> Task&lt;<span class="cls">CollectFeeResult</span>&gt; <span class="mth">Handle</span>(<span class="cls">CollectFeeCommand</span> cmd, <span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">var</span> sw = Stopwatch.<span class="mth">StartNew</span>();
+        <span class="kw">try</span>
+        {
+            <span class="kw">var</span> receipt = <span class="kw">await</span> _repo.<span class="mth">SaveReceiptAsync</span>(cmd, ct);
+            sw.<span class="mth">Stop</span>();
+
+            <span class="cmt">// Custom event — queryable in App Insights Analytics</span>
+            _telemetry.<span class="mth">TrackEvent</span>(<span class="str">"FeeCollected"</span>, <span class="kw">new</span> Dictionary&lt;<span class="kw">string</span>, <span class="kw">string</span>&gt;
+            {
+                [<span class="str">"SchoolId"</span>]    = cmd.SchoolId.<span class="mth">ToString</span>(),
+                [<span class="str">"ReceiptNo"</span>]  = receipt.ReceiptNo,
+                [<span class="str">"PaymentMode"</span>] = cmd.PaymentMode
+            },
+            <span class="kw">new</span> Dictionary&lt;<span class="kw">string</span>, <span class="kw">double</span>&gt;
+            {
+                [<span class="str">"Amount"</span>]       = (<span class="kw">double</span>)cmd.Amount,
+                [<span class="str">"ProcessTimeMs"</span>] = sw.ElapsedMilliseconds
+            });
+
+            <span class="cmt">// Custom metric — dashboard chart: daily fee collection per school</span>
+            _telemetry.<span class="mth">TrackMetric</span>(<span class="str">"FeeAmount"</span>, (<span class="kw">double</span>)cmd.Amount,
+                <span class="kw">new</span> Dictionary&lt;<span class="kw">string</span>, <span class="kw">string</span>&gt; { [<span class="str">"SchoolId"</span>] = cmd.SchoolId.<span class="mth">ToString</span>() });
+
+            <span class="kw">return new</span> <span class="cls">CollectFeeResult</span>(receipt.ReceiptNo);
+        }
+        <span class="kw">catch</span> (<span class="cls">Exception</span> ex)
+        {
+            sw.<span class="mth">Stop</span>();
+            <span class="cmt">// Exception telemetry with custom properties — auto-grouped in Failures blade</span>
+            _telemetry.<span class="mth">TrackException</span>(ex, <span class="kw">new</span> Dictionary&lt;<span class="kw">string</span>, <span class="kw">string</span>&gt;
+            {
+                [<span class="str">"StudentId"</span>] = cmd.StudentId.<span class="mth">ToString</span>(),
+                [<span class="str">"SchoolId"</span>]  = cmd.SchoolId.<span class="mth">ToString</span>(),
+                [<span class="str">"Amount"</span>]    = cmd.Amount.<span class="mth">ToString</span>()
+            });
+            <span class="kw">throw</span>;
+        }
+    }
+}</pre>
+
+    <pre><span class="cmt">// KQL query in App Insights Analytics — fee collection by school</span>
+customEvents
+| where name == <span class="str">"FeeCollected"</span>
+| where timestamp &gt; ago(<span class="num">7</span>d)
+| summarize
+    TotalCollected = sum(todouble(customMeasurements[<span class="str">"Amount"</span>])),
+    Count = count()
+  by tostring(customDimensions[<span class="str">"SchoolId"</span>]), bin(timestamp, <span class="num">1</span>d)
+| order by TotalCollected desc
+
+<span class="cmt">// Alerts in Azure Monitor:</span>
+<span class="cmt">// ERROR rate > 5% in 5 minutes → PagerDuty alert</span>
+<span class="cmt">// Avg response time > 2s for 10 minutes → email team</span>
+<span class="cmt">// FeeCollected count = 0 for 30 minutes during business hours → Slack alert</span></pre>
+</div>
+
+<!-- MOVIE REFS -->
+<h2 class="section-title" id="movies">🎬 Tamil Movie Memory Anchors</h2>
+
+<div class="movie-box">
+    <div class="movie-icon">📋</div>
+    <div class="movie-content">
+        <h4>Structured Logging — "Vikram" (2022)</h4>
+        <p>Vikram-la intel reports — not "bad guy seen somewhere" but structured: name, location, time, weapon, associates. Structured logging same: not "fee failed" but <code>{StudentId: 42, SchoolId: 7, Amount: 5000, Error: "DB timeout"}</code>. Search pannalaam, filter pannalaam, alert set pannalaam. Unstructured = useless intel!</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">🔗</div>
+    <div class="movie-content">
+        <h4>Correlation ID — "Vettaiyaadu Vilaiyaadu" (2006)</h4>
+        <p>Raghavan (Kamal) tracks a case across cities — New York, Chennai — using one case number that connects all evidence. Correlation ID same: one ID (a3f9c2d1) that connects controller log, service log, DB log, SMS log — all from ONE request. Parent says "payment failed at 2:15 PM" → query CorrelationId → see entire story in seconds.</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">💚</div>
+    <div class="movie-content">
+        <h4>Health Checks — "Minnale" (2001)</h4>
+        <p>Madhavan checks if everything is ready before proposing — is she free? Does she like me? Is the moment right? Health checks same: before routing traffic — is DB reachable? Redis responding? SMS provider up? /health/live = "is the app alive?" /health/ready = "is everything it depends on working?" Only route traffic when READY.</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">📊</div>
+    <div class="movie-content">
+        <h4>App Insights — "Thadam" (2019)</h4>
+        <p>Thadam-la forensic investigation — every detail recorded, DNA evidence, CCTV footage, witness statements — all aggregated to find the truth. App Insights same: every HTTP request tracked, every exception with stack trace, every custom event with dimensions. Fee collection drops to zero? KQL query panrom — school 7's DB connection failed 8 PM — case solved!</p>
+    </div>
+</div>
+
+<!-- SCENARIOS -->
+<h2 class="section-title" id="scenarios">🎯 10 Interview Scenarios</h2>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q1. Why is <code>_log.LogError("Fee failed for student " + id)</code> bad? What's the correct approach?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>String concatenation problems:</strong></p>
+        <ol style="margin-left:1.5rem">
+            <li><strong>Not queryable:</strong> Log stored as a flat string — can't filter "all errors for school 7" in App Insights</li>
+            <li><strong>Performance:</strong> String allocation happens even if log level is disabled. With template: <code>LogInformation("...", id)</code> — if INFO is disabled, no string is created</li>
+            <li><strong>No structure:</strong> Kibana/Seq/App Insights can't extract <code>StudentId</code> as a field to group, aggregate, or alert on</li>
+            <li><strong>Security risk:</strong> String interpolation with user input can log sensitive data accidentally</li>
+        </ol>
+        <pre><span class="cmt">// ❌ String concatenation</span>
+_log.<span class="mth">LogError</span>(<span class="str">"Fee failed for student "</span> + studentId + <span class="str">" school "</span> + schoolId);
+
+<span class="cmt">// ✅ Message template — named parameters become JSON properties</span>
+_log.<span class="mth">LogError</span>(ex, <span class="str">"Fee collection failed {StudentId} {SchoolId} {Amount}"</span>,
+    studentId, schoolId, amount);
+<span class="cmt">// Stored: { StudentId: 42, SchoolId: 7, Amount: 5000, Level: "Error", ... }</span>
+<span class="cmt">// Query: customDimensions.StudentId = "42" → instant result</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q2. Production: Parent calls saying "fee payment failed 10 minutes ago." No error visible in dashboard. How do you find it?</div>
+        <span class="scenario-type type-prod">Production Debug</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Step-by-step investigation using correlation ID + structured logging:</strong></p>
+        <ol style="margin-left:1.5rem">
+            <li>Ask parent for the <code>X-Correlation-Id</code> header value from their failed request (mobile app should show it in error screen)</li>
+            <li>Query App Insights: <code>traces | where customDimensions.CorrelationId == "a3f9c2d1"</code></li>
+            <li>See all log lines for that request — controller, handler, DB, SMS</li>
+            <li>If no CorrelationId: query by approximate time + StudentId: <code>where timestamp between (ago(15m)..ago(5m)) and customDimensions.StudentId == "42"</code></li>
+            <li>Check exceptions blade — filter by timestamp window</li>
+        </ol>
+        <pre><span class="cmt">// App Insights KQL — find the failed request</span>
+traces
+| where timestamp > ago(<span class="num">30</span>m)
+| where customDimensions.<span class="mth">StudentId</span> == <span class="str">"42"</span>
+| where severityLevel >= <span class="num">3</span>  <span class="cmt">// Warning and above</span>
+| project timestamp, message, customDimensions, severityLevel
+| order by timestamp asc
+
+<span class="cmt">// Alternative — search all request telemetry for school</span>
+requests
+| where timestamp > ago(<span class="num">30</span>m)
+| where customDimensions.<span class="mth">SchoolId</span> == <span class="str">"7"</span>
+| where success == <span class="str">"False"</span>
+| project timestamp, url, resultCode, duration, operation_Id</pre>
+        <p><strong>Key insight:</strong> Without structured logging + correlation ID, this investigation takes hours. With both, minutes.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q3. What is a Correlation ID? How do you propagate it across microservices in ZenCampus?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Correlation ID</strong> is a unique identifier assigned to each incoming request and attached to every log line produced while handling that request. When a request calls multiple services, the ID is forwarded in HTTP headers so logs across all services can be joined.</p>
+        <p style="margin-top:0.5rem"><strong>Propagation in ZenCampus:</strong></p>
+        <ol style="margin-left:1.5rem">
+            <li>Mobile app generates CorrelationId → sends in <code>X-Correlation-Id</code> header</li>
+            <li>CorrelationIdMiddleware reads/generates, pushes to Serilog LogContext</li>
+            <li>All log lines in that request automatically include CorrelationId</li>
+            <li>Outbound HTTP calls (to Msg91 SMS API): <code>CorrelationIdDelegatingHandler</code> adds header</li>
+            <li>Service Bus messages: add CorrelationId to <code>ApplicationProperties</code></li>
+            <li>Response echoes it back: client can show it in error messages for support</li>
+        </ol>
+        <p style="margin-top:0.5rem"><strong>W3C Trace Context (OpenTelemetry standard):</strong> <code>traceparent</code> header — auto-propagated by .NET HttpClient. App Insights uses this for end-to-end distributed traces (Application Map).</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q4. What should log level be for: (a) EF Core SQL queries, (b) Successful fee collection, (c) Msg91 timeout after 3 retries, (d) Null reference in fee handler?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>(a) EF Core SQL queries → DEBUG</strong><br>
+        Internal diagnostic — too verbose for production. Enable in Staging only when investigating query performance. Override: <code>"Microsoft.EntityFrameworkCore": "Debug"</code> in appsettings.Staging.json.</p>
+        <p style="margin-top:0.5rem"><strong>(b) Successful fee collection → INFO</strong><br>
+        Important business event — always log. Include structured properties: ReceiptNo, Amount, SchoolId, PaymentMode. Useful for audit, analytics, and debugging without noise.</p>
+        <p style="margin-top:0.5rem"><strong>(c) Msg91 timeout after 3 retries → WARNING</strong><br>
+        Fee was saved to DB — the core operation succeeded. SMS is a side effect that will be retried via Hangfire. Degraded state — log as Warning to alert ops but not trigger incident. If all retries permanently fail → ERROR.</p>
+        <p style="margin-top:0.5rem"><strong>(d) Null reference in fee handler → ERROR</strong><br>
+        Unhandled exception — fee was NOT collected — user impacted. Log with exception object (stack trace). Should trigger alert. The IExceptionHandler (Day 20) catches and logs this automatically.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q5. What is the difference between Liveness and Readiness health checks? How does Kubernetes use them?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Liveness probe</strong> (<code>/health/live</code>): "Is the process alive and not deadlocked?" Only checks the app itself — not its dependencies. If fails → Kubernetes <strong>restarts</strong> the pod. Check: memory not exhausted, no deadlock, application started.</p>
+        <p style="margin-top:0.5rem"><strong>Readiness probe</strong> (<code>/health/ready</code>): "Can this pod serve traffic?" Checks all dependencies. If fails → Kubernetes removes pod from load balancer rotation (but does NOT restart). Check: DB reachable, Redis reachable, downstream APIs up.</p>
+        <pre><span class="cmt">// Kubernetes deployment yaml</span>
+livenessProbe:
+  httpGet: { path: /health/live, port: <span class="num">8080</span> }
+  initialDelaySeconds: <span class="num">10</span>    <span class="cmt"># Wait 10s for app to start</span>
+  periodSeconds: <span class="num">15</span>           <span class="cmt"># Check every 15s</span>
+  failureThreshold: <span class="num">3</span>         <span class="cmt"># 3 failures → restart</span>
+
+readinessProbe:
+  httpGet: { path: /health/ready, port: <span class="num">8080</span> }
+  periodSeconds: <span class="num">10</span>
+  failureThreshold: <span class="num">2</span>         <span class="cmt"># 2 failures → remove from LB</span></pre>
+        <p><strong>ZenCampus:</strong> "During DB maintenance, readiness returns Unhealthy → traffic routes to other pods. After maintenance, readiness recovers → pod rejoins rotation. Liveness still passes throughout (app itself didn't crash)."</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q6. Logging is causing performance issues in a hot-path fee validation method called 10,000 times/second. How to fix?</div>
+        <span class="scenario-type type-perf">Performance</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>High-performance logging techniques:</strong></p>
+        <pre><span class="cmt">// 1. Log level guard — skip log creation if level disabled</span>
+<span class="kw">if</span> (_log.<span class="mth">IsEnabled</span>(LogLevel.Debug))
+    _log.<span class="mth">LogDebug</span>(<span class="str">"Validating fee {StudentId} {Amount}"</span>, id, amount);
+
+<span class="cmt">// 2. Source-generated LoggerMessage (zero allocation, fastest possible)</span>
+<span class="kw">public static partial class</span> <span class="cls">FeeLogMessages</span>
+{
+    [<span class="attr">LoggerMessage</span>(
+        EventId = <span class="num">1001</span>,
+        Level   = LogLevel.Information,
+        Message = <span class="str">"Fee collected {ReceiptNo} for {StudentId} amount {Amount:C}"</span>)]
+    <span class="kw">public static partial void</span> <span class="mth">FeeCollected</span>(
+        <span class="kw">this</span> <span class="cls">ILogger</span> logger, <span class="kw">string</span> receiptNo, <span class="kw">int</span> studentId, <span class="kw">decimal</span> amount);
+}
+<span class="cmt">// Usage: _log.FeeCollected(receipt.ReceiptNo, studentId, amount);</span>
+<span class="cmt">// Zero string allocation — generated at compile time. 10x faster than LogInformation()</span>
+
+<span class="cmt">// 3. Async sinks — don't block thread for file write</span>
+.<span class="mth">WriteTo</span>.<span class="mth">Async</span>(a => a.<span class="mth">File</span>(<span class="str">"logs/zencampus-.log"</span>,
+    rollingInterval: RollingInterval.Day,
+    bufferSize: <span class="num">10_000</span>))  <span class="cmt">// Buffer 10k events, write in background thread</span>
+
+<span class="cmt">// 4. Sampling — log 1% of successful requests in hot path</span>
+<span class="kw">if</span> (<span class="cls">Random</span>.Shared.<span class="mth">NextDouble</span>() < <span class="num">0.01</span>) <span class="cmt">// 1% sample</span>
+    _log.<span class="mth">LogDebug</span>(<span class="str">"Validation sample {StudentId}"</span>, studentId);</pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q7. What is OpenTelemetry? How does it differ from Serilog + App Insights?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>OpenTelemetry (OTel)</strong> is a vendor-neutral standard for collecting logs, metrics, and traces. Single instrumentation → export to any backend (App Insights, Jaeger, Grafana, Datadog, Seq).</p>
+        <table>
+            <tr><th>Aspect</th><th>Serilog + App Insights</th><th>OpenTelemetry</th></tr>
+            <tr><td>Vendor</td><td>Microsoft-specific</td><td>Vendor-neutral (CNCF standard)</td></tr>
+            <tr><td>Portability</td><td>Lock-in to App Insights</td><td>Change backend without code change</td></tr>
+            <tr><td>Traces</td><td>App Insights only</td><td>Any OTLP backend (Jaeger, Zipkin)</td></tr>
+            <tr><td>Learning curve</td><td>Simpler setup</td><td>More configuration</td></tr>
+        </table>
+        <pre><span class="cmt">// OTel setup — export to App Insights + Console</span>
+builder.Services.<span class="mth">AddOpenTelemetry</span>()
+    .<span class="mth">WithTracing</span>(tracing => tracing
+        .<span class="mth">AddAspNetCoreInstrumentation</span>()
+        .<span class="mth">AddEntityFrameworkCoreInstrumentation</span>()
+        .<span class="mth">AddRedisInstrumentation</span>()
+        .<span class="mth">AddAzureMonitorTraceExporter</span>()) <span class="cmt">// → App Insights</span>
+    .<span class="mth">WithMetrics</span>(metrics => metrics
+        .<span class="mth">AddAspNetCoreInstrumentation</span>()
+        .<span class="mth">AddAzureMonitorMetricExporter</span>());</pre>
+        <p><strong>ZenCampus:</strong> "We use Serilog for logs (well-known, easy to configure), App Insights for traces (already on Azure). If we ever move to multi-cloud or Grafana dashboards, we'd migrate to OTel without changing business code."</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q8. What should you NEVER log? What are the GDPR/compliance risks?</div>
+        <span class="scenario-type type-design">Security</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Never log (PII / sensitive data):</strong></p>
+        <ul style="margin-left:1.5rem">
+            <li>Passwords (plain or hashed) — even BCrypt hash must not be logged</li>
+            <li>JWT tokens — attacker with log access can impersonate any user</li>
+            <li>Full phone numbers — mask to <code>+91******7890</code></li>
+            <li>Aadhaar/PAN numbers (Indian law: IT Act, DPDP Act 2023)</li>
+            <li>Student health/medical records (especially DPDP Act sensitive data)</li>
+            <li>Bank account / payment card details</li>
+            <li>Session/refresh tokens</li>
+        </ul>
+        <pre><span class="cmt">// Phone masking utility</span>
+<span class="kw">public static string</span> <span class="mth">MaskPhone</span>(<span class="kw">string</span> phone) =>
+    phone.Length >= <span class="num">10</span>
+        ? <span class="str">"XXXXXX"</span> + phone[^<span class="num">4</span>..]   <span class="cmt">// Show only last 4 digits</span>
+        : <span class="str">"[masked]"</span>;
+
+_log.<span class="mth">LogInformation</span>(<span class="str">"SMS sent to {Phone}"</span>, <span class="mth">MaskPhone</span>(parent.Phone));
+<span class="cmt">// Logs: "SMS sent to XXXXXX7890"</span>
+
+<span class="cmt">// GDPR risk: logs are stored in Azure Storage / Log Analytics</span>
+<span class="cmt">// If full Aadhaar logged → data breach = ₹250 crore fine under DPDP Act</span>
+<span class="cmt">// Log retention policy: 30 days for debug, 90 days for audit logs</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q9. ZenCampus morning peak: 500 errors/minute suddenly. How do you set up automated alerting?</div>
+        <span class="scenario-type type-design">Observability</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Alert layers in Azure:</strong></p>
+        <ol style="margin-left:1.5rem">
+            <li><strong>App Insights Smart Detection</strong> — auto-alerts on anomalies (sudden error rate spike). No setup needed, ML-based.</li>
+            <li><strong>Metric Alerts</strong> — threshold-based: "error rate > 5% for 5 minutes → PagerDuty"</li>
+            <li><strong>Log Alerts</strong> — KQL query-based: "count of FATAL logs > 0 in 1 minute → immediate page"</li>
+            <li><strong>Custom metric alert</strong> — "FeeCollected events = 0 for 30min during 8AM-6PM → Slack warning"</li>
+        </ol>
+        <pre><span class="cmt">// App Insights KQL — alert query</span>
+<span class="cmt">// "Error rate" alert — fires when > 5% of requests fail</span>
+requests
+| where timestamp > ago(<span class="num">5</span>m)
+| summarize
+    total   = count(),
+    failed  = countif(success == <span class="str">"False"</span>),
+    errRate = round(<span class="num">100.0</span> * countif(success == <span class="str">"False"</span>) / count(), <span class="num">2</span>)
+| where errRate > <span class="num">5</span>
+
+<span class="cmt">// "Dead school" alert — school 7 has zero activity for 30 min during business hours</span>
+customEvents
+| where timestamp > ago(<span class="num">30</span>m)
+| where name in (<span class="str">"FeeCollected"</span>, <span class="str">"StudentAdmitted"</span>, <span class="str">"AttendanceMarked"</span>)
+| where customDimensions[<span class="str">"SchoolId"</span>] == <span class="str">"7"</span>
+| count
+| where Count == <span class="num">0</span>  <span class="cmt">// No events → alert!</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q10. "Tell me about your logging and observability experience." — Full ZenCampus answer</div>
+        <span class="scenario-type type-exp">Experience</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p>"In ZenCampus — 50,000 students, 200 schools — debugging production issues without good observability was nearly impossible. We had incidents where parents called support about failed payments and we'd spend hours grepping log files with no context.</p>
+        <p style="margin-top:0.5rem"><strong>Serilog with structured logging:</strong> Replaced all string concatenation with message templates — <code>"Fee collected {ReceiptNo} {StudentId} {Amount} {SchoolId}"</code>. App Insights stores these as queryable JSON properties. Added a custom <code>SchoolContextEnricher</code> that pulls SchoolId and UserId from the JWT claim — every log line automatically tagged with tenant context.</p>
+        <p style="margin-top:0.5rem"><strong>Correlation ID middleware:</strong> Generates a unique ID per request, pushes to Serilog LogContext, echoes in response header. We display it in the mobile app's error screen. Support team takes that ID → App Insights query → see controller log, handler log, DB log, SMS log — all for that one request. Investigation time went from hours to 2 minutes.</p>
+        <p style="margin-top:0.5rem"><strong>Health checks:</strong> Three endpoints — /health/live (app alive), /health/ready (DB + Redis + Msg91 reachable). Azure Load Balancer routes based on readiness. During a DB maintenance window, readiness went Unhealthy → traffic auto-shifted to remaining pods — zero user impact.</p>
+        <p style="margin-top:0.5rem"><strong>App Insights:</strong> Custom events for business KPIs — FeeCollected with amount, school, payment mode. KQL dashboards show daily collection per school. Alert fires if FeeCollected count drops to zero during business hours — caught a DB connectivity issue before any parent called."</p>
+    </div>
+</div>
+
+<!-- QUIZ -->
+<h2 class="section-title" id="quiz">🧠 Quick Quiz</h2>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q1. You write: <code>_log.LogDebug("Processing " + studentId + " amount " + amount);</code> — what are the two main problems?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Only one problem — it's unstructured</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">B) Unstructured (can't query by studentId) AND string allocated even when DEBUG is disabled</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) Only one problem — string allocation waste</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) No problems — Debug level is fine for this</button>
+    </div>
+    <div class="quiz-feedback">Both problems: (1) Unstructured — studentId stored as part of the string, not a queryable property — App Insights can't filter "all debug logs for student 42". (2) String allocation — concatenation runs even if DEBUG level is disabled (filtered before writing). Fix: _log.LogDebug("Processing {StudentId} amount {Amount}", studentId, amount);</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q2. Msg91 SMS fails after 3 retries. Fee was saved to DB. The Hangfire retry job is queued. What log level?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) LogInformation — it's handled, no big deal</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">B) LogWarning — operation degraded (SMS not sent) but fee collection succeeded</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) LogError — any failure should be Error</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) LogCritical — parent won't get SMS receipt</button>
+    </div>
+    <div class="quiz-feedback">LogWarning — the core operation (fee collection) succeeded. SMS is a side effect currently in retry queue. System is degraded but functional. LogError should be reserved for operations where the user's goal (fee collection) failed. If all Hangfire retries exhaust → then LogError. Error alerts fire incidents; warnings are monitored but don't page on-call.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q3. During DB maintenance, /health/ready returns Unhealthy. /health/live returns Healthy. What does Kubernetes do?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Restarts the pod — liveness check should catch this</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">B) Removes pod from load balancer rotation (no restart) — readiness failure means stop traffic, not kill pod</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) Kills and replaces the pod with a new one</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Nothing — Kubernetes only checks liveness</button>
+    </div>
+    <div class="quiz-feedback">Removes pod from LB rotation (no restart). Liveness = "is app alive?" (restart if no). Readiness = "can it serve traffic?" (remove from LB if no, but keep running). During DB maintenance, app is alive (liveness pass) but can't serve traffic (readiness fail) → correct behavior: take it out of rotation until DB recovers.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q4. Parent calls support: "Fee payment failed at 2:15 PM." What's the fastest way to find the logs using observability best practices?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) SSH into server and grep the log file for the student name</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">B) Check the Hangfire dashboard for failed jobs</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">C) Ask for X-Correlation-Id from the error screen → query App Insights by CorrelationId → see all request logs instantly</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Check the database for failed transaction records</button>
+    </div>
+    <div class="quiz-feedback">Correlation ID query — if the mobile app shows the CorrelationId in the error, one App Insights query surfaces all logs (controller, handler, DB, SMS) for that exact request. Without CorrelationId: query by StudentId + timestamp range in App Insights structured logs. SSH grep is slow, unstructured, and requires server access. DB shows the result, not the cause.</div>
+</div>
+
+<!-- CHECKLIST -->
+<h2 class="section-title">✅ Day 23 Mastery Checklist</h2>
+<ul class="checklist">
+    <li><input type="checkbox" id="c1"><label for="c1">Structured logging: message templates with named params → queryable JSON properties</label></li>
+    <li><input type="checkbox" id="c2"><label for="c2">Serilog: UseSerilog() in Program.cs, multiple sinks, MinimumLevel.Override() to reduce noise</label></li>
+    <li><input type="checkbox" id="c3"><label for="c3">Enrichers: FromLogContext(), WithMachineName(), custom SchoolContextEnricher from JWT</label></li>
+    <li><input type="checkbox" id="c4"><label for="c4">Log levels: Debug (dev), Info (business events), Warn (degraded), Error (failed+alert), Fatal (app down)</label></li>
+    <li><input type="checkbox" id="c5"><label for="c5">Never log: passwords, tokens, Aadhaar, full phone, medical — mask PII</label></li>
+    <li><input type="checkbox" id="c6"><label for="c6">Correlation ID middleware: generate/read X-Correlation-Id, LogContext.PushProperty, echo in response</label></li>
+    <li><input type="checkbox" id="c7"><label for="c7">CorrelationIdDelegatingHandler: forwards ID to all outbound HTTP calls</label></li>
+    <li><input type="checkbox" id="c8"><label for="c8">Health checks: /health/live (liveness) vs /health/ready (readiness) — different Kubernetes behaviors</label></li>
+    <li><input type="checkbox" id="c9"><label for="c9">Redis/SQL down = Degraded (still serve), DB down = Unhealthy (remove from LB)</label></li>
+    <li><input type="checkbox" id="c10"><label for="c10">App Insights: TrackEvent (FeeCollected), TrackMetric (FeeAmount), TrackException with custom dims</label></li>
+    <li><input type="checkbox" id="c11"><label for="c11">HealthCheckFilter: drop /health/* from App Insights telemetry — prevents metric pollution</label></li>
+    <li><input type="checkbox" id="c12"><label for="c12">[LoggerMessage] source generator: zero allocation hot-path logging — 10x faster</label></li>
+</ul>
+
+<div style="text-align:center;margin:2rem 0;padding:1.5rem;background:var(--card2);border-radius:12px;border:1px solid var(--border);">
+    <div style="font-size:1.5rem;font-weight:800;color:var(--accent-light)">Day 23 Complete! 🎯</div>
+    <div style="color:var(--text-dim);margin-top:0.5rem">38.3% of the 60-day journey done</div>
+    <div style="color:var(--text-dim);font-size:0.85rem;margin-top:0.25rem">Tomorrow: Day 24 — Middleware & Filters (Custom Middleware, Action Filters, Exception Filters, Resource Filters, Pipeline Order)</div>
+</div>
+
+</div>
+
+<footer>
+    <div>Day 23 / 60 — Logging &amp; Observability | ZenCampus .NET Interview Prep</div>
+    <div style="margin-top:0.25rem;color:var(--accent)">Accent: Terminal Green #16a34a | Days 1–23 colors all unique ✓</div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const p = (doc.scrollTop || document.body.scrollTop) / (doc.scrollHeight - doc.clientHeight) * 100;
+    document.getElementById('progressBar').style.width = p + '%';
+});
+function toggle(btn) {
+    const a = btn.nextElementSibling;
+    a.classList.toggle('visible');
+    btn.textContent = a.classList.contains('visible') ? 'Hide Answer' : 'Reveal Answer';
+}
+function quiz(btn, correct) {
+    const card = btn.closest('.quiz-card');
+    card.querySelectorAll('.quiz-opt').forEach(o => o.disabled = true);
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    if (!correct)
+        card.querySelectorAll('.quiz-opt').forEach(o => {
+            if (o.getAttribute('onclick').includes('true')) o.classList.add('correct');
+        });
+    const fb = card.querySelector('.quiz-feedback');
+    fb.classList.add('show');
+    fb.style.cssText = `background:${correct?'rgba(34,197,94,0.1)':'rgba(239,68,68,0.1)'};color:${correct?'#86efac':'#fca5a5'};border:1px solid ${correct?'rgba(34,197,94,0.3)':'rgba(239,68,68,0.3)'};`;
+}
+</script>
+</body>
+</html>

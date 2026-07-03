@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 17 – Performance Optimization | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#1a0020,#0d0d1a,#1a0020);padding:36px 20px;text-align:center;border-bottom:3px solid #f43f5e}
+header h1{font-size:2em;color:#fb7185;text-shadow:0 0 20px #f43f5e55}
+header p{color:#fda4af;margin-top:6px}
+.badge{display:inline-block;background:#f43f5e22;border:1px solid #f43f5e55;color:#fb7185;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#fb7185;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#f43f5e;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.kw{color:#569cd6}.tp{color:#4ec9b0}.st{color:#ce9178}.nm{color:#b5cea8}.cm{color:#6a9955}.pr{color:#9cdcfe}.mt{color:#dcdcaa}.at{color:#c586c0}
+code{background:#1a1a2e;color:#f43f5e;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#1a0010;border-left:4px solid #f43f5e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#fda4af;font-size:0.9em;margin-top:4px}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:700px){.comparison,.two-col{grid-template-columns:1fr}}
+.bad-box{background:#1f0a0a;border:1px solid #e74c3c44;border-radius:8px;padding:14px}
+.good-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:8px;padding:14px}
+.box-label{font-size:0.78em;font-weight:bold;margin-bottom:8px}
+.bad-box .box-label{color:#e74c3c}.good-box .box-label{color:#2ecc71}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#1a0010;color:#fb7185;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#0a0a2a}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.rose{color:#fb7185}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-card.hot{border-color:#f43f5e55;background:#1a0010}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.s-num{background:#f43f5e;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.s-num.warn{background:#e74c3c}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#1a0010;color:#fb7185}
+.real{background:#1a0010;color:#fb7185;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #f43f5e55}
+.hot-badge{background:#1a0010;color:#f43f5e;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #f43f5e55}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#1a0010;border:1px solid #f43f5e;color:#fb7185;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#f43f5e;color:#fff}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1e1e3a}
+.answer.shown{display:block}
+.answer .a-label{color:#fb7185;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.gold-box{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#f43f5e;color:#fb7185}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#f43f5e}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#fb7185;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1e1e3a}
+.sticky-nav a:hover{background:#1a0010}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#f43f5e,#fb7185)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+h3{color:#fda4af;margin:16px 0 8px;font-size:1em}
+.perf-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.75em;font-weight:bold;margin-left:8px}
+.fast{background:#0a2a0a;color:#2ecc71;border:1px solid #2ecc7144}
+.slow{background:#2a0a0a;color:#e74c3c;border:1px solid #e74c3c44}
+.medium-perf{background:#2a1a00;color:#f39c12;border:1px solid #f39c1244}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#fb7185;font-size:0.85em;margin-bottom:6px">📅 Day 17 of 60 | Phase 1: Core .NET Mastery</div>
+  <h1>⚡ Performance Optimization</h1>
+  <p>EF Core N+1 · Dapper · Caching · Async · Pagination · Compiled Queries · Span&lt;T&gt;</p>
+  <div style="margin-top:12px">
+    <span class="badge">N+1 Fix</span><span class="badge">AsNoTracking</span><span class="badge">Dapper</span>
+    <span class="badge">IMemoryCache</span><span class="badge">Redis Cache</span><span class="badge">Pagination</span>
+    <span class="badge">Compiled Queries</span><span class="badge">Parallel.ForEachAsync</span><span class="badge">Output Cache</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#n1">🔁 N+1 Fix</a>
+  <a href="#dapper">⚡ Dapper</a>
+  <a href="#caching">🗄️ Caching</a>
+  <a href="#async">🔀 Async</a>
+  <a href="#pagination">📄 Pagination</a>
+  <a href="#compiled">🏎️ Compiled</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SECTION 1: N+1 -->
+<div class="section" id="n1">
+  <div class="section-title"><span class="num">1</span> EF Core N+1 Problem — ZenCampus's #1 Performance Bug</div>
+
+  <div class="movie">
+    <span class="film">🎬 Baasha — Baasha makes 100 trips to collect payments one by one. N+1 = same. 1 query for schools + 1 query per school for students = 201 DB hits for 200 schools. Single Include() = 1 trip, all data. Baasha becomes smart!</span>
+    <p>Real ZenCampus bug: attendance report page was taking 8 seconds for 200 classes. Root cause: foreach class → query students. 200 classes = 201 queries! Added Include() → 1 query → 400ms. Same data, 20x faster.</p>
+  </div>
+
+  <div class="comparison">
+    <div class="bad-box">
+      <div class="box-label">❌ N+1 — 201 queries for 200 schools</div>
+      <pre style="margin:0"><span class="cm">// 1 query: get all schools</span>
+<span class="kw">var</span> <span class="pr">schools</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Schools</span>
+    .<span class="mt">ToListAsync</span>();
+
+<span class="cm">// +1 query PER school!</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="pr">school</span> <span class="kw">in</span> <span class="pr">schools</span>)
+{
+    <span class="kw">var</span> <span class="pr">count</span> = school.Students.Count;
+    <span class="cm">// ↑ LAZY LOAD → query!</span>
+}</pre>
+    </div>
+    <div class="good-box">
+      <div class="box-label">✅ Include() — 1 query, all data</div>
+      <pre style="margin:0"><span class="cm">// 1 query with JOIN</span>
+<span class="kw">var</span> <span class="pr">schools</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Schools</span>
+    .<span class="mt">Include</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Students</span>)
+    .<span class="mt">ToListAsync</span>();
+
+<span class="cm">// ↓ no extra queries!</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="pr">school</span> <span class="kw">in</span> <span class="pr">schools</span>)
+{
+    <span class="kw">var</span> <span class="pr">count</span> = school.Students.Count;
+}</pre>
+    </div>
+  </div>
+
+  <pre><span class="cm">// Detect N+1: add EF Core logging — see all SQL queries</span>
+<span class="pr">optionsBuilder</span>.<span class="mt">LogTo</span>(<span class="pr">Console</span>.<span class="pr">WriteLine</span>, <span class="tp">LogLevel</span>.<span class="pr">Information</span>)
+              .<span class="mt">EnableSensitiveDataLogging</span>();  <span class="cm">// show parameter values</span>
+
+<span class="cm">// Real ZenCampus fix — attendance report</span>
+<span class="cm">// BEFORE (8 seconds):</span>
+<span class="kw">var</span> <span class="pr">classes</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Classes</span>.<span class="mt">ToListAsync</span>();
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="pr">cls</span> <span class="kw">in</span> <span class="pr">classes</span>)
+    <span class="pr">report</span>.<span class="mt">Add</span>(<span class="pr">cls</span>.<span class="pr">Students</span>.<span class="mt">Count</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">AttendancePercent</span> >= <span class="nm">75</span>));
+
+<span class="cm">// AFTER (400ms) — project only what you need:</span>
+<span class="kw">var</span> <span class="pr">report</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Classes</span>
+    .<span class="mt">Select</span>(<span class="pr">c</span> => <span class="kw">new</span> <span class="tp">ClassAttendanceDto</span>
+    {
+        <span class="pr">ClassName</span>      = <span class="pr">c</span>.<span class="pr">Name</span>,
+        <span class="pr">TotalStudents</span>  = <span class="pr">c</span>.<span class="pr">Students</span>.<span class="mt">Count</span>(),
+        <span class="pr">PresentStudents</span> = <span class="pr">c</span>.<span class="pr">Students</span>.<span class="mt">Count</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">AttendancePercent</span> >= <span class="nm">75</span>)
+    })
+    .<span class="mt">ToListAsync</span>();
+<span class="cm">// Select() = 1 SQL query with subqueries. No Student objects loaded into memory!</span>
+
+<span class="cm">// AsNoTracking — read-only queries 30-40% faster</span>
+<span class="kw">var</span> <span class="pr">students</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Students</span>
+    .<span class="mt">AsNoTracking</span>()              <span class="cm">// no change tracking overhead</span>
+    .<span class="mt">Where</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">SchoolId</span> == <span class="pr">schoolId</span>)
+    .<span class="mt">ToListAsync</span>();
+<span class="cm">// Use for: GET endpoints, reports, exports — anything you won't Update/Delete
+// Never use for: data you'll SaveChanges() on — changes won't be tracked!</span>
+
+<span class="cm">// AsNoTrackingWithIdentityResolution — when Include() returns duplicates
+// (parent with multiple children — join creates duplicate parent rows)</span>
+<span class="kw">var</span> <span class="pr">schoolsWithStudents</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Schools</span>
+    .<span class="mt">Include</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Students</span>)
+    .<span class="mt">AsNoTrackingWithIdentityResolution</span>()  <span class="cm">// dedup without tracking</span>
+    .<span class="mt">ToListAsync</span>();
+
+<span class="cm">// ThenInclude — nested navigation properties</span>
+<span class="kw">var</span> <span class="pr">schools</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Schools</span>
+    .<span class="mt">Include</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Students</span>)
+        .<span class="mt">ThenInclude</span>(<span class="pr">st</span> => <span class="pr">st</span>.<span class="pr">FeeRecords</span>)  <span class="cm">// students' fees</span>
+    .<span class="mt">Include</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Staff</span>)                  <span class="cm">// AND staff</span>
+    .<span class="mt">ToListAsync</span>();</pre>
+</div>
+
+<!-- SECTION 2: DAPPER -->
+<div class="section" id="dapper">
+  <div class="section-title"><span class="num">2</span> Dapper — Raw SQL Speed for Reports</div>
+
+  <div class="movie">
+    <span class="film">🎬 Roja — Speed matters in a crisis. EF Core = thorough but sometimes slow for complex reports. Dapper = raw SQL speed, maps to C# objects. ZenCampus fee report: EF 1.2s → Dapper 85ms. Same data, 14x faster!</span>
+  </div>
+
+  <pre><span class="cm">// NuGet: Dapper
+// Use Dapper for: complex reports, aggregates, multi-table JOINs, stored procs
+// Use EF Core for: CRUD, simple queries where change tracking helps</span>
+
+<span class="kw">public class</span> <span class="tp">FeeReportRepository</span>(<span class="tp">IDbConnection</span> <span class="pr">db</span>)
+{
+    <span class="cm">// Dapper: QueryAsync maps result rows → FeeReportDto automatically</span>
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IEnumerable</span>&lt;<span class="tp">FeeReportDto</span>&gt;&gt; <span class="mt">GetMonthlyFeeReportAsync</span>(
+        <span class="kw">int</span> <span class="pr">schoolId</span>, <span class="kw">int</span> <span class="pr">month</span>, <span class="kw">int</span> <span class="pr">year</span>)
+    {
+        <span class="kw">const string</span> <span class="pr">sql</span> = <span class="st">@"
+            SELECT
+                s.Id         AS StudentId,
+                s.Name       AS StudentName,
+                s.Class,
+                fr.Amount,
+                fr.PaidDate,
+                fr.ReceiptNo,
+                DATEDIFF(day, fr.DueDate, fr.PaidDate) AS DaysLate
+            FROM Students s
+            INNER JOIN FeeRecords fr ON fr.StudentId = s.Id
+            WHERE s.SchoolId = @SchoolId
+              AND MONTH(fr.PaidDate) = @Month
+              AND YEAR(fr.PaidDate)  = @Year
+            ORDER BY s.Class, s.Name"</span>;
+
+        <span class="kw">return await</span> <span class="pr">db</span>.<span class="mt">QueryAsync</span>&lt;<span class="tp">FeeReportDto</span>&gt;(<span class="pr">sql</span>, <span class="kw">new</span> { <span class="pr">SchoolId</span> = <span class="pr">schoolId</span>, <span class="tp">Month</span> = <span class="pr">month</span>, <span class="pr">Year</span> = <span class="pr">year</span> });
+    }
+
+    <span class="cm">// Multi-mapping: one query, map to two objects (parent + child)</span>
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IEnumerable</span>&lt;<span class="tp">SchoolFeeDto</span>&gt;&gt; <span class="mt">GetSchoolFeesSummaryAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>)
+    {
+        <span class="kw">const string</span> <span class="pr">sql</span> = <span class="st">@"
+            SELECT sc.Id, sc.Name AS SchoolName,
+                   SUM(fr.Amount) AS TotalCollected, COUNT(fr.Id) AS ReceiptCount
+            FROM Schools sc
+            LEFT JOIN FeeRecords fr ON fr.SchoolId = sc.Id
+            WHERE sc.Id = @SchoolId
+            GROUP BY sc.Id, sc.Name"</span>;
+
+        <span class="kw">return await</span> <span class="pr">db</span>.<span class="mt">QueryAsync</span>&lt;<span class="tp">SchoolFeeDto</span>&gt;(<span class="pr">sql</span>, <span class="kw">new</span> { <span class="pr">SchoolId</span> = <span class="pr">schoolId</span> });
+    }
+
+    <span class="cm">// QueryFirstOrDefaultAsync — single row</span>
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">StudentFeeStatusDto</span>?&gt; <span class="mt">GetStudentFeeStatusAsync</span>(<span class="kw">int</span> <span class="pr">studentId</span>)
+    {
+        <span class="kw">return await</span> <span class="pr">db</span>.<span class="mt">QueryFirstOrDefaultAsync</span>&lt;<span class="tp">StudentFeeStatusDto</span>&gt;(
+            <span class="st">"SELECT s.Name, SUM(fr.Amount) AS TotalPaid, MAX(fr.PaidDate) AS LastPayment FROM Students s LEFT JOIN FeeRecords fr ON fr.StudentId = s.Id WHERE s.Id = @Id GROUP BY s.Name"</span>,
+            <span class="kw">new</span> { <span class="pr">Id</span> = <span class="pr">studentId</span> });
+    }
+
+    <span class="cm">// ExecuteAsync — for INSERT/UPDATE/DELETE via Dapper (bulk inserts especially)</span>
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">BulkInsertAttendanceAsync</span>(<span class="tp">IEnumerable</span>&lt;<span class="tp">AttendanceRecord</span>&gt; <span class="pr">records</span>)
+    {
+        <span class="kw">await</span> <span class="pr">db</span>.<span class="mt">ExecuteAsync</span>(
+            <span class="st">"INSERT INTO Attendance (StudentId, Date, Status) VALUES (@StudentId, @Date, @Status)"</span>,
+            <span class="pr">records</span>);  <span class="cm">// Dapper sends one batch for all records — much faster than EF SaveChanges per-record!</span>
+    }
+}
+
+<span class="cm">// Register IDbConnection in DI</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddScoped</span>&lt;<span class="tp">IDbConnection</span>&gt;(<span class="pr">sp</span> =>
+    <span class="kw">new</span> <span class="tp">SqlConnection</span>(<span class="pr">builder</span>.<span class="pr">Configuration</span>.<span class="mt">GetConnectionString</span>(<span class="st">"ZenCampus"</span>)));</pre>
+
+  <table>
+    <tr><th>Scenario</th><th>EF Core</th><th>Dapper</th></tr>
+    <tr><td>Simple CRUD</td><td class="green">✅ (change tracking, relationships)</td><td class="yellow">⚠️ (more boilerplate)</td></tr>
+    <tr><td>Complex report with 5 JOINs</td><td class="yellow">⚠️ (slow, awkward)</td><td class="green">✅ (raw SQL, fast)</td></tr>
+    <tr><td>Bulk insert (10,000 rows)</td><td class="red">❌ (slow SaveChanges)</td><td class="green">✅ (ExecuteAsync batch)</td></tr>
+    <tr><td>Migration management</td><td class="green">✅ (EF migrations)</td><td class="red">❌ (manual SQL scripts)</td></tr>
+    <tr><td>Stored procedure call</td><td class="yellow">⚠️ (possible)</td><td class="green">✅ (natural)</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 3: CACHING -->
+<div class="section" id="caching">
+  <div class="section-title"><span class="num">3</span> Caching — Memory Cache + Redis + Output Cache</div>
+
+  <div class="movie">
+    <span class="film">🎬 Thuppakki — Vijay uses intel before action. Cache = same. School list doesn't change every second — query once, cache 5 minutes, serve from memory. DB query avoided 1000 times!</span>
+  </div>
+
+  <pre><span class="cm">// IMemoryCache — in-process cache (single server)</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddMemoryCache</span>();
+
+<span class="kw">public class</span> <span class="tp">SchoolService</span>(<span class="tp">IMemoryCache</span> <span class="pr">cache</span>, <span class="tp">ISchoolRepository</span> <span class="pr">repo</span>)
+{
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">List</span>&lt;<span class="tp">SchoolDto</span>&gt;&gt; <span class="mt">GetAllSchoolsAsync</span>()
+    {
+        <span class="kw">const string</span> <span class="pr">cacheKey</span> = <span class="st">"all-schools"</span>;
+
+        <span class="cm">// GetOrCreateAsync — atomic check + create (no race condition)</span>
+        <span class="kw">return await</span> <span class="pr">cache</span>.<span class="mt">GetOrCreateAsync</span>(<span class="pr">cacheKey</span>, <span class="kw">async</span> <span class="pr">entry</span> =>
+        {
+            <span class="pr">entry</span>.<span class="pr">AbsoluteExpirationRelativeToNow</span> = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">5</span>); <span class="cm">// expire in 5 min</span>
+            <span class="pr">entry</span>.<span class="pr">SlidingExpiration</span>                = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">2</span>); <span class="cm">// reset if accessed</span>
+            <span class="pr">entry</span>.<span class="pr">Size</span>                             = <span class="nm">1</span>;                         <span class="cm">// for SizeLimit</span>
+            <span class="kw">return await</span> <span class="pr">repo</span>.<span class="mt">GetAllAsync</span>();
+        }) ?? [];
+    }
+
+    <span class="cm">// Invalidate when school added/updated</span>
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">AddSchoolAsync</span>(<span class="tp">School</span> <span class="pr">school</span>)
+    {
+        <span class="kw">await</span> <span class="pr">repo</span>.<span class="mt">AddAsync</span>(<span class="pr">school</span>);
+        <span class="pr">cache</span>.<span class="mt">Remove</span>(<span class="st">"all-schools"</span>); <span class="cm">// bust cache after write!</span>
+    }
+}
+
+<span class="cm">// IDistributedCache (Redis) — shared across multiple AKS pods</span>
+<span class="cm">// NuGet: Microsoft.Extensions.Caching.StackExchangeRedis</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddStackExchangeRedisCache</span>(<span class="pr">opts</span> => {
+    <span class="pr">opts</span>.<span class="pr">Configuration</span> = <span class="pr">builder</span>.<span class="pr">Configuration</span>[<span class="st">"Redis:ConnectionString"</span>];
+    <span class="pr">opts</span>.<span class="pr">InstanceName</span>  = <span class="st">"zencampus:"</span>;   <span class="cm">// key prefix: "zencampus:student:101"</span>
+});
+
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">StudentDto</span>?&gt; <span class="mt">GetStudentAsync</span>(<span class="kw">int</span> <span class="pr">id</span>)
+{
+    <span class="kw">var</span> <span class="pr">key</span>   = <span class="st">$"student:{id}"</span>;
+    <span class="kw">var</span> <span class="pr">bytes</span> = <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">GetAsync</span>(<span class="pr">key</span>);
+
+    <span class="kw">if</span> (<span class="pr">bytes</span> <span class="kw">is not null</span>)
+        <span class="kw">return</span> <span class="tp">JsonSerializer</span>.<span class="mt">Deserialize</span>&lt;<span class="tp">StudentDto</span>&gt;(<span class="pr">bytes</span>);
+
+    <span class="kw">var</span> <span class="pr">student</span> = <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">GetByIdAsync</span>(<span class="pr">id</span>);
+    <span class="kw">if</span> (<span class="pr">student</span> <span class="kw">is null</span>) <span class="kw">return null</span>;
+
+    <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">SetAsync</span>(<span class="pr">key</span>,
+        <span class="tp">JsonSerializer</span>.<span class="mt">SerializeToUtf8Bytes</span>(<span class="pr">student</span>),
+        <span class="kw">new</span> <span class="tp">DistributedCacheEntryOptions</span> { <span class="pr">AbsoluteExpirationRelativeToNow</span> = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">10</span>) });
+
+    <span class="kw">return</span> <span class="pr">student</span>;
+}
+
+<span class="cm">// Output Cache — ASP.NET Core 8 (cache entire HTTP response!)</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddOutputCache</span>(<span class="pr">opts</span> => {
+    <span class="pr">opts</span>.<span class="mt">AddPolicy</span>(<span class="st">"SchoolList"</span>, <span class="pr">b</span> => <span class="pr">b</span>
+        .<span class="mt">Expire</span>(<span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">5</span>))
+        .<span class="mt">Tag</span>(<span class="st">"schools"</span>));         <span class="cm">// tag for selective invalidation</span>
+});
+<span class="pr">app</span>.<span class="mt">UseOutputCache</span>();
+
+[<span class="at">OutputCache</span>(<span class="pr">PolicyName</span> = <span class="st">"SchoolList"</span>)]
+[<span class="at">HttpGet</span>(<span class="st">"schools"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="mt">GetSchools</span>() => <span class="mt">Ok</span>(<span class="kw">await</span> <span class="pr">_svc</span>.<span class="mt">GetAllSchoolsAsync</span>());
+<span class="cm">// Entire HTTP response cached 5 min — no controller/service/DB code runs on cache hit!</span>
+
+<span class="cm">// Invalidate output cache by tag (after school update)</span>
+<span class="kw">await</span> <span class="pr">_outputCacheStore</span>.<span class="mt">EvictByTagAsync</span>(<span class="st">"schools"</span>, <span class="tp">CancellationToken</span>.<span class="pr">None</span>);</pre>
+</div>
+
+<!-- SECTION 4: ASYNC PERFORMANCE -->
+<div class="section" id="async">
+  <div class="section-title"><span class="num">4</span> Async Best Practices — Don't Block Threads</div>
+
+  <pre><span class="cm">// DEADLY MISTAKE: .Result or .Wait() in async context → deadlock!</span>
+<span class="kw">var</span> <span class="pr">student</span> = <span class="pr">_repo</span>.<span class="mt">GetAsync</span>(<span class="nm">101</span>).<span class="pr">Result</span>;  <span class="cm">// ⚠️ DEADLOCK in ASP.NET Core!</span>
+<span class="pr">_repo</span>.<span class="mt">SaveAsync</span>(<span class="pr">student</span>).<span class="mt">Wait</span>();           <span class="cm">// ⚠️ DEADLOCK!</span>
+<span class="cm">// ASP.NET Core thread pool + SynchronizationContext = .Result deadlock
+// Fix: always await, never .Result/.Wait() in non-console code</span>
+
+<span class="cm">// ConfigureAwait(false) — library code only (not ASP.NET Core apps)</span>
+<span class="kw">var</span> <span class="pr">data</span> = <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">GetAsync</span>(<span class="nm">101</span>).<span class="mt">ConfigureAwait</span>(<span class="kw">false</span>);
+<span class="cm">// In library code (NuGet packages): ConfigureAwait(false) = don't capture sync context
+// In ASP.NET Core app code: not needed (no sync context in ASP.NET Core)</span>
+
+<span class="cm">// Parallel async — run INDEPENDENT operations concurrently!</span>
+<span class="cm">// SLOW: sequential awaits (student + fees run one after another)</span>
+<span class="kw">var</span> <span class="pr">student</span>  = <span class="kw">await</span> <span class="pr">_studentRepo</span>.<span class="mt">GetAsync</span>(<span class="pr">id</span>);
+<span class="kw">var</span> <span class="pr">fees</span>     = <span class="kw">await</span> <span class="pr">_feeRepo</span>.<span class="mt">GetAsync</span>(<span class="pr">id</span>);
+<span class="kw">var</span> <span class="pr">schedule</span> = <span class="kw">await</span> <span class="pr">_scheduleRepo</span>.<span class="mt">GetAsync</span>(<span class="pr">id</span>);
+<span class="cm">// Total: 100ms + 80ms + 60ms = 240ms</span>
+
+<span class="cm">// FAST: Task.WhenAll (all 3 run in parallel)</span>
+<span class="kw">var</span> (<span class="pr">studentTask</span>, <span class="pr">feesTask</span>, <span class="pr">scheduleTask</span>) = (
+    <span class="pr">_studentRepo</span>.<span class="mt">GetAsync</span>(<span class="pr">id</span>),
+    <span class="pr">_feeRepo</span>.<span class="mt">GetAsync</span>(<span class="pr">id</span>),
+    <span class="pr">_scheduleRepo</span>.<span class="mt">GetAsync</span>(<span class="pr">id</span>));
+
+<span class="kw">await</span> <span class="tp">Task</span>.<span class="mt">WhenAll</span>(<span class="pr">studentTask</span>, <span class="pr">feesTask</span>, <span class="pr">scheduleTask</span>);
+<span class="kw">var</span> <span class="pr">student</span>  = <span class="pr">studentTask</span>.<span class="pr">Result</span>;   <span class="cm">// safe AFTER WhenAll — task is completed!</span>
+<span class="kw">var</span> <span class="pr">fees</span>     = <span class="pr">feesTask</span>.<span class="pr">Result</span>;
+<span class="kw">var</span> <span class="pr">schedule</span> = <span class="pr">scheduleTask</span>.<span class="pr">Result</span>;
+<span class="cm">// Total: max(100, 80, 60) = 100ms. 2.4x faster!</span>
+
+<span class="cm">// Parallel.ForEachAsync — controlled parallelism for bulk operations</span>
+<span class="kw">var</span> <span class="pr">schools</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Schools</span>.<span class="mt">ToListAsync</span>();
+
+<span class="kw">await</span> <span class="tp">Parallel</span>.<span class="mt">ForEachAsync</span>(<span class="pr">schools</span>,
+    <span class="kw">new</span> <span class="tp">ParallelOptions</span> { <span class="pr">MaxDegreeOfParallelism</span> = <span class="nm">5</span> },  <span class="cm">// max 5 concurrent DB calls</span>
+    <span class="kw">async</span> (<span class="pr">school</span>, <span class="pr">ct</span>) =>
+    {
+        <span class="kw">await</span> <span class="pr">_reportService</span>.<span class="mt">GenerateMonthlyReportAsync</span>(<span class="pr">school</span>.<span class="pr">Id</span>, <span class="pr">ct</span>);
+    });
+<span class="cm">// 200 schools processed 5 at a time. Total: ~200/5 × 2s = 80s instead of 200 × 2s = 400s!</span>
+
+<span class="cm">// ValueTask — avoid heap allocation for hot paths (cache hits)</span>
+<span class="kw">public</span> <span class="tp">ValueTask</span>&lt;<span class="tp">Student</span>?&gt; <span class="mt">GetStudentAsync</span>(<span class="kw">int</span> <span class="pr">id</span>)
+{
+    <span class="cm">// Cache hit: synchronous return — no heap allocation!</span>
+    <span class="kw">if</span> (<span class="pr">_localCache</span>.<span class="mt">TryGetValue</span>(<span class="pr">id</span>, <span class="kw">out var</span> <span class="pr">cached</span>))
+        <span class="kw">return</span> <span class="tp">ValueTask</span>.<span class="mt">FromResult</span>(<span class="pr">cached</span>);
+
+    <span class="cm">// Cache miss: async DB call</span>
+    <span class="kw">return new</span> <span class="tp">ValueTask</span>&lt;<span class="tp">Student</span>?&gt;(<span class="pr">_repo</span>.<span class="mt">GetAsync</span>(<span class="pr">id</span>));
+}
+<span class="cm">// Task always allocates on heap. ValueTask = zero alloc on synchronous path!</span></pre>
+</div>
+
+<!-- SECTION 5: PAGINATION + COMPILED QUERIES -->
+<div class="section" id="pagination">
+  <div class="section-title"><span class="num">5</span> Pagination + Compiled Queries</div>
+
+  <pre><span class="cm">// NEVER load all records — OOMKilled in production!</span>
+<span class="cm">// ZenCampus: 50,000 students ToList() = 200MB memory spike → OOMKilled!</span>
+
+<span class="cm">// Cursor-based pagination (fast) — for large tables</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">PagedResult</span>&lt;<span class="tp">StudentDto</span>&gt;&gt; <span class="mt">GetStudentsPagedAsync</span>(
+    <span class="kw">int</span> <span class="pr">schoolId</span>, <span class="kw">int</span> <span class="pr">lastId</span> = <span class="nm">0</span>, <span class="kw">int</span> <span class="pr">pageSize</span> = <span class="nm">50</span>)
+{
+    <span class="kw">var</span> <span class="pr">items</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Students</span>
+        .<span class="mt">Where</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">SchoolId</span> == <span class="pr">schoolId</span> && <span class="pr">s</span>.<span class="pr">Id</span> > <span class="pr">lastId</span>)  <span class="cm">// cursor: last seen Id</span>
+        .<span class="mt">OrderBy</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Id</span>)
+        .<span class="mt">Take</span>(<span class="pr">pageSize</span> + <span class="nm">1</span>)  <span class="cm">// take one extra to check if more pages exist</span>
+        .<span class="mt">Select</span>(<span class="pr">s</span> => <span class="kw">new</span> <span class="tp">StudentDto</span> { <span class="pr">Id</span> = <span class="pr">s</span>.<span class="pr">Id</span>, <span class="pr">Name</span> = <span class="pr">s</span>.<span class="pr">Name</span>, <span class="pr">Class</span> = <span class="pr">s</span>.<span class="pr">Class</span> })
+        .<span class="mt">AsNoTracking</span>()
+        .<span class="mt">ToListAsync</span>();
+
+    <span class="kw">var</span> <span class="pr">hasMore</span>  = <span class="pr">items</span>.<span class="pr">Count</span> > <span class="pr">pageSize</span>;
+    <span class="kw">if</span> (<span class="pr">hasMore</span>) <span class="pr">items</span>.<span class="mt">RemoveAt</span>(<span class="pr">items</span>.<span class="pr">Count</span> - <span class="nm">1</span>);
+
+    <span class="kw">return new</span> <span class="tp">PagedResult</span>&lt;<span class="tp">StudentDto</span>&gt;
+    {
+        <span class="pr">Items</span>      = <span class="pr">items</span>,
+        <span class="pr">HasMore</span>    = <span class="pr">hasMore</span>,
+        <span class="pr">NextCursor</span> = <span class="pr">hasMore</span> ? <span class="pr">items</span>.<span class="mt">Last</span>().<span class="pr">Id</span> : (<span class="kw">int</span>?)<span class="kw">null</span>
+    };
+    <span class="cm">// No COUNT(*) = no full table scan! Cursor-based = consistent O(log n) regardless of page number</span>
+}
+
+<span class="cm">// Offset pagination (simpler, but slower for deep pages)</span>
+.<span class="mt">Skip</span>((<span class="pr">pageNumber</span> - <span class="nm">1</span>) * <span class="pr">pageSize</span>).<span class="mt">Take</span>(<span class="pr">pageSize</span>)
+<span class="cm">// Page 1000 of 50 records = skip 49,950 rows → SQL Server scans 50,000 rows → SLOW!</span></pre>
+
+  <pre><span class="cm">// Compiled Queries — pre-compile EF LINQ → 40% faster for hot paths</span>
+<span class="kw">public class</span> <span class="tp">StudentQueries</span>
+{
+    <span class="cm">// Compiled once at startup, reused for every call</span>
+    <span class="kw">private static readonly</span> <span class="tp">Func</span>&lt;<span class="tp">ZenCampusDbContext</span>, <span class="kw">int</span>, <span class="tp">IAsyncEnumerable</span>&lt;<span class="tp">StudentDto</span>&gt;&gt;
+        <span class="pr">GetBySchoolCompiled</span> = <span class="tp">EF</span>.<span class="mt">CompileAsyncQuery</span>(
+            (<span class="tp">ZenCampusDbContext</span> <span class="pr">ctx</span>, <span class="kw">int</span> <span class="pr">schoolId</span>) =>
+                <span class="pr">ctx</span>.<span class="pr">Students</span>
+                   .<span class="mt">Where</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">SchoolId</span> == <span class="pr">schoolId</span> && <span class="pr">s</span>.<span class="pr">Status</span> == <span class="st">"Active"</span>)
+                   .<span class="mt">Select</span>(<span class="pr">s</span> => <span class="kw">new</span> <span class="tp">StudentDto</span> { <span class="pr">Id</span> = <span class="pr">s</span>.<span class="pr">Id</span>, <span class="pr">Name</span> = <span class="pr">s</span>.<span class="pr">Name</span> })
+                   .<span class="mt">OrderBy</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Name</span>));
+
+    <span class="kw">public</span> <span class="tp">IAsyncEnumerable</span>&lt;<span class="tp">StudentDto</span>&gt; <span class="mt">GetActiveStudentsAsync</span>(<span class="tp">ZenCampusDbContext</span> <span class="pr">ctx</span>, <span class="kw">int</span> <span class="pr">schoolId</span>)
+        => <span class="mt">GetBySchoolCompiled</span>(<span class="pr">ctx</span>, <span class="pr">schoolId</span>);
+    <span class="cm">// Called thousands of times/sec for attendance dashboard — 40% less CPU overhead!</span>
+}</pre>
+</div>
+
+<!-- SECTION 6: SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">6</span> 🎯 Scenarios — Interview + Production</div>
+
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">1</div>
+      <div><div class="scenario-title">Attendance page 8 seconds → 400ms production fix <span class="hot-badge">🔥 Real Bug</span> <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 ZenCampus attendance dashboard takes 8 seconds to load for schools with 40 classes. Identify the problem, diagnose it, and fix it.</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ N+1 DIAGNOSIS + FIX</div>
+      <pre><span class="cm">// Step 1: Add EF Core logging to see SQL queries</span>
+<span class="pr">optionsBuilder</span>.<span class="mt">LogTo</span>(<span class="pr">_log</span>.<span class="pr">LogInformation</span>, <span class="tp">LogLevel</span>.<span class="pr">Information</span>);
+<span class="cm">// Saw 41 queries: 1 for classes + 40 individual student queries!
+
+// Step 2: Identify N+1 source</span>
+<span class="kw">var</span> <span class="pr">classes</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Classes</span>.<span class="mt">ToListAsync</span>();
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="pr">cls</span> <span class="kw">in</span> <span class="pr">classes</span>)
+    <span class="pr">vm</span>.<span class="mt">Add</span>(<span class="kw">new</span> { <span class="pr">cls</span>.<span class="pr">Name</span>, <span class="pr">Total</span> = <span class="pr">cls</span>.<span class="pr">Students</span>.<span class="pr">Count</span> }); <span class="cm">// LAZY LOAD here!</span>
+
+<span class="cm">// Step 3: Fix — project in single query</span>
+<span class="kw">var</span> <span class="pr">vm</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Classes</span>
+    .<span class="mt">Where</span>(<span class="pr">c</span> => <span class="pr">c</span>.<span class="pr">SchoolId</span> == <span class="pr">schoolId</span>)
+    .<span class="mt">Select</span>(<span class="pr">c</span> => <span class="kw">new</span> <span class="tp">ClassSummaryVm</span>
+    {
+        <span class="pr">ClassName</span>       = <span class="pr">c</span>.<span class="pr">Name</span>,
+        <span class="pr">TotalStudents</span>   = <span class="pr">c</span>.<span class="pr">Students</span>.<span class="mt">Count</span>(),
+        <span class="pr">PresentToday</span>    = <span class="pr">c</span>.<span class="pr">Students</span>.<span class="mt">Count</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">TodayAttendance</span> == <span class="st">"P"</span>),
+        <span class="pr">AttendancePct</span>   = <span class="pr">c</span>.<span class="pr">Students</span>.<span class="mt">Average</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">AttendancePercent</span>)
+    })
+    .<span class="mt">AsNoTracking</span>()
+    .<span class="mt">ToListAsync</span>();
+<span class="cm">// 1 SQL query with subqueries. 8s → 400ms. 20x improvement!</span></pre>
+      <div class="gold-box"><div class="gold-label">⭐ Interview Answer</div><p>"Enabled EF Core logging, saw 41 queries. Classic N+1 — lazy-loaded Students in a foreach. Fixed by projecting into DTO with Select() — EF generates one query with COUNT subqueries. Added AsNoTracking() since read-only view. 8s → 400ms. Then created a missing composite index on SchoolId+Class which brought it to 45ms."</p></div>
+    </div>
+  </div>
+
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num warn">2</div>
+      <div><div class="scenario-title">Month-end: 200 schools report generation OOMKilled! <span class="hot-badge">🔥 Critical</span> <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 End-of-month job generates fee reports for all 200 schools. Pod crashes with OOMKilled every month. Memory goes from 256MB to 2GB. How do you fix?</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ STREAMING + PARALLEL + PAGINATION FIX</div>
+      <pre><span class="cm">// Root cause: loaded ALL student fee records into memory at once
+// 50,000 students × 12 months × FeeRecord object = 2GB!</span>
+
+<span class="cm">// Fix 1: Stream with IAsyncEnumerable instead of ToList()</span>
+<span class="kw">public async</span> <span class="tp">IAsyncEnumerable</span>&lt;<span class="tp">FeeRecord</span>&gt; <span class="mt">StreamFeeRecordsAsync</span>(
+    <span class="kw">int</span> <span class="pr">schoolId</span>, [<span class="at">EnumeratorCancellation</span>] <span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+{
+    <span class="kw">await foreach</span> (<span class="kw">var</span> <span class="pr">rec</span> <span class="kw">in</span> <span class="pr">_ctx</span>.<span class="pr">FeeRecords</span>
+        .<span class="mt">Where</span>(<span class="pr">f</span> => <span class="pr">f</span>.<span class="pr">SchoolId</span> == <span class="pr">schoolId</span>)
+        .<span class="mt">AsNoTracking</span>()
+        .<span class="mt">AsAsyncEnumerable</span>()  <span class="cm">// stream — never loads all into memory!</span>
+        .<span class="mt">WithCancellation</span>(<span class="pr">ct</span>))
+    {
+        <span class="kw">yield return</span> <span class="pr">rec</span>;
+    }
+}
+
+<span class="cm">// Consumer: process record by record, write to CSV/blob</span>
+<span class="kw">await foreach</span> (<span class="kw">var</span> <span class="pr">rec</span> <span class="kw">in</span> <span class="mt">StreamFeeRecordsAsync</span>(<span class="pr">schoolId</span>, <span class="pr">ct</span>))
+{
+    <span class="kw">await</span> <span class="pr">csvWriter</span>.<span class="mt">WriteRecordAsync</span>(<span class="pr">rec</span>);  <span class="cm">// write immediately, don't accumulate</span>
+}
+<span class="cm">// Memory stays constant at ~50MB regardless of 50,000 records!</span>
+
+<span class="cm">// Fix 2: Process 200 schools with controlled parallelism</span>
+<span class="kw">await</span> <span class="tp">Parallel</span>.<span class="mt">ForEachAsync</span>(<span class="pr">schools</span>,
+    <span class="kw">new</span> <span class="tp">ParallelOptions</span> { <span class="pr">MaxDegreeOfParallelism</span> = <span class="nm">5</span>, <span class="pr">CancellationToken</span> = <span class="pr">ct</span> },
+    <span class="kw">async</span> (<span class="pr">school</span>, <span class="pr">ct</span>) => <span class="kw">await</span> <span class="mt">GenerateReportAsync</span>(<span class="pr">school</span>.<span class="pr">Id</span>, <span class="pr">ct</span>));
+<span class="cm">// 5 schools at a time, each streaming — peak memory stays ~5 × 50MB = 250MB</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div><div class="scenario-title">When to use Dapper vs EF Core? <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "You use both EF Core and Dapper in ZenCampus. How do you decide which one for a given query?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ CLEAR DECISION RULES</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong>EF Core:</strong> Student/Fee/Attendance CRUD — create, update, delete, simple filters. Where change tracking helps: load student, modify, SaveChanges(). Migrations for schema management. Simple WHERE + SELECT for single entity.</p>
+        <p><strong>Dapper:</strong> Fee collection monthly report (5 table JOIN + GROUP BY + DATEDIFF calculations). Complex aggregates across multiple tables. Stored procedure calls. Bulk insert (10,000 attendance records — EF one-by-one SaveChanges is 30x slower). School-level analytics dashboards. Any query where EF generates ugly/slow SQL that you'd rather write yourself.</p>
+        <p><strong>Hybrid pattern in ZenCampus:</strong> Use EF Core for all writes (Student, Fee, Attendance repositories). Use Dapper for all report queries (FeeReportRepository, AttendanceReportRepository). Same connection string, different libraries. EF handles schema (migrations), Dapper handles read performance.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div><div class="scenario-title">Cache invalidation — school data updated but old data shown <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "Admin updated school name in ZenCampus but the dashboard still shows old name for 5 minutes. Parents are confused. How do you fix and how do you prevent?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ WRITE-THROUGH CACHE + TAG-BASED INVALIDATION</div>
+      <pre><span class="cm">// Root cause: school cached for 5 min, update didn't bust cache
+
+// Fix: always remove cache key on write (write-through pattern)</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">UpdateSchoolAsync</span>(<span class="tp">School</span> <span class="pr">school</span>)
+{
+    <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">UpdateAsync</span>(<span class="pr">school</span>);
+
+    <span class="cm">// Invalidate ALL related cache keys</span>
+    <span class="pr">_cache</span>.<span class="mt">Remove</span>(<span class="st">"all-schools"</span>);                    <span class="cm">// list cache</span>
+    <span class="pr">_cache</span>.<span class="mt">Remove</span>(<span class="st">$"school:{school.Id}"</span>);              <span class="cm">// single school cache</span>
+    <span class="kw">await</span> <span class="pr">_redisCache</span>.<span class="mt">RemoveAsync</span>(<span class="st">$"school:{school.Id}"</span>);  <span class="cm">// Redis too (multi-pod)</span>
+    <span class="kw">await</span> <span class="pr">_outputCacheStore</span>.<span class="mt">EvictByTagAsync</span>(<span class="st">"schools"</span>, <span class="tp">CancellationToken</span>.<span class="pr">None</span>); <span class="cm">// HTTP response cache</span>
+}
+
+<span class="cm">// Pattern: cache tags group related keys
+// Tag "school-42": school:42, school-42-students, school-42-fees
+// EvictByTag("school-42") = invalidate ALL at once after any school 42 update</span></pre>
+      <div class="gold-box"><div class="gold-label">⭐ "Two hard things in CS"</div><p>"Cache invalidation and naming things. In ZenCampus: every write method explicitly removes affected cache keys. Pattern: UpdateAsync() → RemoveAsync(key). For multi-level cache (MemoryCache + Redis + OutputCache), invalidate all three. Missing one = stale data bug."</p></div>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div><div class="scenario-title">Task.WhenAll vs sequential await — student dashboard <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "Student dashboard loads student info, fee status, and timetable. Currently takes 600ms. The three DB calls are independent. How to optimize?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ TASK.WHENALL — PARALLEL INDEPENDENT QUERIES</div>
+      <pre><span class="cm">// BEFORE: 200ms + 200ms + 200ms = 600ms sequential</span>
+<span class="kw">var</span> <span class="pr">student</span>   = <span class="kw">await</span> <span class="pr">_studentRepo</span>.<span class="mt">GetAsync</span>(<span class="pr">studentId</span>);
+<span class="kw">var</span> <span class="pr">feeStatus</span> = <span class="kw">await</span> <span class="pr">_feeRepo</span>.<span class="mt">GetStatusAsync</span>(<span class="pr">studentId</span>);
+<span class="kw">var</span> <span class="pr">timetable</span> = <span class="kw">await</span> <span class="pr">_ttRepo</span>.<span class="mt">GetAsync</span>(<span class="pr">studentId</span>);
+
+<span class="cm">// AFTER: max(200,200,200) = 200ms parallel (3x faster!)</span>
+<span class="kw">var</span> <span class="pr">studentTask</span>   = <span class="pr">_studentRepo</span>.<span class="mt">GetAsync</span>(<span class="pr">studentId</span>);
+<span class="kw">var</span> <span class="pr">feeStatusTask</span> = <span class="pr">_feeRepo</span>.<span class="mt">GetStatusAsync</span>(<span class="pr">studentId</span>);
+<span class="kw">var</span> <span class="pr">timetableTask</span> = <span class="pr">_ttRepo</span>.<span class="mt">GetAsync</span>(<span class="pr">studentId</span>);
+
+<span class="kw">await</span> <span class="tp">Task</span>.<span class="mt">WhenAll</span>(<span class="pr">studentTask</span>, <span class="pr">feeStatusTask</span>, <span class="pr">timetableTask</span>);
+
+<span class="kw">return new</span> <span class="tp">StudentDashboardVm</span>
+{
+    <span class="pr">Student</span>   = <span class="pr">studentTask</span>.<span class="pr">Result</span>,    <span class="cm">// .Result safe after WhenAll!</span>
+    <span class="pr">FeeStatus</span> = <span class="pr">feeStatusTask</span>.<span class="pr">Result</span>,
+    <span class="pr">Timetable</span> = <span class="pr">timetableTask</span>.<span class="pr">Result</span>
+};
+<span class="cm">// Caveat: use separate DbContext per concurrent query!
+// Or: use Dapper (IDbConnection is connection-based, not context-based)</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div><div class="scenario-title">AsNoTracking — when to use and what breaks without it <span class="diff easy">Easy</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "What is AsNoTracking in EF Core? When must you use it? When must you NOT use it?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ TRACKING vs NO-TRACKING</div>
+      <pre><span class="cm">// EF Core Change Tracker: monitors entity state (Added/Modified/Deleted/Unchanged)
+// Cost: creates ChangeTracker entries for EACH entity loaded → memory + CPU
+
+// AsNoTracking() — skips change tracker
+// Use for: reads where you will NOT call SaveChanges() on loaded entities</span>
+
+<span class="cm">// ✅ Use AsNoTracking — read-only endpoints</span>
+<span class="kw">var</span> <span class="pr">students</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Students</span>
+    .<span class="mt">AsNoTracking</span>()
+    .<span class="mt">Where</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">SchoolId</span> == <span class="pr">id</span>)
+    .<span class="mt">ToListAsync</span>();
+<span class="cm">// 30-40% faster, less memory. Safe for: GET endpoints, reports, exports</span>
+
+<span class="cm">// ❌ NEVER AsNoTracking when updating!</span>
+<span class="kw">var</span> <span class="pr">student</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Students</span>
+    .<span class="mt">AsNoTracking</span>()  <span class="cm">// ← WRONG for update!</span>
+    .<span class="mt">FirstAsync</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Id</span> == <span class="nm">101</span>);
+
+<span class="pr">student</span>.<span class="pr">Name</span> = <span class="st">"New Name"</span>;
+<span class="kw">await</span> <span class="pr">_ctx</span>.<span class="mt">SaveChangesAsync</span>(); <span class="cm">// ← 0 rows updated! Entity not tracked!</span>
+
+<span class="cm">// Fix: with tracking (default) OR attach + update
+var student = await _ctx.Students.FirstAsync(s => s.Id == 101); // with tracking
+student.Name = "New Name";
+await _ctx.SaveChangesAsync(); // ← correctly generates UPDATE SQL</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div><div class="scenario-title">ValueTask vs Task — when does it matter? <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "Should you always return ValueTask instead of Task for better performance?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ VALUETASK — ONLY FOR HOT SYNC-SOMETIMES PATHS</div>
+      <pre><span class="cm">// Task = always allocates on heap (even when result is immediate)
+// ValueTask = zero alloc when result is synchronous (cache hit)
+
+// Use ValueTask ONLY when:
+// 1. Method often completes synchronously (cache hit 80% of time)
+// 2. Called thousands of times per second (hot path)
+// 3. Avoiding allocation matters for GC pressure
+
+public ValueTask&lt;Student?&gt; GetStudentAsync(int id)
+{
+    // Synchronous path (cache hit): zero heap allocation
+    if (_localCache.TryGetValue(id, out var cached))
+        return ValueTask.FromResult(cached);   // ValueTask&lt;T&gt; is a struct!
+
+    // Async path (cache miss): one Task allocation (same as before)
+    return new ValueTask&lt;Student?&gt;(_db.GetByIdAsync(id));
+}
+
+// Don't use ValueTask when:
+// 1. Method always awaits (always async) → Task is fine
+// 2. Caller needs to await multiple times → ValueTask can't be awaited twice!
+// 3. Result needs to be stored and awaited later → use Task
+
+// DANGER: never await ValueTask twice!
+var vt = GetStudentAsync(101);
+var s1 = await vt;  // OK
+var s2 = await vt;  // ❌ UNDEFINED BEHAVIOR — await twice!</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div><div class="scenario-title">Profiling — how do you find performance bottlenecks? <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "ZenCampus fee collection API P95 = 2 seconds. How do you find which part is slow — DB? Cache? Business logic? Network?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ MULTI-LAYER PROFILING APPROACH</div>
+      <pre><span class="cm">// Layer 1: Application Insights — distributed trace (already set up Day 15)
+// Filter requests P95 > 1s → drill into traces → which dependency is slow?
+
+// Layer 2: MiniProfiler (dev environment)
+// NuGet: MiniProfiler.AspNetCore.Mvc, MiniProfiler.EntityFrameworkCore</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddMiniProfiler</span>(<span class="pr">opts</span> => <span class="pr">opts</span>.<span class="pr">RouteBasePath</span> = <span class="st">"/profiler"</span>)
+              .<span class="mt">AddEntityFramework</span>(); <span class="cm">// auto-profile all EF queries!</span>
+<span class="cm">// Visit /profiler/results — shows each SQL query + duration</span>
+
+<span class="cm">// Layer 3: Stopwatch timing in code</span>
+<span class="kw">using var</span> <span class="pr">step1</span> = <span class="tp">MiniProfiler</span>.<span class="pr">Current</span>.<span class="mt">Step</span>(<span class="st">"ValidateStudent"</span>);
+<span class="kw">var</span> <span class="pr">student</span> = <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">GetAsync</span>(<span class="pr">dto</span>.<span class="pr">StudentId</span>);
+<span class="pr">step1</span>?.<span class="mt">Dispose</span>();
+
+<span class="kw">using var</span> <span class="pr">step2</span> = <span class="tp">MiniProfiler</span>.<span class="pr">Current</span>.<span class="mt">Step</span>(<span class="st">"CalculateFee"</span>);
+<span class="kw">var</span> <span class="pr">fee</span> = <span class="pr">_calc</span>.<span class="mt">Calculate</span>(<span class="pr">student</span>, <span class="pr">dto</span>);
+<span class="pr">step2</span>?.<span class="mt">Dispose</span>();
+<span class="cm">// Profiler shows: ValidateStudent=1800ms, CalculateFee=2ms
+// → problem is DB query, not calculation!</span>
+
+<span class="cm">// Layer 4: EF Core logging — see generated SQL + timing
+// Layer 5: Azure SQL Query Store — find top 10 slowest queries
+// Layer 6: dotnet-trace / dotnet-counters for CPU/memory profiling</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div><div class="scenario-title">Bulk insert — 10,000 attendance records in one shot <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "Teacher uploads Excel with 1,000 student attendance records. EF Core is taking 15 seconds. How to make it fast?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ DAPPER BATCH + EF CORE BULK EXTENSION</div>
+      <pre><span class="cm">// SLOW: EF Core SaveChanges — generates 1000 individual INSERT statements!</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="pr">record</span> <span class="kw">in</span> <span class="pr">records</span>)
+    <span class="pr">_ctx</span>.<span class="pr">Attendance</span>.<span class="mt">Add</span>(<span class="pr">record</span>);
+<span class="kw">await</span> <span class="pr">_ctx</span>.<span class="mt">SaveChangesAsync</span>(); <span class="cm">// 1000 INSERTs = 15 seconds!</span>
+
+<span class="cm">// OPTION 1: Dapper batch (fast, simple)</span>
+<span class="kw">await</span> <span class="pr">_db</span>.<span class="mt">ExecuteAsync</span>(
+    <span class="st">"INSERT INTO Attendance (StudentId, Date, Status, SchoolId) VALUES (@StudentId, @Date, @Status, @SchoolId)"</span>,
+    <span class="pr">records</span>);  <span class="cm">// Dapper batches this → ~500ms for 1000 records!</span>
+
+<span class="cm">// OPTION 2: EFCore.BulkExtensions — fastest for EF</span>
+<span class="cm">// NuGet: EFCore.BulkExtensions</span>
+<span class="kw">await</span> <span class="tp">BulkExtensions</span>.<span class="mt">BulkInsertAsync</span>(<span class="pr">_ctx</span>, <span class="pr">records</span>);
+<span class="cm">// Uses SqlBulkCopy internally → 1000 records in ~50ms!</span>
+
+<span class="cm">// OPTION 3: SQL Server TVP (Table-Valued Parameter) via Dapper</span>
+<span class="kw">var</span> <span class="pr">dt</span> = <span class="kw">new</span> <span class="tp">DataTable</span>();
+<span class="pr">dt</span>.<span class="pr">Columns</span>.<span class="mt">Add</span>(<span class="st">"StudentId"</span>, <span class="kw">typeof</span>(<span class="kw">int</span>));
+<span class="pr">dt</span>.<span class="pr">Columns</span>.<span class="mt">Add</span>(<span class="st">"Status"</span>, <span class="kw">typeof</span>(<span class="kw">string</span>));
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="pr">r</span> <span class="kw">in</span> <span class="pr">records</span>) <span class="pr">dt</span>.<span class="pr">Rows</span>.<span class="mt">Add</span>(<span class="pr">r</span>.<span class="pr">StudentId</span>, <span class="pr">r</span>.<span class="pr">Status</span>);
+<span class="kw">await</span> <span class="pr">_db</span>.<span class="mt">ExecuteAsync</span>(<span class="st">"usp_BulkInsertAttendance"</span>,
+    <span class="kw">new</span> { <span class="pr">Records</span> = <span class="pr">dt</span>.<span class="mt">AsTableValuedParameter</span>(<span class="st">"AttendanceTVP"</span>) },
+    <span class="pr">commandType</span>: <span class="tp">CommandType</span>.<span class="pr">StoredProcedure</span>);</pre>
+    </div>
+  </div>
+
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div><div class="scenario-title">"Performance optimization experience sollu" — full interview <span class="diff senior">Senior</span></div></div>
+    </div>
+    <div class="scenario-q">📋 "Describe a real performance problem you solved in ZenCampus. What was the impact?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE STAR-FORMAT ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong>Situation:</strong> ZenCampus fee collection dashboard was taking 8-12 seconds to load for school admins. This is a page opened 500+ times per day across 200 schools. Teachers were calling support.</p>
+        <p><strong>Task:</strong> Reduce page load time to under 500ms without changing the feature set.</p>
+        <p><strong>Action:</strong> 1) Added EF Core logging in dev environment — discovered 201 SQL queries (N+1 on class-student relationship). 2) Fixed N+1 by replacing eager load + foreach with a single Select() projection. 3) Added AsNoTracking() since this is a read-only dashboard. 4) Replaced the complex fee aggregation query with Dapper (raw SQL with GROUP BY gave same result in 85ms vs EF's 1.2s). 5) Added IMemoryCache with 5-minute expiry for school configuration data. 6) Created a missing composite index on (SchoolId, PaidDate) for the fee query.</p>
+        <p><strong>Result:</strong> 8-12 seconds → 380ms average. Support tickets for slow pages dropped 94%. MiniProfiler confirmed: SQL went from 7.8s to 290ms, remaining 90ms is rendering. Teachers adopted the dashboard proactively after the fix — it became the most-used page.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">7</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: AsNoTracking() use பண்ணும்போது என்ன happen ஆகும்?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Query doesn't hit the database — returns from memory cache</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) EF Core doesn't create ChangeTracker entries — 30-40% faster for reads, but SaveChanges() won't detect changes to those entities</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Query runs asynchronously in the background</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Disables lazy loading permanently</div>
+    <div class="quiz-fb ok">✅ AsNoTracking() skips the EF Core Change Tracker. Every tracked entity needs a ChangeTracker entry (memory + CPU overhead). For read-only endpoints, this is wasted overhead. 30-40% faster and less memory. NEVER use for entities you'll update — changes won't be detected by SaveChanges()!</div>
+    <div class="quiz-fb nope">❌ AsNoTracking() tells EF Core: "don't monitor this entity for changes." Still hits DB. Still materializes objects. Just skips ChangeTracker overhead (the dictionary that tracks Added/Modified/Deleted state). Use for all read-only queries. Avoid for anything you'll SaveChanges() on!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: N+1 problem — which code causes it?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Using Include() with ThenInclude() on nested navigation properties</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Loading a list, then accessing a navigation property inside a foreach loop (without Include)</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Using AsNoTracking() with pagination</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Calling ToListAsync() inside a service layer</div>
+    <div class="quiz-fb ok">✅ N+1: 1 query to get the list + N queries (one per item) to load related data. Caused by accessing navigation properties (school.Students) in a foreach when they weren't Include()'d. EF lazy loads each access = N separate SQL queries. Fix: Include() before ToListAsync(), or Select() projections that compute everything server-side.</div>
+    <div class="quiz-fb nope">❌ N+1 = "1 query for the list + N queries for related data." Happens when you load entities without Include(), then access a navigation property in a loop. EF Core lazy loads each .Students access → one SQL per iteration. 200 schools = 201 SQL queries! Fix: .Include(s => s.Students) or .Select(projecting what you need).</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: Task.WhenAll vs sequential await — key difference?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) WhenAll uses multiple threads; sequential uses one thread</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) WhenAll starts all tasks concurrently and waits for all to finish; sequential awaits each one fully before starting the next</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) WhenAll only works with CPU-bound operations</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) No functional difference — WhenAll is just syntactic sugar</div>
+    <div class="quiz-fb ok">✅ Sequential: await A (100ms) → then start B (80ms) → then start C (60ms) = 240ms total. WhenAll: START all three simultaneously → wait for slowest = 100ms. For independent DB calls (student + fees + timetable), WhenAll is 2.4x faster! Important: they must be INDEPENDENT (no B depends on A's result).</div>
+    <div class="quiz-fb nope">❌ Task.WhenAll starts all tasks IMMEDIATELY (no waiting between starts), then waits for ALL to complete. Sequential await starts each task only after the previous finishes. For 3 independent 100ms DB calls: sequential = 300ms, WhenAll = 100ms. Use WhenAll for independent operations. Don't use if B needs A's result!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: Cache invalidation — fee paid, which caches must be busted?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) No cache needs busting — wait for TTL to expire naturally</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Only the student's individual cache key</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) All related keys: student fee status cache, school fee summary cache, and any output-cached API responses that show fee data</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Clear all caches on every write operation</div>
+    <div class="quiz-fb ok">✅ After fee payment: student's fee status changes, school's total collection changes, any dashboard showing "fees due" changes. Must bust: student:{id} key, school-fee-summary:{schoolId}, any OutputCache tagged with "fees". Missing one = stale data. Clearing ALL caches = too aggressive, hurts performance. Target only affected keys.</div>
+    <div class="quiz-fb nope">❌ After any write, bust ALL caches that display that data. Fee paid → student fee status cache (student:101:fee-status), school fee summary cache (school:42:fee-summary), and HTTP output-cache responses showing fee data. Don't just wait for TTL — admin will see wrong totals until expiry. Write-through: always remove on write!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">8</span> ✅ Day 17 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Concepts</h3>
+      <ul class="check-list">
+        <li>N+1 — cause: lazy load in foreach, fix: Include or Select</li>
+        <li>AsNoTracking — read-only 30-40% faster</li>
+        <li>EF logging — detect N+1 by counting queries</li>
+        <li>Dapper QueryAsync, ExecuteAsync, QueryFirstOrDefaultAsync</li>
+        <li>IMemoryCache GetOrCreateAsync + Remove on write</li>
+        <li>IDistributedCache (Redis) — shared across pods</li>
+        <li>OutputCache — HTTP response cache, evict by tag</li>
+        <li>Task.WhenAll — parallel independent queries</li>
+        <li>Parallel.ForEachAsync — controlled bulk parallelism</li>
+        <li>IAsyncEnumerable — stream, no memory spike</li>
+        <li>Compiled queries — 40% less CPU on hot paths</li>
+        <li>Cursor pagination vs offset — cursor = O(log n)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"N+1 — EF logging showed 201 queries — fixed with Select()"</li>
+        <li>"AsNoTracking for all GET endpoints — 30% faster"</li>
+        <li>"Dapper for reports — 14x faster than EF on complex joins"</li>
+        <li>"Task.WhenAll for independent student+fees+timetable calls"</li>
+        <li>"IAsyncEnumerable streaming — OOMKilled fixed"</li>
+        <li>"Parallel.ForEachAsync MaxDegreeOfParallelism=5"</li>
+        <li>"Cache key remove on every write — write-through pattern"</li>
+        <li>"OutputCache EvictByTag for HTTP response cache"</li>
+        <li>"Cursor pagination for 50K students — no COUNT(*)"</li>
+        <li>"MiniProfiler in dev — find which layer is slow"</li>
+        <li>"ValueTask for sync-sometimes hot paths — zero alloc"</li>
+        <li>"EFCore.BulkExtensions for 1000-row bulk inserts"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#1a0010,#0d0d1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">⚡ Day 17 Motivation</div>
+    <p style="color:#fb7185;font-style:italic">"Baasha makes 100 trips — N+1 problem. One Include() = one trip, all data. Thuppakki uses intel (cache) before action — don't query what you already know. Roja speed matters — Dapper raw SQL for reports. <strong>Interview-la 'N+1 fix பண்ணேன், EF logging-la 201 queries pathen, Select() projection-la 1 query-a குறைச்சேன், 8s → 380ms' சொன்னா — Performance expert confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 17/60 ✅ | Tomorrow: Day 18 — Security (JWT, Authorization, OWASP, SQL Injection, XSS)</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:28.3%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">17 of 60 days (28.3%) — Performance mastered! Fast code = happy teachers, happy parents, happy 50,000 students!</div>
+  </div>
+</div>
+
+</div>
+<footer>
+  <p>Day 17 – Performance Optimization | ZenCampus | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">⚡ "Measure first, optimize second. N+1 → Include/Select. Read-only → AsNoTracking. Reports → Dapper. Bulk → EFCore.BulkExtensions. Parallel → WhenAll/ForEachAsync. Cache → GetOrCreateAsync + Remove on write."</p>
+</footer>
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent='💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

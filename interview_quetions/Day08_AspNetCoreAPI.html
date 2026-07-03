@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 8 – ASP.NET Core Web API | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#1a1200,#2a1e00,#1a1200);padding:36px 20px;text-align:center;border-bottom:3px solid #f59e0b}
+header h1{font-size:2em;color:#f59e0b;text-shadow:0 0 20px #f59e0b55}
+header p{color:#c0b080;margin-top:6px}
+.badge{display:inline-block;background:#f59e0b22;border:1px solid #f59e0b55;color:#f59e0b;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#f59e0b;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#f59e0b;color:#000;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.c-kw{color:#569cd6}.c-type{color:#4ec9b0}.c-str{color:#ce9178}.c-num{color:#b5cea8}.c-cmt{color:#6a9955;font-style:italic}.c-prop{color:#9cdcfe}.c-method{color:#dcdcaa}.c-attr{color:#c586c0}
+code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#1a1200;border-left:4px solid #9b59b6;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#c39bd3;font-size:0.9em;margin-top:4px}
+.tip{background:#1a1500;border-left:4px solid #f9ca24;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#f9ca24;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#f0dc82;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.perf{background:#0a1a0a;border-left:4px solid #2ecc71;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.perf .p-label{color:#2ecc71;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.perf p{color:#a9dfbf;font-size:0.9em}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.s-num{background:#f59e0b;color:#000;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#2a0a4a;color:#a855f7}
+.real{background:#0a1a2a;color:#3498db;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#1a1200;border:1px solid #f59e0b;color:#f59e0b;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#f59e0b;color:#000}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1a1200}
+.answer.shown{display:block}
+.answer .a-label{color:#f59e0b;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.gold{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:700px){.comparison,.two-col{grid-template-columns:1fr}}
+.bad-box{background:#1f0a0a;border:1px solid #e74c3c44;border-radius:8px;padding:14px}
+.good-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:8px;padding:14px}
+.box-label{font-size:0.78em;font-weight:bold;margin-bottom:8px}
+.bad-box .box-label{color:#e74c3c}.good-box .box-label{color:#2ecc71}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#1a1200;color:#f59e0b;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a1a35}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.blue{color:#3498db}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#f59e0b;color:#f59e0b}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#f59e0b}
+h3{color:#fbbf24;margin:16px 0 8px;font-size:1em}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#fbbf24;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1a1200}
+.sticky-nav a:hover{background:#1a1200}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#f59e0b,#f97316)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+.pipeline-box{display:flex;flex-direction:column;gap:0;margin:12px 0}
+.pipe-step{background:#0a1020;border:1px solid #1e3a5f;padding:10px 16px;font-family:'Consolas',monospace;font-size:0.83em;position:relative;display:flex;align-items:center;gap:10px}
+.pipe-step:not(:last-child)::after{content:"↓";position:absolute;bottom:-14px;left:50%;color:#f59e0b;font-size:1.1em;z-index:1}
+.pipe-step:not(:last-child){margin-bottom:14px}
+.pipe-num{background:#f59e0b;color:#000;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75em;font-weight:bold;flex-shrink:0}
+.pipe-label{color:#9cdcfe}
+.pipe-note{color:#6a9955;font-size:0.85em;margin-left:auto}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#f97316;font-size:0.85em;margin-bottom:6px">📅 Day 8 of 60 | Phase 1: Advanced C#</div>
+  <h1>🌐 ASP.NET Core Web API — Deep Dive</h1>
+  <p>Controllers · Middleware · Filters · Routing · Validation · Error Handling</p>
+  <div style="margin-top:12px">
+    <span class="badge">Middleware</span><span class="badge">ActionFilter</span><span class="badge">ExceptionFilter</span>
+    <span class="badge">Model Binding</span><span class="badge">Problem Details</span><span class="badge">Versioning</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#controllers">🎮 Controllers</a>
+  <a href="#middleware">🔗 Middleware</a>
+  <a href="#filters">🔍 Filters</a>
+  <a href="#routing">🗺️ Routing</a>
+  <a href="#validation">✅ Validation</a>
+  <a href="#errors">⚠️ Errors</a>
+  <a href="#versioning">📌 Versioning</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SECTION 1: CONTROLLERS -->
+<div class="section" id="controllers">
+  <div class="section-title"><span class="num">1</span> Controllers + Action Results — ZenCampus API</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram — Each agent handles specific mission, reports back</span>
+    <p>Controller = agent. Each action method = specific mission. Returns result to HQ (client). [ApiController] attribute = automatic model validation, binding source inference — ஒரு attribute, நிறைய power!</p>
+  </div>
+
+  <pre><span class="c-cmt">// ZenCampus StudentController — production-ready pattern</span>
+[<span class="c-attr">ApiController</span>]
+[<span class="c-attr">Route</span>(<span class="c-str">"api/v{version:apiVersion}/[controller]"</span>)]
+[<span class="c-attr">ApiVersion</span>(<span class="c-str">"1.0"</span>)]
+[<span class="c-attr">Produces</span>(<span class="c-str">"application/json"</span>)]
+<span class="c-kw">public class</span> <span class="c-type">StudentsController</span> : <span class="c-type">ControllerBase</span>  <span class="c-cmt">// NOT Controller — no Views needed!</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IStudentService</span> <span class="c-prop">_svc</span>;
+    <span class="c-kw">private readonly</span> <span class="c-type">ILogger</span>&lt;<span class="c-type">StudentsController</span>&gt; <span class="c-prop">_log</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">StudentsController</span>(<span class="c-type">IStudentService</span> <span class="c-prop">svc</span>, <span class="c-type">ILogger</span>&lt;<span class="c-type">StudentsController</span>&gt; <span class="c-prop">log</span>)
+        => (<span class="c-prop">_svc</span>, <span class="c-prop">_log</span>) = (<span class="c-prop">svc</span>, <span class="c-prop">log</span>);
+
+    <span class="c-cmt">// GET api/v1/students?page=1&size=20</span>
+    [<span class="c-attr">HttpGet</span>]
+    [<span class="c-attr">ProducesResponseType</span>(<span class="c-kw">typeof</span>(<span class="c-type">PagedResult</span>&lt;<span class="c-type">StudentDto</span>&gt;), <span class="c-num">200</span>)]
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">ActionResult</span>&lt;<span class="c-type">PagedResult</span>&lt;<span class="c-type">StudentDto</span>&gt;&gt;&gt; <span class="c-method">GetStudents</span>(
+        [<span class="c-attr">FromQuery</span>] <span class="c-kw">int</span> <span class="c-prop">page</span> = <span class="c-num">1</span>,
+        [<span class="c-attr">FromQuery</span>] <span class="c-kw">int</span> <span class="c-prop">size</span> = <span class="c-num">20</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-kw">await</span> <span class="c-prop">_svc</span>.<span class="c-method">GetPagedAsync</span>(<span class="c-prop">page</span>, <span class="c-prop">size</span>);
+        <span class="c-kw">return</span> <span class="c-method">Ok</span>(<span class="c-prop">result</span>);
+    }
+
+    <span class="c-cmt">// GET api/v1/students/42</span>
+    [<span class="c-attr">HttpGet</span>(<span class="c-str">"{id:int}"</span>)]
+    [<span class="c-attr">ProducesResponseType</span>(<span class="c-kw">typeof</span>(<span class="c-type">StudentDto</span>), <span class="c-num">200</span>)]
+    [<span class="c-attr">ProducesResponseType</span>(<span class="c-num">404</span>)]
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">ActionResult</span>&lt;<span class="c-type">StudentDto</span>&gt;&gt; <span class="c-method">GetStudent</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-kw">await</span> <span class="c-prop">_svc</span>.<span class="c-method">GetByIdAsync</span>(<span class="c-prop">id</span>);
+        <span class="c-kw">return</span> <span class="c-prop">student</span> <span class="c-kw">is null</span> ? <span class="c-method">NotFound</span>() : <span class="c-method">Ok</span>(<span class="c-prop">student</span>);
+    }
+
+    <span class="c-cmt">// POST api/v1/students</span>
+    [<span class="c-attr">HttpPost</span>]
+    [<span class="c-attr">ProducesResponseType</span>(<span class="c-kw">typeof</span>(<span class="c-type">StudentDto</span>), <span class="c-num">201</span>)]
+    [<span class="c-attr">ProducesResponseType</span>(<span class="c-kw">typeof</span>(<span class="c-type">ValidationProblemDetails</span>), <span class="c-num">400</span>)]
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">ActionResult</span>&lt;<span class="c-type">StudentDto</span>&gt;&gt; <span class="c-method">CreateStudent</span>(
+        [<span class="c-attr">FromBody</span>] <span class="c-type">CreateStudentDto</span> <span class="c-prop">dto</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">created</span> = <span class="c-kw">await</span> <span class="c-prop">_svc</span>.<span class="c-method">CreateAsync</span>(<span class="c-prop">dto</span>);
+        <span class="c-kw">return</span> <span class="c-method">CreatedAtAction</span>(
+            <span class="c-kw">nameof</span>(<span class="c-method">GetStudent</span>),
+            <span class="c-kw">new</span> { <span class="c-prop">id</span> = <span class="c-prop">created</span>.<span class="c-prop">Id</span> },
+            <span class="c-prop">created</span>); <span class="c-cmt">// 201 + Location header!</span>
+    }
+
+    <span class="c-cmt">// DELETE api/v1/students/42</span>
+    [<span class="c-attr">HttpDelete</span>(<span class="c-str">"{id:int}"</span>)]
+    [<span class="c-attr">ProducesResponseType</span>(<span class="c-num">204</span>)]
+    [<span class="c-attr">ProducesResponseType</span>(<span class="c-num">404</span>)]
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">IActionResult</span>&gt; <span class="c-method">DeleteStudent</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">deleted</span> = <span class="c-kw">await</span> <span class="c-prop">_svc</span>.<span class="c-method">DeleteAsync</span>(<span class="c-prop">id</span>);
+        <span class="c-kw">return</span> <span class="c-prop">deleted</span> ? <span class="c-method">NoContent</span>() : <span class="c-method">NotFound</span>();
+    }
+}</pre>
+
+  <table>
+    <tr><th>Return Type</th><th>When to Use</th><th>Example</th></tr>
+    <tr><td><code>ActionResult&lt;T&gt;</code></td><td class="green">API endpoints — typed + Swagger docs</td><td><code>return Ok(dto);</code></td></tr>
+    <tr><td><code>IActionResult</code></td><td class="yellow">Multiple return types, no body (204)</td><td><code>return NoContent();</code></td></tr>
+    <tr><td><code>T</code> directly</td><td class="red">Avoid — no status code control</td><td>—</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 2: MIDDLEWARE -->
+<div class="section" id="middleware">
+  <div class="section-title"><span class="num">2</span> Middleware Pipeline — Order Matters!</div>
+
+  <div class="movie">
+    <span class="film">🎬 Baasha — Security check → ID verify → Let you in, அல்லது out</span>
+    <p>Club entry = middleware pipeline. Security (HTTPS) → ID (Auth) → Guest list (Authorization) → Let in (endpoint). Wrong order = auth bypass! Middleware ORDER = critical!</p>
+  </div>
+
+  <div class="pipeline-box">
+    <div class="pipe-step"><span class="pipe-num">1</span><span class="pipe-label">UseExceptionHandler / UseDeveloperExceptionPage</span><span class="pipe-note">first — catch all unhandled!</span></div>
+    <div class="pipe-step"><span class="pipe-num">2</span><span class="pipe-label">UseHttpsRedirection</span><span class="pipe-note">early — secure connection</span></div>
+    <div class="pipe-step"><span class="pipe-num">3</span><span class="pipe-label">UseStaticFiles</span><span class="pipe-note">before routing — short circuit</span></div>
+    <div class="pipe-step"><span class="pipe-num">4</span><span class="pipe-label">UseRouting</span><span class="pipe-note">match route</span></div>
+    <div class="pipe-step"><span class="pipe-num">5</span><span class="pipe-label">UseCors</span><span class="pipe-note">AFTER routing, BEFORE auth!</span></div>
+    <div class="pipe-step"><span class="pipe-num">6</span><span class="pipe-label">UseAuthentication</span><span class="pipe-note">WHO are you?</span></div>
+    <div class="pipe-step"><span class="pipe-num">7</span><span class="pipe-label">UseAuthorization</span><span class="pipe-note">WHAT can you do?</span></div>
+    <div class="pipe-step"><span class="pipe-num">8</span><span class="pipe-label">UseRateLimiting</span><span class="pipe-note">throttle</span></div>
+    <div class="pipe-step"><span class="pipe-num">9</span><span class="pipe-label">MapControllers / MapEndpoints</span><span class="pipe-note">execute action</span></div>
+  </div>
+
+  <pre><span class="c-cmt">// Custom Middleware — ZenCampus request logging</span>
+<span class="c-kw">public class</span> <span class="c-type">RequestLoggingMiddleware</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">RequestDelegate</span> <span class="c-prop">_next</span>;
+    <span class="c-kw">private readonly</span> <span class="c-type">ILogger</span>&lt;<span class="c-type">RequestLoggingMiddleware</span>&gt; <span class="c-prop">_log</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">RequestLoggingMiddleware</span>(<span class="c-type">RequestDelegate</span> <span class="c-prop">next</span>,
+        <span class="c-type">ILogger</span>&lt;<span class="c-type">RequestLoggingMiddleware</span>&gt; <span class="c-prop">log</span>)
+        => (<span class="c-prop">_next</span>, <span class="c-prop">_log</span>) = (<span class="c-prop">next</span>, <span class="c-prop">log</span>);
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">InvokeAsync</span>(<span class="c-type">HttpContext</span> <span class="c-prop">ctx</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">sw</span> = <span class="c-type">Stopwatch</span>.<span class="c-method">StartNew</span>();
+        <span class="c-prop">_log</span>.<span class="c-method">LogInformation</span>(<span class="c-str">"→ {method} {path}"</span>,
+            <span class="c-prop">ctx</span>.<span class="c-prop">Request</span>.<span class="c-prop">Method</span>, <span class="c-prop">ctx</span>.<span class="c-prop">Request</span>.<span class="c-prop">Path</span>);
+
+        <span class="c-kw">await</span> <span class="c-prop">_next</span>(<span class="c-prop">ctx</span>); <span class="c-cmt">// call next middleware!</span>
+
+        <span class="c-prop">sw</span>.<span class="c-method">Stop</span>();
+        <span class="c-prop">_log</span>.<span class="c-method">LogInformation</span>(<span class="c-str">"← {status} {ms}ms"</span>,
+            <span class="c-prop">ctx</span>.<span class="c-prop">Response</span>.<span class="c-prop">StatusCode</span>, <span class="c-prop">sw</span>.<span class="c-prop">ElapsedMilliseconds</span>);
+    }
+}
+
+<span class="c-cmt">// Extension method — clean registration</span>
+<span class="c-kw">public static class</span> <span class="c-type">MiddlewareExtensions</span>
+{
+    <span class="c-kw">public static</span> <span class="c-type">IApplicationBuilder</span> <span class="c-method">UseRequestLogging</span>(
+        <span class="c-kw">this</span> <span class="c-type">IApplicationBuilder</span> <span class="c-prop">app</span>)
+        => <span class="c-prop">app</span>.<span class="c-method">UseMiddleware</span>&lt;<span class="c-type">RequestLoggingMiddleware</span>&gt;();
+}
+
+<span class="c-cmt">// Program.cs</span>
+<span class="c-prop">app</span>.<span class="c-method">UseRequestLogging</span>(); <span class="c-cmt">// register!</span></pre>
+
+  <div class="tip">
+    <div class="t-label">💡 Use vs Run vs Map</div>
+    <p><code>Use</code> — calls next middleware (normal). <code>Run</code> — terminal, no next (short-circuit). <code>Map</code> — branch by path. <code>MapWhen</code> — branch by condition.</p>
+  </div>
+
+  <pre><span class="c-cmt">// Short-circuit — maintenance mode</span>
+<span class="c-prop">app</span>.<span class="c-method">Use</span>(<span class="c-kw">async</span> (<span class="c-prop">ctx</span>, <span class="c-prop">next</span>) =>
+{
+    <span class="c-kw">if</span> (<span class="c-type">Environment</span>.<span class="c-method">GetEnvironmentVariable</span>(<span class="c-str">"MAINTENANCE"</span>) == <span class="c-str">"true"</span>)
+    {
+        <span class="c-prop">ctx</span>.<span class="c-prop">Response</span>.<span class="c-prop">StatusCode</span> = <span class="c-num">503</span>;
+        <span class="c-kw">await</span> <span class="c-prop">ctx</span>.<span class="c-prop">Response</span>.<span class="c-method">WriteAsJsonAsync</span>(<span class="c-kw">new</span> { <span class="c-prop">message</span> = <span class="c-str">"ZenCampus maintenance mode"</span> });
+        <span class="c-kw">return</span>; <span class="c-cmt">// short-circuit — next NOT called!</span>
+    }
+    <span class="c-kw">await</span> <span class="c-prop">next</span>(<span class="c-prop">ctx</span>); <span class="c-cmt">// normal flow</span>
+});</pre>
+</div>
+
+<!-- SECTION 3: FILTERS -->
+<div class="section" id="filters">
+  <div class="section-title"><span class="num">3</span> Filters — Cross-Cutting Concerns</div>
+
+  <div class="movie">
+    <span class="film">🎬 Dasavathaaram — Same Kamal, different roles at different stages</span>
+    <p>Filter = same code, different execution stages (before action, after action, on exception). Authorization → Resource → Action → Exception → Result — each filter type handles specific stage!</p>
+  </div>
+
+  <table>
+    <tr><th>Filter</th><th>Runs</th><th>ZenCampus Use</th></tr>
+    <tr><td><code>IAuthorizationFilter</code></td><td>Before everything</td><td>School-level permission check</td></tr>
+    <tr><td><code>IResourceFilter</code></td><td>After auth, wraps action</td><td>Response caching</td></tr>
+    <tr><td><code>IActionFilter</code></td><td>Before/after action method</td><td>Audit logging, timing</td></tr>
+    <tr><td><code>IExceptionFilter</code></td><td>On unhandled exception</td><td>Global error response format</td></tr>
+    <tr><td><code>IResultFilter</code></td><td>Before/after result written</td><td>Response transformation</td></tr>
+  </table>
+
+  <pre><span class="c-cmt">// Action Filter — ZenCampus audit logging</span>
+<span class="c-kw">public class</span> <span class="c-type">AuditLogFilter</span> : <span class="c-type">IAsyncActionFilter</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IAuditService</span> <span class="c-prop">_audit</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">AuditLogFilter</span>(<span class="c-type">IAuditService</span> <span class="c-prop">audit</span>) => <span class="c-prop">_audit</span> = <span class="c-prop">audit</span>;
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">OnActionExecutionAsync</span>(
+        <span class="c-type">ActionExecutingContext</span> <span class="c-prop">context</span>,
+        <span class="c-type">ActionExecutionDelegate</span> <span class="c-prop">next</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">userId</span>  = <span class="c-prop">context</span>.<span class="c-prop">HttpContext</span>.<span class="c-prop">User</span>.<span class="c-prop">Identity</span>?.<span class="c-prop">Name</span>;
+        <span class="c-kw">var</span> <span class="c-prop">action</span>  = <span class="c-prop">context</span>.<span class="c-prop">ActionDescriptor</span>.<span class="c-prop">DisplayName</span>;
+        <span class="c-kw">var</span> <span class="c-prop">sw</span>      = <span class="c-type">Stopwatch</span>.<span class="c-method">StartNew</span>();
+
+        <span class="c-kw">var</span> <span class="c-prop">executed</span> = <span class="c-kw">await</span> <span class="c-prop">next</span>(); <span class="c-cmt">// execute action!</span>
+
+        <span class="c-kw">await</span> <span class="c-prop">_audit</span>.<span class="c-method">LogAsync</span>(<span class="c-kw">new</span> <span class="c-type">AuditEntry</span>
+        {
+            <span class="c-prop">UserId</span>     = <span class="c-prop">userId</span>,
+            <span class="c-prop">Action</span>     = <span class="c-prop">action</span>,
+            <span class="c-prop">StatusCode</span> = (<span class="c-prop">executed</span>.<span class="c-prop">Result</span> <span class="c-kw">as</span> <span class="c-type">ObjectResult</span>)?.<span class="c-prop">StatusCode</span>,
+            <span class="c-prop">DurationMs</span> = <span class="c-prop">sw</span>.<span class="c-prop">ElapsedMilliseconds</span>
+        });
+    }
+}
+
+<span class="c-cmt">// Register globally — all controllers!</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddControllers</span>(<span class="c-prop">opts</span> =>
+    <span class="c-prop">opts</span>.<span class="c-prop">Filters</span>.<span class="c-method">Add</span>&lt;<span class="c-type">AuditLogFilter</span>&gt;());
+
+<span class="c-cmt">// OR selective — attribute on controller/action</span>
+[<span class="c-attr">ServiceFilter</span>(<span class="c-kw">typeof</span>(<span class="c-type">AuditLogFilter</span>))]  <span class="c-cmt">// uses DI!</span>
+<span class="c-kw">public class</span> <span class="c-type">FeeController</span> : <span class="c-type">ControllerBase</span> { }</pre>
+
+  <pre><span class="c-cmt">// Exception Filter — global error format</span>
+<span class="c-kw">public class</span> <span class="c-type">ZenCampusExceptionFilter</span> : <span class="c-type">IExceptionFilter</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">ILogger</span>&lt;<span class="c-type">ZenCampusExceptionFilter</span>&gt; <span class="c-prop">_log</span>;
+
+    <span class="c-kw">public void</span> <span class="c-method">OnException</span>(<span class="c-type">ExceptionContext</span> <span class="c-prop">ctx</span>)
+    {
+        <span class="c-prop">_log</span>.<span class="c-method">LogError</span>(<span class="c-prop">ctx</span>.<span class="c-prop">Exception</span>, <span class="c-str">"Unhandled exception"</span>);
+
+        <span class="c-prop">ctx</span>.<span class="c-prop">Result</span> = <span class="c-prop">ctx</span>.<span class="c-prop">Exception</span> <span class="c-kw">switch</span>
+        {
+            <span class="c-type">StudentNotFoundException</span> <span class="c-prop">ex</span> => <span class="c-kw">new</span> <span class="c-type">NotFoundObjectResult</span>(
+                <span class="c-kw">new</span> { <span class="c-prop">ex</span>.<span class="c-prop">Message</span>, <span class="c-prop">ex</span>.<span class="c-prop">ErrorCode</span> }),
+
+            <span class="c-type">UnauthorizedAccessException</span> => <span class="c-kw">new</span> <span class="c-type">UnauthorizedObjectResult</span>(
+                <span class="c-kw">new</span> { <span class="c-prop">Message</span> = <span class="c-str">"Access denied"</span> }),
+
+            _ => <span class="c-kw">new</span> <span class="c-type">ObjectResult</span>(<span class="c-kw">new</span> { <span class="c-prop">Message</span> = <span class="c-str">"Internal server error"</span> })
+                { <span class="c-prop">StatusCode</span> = <span class="c-num">500</span> }
+        };
+
+        <span class="c-prop">ctx</span>.<span class="c-prop">ExceptionHandled</span> = <span class="c-kw">true</span>; <span class="c-cmt">// mark handled — no re-throw!</span>
+    }
+}</pre>
+
+  <div class="tip">
+    <div class="t-label">💡 Filter vs Middleware — when to use which?</div>
+    <p><strong>Middleware:</strong> Applies to ALL requests (static files, 404, etc). Good for logging, HTTPS, CORS.<br>
+    <strong>Filter:</strong> Applies only to MVC/API controller actions. Good for auth, audit, validation — knows about controller context.</p>
+  </div>
+</div>
+
+<!-- SECTION 4: ROUTING -->
+<div class="section" id="routing">
+  <div class="section-title"><span class="num">4</span> Routing — URL to Action Mapping</div>
+
+  <div class="movie">
+    <span class="film">🎬 96 — Phone ring, correct person-ku route ஆகுது</span>
+    <p>Phone number = URL. Exchange = routing engine. Correct person = correct action method. Route constraints = wrong number → immediate disconnect. Route templates = flexible number patterns!</p>
+  </div>
+
+  <pre><span class="c-cmt">// Route Constraints — type safe URL params</span>
+[<span class="c-attr">HttpGet</span>(<span class="c-str">"{id:int}"</span>)]           <span class="c-cmt">// only integers</span>
+[<span class="c-attr">HttpGet</span>(<span class="c-str">"{id:int:min(1)}"</span>)]   <span class="c-cmt">// integers ≥ 1</span>
+[<span class="c-attr">HttpGet</span>(<span class="c-str">"{name:alpha}"</span>)]       <span class="c-cmt">// letters only</span>
+[<span class="c-attr">HttpGet</span>(<span class="c-str">"{id:guid}"</span>)]           <span class="c-cmt">// GUID format</span>
+[<span class="c-attr">HttpGet</span>(<span class="c-str">"{date:datetime}"</span>)]    <span class="c-cmt">// date format</span>
+
+<span class="c-cmt">// ZenCampus route patterns</span>
+[<span class="c-attr">Route</span>(<span class="c-str">"api/schools/{schoolId:int}/students"</span>)]
+[<span class="c-attr">HttpGet</span>]
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">IActionResult</span>&gt; <span class="c-method">GetStudentsBySchool</span>(<span class="c-kw">int</span> <span class="c-prop">schoolId</span>)
+{ ... }
+
+[<span class="c-attr">Route</span>(<span class="c-str">"api/schools/{schoolId:int}/students/{studentId:int}/fees"</span>)]
+[<span class="c-attr">HttpGet</span>]
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">IActionResult</span>&gt; <span class="c-method">GetStudentFees</span>(<span class="c-kw">int</span> <span class="c-prop">schoolId</span>, <span class="c-kw">int</span> <span class="c-prop">studentId</span>)
+{ ... }
+
+<span class="c-cmt">// Catch-all route — for SPA fallback</span>
+[<span class="c-attr">HttpGet</span>(<span class="c-str">"{**path}"</span>)]
+<span class="c-kw">public</span> <span class="c-type">IActionResult</span> <span class="c-method">FallbackIndex</span>(<span class="c-kw">string</span> <span class="c-prop">path</span>) => <span class="c-method">File</span>(<span class="c-str">"wwwroot/index.html"</span>, <span class="c-str">"text/html"</span>);</pre>
+
+  <pre><span class="c-cmt">// FromBody / FromQuery / FromRoute / FromHeader — explicit binding</span>
+[<span class="c-attr">HttpPost</span>(<span class="c-str">"schools/{schoolId:int}/students"</span>)]
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">IActionResult</span>&gt; <span class="c-method">Create</span>(
+    [<span class="c-attr">FromRoute</span>]  <span class="c-kw">int</span>               <span class="c-prop">schoolId</span>,    <span class="c-cmt">// from URL path</span>
+    [<span class="c-attr">FromBody</span>]   <span class="c-type">CreateStudentDto</span>  <span class="c-prop">dto</span>,         <span class="c-cmt">// from JSON body</span>
+    [<span class="c-attr">FromHeader</span>(<span class="c-prop">Name</span> = <span class="c-str">"X-Tenant-Id"</span>)] <span class="c-kw">string</span> <span class="c-prop">tenantId</span>,  <span class="c-cmt">// from header</span>
+    [<span class="c-attr">FromQuery</span>]  <span class="c-kw">bool</span>              <span class="c-prop">sendWelcome</span> = <span class="c-kw">true</span>) <span class="c-cmt">// from ?sendWelcome=true</span>
+{ ... }</pre>
+</div>
+
+<!-- SECTION 5: VALIDATION -->
+<div class="section" id="validation">
+  <div class="section-title"><span class="num">5</span> Model Validation — [ApiController] Magic</div>
+
+  <pre><span class="c-cmt">// DTO with validation attributes — ZenCampus</span>
+<span class="c-kw">public class</span> <span class="c-type">CreateStudentDto</span>
+{
+    [<span class="c-attr">Required</span>(<span class="c-prop">ErrorMessage</span> = <span class="c-str">"Student name required"</span>)]
+    [<span class="c-attr">StringLength</span>(<span class="c-num">100</span>, <span class="c-prop">MinimumLength</span> = <span class="c-num">2</span>)]
+    <span class="c-kw">public string</span> <span class="c-prop">Name</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>;
+
+    [<span class="c-attr">Required</span>]
+    [<span class="c-attr">Range</span>(<span class="c-num">1</span>, <span class="c-num">12</span>, <span class="c-prop">ErrorMessage</span> = <span class="c-str">"Grade must be 1-12"</span>)]
+    <span class="c-kw">public int</span> <span class="c-prop">Grade</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+
+    [<span class="c-attr">Required</span>]
+    [<span class="c-attr">RegularExpression</span>(<span class="c-str">@"^\d{10}$"</span>, <span class="c-prop">ErrorMessage</span> = <span class="c-str">"Mobile must be 10 digits"</span>)]
+    <span class="c-kw">public string</span> <span class="c-prop">Mobile</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>;
+
+    [<span class="c-attr">Required</span>]
+    [<span class="c-attr">Range</span>(<span class="c-num">1</span>, <span class="c-kw">int</span>.<span class="c-prop">MaxValue</span>)]
+    <span class="c-kw">public int</span> <span class="c-prop">SchoolId</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+}
+
+<span class="c-cmt">// [ApiController] auto-returns 400 if ModelState invalid!
+// No need for: if (!ModelState.IsValid) return BadRequest(ModelState);</span>
+
+<span class="c-cmt">// Custom validation attribute</span>
+<span class="c-kw">public class</span> <span class="c-type">FutureDateAttribute</span> : <span class="c-type">ValidationAttribute</span>
+{
+    <span class="c-kw">protected override</span> <span class="c-type">ValidationResult</span>? <span class="c-method">IsValid</span>(<span class="c-kw">object</span>? <span class="c-prop">value</span>, <span class="c-type">ValidationContext</span> <span class="c-prop">ctx</span>)
+    {
+        <span class="c-kw">if</span> (<span class="c-prop">value</span> <span class="c-kw">is</span> <span class="c-type">DateTime</span> <span class="c-prop">date</span> && <span class="c-prop">date</span> > <span class="c-type">DateTime</span>.<span class="c-prop">Now</span>)
+            <span class="c-kw">return</span> <span class="c-type">ValidationResult</span>.<span class="c-prop">Success</span>;
+        <span class="c-kw">return new</span> <span class="c-type">ValidationResult</span>(<span class="c-str">"Exam date must be in the future"</span>);
+    }
+}
+
+<span class="c-cmt">// IValidatableObject — cross-field validation</span>
+<span class="c-kw">public class</span> <span class="c-type">CreateExamDto</span> : <span class="c-type">IValidatableObject</span>
+{
+    <span class="c-kw">public</span> <span class="c-type">DateTime</span> <span class="c-prop">StartDate</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public</span> <span class="c-type">DateTime</span> <span class="c-prop">EndDate</span>   { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+
+    <span class="c-kw">public</span> <span class="c-type">IEnumerable</span>&lt;<span class="c-type">ValidationResult</span>&gt; <span class="c-method">Validate</span>(<span class="c-type">ValidationContext</span> <span class="c-prop">ctx</span>)
+    {
+        <span class="c-kw">if</span> (<span class="c-prop">EndDate</span> &lt;= <span class="c-prop">StartDate</span>)
+            <span class="c-kw">yield return new</span> <span class="c-type">ValidationResult</span>(
+                <span class="c-str">"EndDate must be after StartDate"</span>,
+                [<span class="c-kw">nameof</span>(<span class="c-prop">EndDate</span>)]);
+    }
+}</pre>
+</div>
+
+<!-- SECTION 6: ERROR HANDLING -->
+<div class="section" id="errors">
+  <div class="section-title"><span class="num">6</span> Global Error Handling — Problem Details Standard</div>
+
+  <pre><span class="c-cmt">// UseExceptionHandler — global error middleware (preferred over Exception Filter)</span>
+<span class="c-prop">app</span>.<span class="c-method">UseExceptionHandler</span>(<span class="c-prop">errApp</span> =>
+    <span class="c-prop">errApp</span>.<span class="c-method">Run</span>(<span class="c-kw">async</span> <span class="c-prop">ctx</span> =>
+    {
+        <span class="c-kw">var</span> <span class="c-prop">ex</span> = <span class="c-prop">ctx</span>.<span class="c-prop">Features</span>.<span class="c-method">Get</span>&lt;<span class="c-type">IExceptionHandlerFeature</span>&gt;()?.Error;
+
+        (<span class="c-kw">int</span> <span class="c-prop">status</span>, <span class="c-kw">string</span> <span class="c-prop">title</span>) = <span class="c-prop">ex</span> <span class="c-kw">switch</span>
+        {
+            <span class="c-type">StudentNotFoundException</span>  => (<span class="c-num">404</span>, <span class="c-str">"Student not found"</span>),
+            <span class="c-type">ValidationException</span>      => (<span class="c-num">400</span>, <span class="c-str">"Validation failed"</span>),
+            <span class="c-type">UnauthorizedAccessException</span> => (<span class="c-num">401</span>, <span class="c-str">"Unauthorized"</span>),
+            _                        => (<span class="c-num">500</span>, <span class="c-str">"An error occurred"</span>)
+        };
+
+        <span class="c-prop">ctx</span>.<span class="c-prop">Response</span>.<span class="c-prop">StatusCode</span> = <span class="c-prop">status</span>;
+        <span class="c-kw">await</span> <span class="c-prop">ctx</span>.<span class="c-prop">Response</span>.<span class="c-method">WriteAsJsonAsync</span>(<span class="c-kw">new</span> <span class="c-type">ProblemDetails</span>
+        {
+            <span class="c-prop">Title</span>    = <span class="c-prop">title</span>,
+            <span class="c-prop">Status</span>   = <span class="c-prop">status</span>,
+            <span class="c-prop">Detail</span>   = <span class="c-prop">ex</span>?.<span class="c-prop">Message</span>,
+            <span class="c-prop">Instance</span> = <span class="c-prop">ctx</span>.<span class="c-prop">Request</span>.<span class="c-prop">Path</span>
+        });
+    }));
+
+<span class="c-cmt">// .NET 8 — AddProblemDetails() built-in</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddProblemDetails</span>(<span class="c-prop">opts</span> =>
+    <span class="c-prop">opts</span>.<span class="c-prop">CustomizeProblemDetails</span> = <span class="c-prop">ctx</span> =>
+    {
+        <span class="c-prop">ctx</span>.<span class="c-prop">ProblemDetails</span>.<span class="c-prop">Extensions</span>[<span class="c-str">"traceId"</span>] =
+            <span class="c-prop">ctx</span>.<span class="c-prop">HttpContext</span>.<span class="c-prop">TraceIdentifier</span>; <span class="c-cmt">// for support tickets!</span>
+    });
+<span class="c-prop">app</span>.<span class="c-method">UseExceptionHandler</span>();
+<span class="c-prop">app</span>.<span class="c-method">UseStatusCodePages</span>();</pre>
+
+  <div class="tip">
+    <div class="t-label">💡 ProblemDetails — RFC 7807 standard error format</div>
+    <p>All errors in one consistent JSON format: <code>{"type":"...","title":"...","status":404,"detail":"...","instance":"/api/students/99"}</code>. Clients can parse predictably. Swagger auto-documents. ALWAYS use this in production APIs!</p>
+  </div>
+</div>
+
+<!-- SECTION 7: VERSIONING -->
+<div class="section" id="versioning">
+  <div class="section-title"><span class="num">7</span> API Versioning + CORS + Rate Limiting</div>
+
+  <pre><span class="c-cmt">// API Versioning — Asp.Versioning.Mvc NuGet</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddApiVersioning</span>(<span class="c-prop">opts</span> =>
+{
+    <span class="c-prop">opts</span>.<span class="c-prop">DefaultApiVersion</span>        = <span class="c-kw">new</span> <span class="c-type">ApiVersion</span>(<span class="c-num">1</span>, <span class="c-num">0</span>);
+    <span class="c-prop">opts</span>.<span class="c-prop">AssumeDefaultVersionWhenUnspecified</span> = <span class="c-kw">true</span>;
+    <span class="c-prop">opts</span>.<span class="c-prop">ReportApiVersions</span>         = <span class="c-kw">true</span>; <span class="c-cmt">// header: api-supported-versions</span>
+    <span class="c-prop">opts</span>.<span class="c-prop">ApiVersionReader</span>          = <span class="c-type">ApiVersionReader</span>.<span class="c-method">Combine</span>(
+        <span class="c-kw">new</span> <span class="c-type">UrlSegmentApiVersionReader</span>(),     <span class="c-cmt">// api/v1/students</span>
+        <span class="c-kw">new</span> <span class="c-type">HeaderApiVersionReader</span>(<span class="c-str">"X-Api-Version"</span>),  <span class="c-cmt">// header</span>
+        <span class="c-kw">new</span> <span class="c-type">QueryStringApiVersionReader</span>(<span class="c-str">"version"</span>));  <span class="c-cmt">// ?version=1.0</span>
+});
+
+<span class="c-cmt">// V1 Controller</span>
+[<span class="c-attr">ApiVersion</span>(<span class="c-str">"1.0"</span>)]
+[<span class="c-attr">Route</span>(<span class="c-str">"api/v{version:apiVersion}/students"</span>)]
+<span class="c-kw">public class</span> <span class="c-type">StudentsV1Controller</span> : <span class="c-type">ControllerBase</span> { }
+
+<span class="c-cmt">// V2 Controller — breaking change</span>
+[<span class="c-attr">ApiVersion</span>(<span class="c-str">"2.0"</span>)]
+[<span class="c-attr">Route</span>(<span class="c-str">"api/v{version:apiVersion}/students"</span>)]
+<span class="c-kw">public class</span> <span class="c-type">StudentsV2Controller</span> : <span class="c-type">ControllerBase</span> { }</pre>
+
+  <pre><span class="c-cmt">// CORS — ZenCampus frontend on different domain</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddCors</span>(<span class="c-prop">opts</span> =>
+{
+    <span class="c-prop">opts</span>.<span class="c-method">AddPolicy</span>(<span class="c-str">"ZenCampusFrontend"</span>, <span class="c-prop">policy</span> =>
+        <span class="c-prop">policy</span>.<span class="c-method">WithOrigins</span>(<span class="c-str">"https://app.zencampus.in"</span>, <span class="c-str">"http://localhost:3000"</span>)
+              .<span class="c-method">AllowAnyHeader</span>()
+              .<span class="c-method">AllowAnyMethod</span>()
+              .<span class="c-method">AllowCredentials</span>());  <span class="c-cmt">// for cookies/JWT in header</span>
+});
+<span class="c-prop">app</span>.<span class="c-method">UseCors</span>(<span class="c-str">"ZenCampusFrontend"</span>);
+
+<span class="c-cmt">// Rate Limiting — .NET 7+ built-in</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddRateLimiter</span>(<span class="c-prop">opts</span> =>
+{
+    <span class="c-prop">opts</span>.<span class="c-method">AddFixedWindowLimiter</span>(<span class="c-str">"api"</span>, <span class="c-prop">lim</span> =>
+    {
+        <span class="c-prop">lim</span>.<span class="c-prop">PermitLimit</span>  = <span class="c-num">100</span>;              <span class="c-cmt">// 100 requests</span>
+        <span class="c-prop">lim</span>.<span class="c-prop">Window</span>       = <span class="c-type">TimeSpan</span>.<span class="c-method">FromMinutes</span>(<span class="c-num">1</span>); <span class="c-cmt">// per minute</span>
+        <span class="c-prop">lim</span>.<span class="c-prop">QueueLimit</span>   = <span class="c-num">10</span>;              <span class="c-cmt">// queue 10 more</span>
+    });
+    <span class="c-prop">opts</span>.<span class="c-prop">RejectionStatusCode</span> = <span class="c-num">429</span>; <span class="c-cmt">// 429 Too Many Requests</span>
+});
+<span class="c-prop">app</span>.<span class="c-method">UseRateLimiter</span>();
+
+[<span class="c-attr">EnableRateLimiting</span>(<span class="c-str">"api"</span>)]
+<span class="c-kw">public class</span> <span class="c-type">StudentsController</span> : <span class="c-type">ControllerBase</span> { }</pre>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">8</span> 🎯 Scenario-Based Interview Questions</div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">1</div>
+      <div>
+        <div class="scenario-title">Middleware order wrong — Auth bypass aagudhu <span class="diff real">Real Interview</span> <span class="diff hard">Hard</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Production-la protected API-endpoints anonymous users access பண்றாங்க! [Authorize] attribute இருக்கு. Code review-la இந்த order பாத்தோம்:"
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-prop">app</span>.<span class="c-method">UseRouting</span>();
+<span class="c-prop">app</span>.<span class="c-method">UseAuthorization</span>();   <span class="c-cmt">// ← authorization</span>
+<span class="c-prop">app</span>.<span class="c-method">UseAuthentication</span>(); <span class="c-cmt">// ← authentication AFTER?!</span>
+<span class="c-prop">app</span>.<span class="c-method">MapControllers</span>();</pre>
+      "Why is this wrong? Fix it."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <p><strong>Root Cause:</strong> Authentication must run BEFORE Authorization. Auth middleware sets <code>HttpContext.User</code> from JWT/cookie. Authorization reads <code>HttpContext.User</code> to check claims. If Auth runs after Authz — User is always anonymous → Authz always allows!</p>
+      <pre><span class="c-cmt">// ✅ CORRECT ORDER:</span>
+<span class="c-prop">app</span>.<span class="c-method">UseRouting</span>();
+<span class="c-prop">app</span>.<span class="c-method">UseAuthentication</span>(); <span class="c-cmt">// WHO are you? → sets User</span>
+<span class="c-prop">app</span>.<span class="c-method">UseAuthorization</span>();  <span class="c-cmt">// WHAT can you do? → reads User</span>
+<span class="c-prop">app</span>.<span class="c-method">MapControllers</span>();
+
+<span class="c-cmt">// Interview answer: "Authentication populates HttpContext.User.
+// Authorization inspects it. Wrong order = User always null/anonymous
+// = [Authorize] sees no claims = bypass. Order is CRITICAL."</span></pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Also catch: CORS before Auth!</div>
+        <p>CORS preflight (OPTIONS) must respond before auth check. Put UseCors() BEFORE UseAuthentication() and UseAuthorization().</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div>
+        <div class="scenario-title">Exception filter vs Middleware — ena use panuvaa? <span class="diff real">Real Interview</span> <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Global exception handling panna — UseExceptionHandler middleware use panuvoma, IExceptionFilter use panuvoma? Difference enna, which one prefer panuvaa ZenCampus-la?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <table style="font-size:0.83em">
+        <tr><th></th><th>UseExceptionHandler</th><th>IExceptionFilter</th></tr>
+        <tr><td>Scope</td><td class="green">ALL requests (static, 404, etc)</td><td class="yellow">MVC/API only</td></tr>
+        <tr><td>Access to</td><td class="yellow">HttpContext only</td><td class="green">ActionContext, route data</td></tr>
+        <tr><td>DI Support</td><td class="green">Full DI via IServiceProvider</td><td class="green">Constructor injection</td></tr>
+        <tr><td>Exception mapping</td><td class="green">Yes</td><td class="green">Yes</td></tr>
+        <tr><td>Preferred for</td><td class="green">Production global handler</td><td class="yellow">Per-controller nuance</td></tr>
+      </table>
+      <div class="gold">
+        <div class="gold-label">⭐ ZenCampus Answer</div>
+        <p>"We use UseExceptionHandler + ProblemDetails globally. This catches everything — middleware errors, 404s, etc. For specific controllers needing special handling (audit on exception), we add IExceptionFilter on top. Belt-and-suspenders approach."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div>
+        <div class="scenario-title">CORS error — frontend API call block aagudhu <span class="diff real">Real Interview</span> <span class="diff easy">Easy</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "React frontend localhost:3000-la run ஆகுது. API localhost:5001-la. Browser console-la 'Access-Control-Allow-Origin' error வருது. API கிட்ட போகவே இல்ல! Fix?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-cmt">// CORS = browser security. Different origin = blocked by browser.
+// Server must explicitly allow the origin!</span>
+
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddCors</span>(<span class="c-prop">opts</span> =>
+    <span class="c-prop">opts</span>.<span class="c-method">AddPolicy</span>(<span class="c-str">"Dev"</span>, <span class="c-prop">p</span> =>
+        <span class="c-prop">p</span>.<span class="c-method">WithOrigins</span>(<span class="c-str">"http://localhost:3000"</span>)
+         .<span class="c-method">AllowAnyMethod</span>()
+         .<span class="c-method">AllowAnyHeader</span>()));
+
+<span class="c-cmt">// Program.cs — AFTER UseRouting, BEFORE UseAuthentication!</span>
+<span class="c-prop">app</span>.<span class="c-method">UseCors</span>(<span class="c-str">"Dev"</span>);</pre>
+      <div class="danger">
+        <div class="d-label">⚠️ NEVER use AllowAnyOrigin + AllowCredentials together!</div>
+        <p><code>AllowAnyOrigin()</code> + <code>AllowCredentials()</code> = runtime exception. Security risk — any origin can send cookies. Use <code>WithOrigins()</code> specifically when credentials needed.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div>
+        <div class="scenario-title">Validation error — clear message client-ku varala <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "POST /api/students-la invalid data பண்றோம். 400 varuthu ஆனா error message 'One or more validation errors occurred' மட்டும் வருது. Which field wrong ennae therila! Fix?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Configure ValidationProblemDetails</div>
+      <pre><span class="c-cmt">// [ApiController] returns ValidationProblemDetails automatically!
+// Standard 400 response already has field-level errors:</span>
+<span class="c-cmt">// {
+//   "errors": {
+//     "Name": ["Student name required"],
+//     "Mobile": ["Mobile must be 10 digits"]
+//   },
+//   "status": 400,
+//   "title": "One or more validation errors occurred."
+// }
+// Client must READ errors field! If they're not seeing it — frontend bug.</span>
+
+<span class="c-cmt">// Customize the 400 response format if needed:</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddControllers</span>()
+    .<span class="c-method">ConfigureApiBehaviorOptions</span>(<span class="c-prop">opts</span> =>
+    {
+        <span class="c-prop">opts</span>.<span class="c-prop">InvalidModelStateResponseFactory</span> = <span class="c-prop">ctx</span> =>
+        {
+            <span class="c-kw">var</span> <span class="c-prop">errors</span> = <span class="c-prop">ctx</span>.<span class="c-prop">ModelState</span>
+                .<span class="c-method">Where</span>(<span class="c-prop">e</span> => <span class="c-prop">e</span>.<span class="c-prop">Value</span>?.<span class="c-prop">Errors</span>.<span class="c-prop">Count</span> > <span class="c-num">0</span>)
+                .<span class="c-method">SelectMany</span>(<span class="c-prop">e</span> => <span class="c-prop">e</span>.<span class="c-prop">Value</span>!.<span class="c-prop">Errors</span>
+                    .<span class="c-method">Select</span>(<span class="c-prop">err</span> => <span class="c-kw">new</span> { <span class="c-prop">Field</span> = <span class="c-prop">e</span>.<span class="c-prop">Key</span>, <span class="c-prop">Error</span> = <span class="c-prop">err</span>.<span class="c-prop">ErrorMessage</span> }))
+                .<span class="c-method">ToList</span>();
+
+            <span class="c-kw">return new</span> <span class="c-type">BadRequestObjectResult</span>(<span class="c-kw">new</span>
+            {
+                <span class="c-prop">Message</span> = <span class="c-str">"Validation failed"</span>,
+                <span class="c-prop">Errors</span>  = <span class="c-prop">errors</span>
+            });
+        };
+    });</pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div>
+        <div class="scenario-title">Every API call-la School permission check — DRY panna ena? <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus-la 50+ controller actions இருக்கு. எல்லாத்திலயும் 'does user belong to this school?' check பண்றோம். Copy-paste 50 places. DRY panna ena approach?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Custom Authorization Policy</div>
+      <pre><span class="c-cmt">// Custom requirement</span>
+<span class="c-kw">public record</span> <span class="c-type">SchoolAccessRequirement</span>(<span class="c-kw">string</span> <span class="c-prop">RouteParam</span> = <span class="c-str">"schoolId"</span>)
+    : <span class="c-type">IAuthorizationRequirement</span>;
+
+<span class="c-cmt">// Handler — runs once for all [Authorize("SchoolAccess")] endpoints</span>
+<span class="c-kw">public class</span> <span class="c-type">SchoolAccessHandler</span>
+    : <span class="c-type">AuthorizationHandler</span>&lt;<span class="c-type">SchoolAccessRequirement</span>&gt;
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IHttpContextAccessor</span> <span class="c-prop">_http</span>;
+
+    <span class="c-kw">protected override</span> <span class="c-type">Task</span> <span class="c-method">HandleRequirementAsync</span>(
+        <span class="c-type">AuthorizationHandlerContext</span> <span class="c-prop">ctx</span>,
+        <span class="c-type">SchoolAccessRequirement</span>     <span class="c-prop">req</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">httpCtx</span>   = <span class="c-prop">_http</span>.<span class="c-prop">HttpContext</span>!;
+        <span class="c-kw">var</span> <span class="c-prop">schoolId</span>  = <span class="c-kw">int</span>.<span class="c-method">Parse</span>(<span class="c-prop">httpCtx</span>.<span class="c-prop">GetRouteValue</span>(<span class="c-prop">req</span>.<span class="c-prop">RouteParam</span>)!.<span class="c-method">ToString</span>()!);
+        <span class="c-kw">var</span> <span class="c-prop">userSchool</span> = <span class="c-kw">int</span>.<span class="c-method">Parse</span>(<span class="c-prop">ctx</span>.<span class="c-prop">User</span>.<span class="c-method">FindFirst</span>(<span class="c-str">"SchoolId"</span>)!.<span class="c-prop">Value</span>);
+
+        <span class="c-kw">if</span> (<span class="c-prop">schoolId</span> == <span class="c-prop">userSchool</span>)
+            <span class="c-prop">ctx</span>.<span class="c-method">Succeed</span>(<span class="c-prop">req</span>);
+
+        <span class="c-kw">return</span> <span class="c-type">Task</span>.<span class="c-prop">CompletedTask</span>;
+    }
+}
+
+<span class="c-cmt">// Register</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddAuthorization</span>(<span class="c-prop">opts</span> =>
+    <span class="c-prop">opts</span>.<span class="c-method">AddPolicy</span>(<span class="c-str">"SchoolAccess"</span>, <span class="c-prop">p</span> =>
+        <span class="c-prop">p</span>.<span class="c-method">AddRequirements</span>(<span class="c-kw">new</span> <span class="c-type">SchoolAccessRequirement</span>())));
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddScoped</span>&lt;<span class="c-type">IAuthorizationHandler</span>, <span class="c-type">SchoolAccessHandler</span>&gt;();
+
+<span class="c-cmt">// Usage — one attribute replaces 50 copy-pastes!</span>
+[<span class="c-attr">Authorize</span>(<span class="c-prop">Policy</span> = <span class="c-str">"SchoolAccess"</span>)]
+[<span class="c-attr">HttpGet</span>(<span class="c-str">"schools/{schoolId}/students"</span>)]
+<span class="c-kw">public</span> <span class="c-type">IActionResult</span> <span class="c-method">GetStudents</span>(<span class="c-kw">int</span> <span class="c-prop">schoolId</span>) { ... }</pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div>
+        <div class="scenario-title">API versioning break pannama new feature add panna <span class="diff senior">Senior</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus API v1 already 50 school clients use பண்றாங்க. New v2 — StudentDto-la 3 new fields, 1 field rename. Existing clients break ஆகக்கூடாது. Approach?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Versioning Strategy</div>
+      <pre><span class="c-cmt">// V1 — original (never change!)</span>
+<span class="c-kw">public class</span> <span class="c-type">StudentDtoV1</span>
+{
+    <span class="c-kw">public int</span>    <span class="c-prop">Id</span>       { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public string</span> <span class="c-prop">Name</span>     { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>;
+    <span class="c-kw">public string</span> <span class="c-prop">Mobile</span>   { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>; <span class="c-cmt">// old field name</span>
+}
+
+<span class="c-cmt">// V2 — new contract</span>
+<span class="c-kw">public class</span> <span class="c-type">StudentDtoV2</span>
+{
+    <span class="c-kw">public int</span>    <span class="c-prop">Id</span>          { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public string</span> <span class="c-prop">FullName</span>    { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>; <span class="c-cmt">// renamed!</span>
+    <span class="c-kw">public string</span> <span class="c-prop">PhoneNumber</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>; <span class="c-cmt">// renamed!</span>
+    <span class="c-kw">public string</span> <span class="c-prop">Email</span>       { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>; <span class="c-cmt">// new!</span>
+    <span class="c-kw">public string</span> <span class="c-prop">AadhaarNo</span>   { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>; <span class="c-cmt">// new!</span>
+}
+
+<span class="c-cmt">// Separate controllers — v1 clients unchanged!</span>
+[<span class="c-attr">ApiVersion</span>(<span class="c-str">"1.0"</span>)][<span class="c-attr">Route</span>(<span class="c-str">"api/v{version:apiVersion}/students"</span>)]
+<span class="c-kw">public class</span> <span class="c-type">StudentsV1Controller</span> : <span class="c-type">ControllerBase</span>
+{
+    [<span class="c-attr">HttpGet</span>(<span class="c-str">"{id}"</span>)]
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">ActionResult</span>&lt;<span class="c-type">StudentDtoV1</span>&gt;&gt; <span class="c-method">Get</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>) { ... }
+}
+
+[<span class="c-attr">ApiVersion</span>(<span class="c-str">"2.0"</span>)][<span class="c-attr">Route</span>(<span class="c-str">"api/v{version:apiVersion}/students"</span>)]
+<span class="c-kw">public class</span> <span class="c-type">StudentsV2Controller</span> : <span class="c-type">ControllerBase</span>
+{
+    [<span class="c-attr">HttpGet</span>(<span class="c-str">"{id}"</span>)]
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">ActionResult</span>&lt;<span class="c-type">StudentDtoV2</span>&gt;&gt; <span class="c-method">Get</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>) { ... }
+}</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Sunset Strategy</div>
+        <p>"V1 we mark [Deprecated] — response header 'Sunset: 2026-12-31'. Clients get warning, migrate before sunset date. After sunset date, remove V1 controller. Clients who didn't migrate get 410 Gone."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div>
+        <div class="scenario-title">Request logging — every API call who called, when, how long <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus support team kekutraanga — 'yesterday 3 PM-la student fee API who called, what payload, how long took?' Ippoluthe log இல்ல. Log infrastructure add panna?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Structured Logging Middleware</div>
+      <pre><span class="c-cmt">// Structured logging middleware — captures everything</span>
+<span class="c-kw">public class</span> <span class="c-type">StructuredLoggingMiddleware</span>
+{
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">InvokeAsync</span>(<span class="c-type">HttpContext</span> <span class="c-prop">ctx</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">sw</span>        = <span class="c-type">Stopwatch</span>.<span class="c-method">StartNew</span>();
+        <span class="c-kw">var</span> <span class="c-prop">correlationId</span> = <span class="c-type">Guid</span>.<span class="c-method">NewGuid</span>().<span class="c-method">ToString</span>(<span class="c-str">"N"</span>)[..<span class="c-num">8</span>];
+        <span class="c-prop">ctx</span>.<span class="c-prop">Response</span>.<span class="c-prop">Headers</span>[<span class="c-str">"X-Correlation-Id"</span>] = <span class="c-prop">correlationId</span>;
+
+        <span class="c-kw">using var</span> <span class="c-prop">scope</span> = <span class="c-prop">_log</span>.<span class="c-method">BeginScope</span>(<span class="c-kw">new</span> <span class="c-type">Dictionary</span>&lt;<span class="c-kw">string</span>, <span class="c-kw">object</span>&gt;
+        {
+            [<span class="c-str">"CorrelationId"</span>] = <span class="c-prop">correlationId</span>,
+            [<span class="c-str">"UserId"</span>]        = <span class="c-prop">ctx</span>.<span class="c-prop">User</span>.<span class="c-prop">Identity</span>?.<span class="c-prop">Name</span> ?? <span class="c-str">"anonymous"</span>,
+            [<span class="c-str">"RemoteIp"</span>]      = <span class="c-prop">ctx</span>.<span class="c-prop">Connection</span>.<span class="c-prop">RemoteIpAddress</span>
+        });
+
+        <span class="c-kw">await</span> <span class="c-prop">_next</span>(<span class="c-prop">ctx</span>);
+        <span class="c-prop">sw</span>.<span class="c-method">Stop</span>();
+
+        <span class="c-prop">_log</span>.<span class="c-method">LogInformation</span>(
+            <span class="c-str">"HTTP {method} {path} {status} {ms}ms"</span>,
+            <span class="c-prop">ctx</span>.<span class="c-prop">Request</span>.<span class="c-prop">Method</span>,
+            <span class="c-prop">ctx</span>.<span class="c-prop">Request</span>.<span class="c-prop">Path</span>,
+            <span class="c-prop">ctx</span>.<span class="c-prop">Response</span>.<span class="c-prop">StatusCode</span>,
+            <span class="c-prop">sw</span>.<span class="c-prop">ElapsedMilliseconds</span>);
+    }
+}
+<span class="c-cmt">// Output (Seq/ELK): {"method":"POST","path":"/api/students","status":201,
+// "ms":245,"UserId":"teacher01","CorrelationId":"a3f9b2c1"}
+// Support team: filter by path + date → instant!</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div>
+        <div class="scenario-title">Action filter vs Service layer logic — which layer? <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus-la student create பண்ணும் போது — admission number auto-generate பண்ணணும். Controller-la panuvoma, filter-la panuvoma, service-la panuvoma?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Layer Responsibility</div>
+      <div style="background:#0a1020;padding:14px;border-radius:8px;font-size:0.9em;line-height:1.9">
+        <p><span class="green">✅ Service Layer</span> — Business logic belongs here. Auto-generate admission number = business rule.</p>
+        <p><span class="red">❌ Controller</span> — Controller = HTTP concern only (parse request, return response). No business logic.</p>
+        <p><span class="red">❌ Filter</span> — Filter = cross-cutting concern (logging, auth, caching). Not business logic.</p>
+        <p><span class="red">❌ Middleware</span> — Middleware = pipeline concern (HTTPS, CORS). Not domain-specific.</p>
+      </div>
+      <pre><span class="c-cmt">// ✅ Service handles business rules</span>
+<span class="c-kw">public class</span> <span class="c-type">StudentService</span> : <span class="c-type">IStudentService</span>
+{
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">StudentDto</span>&gt; <span class="c-method">CreateAsync</span>(<span class="c-type">CreateStudentDto</span> <span class="c-prop">dto</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">admNo</span> = <span class="c-kw">await</span> <span class="c-prop">_seqGen</span>.<span class="c-method">GenerateAsync</span>(<span class="c-prop">dto</span>.<span class="c-prop">SchoolId</span>); <span class="c-cmt">// business rule</span>
+        <span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-kw">new</span> <span class="c-type">Student</span> { <span class="c-prop">AdmissionNo</span> = <span class="c-prop">admNo</span>, ... };
+        <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">SaveAsync</span>(<span class="c-prop">student</span>);
+        <span class="c-kw">return</span> <span class="c-prop">_mapper</span>.<span class="c-method">Map</span>&lt;<span class="c-type">StudentDto</span>&gt;(<span class="c-prop">student</span>);
+    }
+}
+
+<span class="c-cmt">// Controller = thin! Only HTTP concerns</span>
+[<span class="c-attr">HttpPost</span>]
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">IActionResult</span>&gt; <span class="c-method">Create</span>([<span class="c-attr">FromBody</span>] <span class="c-type">CreateStudentDto</span> <span class="c-prop">dto</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-kw">await</span> <span class="c-prop">_svc</span>.<span class="c-method">CreateAsync</span>(<span class="c-prop">dto</span>);
+    <span class="c-kw">return</span> <span class="c-method">CreatedAtAction</span>(<span class="c-kw">nameof</span>(<span class="c-method">Get</span>), <span class="c-kw">new</span> { <span class="c-prop">id</span> = <span class="c-prop">result</span>.<span class="c-prop">Id</span> }, <span class="c-prop">result</span>);
+}</pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div>
+        <div class="scenario-title">Rate limiting — SMS API abuse panna someone <span class="diff hard">Hard</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus-la /api/forgot-password endpoint இருக்கு. Someone script போட்டு 1000 requests/minute அடிக்கிறாங்க. SMS provider bill ரொம்ப வந்துச்சு! Fix?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Per-IP Rate Limiting</div>
+      <pre><span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddRateLimiter</span>(<span class="c-prop">opts</span> =>
+{
+    <span class="c-cmt">// Sliding window — per IP per minute</span>
+    <span class="c-prop">opts</span>.<span class="c-method">AddSlidingWindowLimiter</span>(<span class="c-str">"sms"</span>, <span class="c-prop">lim</span> =>
+    {
+        <span class="c-prop">lim</span>.<span class="c-prop">PermitLimit</span>       = <span class="c-num">5</span>;                           <span class="c-cmt">// 5 requests</span>
+        <span class="c-prop">lim</span>.<span class="c-prop">Window</span>            = <span class="c-type">TimeSpan</span>.<span class="c-method">FromMinutes</span>(<span class="c-num">1</span>);        <span class="c-cmt">// per minute</span>
+        <span class="c-prop">lim</span>.<span class="c-prop">SegmentsPerWindow</span>  = <span class="c-num">6</span>;                           <span class="c-cmt">// 10-sec segments</span>
+        <span class="c-prop">lim</span>.<span class="c-prop">QueueLimit</span>         = <span class="c-num">0</span>;                           <span class="c-cmt">// no queue — reject immediately</span>
+    });
+
+    <span class="c-cmt">// Per IP partitioning</span>
+    <span class="c-prop">opts</span>.<span class="c-method">AddPolicy</span>(<span class="c-str">"sms-per-ip"</span>, <span class="c-prop">ctx</span> =>
+        <span class="c-type">RateLimitPartition</span>.<span class="c-method">GetSlidingWindowLimiter</span>(
+            <span class="c-prop">partitionKey</span>: <span class="c-prop">ctx</span>.<span class="c-prop">Connection</span>.<span class="c-prop">RemoteIpAddress</span>?.<span class="c-method">ToString</span>() ?? <span class="c-str">"anon"</span>,
+            <span class="c-prop">factory</span>: _ => <span class="c-kw">new</span> <span class="c-type">SlidingWindowRateLimiterOptions</span>
+            {
+                <span class="c-prop">PermitLimit</span>      = <span class="c-num">5</span>,
+                <span class="c-prop">Window</span>           = <span class="c-type">TimeSpan</span>.<span class="c-method">FromMinutes</span>(<span class="c-num">1</span>),
+                <span class="c-prop">SegmentsPerWindow</span> = <span class="c-num">6</span>
+            }));
+
+    <span class="c-prop">opts</span>.<span class="c-prop">OnRejected</span> = <span class="c-kw">async</span> (<span class="c-prop">ctx</span>, _) =>
+    {
+        <span class="c-prop">ctx</span>.<span class="c-prop">HttpContext</span>.<span class="c-prop">Response</span>.<span class="c-prop">StatusCode</span> = <span class="c-num">429</span>;
+        <span class="c-kw">await</span> <span class="c-prop">ctx</span>.<span class="c-prop">HttpContext</span>.<span class="c-prop">Response</span>.<span class="c-method">WriteAsJsonAsync</span>(
+            <span class="c-kw">new</span> { <span class="c-prop">Message</span> = <span class="c-str">"Too many requests. Try after 1 minute."</span> });
+    };
+});
+
+[<span class="c-attr">EnableRateLimiting</span>(<span class="c-str">"sms-per-ip"</span>)]
+[<span class="c-attr">HttpPost</span>(<span class="c-str">"forgot-password"</span>)]
+<span class="c-kw">public</span> <span class="c-type">IActionResult</span> <span class="c-method">ForgotPassword</span>(<span class="c-type">ForgotPasswordDto</span> <span class="c-prop">dto</span>) { ... }</pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div>
+        <div class="scenario-title">"ASP.NET Core API experience sollu" — Complete Answer <span class="diff senior">Senior</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ASP.NET Core Web API-la real experience பண்ணிருக்கீங்களா? Architecture, middleware, filters — ZenCampus example குடு."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE INTERVIEW ANSWER</div>
+      <div style="background:#0a1a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p>"Yes — ZenCampus: 50,000 students, 200 schools, ASP.NET Core 8 Web API."</p>
+        <p><strong>Architecture:</strong> Thin controllers — only parse request and return response. Business logic in service layer. Repository for data access. DTOs for API contract — entities never exposed directly.</p>
+        <p><strong>Middleware pipeline:</strong> Exception handler first, then HTTPS redirect, CORS for our React frontend, then authentication + authorization, then rate limiting on sensitive endpoints, then controllers. Order was critical — had a bug where auth ran before auth, fixed by reordering.</p>
+        <p><strong>Filters:</strong> Global AuditLogFilter for every write operation (who, what, when, how long). Global exception filter mapping custom exceptions to ProblemDetails format. Per-controller SchoolAccess authorization policy replacing 50 copy-pasted checks.</p>
+        <p><strong>Versioning:</strong> URL segment versioning (v1/v2). V1 unchanged for existing clients. V2 with richer StudentDto. Sunset header on deprecated versions.</p>
+        <p><strong>Pain point solved:</strong> SMS abuse — rate limiter per IP, 5 req/min on forgot-password. Cut SMS bill by 95%.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">9</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: [ApiController] attribute — main benefits enna?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Enables routing</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Auto 400 on invalid model, binding source inference, automatic ProblemDetails</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Enables async actions</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Registers controller in DI</div>
+    <div class="quiz-fb ok">✅ [ApiController] = automatic ModelState validation (returns 400 without if-check), FromBody inference for complex types, ProblemDetails format. Essential for API controllers!</div>
+    <div class="quiz-fb nope">❌ [ApiController] auto-validates ModelState → 400 if invalid (no manual check needed), infers [FromBody]/[FromQuery], returns ProblemDetails format!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: Middleware vs Filter — key difference?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Middleware is faster</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Middleware = all requests (pipeline level). Filter = MVC/API actions only, has action context.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Filter supports async, middleware doesn't</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) No difference</div>
+    <div class="quiz-fb ok">✅ Middleware handles ALL HTTP requests (including static files, 404 pages). Filters run only for controller actions and have access to ActionContext, route data, etc. Choose middleware for cross-cutting HTTP concerns, filter for action-specific logic!</div>
+    <div class="quiz-fb nope">❌ Middleware = pipeline level, ALL requests. Filter = MVC/API only, knows about controllers. Middleware for CORS/HTTPS, Filter for audit/authorization on actions!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: AllowAnyOrigin() + AllowCredentials() — what happens?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Works fine — allows all origins with credentials</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Runtime InvalidOperationException — security risk, not allowed</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Compile error</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Just ignores AllowCredentials</div>
+    <div class="quiz-fb ok">✅ ASP.NET Core throws at runtime: "The CORS protocol does not allow specifying a wildcard origin with credentials." Use WithOrigins("specific-url") when AllowCredentials() is needed — security by design!</div>
+    <div class="quiz-fb nope">❌ Runtime exception! AllowAnyOrigin + AllowCredentials = security hole + ASP.NET Core blocks it. Must use WithOrigins("specific") when credentials involved!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: ControllerBase vs Controller — Web API-la ena use pananum?</p>
+    <div class="quiz-opt" onclick="ans(this,'correct')">A) ControllerBase — no View support needed, lighter</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Controller — always use</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) No difference</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Controller for async, ControllerBase for sync</div>
+    <div class="quiz-fb ok">✅ ControllerBase = base for API (no View methods). Controller extends ControllerBase and adds View(), PartialView(), etc. Web API never serves Views — ControllerBase is correct and lighter!</div>
+    <div class="quiz-fb nope">❌ ControllerBase for Web API! Controller inherits ControllerBase and adds View-related methods (View(), PartialView()) — unnecessary bloat for APIs. Always ControllerBase for REST APIs!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">10</span> ✅ Day 8 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory (45 min)</h3>
+      <ul class="check-list">
+        <li>Middleware pipeline order (critical!)</li>
+        <li>[ApiController] attribute benefits</li>
+        <li>ActionFilter vs ExceptionFilter vs Middleware</li>
+        <li>Route constraints + binding sources</li>
+        <li>IValidatableObject cross-field validation</li>
+        <li>ProblemDetails RFC 7807 standard</li>
+        <li>CORS AllowAnyOrigin trap</li>
+        <li>Rate limiting sliding vs fixed window</li>
+      </ul>
+    </div>
+    <div>
+      <h3>💻 Hands-On (60 min)</h3>
+      <ul class="check-list">
+        <li>Create StudentsController with all HTTP verbs</li>
+        <li>Write custom RequestLoggingMiddleware</li>
+        <li>Add AuditLogFilter globally</li>
+        <li>Test CORS with wrong origin</li>
+        <li>Custom authorization policy</li>
+        <li>API versioning v1/v2 side by side</li>
+        <li>Rate limiter on forgot-password</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Key Scenarios</h3>
+      <ul class="check-list">
+        <li>S1: Auth bypass — middleware order bug</li>
+        <li>S3: CORS error — frontend blocked</li>
+        <li>S5: Custom auth policy — DRY principle</li>
+        <li>S6: API versioning without breaking clients</li>
+        <li>S9: Rate limiting — SMS abuse fix</li>
+        <li>S10: Full ASP.NET Core experience answer</li>
+      </ul>
+    </div>
+    <div>
+      <h3>⭐ Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"Auth before Authz — order is critical"</li>
+        <li>"[ApiController] = auto model validation"</li>
+        <li>"Middleware = all requests, Filter = MVC only"</li>
+        <li>"ProblemDetails = RFC 7807 standard"</li>
+        <li>"CORS = browser security, server allows"</li>
+        <li>"Thin controller, fat service"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#1a1200,#0a0a1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🎬 Day 8 Motivation</div>
+    <p style="color:#f59e0b;font-style:italic">"Baasha club-la security order wrong ஆனா — wrong people உள்ளே நுழைவாங்க. Middleware order wrong ஆனா — unauthorized users API access பண்ணுவாங்க. <strong>Interview-la 'middleware order bug fix பண்ணினேன், auth bypass was happening because UseAuthentication was after UseAuthorization' சொன்னா — senior engineer confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 8/60 ✅ | Tomorrow: Authentication — JWT, Refresh Tokens, Role-based Auth</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:13.3%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">8 of 60 days (13.3%) — ASP.NET Core API mastered!</div>
+  </div>
+</div>
+</div>
+
+<footer>
+  <p>Day 8 – ASP.NET Core Web API | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🎬 "Vikram = Controllers. Baasha = Middleware order. Dasavathaaram = Filters. 96 = Routing. Thin controller, fat service!"</p>
+</footer>
+
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent='💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

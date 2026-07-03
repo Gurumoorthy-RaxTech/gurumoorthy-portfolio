@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>50 Problems · Part 2 — C# Arrays, LINQ &amp; Collections</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0f0f1a;color:#e0e0e0;line-height:1.7}
+header{background:linear-gradient(135deg,#1a2e1a,#163e1e,#0f3020);padding:26px 20px;text-align:center;border-bottom:3px solid #27ae60}
+header h1{font-size:1.8em;color:#2ecc71}
+header p{color:#a0c0a0;margin-top:5px}
+.nav-pills{display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.nav-pills a{background:#1e3a2e;color:#74e09c;padding:5px 14px;border-radius:20px;text-decoration:none;font-size:.8em}
+.nav-pills a:hover{background:#27ae60;color:#fff}
+.container{max-width:1060px;margin:0 auto;padding:20px}
+.toc{background:#13132a;border:1px solid #2a2a4a;border-radius:10px;padding:16px 20px;margin:16px 0}
+.toc h3{color:#f39c12;margin-bottom:8px;font-size:.95em}
+.toc a{color:#74b9ff;text-decoration:none;font-size:.82em;margin-right:14px;line-height:2}
+.toc a:hover{color:#2ecc71}
+.q-card{background:#13132a;border-radius:12px;margin:22px 0;border:1px solid #2a2a4a;overflow:hidden}
+.q-hdr{padding:13px 20px;display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#112010,#1e3a1e)}
+.q-num{background:#27ae60;color:#fff;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.85em;flex-shrink:0}
+.q-title{font-size:1em;font-weight:bold;color:#fff}
+.tag{font-size:.7em;padding:2px 8px;border-radius:12px;font-weight:bold}
+.easy{background:#0a2010;color:#2ecc71;border:1px solid #2ecc71}
+.med{background:#1a1000;color:#f39c12;border:1px solid #f39c12}
+.hard{background:#1a0000;color:#e74c3c;border:1px solid #e74c3c}
+.q-body{padding:16px 20px}
+.method-lbl{font-size:.75em;color:#27ae60;font-weight:bold;text-transform:uppercase;letter-spacing:1px;margin:12px 0 5px}
+.mbox{background:#0d1117;border-radius:7px;padding:13px;margin:7px 0;border-left:4px solid #27ae60}
+.mbox.m2{border-left-color:#f39c12}.mbox.m3{border-left-color:#e94560}.mbox.m4{border-left-color:#8e44ad}
+.mtitle{font-size:.8em;font-weight:bold;color:#74b9ff;margin-bottom:5px}
+pre{background:#080c12;border-radius:5px;padding:11px;overflow-x:auto;font-size:.78em;font-family:'Consolas',monospace;color:#e0e0e0;margin:6px 0;border:1px solid #1e2a3a;line-height:1.75}
+.kw{color:#569cd6}.str{color:#ce9178}.cm{color:#6a9955}.num{color:#b5cea8}.typ{color:#4ec9b0}.fn{color:#dcdcaa}.prop{color:#9cdcfe}
+.exp{background:#0a2010;border-radius:6px;padding:11px 14px;margin:10px 0;border-left:3px solid #2ecc71}
+.exp .lbl{color:#2ecc71;font-size:.75em;font-weight:bold;margin-bottom:3px}
+.hint{background:#1a1a35;border-radius:6px;padding:10px 14px;margin:8px 0;border-left:3px solid #74b9ff}
+.hint .lbl{color:#74b9ff;font-size:.75em;font-weight:bold;margin-bottom:3px}
+.cx{display:flex;gap:8px;margin:7px 0;flex-wrap:wrap}
+.c{background:#0d1117;border:1px solid #2a2a4a;border-radius:3px;padding:3px 9px;font-size:.76em}
+.c span{color:#f39c12;font-weight:bold}
+.sec-div{background:linear-gradient(90deg,#1a1a2e,#16213e);border-radius:10px;padding:12px 18px;margin:26px 0 10px;border-left:4px solid #f39c12}
+footer{text-align:center;padding:22px;color:#555;border-top:1px solid #2a2a4a;margin-top:30px}
+</style>
+</head>
+<body>
+<header>
+  <h1>💻 50 Problems — Part 2: Arrays, LINQ &amp; Collections</h1>
+  <p>Q18–Q34 · Duplicates · Sorting · Stack/Queue · LINQ · Generics · OOP Patterns</p>
+  <div class="nav-pills">
+    <a href="PS_Part1_CSharp_StringNumbers.html">← Part 1: String &amp; Number</a>
+    <a href="#">Part 2: Arrays &amp; LINQ (You are here)</a>
+    <a href="PS_Part3_SQL_Classic.html">Part 3: SQL Problems →</a>
+  </div>
+</header>
+<div class="container">
+
+<div class="toc">
+  <h3>📋 Q18–Q34 Jump</h3>
+  <a href="#q18">18. Find Duplicates</a><a href="#q19">19. Missing Number</a>
+  <a href="#q20">20. Two Sum</a><a href="#q21">21. Max Subarray</a>
+  <a href="#q22">22. Bubble Sort</a><a href="#q23">23. Binary Search</a>
+  <a href="#q24">24. Stack using Array</a><a href="#q25">25. Queue with 2 Stacks</a>
+  <a href="#q26">26. Balanced Brackets</a><a href="#q27">27. Group Anagrams</a>
+  <a href="#q28">28. LINQ GroupBy Aggregation</a><a href="#q29">29. Flatten Nested</a>
+  <a href="#q30">30. Custom Sort</a><a href="#q31">31. Intersection/Union</a>
+  <a href="#q32">32. Generic Stack</a><a href="#q33">33. Singleton Pattern</a>
+  <a href="#q34">34. Builder Pattern</a>
+</div>
+
+<!-- ===== Q18 FIND DUPLICATES ===== -->
+<div class="q-card" id="q18">
+  <div class="q-hdr"><div class="q-num">18</div><div class="q-title">Find All Duplicate Elements in an Array</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+      <div class="mtitle">✅ Method 1: HashSet — O(n) time, O(n) space</div>
+<pre><span class="kw">public static</span> <span class="typ">List</span>&lt;<span class="kw">int</span>&gt; <span class="fn">FindDuplicates</span>(<span class="kw">int</span>[] <span class="prop">arr</span>)
+{
+    <span class="kw">var</span> <span class="prop">seen</span>  = <span class="kw">new</span> <span class="typ">HashSet</span>&lt;<span class="kw">int</span>&gt;();
+    <span class="kw">var</span> <span class="prop">dupes</span> = <span class="kw">new</span> <span class="typ">HashSet</span>&lt;<span class="kw">int</span>&gt;();
+    <span class="kw">foreach</span> (<span class="kw">var</span> <span class="prop">n</span> <span class="kw">in</span> <span class="prop">arr</span>)
+        <span class="kw">if</span> (!<span class="prop">seen</span>.<span class="fn">Add</span>(<span class="prop">n</span>)) <span class="prop">dupes</span>.<span class="fn">Add</span>(<span class="prop">n</span>);
+    <span class="kw">return</span> <span class="prop">dupes</span>.<span class="fn">ToList</span>();
+}
+<span class="cm">// [1,2,3,2,4,3,5] → [2,3]</span></pre>
+    </div>
+    <div class="mbox m2"><div class="mtitle">Method 2: LINQ GroupBy</div>
+<pre><span class="kw">var</span> <span class="prop">dupes</span> = <span class="prop">arr</span>
+    .<span class="fn">GroupBy</span>(<span class="prop">x</span> =&gt; <span class="prop">x</span>)
+    .<span class="fn">Where</span>(<span class="prop">g</span> =&gt; <span class="prop">g</span>.<span class="fn">Count</span>() &gt; <span class="num">1</span>)
+    .<span class="fn">Select</span>(<span class="prop">g</span> =&gt; <span class="prop">g</span>.<span class="prop">Key</span>)
+    .<span class="fn">ToList</span>();</pre>
+    </div>
+    <div class="mbox m3"><div class="mtitle">Bonus: Count frequency of each element</div>
+<pre><span class="kw">var</span> <span class="prop">freq</span> = <span class="prop">arr</span>
+    .<span class="fn">GroupBy</span>(<span class="prop">x</span> =&gt; <span class="prop">x</span>)
+    .<span class="fn">ToDictionary</span>(<span class="prop">g</span> =&gt; <span class="prop">g</span>.<span class="prop">Key</span>, <span class="prop">g</span> =&gt; <span class="prop">g</span>.<span class="fn">Count</span>());
+<span class="cm">// [1,2,2,3,3,3] → {1:1, 2:2, 3:3}</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"HashSet.Add() returns false if element already exists — elegant way to detect duplicates. Using two HashSets: 'seen' tracks all, 'dupes' tracks duplicates (second HashSet prevents reporting the same duplicate multiple times if it appears 3+ times). LINQ GroupBy is clean for functional style. ZenCampus: find students enrolled twice in same class."</div>
+  </div>
+</div>
+
+<!-- ===== Q19 MISSING NUMBER ===== -->
+<div class="q-card" id="q19">
+  <div class="q-hdr"><div class="q-num">19</div><div class="q-title">Find Missing Number in 1..N Array</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox"><div class="mtitle">✅ Sum Formula — O(n) O(1)</div>
+<pre><span class="kw">public static int</span> <span class="fn">FindMissing</span>(<span class="kw">int</span>[] <span class="prop">arr</span>, <span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="cm">// Sum of 1..n = n*(n+1)/2</span>
+    <span class="kw">int</span> <span class="prop">expected</span> = <span class="prop">n</span> * (<span class="prop">n</span> + <span class="num">1</span>) / <span class="num">2</span>;
+    <span class="kw">return</span> <span class="prop">expected</span> - <span class="prop">arr</span>.<span class="fn">Sum</span>();
+}
+<span class="cm">// n=5, [1,2,4,5] → expected=15, sum=12, missing=3</span></pre>
+    </div>
+    <div class="mbox m2"><div class="mtitle">XOR Trick — even more elegant!</div>
+<pre><span class="kw">public static int</span> <span class="fn">FindMissingXOR</span>(<span class="kw">int</span>[] <span class="prop">arr</span>, <span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">int</span> <span class="prop">xor</span> = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="num">1</span>; <span class="prop">i</span>&lt;=<span class="prop">n</span>; <span class="prop">i</span>++) <span class="prop">xor</span> ^= <span class="prop">i</span>;
+    <span class="kw">foreach</span> (<span class="kw">var</span> <span class="prop">x</span> <span class="kw">in</span> <span class="prop">arr</span>)         <span class="prop">xor</span> ^= <span class="prop">x</span>;
+    <span class="kw">return</span> <span class="prop">xor</span>; <span class="cm">// a^a=0, so pairs cancel, missing remains</span>
+}
+<span class="cm">// Avoids int overflow risk with sum for large n</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Two approaches. Sum formula: n*(n+1)/2 is the Gaussian formula for sum 1..n. Missing = expected - actual sum. Simple, O(1) space. XOR approach: x^x = 0, so XOR all 1..n with all array elements — matching pairs cancel, only the missing number remains. XOR is safer for very large n where sum might overflow long. I'd mention both and let them choose."</div>
+  </div>
+</div>
+
+<!-- ===== Q20 TWO SUM ===== -->
+<div class="q-card" id="q20">
+  <div class="q-hdr"><div class="q-num">20</div><div class="q-title">Two Sum — find indices of pair adding to target</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox"><div class="mtitle">✅ HashMap — O(n) time, O(n) space</div>
+<pre><span class="kw">public static</span> (<span class="kw">int</span>, <span class="kw">int</span>) <span class="fn">TwoSum</span>(<span class="kw">int</span>[] <span class="prop">nums</span>, <span class="kw">int</span> <span class="prop">target</span>)
+{
+    <span class="kw">var</span> <span class="prop">map</span> = <span class="kw">new</span> <span class="typ">Dictionary</span>&lt;<span class="kw">int</span>,<span class="kw">int</span>&gt;(); <span class="cm">// val → index</span>
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="num">0</span>; <span class="prop">i</span>&lt;<span class="prop">nums</span>.<span class="prop">Length</span>; <span class="prop">i</span>++)
+    {
+        <span class="kw">int</span> <span class="prop">complement</span> = <span class="prop">target</span> - <span class="prop">nums</span>[<span class="prop">i</span>];
+        <span class="kw">if</span> (<span class="prop">map</span>.<span class="fn">TryGetValue</span>(<span class="prop">complement</span>, <span class="kw">out int</span> <span class="prop">j</span>))
+            <span class="kw">return</span> (<span class="prop">j</span>, <span class="prop">i</span>);
+        <span class="prop">map</span>[<span class="prop">nums</span>[<span class="prop">i</span>]] = <span class="prop">i</span>;
+    }
+    <span class="kw">return</span> (-<span class="num">1</span>,-<span class="num">1</span>);
+}
+<span class="cm">// nums=[2,7,11,15], target=9
+// i=0: complement=7, not seen. map={2:0}
+// i=1: complement=2, found at 0! → (0,1) ✅</span></pre>
+    </div>
+    <div class="mbox m2"><div class="mtitle">Three Sum — extension (sorted + two pointer)</div>
+<pre><span class="kw">public static</span> <span class="typ">List</span>&lt;(<span class="kw">int</span>,<span class="kw">int</span>,<span class="kw">int</span>)&gt; <span class="fn">ThreeSum</span>(<span class="kw">int</span>[] <span class="prop">nums</span>)
+{
+    <span class="kw">var</span> <span class="prop">result</span> = <span class="kw">new</span> <span class="typ">List</span>&lt;(<span class="kw">int</span>,<span class="kw">int</span>,<span class="kw">int</span>)&gt;();
+    <span class="typ">Array</span>.<span class="fn">Sort</span>(<span class="prop">nums</span>);
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="num">0</span>; <span class="prop">i</span>&lt;<span class="prop">nums</span>.<span class="prop">Length</span>-<span class="num">2</span>; <span class="prop">i</span>++)
+    {
+        <span class="kw">int</span> <span class="prop">l</span>=<span class="prop">i</span>+<span class="num">1</span>, <span class="prop">r</span>=<span class="prop">nums</span>.<span class="prop">Length</span>-<span class="num">1</span>;
+        <span class="kw">while</span> (<span class="prop">l</span>&lt;<span class="prop">r</span>)
+        {
+            <span class="kw">int</span> <span class="prop">s</span>=<span class="prop">nums</span>[<span class="prop">i</span>]+<span class="prop">nums</span>[<span class="prop">l</span>]+<span class="prop">nums</span>[<span class="prop">r</span>];
+            <span class="kw">if</span>      (<span class="prop">s</span>==<span class="num">0</span>) { <span class="prop">result</span>.<span class="fn">Add</span>((<span class="prop">nums</span>[<span class="prop">i</span>],<span class="prop">nums</span>[<span class="prop">l</span>],<span class="prop">nums</span>[<span class="prop">r</span>])); <span class="prop">l</span>++; <span class="prop">r</span>--; }
+            <span class="kw">else if</span> (<span class="prop">s</span>&lt;<span class="num">0</span>) <span class="prop">l</span>++;
+            <span class="kw">else</span>           <span class="prop">r</span>--;
+        }
+    }
+    <span class="kw">return</span> <span class="prop">result</span>;
+}</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Classic problem. Brute force is O(n²) — nested loops. Optimal: HashMap stores {value → index}. For each number, compute complement (target - current), check if it's already in map. Single pass! The key insight: don't look forward for the pair, look backward using the hash map. ThreeSum extends this: sort first, then fix one element and use two-pointer for the remaining pair — O(n²) total."</div>
+  </div>
+</div>
+
+<!-- ===== Q21 MAX SUBARRAY ===== -->
+<div class="q-card" id="q21">
+  <div class="q-hdr"><div class="q-num">21</div><div class="q-title">Maximum Subarray Sum — Kadane's Algorithm</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="hint"><div class="lbl">💡 Problem</div>Given [-2,1,-3,4,-1,2,1,-5,4] → max subarray is [4,-1,2,1] = 6</div>
+    <div class="mbox"><div class="mtitle">✅ Kadane's Algorithm — O(n) O(1)</div>
+<pre><span class="kw">public static int</span> <span class="fn">MaxSubarraySum</span>(<span class="kw">int</span>[] <span class="prop">nums</span>)
+{
+    <span class="kw">int</span> <span class="prop">maxSoFar</span>    = <span class="prop">nums</span>[<span class="num">0</span>];
+    <span class="kw">int</span> <span class="prop">maxEndingHere</span> = <span class="prop">nums</span>[<span class="num">0</span>];
+
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="num">1</span>; <span class="prop">i</span>&lt;<span class="prop">nums</span>.<span class="prop">Length</span>; <span class="prop">i</span>++)
+    {
+        <span class="cm">// extend current subarray OR start fresh</span>
+        <span class="prop">maxEndingHere</span> = <span class="typ">Math</span>.<span class="fn">Max</span>(<span class="prop">nums</span>[<span class="prop">i</span>],
+                         <span class="prop">maxEndingHere</span> + <span class="prop">nums</span>[<span class="prop">i</span>]);
+        <span class="prop">maxSoFar</span> = <span class="typ">Math</span>.<span class="fn">Max</span>(<span class="prop">maxSoFar</span>, <span class="prop">maxEndingHere</span>);
+    }
+    <span class="kw">return</span> <span class="prop">maxSoFar</span>;
+}
+<span class="cm">// [-2,1,-3,4,-1,2,1,-5,4] → 6
+// Track: maxEndingHere = -2,1,-2,4,3,5,6,1,5
+//        maxSoFar      = -2,1, 1,4,4,5,6,6,6</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer — Kadane's insight</div>"At each position, decide: extend the previous subarray OR start a new subarray from current element. If maxEndingHere goes negative, it's better to start fresh — negative prefix only hurts the sum. O(n) single pass, O(1) space. This is Dynamic Programming — current decision based on previous optimal state. Variant: also track start/end indices to return the actual subarray."</div>
+  </div>
+</div>
+
+<!-- ===== Q22 BUBBLE SORT ===== -->
+<div class="q-card" id="q22">
+  <div class="q-hdr"><div class="q-num">22</div><div class="q-title">Bubble Sort + Selection Sort + Insertion Sort</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox"><div class="mtitle">Bubble Sort — O(n²) with early exit optimization</div>
+<pre><span class="kw">public static void</span> <span class="fn">BubbleSort</span>(<span class="kw">int</span>[] <span class="prop">arr</span>)
+{
+    <span class="kw">int</span> <span class="prop">n</span> = <span class="prop">arr</span>.<span class="prop">Length</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="num">0</span>; <span class="prop">i</span>&lt;<span class="prop">n</span>-<span class="num">1</span>; <span class="prop">i</span>++)
+    {
+        <span class="kw">bool</span> <span class="prop">swapped</span> = <span class="kw">false</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">j</span>=<span class="num">0</span>; <span class="prop">j</span>&lt;<span class="prop">n</span>-<span class="prop">i</span>-<span class="num">1</span>; <span class="prop">j</span>++)
+            <span class="kw">if</span> (<span class="prop">arr</span>[<span class="prop">j</span>] &gt; <span class="prop">arr</span>[<span class="prop">j</span>+<span class="num">1</span>])
+            {
+                (<span class="prop">arr</span>[<span class="prop">j</span>], <span class="prop">arr</span>[<span class="prop">j</span>+<span class="num">1</span>]) = (<span class="prop">arr</span>[<span class="prop">j</span>+<span class="num">1</span>], <span class="prop">arr</span>[<span class="prop">j</span>]);
+                <span class="prop">swapped</span> = <span class="kw">true</span>;
+            }
+        <span class="kw">if</span> (!<span class="prop">swapped</span>) <span class="kw">break</span>; <span class="cm">// already sorted!</span>
+    }
+}</pre>
+    </div>
+    <div class="mbox m2"><div class="mtitle">Insertion Sort — Best for nearly sorted data</div>
+<pre><span class="kw">public static void</span> <span class="fn">InsertionSort</span>(<span class="kw">int</span>[] <span class="prop">arr</span>)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="num">1</span>; <span class="prop">i</span>&lt;<span class="prop">arr</span>.<span class="prop">Length</span>; <span class="prop">i</span>++)
+    {
+        <span class="kw">int</span> <span class="prop">key</span> = <span class="prop">arr</span>[<span class="prop">i</span>];
+        <span class="kw">int</span> <span class="prop">j</span>   = <span class="prop">i</span> - <span class="num">1</span>;
+        <span class="kw">while</span> (<span class="prop">j</span> &gt;= <span class="num">0</span> &amp;&amp; <span class="prop">arr</span>[<span class="prop">j</span>] &gt; <span class="prop">key</span>)
+        {
+            <span class="prop">arr</span>[<span class="prop">j</span>+<span class="num">1</span>] = <span class="prop">arr</span>[<span class="prop">j</span>];
+            <span class="prop">j</span>--;
+        }
+        <span class="prop">arr</span>[<span class="prop">j</span>+<span class="num">1</span>] = <span class="prop">key</span>;
+    }
+}
+<span class="cm">// Best case O(n) when nearly sorted — great for real data!</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Comparison Table</div>"Bubble Sort: O(n²) worst, O(n) best (with swap flag). Each pass 'bubbles' the largest to end. Insertion Sort: O(n²) worst, O(n) best — insert each element into its correct position in the sorted left part. Best for nearly-sorted data — faster in practice. For interviews, code Bubble Sort but mention C#'s Array.Sort() uses an introsort (quicksort + heapsort + insertion sort hybrid) — O(n log n) average."</div>
+  </div>
+</div>
+
+<!-- ===== Q23 BINARY SEARCH ===== -->
+<div class="q-card" id="q23">
+  <div class="q-hdr"><div class="q-num">23</div><div class="q-title">Binary Search — Iterative + Recursive</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox"><div class="mtitle">✅ Iterative — No stack overflow risk</div>
+<pre><span class="kw">public static int</span> <span class="fn">BinarySearch</span>(<span class="kw">int</span>[] <span class="prop">arr</span>, <span class="kw">int</span> <span class="prop">target</span>)
+{
+    <span class="kw">int</span> <span class="prop">low</span> = <span class="num">0</span>, <span class="prop">high</span> = <span class="prop">arr</span>.<span class="prop">Length</span> - <span class="num">1</span>;
+    <span class="kw">while</span> (<span class="prop">low</span> &lt;= <span class="prop">high</span>)
+    {
+        <span class="cm">// Avoid overflow: mid = low + (high-low)/2</span>
+        <span class="kw">int</span> <span class="prop">mid</span> = <span class="prop">low</span> + (<span class="prop">high</span> - <span class="prop">low</span>) / <span class="num">2</span>;
+        <span class="kw">if</span>      (<span class="prop">arr</span>[<span class="prop">mid</span>] == <span class="prop">target</span>) <span class="kw">return</span> <span class="prop">mid</span>;
+        <span class="kw">else if</span> (<span class="prop">arr</span>[<span class="prop">mid</span>] &lt;  <span class="prop">target</span>) <span class="prop">low</span>  = <span class="prop">mid</span> + <span class="num">1</span>;
+        <span class="kw">else</span>                            <span class="prop">high</span> = <span class="prop">mid</span> - <span class="num">1</span>;
+    }
+    <span class="kw">return</span> -<span class="num">1</span>; <span class="cm">// not found</span>
+}
+<span class="cm">// arr=[1,3,5,7,9,11], target=7 → index 3
+// Steps: mid=5(index 2)→too small, mid=9(4)→too big, mid=7(3)✅</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Critical Bug to mention</div>"Common bug: mid = (low + high) / 2 can INTEGER OVERFLOW when both low and high are near Int.MaxValue. Correct: mid = low + (high - low) / 2. Array MUST be sorted. O(log n) — halves search space each step. Log₂(1 million) = ~20 steps. Prefer Array.BinarySearch() in production."</div>
+  </div>
+</div>
+
+<!-- ===== Q24 STACK ===== -->
+<div class="q-card" id="q24">
+  <div class="q-hdr"><div class="q-num">24</div><div class="q-title">Implement a Stack using Array — Push, Pop, Peek</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">public class</span> <span class="typ">MyStack</span>&lt;<span class="typ">T</span>&gt;
+{
+    <span class="kw">private</span> <span class="typ">T</span>[] <span class="prop">_data</span>;
+    <span class="kw">private int</span> <span class="prop">_top</span> = -<span class="num">1</span>;
+
+    <span class="kw">public</span> <span class="fn">MyStack</span>(<span class="kw">int</span> <span class="prop">capacity</span> = <span class="num">16</span>)
+        =&gt; <span class="prop">_data</span> = <span class="kw">new</span> <span class="typ">T</span>[<span class="prop">capacity</span>];
+
+    <span class="kw">public bool</span> <span class="prop">IsEmpty</span> =&gt; <span class="prop">_top</span> == -<span class="num">1</span>;
+    <span class="kw">public int</span>  <span class="prop">Count</span>   =&gt; <span class="prop">_top</span> + <span class="num">1</span>;
+
+    <span class="kw">public void</span> <span class="fn">Push</span>(<span class="typ">T</span> <span class="prop">item</span>)
+    {
+        <span class="kw">if</span> (<span class="prop">_top</span> == <span class="prop">_data</span>.<span class="prop">Length</span>-<span class="num">1</span>) <span class="fn">Resize</span>();
+        <span class="prop">_data</span>[++<span class="prop">_top</span>] = <span class="prop">item</span>;
+    }
+    <span class="kw">public</span> <span class="typ">T</span> <span class="fn">Pop</span>()
+    {
+        <span class="kw">if</span> (<span class="prop">IsEmpty</span>) <span class="kw">throw new</span> <span class="typ">InvalidOperationException</span>(<span class="str">"Empty"</span>);
+        <span class="kw">var</span> <span class="prop">item</span> = <span class="prop">_data</span>[<span class="prop">_top</span>];
+        <span class="prop">_data</span>[<span class="prop">_top</span>--] = <span class="kw">default</span>!; <span class="cm">// GC friendly</span>
+        <span class="kw">return</span> <span class="prop">item</span>;
+    }
+    <span class="kw">public</span> <span class="typ">T</span> <span class="fn">Peek</span>()
+    {
+        <span class="kw">if</span> (<span class="prop">IsEmpty</span>) <span class="kw">throw new</span> <span class="typ">InvalidOperationException</span>(<span class="str">"Empty"</span>);
+        <span class="kw">return</span> <span class="prop">_data</span>[<span class="prop">_top</span>];
+    }
+    <span class="kw">private void</span> <span class="fn">Resize</span>()
+    {
+        <span class="kw">var</span> <span class="prop">bigger</span> = <span class="kw">new</span> <span class="typ">T</span>[<span class="prop">_data</span>.<span class="prop">Length</span> * <span class="num">2</span>];
+        <span class="typ">Array</span>.<span class="fn">Copy</span>(<span class="prop">_data</span>, <span class="prop">bigger</span>, <span class="prop">_data</span>.<span class="prop">Length</span>);
+        <span class="prop">_data</span> = <span class="prop">bigger</span>;
+    }
+}</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Generic Stack<T> using array with dynamic resize (double when full, like List<T> internally). _top=-1 means empty. Push increments top first, Pop reads then decrements. Setting popped slot to default! allows GC to collect objects (important for reference types). Resize doubles capacity — amortized O(1) push. This is essentially how .NET's Stack<T> works internally."</div>
+  </div>
+</div>
+
+<!-- ===== Q25 QUEUE WITH 2 STACKS ===== -->
+<div class="q-card" id="q25">
+  <div class="q-hdr"><div class="q-num">25</div><div class="q-title">Implement Queue using Two Stacks</div><span class="tag hard">Hard</span></div>
+  <div class="q-body">
+    <div class="hint"><div class="lbl">💡 Famous Interview Problem</div>Stack = LIFO, Queue = FIFO. Use two stacks to simulate queue behavior.</div>
+    <div class="mbox">
+<pre><span class="kw">public class</span> <span class="typ">MyQueue</span>&lt;<span class="typ">T</span>&gt;
+{
+    <span class="kw">private</span> <span class="typ">Stack</span>&lt;<span class="typ">T</span>&gt; <span class="prop">_inbox</span>  = <span class="kw">new</span>();
+    <span class="kw">private</span> <span class="typ">Stack</span>&lt;<span class="typ">T</span>&gt; <span class="prop">_outbox</span> = <span class="kw">new</span>();
+
+    <span class="kw">public void</span> <span class="fn">Enqueue</span>(<span class="typ">T</span> <span class="prop">item</span>)
+        =&gt; <span class="prop">_inbox</span>.<span class="fn">Push</span>(<span class="prop">item</span>);  <span class="cm">// always push to inbox</span>
+
+    <span class="kw">public</span> <span class="typ">T</span> <span class="fn">Dequeue</span>()
+    {
+        <span class="fn">Refill</span>();
+        <span class="kw">return</span> <span class="prop">_outbox</span>.<span class="fn">Pop</span>();
+    }
+    <span class="kw">public</span> <span class="typ">T</span> <span class="fn">Peek</span>() { <span class="fn">Refill</span>(); <span class="kw">return</span> <span class="prop">_outbox</span>.<span class="fn">Peek</span>(); }
+
+    <span class="kw">private void</span> <span class="fn">Refill</span>()
+    {
+        <span class="kw">if</span> (<span class="prop">_outbox</span>.<span class="prop">Count</span> &gt; <span class="num">0</span>) <span class="kw">return</span>; <span class="cm">// outbox not empty</span>
+        <span class="kw">if</span> (<span class="prop">_inbox</span>.<span class="prop">Count</span> == <span class="num">0</span>)
+            <span class="kw">throw new</span> <span class="typ">InvalidOperationException</span>(<span class="str">"Empty"</span>);
+        <span class="cm">// Transfer inbox → outbox (reverses order = FIFO!)</span>
+        <span class="kw">while</span> (<span class="prop">_inbox</span>.<span class="prop">Count</span> &gt; <span class="num">0</span>)
+            <span class="prop">_outbox</span>.<span class="fn">Push</span>(<span class="prop">_inbox</span>.<span class="fn">Pop</span>());
+    }
+}
+<span class="cm">// Enqueue: 1,2,3
+// Dequeue: 1 (not 3!) ← two stacks reverse the reversal!</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Insight</div>"Transfer only when outbox is empty — amortized O(1) per operation. Inbox is for writing, outbox is for reading. When reading: if outbox empty, pour inbox into outbox (reverses order). A single element moves at most twice (once in, once out). Total O(n) for n operations = amortized O(1) each. This is the 'lazy evaluation' principle — defer work until necessary."</div>
+  </div>
+</div>
+
+<!-- ===== Q26 BALANCED BRACKETS ===== -->
+<div class="q-card" id="q26">
+  <div class="q-hdr"><div class="q-num">26</div><div class="q-title">Balanced Brackets — Valid Parentheses</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">public static bool</span> <span class="fn">IsBalanced</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="kw">var</span> <span class="prop">stack</span> = <span class="kw">new</span> <span class="typ">Stack</span>&lt;<span class="kw">char</span>&gt;();
+    <span class="kw">var</span> <span class="prop">pairs</span> = <span class="kw">new</span> <span class="typ">Dictionary</span>&lt;<span class="kw">char</span>,<span class="kw">char</span>&gt;
+    {
+        { <span class="str">')'</span>, <span class="str">'('</span> }, { <span class="str">']'</span>, <span class="str">'['</span> }, { <span class="str">'}'</span>, <span class="str">'{'</span> }
+    };
+
+    <span class="kw">foreach</span> (<span class="kw">char</span> <span class="prop">c</span> <span class="kw">in</span> <span class="prop">s</span>)
+    {
+        <span class="kw">if</span> (<span class="str">"([{"</span>.<span class="fn">Contains</span>(<span class="prop">c</span>))
+            <span class="prop">stack</span>.<span class="fn">Push</span>(<span class="prop">c</span>);
+        <span class="kw">else if</span> (<span class="prop">pairs</span>.<span class="fn">ContainsKey</span>(<span class="prop">c</span>))
+        {
+            <span class="kw">if</span> (<span class="prop">stack</span>.<span class="prop">Count</span>==<span class="num">0</span> || <span class="prop">stack</span>.<span class="fn">Pop</span>() != <span class="prop">pairs</span>[<span class="prop">c</span>])
+                <span class="kw">return false</span>;
+        }
+    }
+    <span class="kw">return</span> <span class="prop">stack</span>.<span class="prop">Count</span> == <span class="num">0</span>; <span class="cm">// stack must be empty</span>
+}
+<span class="cm">// "()[]{}"  → true
+// "([)]"    → false
+// "{[()]}"  → true
+// "((("     → false (stack not empty)</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Stack is the natural data structure — push open brackets, pop and verify when closing bracket encountered. The pairs dictionary maps closing to opening. Two error conditions: closing bracket when stack empty (no matching open), or top of stack doesn't match. Final check: stack must be empty (all opens were closed). ZenCampus: same logic validates JSON/XML template expressions."</div>
+  </div>
+</div>
+
+<!-- ===== Q27 GROUP ANAGRAMS ===== -->
+<div class="q-card" id="q27">
+  <div class="q-hdr"><div class="q-num">27</div><div class="q-title">Group Anagrams Together — ["eat","tea","tan","ate","nat","bat"]</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">public static</span> <span class="typ">List</span>&lt;<span class="typ">List</span>&lt;<span class="kw">string</span>&gt;&gt; <span class="fn">GroupAnagrams</span>(<span class="kw">string</span>[] <span class="prop">words</span>)
+{
+    <span class="kw">var</span> <span class="prop">map</span> = <span class="kw">new</span> <span class="typ">Dictionary</span>&lt;<span class="kw">string</span>, <span class="typ">List</span>&lt;<span class="kw">string</span>&gt;&gt;();
+
+    <span class="kw">foreach</span> (<span class="kw">var</span> <span class="prop">word</span> <span class="kw">in</span> <span class="prop">words</span>)
+    {
+        <span class="cm">// Sorted word is the canonical key</span>
+        <span class="kw">var</span> <span class="prop">key</span> = <span class="kw">new string</span>(<span class="prop">word</span>.<span class="fn">OrderBy</span>(<span class="prop">c</span>=&gt;<span class="prop">c</span>).<span class="fn">ToArray</span>());
+        <span class="kw">if</span> (!<span class="prop">map</span>.<span class="fn">ContainsKey</span>(<span class="prop">key</span>))
+            <span class="prop">map</span>[<span class="prop">key</span>] = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="kw">string</span>&gt;();
+        <span class="prop">map</span>[<span class="prop">key</span>].<span class="fn">Add</span>(<span class="prop">word</span>);
+    }
+    <span class="kw">return</span> <span class="prop">map</span>.<span class="prop">Values</span>.<span class="fn">ToList</span>();
+}
+<span class="cm">// ["eat","tea","ate"] → sorted key = "aet"
+// ["tan","nat"]       → sorted key = "ant"
+// ["bat"]             → sorted key = "abt"
+// Output: [["eat","tea","ate"],["tan","nat"],["bat"]]</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Insight</div>"Sorted string is the canonical key — all anagrams sort to the same string ('eat', 'tea', 'ate' all sort to 'aet'). Group by this key. O(n * k log k) where k is avg word length. LINQ version: words.GroupBy(w => new string(w.OrderBy(c=>c).ToArray()))"</div>
+  </div>
+</div>
+
+<!-- ===== Q28 LINQ GROUPBY ===== -->
+<div class="q-card" id="q28">
+  <div class="q-hdr"><div class="q-num">28</div><div class="q-title">LINQ — GroupBy Aggregations on ZenCampus Data</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox"><div class="mtitle">Student Fee Analysis with LINQ</div>
+<pre><span class="kw">var</span> <span class="prop">students</span> = <span class="kw">new</span>[] {
+    <span class="kw">new</span> { <span class="prop">Name</span>=<span class="str">"Guru"</span>,  <span class="prop">Class</span>=<span class="str">"10A"</span>, <span class="prop">Marks</span>=<span class="num">90</span> },
+    <span class="kw">new</span> { <span class="prop">Name</span>=<span class="str">"Priya"</span>, <span class="prop">Class</span>=<span class="str">"10A"</span>, <span class="prop">Marks</span>=<span class="num">85</span> },
+    <span class="kw">new</span> { <span class="prop">Name</span>=<span class="str">"Kumar"</span>, <span class="prop">Class</span>=<span class="str">"10B"</span>, <span class="prop">Marks</span>=<span class="num">78</span> },
+    <span class="kw">new</span> { <span class="prop">Name</span>=<span class="str">"Meena"</span>, <span class="prop">Class</span>=<span class="str">"10B"</span>, <span class="prop">Marks</span>=<span class="num">92</span> },
+};
+
+<span class="cm">// Average marks per class</span>
+<span class="kw">var</span> <span class="prop">classAvg</span> = <span class="prop">students</span>
+    .<span class="fn">GroupBy</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Class</span>)
+    .<span class="fn">Select</span>(<span class="prop">g</span> =&gt; <span class="kw">new</span> {
+        <span class="prop">Class</span>   = <span class="prop">g</span>.<span class="prop">Key</span>,
+        <span class="prop">Average</span> = <span class="prop">g</span>.<span class="fn">Average</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Marks</span>),
+        <span class="prop">TopStudent</span> = <span class="prop">g</span>.<span class="fn">MaxBy</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Marks</span>).<span class="prop">Name</span>
+    });
+<span class="cm">// 10A: Avg=87.5, Top=Guru
+// 10B: Avg=85.0, Top=Meena</span>
+
+<span class="cm">// Students above class average (complex LINQ)</span>
+<span class="kw">var</span> <span class="prop">aboveAvg</span> = <span class="kw">from</span> <span class="prop">s</span> <span class="kw">in</span> <span class="prop">students</span>
+               <span class="kw">let</span> <span class="prop">avg</span> = <span class="prop">students</span>
+                   .<span class="fn">Where</span>(<span class="prop">x</span> =&gt; <span class="prop">x</span>.<span class="prop">Class</span> == <span class="prop">s</span>.<span class="prop">Class</span>)
+                   .<span class="fn">Average</span>(<span class="prop">x</span> =&gt; <span class="prop">x</span>.<span class="prop">Marks</span>)
+               <span class="kw">where</span> <span class="prop">s</span>.<span class="prop">Marks</span> &gt; <span class="prop">avg</span>
+               <span class="kw">select new</span> { <span class="prop">s</span>.<span class="prop">Name</span>, <span class="prop">s</span>.<span class="prop">Marks</span>, <span class="prop">s</span>.<span class="prop">Class</span> };</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"GroupBy in LINQ groups elements by a key — each group is IGrouping<TKey,T>. Chaining aggregates (Average, Max, Count, Sum) on each group is the standard BI query pattern. let keyword in query syntax creates a computed sub-expression. MaxBy() is .NET 6+ — before that use OrderByDescending().First(). ZenCampus reporting module uses exactly this pattern for class-wise analytics."</div>
+  </div>
+</div>
+
+<!-- ===== Q29 FLATTEN ===== -->
+<div class="q-card" id="q29">
+  <div class="q-hdr"><div class="q-num">29</div><div class="q-title">Flatten Nested List — SelectMany + Recursive</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="cm">// Simple: List of Lists → flat list</span>
+<span class="kw">var</span> <span class="prop">nested</span> = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="typ">List</span>&lt;<span class="kw">int</span>&gt;&gt; {
+    <span class="kw">new</span> { <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span> }, <span class="kw">new</span> { <span class="num">4</span>,<span class="num">5</span> }, <span class="kw">new</span> { <span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span> }
+};
+<span class="kw">var</span> <span class="prop">flat</span> = <span class="prop">nested</span>.<span class="fn">SelectMany</span>(<span class="prop">x</span> =&gt; <span class="prop">x</span>).<span class="fn">ToList</span>();
+<span class="cm">// → [1,2,3,4,5,6,7,8]</span>
+
+<span class="cm">// Deeply nested: custom recursive flatten</span>
+<span class="kw">static</span> <span class="typ">IEnumerable</span>&lt;<span class="kw">int</span>&gt; <span class="fn">FlattenDeep</span>(
+    <span class="typ">IEnumerable</span>&lt;<span class="kw">object</span>&gt; <span class="prop">source</span>)
+{
+    <span class="kw">foreach</span> (<span class="kw">var</span> <span class="prop">item</span> <span class="kw">in</span> <span class="prop">source</span>)
+    {
+        <span class="kw">if</span> (<span class="prop">item</span> <span class="kw">is</span> <span class="kw">int</span> <span class="prop">n</span>)
+            <span class="kw">yield return</span> <span class="prop">n</span>;
+        <span class="kw">else if</span> (<span class="prop">item</span> <span class="kw">is</span> <span class="typ">IEnumerable</span>&lt;<span class="kw">object</span>&gt; <span class="prop">inner</span>)
+            <span class="kw">foreach</span> (<span class="kw">var</span> <span class="prop">x</span> <span class="kw">in</span> <span class="fn">FlattenDeep</span>(<span class="prop">inner</span>))
+                <span class="kw">yield return</span> <span class="prop">x</span>;
+    }
+}
+<span class="cm">// .NET 6+: IEnumerable.Chunk(3) splits into batches of 3!</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Point</div>"SelectMany is LINQ's flat-map operator — it projects each element to a sequence and flattens the results. Equivalent to two nested foreach loops. For ZenCampus: flatten class-wise student lists into one report list. Recursive flatten uses pattern matching (is int n, is IEnumerable) — C# 7+ switch expression or is-patterns make this clean."</div>
+  </div>
+</div>
+
+<!-- ===== Q30 CUSTOM SORT ===== -->
+<div class="q-card" id="q30">
+  <div class="q-hdr"><div class="q-num">30</div><div class="q-title">Custom Sort — Sort students by Class ASC, Marks DESC</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">var</span> <span class="prop">sorted</span> = <span class="prop">students</span>
+    .<span class="fn">OrderBy</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Class</span>)
+    .<span class="fn">ThenByDescending</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Marks</span>)
+    .<span class="fn">ThenBy</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Name</span>)  <span class="cm">// tie-break by name</span>
+    .<span class="fn">ToList</span>();
+
+<span class="cm">// IComparer for complex sort</span>
+<span class="kw">var</span> <span class="prop">comp</span> = <span class="typ">Comparer</span>&lt;<span class="typ">Student</span>&gt;.<span class="fn">Create</span>((<span class="prop">x</span>, <span class="prop">y</span>) =&gt;
+{
+    <span class="kw">int</span> <span class="prop">c</span> = <span class="prop">x</span>.<span class="prop">Class</span>.<span class="fn">CompareTo</span>(<span class="prop">y</span>.<span class="prop">Class</span>);
+    <span class="kw">return</span> <span class="prop">c</span> != <span class="num">0</span> ? <span class="prop">c</span> : <span class="prop">y</span>.<span class="prop">Marks</span>.<span class="fn">CompareTo</span>(<span class="prop">x</span>.<span class="prop">Marks</span>);
+});
+
+<span class="cm">// Sort by Roman numerals, custom grade order</span>
+<span class="kw">var</span> <span class="prop">gradeOrder</span> = <span class="kw">new</span>[] { <span class="str">"A+"</span>, <span class="str">"A"</span>, <span class="str">"B+"</span>, <span class="str">"B"</span>, <span class="str">"C"</span> };
+<span class="kw">var</span> <span class="prop">byGrade</span> = <span class="prop">results</span>
+    .<span class="fn">OrderBy</span>(<span class="prop">r</span> =&gt; <span class="typ">Array</span>.<span class="fn">IndexOf</span>(<span class="prop">gradeOrder</span>, <span class="prop">r</span>.<span class="prop">Grade</span>));</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Point</div>"LINQ OrderBy/ThenBy is clean for multi-key sort. Always stable — equal elements preserve original order. For custom grade order, Array.IndexOf() converts the grade to a rank number — sort by rank. IComparer.Create() with lambda avoids creating a full class. In production, implement IComparable<T> on the model class."</div>
+  </div>
+</div>
+
+<!-- ===== Q31 INTERSECTION ===== -->
+<div class="q-card" id="q31">
+  <div class="q-hdr"><div class="q-num">31</div><div class="q-title">Array Intersection, Union, Difference using LINQ</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">int</span>[] <span class="prop">a</span> = { <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span> };
+<span class="kw">int</span>[] <span class="prop">b</span> = { <span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span> };
+
+<span class="cm">// Intersection (common elements)</span>
+<span class="kw">var</span> <span class="prop">intersection</span> = <span class="prop">a</span>.<span class="fn">Intersect</span>(<span class="prop">b</span>).<span class="fn">ToList</span>();
+<span class="cm">// → [3,4,5]
+
+// Union (all, no duplicates)</span>
+<span class="kw">var</span> <span class="prop">union</span> = <span class="prop">a</span>.<span class="fn">Union</span>(<span class="prop">b</span>).<span class="fn">ToList</span>();
+<span class="cm">// → [1,2,3,4,5,6,7]
+
+// Difference (in a but not in b)</span>
+<span class="kw">var</span> <span class="prop">diff</span> = <span class="prop">a</span>.<span class="fn">Except</span>(<span class="prop">b</span>).<span class="fn">ToList</span>();
+<span class="cm">// → [1,2]
+
+// ZenCampus: students in Class A but not attending Section B</span>
+<span class="kw">var</span> <span class="prop">absentees</span> = <span class="prop">classAStudents</span>
+    .<span class="fn">Except</span>(<span class="prop">sectionBAttendance</span>)
+    .<span class="fn">ToList</span>();</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Q32 GENERIC STACK ===== -->
+<div class="q-card" id="q32">
+  <div class="q-hdr"><div class="q-num">32</div><div class="q-title">Generic Repository Pattern — T constraints</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="cm">// Generic base repository — ZenCampus pattern</span>
+<span class="kw">public interface</span> <span class="typ">IRepository</span>&lt;<span class="typ">T</span>&gt; <span class="kw">where</span> <span class="typ">T</span> : <span class="kw">class</span>
+{
+    <span class="typ">Task</span>&lt;<span class="typ">T</span>?&gt;         <span class="fn">GetByIdAsync</span>(<span class="kw">int</span> <span class="prop">id</span>);
+    <span class="typ">Task</span>&lt;<span class="typ">IEnumerable</span>&lt;<span class="typ">T</span>&gt;&gt; <span class="fn">GetAllAsync</span>();
+    <span class="typ">Task</span>             <span class="fn">AddAsync</span>(<span class="typ">T</span> <span class="prop">entity</span>);
+    <span class="typ">Task</span>             <span class="fn">UpdateAsync</span>(<span class="typ">T</span> <span class="prop">entity</span>);
+    <span class="typ">Task</span>             <span class="fn">DeleteAsync</span>(<span class="kw">int</span> <span class="prop">id</span>);
+}
+
+<span class="kw">public class</span> <span class="typ">GenericRepository</span>&lt;<span class="typ">T</span>&gt; : <span class="typ">IRepository</span>&lt;<span class="typ">T</span>&gt;
+    <span class="kw">where</span> <span class="typ">T</span> : <span class="kw">class</span>, <span class="typ">IEntity</span>  <span class="cm">// must have Id</span>
+{
+    <span class="kw">protected readonly</span> <span class="typ">AppDbContext</span> <span class="prop">_ctx</span>;
+    <span class="kw">public</span> <span class="fn">GenericRepository</span>(<span class="typ">AppDbContext</span> <span class="prop">ctx</span>)
+        =&gt; <span class="prop">_ctx</span> = <span class="prop">ctx</span>;
+
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">T</span>?&gt; <span class="fn">GetByIdAsync</span>(<span class="kw">int</span> <span class="prop">id</span>)
+        =&gt; <span class="kw">await</span> <span class="prop">_ctx</span>.<span class="fn">Set</span>&lt;<span class="typ">T</span>&gt;().<span class="fn">FindAsync</span>(<span class="prop">id</span>);
+
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IEnumerable</span>&lt;<span class="typ">T</span>&gt;&gt; <span class="fn">GetAllAsync</span>()
+        =&gt; <span class="kw">await</span> <span class="prop">_ctx</span>.<span class="fn">Set</span>&lt;<span class="typ">T</span>&gt;().<span class="fn">ToListAsync</span>();
+
+    <span class="kw">public async</span> <span class="typ">Task</span> <span class="fn">AddAsync</span>(<span class="typ">T</span> <span class="prop">entity</span>)
+    {
+        <span class="kw">await</span> <span class="prop">_ctx</span>.<span class="fn">Set</span>&lt;<span class="typ">T</span>&gt;().<span class="fn">AddAsync</span>(<span class="prop">entity</span>);
+        <span class="kw">await</span> <span class="prop">_ctx</span>.<span class="fn">SaveChangesAsync</span>();
+    }
+}</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Generic Repository reduces boilerplate — DbContext.Set<T>() returns the DbSet for any entity type. The 'where T : class' constraint prevents value types. 'where T : class, IEntity' adds a custom constraint ensuring all entities have an Id. In ZenCampus, Student, Staff, and Fee repositories all extend this — Add/Update/Delete/GetAll implemented once, entity-specific queries in child repositories."</div>
+  </div>
+</div>
+
+<!-- ===== Q33 SINGLETON ===== -->
+<div class="q-card" id="q33">
+  <div class="q-hdr"><div class="q-num">33</div><div class="q-title">Singleton Pattern — Thread-safe implementation</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox m2"><div class="mtitle">❌ Not thread-safe (wrong)</div>
+<pre><span class="cm">// WRONG — two threads can both find _instance==null!</span>
+<span class="kw">public class</span> <span class="typ">BadSingleton</span>
+{
+    <span class="kw">private static</span> <span class="typ">BadSingleton</span> <span class="prop">_instance</span>;
+    <span class="kw">public static</span> <span class="typ">BadSingleton</span> <span class="prop">Instance</span>
+        =&gt; <span class="prop">_instance</span> ??= <span class="kw">new</span> <span class="typ">BadSingleton</span>();
+}</pre>
+    </div>
+    <div class="mbox"><div class="mtitle">✅ Thread-safe — Lazy<T></div>
+<pre><span class="kw">public sealed class</span> <span class="typ">AppConfig</span>
+{
+    <span class="kw">private static readonly</span> <span class="typ">Lazy</span>&lt;<span class="typ">AppConfig</span>&gt; <span class="prop">_lazy</span>
+        = <span class="kw">new</span>(() =&gt; <span class="kw">new</span> <span class="typ">AppConfig</span>());
+
+    <span class="kw">public static</span> <span class="typ">AppConfig</span> <span class="prop">Instance</span>
+        =&gt; <span class="prop">_lazy</span>.<span class="prop">Value</span>;
+
+    <span class="kw">private</span> <span class="fn">AppConfig</span>() { }  <span class="cm">// private constructor</span>
+
+    <span class="kw">public string</span> <span class="prop">ApiBaseUrl</span> { <span class="kw">get</span>; <span class="kw">set</span>; }
+        = <span class="str">"https://api.zencampus.com"</span>;
+}
+<span class="cm">// Usage: AppConfig.Instance.ApiBaseUrl
+// Lazy<T> is thread-safe by default</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Lazy<T> is the modern C# way — thread-safe by default, lazy (created on first access), and clean. sealed prevents subclassing which could break the singleton guarantee. private constructor prevents external instantiation. Note: in ASP.NET Core, prefer DI container with AddSingleton<T>() — IoC containers handle thread-safe singleton lifecycle, easier to test."</div>
+  </div>
+</div>
+
+<!-- ===== Q34 BUILDER PATTERN ===== -->
+<div class="q-card" id="q34">
+  <div class="q-hdr"><div class="q-num">34</div><div class="q-title">Builder Pattern — Construct complex StudentAdmission object</div><span class="tag hard">Hard</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">public class</span> <span class="typ">Student</span>
+{
+    <span class="kw">public string</span> <span class="prop">Name</span>    { <span class="kw">get</span>; <span class="kw">init</span>; }
+    <span class="kw">public string</span> <span class="prop">Class</span>   { <span class="kw">get</span>; <span class="kw">init</span>; }
+    <span class="kw">public string</span> <span class="prop">Section</span> { <span class="kw">get</span>; <span class="kw">init</span>; }
+    <span class="kw">public string</span> <span class="prop">Contact</span> { <span class="kw">get</span>; <span class="kw">init</span>; }
+    <span class="kw">public bool</span>   <span class="prop">HasTransport</span> { <span class="kw">get</span>; <span class="kw">init</span>; }
+    <span class="kw">public bool</span>   <span class="prop">HasHostel</span>    { <span class="kw">get</span>; <span class="kw">init</span>; }
+}
+
+<span class="kw">public class</span> <span class="typ">StudentBuilder</span>
+{
+    <span class="kw">private string</span> <span class="prop">_name</span>, <span class="prop">_class</span>, <span class="prop">_section</span>, <span class="prop">_contact</span>;
+    <span class="kw">private bool</span>   <span class="prop">_transport</span>, <span class="prop">_hostel</span>;
+
+    <span class="kw">public</span> <span class="typ">StudentBuilder</span> <span class="fn">WithName</span>(<span class="kw">string</span> <span class="prop">n</span>)    { <span class="prop">_name</span>      = <span class="prop">n</span>; <span class="kw">return this</span>; }
+    <span class="kw">public</span> <span class="typ">StudentBuilder</span> <span class="fn">InClass</span>(<span class="kw">string</span> <span class="prop">c</span>)    { <span class="prop">_class</span>     = <span class="prop">c</span>; <span class="kw">return this</span>; }
+    <span class="kw">public</span> <span class="typ">StudentBuilder</span> <span class="fn">InSection</span>(<span class="kw">string</span> <span class="prop">s</span>)  { <span class="prop">_section</span>   = <span class="prop">s</span>; <span class="kw">return this</span>; }
+    <span class="kw">public</span> <span class="typ">StudentBuilder</span> <span class="fn">WithContact</span>(<span class="kw">string</span> <span class="prop">p</span>){ <span class="prop">_contact</span>   = <span class="prop">p</span>; <span class="kw">return this</span>; }
+    <span class="kw">public</span> <span class="typ">StudentBuilder</span> <span class="fn">WithTransport</span>()       { <span class="prop">_transport</span> = <span class="kw">true</span>; <span class="kw">return this</span>; }
+    <span class="kw">public</span> <span class="typ">StudentBuilder</span> <span class="fn">WithHostel</span>()          { <span class="prop">_hostel</span>    = <span class="kw">true</span>; <span class="kw">return this</span>; }
+
+    <span class="kw">public</span> <span class="typ">Student</span> <span class="fn">Build</span>()
+    {
+        <span class="kw">if</span> (<span class="kw">string</span>.<span class="fn">IsNullOrEmpty</span>(<span class="prop">_name</span>))
+            <span class="kw">throw new</span> <span class="typ">InvalidOperationException</span>(<span class="str">"Name required"</span>);
+        <span class="kw">return new</span> <span class="typ">Student</span> {
+            <span class="prop">Name</span>         = <span class="prop">_name</span>,
+            <span class="prop">Class</span>        = <span class="prop">_class</span>,
+            <span class="prop">Section</span>      = <span class="prop">_section</span>,
+            <span class="prop">Contact</span>      = <span class="prop">_contact</span>,
+            <span class="prop">HasTransport</span> = <span class="prop">_transport</span>,
+            <span class="prop">HasHostel</span>    = <span class="prop">_hostel</span>
+        };
+    }
+}
+
+<span class="cm">// Fluent usage</span>
+<span class="kw">var</span> <span class="prop">student</span> = <span class="kw">new</span> <span class="typ">StudentBuilder</span>()
+    .<span class="fn">WithName</span>(<span class="str">"Gurumoorthy"</span>)
+    .<span class="fn">InClass</span>(<span class="str">"10A"</span>)
+    .<span class="fn">InSection</span>(<span class="str">"A"</span>)
+    .<span class="fn">WithTransport</span>()
+    .<span class="fn">Build</span>();</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Builder separates construction from representation. Each setter returns 'this' for method chaining — fluent API. Build() validates required fields and constructs the immutable object. Prevents 'telescoping constructor' problem where you need 8 overloads for 8 optional params. In C#, record types with required properties + object initializers reduce need for Builder, but Builder is still valuable for complex validation logic during construction."</div>
+  </div>
+</div>
+
+</div>
+<footer>
+  <p>Part 2 of 3 · Q18–Q34 · Arrays, LINQ, Collections &amp; OOP Design Patterns</p>
+  <p style="margin-top:4px"><a href="PS_Part1_CSharp_StringNumbers.html" style="color:#e94560">← Part 1: String &amp; Number</a> &nbsp;|&nbsp; <a href="PS_Part3_SQL_Classic.html" style="color:#f39c12">→ Part 3: SQL Problems (Q35–Q50)</a></p>
+</footer>
+</body>
+</html>

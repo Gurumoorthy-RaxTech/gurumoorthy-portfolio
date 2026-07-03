@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 10 – SQL Server Performance | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#001a1a,#00151f,#001a1a);padding:36px 20px;text-align:center;border-bottom:3px solid #0ea5e9}
+header h1{font-size:2em;color:#38bdf8;text-shadow:0 0 20px #0ea5e955}
+header p{color:#a0bcc0;margin-top:6px}
+.badge{display:inline-block;background:#0ea5e922;border:1px solid #0ea5e955;color:#38bdf8;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#38bdf8;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#0ea5e9;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.s-kw{color:#569cd6}.s-fn{color:#dcdcaa}.s-str{color:#ce9178}.s-num{color:#b5cea8}.s-cmt{color:#6a9955;font-style:italic}.s-type{color:#4ec9b0}.s-op{color:#d4d4d4}
+.cs-kw{color:#569cd6}.cs-type{color:#4ec9b0}.cs-str{color:#ce9178}.cs-num{color:#b5cea8}.cs-cmt{color:#6a9955;font-style:italic}.cs-prop{color:#9cdcfe}.cs-method{color:#dcdcaa}.cs-attr{color:#c586c0}
+code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#00080f;border-left:4px solid #0ea5e9;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#7dd3fc;font-size:0.9em;margin-top:4px}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.critical{background:#1a0800;border:2px solid #f97316;border-radius:10px;padding:16px;margin:14px 0}
+.critical .c-t{color:#fb923c;font-weight:bold;font-size:0.9em;margin-bottom:8px}
+.critical p{color:#fed7aa;font-size:0.9em}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-card.perf-card{border-color:#0ea5e955;background:#00080f}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.s-num{background:#0ea5e9;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.s-num.perf{background:#f97316}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#0a1a2a;color:#38bdf8}
+.real{background:#0a1a2a;color:#0ea5e9;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.perf-badge{background:#1a0800;color:#f97316;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #f9731655}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#00080f;border:1px solid #0ea5e9;color:#38bdf8;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#0ea5e9;color:#fff}
+.reveal-btn.perf-btn{border-color:#f97316;color:#fb923c}
+.reveal-btn.perf-btn:hover{background:#f97316;color:#fff}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #0d001a}
+.answer.shown{display:block}
+.answer .a-label{color:#38bdf8;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.answer .a-label.perf{color:#f97316}
+.gold{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:700px){.comparison,.two-col{grid-template-columns:1fr}}
+.bad-box{background:#1f0a0a;border:1px solid #e74c3c44;border-radius:8px;padding:14px}
+.good-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:8px;padding:14px}
+.box-label{font-size:0.78em;font-weight:bold;margin-bottom:8px}
+.bad-box .box-label{color:#e74c3c}.good-box .box-label{color:#2ecc71}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#001a20;color:#38bdf8;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a1a35}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.blue{color:#38bdf8}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#0ea5e9;color:#38bdf8}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#38bdf8}
+h3{color:#7dd3fc;margin:16px 0 8px;font-size:1em}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#7dd3fc;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #0d0d1a}
+.sticky-nav a:hover{background:#0d0d1a}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#0ea5e9,#38bdf8)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+.plan-box{background:#001a20;border:1px solid #0ea5e955;border-radius:10px;padding:16px;margin:14px 0;font-family:'Consolas',monospace;font-size:0.82em}
+.plan-row{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border-bottom:1px solid #1e1e3a;color:#c0d8e0}
+.plan-row:last-child{border-bottom:none}
+.plan-icon{width:26px;flex-shrink:0;text-align:center}
+.seek{color:#22c55e;font-weight:bold}.scan{color:#e74c3c;font-weight:bold}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#38bdf8;font-size:0.85em;margin-bottom:6px">📅 Day 10 of 60 | Phase 1: Advanced C#</div>
+  <h1>🗄️ SQL Server — Indexes, Optimization, SP, Transactions</h1>
+  <p>Clustered · Non-Clustered · Covering Index · Execution Plan · ACID · Deadlocks · Isolation Levels</p>
+  <div style="margin-top:12px">
+    <span class="badge">Indexes</span><span class="badge">Query Plan</span><span class="badge">SARGable</span>
+    <span class="badge">Stored Proc</span><span class="badge">Transactions</span><span class="badge">Deadlocks</span><span class="badge">Isolation</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#indexes">📇 Indexes</a>
+  <a href="#plan">🔍 Exec Plan</a>
+  <a href="#sargable">⚡ SARGable</a>
+  <a href="#sp">📦 Stored Proc</a>
+  <a href="#tx">🔒 Transactions</a>
+  <a href="#isolation">🔀 Isolation</a>
+  <a href="#deadlock">💀 Deadlocks</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SECTION 1: INDEXES -->
+<div class="section" id="indexes">
+  <div class="section-title"><span class="num">1</span> Indexes — Clustered vs Non-Clustered vs Covering</div>
+
+  <div class="movie">
+    <span class="film">🎬 Thuppakki — Sniper shoots exact target (Index Seek) vs spraying everywhere (Table Scan)</span>
+    <p>Index Seek = Jagadish Kumar — direct shot, exact row. Table Scan = AK-47 spray — scan every row in table. 50,000 students table-la student name search — no index = scan all 50k rows. Index = jump directly!</p>
+  </div>
+
+  <table>
+    <tr><th>Type</th><th>Structure</th><th>Count per table</th><th>ZenCampus example</th></tr>
+    <tr><td><span class="blue">Clustered</span></td><td>Data rows sorted by key — B-Tree leaf = actual row</td><td class="green">Only 1</td><td>Students.StudentId (PK auto-creates CI)</td></tr>
+    <tr><td><span class="yellow">Non-Clustered</span></td><td>Separate B-Tree, leaf = row pointer (RID or CI key)</td><td class="yellow">Up to 999</td><td>Students.AdmissionNo, FeeRecords.SchoolId</td></tr>
+    <tr><td><span class="green">Covering Index</span></td><td>NCI + INCLUDE columns — no key lookup needed</td><td class="yellow">Up to 999</td><td>NCI on SchoolId INCLUDE(Name, Grade, Amount)</td></tr>
+    <tr><td><span class="red">Filtered Index</span></td><td>NCI with WHERE clause — partial index</td><td class="yellow">Up to 999</td><td>NCI on Status WHERE Status = 'Active'</td></tr>
+    <tr><td><span class="red">Composite Index</span></td><td>Multiple columns — order matters! (a,b) ≠ (b,a)</td><td class="yellow">Up to 999</td><td>(SchoolId, AcademicYear, StudentId)</td></tr>
+  </table>
+
+  <pre><span class="s-cmt">-- ZenCampus: FeeRecords table — common query patterns</span>
+
+<span class="s-cmt">-- Clustered Index (auto-created by PRIMARY KEY)</span>
+<span class="s-kw">CREATE TABLE</span> FeeRecords (
+    FeeRecordId   <span class="s-type">INT</span> <span class="s-kw">IDENTITY</span>(<span class="s-num">1</span>,<span class="s-num">1</span>) <span class="s-kw">PRIMARY KEY</span>,  <span class="s-cmt">-- CI on FeeRecordId</span>
+    StudentId     <span class="s-type">INT</span> <span class="s-kw">NOT NULL</span>,
+    SchoolId      <span class="s-type">INT</span> <span class="s-kw">NOT NULL</span>,
+    AcademicYear  <span class="s-type">NVARCHAR</span>(<span class="s-num">10</span>),
+    FeeType       <span class="s-type">NVARCHAR</span>(<span class="s-num">50</span>),
+    Amount        <span class="s-type">DECIMAL</span>(<span class="s-num">10</span>,<span class="s-num">2</span>),
+    PaidDate      <span class="s-type">DATE</span>,
+    Status        <span class="s-type">NVARCHAR</span>(<span class="s-num">20</span>)
+);
+
+<span class="s-cmt">-- Non-Clustered Index — frequent WHERE SchoolId + AcademicYear</span>
+<span class="s-kw">CREATE NONCLUSTERED INDEX</span> IX_FeeRecords_School_Year
+    <span class="s-kw">ON</span> FeeRecords (SchoolId, AcademicYear);
+
+<span class="s-cmt">-- Covering Index — query needs Name, Amount too → add INCLUDE!</span>
+<span class="s-kw">CREATE NONCLUSTERED INDEX</span> IX_FeeRecords_School_Year_Covering
+    <span class="s-kw">ON</span> FeeRecords (SchoolId, AcademicYear)
+    <span class="s-kw">INCLUDE</span> (StudentId, FeeType, Amount, Status);
+<span class="s-cmt">-- Now: SELECT StudentId, FeeType, Amount, Status
+--       WHERE SchoolId = 42 AND AcademicYear = '2026-27'
+-- → Index Seek only! No Key Lookup → fastest!</span>
+
+<span class="s-cmt">-- Filtered Index — only active students (most queries filter this)</span>
+<span class="s-kw">CREATE NONCLUSTERED INDEX</span> IX_Students_Active
+    <span class="s-kw">ON</span> Students (SchoolId, AdmissionNo)
+    <span class="s-kw">WHERE</span> Status = <span class="s-str">'Active'</span>;
+<span class="s-cmt">-- Smaller index — only active rows (80% of queries!)</span>
+
+<span class="s-cmt">-- Check index usage — is your index being used?</span>
+<span class="s-kw">SELECT</span>
+    i.name <span class="s-kw">AS</span> IndexName,
+    ius.user_seeks, ius.user_scans, ius.user_lookups, ius.user_updates
+<span class="s-kw">FROM</span> sys.indexes i
+<span class="s-kw">JOIN</span> sys.dm_db_index_usage_stats ius
+    <span class="s-kw">ON</span> i.object_id = ius.object_id <span class="s-kw">AND</span> i.index_id = ius.index_id
+<span class="s-kw">WHERE</span> OBJECT_NAME(i.object_id) = <span class="s-str">'FeeRecords'</span>;</pre>
+
+  <div class="critical">
+    <div class="c-t">⚠️ Index Column Order Matters — Composite Index Left-Prefix Rule!</div>
+    <p>Index on <code>(SchoolId, AcademicYear)</code>: WHERE SchoolId = 42 ✅ (leftmost prefix — seeks). WHERE AcademicYear = '2026' ❌ (skip leftmost — scan). WHERE SchoolId = 42 AND AcademicYear = '2026' ✅ (both — seeks). Design composite index with most selective + most frequently filtered column FIRST.</p>
+  </div>
+</div>
+
+<!-- SECTION 2: EXECUTION PLAN -->
+<div class="section" id="plan">
+  <div class="section-title"><span class="num">2</span> Execution Plan — Reading & Diagnosing</div>
+
+  <div class="movie">
+    <span class="film">🎬 Ratsasan — Systematic clue investigation = reading execution plan step by step</span>
+    <p>Ratsasan trace pannina mathiri — execution plan trace panunga. Warning icons = missing index. Thick arrows = too many rows estimated. Table Scan = problem identified!</p>
+  </div>
+
+  <div class="plan-box">
+    <div style="color:#38bdf8;font-weight:bold;margin-bottom:10px;font-size:0.9em">📋 Execution Plan — Know these operators!</div>
+    <div class="plan-row"><span class="plan-icon">🟢</span><span><span class="seek">Index Seek</span> — Best! B-Tree traversal, finds exact rows. Cost near 0%</span></div>
+    <div class="plan-row"><span class="plan-icon">🔴</span><span><span class="scan">Table Scan</span> / <span class="scan">Index Scan</span> — Reads ALL rows. Major red flag on large tables!</span></div>
+    <div class="plan-row"><span class="plan-icon">🟡</span><span><span style="color:#f39c12;font-weight:bold">Key Lookup</span> — NCI found row, but needs extra data → goes to CI. Shows covering index opportunity!</span></div>
+    <div class="plan-row"><span class="plan-icon">🔵</span><span><span style="color:#3b82f6;font-weight:bold">Hash Match</span> — Join without supporting index. On large tables = slow. Add index on join column!</span></div>
+    <div class="plan-row"><span class="plan-icon">🟠</span><span><span style="color:#f97316;font-weight:bold">Sort</span> — No index to satisfy ORDER BY. Temp sort in memory/disk. Add index with same column order!</span></div>
+    <div class="plan-row"><span class="plan-icon">⚠️</span><span><span style="color:#fbbf24;font-weight:bold">Warning (yellow !)</span> — Missing index suggestion, implicit conversion, or spill to tempdb!</span></div>
+  </div>
+
+  <pre><span class="s-cmt">-- Enable actual execution plan + statistics</span>
+<span class="s-kw">SET</span> STATISTICS IO <span class="s-kw">ON</span>;   <span class="s-cmt">-- shows logical reads</span>
+<span class="s-kw">SET</span> STATISTICS TIME <span class="s-kw">ON</span>; <span class="s-cmt">-- shows CPU + elapsed time</span>
+
+<span class="s-cmt">-- Fee report — check slow query</span>
+<span class="s-kw">SELECT</span> s.Name, s.AdmissionNo, f.Amount, f.FeeType, f.PaidDate
+<span class="s-kw">FROM</span>   FeeRecords f
+<span class="s-kw">JOIN</span>   Students   s <span class="s-kw">ON</span> s.StudentId = f.StudentId
+<span class="s-kw">WHERE</span>  f.SchoolId     = <span class="s-num">42</span>
+  <span class="s-kw">AND</span>  f.AcademicYear  = <span class="s-str">'2026-27'</span>
+  <span class="s-kw">AND</span>  f.Status        = <span class="s-str">'Pending'</span>;
+
+<span class="s-cmt">-- Read statistics output:
+-- Table 'FeeRecords'. Scan count 1, logical reads 8420 → too many!
+-- After adding covering index: logical reads 12 → 700x faster!</span>
+
+<span class="s-cmt">-- sp_helpindex — see existing indexes on table</span>
+<span class="s-kw">EXEC</span> sp_helpindex FeeRecords;
+
+<span class="s-cmt">-- Find missing index suggestions from SQL Server</span>
+<span class="s-kw">SELECT</span>
+    migs.avg_total_user_cost * migs.avg_user_impact * (migs.user_seeks + migs.user_scans)
+        <span class="s-kw">AS</span> improvement_measure,
+    mid.statement <span class="s-kw">AS</span> TableName,
+    mid.equality_columns, mid.inequality_columns, mid.included_columns
+<span class="s-kw">FROM</span>   sys.dm_db_missing_index_groups    mig
+<span class="s-kw">JOIN</span>   sys.dm_db_missing_index_group_stats migs <span class="s-kw">ON</span> mig.index_group_handle = migs.group_handle
+<span class="s-kw">JOIN</span>   sys.dm_db_missing_index_details   mid  <span class="s-kw">ON</span> mig.index_handle       = mid.index_handle
+<span class="s-kw">ORDER BY</span> improvement_measure <span class="s-kw">DESC</span>;</pre>
+</div>
+
+<!-- SECTION 3: SARGABLE -->
+<div class="section" id="sargable">
+  <div class="section-title"><span class="num">3</span> SARGable Queries — Make Your Index Work!</div>
+
+  <div class="movie">
+    <span class="film">🎬 Kaththi — Villain uses villagers' weakness directly. SARGable = index weakness directly exploited (in a good way!)</span>
+    <p>SARGable = Search ARGument ABLE. Query-a index use பண்ண allow பண்றதா? Column-a function-la wrap பண்ணா — index bypass ஆகும். Column naked-a இருக்கணும் WHERE-la!</p>
+  </div>
+
+  <div class="comparison">
+    <div class="bad-box">
+      <div class="box-label">❌ NON-SARGable (Index Not Used!)</div>
+      <pre style="font-size:0.8em"><span class="s-cmt">-- Function on column = index bypass!</span>
+<span class="s-kw">WHERE</span> <span class="s-fn">YEAR</span>(PaidDate) = <span class="s-num">2026</span>
+<span class="s-cmt">-- SQL must call YEAR() on every row!</span>
+
+<span class="s-kw">WHERE</span> <span class="s-fn">UPPER</span>(StudentName) = <span class="s-str">'RAMESH'</span>
+<span class="s-cmt">-- Calls UPPER() on each row!</span>
+
+<span class="s-kw">WHERE</span> Amount + <span class="s-num">100</span> > <span class="s-num">5000</span>
+<span class="s-cmt">-- Math on column = scan!</span>
+
+<span class="s-kw">WHERE</span> SchoolId = <span class="s-str">'42'</span>  <span class="s-cmt">-- int vs varchar</span>
+<span class="s-cmt">-- Implicit conversion = index ignored!</span>
+
+<span class="s-kw">WHERE</span> Name <span class="s-kw">LIKE</span> <span class="s-str">'%Ramesh%'</span>
+<span class="s-cmt">-- Leading % = full scan!</span></pre>
+    </div>
+    <div class="good-box">
+      <div class="box-label">✅ SARGable (Index Seek!)</div>
+      <pre style="font-size:0.8em"><span class="s-cmt">-- Move function to right side!</span>
+<span class="s-kw">WHERE</span> PaidDate >= <span class="s-str">'2026-01-01'</span>
+  <span class="s-kw">AND</span> PaidDate <  <span class="s-str">'2027-01-01'</span>
+<span class="s-cmt">-- Column naked — range seek!</span>
+
+<span class="s-kw">WHERE</span> StudentName = <span class="s-str">'RAMESH'</span>
+<span class="s-cmt">-- Case-insensitive collation handles it</span>
+
+<span class="s-kw">WHERE</span> Amount > <span class="s-num">4900</span>
+<span class="s-cmt">-- Move math to value side!</span>
+
+<span class="s-kw">WHERE</span> SchoolId = <span class="s-num">42</span>  <span class="s-cmt">-- int literal</span>
+<span class="s-cmt">-- Types match — no conversion!</span>
+
+<span class="s-kw">WHERE</span> Name <span class="s-kw">LIKE</span> <span class="s-str">'Ramesh%'</span>
+<span class="s-cmt">-- Trailing % only = seek possible!</span></pre>
+    </div>
+  </div>
+
+  <pre><span class="s-cmt">-- ZenCampus real bug: attendance query was slow (Table Scan!)</span>
+
+<span class="s-cmt">-- WRONG (Non-SARGable)</span>
+<span class="s-kw">SELECT</span> * <span class="s-kw">FROM</span> Attendance
+<span class="s-kw">WHERE</span> <span class="s-fn">CAST</span>(AttendanceDate <span class="s-kw">AS</span> <span class="s-type">DATE</span>) = <span class="s-str">'2026-06-15'</span>
+  <span class="s-kw">AND</span> <span class="s-fn">CONVERT</span>(<span class="s-type">VARCHAR</span>, SchoolId) = <span class="s-str">'42'</span>  <span class="s-cmt">-- implicit conversion!</span>
+
+<span class="s-cmt">-- FIXED (SARGable — Index Seek!)</span>
+<span class="s-kw">SELECT</span> StudentId, IsPresent, Remarks
+<span class="s-kw">FROM</span>   Attendance
+<span class="s-kw">WHERE</span>  AttendanceDate >= <span class="s-str">'2026-06-15'</span>
+  <span class="s-kw">AND</span>  AttendanceDate <  <span class="s-str">'2026-06-16'</span>
+  <span class="s-kw">AND</span>  SchoolId = <span class="s-num">42</span>   <span class="s-cmt">-- int, no conversion!</span>
+<span class="s-cmt">-- Result: 8420 logical reads → 14 reads. 600x improvement!</span></pre>
+
+  <div class="tip">
+    <div class="t-label">💡 SELECT * — Two Problems</div>
+    <p>1. Covering index useless — * needs ALL columns → Key Lookup back to clustered index. 2. Network overhead — sending columns you don't need. Always SELECT only needed columns = SARGable + covering index friendly!</p>
+  </div>
+</div>
+
+<!-- SECTION 4: STORED PROCEDURES -->
+<div class="section" id="sp">
+  <div class="section-title"><span class="num">4</span> Stored Procedures — When & Why</div>
+
+  <div class="movie">
+    <span class="film">🎬 Baasha — Trusted lieutenant, pre-trained, executes perfectly every time. Stored Proc = pre-compiled, cached plan!</span>
+    <p>Inline SQL = hire new worker every time, train them, then work. SP = trained lieutenant — ready, plan cached, faster execution. ZenCampus fee report SP — first call compiles, next 10,000 calls use cached plan!</p>
+  </div>
+
+  <pre><span class="s-cmt">-- ZenCampus: Fee collection report stored procedure</span>
+<span class="s-kw">CREATE OR ALTER PROCEDURE</span> usp_GetFeeReport
+    <span class="s-fn">@SchoolId</span>     <span class="s-type">INT</span>,
+    <span class="s-fn">@AcademicYear</span> <span class="s-type">NVARCHAR</span>(<span class="s-num">10</span>),
+    <span class="s-fn">@Status</span>       <span class="s-type">NVARCHAR</span>(<span class="s-num">20</span>) = <span class="s-kw">NULL</span>  <span class="s-cmt">-- optional filter</span>
+<span class="s-kw">AS</span>
+<span class="s-kw">BEGIN</span>
+    <span class="s-kw">SET NOCOUNT ON</span>;  <span class="s-cmt">-- suppress "X rows affected" — improves perf!</span>
+
+    <span class="s-kw">SELECT</span>
+        s.StudentId,
+        s.Name         <span class="s-kw">AS</span> StudentName,
+        s.AdmissionNo,
+        s.Grade,
+        f.FeeType,
+        f.Amount,
+        f.PaidDate,
+        f.Status,
+        f.ReceiptNo
+    <span class="s-kw">FROM</span>   Students   s
+    <span class="s-kw">JOIN</span>   FeeRecords f <span class="s-kw">ON</span> f.StudentId = s.StudentId
+    <span class="s-kw">WHERE</span>  f.SchoolId     = <span class="s-fn">@SchoolId</span>
+      <span class="s-kw">AND</span>  f.AcademicYear  = <span class="s-fn">@AcademicYear</span>
+      <span class="s-kw">AND</span>  (<span class="s-fn">@Status</span> <span class="s-kw">IS NULL OR</span> f.Status = <span class="s-fn">@Status</span>)
+    <span class="s-kw">ORDER BY</span> s.Grade, s.Name;
+<span class="s-kw">END</span>
+
+<span class="s-cmt">-- Execute</span>
+<span class="s-kw">EXEC</span> usp_GetFeeReport
+    <span class="s-fn">@SchoolId</span>     = <span class="s-num">42</span>,
+    <span class="s-fn">@AcademicYear</span> = <span class="s-str">'2026-27'</span>,
+    <span class="s-fn">@Status</span>       = <span class="s-str">'Pending'</span>;
+
+<span class="s-cmt">-- Call from C# / EF Core</span></pre>
+
+  <pre><span class="cs-cmt">// EF Core — call stored procedure</span>
+<span class="cs-kw">var</span> <span class="cs-prop">results</span> = <span class="cs-kw">await</span> <span class="cs-prop">_ctx</span>.<span class="cs-prop">FeeReportItems</span>
+    .<span class="cs-method">FromSqlRaw</span>(
+        <span class="cs-str">"EXEC usp_GetFeeReport @SchoolId, @AcademicYear, @Status"</span>,
+        <span class="cs-kw">new</span> <span class="cs-type">SqlParameter</span>(<span class="cs-str">"@SchoolId"</span>,     <span class="cs-prop">schoolId</span>),
+        <span class="cs-kw">new</span> <span class="cs-type">SqlParameter</span>(<span class="cs-str">"@AcademicYear"</span>, <span class="cs-prop">year</span>),
+        <span class="cs-kw">new</span> <span class="cs-type">SqlParameter</span>(<span class="cs-str">"@Status"</span>,       <span class="cs-prop">status</span> ?? (<span class="cs-type">object</span>)<span class="cs-type">DBNull</span>.<span class="cs-prop">Value</span>))
+    .<span class="cs-method">ToListAsync</span>();
+
+<span class="cs-cmt">// Or: _ctx.Database.ExecuteSqlRawAsync for non-query SPs</span></pre>
+
+  <table style="font-size:0.83em">
+    <tr><th>SP Advantage</th><th>When to prefer SP over EF query</th></tr>
+    <tr><td class="green">Execution plan cached</td><td>Complex multi-table reports (fee, attendance, exam)</td></tr>
+    <tr><td class="green">Security — no inline SQL</td><td>DBA manages complex query optimization</td></tr>
+    <tr><td class="green">Reduce network traffic</td><td>Batch operations (bulk status updates)</td></tr>
+    <tr><td class="yellow">WITH RECOMPILE hint</td><td>Parameters vary widely (1 student vs 50k students)</td></tr>
+    <tr><td class="red">Harder to version/test</td><td>Simple CRUD — prefer EF Core</td></tr>
+  </table>
+
+  <div class="danger">
+    <div class="d-label">⚠️ Parameter Sniffing — SP returns different results for same query!</div>
+    <p>SQL Server caches plan for FIRST parameter. If first call was schoolId=1 (5 students), plan cached for small set. Next call schoolId=42 (5000 students) — uses wrong plan! Fix: <code>WITH RECOMPILE</code> or <code>OPTION (RECOMPILE)</code> at query level for parameter-sensitive SPs.</p>
+  </div>
+</div>
+
+<!-- SECTION 5: TRANSACTIONS -->
+<div class="section" id="tx">
+  <div class="section-title"><span class="num">5</span> Transactions — ACID + BEGIN/COMMIT/ROLLBACK</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram — Multi-agent mission: all agents complete OR mission aborts. Partial success = failure!</span>
+    <p>Fee payment = Vikram mission. Debit student account + Add FeeRecord + Update Balance + Generate Receipt — all 4 must succeed. One fails = ROLLBACK all. Half-paid fee = data corruption!</p>
+  </div>
+
+  <pre><span class="s-cmt">-- ZenCampus: Fee payment transaction</span>
+<span class="s-kw">CREATE OR ALTER PROCEDURE</span> usp_CollectFee
+    <span class="s-fn">@StudentId</span>  <span class="s-type">INT</span>,
+    <span class="s-fn">@SchoolId</span>   <span class="s-type">INT</span>,
+    <span class="s-fn">@Amount</span>     <span class="s-type">DECIMAL</span>(<span class="s-num">10</span>,<span class="s-num">2</span>),
+    <span class="s-fn">@FeeType</span>    <span class="s-type">NVARCHAR</span>(<span class="s-num">50</span>),
+    <span class="s-fn">@CollectedBy</span> <span class="s-type">INT</span>
+<span class="s-kw">AS</span>
+<span class="s-kw">BEGIN</span>
+    <span class="s-kw">SET NOCOUNT ON</span>;
+
+    <span class="s-kw">DECLARE</span> <span class="s-fn">@ReceiptNo</span>  <span class="s-type">NVARCHAR</span>(<span class="s-num">20</span>);
+    <span class="s-kw">DECLARE</span> <span class="s-fn">@ErrorMsg</span>   <span class="s-type">NVARCHAR</span>(<span class="s-num">500</span>);
+
+    <span class="s-kw">BEGIN TRY</span>
+        <span class="s-kw">BEGIN TRANSACTION</span>;  <span class="s-cmt">-- Start transaction!</span>
+
+        <span class="s-cmt">-- 1. Generate receipt number</span>
+        <span class="s-kw">SET</span> <span class="s-fn">@ReceiptNo</span> = <span class="s-str">'ZEN'</span> + <span class="s-fn">FORMAT</span>(<span class="s-fn">GETDATE</span>(), <span class="s-str">'yyyyMMdd'</span>)
+                       + <span class="s-fn">RIGHT</span>(<span class="s-str">'0000'</span> + <span class="s-fn">CAST</span>(<span class="s-fn">@StudentId</span> <span class="s-kw">AS</span> <span class="s-type">VARCHAR</span>), <span class="s-num">4</span>);
+
+        <span class="s-cmt">-- 2. Insert fee record</span>
+        <span class="s-kw">INSERT INTO</span> FeeRecords
+            (StudentId, SchoolId, FeeType, Amount, PaidDate, Status, ReceiptNo, CollectedBy)
+        <span class="s-kw">VALUES</span>
+            (<span class="s-fn">@StudentId</span>, <span class="s-fn">@SchoolId</span>, <span class="s-fn">@FeeType</span>, <span class="s-fn">@Amount</span>,
+             <span class="s-fn">GETDATE</span>(), <span class="s-str">'Paid'</span>, <span class="s-fn">@ReceiptNo</span>, <span class="s-fn">@CollectedBy</span>);
+
+        <span class="s-cmt">-- 3. Update student balance</span>
+        <span class="s-kw">UPDATE</span> StudentFeeBalance
+        <span class="s-kw">SET</span>    PaidAmount = PaidAmount + <span class="s-fn">@Amount</span>,
+               LastPaidDate = <span class="s-fn">GETDATE</span>()
+        <span class="s-kw">WHERE</span>  StudentId = <span class="s-fn">@StudentId</span> <span class="s-kw">AND</span> SchoolId = <span class="s-fn">@SchoolId</span>;
+
+        <span class="s-cmt">-- 4. Verify balance was updated (else something wrong!)</span>
+        <span class="s-kw">IF</span> <span class="s-fn">@@ROWCOUNT</span> = <span class="s-num">0</span>
+            <span class="s-kw">THROW</span> <span class="s-num">50001</span>, <span class="s-str">'Student fee balance record not found'</span>, <span class="s-num">1</span>;
+
+        <span class="s-cmt">-- 5. Log audit</span>
+        <span class="s-kw">INSERT INTO</span> AuditLog (TableName, Action, RecordId, UserId, ActionDate)
+        <span class="s-kw">VALUES</span> (<span class="s-str">'FeeRecords'</span>, <span class="s-str">'INSERT'</span>, <span class="s-fn">SCOPE_IDENTITY</span>(), <span class="s-fn">@CollectedBy</span>, <span class="s-fn">GETDATE</span>());
+
+        <span class="s-kw">COMMIT TRANSACTION</span>;  <span class="s-cmt">-- All good — commit!</span>
+
+        <span class="s-kw">SELECT</span> <span class="s-fn">@ReceiptNo</span> <span class="s-kw">AS</span> ReceiptNo, <span class="s-str">'Success'</span> <span class="s-kw">AS</span> Status;
+
+    <span class="s-kw">END TRY</span>
+    <span class="s-kw">BEGIN CATCH</span>
+        <span class="s-kw">IF</span> <span class="s-fn">@@TRANCOUNT</span> > <span class="s-num">0</span>
+            <span class="s-kw">ROLLBACK TRANSACTION</span>;  <span class="s-cmt">-- Undo EVERYTHING!</span>
+
+        <span class="s-kw">SET</span> <span class="s-fn">@ErrorMsg</span> = <span class="s-fn">ERROR_MESSAGE</span>();
+        <span class="s-kw">INSERT INTO</span> ErrorLog (ErrorMessage, ErrorDate, UserId)
+        <span class="s-kw">VALUES</span> (<span class="s-fn">@ErrorMsg</span>, <span class="s-fn">GETDATE</span>(), <span class="s-fn">@CollectedBy</span>);
+
+        <span class="s-kw">SELECT</span> <span class="s-kw">NULL</span> <span class="s-kw">AS</span> ReceiptNo, <span class="s-fn">@ErrorMsg</span> <span class="s-kw">AS</span> Status;
+    <span class="s-kw">END CATCH</span>
+<span class="s-kw">END</span></pre>
+
+  <div class="tip">
+    <div class="t-label">💡 ACID Properties — Remember via ZenCampus Fee:</div>
+    <p><strong>A</strong>tomic — Fee insert + Balance update = one unit. Half success = fail.<br>
+    <strong>C</strong>onsistent — Before: Balance=5000. After: Balance=6000. Always valid state.<br>
+    <strong>I</strong>solated — Concurrent fee collections don't interfere.<br>
+    <strong>D</strong>urable — Committed fee payment survives server crash.</p>
+  </div>
+</div>
+
+<!-- SECTION 6: ISOLATION LEVELS -->
+<div class="section" id="isolation">
+  <div class="section-title"><span class="num">6</span> Isolation Levels — Dirty Read, Phantom, Lost Update</div>
+
+  <table>
+    <tr><th>Level</th><th>Dirty Read</th><th>Non-Repeatable Read</th><th>Phantom</th><th>ZenCampus use</th></tr>
+    <tr><td><span class="red">READ UNCOMMITTED</span></td><td class="red">Yes</td><td class="red">Yes</td><td class="red">Yes</td><td>Never for fees! (can read rolled-back data)</td></tr>
+    <tr><td><span class="yellow">READ COMMITTED</span></td><td class="green">No</td><td class="red">Yes</td><td class="red">Yes</td><td>Default — general reports</td></tr>
+    <tr><td><span class="yellow">REPEATABLE READ</span></td><td class="green">No</td><td class="green">No</td><td class="red">Yes</td><td>Fee calculation (re-read same value)</td></tr>
+    <tr><td><span class="green">SERIALIZABLE</span></td><td class="green">No</td><td class="green">No</td><td class="green">No</td><td>Safest — exam result finalization</td></tr>
+    <tr><td><span class="blue">SNAPSHOT</span></td><td class="green">No</td><td class="green">No</td><td class="green">No</td><td>Reports — no blocking! (row versioning)</td></tr>
+  </table>
+
+  <pre><span class="s-cmt">-- READ UNCOMMITTED — dirty read danger!</span>
+<span class="s-kw">SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED</span>;
+<span class="s-kw">SELECT</span> Balance <span class="s-kw">FROM</span> StudentFeeBalance <span class="s-kw">WHERE</span> StudentId = <span class="s-num">101</span>;
+<span class="s-cmt">-- Could read partially updated balance from uncommitted TX!
+-- Session A: UPDATE Balance = 10000 (not committed yet)
+-- Session B (above): reads 10000 — WRONG! A might rollback to 5000!</span>
+
+<span class="s-cmt">-- SNAPSHOT ISOLATION — best for ZenCampus reports!</span>
+<span class="s-cmt">-- Enable at DB level (one time)</span>
+<span class="s-kw">ALTER DATABASE</span> ZenCampusDB <span class="s-kw">SET READ_COMMITTED_SNAPSHOT ON</span>;
+<span class="s-cmt">-- Now all READ COMMITTED queries use snapshot = no locks on reads!</span>
+
+<span class="s-cmt">-- Report query — won't block fee collections!</span>
+<span class="s-kw">SET TRANSACTION ISOLATION LEVEL SNAPSHOT</span>;
+<span class="s-kw">SELECT</span> s.Name, <span class="s-fn">SUM</span>(f.Amount) <span class="s-kw">AS</span> TotalFee
+<span class="s-kw">FROM</span>   Students   s
+<span class="s-kw">JOIN</span>   FeeRecords f <span class="s-kw">ON</span> f.StudentId = s.StudentId
+<span class="s-kw">WHERE</span>  f.SchoolId = <span class="s-num">42</span>
+<span class="s-kw">GROUP BY</span> s.Name;
+<span class="s-cmt">-- Reads committed snapshot — no X-lock blocking, no dirty reads!</span>
+
+<span class="s-cmt">-- Or: NOLOCK hint (= READ UNCOMMITTED, use carefully)</span>
+<span class="s-kw">SELECT</span> * <span class="s-kw">FROM</span> FeeRecords <span class="s-kw">WITH (NOLOCK)</span>
+<span class="s-kw">WHERE</span>  SchoolId = <span class="s-num">42</span>;
+<span class="s-cmt">-- Fast, no blocking — but might get dirty data. OK for dashboards, NOT fee reports!</span></pre>
+</div>
+
+<!-- SECTION 7: DEADLOCKS -->
+<div class="section" id="deadlock">
+  <div class="section-title"><span class="num">7</span> Deadlocks — Detect + Prevent</div>
+
+  <div class="movie">
+    <span class="film">🎬 Kaithi — Dilli trapped — can't move forward, can't go back. Two sessions, each waiting for the other!</span>
+    <p>Session A holds lock on Students, wants FeeRecords lock. Session B holds lock on FeeRecords, wants Students lock. Deadlock! SQL Server chooses one as "victim" — kills it. App gets error 1205!</p>
+  </div>
+
+  <pre><span class="s-cmt">-- Deadlock scenario — classic cross-resource lock!</span>
+
+<span class="s-cmt">-- Session A (fee collection)</span>
+<span class="s-kw">BEGIN TRAN</span>;
+<span class="s-kw">UPDATE</span> Students        <span class="s-kw">SET</span> Status = <span class="s-str">'Updated'</span> <span class="s-kw">WHERE</span> StudentId = <span class="s-num">101</span>; <span class="s-cmt">-- locks Students row</span>
+<span class="s-kw">UPDATE</span> FeeRecords      <span class="s-kw">SET</span> Amount = <span class="s-num">5000</span>       <span class="s-kw">WHERE</span> StudentId = <span class="s-num">101</span>; <span class="s-cmt">-- WAITS for B!</span>
+
+<span class="s-cmt">-- Session B (attendance update)</span>
+<span class="s-kw">BEGIN TRAN</span>;
+<span class="s-kw">UPDATE</span> FeeRecords      <span class="s-kw">SET</span> Status = <span class="s-str">'Paid'</span>    <span class="s-kw">WHERE</span> StudentId = <span class="s-num">101</span>; <span class="s-cmt">-- locks FeeRecords</span>
+<span class="s-kw">UPDATE</span> Students        <span class="s-kw">SET</span> FeeStatus = <span class="s-str">'OK'</span>   <span class="s-kw">WHERE</span> StudentId = <span class="s-num">101</span>; <span class="s-cmt">-- WAITS for A!</span>
+<span class="s-cmt">-- DEADLOCK! SQL Server kills one → Error 1205</span>
+
+<span class="s-cmt">-- FIX 1: Consistent access order — ALWAYS lock tables in same order!</span>
+<span class="s-cmt">-- Both sessions: Students first, then FeeRecords</span>
+<span class="s-kw">BEGIN TRAN</span>;
+<span class="s-kw">UPDATE</span> Students   ... ;  <span class="s-cmt">-- always first</span>
+<span class="s-kw">UPDATE</span> FeeRecords ... ;  <span class="s-cmt">-- always second</span>
+<span class="s-kw">COMMIT</span>;
+
+<span class="s-cmt">-- FIX 2: Keep transactions short — don't hold locks long!</span>
+
+<span class="s-cmt">-- FIX 3: Index on join/WHERE columns — reduces lock contention</span>
+
+<span class="s-cmt">-- FIX 4: READ_COMMITTED_SNAPSHOT — readers don't block writers!</span>
+
+<span class="s-cmt">-- Detect deadlocks — trace flag or Extended Events</span>
+<span class="s-kw">DBCC TRACEON</span> (<span class="s-num">1222</span>, -<span class="s-num">1</span>); <span class="s-cmt">-- log deadlock info to SQL Server error log</span></pre>
+
+  <pre><span class="cs-cmt">// C# — handle deadlock retry (Error 1205)</span>
+<span class="cs-kw">public async</span> <span class="cs-type">Task</span> <span class="cs-method">CollectFeeWithRetryAsync</span>(<span class="cs-type">FeeDto</span> <span class="cs-prop">dto</span>)
+{
+    <span class="cs-kw">const int</span> <span class="cs-prop">maxRetries</span> = <span class="cs-num">3</span>;
+    <span class="cs-kw">for</span> (<span class="cs-kw">int</span> <span class="cs-prop">attempt</span> = <span class="cs-num">1</span>; <span class="cs-prop">attempt</span> <= <span class="cs-prop">maxRetries</span>; <span class="cs-prop">attempt</span>++)
+    {
+        <span class="cs-kw">try</span>
+        {
+            <span class="cs-kw">await</span> <span class="cs-method">CollectFeeAsync</span>(<span class="cs-prop">dto</span>);
+            <span class="cs-kw">return</span>;
+        }
+        <span class="cs-kw">catch</span> (<span class="cs-type">SqlException</span> <span class="cs-prop">ex</span>) <span class="cs-kw">when</span> (<span class="cs-prop">ex</span>.<span class="cs-prop">Number</span> == <span class="cs-num">1205</span>) <span class="cs-cmt">// Deadlock!</span>
+        {
+            <span class="cs-kw">if</span> (<span class="cs-prop">attempt</span> == <span class="cs-prop">maxRetries</span>) <span class="cs-kw">throw</span>;
+            <span class="cs-kw">await</span> <span class="cs-type">Task</span>.<span class="cs-method">Delay</span>(<span class="cs-prop">attempt</span> * <span class="cs-num">100</span>); <span class="cs-cmt">// 100ms, 200ms, 300ms</span>
+            <span class="cs-prop">_log</span>.<span class="cs-method">LogWarning</span>(<span class="cs-str">"Deadlock victim, retry {attempt}"</span>, <span class="cs-prop">attempt</span>);
+        }
+    }
+}</pre>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">8</span> 🎯 Real Scenarios — Interview + Performance + ZenCampus</div>
+
+  <!-- S1 -->
+  <div class="scenario-card perf-card">
+    <div class="scenario-header">
+      <div class="s-num perf">1</div>
+      <div>
+        <div class="scenario-title">Fee report 45 seconds load — diagnose and fix <span class="perf-badge">🐢 Performance</span> <span class="diff hard">Hard</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus fee report page-la 50,000 students-ku fee summary load ஆக 45 seconds ஆகுது. Principal-ku complaint varutu. Systematic-aa diagnose பண்ணி fix பண்ணு."
+    </div>
+    <button class="reveal-btn perf-btn" onclick="toggle(this)">🔍 Diagnose + Fix</button>
+    <div class="answer">
+      <div class="a-label perf">✅ SYSTEMATIC DIAGNOSIS — 5 Steps</div>
+      <pre><span class="s-cmt">-- Step 1: Capture slow query</span>
+<span class="s-kw">SELECT</span> qs.total_elapsed_time/<span class="s-num">1000</span> <span class="s-kw">AS</span> ms, qs.execution_count,
+       <span class="s-fn">SUBSTRING</span>(st.text, qs.statement_start_offset/<span class="s-num">2</span>, <span class="s-num">4000</span>) <span class="s-kw">AS</span> query
+<span class="s-kw">FROM</span>   sys.dm_exec_query_stats qs
+<span class="s-kw">CROSS APPLY</span> sys.dm_exec_sql_text(qs.sql_handle) st
+<span class="s-kw">ORDER BY</span> qs.total_elapsed_time <span class="s-kw">DESC</span>;
+
+<span class="s-cmt">-- Step 2: Add actual execution plan — spotted: TABLE SCAN on FeeRecords!</span>
+<span class="s-cmt">-- Estimated rows: 50, Actual rows: 48,000 → Stale statistics!</span>
+
+<span class="s-cmt">-- Step 3: Check statistics</span>
+<span class="s-kw">DBCC SHOW_STATISTICS</span> (<span class="s-str">'FeeRecords'</span>, <span class="s-str">'IX_FeeRecords_School_Year'</span>);
+<span class="s-cmt">-- Last updated: 6 months ago! 50k rows added since.</span>
+
+<span class="s-cmt">-- Step 4: Update stats + add covering index</span>
+<span class="s-kw">UPDATE STATISTICS</span> FeeRecords <span class="s-kw">WITH FULLSCAN</span>;
+
+<span class="s-kw">CREATE NONCLUSTERED INDEX</span> IX_FeeRecords_School_Year_Covering
+<span class="s-kw">ON</span> FeeRecords (SchoolId, AcademicYear, Status)
+<span class="s-kw">INCLUDE</span> (StudentId, FeeType, Amount, PaidDate, ReceiptNo);
+
+<span class="s-cmt">-- Step 5: Fix non-SARGable WHERE (was using CONVERT on SchoolId!)</span>
+<span class="s-cmt">-- Before: WHERE CONVERT(VARCHAR, SchoolId) = '42'  (scan!)</span>
+<span class="s-cmt">-- After:  WHERE SchoolId = 42                       (seek!)</span>
+
+<span class="s-cmt">-- Result: 45 seconds → 0.3 seconds. 150x improvement!</span></pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Senior Add-On</div>
+        <p>"Also enabled READ_COMMITTED_SNAPSHOT on DB — report query no longer blocks fee collection. Scheduled nightly UPDATE STATISTICS on large tables. Added Query Store monitoring to catch regressions early."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div>
+        <div class="scenario-title">Loop-la 5000 INSERT — 4 minutes! Set-based fix <span class="diff real">Real Interview</span> <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus attendance bulk upload — Excel-la 5000 rows. C# loop-la ஒவ்வொரு row-kuvm INSERT பண்றான். 4 minutes! Loop mentality vs SQL set-based thinking explain பண்ணு."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ SET-BASED vs CURSOR/LOOP</div>
+      <div class="comparison">
+        <div class="bad-box">
+          <div class="box-label">❌ Row-by-row (RBAR — Row By Agonizing Row)</div>
+          <pre style="font-size:0.8em"><span class="cs-cmt">// C# loop — 5000 DB round trips!</span>
+<span class="cs-kw">foreach</span> (<span class="cs-kw">var</span> <span class="cs-prop">row</span> <span class="cs-kw">in</span> <span class="cs-prop">excelRows</span>)
+{
+    <span class="cs-kw">await</span> <span class="cs-prop">_ctx</span>.<span class="cs-prop">Attendance</span>
+        .<span class="cs-method">AddAsync</span>(<span class="cs-prop">row</span>);
+    <span class="cs-kw">await</span> <span class="cs-prop">_ctx</span>
+        .<span class="cs-method">SaveChangesAsync</span>();
+}<span class="cs-cmt">// 5000 INSERT, 5000 commits!</span></pre>
+        </div>
+        <div class="good-box">
+          <div class="box-label">✅ Bulk Insert — 1 round trip!</div>
+          <pre style="font-size:0.8em"><span class="cs-cmt">// Option 1: AddRange + SaveChanges once</span>
+<span class="cs-kw">await</span> <span class="cs-prop">_ctx</span>.<span class="cs-prop">Attendance</span>
+    .<span class="cs-method">AddRangeAsync</span>(<span class="cs-prop">rows</span>);
+<span class="cs-kw">await</span> <span class="cs-prop">_ctx</span>.<span class="cs-method">SaveChangesAsync</span>();
+
+<span class="cs-cmt">// Option 2: SqlBulkCopy (fastest!)</span>
+<span class="cs-kw">using var</span> <span class="cs-prop">bulk</span> = <span class="cs-kw">new</span> <span class="cs-type">SqlBulkCopy</span>(<span class="cs-prop">conn</span>);
+<span class="cs-prop">bulk</span>.<span class="cs-prop">DestinationTableName</span> = <span class="cs-str">"Attendance"</span>;
+<span class="cs-prop">bulk</span>.<span class="cs-prop">BatchSize</span> = <span class="cs-num">500</span>;
+<span class="cs-kw">await</span> <span class="cs-prop">bulk</span>.<span class="cs-method">WriteToServerAsync</span>(<span class="cs-prop">dt</span>);</pre>
+        </div>
+      </div>
+      <pre><span class="s-cmt">-- SQL side: Table-Valued Parameter (TVP) — pass 5000 rows in 1 call!</span>
+<span class="s-cmt">-- Step 1: Create TYPE</span>
+<span class="s-kw">CREATE TYPE</span> AttendanceTableType <span class="s-kw">AS TABLE</span> (
+    StudentId    <span class="s-type">INT</span>,
+    AttendDate   <span class="s-type">DATE</span>,
+    IsPresent    <span class="s-type">BIT</span>,
+    SchoolId     <span class="s-type">INT</span>
+);
+
+<span class="s-cmt">-- Step 2: SP accepts TVP</span>
+<span class="s-kw">CREATE PROCEDURE</span> usp_BulkInsertAttendance
+    <span class="s-fn">@AttendData</span> AttendanceTableType <span class="s-kw">READONLY</span>
+<span class="s-kw">AS</span>
+<span class="s-kw">BEGIN</span>
+    <span class="s-kw">SET NOCOUNT ON</span>;
+    <span class="s-kw">INSERT INTO</span> Attendance (StudentId, AttendDate, IsPresent, SchoolId)
+    <span class="s-kw">SELECT</span> StudentId, AttendDate, IsPresent, SchoolId
+    <span class="s-kw">FROM</span>   <span class="s-fn">@AttendData</span>;
+<span class="s-kw">END</span>
+<span class="s-cmt">-- 5000 rows, 1 SP call = 4 minutes → 1.2 seconds!</span></pre>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div>
+        <div class="scenario-title">Index add panna slow aachu — too many indexes! <span class="diff medium">Medium</span> <span class="diff real">Real Interview</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus FeeRecords table-la reports fast ஆகணும்னு 15 indexes add பண்ணாங்க. Now INSERT பண்றா 3 seconds ஆகுது! Why? How many indexes is too many?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ INDEX OVERHEAD TRAP</div>
+      <div style="background:#1a1000;padding:14px;border-radius:8px;font-size:0.9em;line-height:1.9;margin-bottom:10px">
+        <p><strong style="color:#f39c12">Why slow:</strong> Every INSERT/UPDATE/DELETE must update ALL 15 indexes + the clustered index. One row inserted = 16 B-Tree updates. FeeRecords = 200 inserts/second during school hours = massive write amplification!</p>
+        <p><strong style="color:#2ecc71">Rule of thumb:</strong> OLTP tables (frequent writes): 5-7 indexes max. Reporting tables (few writes): 10-15 OK. Review unused indexes — they add write cost with zero read benefit.</p>
+      </div>
+      <pre><span class="s-cmt">-- Find unused indexes (high updates, low seeks = useless weight!)</span>
+<span class="s-kw">SELECT</span>
+    i.name <span class="s-kw">AS</span> IndexName,
+    ius.user_seeks    <span class="s-kw">AS</span> Seeks,     <span class="s-cmt">-- reads using this index</span>
+    ius.user_scans    <span class="s-kw">AS</span> Scans,
+    ius.user_updates  <span class="s-kw">AS</span> Updates    <span class="s-cmt">-- maintenance cost!</span>
+<span class="s-kw">FROM</span>   sys.indexes i
+<span class="s-kw">LEFT JOIN</span> sys.dm_db_index_usage_stats ius
+    <span class="s-kw">ON</span> i.object_id = ius.object_id <span class="s-kw">AND</span> i.index_id = ius.index_id
+<span class="s-kw">WHERE</span>  OBJECT_NAME(i.object_id) = <span class="s-str">'FeeRecords'</span>
+  <span class="s-kw">AND</span>  i.index_id > <span class="s-num">1</span>  <span class="s-cmt">-- skip clustered</span>
+  <span class="s-kw">AND</span>  <span class="s-fn">ISNULL</span>(ius.user_seeks, <span class="s-num">0</span>) + <span class="s-fn">ISNULL</span>(ius.user_scans, <span class="s-num">0</span>) = <span class="s-num">0</span>
+<span class="s-kw">ORDER BY</span> <span class="s-fn">ISNULL</span>(ius.user_updates, <span class="s-num">0</span>) <span class="s-kw">DESC</span>;
+<span class="s-cmt">-- Indexes with Updates > 0 but Seeks/Scans = 0 → DELETE THEM!</span>
+
+<span class="s-cmt">-- After cleanup: 15 indexes → 6 covering indexes
+-- INSERT time: 3 seconds → 0.4 seconds</span></pre>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card perf-card">
+    <div class="scenario-header">
+      <div class="s-num perf">4</div>
+      <div>
+        <div class="scenario-title">Fee payment — server crash during transaction. Data corrupt? <span class="perf-badge">💥 Critical</span> <span class="diff senior">Senior</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "ZenCampus fee collection-la: FeeRecord INSERT ஆச்சு, StudentFeeBalance UPDATE ஆகுமுன்னே server crash ஆச்சு. Student fee paid, balance update ஆகல. Data corrupt ஆச்சா? SQL Server எப்படி handle பண்றது?"
+    </div>
+    <button class="reveal-btn perf-btn" onclick="toggle(this)">🔍 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label perf">✅ TRANSACTION LOG + WAL PROTOCOL</div>
+      <div style="background:#001500;padding:14px;border-radius:8px;font-size:0.9em;line-height:1.9;margin-bottom:10px">
+        <p><strong style="color:#22c55e">No corruption — WAL saves you!</strong></p>
+        <p><strong>Write-Ahead Logging (WAL):</strong> SQL Server writes to Transaction Log BEFORE writing data pages. Log is sequential, fast I/O.</p>
+        <p><strong>On crash:</strong> SQL Server restarts → reads Transaction Log → sees incomplete TX (no COMMIT) → automatically ROLLBACKS it. FeeRecord INSERT undone. Student not charged. Consistent state!</p>
+        <p><strong>Durability:</strong> COMMITTED data → log was flushed to disk before COMMIT returned. Survives crash.</p>
+      </div>
+      <pre><span class="s-cmt">-- Transaction Log flow:
+-- 1. BEGIN TRAN  → Log: BEGIN_TRAN
+-- 2. INSERT FeeRecords → Log: INSERT undo info (before image)
+-- 3. UPDATE Balance    → Log: UPDATE undo info
+-- [CRASH HERE — no COMMIT logged]
+-- Restart: Log shows no COMMIT → ROLLBACK using before images
+-- Database consistent!</span>
+
+<span class="s-cmt">-- That's why ACID Durability works:</span>
+<span class="s-cmt">-- COMMIT doesn't return until log record flushed to disk (fsync)</span>
+
+<span class="s-cmt">-- Check transaction log</span>
+<span class="s-kw">SELECT</span> operation, context, <span class="s-fn">[Transaction ID]</span>, [<span class="s-type">Begin Time</span>]
+<span class="s-kw">FROM</span>   fn_dblog(<span class="s-kw">NULL</span>, <span class="s-kw">NULL</span>)
+<span class="s-kw">WHERE</span>  operation <span class="s-kw">IN</span> (<span class="s-str">'LOP_BEGIN_XACT'</span>, <span class="s-str">'LOP_COMMIT_XACT'</span>, <span class="s-str">'LOP_ABORT_XACT'</span>)
+<span class="s-kw">ORDER BY</span> [Current LSN] <span class="s-kw">DESC</span>;</pre>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div>
+        <div class="scenario-title">Deadlock — two concurrent fee collections blocking each other <span class="diff hard">Hard</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Morning school time-la fee collection peak — Error 1205 deadlock victim error vanthuchu. Application logs-la daily 50+ deadlock errors. Root cause find பண்ணி fix பண்ணு."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ DEADLOCK ROOT CAUSE + MULTI-LAYER FIX</div>
+      <pre><span class="s-cmt">-- Step 1: Capture deadlock graph</span>
+<span class="s-cmt">-- SQL Server Management Studio → Extended Events → system_health</span>
+<span class="s-cmt">-- Or: trace flag 1222</span>
+<span class="s-kw">DBCC TRACEON</span> (<span class="s-num">1222</span>, -<span class="s-num">1</span>);
+
+<span class="s-cmt">-- Found: Session A updates Students then FeeRecords
+--         Session B updates FeeRecords then Students  ← reversed order!</span>
+
+<span class="s-cmt">-- Fix 1: Consistent lock ordering — both SPs use same table order</span>
+<span class="s-cmt">-- Fee SP: 1. FeeRecords INSERT  2. StudentFeeBalance UPDATE  (always this order!)</span>
+
+<span class="s-cmt">-- Fix 2: Add index on join column — avoids range locks</span>
+<span class="s-kw">CREATE INDEX</span> IX_FeeRecords_StudentId <span class="s-kw">ON</span> FeeRecords (StudentId);
+<span class="s-cmt">-- Before: table scan + range lock on many rows
+-- After: row-level lock on specific row only → less contention!</span>
+
+<span class="s-cmt">-- Fix 3: Enable READ_COMMITTED_SNAPSHOT — readers don't block writers!</span>
+<span class="s-kw">ALTER DATABASE</span> ZenCampusDB <span class="s-kw">SET READ_COMMITTED_SNAPSHOT ON</span>;</pre>
+      <pre><span class="cs-cmt">// Fix 4: Application retry for Error 1205</span>
+<span class="cs-kw">catch</span> (<span class="cs-type">SqlException</span> <span class="cs-prop">ex</span>) <span class="cs-kw">when</span> (<span class="cs-prop">ex</span>.<span class="cs-prop">Number</span> == <span class="cs-num">1205</span>)
+{
+    <span class="cs-kw">await</span> <span class="cs-type">Task</span>.<span class="cs-method">Delay</span>(<span class="cs-num">100</span> * <span class="cs-prop">attempt</span>);
+    <span class="cs-cmt">// Retry — other TX committed, conflict gone!</span>
+}</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Result after fixes</div>
+        <p>50 deadlocks/day → 0 deadlocks. RCSI enabled — report queries no longer block fee collection. Peak hour throughput: 120 transactions/min → 180 transactions/min.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div>
+        <div class="scenario-title">NOLOCK hint use பண்ணலாமா? Principal balance galat show ஆகுது! <span class="diff real">Real Interview</span> <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Senior developer said 'NOLOCK use pannidhu — reports block aagathu'. Added NOLOCK everywhere. Now sometimes fee balance wrong amount shows. Principal complaint. Why?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ NOLOCK DANGER + RIGHT FIX</div>
+      <div style="background:#1f0a0a;padding:14px;border-radius:8px;font-size:0.9em;line-height:1.9;margin-bottom:10px">
+        <p><strong style="color:#e74c3c">NOLOCK = READ UNCOMMITTED = dirty reads!</strong></p>
+        <p>Session A: UPDATE FeeBalance = 10000 (not committed yet). Session B (NOLOCK): reads 10000. Session A: ROLLBACK → actual balance = 5000. Session B showed wrong data!</p>
+        <p><strong style="color:#f39c12">NOLOCK also reads partially written rows</strong> — forward scans can see rows twice, backward scans miss rows. Not just dirty reads — corrupted result sets!</p>
+      </div>
+      <pre><span class="s-cmt">-- Wrong: NOLOCK everywhere</span>
+<span class="s-kw">SELECT</span> Balance <span class="s-kw">FROM</span> StudentFeeBalance <span class="s-kw">WITH (NOLOCK)</span>
+<span class="s-kw">WHERE</span>  StudentId = <span class="s-num">101</span>;
+<span class="s-cmt">-- Might read uncommitted/rolled-back balance!</span>
+
+<span class="s-cmt">-- Right fix: READ_COMMITTED_SNAPSHOT at database level</span>
+<span class="s-kw">ALTER DATABASE</span> ZenCampusDB <span class="s-kw">SET READ_COMMITTED_SNAPSHOT ON</span>;
+<span class="s-cmt">-- Now: READ COMMITTED reads committed snapshot (row versioning)
+-- No blocking + no dirty reads! Best of both worlds!</span>
+
+<span class="s-cmt">-- After enabling RCSI — remove all NOLOCK hints!
+-- NOLOCK OK ONLY for: approximate counts where wrong count acceptable</span>
+<span class="s-kw">SELECT</span> <span class="s-fn">COUNT</span>(*) <span class="s-kw">FROM</span> AuditLog <span class="s-kw">WITH (NOLOCK)</span>; <span class="s-cmt">-- dashboard: "~48,234 entries"</span></pre>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div>
+        <div class="scenario-title">Stored Procedure vs EF Core — when to use what? <span class="diff easy">Easy</span> <span class="diff real">Real Interview</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Interview la kekkuran: 'ZenCampus-la EF Core use pannuva, SP use pannuva — when to use what? Design philosophy sollu.'"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ BALANCED ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;font-size:0.9em;line-height:1.9">
+        <p><strong style="color:#38bdf8">EF Core for:</strong> Simple CRUD (Add, Update, Delete students), relationship navigation, business logic queries, testable code, change tracking. EF Core generates optimized SQL for most cases.</p>
+        <p><strong style="color:#f39c12">Stored Procedures for:</strong> Complex multi-table reports (fee summary, term-wise attendance, exam rank), bulk operations (year-end promotion for 50k students), operations requiring fine-tuned query plan control, DBA-managed performance-critical queries.</p>
+        <p><strong style="color:#2ecc71">ZenCampus approach:</strong> EF Core for all CRUD + simple business queries. SPs for 5-6 complex reports that process >10k rows. Dapper for intermediate ad-hoc queries where EF generates suboptimal SQL.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card perf-card">
+    <div class="scenario-header">
+      <div class="s-num perf">8</div>
+      <div>
+        <div class="scenario-title">Academic year promotion — 50,000 students update in production <span class="perf-badge">🔥 Production</span> <span class="diff senior">Senior</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "March year-end — 50,000 students Grade promote பண்ணணும் (Grade 1 → Grade 2, etc). One UPDATE statement panrom — blocking issue, log file full, DBA panic. How to handle safely?"
+    </div>
+    <button class="reveal-btn perf-btn" onclick="toggle(this)">🔍 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label perf">✅ BATCH UPDATE — Safe Large-Scale Operation</div>
+      <pre><span class="s-cmt">-- WRONG: One giant update — locks entire table for minutes!</span>
+<span class="s-kw">UPDATE</span> Students <span class="s-kw">SET</span> Grade = Grade + <span class="s-num">1</span>
+<span class="s-kw">WHERE</span> SchoolId = <span class="s-num">42</span> <span class="s-kw">AND</span> Status = <span class="s-str">'Active'</span>;
+<span class="s-cmt">-- 50k rows locked → fee collection blocked → angry principals!</span>
+
+<span class="s-cmt">-- RIGHT: Batch update — small chunks, pause between batches</span>
+<span class="s-kw">DECLARE</span> <span class="s-fn">@BatchSize</span>     <span class="s-type">INT</span>  = <span class="s-num">500</span>;
+<span class="s-kw">DECLARE</span> <span class="s-fn">@TotalUpdated</span>  <span class="s-type">INT</span>  = <span class="s-num">0</span>;
+<span class="s-kw">DECLARE</span> <span class="s-fn">@RowsAffected</span>  <span class="s-type">INT</span>  = <span class="s-num">1</span>;
+
+<span class="s-kw">WHILE</span> <span class="s-fn">@RowsAffected</span> > <span class="s-num">0</span>
+<span class="s-kw">BEGIN</span>
+    <span class="s-kw">BEGIN TRAN</span>;
+
+    <span class="s-kw">UPDATE TOP</span> (<span class="s-fn">@BatchSize</span>) Students
+    <span class="s-kw">SET</span>    Grade        = Grade + <span class="s-num">1</span>,
+           AcademicYear = <span class="s-str">'2026-27'</span>,
+           PromotedDate = <span class="s-fn">GETDATE</span>()
+    <span class="s-kw">WHERE</span>  Status = <span class="s-str">'Active'</span>
+      <span class="s-kw">AND</span>  PromotedDate <span class="s-kw">IS NULL</span>; <span class="s-cmt">-- flag: not yet promoted</span>
+
+    <span class="s-kw">SET</span> <span class="s-fn">@RowsAffected</span> = <span class="s-fn">@@ROWCOUNT</span>;
+    <span class="s-kw">SET</span> <span class="s-fn">@TotalUpdated</span>  = <span class="s-fn">@TotalUpdated</span> + <span class="s-fn">@RowsAffected</span>;
+
+    <span class="s-kw">COMMIT TRAN</span>;  <span class="s-cmt">-- commit each batch = log checkpoint, no log bloat!</span>
+
+    <span class="s-kw">WAITFOR DELAY</span> <span class="s-str">'00:00:00.1'</span>; <span class="s-cmt">-- 100ms pause = other queries breathe!</span>
+
+    <span class="s-kw">PRINT</span> <span class="s-str">'Updated '</span> + <span class="s-fn">CAST</span>(<span class="s-fn">@TotalUpdated</span> <span class="s-kw">AS</span> <span class="s-type">VARCHAR</span>) + <span class="s-str">' students'</span>;
+<span class="s-kw">END</span>
+<span class="s-cmt">-- 50k rows: 100 batches × 500 rows × 100ms = 10 seconds total
+-- Max lock duration: 500 rows × ~1ms = negligible blocking!</span></pre>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div>
+        <div class="scenario-title">MERGE — Upsert attendance without INSERT + UPDATE separately <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Attendance sync API — SMS gateway sends attendance data, some students already have attendance (UPDATE), some new (INSERT). C# la IF EXISTS → UPDATE ELSE INSERT pattern-a use pannuvan. Better approach?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ SQL MERGE (UPSERT) Statement</div>
+      <pre><span class="s-cmt">-- MERGE = UPDATE if exists, INSERT if not. Atomic, one statement!</span>
+<span class="s-kw">MERGE INTO</span> Attendance <span class="s-kw">AS</span> Target
+<span class="s-kw">USING</span> (
+    <span class="s-cmt">-- Source: incoming attendance from SMS gateway (TVP)</span>
+    <span class="s-kw">SELECT</span> StudentId, AttendDate, IsPresent, SchoolId, Remarks
+    <span class="s-kw">FROM</span>   <span class="s-fn">@AttendanceData</span>  <span class="s-cmt">-- TVP parameter</span>
+) <span class="s-kw">AS</span> Source
+<span class="s-kw">ON</span> (Target.StudentId  = Source.StudentId
+<span class="s-kw">AND</span>  Target.AttendDate = Source.AttendDate
+<span class="s-kw">AND</span>  Target.SchoolId  = Source.SchoolId)
+
+<span class="s-kw">WHEN MATCHED THEN</span>                 <span class="s-cmt">-- Row exists → UPDATE</span>
+    <span class="s-kw">UPDATE SET</span>
+        Target.IsPresent = Source.IsPresent,
+        Target.Remarks   = Source.Remarks,
+        Target.UpdatedAt = <span class="s-fn">GETDATE</span>()
+
+<span class="s-kw">WHEN NOT MATCHED BY TARGET THEN</span>   <span class="s-cmt">-- New row → INSERT</span>
+    <span class="s-kw">INSERT</span> (StudentId, AttendDate, IsPresent, SchoolId, Remarks, CreatedAt)
+    <span class="s-kw">VALUES</span> (Source.StudentId, Source.AttendDate,
+             Source.IsPresent, Source.SchoolId, Source.Remarks, <span class="s-fn">GETDATE</span>())
+
+<span class="s-kw">WHEN NOT MATCHED BY SOURCE</span>        <span class="s-cmt">-- Row in DB but not in source → optional</span>
+    <span class="s-kw">AND</span> Target.AttendDate = <span class="s-str">'2026-06-23'</span>
+    <span class="s-kw">THEN DELETE</span>;                   <span class="s-cmt">-- remove removed students</span>
+
+<span class="s-cmt">-- OUTPUT shows what happened</span>
+<span class="s-kw">OUTPUT</span> $action <span class="s-kw">AS</span> Action, Inserted.StudentId;
+<span class="s-cmt">-- Returns: 'INSERT' or 'UPDATE' per row</span></pre>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div>
+        <div class="scenario-title">"SQL performance experience sollu" — Complete Interview Answer <span class="diff senior">Senior</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "SQL Server performance — ZenCampus-la what kind of optimization work did you do? Indexes, transactions, stored procedures — real experience sollu."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ FULL STRUCTURED INTERVIEW ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p>"ZenCampus — 200 schools, 50,000+ students. SQL Server 2019. Key performance work:"</p>
+        <p><strong>Index optimization:</strong> Fee report was 45 seconds. Used SET STATISTICS IO to find 8,420 logical reads. Execution plan showed Table Scan — non-SARGable WHERE clause (CONVERT on SchoolId). Fixed query + added covering index (SchoolId, AcademicYear) INCLUDE(Amount, Status). Result: 45s → 0.3s.</p>
+        <p><strong>Bulk operations:</strong> Attendance Excel upload — 5,000 row-by-row INSERT loop taking 4 minutes. Replaced with SqlBulkCopy + TVP stored procedure. 4 min → 1.2 seconds.</p>
+        <p><strong>Deadlock resolution:</strong> 50 deadlocks/day during peak fee collection. Extended Events captured graph — inconsistent lock ordering between SPs. Fixed order + enabled READ_COMMITTED_SNAPSHOT. Deadlocks → 0.</p>
+        <p><strong>Transaction management:</strong> Multi-step fee payment SP with BEGIN TRY/BEGIN TRAN pattern. All-or-nothing: FeeRecord INSERT + Balance UPDATE + Audit Log. Server crash = WAL auto-rollback, no corruption.</p>
+        <p><strong>Year-end promotion:</strong> 50k students batch update in 500-row chunks with WAITFOR DELAY. No table lock, no log file bloat, zero blocking for concurrent fee operations.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">9</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: WHERE YEAR(PaidDate) = 2026 — இது SARGable-aa?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Yes — YEAR() is a simple function, SQL optimizes it</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) No — function on column = SQL evaluates every row = Table Scan!</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Depends on index type</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Only for DATETIME columns, not DATE</div>
+    <div class="quiz-fb ok">✅ Non-SARGable! YEAR(PaidDate) = SQL must call YEAR() on each row = can't use index. Fix: WHERE PaidDate >= '2026-01-01' AND PaidDate < '2027-01-01' → Index Seek!</div>
+    <div class="quiz-fb nope">❌ Function on column = index bypass! SQL can't seek into an index when column is wrapped in function. Always rewrite to bare column = value pattern!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: Table-la 20 Non-Clustered Index add பண்றா — INSERT performance?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) No change — reads improve, writes unaffected</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Improves — more indexes, faster searches</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) Degrades — each INSERT must update all 20 index B-Trees!</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Depends on index size</div>
+    <div class="quiz-fb ok">✅ Write amplification! 1 INSERT = 20 index B-Tree updates + 1 clustered index update. OLTP tables: 5-7 indexes max. Find unused indexes (seeks=0, updates>0) and drop them!</div>
+    <div class="quiz-fb nope">❌ Indexes hurt writes! Every INSERT/UPDATE/DELETE must maintain ALL indexes. 20 indexes = 21 B-Tree updates per row. Find and drop unused indexes!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: @@TRANCOUNT = 2 — BEGIN TRAN எத்தனை times call ஆச்சு?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) 1</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) 2 — nested transactions. COMMIT once = @@TRANCOUNT 2→1. Need 2 COMMITs!</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) @@TRANCOUNT always 0 or 1</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) 0 — outer transaction not started yet</div>
+    <div class="quiz-fb ok">✅ @@TRANCOUNT counts nested BEGIN TRANs. Each BEGIN TRAN = +1. Each COMMIT = -1. Only when @@TRANCOUNT reaches 0 does the actual transaction commit to disk. ROLLBACK always goes to 0 (full rollback)!</div>
+    <div class="quiz-fb nope">❌ @@TRANCOUNT = 2 means 2 nested BEGIN TRANs. Need 2 COMMITs to actually commit. But 1 ROLLBACK kills everything (goes to 0)! Check @@TRANCOUNT > 0 before ROLLBACK in CATCH blocks!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: Composite index (SchoolId, Grade) — WHERE Grade = 5 AND SchoolId = 42 — uses index?</p>
+    <div class="quiz-opt" onclick="ans(this,'correct')">A) Yes — SQL optimizer can use leftmost prefix even if WHERE order differs</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) No — WHERE must match index column order exactly</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Only if Grade = 5 comes first in WHERE</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Only clustered index can be used here</div>
+    <div class="quiz-fb ok">✅ SQL optimizer is smart — it rearranges WHERE clause to match index column order. WHERE Grade = 5 AND SchoolId = 42 → optimizer reads as SchoolId = 42 AND Grade = 5 → leftmost prefix (SchoolId) matched → Index Seek!</div>
+    <div class="quiz-fb nope">❌ SQL optimizer reorders WHERE predicates! The critical thing is which COLUMNS are present, not their WHERE clause order. (SchoolId, Grade) index: WHERE Grade=5 AND SchoolId=42 → optimizer uses Index Seek on SchoolId first!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">10</span> ✅ Day 10 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory (60 min)</h3>
+      <ul class="check-list">
+        <li>Clustered vs Non-Clustered vs Covering</li>
+        <li>Left-prefix rule for composite indexes</li>
+        <li>Index Seek vs Index Scan vs Table Scan</li>
+        <li>SARGable — function on column = bad</li>
+        <li>Execution plan — Key Lookup, Hash Match, Sort</li>
+        <li>ACID — Atomic, Consistent, Isolated, Durable</li>
+        <li>BEGIN TRY / BEGIN TRAN / COMMIT / ROLLBACK</li>
+        <li>Isolation levels — RCSI vs NOLOCK</li>
+        <li>Deadlock — consistent ordering fix</li>
+        <li>WAL — why crash doesn't corrupt data</li>
+      </ul>
+    </div>
+    <div>
+      <h3>💻 Hands-On SSMS (60 min)</h3>
+      <ul class="check-list">
+        <li>Create covering index on FeeRecords</li>
+        <li>SET STATISTICS IO ON — measure reads</li>
+        <li>View execution plan — spot Table Scan</li>
+        <li>Write usp_CollectFee with transaction</li>
+        <li>Write usp_BulkInsertAttendance with TVP</li>
+        <li>MERGE statement for attendance upsert</li>
+        <li>ALTER DATABASE ... SET READ_COMMITTED_SNAPSHOT ON</li>
+        <li>UPDATE STATISTICS FeeRecords WITH FULLSCAN</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Key Interview Phrases</h3>
+      <ul class="check-list">
+        <li>"Covering index eliminates Key Lookup"</li>
+        <li>"SARGable — column naked in WHERE clause"</li>
+        <li>"Logical reads = true performance metric"</li>
+        <li>"RCSI — readers don't block writers"</li>
+        <li>"Consistent lock ordering prevents deadlocks"</li>
+        <li>"WAL ensures durability — crash safe"</li>
+        <li>"Batch updates — 500 rows, WAITFOR DELAY"</li>
+        <li>"SET NOCOUNT ON in all SPs"</li>
+      </ul>
+    </div>
+    <div>
+      <h3>⚡ Common Mistakes to Avoid</h3>
+      <ul class="check-list">
+        <li>NOLOCK on financial data (dirty reads!)</li>
+        <li>20+ indexes on OLTP table (write slow!)</li>
+        <li>CONVERT/CAST on WHERE column (scan!)</li>
+        <li>Missing @@TRANCOUNT check in CATCH</li>
+        <li>One UPDATE for 50k rows (lock table!)</li>
+        <li>CURSOR instead of set-based operation</li>
+        <li>SELECT * with covering index (key lookup!)</li>
+        <li>Nested BEGIN TRAN without tracking @@TRANCOUNT</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#001a20,#0a0a1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🗄️ Day 10 Motivation</div>
+    <p style="color:#38bdf8;font-style:italic">"Thuppakki sniper = Index Seek. AK-47 spray = Table Scan. SQL interview-la 'execution plan check pannen, Table Scan paarthe, non-SARGable query fix panne, 45 seconds → 0.3 seconds aachu' — அது thaan senior developer answer! <strong>Logic reads = true cost. Index seek = precision. RCSI = peace of mind. Batch update = safe production operation. Intha naalu therinjiruntha SQL interview crack!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 10/60 ✅ | Tomorrow: Day 11 — Redis Caching (Distributed Cache, Cache-Aside, Cache Invalidation, Session Storage)</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:16.7%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">10 of 60 days (16.7%) — Database mastered!</div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p>Day 10 – SQL Server Performance | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🗄️ "Index Seek = Thuppakki sniper. SARGable = column naked in WHERE. RCSI = no blocking reports. WAL = crash-proof. Batch = safe 50k update!"</p>
+</footer>
+
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent=btn.classList.contains('perf-btn')?'🔍 Diagnose + Fix':'💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

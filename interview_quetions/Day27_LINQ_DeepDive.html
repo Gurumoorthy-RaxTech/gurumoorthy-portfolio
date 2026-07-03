@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 27 — LINQ Deep Dive | ZenCampus .NET Interview Prep</title>
+<style>
+  :root {
+    --accent: #0284c7;
+    --accent-dim: #0369a1;
+    --accent-glow: rgba(2,132,199,0.18);
+    --accent-subtle: rgba(2,132,199,0.08);
+    --bg: #0d0d1a;
+    --bg2: #111120;
+    --bg3: #181830;
+    --card: #1a1a2e;
+    --card2: #16213e;
+    --border: #2a2a4a;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --danger: #ef4444;
+    --warn: #f59e0b;
+    --good: #22c55e;
+    --info: #38bdf8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.7; }
+
+  #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 9999; transition: width 0.2s; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,13,26,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0.6rem 1.5rem; display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+  }
+  nav .day-badge { background: var(--accent); color: #fff; font-weight: 800; font-size: 0.85rem; padding: 0.25rem 0.75rem; border-radius: 999px; white-space: nowrap; }
+  nav a { color: var(--muted); font-size: 0.8rem; text-decoration: none; transition: color 0.2s; white-space: nowrap; }
+  nav a:hover { color: var(--accent); }
+
+  .hero { padding: 3.5rem 1.5rem 2rem; text-align: center; border-bottom: 1px solid var(--border); background: radial-gradient(ellipse at top, rgba(2,132,199,0.12) 0%, transparent 70%); }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; color: var(--accent); letter-spacing: -1px; }
+  .hero p { color: var(--muted); margin-top: 0.5rem; font-size: 1.1rem; }
+  .hero .tags { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+  .hero .tag { background: var(--accent-subtle); border: 1px solid var(--accent-dim); color: var(--accent); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  section { margin-bottom: 3.5rem; }
+  h2 { font-size: 1.6rem; font-weight: 800; color: var(--accent); margin-bottom: 1.2rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--accent-dim); display: flex; align-items: center; gap: 0.5rem; }
+  h3 { font-size: 1.15rem; font-weight: 700; color: var(--info); margin: 1.4rem 0 0.6rem; }
+  p { color: var(--text); margin-bottom: 0.7rem; }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem; margin-bottom: 1.2rem; }
+  .card-danger { border-left: 4px solid var(--danger); background: rgba(239,68,68,0.05); }
+  .card-good  { border-left: 4px solid var(--good);   background: rgba(34,197,94,0.05); }
+  .card-warn  { border-left: 4px solid var(--warn);   background: rgba(245,158,11,0.05); }
+  .card-info  { border-left: 4px solid var(--info);   background: rgba(56,189,248,0.05); }
+  .card-accent{ border-left: 4px solid var(--accent); }
+
+  pre {
+    background: #0a0a16; border: 1px solid var(--border); border-radius: 10px;
+    padding: 1.2rem; overflow-x: auto; font-family: 'Cascadia Code','Fira Code',Consolas,monospace;
+    font-size: 0.82rem; line-height: 1.65; margin: 0.8rem 0; color: #e2e8f0;
+  }
+  .kw  { color: #c792ea; }
+  .cl  { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .cm  { color: #546e7a; font-style: italic; }
+  .num { color: #f78c6c; }
+  .mth { color: #82aaff; }
+  .dec { color: var(--accent); font-weight: 600; }
+  .err { color: var(--danger); font-weight: 700; }
+  .ok  { color: var(--good);   font-weight: 700; }
+  .hl  { color: var(--warn);   font-weight: 700; }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 1rem 0; }
+  th { background: var(--accent-subtle); color: var(--accent); padding: 0.65rem 0.9rem; text-align: left; font-weight: 700; border: 1px solid var(--border); }
+  td { padding: 0.6rem 0.9rem; border: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .badge-danger { background: rgba(239,68,68,0.15); color: var(--danger); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.78rem; font-weight: 700; }
+  .badge-good   { background: rgba(34,197,94,0.15);  color: var(--good);   padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.78rem; font-weight: 700; }
+  .badge-warn   { background: rgba(245,158,11,0.15); color: var(--warn);   padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.78rem; font-weight: 700; }
+  .badge-info   { background: rgba(56,189,248,0.15); color: var(--info);   padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.78rem; font-weight: 700; }
+
+  .movie-box {
+    background: linear-gradient(135deg, rgba(2,132,199,0.12), rgba(2,132,199,0.04));
+    border: 1px solid var(--accent-dim); border-radius: 12px; padding: 1.1rem 1.3rem;
+    margin: 1.2rem 0; display: flex; gap: 1rem; align-items: flex-start;
+  }
+  .movie-icon  { font-size: 1.6rem; flex-shrink: 0; }
+  .movie-title { color: var(--accent); font-weight: 800; font-size: 0.95rem; }
+  .movie-body  { color: var(--muted); font-size: 0.88rem; margin-top: 0.2rem; }
+
+  .scenario { background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; margin-bottom: 1rem; }
+  .scenario-header { display: flex; align-items: flex-start; gap: 0.8rem; }
+  .scenario-num { background: var(--accent); color: #fff; font-weight: 900; font-size: 0.9rem; width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 0.1rem; }
+  .scenario-q { font-weight: 700; color: var(--text); font-size: 0.95rem; }
+  .scenario-type { font-size: 0.72rem; color: var(--accent); background: var(--accent-subtle); border: 1px solid var(--accent-dim); padding: 0.1rem 0.5rem; border-radius: 999px; margin-left: 0.4rem; font-weight: 600; }
+  .reveal-btn { margin-top: 0.8rem; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.82rem; font-weight: 600; transition: all 0.2s; }
+  .reveal-btn:hover { background: var(--accent); color: #fff; }
+  .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+  .reveal-content.open { display: block; }
+
+  .quiz-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; margin-bottom: 1rem; }
+  .quiz-q { font-weight: 700; margin-bottom: 0.8rem; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 0.45rem; }
+  .quiz-opt { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.55rem 1rem; cursor: pointer; font-size: 0.88rem; transition: all 0.2s; text-align: left; }
+  .quiz-opt:hover { border-color: var(--accent); background: var(--accent-subtle); }
+  .quiz-opt.correct { border-color: var(--good); background: rgba(34,197,94,0.1); color: var(--good); font-weight: 700; }
+  .quiz-opt.wrong   { border-color: var(--danger); background: rgba(239,68,68,0.1); color: var(--danger); }
+  .quiz-fb { font-size: 0.82rem; margin-top: 0.6rem; padding: 0.5rem 0.8rem; border-radius: 6px; display: none; }
+  .quiz-fb.show { display: block; }
+  .quiz-fb.good { background: rgba(34,197,94,0.1); color: var(--good); }
+  .quiz-fb.bad  { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+  .checklist { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 0.4rem; }
+  .checklist li { display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; cursor: pointer; padding: 0.3rem 0.4rem; border-radius: 6px; transition: background 0.15s; }
+  .checklist li:hover { background: var(--accent-subtle); }
+  .checklist li input[type=checkbox] { accent-color: var(--accent); width: 1rem; height: 1rem; flex-shrink: 0; }
+  .checklist li.done { color: var(--muted); text-decoration: line-through; }
+
+  .hl-box     { background: var(--accent-subtle); border: 1px solid var(--accent-dim); border-radius: 8px; padding: 0.9rem 1.1rem; margin: 0.8rem 0; font-size: 0.9rem; }
+  .danger-box { background: rgba(239,68,68,0.07);  border: 1px solid rgba(239,68,68,0.3);  border-radius: 8px; padding: 0.9rem 1.1rem; margin: 0.8rem 0; font-size: 0.9rem; }
+  .good-box   { background: rgba(34,197,94,0.07);  border: 1px solid rgba(34,197,94,0.3);  border-radius: 8px; padding: 0.9rem 1.1rem; margin: 0.8rem 0; font-size: 0.9rem; }
+  .warn-box   { background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 0.9rem 1.1rem; margin: 0.8rem 0; font-size: 0.9rem; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width:700px) { .split { grid-template-columns: 1fr; } nav a { font-size: 0.72rem; } }
+
+  .exec-tag { display: inline-block; font-size: 0.72rem; font-weight: 800; padding: 0.12rem 0.55rem; border-radius: 4px; margin-left: 0.4rem; }
+  .deferred  { background: rgba(2,132,199,0.2);  color: var(--accent); }
+  .immediate { background: rgba(239,68,68,0.2);  color: var(--danger); }
+
+  footer { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 3rem; }
+</style>
+</head>
+<body>
+<div id="progress-bar" style="width:0%"></div>
+
+<nav>
+  <span class="day-badge">DAY 27</span>
+  <a href="#deferred">Deferred vs Immediate</a>
+  <a href="#iq">IEnumerable vs IQueryable</a>
+  <a href="#operators">Key Operators</a>
+  <a href="#pitfalls">Pitfalls</a>
+  <a href="#expressions">Expression Trees</a>
+  <a href="#extensions">Custom Extensions</a>
+  <a href="#groupby">GroupBy</a>
+  <a href="#plinq">PLINQ</a>
+  <a href="#scenarios">Interview Q</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#checklist">Checklist</a>
+</nav>
+
+<div class="hero">
+  <h1>LINQ Deep Dive</h1>
+  <p>Deferred Execution · IQueryable vs IEnumerable · Expression Trees · Custom Extensions · Pitfalls</p>
+  <div class="tags">
+    <span class="tag">LINQ to Objects</span>
+    <span class="tag">LINQ to EF</span>
+    <span class="tag">ZenCampus Queries</span>
+    <span class="tag">50k Students</span>
+    <span class="tag">Day 27 / 60</span>
+    <span class="tag" style="background:rgba(2,132,199,0.2);border-color:#0284c7;color:#0284c7;">Cerulean #0284c7</span>
+  </div>
+</div>
+
+<main>
+
+<!-- ============================== SECTION 1: DEFERRED vs IMMEDIATE ============================== -->
+<section id="deferred">
+  <h2>⏳ Deferred vs Immediate Execution — The Core of LINQ</h2>
+
+  <p>LINQ-la most important concept: query define panradhu != query execute panradhu. Ithu theriyaama real production bugs varum — especially ZenCampus-la 50k students query pannum pothu.</p>
+
+  <h3>Deferred Execution — Query is Just a Plan</h3>
+  <pre><code><span class="cm">// DEFERRED — No DB call yet. Just building the query object.</span>
+<span class="kw">var</span> query = _db.Students
+    .Where(s =&gt; s.SchoolId == schoolId &amp;&amp; s.IsActive)
+    .OrderBy(s =&gt; s.Name);
+<span class="cm">// At this point: ZERO SQL executed. query is IQueryable&lt;Student&gt;</span>
+
+<span class="cm">// Adding more conditions is still deferred</span>
+<span class="kw">if</span> (!<span class="kw">string</span>.IsNullOrEmpty(className))
+    query = query.Where(s =&gt; s.Class.Name == className);  <span class="cm">// still no DB call</span>
+
+<span class="cm">// IMMEDIATE execution triggers — DB call happens HERE</span>
+<span class="kw">var</span> list     = <span class="kw">await</span> query.ToListAsync();         <span class="err">// SQL executed NOW</span>
+<span class="kw">var</span> first    = <span class="kw">await</span> query.FirstOrDefaultAsync(); <span class="err">// SQL executed NOW</span>
+<span class="kw">var</span> count    = <span class="kw">await</span> query.CountAsync();           <span class="err">// SQL executed NOW</span>
+<span class="kw">var</span> any      = <span class="kw">await</span> query.AnyAsync();             <span class="err">// SQL executed NOW</span>
+<span class="kw">var</span> arr      = <span class="kw">await</span> query.ToArrayAsync();         <span class="err">// SQL executed NOW</span>
+<span class="kw">await foreach</span> (<span class="kw">var</span> s <span class="kw">in</span> query) { ... }           <span class="err">// SQL executed NOW</span></code></pre>
+
+  <table>
+    <tr><th>Operator</th><th>Execution</th><th>Notes</th></tr>
+    <tr><td>Where, Select, OrderBy, Skip, Take, GroupBy, Join</td><td><span class="exec-tag deferred">Deferred</span></td><td>Returns IQueryable/IEnumerable — no execution</td></tr>
+    <tr><td>ToList(), ToArray(), ToDictionary()</td><td><span class="exec-tag immediate">Immediate</span></td><td>Materialises to collection</td></tr>
+    <tr><td>First(), FirstOrDefault(), Single(), Last()</td><td><span class="exec-tag immediate">Immediate</span></td><td>Returns one element</td></tr>
+    <tr><td>Count(), Sum(), Min(), Max(), Average()</td><td><span class="exec-tag immediate">Immediate</span></td><td>Returns scalar</td></tr>
+    <tr><td>Any(), All(), Contains()</td><td><span class="exec-tag immediate">Immediate</span></td><td>Returns bool</td></tr>
+    <tr><td>foreach loop</td><td><span class="exec-tag immediate">Immediate</span></td><td>Iterates and executes</td></tr>
+  </table>
+
+  <h3>The Classic Bug — Multiple Enumeration</h3>
+  <pre><code><span class="cm">// BUG: students is IQueryable — enumerated TWICE = 2 DB queries!</span>
+<span class="kw">var</span> students = _db.Students.Where(s =&gt; s.SchoolId == schoolId);
+
+<span class="kw">if</span> (students.Any())               <span class="err">// DB query 1: SELECT COUNT(*) WHERE...</span>
+{
+    <span class="kw">var</span> list = students.ToList();  <span class="err">// DB query 2: SELECT * WHERE... (again!)</span>
+    ProcessStudents(list);
+}
+
+<span class="cm">// FIX: Materialise once</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+    .Where(s =&gt; s.SchoolId == schoolId)
+    .ToListAsync();              <span class="ok">// ONE DB query</span>
+
+<span class="kw">if</span> (students.Count &gt; <span class="num">0</span>)        <span class="ok">// in-memory check — no DB</span>
+    ProcessStudents(students);  <span class="ok">// no DB</span></code></pre>
+
+  <div class="danger-box">
+    <strong>Production trap — Captured Variable Bug:</strong>
+    <pre style="margin-top:0.5rem"><code><span class="kw">var</span> schoolIds = <span class="kw">new</span>[] { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span> };
+<span class="kw">var</span> queries = <span class="kw">new</span> <span class="cl">List</span>&lt;<span class="cl">IQueryable</span>&lt;<span class="cl">Student</span>&gt;&gt;();
+<span class="kw">foreach</span> (<span class="kw">var</span> id <span class="kw">in</span> schoolIds)
+    queries.Add(_db.Students.Where(s =&gt; s.SchoolId == id)); <span class="cm">// captures `id`</span>
+
+<span class="cm">// By the time queries execute, id = 3 (last value) — all queries filter SchoolId==3!</span>
+<span class="cm">// FIX: capture in local variable</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> id <span class="kw">in</span> schoolIds)
+{
+    <span class="kw">var</span> localId = id;  <span class="ok">// capture locally</span>
+    queries.Add(_db.Students.Where(s =&gt; s.SchoolId == localId));
+}
+<span class="cm">// In C# 5+ foreach loop variable is captured correctly — but watch out in for(;;) loops!</span></code></pre>
+  </div>
+
+  <div class="movie-box">
+    <div class="movie-icon">🎬</div>
+    <div>
+      <div class="movie-title">Dasavathaaram (2008) — Plan First, Execute Later</div>
+      <div class="movie-body">Dasavathaaram-la 800 years agae oru plan setup aachu — actual execution pinna naala. Deferred execution exact same: LINQ query oru plan (IQueryable object) — actual DB trip ToList() or foreach-la taan nadalum. Plan panrom, execute panrom — rendu different moments!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 2: IEnumerable vs IQueryable ============================== -->
+<section id="iq">
+  <h2>🎯 IEnumerable vs IQueryable — The Critical Distinction</h2>
+
+  <div class="split">
+    <div class="card card-danger">
+      <h3 style="color:var(--danger);margin-top:0">IEnumerable — In-Memory</h3>
+      <p>Filter runs in <strong>C# memory</strong> after loading all data from DB.</p>
+      <pre><code><span class="cm">// SLOW — loads ALL 50k students first!</span>
+<span class="cl">IEnumerable</span>&lt;<span class="cl">Student</span>&gt; students =
+    _db.Students.ToList(); <span class="err">// SELECT * FROM Students</span>
+
+<span class="kw">var</span> active = students
+    .Where(s =&gt; s.IsActive); <span class="err">// C# loop, 50k items</span></code></pre>
+    </div>
+    <div class="card card-good">
+      <h3 style="color:var(--good);margin-top:0">IQueryable — SQL Translation</h3>
+      <p>Filter translates to <strong>SQL WHERE clause</strong> — DB does the work.</p>
+      <pre><code><span class="cm">// FAST — DB filters before sending data</span>
+<span class="cl">IQueryable</span>&lt;<span class="cl">Student</span>&gt; query =
+    _db.Students;  <span class="ok">// no DB call yet</span>
+
+<span class="kw">var</span> active = query
+    .Where(s =&gt; s.IsActive); <span class="ok">// adds WHERE IsActive=1</span>
+<span class="cm">// SQL: SELECT * FROM Students WHERE IsActive=1</span></code></pre>
+    </div>
+  </div>
+
+  <h3>The Repository Leak — Real Interview Trap</h3>
+  <pre><code><span class="cm">// Repository returns IEnumerable — all filtering happens in C# memory!</span>
+<span class="kw">public</span> <span class="cl">IEnumerable</span>&lt;<span class="cl">Student</span>&gt; GetAll() <span class="err">// Returns IEnumerable</span>
+    =&gt; _db.Students;  <span class="cm">// executes immediately on caller's foreach</span>
+
+<span class="cm">// Caller tries to filter — but it's ALREADY loaded from DB</span>
+<span class="kw">var</span> active = _repo.GetAll()
+    .Where(s =&gt; s.IsActive)   <span class="err">// in-memory — all 50k students already loaded!</span>
+    .Take(<span class="num">20</span>)
+    .ToList();
+
+<span class="cm">// FIX: Return IQueryable so caller's filters become SQL</span>
+<span class="kw">public</span> <span class="cl">IQueryable</span>&lt;<span class="cl">Student</span>&gt; GetAll() <span class="ok">// Returns IQueryable</span>
+    =&gt; _db.Students.AsNoTracking();
+
+<span class="cm">// Now caller's filter goes to DB</span>
+<span class="kw">var</span> active = _repo.GetAll()
+    .Where(s =&gt; s.IsActive)   <span class="ok">// part of SQL WHERE</span>
+    .Take(<span class="num">20</span>)                  <span class="ok">// SQL TOP 20</span>
+    .ToListAsync();            <span class="ok">// Single optimised query</span></code></pre>
+
+  <table>
+    <tr><th>Aspect</th><th>IEnumerable&lt;T&gt;</th><th>IQueryable&lt;T&gt;</th></tr>
+    <tr><td>Namespace</td><td>System.Collections.Generic</td><td>System.Linq</td></tr>
+    <tr><td>Execution</td><td>In C# memory</td><td>Translated to SQL (or other provider)</td></tr>
+    <tr><td>Filter timing</td><td>After loading ALL data</td><td>In the DB WHERE clause</td></tr>
+    <tr><td>Use for</td><td>In-memory collections, List, Array</td><td>EF Core, database queries</td></tr>
+    <tr><td>Expression type</td><td>Func&lt;T, bool&gt;</td><td>Expression&lt;Func&lt;T, bool&gt;&gt;</td></tr>
+    <tr><td>AsNoTracking()</td><td>Not applicable</td><td>Available — removes EF overhead</td></tr>
+    <tr><td>Performance with 50k rows</td><td class="badge-danger">SLOW — loads all</td><td class="badge-good">FAST — DB filter</td></tr>
+  </table>
+
+  <div class="movie-box">
+    <div class="movie-icon">🎬</div>
+    <div>
+      <div class="movie-title">Thuppakki (2012) vs Kadaikutty Singam (2018)</div>
+      <div class="movie-body">Thuppakki-la Vijay precise target identify panni oru shot-la eliminate panruvan — IQueryable like that: DB-la precise SQL, minimum data. Kadaikutty Singam-la entire family home vanthu serthu later sort out pannuvanga — IEnumerable like that: ALL data load, THEN filter in memory. Interview-la ethu faster nu ketkanga — always IQueryable for DB!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 3: KEY OPERATORS ============================== -->
+<section id="operators">
+  <h2>🔧 Key LINQ Operators — ZenCampus Examples</h2>
+
+  <h3>SelectMany — Flatten Nested Collections</h3>
+  <pre><code><span class="cm">// Get ALL fee records across ALL students in a school</span>
+<span class="cm">// Select would give IEnumerable&lt;IEnumerable&lt;FeeRecord&gt;&gt; — nested!</span>
+<span class="kw">var</span> allFees = students
+    .SelectMany(s =&gt; s.FeeRecords)   <span class="ok">// flattens to IEnumerable&lt;FeeRecord&gt;</span>
+    .Where(f =&gt; !f.IsPaid)
+    .OrderByDescending(f =&gt; f.Amount)
+    .ToList();
+
+<span class="cm">// With both student and fee in result</span>
+<span class="kw">var</span> pendingFees = students
+    .SelectMany(s =&gt; s.FeeRecords, (student, fee) =&gt; <span class="kw">new</span>
+    {
+        student.Name,
+        student.AdmissionNumber,
+        fee.Amount,
+        fee.DueDate,
+        DaysOverdue = (<span class="cl">DateTime</span>.Today - fee.DueDate).Days
+    })
+    .Where(x =&gt; !x.IsPaid &amp;&amp; x.DaysOverdue &gt; <span class="num">0</span>)
+    .OrderByDescending(x =&gt; x.DaysOverdue);</code></pre>
+
+  <h3>GroupBy — Summarise by Class</h3>
+  <pre><code><span class="cm">// In-memory GroupBy (after materialising)</span>
+<span class="kw">var</span> classSummary = students
+    .GroupBy(s =&gt; s.Class.Name)
+    .Select(g =&gt; <span class="kw">new</span> ClassSummary
+    {
+        ClassName     = g.Key,
+        TotalStudents = g.Count(),
+        ActiveCount   = g.Count(s =&gt; s.IsActive),
+        AverageFee    = g.Average(s =&gt; s.FeeRecords.Sum(f =&gt; f.Amount))
+    })
+    .OrderBy(c =&gt; c.ClassName)
+    .ToList();
+
+<span class="cm">// EF Core GroupBy — push aggregation to SQL (EF 8 translates most GroupBy)</span>
+<span class="kw">var</span> feeByClass = <span class="kw">await</span> _db.Students
+    .Where(s =&gt; s.SchoolId == schoolId)
+    .GroupBy(s =&gt; s.Class.Name)
+    .Select(g =&gt; <span class="kw">new</span>
+    {
+        ClassName    = g.Key,
+        StudentCount = g.Count(),
+        TotalFee     = g.Sum(s =&gt; s.FeeRecords.Sum(f =&gt; f.Amount))
+    })
+    .ToListAsync();
+<span class="cm">// SQL: SELECT c.Name, COUNT(*), SUM(f.Amount)
+//      FROM Students s JOIN Classes c... JOIN FeeRecords f...
+//      GROUP BY c.Name</span></code></pre>
+
+  <h3>Join — When Navigation Properties Don't Work</h3>
+  <pre><code><span class="cm">// LINQ Join (explicit) — same as SQL INNER JOIN</span>
+<span class="kw">var</span> studentFees = <span class="kw">await</span> _db.Students
+    .Join(_db.FeeRecords,
+          student =&gt; student.Id,
+          fee     =&gt; fee.StudentId,
+          (student, fee) =&gt; <span class="kw">new</span> { student.Name, fee.Amount, fee.IsPaid })
+    .Where(x =&gt; !x.IsPaid)
+    .ToListAsync();
+
+<span class="cm">// Prefer navigation properties over explicit Join — cleaner, same SQL</span>
+<span class="kw">var</span> studentFees = <span class="kw">await</span> _db.Students
+    .SelectMany(s =&gt; s.FeeRecords, (s, f) =&gt; <span class="kw">new</span> { s.Name, f.Amount, f.IsPaid })
+    .Where(x =&gt; !x.IsPaid)
+    .ToListAsync();</code></pre>
+
+  <h3>Pagination — Skip + Take (ZenCampus API Standard)</h3>
+  <pre><code><span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">PagedResult</span>&lt;<span class="cl">StudentDto</span>&gt;&gt; GetStudentsPagedAsync(
+    <span class="kw">int</span> schoolId, <span class="kw">int</span> page, <span class="kw">int</span> pageSize, <span class="cl">CancellationToken</span> ct)
+{
+    <span class="kw">var</span> query = _db.Students
+        .Where(s =&gt; s.SchoolId == schoolId)
+        .OrderBy(s =&gt; s.Name)
+        .AsNoTracking();
+
+    <span class="cm">// Count and data in parallel — two DB calls but concurrent</span>
+    <span class="kw">var</span> totalTask = query.CountAsync(ct);
+    <span class="kw">var</span> dataTask  = query
+        .Skip((page - <span class="num">1</span>) * pageSize)   <span class="cm">// OFFSET</span>
+        .Take(pageSize)                 <span class="cm">// FETCH NEXT</span>
+        .Select(s =&gt; <span class="kw">new</span> <span class="cl">StudentDto</span>(s.Id, s.Name, s.AdmissionNumber))
+        .ToListAsync(ct);
+
+    <span class="kw">await</span> <span class="cl">Task</span>.WhenAll(totalTask, dataTask);
+
+    <span class="kw">return new</span> <span class="cl">PagedResult</span>&lt;<span class="cl">StudentDto</span>&gt;
+    {
+        Data      = dataTask.Result,
+        Total     = totalTask.Result,
+        Page      = page,
+        PageSize  = pageSize,
+        HasNext   = (page * pageSize) &lt; totalTask.Result
+    };
+}</code></pre>
+
+  <h3>Useful Operator Quick Reference</h3>
+  <table>
+    <tr><th>Operator</th><th>SQL Equivalent</th><th>ZenCampus Use</th></tr>
+    <tr><td>Where(predicate)</td><td>WHERE</td><td>Filter by SchoolId, IsActive</td></tr>
+    <tr><td>Select(projection)</td><td>SELECT columns</td><td>Map to DTO, pick columns</td></tr>
+    <tr><td>SelectMany(collection)</td><td>CROSS APPLY / UNNEST</td><td>Flatten Student→FeeRecords</td></tr>
+    <tr><td>OrderBy / ThenBy</td><td>ORDER BY</td><td>Sort by Name, then AdmissionNo</td></tr>
+    <tr><td>Skip(n).Take(m)</td><td>OFFSET n ROWS FETCH NEXT m</td><td>Pagination</td></tr>
+    <tr><td>GroupBy(key)</td><td>GROUP BY</td><td>Fee totals per class</td></tr>
+    <tr><td>Any(predicate)</td><td>EXISTS (SELECT 1 ...)</td><td>Check if student has dues</td></tr>
+    <tr><td>All(predicate)</td><td>NOT EXISTS (... WHERE NOT)</td><td>All fees paid?</td></tr>
+    <tr><td>Distinct()</td><td>DISTINCT</td><td>Unique class names in a school</td></tr>
+    <tr><td>Union / Intersect / Except</td><td>UNION / INTERSECT / EXCEPT</td><td>Set operations on student lists</td></tr>
+  </table>
+</section>
+
+<!-- ============================== SECTION 4: PITFALLS ============================== -->
+<section id="pitfalls">
+  <h2>⚠️ LINQ Pitfalls — What Fails in Production</h2>
+
+  <h3>Pitfall 1 — Client-Side Evaluation (EF Can't Translate)</h3>
+  <pre><code><span class="cm">// DANGER: Custom C# method — EF can't translate to SQL</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+    .Where(s =&gt; IsEligibleForScholarship(s))  <span class="err">// throws InvalidOperationException!</span>
+    .ToListAsync();
+
+<span class="cm">// EF Core 3+ throws — no silent client evaluation (good!)</span>
+<span class="cm">// FIX 1: Load then filter in memory</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+    .Where(s =&gt; s.SchoolId == schoolId)  <span class="ok">// SQL filter first</span>
+    .AsNoTracking()
+    .ToListAsync();
+<span class="kw">var</span> eligible = students.Where(IsEligibleForScholarship); <span class="ok">// in-memory</span>
+
+<span class="cm">// FIX 2: Express the logic as translatable LINQ</span>
+<span class="kw">var</span> eligible = <span class="kw">await</span> _db.Students
+    .Where(s =&gt; s.AttendancePercent &gt;= <span class="num">75</span>
+             &amp;&amp; s.FeeRecords.All(f =&gt; f.IsPaid)
+             &amp;&amp; s.Marks.Average(m =&gt; m.Score) &gt;= <span class="num">80</span>)
+    .ToListAsync();</code></pre>
+
+  <h3>Pitfall 2 — ToLower() / ToString() Translation Issues</h3>
+  <pre><code><span class="cm">// Works in EF Core — translates to LOWER()</span>
+_db.Students.Where(s =&gt; s.Name.ToLower() == name.ToLower())
+<span class="cm">// Better: case-insensitive collation at DB level, or use EF.Functions.Like</span>
+_db.Students.Where(s =&gt; <span class="cl">EF</span>.Functions.Like(s.Name, <span class="str">$"%{name}%"</span>));
+
+<span class="cm">// DOES NOT translate — throws at runtime</span>
+_db.Students.Where(s =&gt; s.DateOfBirth.ToString(<span class="str">"yyyy"</span>) == <span class="str">"2010"</span>); <span class="err">// BOOM</span>
+
+<span class="cm">// FIX: Use EF-translatable date functions</span>
+_db.Students.Where(s =&gt; s.DateOfBirth.Year == <span class="num">2010</span>);  <span class="ok">// YEAR() in SQL</span></code></pre>
+
+  <h3>Pitfall 3 — Lazy Loading Surprise</h3>
+  <pre><code><span class="cm">// If lazy loading proxies enabled — accessing navigation property triggers DB call!</span>
+<span class="kw">var</span> student = <span class="kw">await</span> _db.Students.FindAsync(studentId); <span class="cm">// loaded</span>
+
+<span class="kw">foreach</span> (<span class="kw">var</span> fee <span class="kw">in</span> student.FeeRecords)  <span class="err">// LAZY LOAD — new DB query!</span>
+    Console.WriteLine(fee.Amount);
+
+<span class="cm">// ZenCampus: disable lazy loading — explicit loading only</span>
+builder.Services.AddDbContext&lt;<span class="cl">ZenCampusDbContext</span>&gt;(opts =&gt;
+    opts.UseSqlServer(cs).UseLazyLoadingProxies(<span class="kw">false</span>));  <span class="ok">// explicit is better</span></code></pre>
+
+  <h3>Pitfall 4 — null propagation in LINQ to EF</h3>
+  <pre><code><span class="cm">// NULL propagation ?. is handled by EF Core — translates to IS NULL check</span>
+_db.Students.Where(s =&gt; s.Guardian!.Phone == phone); <span class="ok">// EF handles null Guardian</span>
+
+<span class="cm">// BUT: complex null chains may not translate</span>
+_db.Students.Where(s =&gt; s?.Guardian?.Address?.City == <span class="str">"Chennai"</span>); <span class="err">// may fail</span>
+
+<span class="cm">// Safe: explicit null check</span>
+_db.Students.Where(s =&gt; s.Guardian != <span class="kw">null</span>
+                      &amp;&amp; s.Guardian.Address != <span class="kw">null</span>
+                      &amp;&amp; s.Guardian.Address.City == <span class="str">"Chennai"</span>); <span class="ok">// safe</span></code></pre>
+
+  <div class="movie-box">
+    <div class="movie-icon">🎬</div>
+    <div>
+      <div class="movie-title">Mankatha (2011) — Wrong Plan = Everything Collapses</div>
+      <div class="movie-body">Mankatha-la oru wrong move = entire heist plan fail. LINQ pitfalls same: client-side evaluation, multiple enumeration, lazy load surprise — wrong move panaa production-la query timeout or wrong data. Always SQL profiler or EF logging enable panni verify pannum!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 5: EXPRESSION TREES ============================== -->
+<section id="expressions">
+  <h2>🌳 Expression Trees — How LINQ Talks to EF</h2>
+
+  <p>LINQ to EF works via <strong>Expression Trees</strong> — code as data structure that EF can inspect and translate to SQL. This is why <code>IQueryable</code> takes <code>Expression&lt;Func&lt;T,bool&gt;&gt;</code> not <code>Func&lt;T,bool&gt;</code>.</p>
+
+  <pre><code><span class="cm">// Func&lt;T, bool&gt; — compiled code, can't inspect, runs in C# only</span>
+<span class="cl">Func</span>&lt;<span class="cl">Student</span>, <span class="kw">bool</span>&gt; func = s =&gt; s.IsActive &amp;&amp; s.SchoolId == <span class="num">5</span>;
+<span class="cm">// EF can't see what's inside — can't translate to SQL</span>
+
+<span class="cm">// Expression&lt;Func&lt;T, bool&gt;&gt; — data structure representing the code</span>
+<span class="cl">Expression</span>&lt;<span class="cl">Func</span>&lt;<span class="cl">Student</span>, <span class="kw">bool</span>&gt;&gt; expr = s =&gt; s.IsActive &amp;&amp; s.SchoolId == <span class="num">5</span>;
+<span class="cm">// EF can inspect: "BinaryAnd(MemberAccess(IsActive), Equal(MemberAccess(SchoolId), Constant(5)))"
+// Translates to SQL: WHERE IsActive = 1 AND SchoolId = 5</span></code></pre>
+
+  <h3>Dynamic Expression — Runtime Filter Builder</h3>
+  <pre><code><span class="cm">// Build expressions dynamically — useful for search filters</span>
+<span class="kw">using</span> System.Linq.Expressions;
+
+<span class="kw">public static</span> <span class="cl">Expression</span>&lt;<span class="cl">Func</span>&lt;<span class="cl">Student</span>, <span class="kw">bool</span>&gt;&gt; BuildSearchFilter(
+    <span class="cl">StudentSearchDto</span> search)
+{
+    <span class="kw">var</span> param = <span class="cl">Expression</span>.Parameter(<span class="kw">typeof</span>(<span class="cl">Student</span>), <span class="str">"s"</span>);
+    <span class="cl">Expression</span> body = <span class="cl">Expression</span>.Constant(<span class="kw">true</span>); <span class="cm">// starts as "true AND ..."</span>
+
+    <span class="kw">if</span> (!<span class="kw">string</span>.IsNullOrEmpty(search.Name))
+    {
+        <span class="kw">var</span> nameProp  = <span class="cl">Expression</span>.Property(param, <span class="kw">nameof</span>(<span class="cl">Student</span>.Name));
+        <span class="kw">var</span> contains  = <span class="kw">typeof</span>(<span class="kw">string</span>).GetMethod(<span class="str">"Contains"</span>, [<span class="kw">typeof</span>(<span class="kw">string</span>)])!;
+        <span class="kw">var</span> nameCheck = <span class="cl">Expression</span>.Call(nameProp, contains,
+                            <span class="cl">Expression</span>.Constant(search.Name));
+        body = <span class="cl">Expression</span>.AndAlso(body, nameCheck);
+    }
+
+    <span class="kw">if</span> (search.ClassId.HasValue)
+    {
+        <span class="kw">var</span> classProp  = <span class="cl">Expression</span>.Property(param, <span class="kw">nameof</span>(<span class="cl">Student</span>.ClassId));
+        <span class="kw">var</span> classCheck = <span class="cl">Expression</span>.Equal(classProp,
+                             <span class="cl">Expression</span>.Constant(search.ClassId.Value));
+        body = <span class="cl">Expression</span>.AndAlso(body, classCheck);
+    }
+
+    <span class="kw">return</span> <span class="cl">Expression</span>.Lambda&lt;<span class="cl">Func</span>&lt;<span class="cl">Student</span>, <span class="kw">bool</span>&gt;&gt;(body, param);
+}
+
+<span class="cm">// Usage — EF translates the dynamically built expression to SQL</span>
+<span class="kw">var</span> filter  = BuildSearchFilter(searchDto);
+<span class="kw">var</span> results = <span class="kw">await</span> _db.Students.Where(filter).ToListAsync();</code></pre>
+
+  <div class="movie-box">
+    <div class="movie-icon">🎬</div>
+    <div>
+      <div class="movie-title">Enthiran (2010) — Instructions as Data</div>
+      <div class="movie-body">Chitti robot-ku instructions code-a irundhathu — runtime-la read panni execute pannaan. Expression Trees exact same: lambda-va compile panna maatta — data structure-a store pannrom. EF runtime-la ithai read panni SQL-a generate pannum. Meta-programming at its finest!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 6: CUSTOM EXTENSIONS ============================== -->
+<section id="extensions">
+  <h2>🔌 Custom LINQ Extension Methods — ZenCampus Utilities</h2>
+
+  <h3>WhereIf — Conditional Filter</h3>
+  <pre><code><span class="cm">// Extension method — conditional WHERE (avoids if-else query building)</span>
+<span class="kw">public static</span> <span class="cl">IQueryable</span>&lt;T&gt; WhereIf&lt;T&gt;(
+    <span class="kw">this</span> <span class="cl">IQueryable</span>&lt;T&gt; query,
+    <span class="kw">bool</span> condition,
+    <span class="cl">Expression</span>&lt;<span class="cl">Func</span>&lt;T, <span class="kw">bool</span>&gt;&gt; predicate)
+    =&gt; condition ? query.Where(predicate) : query;
+
+<span class="cm">// Clean usage — no if-else blocks</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+    .WhereIf(!<span class="kw">string</span>.IsNullOrEmpty(search.Name),     s =&gt; s.Name.Contains(search.Name!))
+    .WhereIf(search.ClassId.HasValue,                  s =&gt; s.ClassId == search.ClassId)
+    .WhereIf(search.IsActive.HasValue,                 s =&gt; s.IsActive == search.IsActive)
+    .WhereIf(search.AdmissionYear.HasValue,            s =&gt; s.AdmissionDate.Year == search.AdmissionYear)
+    .WhereIf(!<span class="kw">string</span>.IsNullOrEmpty(search.HostelBlock), s =&gt; s.HostelRoom!.Block == search.HostelBlock)
+    .OrderBy(s =&gt; s.Name)
+    .AsNoTracking()
+    .ToListAsync();</code></pre>
+
+  <h3>ToPagedListAsync — Standard Pagination</h3>
+  <pre><code><span class="kw">public record</span> <span class="cl">PagedList</span>&lt;T&gt;(
+    <span class="cl">List</span>&lt;T&gt; Items,
+    <span class="kw">int</span> Total,
+    <span class="kw">int</span> Page,
+    <span class="kw">int</span> PageSize)
+{
+    <span class="kw">public bool</span> HasNext  =&gt; Page * PageSize &lt; Total;
+    <span class="kw">public bool</span> HasPrev  =&gt; Page &gt; <span class="num">1</span>;
+    <span class="kw">public int</span>  LastPage =&gt; (<span class="kw">int</span>)Math.Ceiling(Total / (<span class="kw">double</span>)PageSize);
+}
+
+<span class="kw">public static async</span> <span class="cl">Task</span>&lt;<span class="cl">PagedList</span>&lt;T&gt;&gt; ToPagedListAsync&lt;T&gt;(
+    <span class="kw">this</span> <span class="cl">IQueryable</span>&lt;T&gt; source,
+    <span class="kw">int</span> page, <span class="kw">int</span> pageSize, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>)
+{
+    page     = Math.Max(<span class="num">1</span>, page);
+    pageSize = Math.Clamp(pageSize, <span class="num">1</span>, <span class="num">100</span>);  <span class="cm">// max 100 per page — ZenCampus policy</span>
+
+    <span class="kw">var</span> total = <span class="kw">await</span> source.CountAsync(ct);
+    <span class="kw">var</span> items = <span class="kw">await</span> source
+        .Skip((page - <span class="num">1</span>) * pageSize)
+        .Take(pageSize)
+        .ToListAsync(ct);
+
+    <span class="kw">return new</span> <span class="cl">PagedList</span>&lt;T&gt;(items, total, page, pageSize);
+}
+
+<span class="cm">// Usage — clean API endpoint</span>
+<span class="kw">var</span> result = <span class="kw">await</span> _db.Students
+    .Where(s =&gt; s.SchoolId == schoolId)
+    .OrderBy(s =&gt; s.Name)
+    .Select(s =&gt; <span class="kw">new</span> <span class="cl">StudentDto</span>(s.Id, s.Name, s.Class.Name))
+    .ToPagedListAsync(dto.Page, dto.PageSize, ct);</code></pre>
+
+  <h3>OrderByDynamic — Runtime Column Sort</h3>
+  <pre><code><span class="kw">public static</span> <span class="cl">IQueryable</span>&lt;T&gt; OrderByDynamic&lt;T&gt;(
+    <span class="kw">this</span> <span class="cl">IQueryable</span>&lt;T&gt; query,
+    <span class="kw">string</span> columnName,
+    <span class="kw">bool</span> descending = <span class="kw">false</span>)
+{
+    <span class="kw">var</span> param    = <span class="cl">Expression</span>.Parameter(<span class="kw">typeof</span>(T), <span class="str">"x"</span>);
+    <span class="kw">var</span> property = <span class="kw">typeof</span>(T).GetProperty(columnName,
+                       <span class="cl">BindingFlags</span>.Public | <span class="cl">BindingFlags</span>.Instance | <span class="cl">BindingFlags</span>.IgnoreCase)
+                   ?? <span class="kw">throw new</span> <span class="cl">ArgumentException</span>(<span class="str">$"Property {columnName} not found"</span>);
+    <span class="kw">var</span> propExpr = <span class="cl">Expression</span>.Property(param, property);
+    <span class="kw">var</span> keyExpr  = <span class="cl">Expression</span>.Lambda(propExpr, param);
+    <span class="kw">var</span> method   = descending ? <span class="str">"OrderByDescending"</span> : <span class="str">"OrderBy"</span>;
+    <span class="kw">var</span> result   = <span class="kw">typeof</span>(<span class="cl">Queryable</span>).GetMethods()
+        .First(m =&gt; m.Name == method &amp;&amp; m.GetParameters().Length == <span class="num">2</span>)
+        .MakeGenericMethod(<span class="kw">typeof</span>(T), property.PropertyType)
+        .Invoke(<span class="kw">null</span>, [query, keyExpr]);
+
+    <span class="kw">return</span> (<span class="cl">IQueryable</span>&lt;T&gt;)result!;
+}
+
+<span class="cm">// Usage — column from API query param, validated before use</span>
+<span class="kw">var</span> allowed = <span class="kw">new</span>[] { <span class="str">"Name"</span>, <span class="str">"AdmissionNumber"</span>, <span class="str">"AdmissionDate"</span> };
+<span class="kw">var</span> sortCol = allowed.Contains(dto.SortBy) ? dto.SortBy : <span class="str">"Name"</span>;
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+    .OrderByDynamic(sortCol, dto.Descending)
+    .ToPagedListAsync(dto.Page, dto.PageSize);</code></pre>
+</section>
+
+<!-- ============================== SECTION 7: GROUPBY ============================== -->
+<section id="groupby">
+  <h2>📊 GroupBy — Common Mistakes in EF Core</h2>
+
+  <h3>GroupBy Translation Rules in EF Core 8</h3>
+  <pre><code><span class="cm">// TRANSLATES to SQL — simple aggregations</span>
+<span class="kw">var</span> summary = <span class="kw">await</span> _db.FeeRecords
+    .Where(f =&gt; f.Student.SchoolId == schoolId)
+    .GroupBy(f =&gt; f.Student.ClassId)
+    .Select(g =&gt; <span class="kw">new</span>
+    {
+        ClassId    = g.Key,
+        Count      = g.Count(),
+        TotalFee   = g.Sum(f =&gt; f.Amount),
+        PaidAmount = g.Where(f =&gt; f.IsPaid).Sum(f =&gt; f.Amount)
+    })
+    .ToListAsync();
+<span class="cm">// SQL: SELECT ClassId, COUNT(*), SUM(Amount), SUM(CASE WHEN IsPaid=1 THEN Amount ELSE 0 END)
+//      FROM FeeRecords JOIN Students... WHERE SchoolId=@p0 GROUP BY ClassId</span>
+
+<span class="cm">// MAY NOT TRANSLATE — accessing full objects inside group</span>
+<span class="kw">var</span> groups = <span class="kw">await</span> _db.Students
+    .GroupBy(s =&gt; s.Class.Name)
+    .Select(g =&gt; <span class="kw">new</span>
+    {
+        ClassName = g.Key,
+        Students  = g.ToList()  <span class="err">// EF may evaluate this client-side — check generated SQL!</span>
+    })
+    .ToListAsync();
+
+<span class="cm">// SAFE ALTERNATIVE: materialise first, then group</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+    .Where(s =&gt; s.SchoolId == schoolId)
+    .Select(s =&gt; <span class="kw">new</span> { s.Id, s.Name, ClassName = s.Class.Name })
+    .ToListAsync();  <span class="ok">// DB call with minimal columns</span>
+
+<span class="kw">var</span> byClass = students
+    .GroupBy(s =&gt; s.ClassName)       <span class="ok">// in-memory grouping — fine for moderate data</span>
+    .ToDictionary(g =&gt; g.Key, g =&gt; g.ToList());</code></pre>
+</section>
+
+<!-- ============================== SECTION 8: PLINQ ============================== -->
+<section id="plinq">
+  <h2>⚡ PLINQ — Parallel LINQ for CPU-Bound Work</h2>
+
+  <div class="warn-box">
+    <strong>Important:</strong> PLINQ is for CPU-bound in-memory operations — NOT for database queries. Never use PLINQ with EF Core (DbContext is not thread-safe). Use PLINQ for heavy computation on already-loaded data.
+  </div>
+
+  <pre><code><span class="cm">// ZenCampus: Calculate attendance percentage for 50k students
+// CPU-bound computation on in-memory data — PLINQ helps</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+    .Include(s =&gt; s.AttendanceRecords)
+    .Where(s =&gt; s.SchoolId == schoolId)
+    .AsNoTracking()
+    .ToListAsync();   <span class="cm">// load once</span>
+
+<span class="cm">// PLINQ — parallel computation of attendance percentage</span>
+<span class="kw">var</span> report = students
+    .AsParallel()                             <span class="ok">// enables PLINQ</span>
+    .WithDegreeOfParallelism(<span class="cl">Environment</span>.ProcessorCount)
+    .Select(s =&gt; <span class="kw">new</span> <span class="cl">AttendanceReport</span>
+    {
+        StudentId          = s.Id,
+        Name               = s.Name,
+        TotalWorkingDays   = s.AttendanceRecords.Count,
+        PresentDays        = s.AttendanceRecords.Count(a =&gt; a.IsPresent),
+        AttendancePercent  = s.AttendanceRecords.Count == <span class="num">0</span> ? <span class="num">0</span> :
+            s.AttendanceRecords.Count(a =&gt; a.IsPresent) * <span class="num">100.0</span> /
+            s.AttendanceRecords.Count
+    })
+    .OrderByDescending(r =&gt; r.AttendancePercent)
+    .ToList();   <span class="cm">// materialise parallel result</span>
+
+<span class="cm">// PLINQ with exception handling</span>
+<span class="kw">try</span>
+{
+    <span class="kw">var</span> results = data.AsParallel()
+        .WithDegreeOfParallelism(<span class="num">4</span>)
+        .Select(ComputeHeavyOperation)
+        .ToList();
+}
+<span class="kw">catch</span> (<span class="cl">AggregateException</span> ex)  <span class="cm">// PLINQ wraps exceptions in AggregateException</span>
+{
+    <span class="kw">foreach</span> (<span class="kw">var</span> inner <span class="kw">in</span> ex.InnerExceptions)
+        _log.LogError(inner, <span class="str">"PLINQ worker failed"</span>);
+}</code></pre>
+
+  <div class="movie-box">
+    <div class="movie-icon">🎬</div>
+    <div>
+      <div class="movie-title">7aum Arivu (2011) — Parallel Brain Processing</div>
+      <div class="movie-body">7aum Arivu-la Surya brain's unused pathways activate panraaru — parallel processing kapasity! PLINQ exact same: multiple CPU cores parallel-a work pannum. But remember: EF Core DbContext thread-safe illai — PLINQ only for in-memory data after DB load pannitta!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 9: INTERVIEW SCENARIOS ============================== -->
+<section id="scenarios">
+  <h2>🎯 10 Scenario-Based Interview Questions</h2>
+
+  <!-- Q1 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">1</div>
+      <div>
+        <span class="scenario-q">What is the difference between deferred and immediate execution in LINQ? Give a ZenCampus example where mixing them caused a bug.</span>
+        <span class="scenario-type">Concept</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><strong>Deferred:</strong> LINQ operators (Where, Select, OrderBy) don't execute until enumerated. The query is a plan.</p>
+      <p><strong>Immediate:</strong> ToList(), Count(), Any(), FirstOrDefault() trigger actual execution.</p>
+      <p><strong>Bug example:</strong> <code>var q = _db.Students.Where(s =&gt; s.SchoolId == id);</code> then <code>if (q.Any()) ... return q.ToList();</code> — two DB calls! Fix: <code>var list = await q.ToListAsync();</code> then <code>if (list.Count &gt; 0)</code>.</p>
+      <p><strong>Captured variable bug:</strong> Using a loop variable in a deferred query captures the reference — by execution time it has the last value.</p>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">2</div>
+      <div>
+        <span class="scenario-q">A repository method returns IEnumerable&lt;Student&gt;. A caller chains .Where() and .Take(20). How many students are loaded from DB?</span>
+        <span class="scenario-type">Performance Trap</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><strong>ALL students are loaded from DB</strong> — potentially 50,000.</p>
+      <p>Because IEnumerable doesn't translate to SQL — the repository's <code>_db.Students</code> executed when the caller's foreach/ToList ran. All 50k rows come into memory, THEN C# applies Where and Take(20).</p>
+      <p><strong>Fix:</strong> Change repository to return <code>IQueryable&lt;Student&gt;</code>. Now caller's <code>.Where().Take(20)</code> translates to <code>SELECT TOP 20 FROM Students WHERE ...</code> — only 20 rows transferred.</p>
+      <p><strong>Trade-off:</strong> Exposing IQueryable leaks DB concern through the abstraction. Consider: return materialised DTOs for simple cases, expose IQueryable only for composable query layers.</p>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">3</div>
+      <div>
+        <span class="scenario-q">What is the difference between Func&lt;T,bool&gt; and Expression&lt;Func&lt;T,bool&gt;&gt; in LINQ?</span>
+        <span class="scenario-type">Concept</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><strong>Func&lt;T,bool&gt;:</strong> A compiled delegate — black box to EF. Can only be used with IEnumerable (in-memory). EF cannot look inside and translate it to SQL.</p>
+      <p><strong>Expression&lt;Func&lt;T,bool&gt;&gt;:</strong> A data structure representing the lambda code. EF Core can inspect its AST (abstract syntax tree) and translate it to a SQL WHERE clause.</p>
+      <p><strong>Practical impact:</strong> <code>IQueryable.Where()</code> accepts Expression — translates to SQL. <code>IEnumerable.Where()</code> accepts Func — runs in C#. If you accidentally pass a Func to IQueryable, the IQueryable becomes IEnumerable internally and all rows load.</p>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">4</div>
+      <div>
+        <span class="scenario-q">How do you implement a search endpoint in ZenCampus where all filter parameters are optional (name, classId, isActive, admissionYear)?</span>
+        <span class="scenario-type">Design</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><strong>Pattern 1 — WhereIf extension:</strong> Build query composably. Only adds WHERE clause when value is present:</p>
+      <pre style="font-size:0.8rem"><code>var q = _db.Students
+    .WhereIf(!string.IsNullOrEmpty(name), s => s.Name.Contains(name!))
+    .WhereIf(classId.HasValue, s => s.ClassId == classId)
+    .WhereIf(isActive.HasValue, s => s.IsActive == isActive);</code></pre>
+      <p><strong>Pattern 2 — Dynamic Expression builder:</strong> Use Expression.AndAlso to combine only non-null filters. All combined filters go as a single WHERE clause to SQL.</p>
+      <p><strong>Anti-pattern:</strong> Multiple <code>if/else</code> blocks building different query strings — hard to maintain, easy to miss combinations.</p>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">5</div>
+      <div>
+        <span class="scenario-q">An EF Core query throws InvalidOperationException: "could not be translated". What does this mean and how do you fix it?</span>
+        <span class="scenario-type">Production Bug</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p>EF Core 3+ removed silent client-side evaluation. This exception means a LINQ operator or custom method in your query cannot be translated to SQL.</p>
+      <p><strong>Common causes:</strong> (1) Custom C# method in Where clause, (2) <code>.ToString("format")</code> on DateTime, (3) Complex string manipulation EF doesn't know.</p>
+      <p><strong>Fix options:</strong></p>
+      <ul style="margin-left:1.2rem">
+        <li>Rewrite using EF-translatable equivalents (<code>s.DateOfBirth.Year</code> instead of <code>s.DateOfBirth.ToString("yyyy")</code>)</li>
+        <li>Use <code>EF.Functions.Like()</code> for pattern matching</li>
+        <li>Load data first with translatable filter, then apply complex logic in C# memory</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">6</div>
+      <div>
+        <span class="scenario-q">What is SelectMany? When would you use it in ZenCampus versus a simple Select?</span>
+        <span class="scenario-type">Concept</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><code>Select</code> projects each item to one result — 1-to-1 mapping. Returns <code>IEnumerable&lt;IEnumerable&lt;T&gt;&gt;</code> when projecting to a collection.</p>
+      <p><code>SelectMany</code> projects each item to a collection, then flattens — 1-to-many. Returns <code>IEnumerable&lt;T&gt;</code>.</p>
+      <p><strong>ZenCampus use:</strong> Get ALL fee records across all active students: <code>students.SelectMany(s =&gt; s.FeeRecords)</code> gives a flat list of FeeRecord — not a list of lists. Also useful for getting all subjects from multiple classes.</p>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">7</div>
+      <div>
+        <span class="scenario-q">When should you use PLINQ in a ZenCampus background job? What are the risks?</span>
+        <span class="scenario-type">Architecture</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><strong>Use PLINQ when:</strong> CPU-bound computation on in-memory data — e.g., calculating attendance percentages for 50k students after loading, generating PDF reports in parallel, running complex fee calculations for all students.</p>
+      <p><strong>Risks:</strong></p>
+      <ul style="margin-left:1.2rem">
+        <li>DbContext is NOT thread-safe — never use PLINQ with EF queries. Load data first, THEN parallelise.</li>
+        <li>Exceptions are wrapped in <code>AggregateException</code> — must catch and unwrap.</li>
+        <li>Thread pool contention — don't use PLINQ in ASP.NET request handling (thread pool shared). Reserve for BackgroundService.</li>
+        <li>Ordering not guaranteed unless <code>.AsOrdered()</code> used — extra overhead.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">8</div>
+      <div>
+        <span class="scenario-q">Implement a generic ToPagedListAsync extension for ZenCampus APIs that prevents page size abuse (cap at 100).</span>
+        <span class="scenario-type">Code Design</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <pre style="font-size:0.8rem"><code>public static async Task&lt;PagedList&lt;T&gt;&gt; ToPagedListAsync&lt;T&gt;(
+    this IQueryable&lt;T&gt; source, int page, int pageSize, CancellationToken ct = default)
+{
+    page     = Math.Max(1, page);
+    pageSize = Math.Clamp(pageSize, 1, 100);   // cap: no one gets 10k rows
+    var total = await source.CountAsync(ct);
+    var items = await source.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(ct);
+    return new PagedList&lt;T&gt;(items, total, page, pageSize);
+}</code></pre>
+      <p>Key points: clamp page to min 1, clamp pageSize 1–100. Run Count and data fetch — use <code>Task.WhenAll</code> if both are needed concurrently. Return a record with HasNext/HasPrev computed properties so callers don't re-derive.</p>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">9</div>
+      <div>
+        <span class="scenario-q">What is lazy loading in EF Core and why does ZenCampus disable it by default?</span>
+        <span class="scenario-type">Architecture Decision</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p>Lazy loading automatically loads navigation properties when first accessed — via proxy objects. Convenient but dangerous.</p>
+      <p><strong>Why ZenCampus disables it:</strong></p>
+      <ul style="margin-left:1.2rem">
+        <li><strong>N+1 hidden:</strong> <code>foreach(var s in students) { var fees = s.FeeRecords; }</code> — each access fires a DB query. 250 students = 250 hidden queries.</li>
+        <li><strong>Disposed DbContext:</strong> If student entity escapes the request scope, accessing navigation property throws ObjectDisposedException.</li>
+        <li><strong>Non-deterministic performance:</strong> Developer doesn't know when DB calls happen — hard to profile/optimise.</li>
+      </ul>
+      <p><strong>ZenCampus policy:</strong> Explicit loading only — Include() or separate query. Every DB call is intentional and visible.</p>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">10</div>
+      <div>
+        <span class="scenario-q">How does LINQ's GroupBy behave differently in LINQ to Objects vs LINQ to EF? Give a pitfall example.</span>
+        <span class="scenario-type">EF Internals</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><strong>LINQ to Objects:</strong> GroupBy is fully in-memory — any C# code inside Select(g =&gt; ...) works, including <code>g.ToList()</code>, custom methods, etc.</p>
+      <p><strong>LINQ to EF:</strong> GroupBy must translate to SQL GROUP BY. Only aggregation functions (Count, Sum, Min, Max, Average) and the key are safely translated. Accessing <code>g.ToList()</code> inside Select on IQueryable may cause client evaluation or throw.</p>
+      <p><strong>Pitfall:</strong> <code>_db.Students.GroupBy(s =&gt; s.Class.Name).Select(g =&gt; new { g.Key, Students = g.ToList() })</code> — EF might load ALL students then group in memory. Fix: materialise first with <code>ToListAsync()</code>, then GroupBy in-memory.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== QUIZ ============================== -->
+<section id="quiz">
+  <h2>🧠 4 Quick Quiz Questions</h2>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. IQueryable&lt;Student&gt; query = _db.Students.Where(s =&gt; s.IsActive); — At this point, how many SQL queries have been sent to the database?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'correct','Correct! LINQ is deferred — Where() builds the query object but sends zero SQL until ToList()/FirstOrDefault()/Count() etc.')">0 — No SQL sent yet</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','Incorrect. WHERE is a deferred operator — no execution yet')">1 — SELECT * WHERE IsActive=1</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','Incorrect. Two queries would mean double execution which is not the case here')">2 — Count query + data query</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','Incorrect. Deferred execution means the plan is built, not executed')">Depends on the LINQ provider</button>
+    </div>
+    <div class="quiz-fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. What type of exception does PLINQ throw when a worker task fails?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'wrong','TaskCanceledException is for cancellation tokens, not worker exceptions')">TaskCanceledException</button>
+      <button class="quiz-opt" onclick="answer(this,'correct','Correct! PLINQ wraps all parallel exceptions into AggregateException — always catch and check InnerExceptions')">AggregateException</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','InvalidOperationException is for EF translation failures, not PLINQ')">InvalidOperationException</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','ParallelException does not exist in .NET')">ParallelException</button>
+    </div>
+    <div class="quiz-fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. students.SelectMany(s =&gt; s.FeeRecords) returns which type?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'wrong','Select would return IEnumerable&lt;IEnumerable&lt;FeeRecord&gt;&gt; — nested. SelectMany flattens it.')">IEnumerable&lt;IEnumerable&lt;FeeRecord&gt;&gt;</button>
+      <button class="quiz-opt" onclick="answer(this,'correct','Correct! SelectMany flattens the nested collections into a single flat IEnumerable&lt;FeeRecord&gt;')">IEnumerable&lt;FeeRecord&gt;</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','List would require .ToList() call — SelectMany returns IEnumerable')">List&lt;FeeRecord&gt;</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','IGrouping is returned by GroupBy, not SelectMany')">IGrouping&lt;Student, FeeRecord&gt;</button>
+    </div>
+    <div class="quiz-fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. A developer passes a Func&lt;Student, bool&gt; to IQueryable&lt;Student&gt;.Where(). What happens?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'wrong','It does NOT throw — it silently compiles but runs in memory')">Compile error — wrong type</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','It does NOT throw at runtime — the overload accepts Func via IEnumerable extension method')">InvalidOperationException at runtime</button>
+      <button class="quiz-opt" onclick="answer(this,'correct','Correct! IQueryable has IEnumerable extension methods. Passing Func causes the IQueryable to evaluate as IEnumerable — ALL rows load from DB, then C# filters. Silent performance bug!')">Works but loads ALL rows from DB, then filters in C# — silent perf bug</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','EF does not translate Func — it cannot inspect it as an expression tree')">EF Core translates it to SQL normally</button>
+    </div>
+    <div class="quiz-fb"></div>
+  </div>
+</section>
+
+<!-- ============================== CHECKLIST ============================== -->
+<section id="checklist">
+  <h2>✅ Day 27 Mastery Checklist</h2>
+  <ul class="checklist">
+    <li onclick="check(this)"><input type="checkbox">I can list 5 deferred and 5 immediate LINQ operators</li>
+    <li onclick="check(this)"><input type="checkbox">I know why multiple enumeration causes multiple DB queries</li>
+    <li onclick="check(this)"><input type="checkbox">I can explain IEnumerable vs IQueryable with filter timing difference</li>
+    <li onclick="check(this)"><input type="checkbox">I understand why returning IEnumerable from repository is a perf bug</li>
+    <li onclick="check(this)"><input type="checkbox">I can explain Expression&lt;Func&gt; vs Func and why EF needs Expression</li>
+    <li onclick="check(this)"><input type="checkbox">I can write a WhereIf extension method</li>
+    <li onclick="check(this)"><input type="checkbox">I can implement ToPagedListAsync with page size capping</li>
+    <li onclick="check(this)"><input type="checkbox">I can use SelectMany to flatten nested collections</li>
+    <li onclick="check(this)"><input type="checkbox">I know EF Core GroupBy limitations and the safe workaround</li>
+    <li onclick="check(this)"><input type="checkbox">I know when PLINQ is safe (CPU-bound in-memory) vs dangerous (DB queries)</li>
+    <li onclick="check(this)"><input type="checkbox">I can fix "could not be translated" EF Core exception</li>
+    <li onclick="check(this)"><input type="checkbox">I know why ZenCampus disables lazy loading</li>
+  </ul>
+</section>
+
+<!-- Tamil Movie Summary -->
+<section>
+  <h2>🎬 Day 27 Tamil Movie Memory Anchors</h2>
+  <div class="grid-2">
+    <div class="movie-box">
+      <div class="movie-icon">🎬</div>
+      <div>
+        <div class="movie-title">Dasavathaaram → Deferred Execution</div>
+        <div class="movie-body">800 year plan — execute later. LINQ query = plan. ToList() = action!</div>
+      </div>
+    </div>
+    <div class="movie-box">
+      <div class="movie-icon">🎬</div>
+      <div>
+        <div class="movie-title">Thuppakki vs Kadaikutty Singam → IQueryable vs IEnumerable</div>
+        <div class="movie-body">Precise target (SQL filter) vs everyone come home (load all). Always IQueryable for DB!</div>
+      </div>
+    </div>
+    <div class="movie-box">
+      <div class="movie-icon">🎬</div>
+      <div>
+        <div class="movie-title">Enthiran → Expression Trees</div>
+        <div class="movie-body">Instructions as data — robot reads and executes. EF reads Expression tree and generates SQL.</div>
+      </div>
+    </div>
+    <div class="movie-box">
+      <div class="movie-icon">🎬</div>
+      <div>
+        <div class="movie-title">Mankatha → LINQ Pitfalls</div>
+        <div class="movie-body">Wrong move = heist collapse. Client-side eval, multiple enum, lazy load — wrong LINQ move = production crash.</div>
+      </div>
+    </div>
+    <div class="movie-box">
+      <div class="movie-icon">🎬</div>
+      <div>
+        <div class="movie-title">7aum Arivu → PLINQ</div>
+        <div class="movie-body">Parallel brain power. PLINQ = parallel CPU cores. Only for in-memory, never with DbContext!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p style="color:var(--accent);font-weight:700;font-size:1rem;">Day 27 Complete ✓ — LINQ Deep Dive</p>
+  <p style="margin-top:0.3rem;">Accent: Cerulean <strong>#0284c7</strong> · Distinct from Day 10 Sky Blue (#0ea5e9) and Day 15 Azure (#0078d4)</p>
+  <p style="margin-top:0.5rem;">Days 1–27 done · 33 remaining · <span style="color:var(--accent)">Tomorrow: Day 28 — Async/Await Deep Dive (Task, ValueTask, ConfigureAwait, CancellationToken, Deadlocks)</span></p>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    document.getElementById('progress-bar').style.width =
+      (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+  });
+
+  function toggle(btn) {
+    const c = btn.nextElementSibling;
+    const open = c.classList.toggle('open');
+    btn.textContent = open ? 'Hide Answer' : 'Reveal Answer';
+  }
+
+  function answer(btn, result, feedback) {
+    const card = btn.closest('.quiz-card');
+    if (card.dataset.answered) return;
+    card.dataset.answered = '1';
+    card.querySelectorAll('.quiz-opt').forEach(o => o.style.pointerEvents = 'none');
+    btn.classList.add(result);
+    const fb = card.querySelector('.quiz-fb');
+    fb.textContent = (result === 'correct' ? '✓ ' : '✗ ') + feedback;
+    fb.className = 'quiz-fb show ' + (result === 'correct' ? 'good' : 'bad');
+  }
+
+  function check(li) {
+    const cb = li.querySelector('input');
+    cb.checked = !cb.checked;
+    li.classList.toggle('done', cb.checked);
+  }
+</script>
+</body>
+</html>

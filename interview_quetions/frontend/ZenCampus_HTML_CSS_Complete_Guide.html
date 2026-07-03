@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenCampus HTML & CSS Complete Guide - 20 Concepts + 50 Interview Q&A</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --accent:#fb923c; --text:#e2e8f0; --muted:#94a3b8; --code:#0b1220; --green:#22c55e;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI',Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  header{ background:linear-gradient(135deg,#7c2d12,#0f172a); padding:36px 20px; text-align:center; border-bottom:3px solid var(--accent); }
+  header h1{ margin:0 0 8px; font-size:1.9rem; color:#fff; }
+  header p{ margin:0; color:var(--muted); }
+  .tabs{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; background:#0b1220; padding:14px; position:sticky; top:0; z-index:20; border-bottom:1px solid #334155; }
+  .tab-btn{ padding:10px 20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--muted); cursor:pointer; font-weight:600; font-size:0.9rem; }
+  .tab-btn.active{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+  .container{ max-width:920px; margin:0 auto; padding:30px 20px 80px; }
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
+
+  .search-box{ width:100%; padding:12px 16px; margin-bottom:20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--text); font-size:1rem; }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .filter-btn{ padding:6px 14px; border-radius:20px; border:1px solid #334155; background:transparent; color:var(--muted); cursor:pointer; font-size:0.85rem; }
+  .filter-btn.active, .filter-btn:hover{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+
+  .day-block{ margin-bottom:36px; }
+  .day-title{ color:var(--accent); font-size:1.3rem; margin-bottom:14px; border-left:4px solid var(--accent); padding-left:10px; }
+
+  .qa{ background:var(--card); border-radius:10px; margin-bottom:14px; overflow:hidden; border:1px solid #334155; scroll-margin-top:140px; }
+  .q{ padding:16px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; gap:12px; }
+  .q:hover{ background:#2b2114; }
+  .q .num{ color:var(--accent); margin-right:8px; }
+  .q .tag{ font-size:0.7rem; font-weight:400; padding:2px 8px; border-radius:10px; background:#0b1220; color:var(--accent); white-space:nowrap; }
+  .q .tag2{ font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:10px; background:#0b1220; white-space:nowrap; }
+  .tag-html{ color:#f97316; }
+  .tag-css{ color:#38bdf8; }
+  .a{ max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 18px; color:var(--muted); border-top:1px solid transparent; }
+  .qa.open .a{ max-height:1300px; padding:0 18px 18px; border-top:1px solid #334155; }
+  .a code, .a pre{ background:var(--code); color:#fdba74; padding:2px 6px; border-radius:4px; font-family:Consolas,Monaco,monospace; font-size:0.86rem; }
+  .a pre{ display:block; padding:12px; overflow-x:auto; white-space:pre-wrap; margin:10px 0; }
+  .movie-ref{ background:#3b1e5e; color:#e9d5ff; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .zen-ref{ background:#0e3b2e; color:#bbf7d0; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .toggle-icon{ transition:transform .25s; color:var(--accent); font-size:1.1rem; }
+  .qa.open .toggle-icon{ transform:rotate(45deg); }
+  .count{ color:var(--accent); font-weight:600; }
+
+  .checklist{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media(max-width:600px){ .checklist{ grid-template-columns:1fr; } }
+  .check-item{ background:var(--card); border:1px solid #334155; border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .check-item:hover{ border-color:var(--accent); }
+  .check-item .badge{ color:var(--green); font-size:1.1rem; }
+  .check-item .num{ color:var(--muted); font-size:0.8rem; min-width:20px; }
+
+  footer{ text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎨 ZenCampus HTML &amp; CSS Complete Guide</h1>
+  <p>20 Core Concepts (5-Day Plan) + 50 Interview Q&A — All-in-One</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="guide">📘 5-Day Guide</button>
+  <button class="tab-btn" data-tab="interview">🎯 Interview Q&A</button>
+  <button class="tab-btn" data-tab="coverage">✅ Topic Coverage</button>
+</div>
+
+<div class="container">
+
+  <div class="tab-content active" id="tab-guide">
+    <div id="guideList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-interview">
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search a question (e.g. flexbox, semantic, box model)...">
+    <div class="filters" id="filters"></div>
+    <p style="color:var(--muted); font-size:0.85rem;">Showing <span class="count" id="visibleCount">50</span> / 50 questions</p>
+    <div id="qaList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-coverage">
+    <p style="color:var(--muted);">All 20 core HTML &amp; CSS concepts every ZenCampus frontend dev should know. Click any item to jump to it.</p>
+    <div class="checklist" id="checklist"></div>
+  </div>
+
+</div>
+
+<footer>Built for ZenCampus HTML/CSS learning • 2026-07-02</footer>
+
+<script>
+// ============ 20 CONCEPTS ACROSS 5 DAYS (4 topics/day) ============
+const guideDays = [
+{
+  day:1, title:"Day 1 — HTML Fundamentals (Structure, Semantics, Forms, Tables)",
+  topics:[
+    { name:"1. HTML Basics &amp; Document Structure",
+      movie:"🎬 Baahubali — before Mahishmati's kingdom is built, the foundation (Doctype, html, head, body) must be laid exactly right, or everything above collapses.",
+      explain:"Every HTML page starts with <code>&lt;!DOCTYPE html&gt;</code> (tells the browser to use standards mode), then <code>&lt;html&gt;</code> wrapping <code>&lt;head&gt;</code> (metadata, not visible) and <code>&lt;body&gt;</code> (visible content).",
+      zen:"Every `.cshtml` view in ZenCampus renders inside a shared `_Layout.cshtml` that defines this exact skeleton once, so every page (Bill, Hostel, Exam) inherits the same structure.",
+      code:"&lt;!DOCTYPE html&gt;\n&lt;html lang=\"en\"&gt;\n&lt;head&gt;\n  &lt;meta charset=\"UTF-8\"&gt;\n  &lt;title&gt;ZenCampus&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n  &lt;h1&gt;Welcome&lt;/h1&gt;\n&lt;/body&gt;\n&lt;/html&gt;" },
+    { name:"2. Semantic HTML Elements",
+      movie:"🎬 Vikram — every character has a clear, meaningful role (cop, agent, don) instead of being an unnamed extra. Semantic tags give every section of a page a clear, meaningful role instead of generic, faceless &lt;div&gt;s.",
+      explain:"Tags like <code>&lt;header&gt;, &lt;nav&gt;, &lt;main&gt;, &lt;section&gt;, &lt;article&gt;, &lt;aside&gt;, &lt;footer&gt;</code> describe the MEANING of content, not just its look — improving SEO, accessibility, and code readability over generic <code>&lt;div&gt;</code> soup.",
+      zen:"The Hostel and Bill views should use <code>&lt;nav&gt;</code> for the sidebar menu, <code>&lt;main&gt;</code> for the report/table area, and <code>&lt;section&gt;</code> per fee category — screen readers and Google both understand this structure.",
+      code:"&lt;header&gt;ZenCampus Dashboard&lt;/header&gt;\n&lt;nav&gt;...menu...&lt;/nav&gt;\n&lt;main&gt;\n  &lt;section&gt;Fee Summary&lt;/section&gt;\n&lt;/main&gt;\n&lt;footer&gt;© ZenCampus&lt;/footer&gt;" },
+    { name:"3. Attributes (data-*, ARIA, id, class)",
+      movie:"🎬 Anniyan — each personality (Ambi, Remo, Anniyan) carries hidden identity markers only revealed under the right conditions, just like <code>data-*</code> attributes quietly carry extra info on an element that JS can read later.",
+      explain:"<code>id</code> uniquely identifies one element; <code>class</code> groups elements for styling/JS; <code>data-*</code> stores custom data readable via <code>element.dataset</code>; <code>aria-*</code> attributes improve screen-reader accessibility.",
+      zen:"A student row in a table can carry <code>data-student-id=\"101\"</code> so a click handler knows exactly which student to fetch details for, without extra lookups.",
+      code:"&lt;tr data-student-id=\"101\" class=\"student-row\"&gt;\n  &lt;td&gt;Arjun&lt;/td&gt;\n&lt;/tr&gt;\n\n&lt;script&gt;\nrow.addEventListener('click', () =&gt; {\n  console.log(row.dataset.studentId); // \"101\"\n});\n&lt;/script&gt;" },
+    { name:"4. Forms &amp; Input Types",
+      movie:"🎬 Jai Bhim — Chandru gathers structured evidence piece by piece (name, testimony, proof) before presenting the case. A form gathers structured user input piece by piece before submitting it as 'evidence' to the server.",
+      explain:"<code>&lt;form&gt;</code> wraps inputs like <code>text, email, number, date, password, checkbox, radio, select, file</code>. HTML5 gives built-in validation via <code>required</code>, <code>pattern</code>, <code>min/max</code> — before any JS even runs.",
+      zen:"The Student Admission form uses <code>type=\"email\"</code>, <code>type=\"tel\"</code> with <code>pattern</code>, and <code>required</code> attributes so invalid data never reaches the ASP.NET Controller in the first place.",
+      code:"&lt;form method=\"post\"&gt;\n  &lt;input type=\"text\" name=\"studentName\" required&gt;\n  &lt;input type=\"email\" name=\"email\" required&gt;\n  &lt;input type=\"tel\" pattern=\"[0-9]{10}\" name=\"phone\"&gt;\n  &lt;button type=\"submit\"&gt;Save&lt;/button&gt;\n&lt;/form&gt;" }
+  ]
+},
+{
+  day:2, title:"Day 2 — HTML Advanced (Tables, Links, Media, Accessibility) + CSS Intro",
+  topics:[
+    { name:"5. Tables",
+      movie:"🎬 96 — Ram's old classroom seating chart, rows and columns of memories laid out in perfect grid order. HTML tables are exactly that — rows and columns of tabular data.",
+      explain:"<code>&lt;table&gt;</code> contains <code>&lt;thead&gt;</code> (column headers), <code>&lt;tbody&gt;</code> (data rows), and <code>&lt;tr&gt;/&lt;td&gt;/&lt;th&gt;</code> for rows/cells. Use tables ONLY for real tabular data, never for page layout.",
+      zen:"The Fee Dues report and Attendance report in ZenCampus are rendered as real <code>&lt;table&gt;</code> elements — correct for tabular data and easily sortable/exportable.",
+      code:"&lt;table&gt;\n  &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Due&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;\n  &lt;tbody&gt;\n    &lt;tr&gt;&lt;td&gt;Arjun&lt;/td&gt;&lt;td&gt;₹5000&lt;/td&gt;&lt;/tr&gt;\n  &lt;/tbody&gt;\n&lt;/table&gt;" },
+    { name:"6. Links, Navigation &amp; Responsive Images",
+      movie:"🎬 Kaithi — Dilli moves from one location to the next, each doorway leading somewhere specific. Links (<code>&lt;a href&gt;</code>) are those doorways connecting pages.",
+      explain:"<code>&lt;a href=\"...\"&gt;</code> creates navigable links (internal, external, anchors with <code>#id</code>). For images, <code>&lt;img srcset&gt;</code> lets the browser pick the best resolution per device, and <code>loading=\"lazy\"</code> defers offscreen images for performance.",
+      zen:"The ZenCampus student photo gallery uses <code>loading=\"lazy\"</code> so photo-heavy pages (like a full class list with ID photos) don't slow down initial page load.",
+      code:"&lt;a href=\"/Student/Details/101\"&gt;View Profile&lt;/a&gt;\n&lt;img src=\"student.jpg\" alt=\"Arjun's photo\" loading=\"lazy\"&gt;" },
+    { name:"7. HTML5 New Elements (video, audio, canvas)",
+      movie:"🎬 Enthiran (Robot) — Chitti isn't just static metal, it moves, reacts, performs. HTML5 media elements bring the same 'alive' quality — native video/audio playback and canvas-drawn graphics without needing Flash or plugins.",
+      explain:"<code>&lt;video&gt;</code> and <code>&lt;audio&gt;</code> give native, controllable media playback. <code>&lt;canvas&gt;</code> provides a JS-drawable surface for graphs/charts.",
+      zen:"The DVR module in ZenCampus (CCTV/device footage) plays clips using <code>&lt;video controls src=\"...\"&gt;</code>, and dashboard charts (attendance trends, fee collection) can render on <code>&lt;canvas&gt;</code> via chart libraries.",
+      code:"&lt;video controls width=\"400\"&gt;\n  &lt;source src=\"dvr-clip.mp4\" type=\"video/mp4\"&gt;\n&lt;/video&gt;\n\n&lt;canvas id=\"attendanceChart\" width=\"300\" height=\"150\"&gt;&lt;/canvas&gt;" },
+    { name:"8. CSS Basics &amp; Selectors",
+      movie:"🎬 Master — JD identifies exactly which students need his attention out of the whole hostel. CSS selectors do the same — precisely 'select' which HTML elements a style rule should apply to.",
+      explain:"CSS = Cascading Style Sheets, controls appearance. Selectors: <code>element</code>, <code>.class</code>, <code>#id</code>, <code>element.class</code>, descendant (<code>div p</code>), child (<code>div &gt; p</code>), attribute (<code>[type=text]</code>).",
+      zen:"ZenCampus styles all 'danger' fee-due rows with a shared <code>.due-row</code> class, and one specific highlighted row with a unique <code>#selectedStudentRow</code> id.",
+      code:".due-row { background: #fee2e2; }\n#selectedStudentRow { border: 2px solid orange; }\ntable tr:hover { background: #f1f5f9; }" }
+  ]
+},
+{
+  day:3, title:"Day 3 — CSS Core (Box Model, Positioning, Specificity, Pseudo-Classes)",
+  topics:[
+    { name:"9. The Box Model",
+      movie:"🎬 Vaaranam Aayiram — Krishna's life is layered: the core self (content), then relationships (padding), boundaries (border), then how much space he keeps from others (margin). Every HTML element is a box built from these exact same 4 layers.",
+      explain:"Every element = <code>content</code> → <code>padding</code> (inner space) → <code>border</code> → <code>margin</code> (outer space). <code>box-sizing: border-box</code> makes width/height include padding+border, avoiding surprise overflow — set this globally.",
+      zen:"ZenCampus's global stylesheet sets <code>* { box-sizing: border-box; }</code> so that a fee-summary card's declared <code>width: 300px</code> stays exactly 300px even after adding padding and a border.",
+      code:"* { box-sizing: border-box; }\n.fee-card {\n  width: 300px;\n  padding: 16px;\n  border: 1px solid #ccc;\n  margin: 10px;\n}" },
+    { name:"10. Positioning (static, relative, absolute, fixed, sticky)",
+      movie:"🎬 Vikram Vedha — Vikram normally follows the standard flow of law (static), but sometimes shifts relative to his usual spot to chase a lead, and Vedha operates completely outside the normal flow, fixed to his own agenda regardless of what else moves around him.",
+      explain:"<code>static</code> (default flow), <code>relative</code> (offset from its own normal position), <code>absolute</code> (positioned relative to nearest non-static ancestor), <code>fixed</code> (relative to the viewport, stays on scroll), <code>sticky</code> (acts relative until a scroll threshold, then sticks like fixed).",
+      zen:"The ZenCampus top navbar uses <code>position: sticky; top: 0;</code> so it stays visible while scrolling a long fee/attendance report, and a 'Save' floating action button uses <code>position: fixed</code>.",
+      code:".navbar { position: sticky; top: 0; z-index: 100; }\n.save-fab { position: fixed; bottom: 20px; right: 20px; }" },
+    { name:"11. Specificity &amp; the Cascade",
+      movie:"🎬 Thani Oruvan — when multiple orders conflict, rank decides who wins: a Commissioner's order beats a constable's, but Mithran's direct undercover order can override both when it's more specific to the situation. CSS resolves conflicting rules the same way — by specificity rank, not just by which rule was written last.",
+      explain:"Specificity order (low → high): element selectors &lt; class/attribute/pseudo-class selectors &lt; ID selectors &lt; inline styles &lt; <code>!important</code>. When two rules tie in specificity, the one declared LAST in the stylesheet wins.",
+      zen:"A common ZenCampus CSS bug: a `.due-row` background not showing because a more specific `#feeTable tr` rule was overriding it — fixed by increasing specificity or reordering, never by reaching for `!important`.",
+      code:"p { color: black; }               /* specificity: 0,0,1 */\n.text-red { color: red; }         /* specificity: 0,1,0 - wins over p */\n#title { color: blue; }           /* specificity: 1,0,0 - wins over .text-red */" },
+    { name:"12. Pseudo-classes &amp; Pseudo-elements",
+      movie:"🎬 Ratsasan — the killer only reveals himself under very specific conditions/states (nighttime, alone, unlocked door). Pseudo-classes style an element only when it's in a specific STATE — hover, focus, first-child — without needing extra classes in the HTML.",
+      explain:"Pseudo-classes (<code>:hover, :focus, :nth-child(), :first-child, :checked, :disabled</code>) target an element's STATE. Pseudo-elements (<code>::before, ::after, ::placeholder</code>) target a virtual sub-part of an element that doesn't exist in the HTML.",
+      zen:"ZenCampus buttons use `.btn:hover` for interactive feedback, and `.required-field::after { content: ' *'; color: red; }` to auto-add a red asterisk to required form labels without editing the HTML.",
+      code:".btn:hover { background: #1d4ed8; }\ntr:nth-child(even) { background: #f8fafc; }\n.required-field::after { content: ' *'; color: red; }" }
+  ]
+},
+{
+  day:4, title:"Day 4 — CSS Layout (Flexbox, Grid, Responsive Design, Variables)",
+  topics:[
+    { name:"13. Flexbox",
+      movie:"🎬 Mersal — Vijay's three roles line up and redistribute themselves fluidly across the story depending on what's needed at that moment. Flexbox arranges items in a single row or column, fluidly distributing space between them.",
+      explain:"<code>display: flex</code> on a parent arranges children along one axis. <code>justify-content</code> controls the main axis (horizontal by default), <code>align-items</code> controls the cross axis (vertical). <code>flex-wrap</code> allows wrapping to new lines.",
+      zen:"The ZenCampus dashboard's summary cards row (Total Students, Fee Collected, Pending Dues) uses <code>display:flex; justify-content:space-between;</code> so cards stay evenly spaced across any screen width.",
+      code:".dashboard-cards {\n  display: flex;\n  justify-content: space-between;\n  gap: 16px;\n  flex-wrap: wrap;\n}" },
+    { name:"14. CSS Grid",
+      movie:"🎬 Baahubali — Mahishmati's kingdom is planned on a precise architectural grid — every structure has an exact row and column position. CSS Grid gives that same 2-dimensional (rows AND columns) precision layout control.",
+      explain:"<code>display: grid</code> with <code>grid-template-columns</code>/<code>grid-template-rows</code> defines a true 2D layout grid, unlike Flexbox's single-axis flow. <code>gap</code> controls spacing between cells.",
+      zen:"The Hostel Room allocation view uses CSS Grid to lay out room cards in a fixed 4-column grid (`grid-template-columns: repeat(4, 1fr)`) that automatically reflows to fewer columns on smaller screens via media queries.",
+      code:".room-grid {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  gap: 12px;\n}" },
+    { name:"15. Responsive Design &amp; Media Queries",
+      movie:"🎬 96 — Ram adapts how he presents himself differently at the school reunion (big screen) vs. a quiet one-on-one chat (small screen) — same person, same content, different presentation depending on the 'viewport'. That's responsive design.",
+      explain:"Media queries (<code>@media (max-width: 768px) { ... }</code>) apply different CSS rules based on screen size, enabling mobile-friendly layouts from one codebase — critical since staff/parents access ZenCampus from phones too.",
+      zen:"The ZenCampus fee-dues table collapses from a full table view to stacked mobile cards below 768px width, using a single media query instead of a separate mobile page.",
+      code:"@media (max-width: 768px) {\n  .room-grid { grid-template-columns: repeat(2, 1fr); }\n  .dashboard-cards { flex-direction: column; }\n}" },
+    { name:"16. CSS Custom Properties (Variables)",
+      movie:"🎬 Indian (1996) — Senapathy's core values pass down through generations, reused everywhere without being rewritten each time. CSS variables define a value once and reuse it consistently across the whole stylesheet.",
+      explain:"Defined with <code>--name: value;</code> (usually on <code>:root</code> for global scope) and used via <code>var(--name)</code>. Unlike Sass variables, these are LIVE in the browser and can even be changed dynamically via JS for theming.",
+      zen:"ZenCampus defines `--primary-color`, `--danger-color` (for due fees), and `--border-radius` once in `:root`, so changing the brand color for the whole app is a one-line edit instead of hunting through every file.",
+      code:":root {\n  --primary-color: #1d4ed8;\n  --danger-color: #dc2626;\n  --radius: 8px;\n}\n.btn-primary { background: var(--primary-color); border-radius: var(--radius); }\n.due-badge { color: var(--danger-color); }" }
+  ]
+},
+{
+  day:5, title:"Day 5 — CSS Advanced (Units, Stacking, Transitions/Animations, DevTools)",
+  topics:[
+    { name:"17. CSS Units (px, %, em, rem, vw, vh)",
+      movie:"🎬 Vaaranam Aayiram again — some measurements are fixed like a specific date (px, an absolute unit), while others are relative to context, like 'a few years after college' (em/rem/%, relative units).",
+      explain:"<code>px</code> = fixed/absolute. <code>%</code> = relative to parent. <code>em</code> = relative to the current element's font-size. <code>rem</code> = relative to the ROOT (html) font-size — the most predictable unit for consistent spacing/typography. <code>vw/vh</code> = relative to viewport width/height.",
+      zen:"ZenCampus uses `rem` for font sizes and spacing so that if a user increases their browser's base font size for accessibility, the entire layout scales proportionally instead of staying a fixed pixel size.",
+      code:"html { font-size: 16px; }\n.heading { font-size: 1.5rem; }  /* = 24px, scales with root */\n.hero { height: 100vh; }         /* full viewport height */" },
+    { name:"18. Z-index &amp; Stacking Context",
+      movie:"🎬 Vikram Vedha — when Vikram and Vedha's storylines overlap in the same scene, the director decides who appears 'in front'. <code>z-index</code> decides which overlapping element appears in front of another.",
+      explain:"<code>z-index</code> only works on positioned elements (not <code>static</code>). Higher values sit visually on top. A new 'stacking context' is created by properties like <code>position</code> + <code>z-index</code>, <code>opacity &lt; 1</code>, or <code>transform</code> — nested z-index values are then scoped INSIDE that context, which is a common source of confusing 'my z-index isn't working' bugs.",
+      zen:"A ZenCampus modal (e.g. 'Confirm Fee Payment' popup) uses `position: fixed; z-index: 1000;` combined with a dimmed backdrop at `z-index: 999`, ensuring it always renders above the sticky navbar (`z-index: 100`).",
+      code:".modal-backdrop { position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,.5); }\n.modal { position: fixed; z-index: 1000; top: 20%; left: 50%; }" },
+    { name:"19. Transitions &amp; Animations",
+      movie:"🎬 Master — JD's entrance isn't instant, it builds up with style and timing, not an abrupt cut. CSS transitions/animations give UI changes that same smooth, purposeful build-up instead of an instant, jarring jump.",
+      explain:"<code>transition</code> smoothly animates a property change between two states (e.g. hover). <code>@keyframes</code> + <code>animation</code> define multi-step, looping, or complex animations independent of user interaction.",
+      zen:"The ZenCampus 'Save' button smoothly changes background color on hover via `transition`, and a loading spinner while fetching fee data uses a `@keyframes` rotation animation.",
+      code:".btn { transition: background-color .2s ease; }\n.btn:hover { background-color: #1d4ed8; }\n\n@keyframes spin { to { transform: rotate(360deg); } }\n.spinner { animation: spin 1s linear infinite; }" },
+    { name:"20. Browser DevTools &amp; Debugging Layout",
+      movie:"🎬 Jai Bhim — Chandru inspects every piece of evidence closely under scrutiny before drawing conclusions. Browser DevTools (F12) let you inspect every HTML/CSS 'piece of evidence' live — computed styles, box model, applied rules — before concluding why a layout looks wrong.",
+      explain:"Chrome/Edge DevTools' Elements panel shows the live DOM, computed CSS, and a visual box-model diagram. The 'Inspect' tool + toggling classes/styles live is the fastest way to debug a layout issue without guessing and reloading repeatedly.",
+      zen:"When a ZenCampus fee table looks misaligned in production, open DevTools → Elements → click the row → check the Box Model panel to instantly see which margin/padding/border is causing the misalignment, rather than editing the `.cshtml` file blindly and refreshing.",
+      code:"/* No code - it's a workflow:\n1. Right-click element -> Inspect\n2. Check 'Computed' tab for final resolved styles\n3. Toggle classes/styles live in the Styles panel\n4. Use the Box Model diagram to see padding/border/margin */" }
+  ]
+}
+];
+
+// ============ 50 INTERVIEW QUESTIONS (HTML + CSS) ============
+const questions = [
+  {level:"Basic", type:"HTML", q:"What is the difference between HTML elements and tags?", a:"A tag is the markup itself, e.g. <code>&lt;p&gt;</code> and <code>&lt;/p&gt;</code>. An element is the tag PLUS its content, e.g. <code>&lt;p&gt;Hello&lt;/p&gt;</code> is the full element."},
+  {level:"Basic", type:"HTML", q:"What is the difference between block-level and inline elements?", a:"Block-level elements (<code>div, p, section, h1</code>) start on a new line and take full available width. Inline elements (<code>span, a, strong</code>) flow within a line and only take up as much width as their content."},
+  {level:"Basic", type:"HTML", q:"What is semantic HTML and why does it matter?", a:"Semantic HTML uses tags that describe their MEANING (<code>&lt;header&gt;, &lt;nav&gt;, &lt;article&gt;</code>) instead of generic <code>&lt;div&gt;</code>s. It improves SEO, accessibility (screen readers), and code maintainability."},
+  {level:"Basic", type:"HTML", q:"What is the purpose of the alt attribute on images?", a:"Provides alternate text describing the image for screen readers (accessibility) and displays if the image fails to load. Also used by search engines for image SEO."},
+  {level:"Basic", type:"HTML", q:"What is the difference between id and class attributes?", a:"<code>id</code> must be unique per page and is used for a single specific element (also usable as a CSS selector or JS hook). <code>class</code> can be reused across multiple elements for shared styling/behavior."},
+  {level:"Basic", type:"HTML", q:"What are void/self-closing elements? Give examples.", a:"Elements with no closing tag and no content, e.g. <code>&lt;img&gt;, &lt;br&gt;, &lt;input&gt;, &lt;hr&gt;, &lt;meta&gt;, &lt;link&gt;</code>."},
+  {level:"Basic", type:"HTML", q:"What is the difference between GET and POST form methods?", a:"<code>GET</code> appends form data to the URL (visible, bookmarkable, limited length, used for retrieving data). <code>POST</code> sends data in the request body (hidden from URL, no length limit, used for submitting/changing data)."},
+  {level:"Basic", type:"HTML", q:"What is the DOCTYPE declaration for?", a:"<code>&lt;!DOCTYPE html&gt;</code> tells the browser to render the page in standards mode (HTML5) rather than quirks mode, ensuring consistent rendering across browsers."},
+  {level:"Basic", type:"CSS", q:"What is the CSS Box Model?", a:"Every element is a box composed of, from inside out: <code>content → padding → border → margin</code>. Total visible size = content + padding + border (+ margin for spacing outside)."},
+  {level:"Basic", type:"CSS", q:"What is the difference between inline, internal, and external CSS?", a:"Inline: <code>style=\"...\"</code> directly on an element (highest priority, hardest to maintain). Internal: <code>&lt;style&gt;</code> block in the <code>&lt;head&gt;</code>. External: a linked <code>.css</code> file via <code>&lt;link&gt;</code> — best for reuse and caching."},
+  {level:"Basic", type:"CSS", q:"What is the difference between class and ID selectors in terms of specificity?", a:"ID selectors (<code>#id</code>) have higher specificity than class selectors (<code>.class</code>), meaning ID rules override class rules when both target the same element, regardless of order."},
+  {level:"Basic", type:"CSS", q:"What is the difference between margin and padding?", a:"<code>padding</code> is space INSIDE an element's border (between content and border). <code>margin</code> is space OUTSIDE the border, separating the element from its neighbors."},
+  {level:"Basic", type:"CSS", q:"What are the different position values in CSS?", a:"<code>static</code> (default, normal flow), <code>relative</code> (offset from its own position), <code>absolute</code> (positioned relative to nearest positioned ancestor), <code>fixed</code> (relative to viewport), <code>sticky</code> (relative until a scroll threshold, then fixed)."},
+  {level:"Basic", type:"CSS", q:"What is the difference between visibility:hidden and display:none?", a:"<code>display:none</code> removes the element entirely from layout (no space reserved). <code>visibility:hidden</code> hides the element visually but still reserves its layout space."},
+  {level:"Intermediate", type:"HTML", q:"What is the difference between localStorage-backed forms and server-rendered forms?", a:"Server-rendered forms (like ASP.NET MVC's Razor forms) submit and reload the full page via POST unless intercepted by JS/AJAX. Client-side JS can capture the submit event, POST via fetch, and update the DOM without a full reload — a common ZenCampus pattern for smoother UX."},
+  {level:"Intermediate", type:"HTML", q:"What are ARIA attributes and when should you use them?", a:"Accessible Rich Internet Application attributes (<code>role, aria-label, aria-hidden, aria-live</code>) improve accessibility for assistive technologies, especially for custom interactive components (like a JS-built dropdown) that native HTML doesn't cover. Rule of thumb: prefer semantic HTML first, add ARIA only when necessary."},
+  {level:"Intermediate", type:"HTML", q:"What is the difference between defer and async on a script tag?", a:"Both let the script download without blocking HTML parsing. <code>async</code> executes the script as soon as it's downloaded (order not guaranteed). <code>defer</code> executes scripts in order, only after the HTML is fully parsed — generally preferred for scripts that touch the DOM."},
+  {level:"Intermediate", type:"HTML", q:"What is the viewport meta tag and why is it required for responsive design?", a:"<code>&lt;meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"&gt;</code> tells mobile browsers to render the page at the device's actual width instead of a default desktop-width canvas, which is required for media queries to work correctly on phones."},
+  {level:"Intermediate", type:"HTML", q:"What is the difference between srcset and the src attribute on an img tag?", a:"<code>src</code> gives one fixed image URL. <code>srcset</code> provides multiple image sources at different resolutions/widths, letting the browser pick the most efficient one for the current device and screen density — improving load performance."},
+  {level:"Intermediate", type:"CSS", q:"Explain Flexbox: main axis vs cross axis.", a:"In <code>display:flex</code>, the main axis follows <code>flex-direction</code> (row by default = horizontal). <code>justify-content</code> aligns items along the main axis; <code>align-items</code> aligns items along the cross axis (perpendicular to main)."},
+  {level:"Intermediate", type:"CSS", q:"What is the difference between Flexbox and Grid, and when would you use each?", a:"Flexbox is 1-dimensional (a single row OR column) — best for aligning items in a line (navbar, button group). Grid is 2-dimensional (rows AND columns together) — best for full page/section layouts (dashboards, card grids)."},
+  {level:"Intermediate", type:"CSS", q:"What is CSS specificity and how is it calculated?", a:"Specificity ranks which rule wins when multiple rules target the same element. Roughly: inline styles (1000) &gt; IDs (100) &gt; classes/attributes/pseudo-classes (10) &gt; elements/pseudo-elements (1). Higher specificity wins regardless of source order; equal specificity is resolved by which rule comes last."},
+  {level:"Intermediate", type:"CSS", q:"What is the difference between em and rem units?", a:"<code>em</code> is relative to the font-size of its OWN element (compounding when nested). <code>rem</code> is always relative to the ROOT (<code>html</code>) font-size, making it more predictable for consistent spacing across a codebase."},
+  {level:"Intermediate", type:"CSS", q:"What are media queries and how do you write a mobile-first one?", a:"<code>@media (condition) { rules }</code> applies CSS conditionally based on viewport size/features. Mobile-first means writing base styles for small screens first, then using <code>min-width</code> media queries to progressively add styles for larger screens: <pre>.card { width: 100%; }\n@media (min-width: 768px) { .card { width: 50%; } }</pre>"},
+  {level:"Intermediate", type:"CSS", q:"What is the difference between relative, absolute, and fixed positioning in terms of their containing block?", a:"<code>relative</code> positions relative to its own normal position. <code>absolute</code> positions relative to the nearest ANCESTOR with a non-static position (or the initial containing block if none exists). <code>fixed</code> positions relative to the browser viewport and ignores scrolling."},
+  {level:"Intermediate", type:"CSS", q:"What is a CSS pseudo-element and how is it different from a pseudo-class?", a:"Pseudo-classes (<code>:hover, :nth-child</code>) target an element's STATE or position. Pseudo-elements (<code>::before, ::after</code>) target a virtual sub-part of an element not present in the actual DOM, often used to insert decorative content via <code>content:</code>."},
+  {level:"Intermediate", type:"CSS", q:"What is the CSS cascade and how does source order affect it?", a:"The cascade determines the final applied style by combining: 1) importance (<code>!important</code>), 2) specificity, 3) source order (later rules win ties). Understanding this order prevents confusing 'why isn't my CSS applying' bugs."},
+  {level:"Intermediate", type:"CSS", q:"What is the difference between inline-block and block display?", a:"<code>block</code> takes full width and starts on a new line. <code>inline-block</code> flows inline with surrounding content (like inline) but still respects width/height/margin/padding (like block) — useful for button-like elements sitting side by side."},
+  {level:"Advanced", type:"HTML", q:"What is the difference between the DOM and HTML source code?", a:"HTML source is the static text file sent by the server. The DOM is the browser's live, in-memory tree representation of that HTML after parsing — and it can be dynamically modified by JavaScript, diverging from the original source at any time."},
+  {level:"Advanced", type:"HTML", q:"What is Shadow DOM?", a:"An encapsulated DOM subtree attached to an element, whose internal styles and markup are isolated from the main document's CSS/JS — the foundation of Web Components, preventing style leakage in either direction."},
+  {level:"Advanced", type:"HTML", q:"How does the browser handle render-blocking resources like CSS and JS?", a:"CSS in <code>&lt;head&gt;</code> blocks rendering until fully downloaded and parsed (to avoid a flash of unstyled content). Synchronous <code>&lt;script&gt;</code> tags block HTML parsing entirely at their position — which is why scripts are placed at the end of <code>&lt;body&gt;</code> or given <code>defer</code>/<code>async</code>."},
+  {level:"Advanced", type:"HTML", q:"What is Critical Rendering Path?", a:"The sequence of steps the browser takes to convert HTML/CSS/JS into pixels on screen: parse HTML → build DOM → parse CSS → build CSSOM → combine into Render Tree → Layout (geometry) → Paint (pixels). Optimizing this path (minifying CSS, deferring JS) improves perceived load speed."},
+  {level:"Advanced", type:"CSS", q:"What is a stacking context and what creates one?", a:"An independent layering hierarchy for <code>z-index</code>. Created by: a positioned element with a <code>z-index</code> value, <code>opacity &lt; 1</code>, <code>transform</code>, <code>filter</code>, or <code>will-change</code>. Nested z-index values only compete WITHIN their own stacking context, which is why a very high z-index sometimes still fails to appear on top."},
+  {level:"Advanced", type:"CSS", q:"What is the difference between CSS Grid's fr unit and percentage widths?", a:"<code>fr</code> (fraction unit) distributes remaining available space proportionally AFTER fixed-size tracks and gaps are accounted for. Percentages are calculated purely from the container's total width, ignoring gaps — <code>fr</code> is generally more predictable for flexible grid layouts."},
+  {level:"Advanced", type:"CSS", q:"What is the purpose of the will-change property?", a:"A performance hint telling the browser to optimize (e.g. promote to its own GPU layer) for an upcoming change to a property like <code>transform</code> or <code>opacity</code>, reducing jank during animations. Should be used sparingly — overuse consumes excessive GPU memory."},
+  {level:"Advanced", type:"CSS", q:"How does CSS containment (contain property) improve performance?", a:"<code>contain: layout | paint | size | content</code> tells the browser that an element's internals don't affect the outside layout/paint, letting the browser skip recalculating the rest of the page when that element changes — useful for isolating large dynamic tables/widgets."},
+  {level:"Advanced", type:"CSS", q:"What is the difference between CSS Grid's implicit and explicit grids?", a:"The explicit grid is defined via <code>grid-template-columns</code>/<code>rows</code>. The implicit grid is auto-generated by the browser for extra items that don't fit the explicit definition, sized via <code>grid-auto-rows</code>/<code>grid-auto-columns</code>."},
+  {level:"Advanced", type:"CSS", q:"What are CSS logical properties and why are they useful?", a:"Properties like <code>margin-inline-start</code> instead of <code>margin-left</code> adapt automatically to text direction (LTR/RTL) and writing mode, making styles work correctly for internationalized apps without duplicating rules per language direction."},
+  {level:"Advanced", type:"CSS", q:"What is the difference between CSS variables (custom properties) and preprocessor variables (like Sass)?", a:"Sass variables are compiled away at BUILD time — static, no runtime access. CSS custom properties (<code>--var</code>) are LIVE in the browser, can be read/changed via JavaScript at runtime, inherit through the DOM, and enable dynamic theming (e.g. dark mode toggling) without recompiling."},
+  {level:"Advanced", type:"CSS", q:"How would you build a responsive fee-dues table that turns into stacked cards on mobile without duplicating the HTML?", a:"Use a single semantic <code>&lt;table&gt;</code>, then apply a media query below a breakpoint that overrides table display roles: <code>display:block</code> on <code>table, tr, td</code>, hide <code>&lt;thead&gt;</code>, and use <code>::before { content: attr(data-label); }</code> on each <code>&lt;td&gt;</code> to show its column label — achieving a card-like stacked layout from the same markup."},
+  {level:"Advanced", type:"CSS", q:"What causes layout thrashing and how do you avoid it?", a:"Layout thrashing happens when JS repeatedly reads a layout property (like <code>offsetHeight</code>) then writes a style, forcing the browser to recalculate layout synchronously on every iteration inside a loop. Avoid it by batching all reads first, then all writes, or using <code>requestAnimationFrame</code>."},
+  {level:"Advanced", type:"CSS", q:"What is the difference between CSS transitions and CSS animations?", a:"Transitions animate a property smoothly between two states triggered by a change (like <code>:hover</code>) — simple, one-directional. Animations (<code>@keyframes</code>) define multiple steps/percentages, can loop infinitely, and don't require a state change to start."}
+];
+
+// ============ COVERAGE CHECKLIST ============
+const coverageTopics = guideDays.flatMap(day => day.topics.map(t => ({ name: t.name, day: day.day })));
+
+// ============ RENDER: TABS ============
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ============ RENDER: GUIDE ============
+const guideListEl = document.getElementById('guideList');
+guideListEl.innerHTML = guideDays.map(day => `
+  <div class="day-block" id="day-${day.day}">
+    <h2 class="day-title">${day.title}</h2>
+    ${day.topics.map((t) => `
+      <div class="qa" id="topic-${t.name.split('.')[0].trim()}">
+        <div class="q">
+          <span>${t.name}</span>
+          <span class="toggle-icon">+</span>
+        </div>
+        <div class="a">
+          <div class="movie-ref">${t.movie}</div>
+          <p>${t.explain}</p>
+          <pre>${t.code}</pre>
+          <div class="zen-ref"><strong>ZenCampus use case:</strong> ${t.zen}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+`).join('');
+guideListEl.querySelectorAll('.q').forEach(qEl=>{
+  qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+});
+
+// ============ RENDER: INTERVIEW Q&A ============
+const listEl = document.getElementById('qaList');
+const filtersEl = document.getElementById('filters');
+const searchBox = document.getElementById('searchBox');
+const visibleCountEl = document.getElementById('visibleCount');
+const levels = ["All", "HTML", "CSS", "Basic", "Intermediate", "Advanced"];
+let activeLevel = "All";
+
+function matchesFilter(item){
+  if(activeLevel==="All") return true;
+  if(activeLevel==="HTML" || activeLevel==="CSS") return item.type===activeLevel;
+  return item.level===activeLevel;
+}
+
+function renderFilters(){
+  filtersEl.innerHTML = levels.map(lvl =>
+    `<button class="filter-btn ${lvl===activeLevel?'active':''}" data-level="${lvl}">${lvl}</button>`
+  ).join('');
+  filtersEl.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeLevel = btn.dataset.level;
+      renderFilters();
+      renderQAList();
+    });
+  });
+}
+
+function renderQAList(){
+  const searchTerm = searchBox.value.trim().toLowerCase();
+  const filtered = questions
+    .map((item, idx)=>({...item, idx}))
+    .filter(matchesFilter)
+    .filter(item => !searchTerm || item.q.toLowerCase().includes(searchTerm) || item.a.toLowerCase().includes(searchTerm));
+
+  visibleCountEl.textContent = filtered.length;
+
+  listEl.innerHTML = filtered.map(item => `
+    <div class="qa" data-idx="${item.idx}">
+      <div class="q">
+        <span><span class="num">Q${item.idx+1}.</span>${item.q}</span>
+        <span style="display:flex; align-items:center; gap:8px;">
+          <span class="tag2 ${item.type==='HTML'?'tag-html':'tag-css'}">${item.type}</span>
+          <span class="tag">${item.level}</span>
+          <span class="toggle-icon">+</span>
+        </span>
+      </div>
+      <div class="a">${item.a}</div>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.q').forEach(qEl=>{
+    qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+  });
+}
+searchBox.addEventListener('input', renderQAList);
+renderFilters();
+renderQAList();
+
+// ============ RENDER: COVERAGE CHECKLIST ============
+const checklistEl = document.getElementById('checklist');
+checklistEl.innerHTML = coverageTopics.map((t) => `
+  <div class="check-item" data-target="topic-${t.name.split('.')[0].trim()}" data-day="${t.day}">
+    <span class="badge">✅</span>
+    <span class="num">${t.name.split('.')[0]}</span>
+    <span>${t.name.split('. ')[1].replace(/&amp;/g,'&')} <em style="color:var(--muted); font-size:0.8rem;">(Day ${t.day})</em></span>
+  </div>
+`).join('');
+checklistEl.querySelectorAll('.check-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelector('.tab-btn[data-tab="guide"]').click();
+    setTimeout(()=>{
+      const target = document.getElementById(item.dataset.target);
+      if(target){
+        target.classList.add('open');
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }, 50);
+  });
+});
+</script>
+
+</body>
+</html>

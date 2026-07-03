@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 13 – Microservices | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#001a0f,#0d0d1a,#001a0f);padding:36px 20px;text-align:center;border-bottom:3px solid #10b981}
+header h1{font-size:2em;color:#6ee7b7;text-shadow:0 0 20px #10b98155}
+header p{color:#34d399;margin-top:6px}
+.badge{display:inline-block;background:#10b98122;border:1px solid #10b98155;color:#6ee7b7;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#6ee7b7;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#10b981;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.kw{color:#569cd6}.tp{color:#4ec9b0}.st{color:#ce9178}.nm{color:#b5cea8}.cm{color:#6a9955}.pr{color:#9cdcfe}.mt{color:#dcdcaa}.at{color:#c586c0}
+code{background:#1a1a2e;color:#10b981;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#001008;border-left:4px solid #10b981;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#6ee7b7;font-size:0.9em;margin-top:4px}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:700px){.comparison,.two-col{grid-template-columns:1fr}}
+.bad-box{background:#1f0a0a;border:1px solid #e74c3c44;border-radius:8px;padding:14px}
+.good-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:8px;padding:14px}
+.box-label{font-size:0.78em;font-weight:bold;margin-bottom:8px}
+.bad-box .box-label{color:#e74c3c}.good-box .box-label{color:#2ecc71}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#001008;color:#6ee7b7;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a2a1a}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.em{color:#6ee7b7}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-card.hot{border-color:#10b98155;background:#001008}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.s-num{background:#10b981;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.s-num.warn{background:#f97316}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#001a0f;color:#10b981}
+.real{background:#001a0f;color:#10b981;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.hot-badge{background:#1a0800;color:#f97316;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #f9731655}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#001008;border:1px solid #10b981;color:#6ee7b7;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#10b981;color:#fff}
+.reveal-btn.warn-btn{border-color:#f97316;color:#fb923c}
+.reveal-btn.warn-btn:hover{background:#f97316;color:#fff}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1e1e3a}
+.answer.shown{display:block}
+.answer .a-label{color:#6ee7b7;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.answer .a-label.warn{color:#f97316}
+.gold{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#10b981;color:#6ee7b7}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#10b981}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#6ee7b7;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1e1e3a}
+.sticky-nav a:hover{background:#001008}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#10b981,#6ee7b7)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+h3{color:#34d399;margin:16px 0 8px;font-size:1em}
+.arch-box{background:#0a0a1a;border:1px solid #1e3a1e;border-radius:10px;padding:16px;margin:14px 0;font-family:'Consolas',monospace;font-size:0.82em;color:#6ee7b7;line-height:1.9}
+.state-box{display:inline-block;padding:4px 12px;border-radius:4px;font-size:0.82em;font-weight:bold;margin:2px}
+.st-closed{background:#1a4a1a;color:#2ecc71;border:1px solid #2ecc71}
+.st-open{background:#4a0a0a;color:#e74c3c;border:1px solid #e74c3c}
+.st-half{background:#4a3a0a;color:#f39c12;border:1px solid #f39c12}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#6ee7b7;font-size:0.85em;margin-bottom:6px">📅 Day 13 of 60 | Phase 1: Advanced Architecture</div>
+  <h1>🏗️ Microservices Fundamentals</h1>
+  <p>API Gateway · Service Discovery · Circuit Breaker · Inter-service Communication · Polly · gRPC</p>
+  <div style="margin-top:12px">
+    <span class="badge">API Gateway</span><span class="badge">Ocelot</span><span class="badge">YARP</span>
+    <span class="badge">Consul</span><span class="badge">Polly</span><span class="badge">Circuit Breaker</span>
+    <span class="badge">gRPC</span><span class="badge">RabbitMQ</span><span class="badge">IHttpClientFactory</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#why">🤔 Mono vs Micro</a>
+  <a href="#gateway">🚪 API Gateway</a>
+  <a href="#discovery">🔍 Discovery</a>
+  <a href="#polly">🛡️ Polly</a>
+  <a href="#circuit">⚡ Circuit Breaker</a>
+  <a href="#comms">📡 Inter-service</a>
+  <a href="#grpc">⚡ gRPC</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SECTION 1 -->
+<div class="section" id="why">
+  <div class="section-title"><span class="num">1</span> Monolith vs Microservices — ZenCampus Decision</div>
+
+  <div class="movie">
+    <span class="film">🎬 Enthiran — One robot brain (monolith) vs Chitti army (microservices). One brain = one failure kills everything. Army = distributed, independent, resilient.</span>
+    <p>ZenCampus current = monolith. 50,000 students, 200 schools. Fee module bug → entire app down. Microservices → FeeService bug = only fees affected, attendance/timetable still running. Trade-off: complexity increases! Interview-la honest answer: "Monolith started, now migrating selectively."</p>
+  </div>
+
+  <table>
+    <tr><th>Aspect</th><th>Monolith</th><th>Microservices</th></tr>
+    <tr><td>Deploy</td><td>One deploy for everything</td><td class="green">Deploy services independently</td></tr>
+    <tr><td>Scale</td><td>Scale entire app (wasteful)</td><td class="green">Scale only FeeService during month-end</td></tr>
+    <tr><td>Failure</td><td class="red">One bug → entire app down</td><td class="green">FeeService down → SMS/Attendance still up</td></tr>
+    <tr><td>Team</td><td>Everyone touches same code</td><td class="green">Team A owns StudentService, Team B owns FeeService</td></tr>
+    <tr><td>Data</td><td class="green">One DB — easy joins</td><td class="red">Each service owns its DB — no direct joins!</td></tr>
+    <tr><td>Testing</td><td class="green">Integration test one app</td><td class="red">N services to test + integration between them</td></tr>
+    <tr><td>Complexity</td><td class="green">Simple — one process</td><td class="red">Network calls, distributed tracing, service mesh</td></tr>
+    <tr><td>Latency</td><td class="green">In-process method calls</td><td class="red">HTTP/gRPC hops add latency</td></tr>
+  </table>
+
+  <div class="arch-box">
+ZenCampus Proposed Microservices:
+┌─────────────────────────────────────────────────────────────────┐
+│                    API Gateway (YARP / Ocelot)                  │
+│  /api/students/* → StudentService  :5001                        │
+│  /api/fees/*     → FeeService      :5002                        │
+│  /api/attend/*   → AttendanceService :5003                      │
+│  /api/notify/*   → NotificationService :5004                    │
+└─────────────────────────────────────────────────────────────────┘
+         ↕ Service Discovery (Consul / k8s DNS)
+┌───────────┐  ┌───────────┐  ┌────────────┐  ┌──────────────┐
+│  Student  │  │    Fee    │  │ Attendance │  │ Notification │
+│  Service  │  │  Service  │  │  Service   │  │   Service    │
+│  (own DB) │  │  (own DB) │  │  (own DB)  │  │  (no DB)     │
+└───────────┘  └───────────┘  └────────────┘  └──────────────┘
+         ↕ Async messaging (RabbitMQ / Azure Service Bus)
+  fee.paid → NotificationService (SMS/Email)
+  student.admitted → FeeService (create fee structure)
+  </div>
+</div>
+
+<!-- SECTION 2: API GATEWAY -->
+<div class="section" id="gateway">
+  <div class="section-title"><span class="num">2</span> API Gateway — Single Entry Point</div>
+
+  <p style="color:#a0c0a0">API Gateway = reverse proxy + auth + rate limiting + routing + load balancing. Client talks only to Gateway — doesn't know how many services exist behind it.</p>
+
+  <pre><span class="cm">// Option 1: YARP (Yet Another Reverse Proxy) — Microsoft, lightweight</span>
+<span class="cm">// NuGet: Yarp.ReverseProxy</span>
+
+<span class="cm">// Program.cs</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddReverseProxy</span>()
+    .<span class="mt">LoadFromConfig</span>(<span class="pr">builder</span>.<span class="pr">Configuration</span>.<span class="mt">GetSection</span>(<span class="st">"ReverseProxy"</span>));
+
+<span class="pr">app</span>.<span class="mt">MapReverseProxy</span>();</pre>
+
+  <pre><span class="cm">// appsettings.json — YARP routing config</span>
+{
+  <span class="st">"ReverseProxy"</span>: {
+    <span class="st">"Routes"</span>: {
+      <span class="st">"student-route"</span>: {
+        <span class="st">"ClusterId"</span>: <span class="st">"student-cluster"</span>,
+        <span class="st">"Match"</span>: { <span class="st">"Path"</span>: <span class="st">"/api/students/{**catch-all}"</span> },
+        <span class="st">"AuthorizationPolicy"</span>: <span class="st">"default"</span>   <span class="cm">// JWT auth at gateway!</span>
+      },
+      <span class="st">"fee-route"</span>: {
+        <span class="st">"ClusterId"</span>: <span class="st">"fee-cluster"</span>,
+        <span class="st">"Match"</span>: { <span class="st">"Path"</span>: <span class="st">"/api/fees/{**catch-all}"</span> }
+      }
+    },
+    <span class="st">"Clusters"</span>: {
+      <span class="st">"student-cluster"</span>: {
+        <span class="st">"Destinations"</span>: {
+          <span class="st">"s1"</span>: { <span class="st">"Address"</span>: <span class="st">"http://student-service:5001/"</span> },
+          <span class="st">"s2"</span>: { <span class="st">"Address"</span>: <span class="st">"http://student-service-2:5001/"</span> }
+        },
+        <span class="st">"LoadBalancingPolicy"</span>: <span class="st">"RoundRobin"</span>   <span class="cm">// built-in LB!</span>
+      }
+    }
+  }
+}</pre>
+
+  <pre><span class="cm">// Option 2: Ocelot — feature-rich, popular .NET API Gateway</span>
+<span class="cm">// NuGet: Ocelot, Ocelot.Provider.Consul</span>
+
+<span class="cm">// ocelot.json</span>
+{
+  <span class="st">"Routes"</span>: [
+    {
+      <span class="st">"DownstreamPathTemplate"</span>: <span class="st">"/api/students/{everything}"</span>,
+      <span class="st">"DownstreamScheme"</span>:       <span class="st">"http"</span>,
+      <span class="st">"DownstreamHostAndPorts"</span>: [
+        { <span class="st">"Host"</span>: <span class="st">"student-service"</span>, <span class="st">"Port"</span>: <span class="nm">5001</span> }
+      ],
+      <span class="st">"UpstreamPathTemplate"</span>:   <span class="st">"/api/students/{everything}"</span>,
+      <span class="st">"UpstreamHttpMethod"</span>:     [<span class="st">"GET"</span>, <span class="st">"POST"</span>, <span class="st">"PUT"</span>],
+      <span class="st">"AuthenticationOptions"</span>: {
+        <span class="st">"AuthenticationProviderKey"</span>: <span class="st">"Bearer"</span>   <span class="cm">// JWT validated at gateway</span>
+      },
+      <span class="st">"RateLimitOptions"</span>: {
+        <span class="st">"EnableRateLimiting"</span>: <span class="kw">true</span>,
+        <span class="st">"Period"</span>: <span class="st">"1s"</span>, <span class="st">"Limit"</span>: <span class="nm">100</span>   <span class="cm">// 100 req/sec per route</span>
+      }
+    }
+  ],
+  <span class="st">"GlobalConfiguration"</span>: {
+    <span class="st">"BaseUrl"</span>: <span class="st">"https://api.zencampus.com"</span>
+  }
+}
+
+<span class="cm">// Program.cs</span>
+<span class="pr">builder</span>.<span class="pr">Configuration</span>.<span class="mt">AddJsonFile</span>(<span class="st">"ocelot.json"</span>);
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddOcelot</span>();
+<span class="kw">await</span> <span class="pr">app</span>.<span class="mt">UseOcelot</span>();</pre>
+
+  <div class="tip">
+    <div class="t-label">💡 API Gateway Responsibilities</div>
+    <p><strong>Auth</strong> — validate JWT once at gateway (services don't need to re-validate)<br>
+    <strong>Rate Limiting</strong> — protect services from DDoS/overload<br>
+    <strong>Load Balancing</strong> — distribute across multiple instances<br>
+    <strong>SSL Termination</strong> — HTTPS at gateway, HTTP inside (less overhead)<br>
+    <strong>Request Aggregation</strong> — one frontend call → multiple service calls merged</p>
+  </div>
+</div>
+
+<!-- SECTION 3: SERVICE DISCOVERY -->
+<div class="section" id="discovery">
+  <div class="section-title"><span class="num">3</span> Service Discovery — Find Where Services Are</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram — Rolex paaru exactly which agent is active. Service Discovery = same. Which StudentService instance is alive? Consul knows!</span>
+    <p>Without discovery: hardcode IPs → new instance spins up → gateway doesn't know. With Consul: each service registers on startup, sends heartbeat every 10s, Consul deregisters if heartbeat stops. Gateway asks Consul "StudentService available?" → gets live IPs.</p>
+  </div>
+
+  <pre><span class="cm">// NuGet: Consul</span>
+
+<span class="cm">// Service registers itself with Consul on startup</span>
+<span class="kw">public static class</span> <span class="tp">ConsulRegistration</span>
+{
+    <span class="kw">public static</span> <span class="tp">IApplicationBuilder</span> <span class="mt">UseConsul</span>(<span class="kw">this</span> <span class="tp">IApplicationBuilder</span> <span class="pr">app</span>)
+    {
+        <span class="kw">var</span> <span class="pr">consul</span>  = <span class="pr">app</span>.<span class="pr">ApplicationServices</span>.<span class="mt">GetRequiredService</span>&lt;<span class="tp">IConsulClient</span>&gt;();
+        <span class="kw">var</span> <span class="pr">life</span>    = <span class="pr">app</span>.<span class="pr">ApplicationServices</span>.<span class="mt">GetRequiredService</span>&lt;<span class="tp">IHostApplicationLifetime</span>&gt;();
+        <span class="kw">var</span> <span class="pr">cfg</span>     = <span class="pr">app</span>.<span class="pr">ApplicationServices</span>.<span class="mt">GetRequiredService</span>&lt;<span class="tp">IConfiguration</span>&gt;();
+
+        <span class="kw">var</span> <span class="pr">serviceId</span> = <span class="st">$"student-service-{Guid.NewGuid()}"</span>; <span class="cm">// unique per instance</span>
+
+        <span class="pr">life</span>.<span class="pr">ApplicationStarted</span>.<span class="mt">Register</span>(() =>
+        {
+            <span class="pr">consul</span>.<span class="pr">Agent</span>.<span class="mt">ServiceRegister</span>(<span class="kw">new</span> <span class="tp">AgentServiceRegistration</span>
+            {
+                <span class="pr">ID</span>      = <span class="pr">serviceId</span>,
+                <span class="pr">Name</span>    = <span class="st">"student-service"</span>,
+                <span class="pr">Address</span> = <span class="pr">cfg</span>[<span class="st">"Service:Host"</span>],
+                <span class="pr">Port</span>    = <span class="kw">int</span>.<span class="mt">Parse</span>(<span class="pr">cfg</span>[<span class="st">"Service:Port"</span>]!),
+                <span class="pr">Check</span>   = <span class="kw">new</span> <span class="tp">AgentServiceCheck</span>
+                {
+                    <span class="pr">HTTP</span>                        = <span class="st">$"http://{cfg["Service:Host"]}:{cfg["Service:Port"]}/health"</span>,
+                    <span class="pr">Interval</span>                    = <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">10</span>),
+                    <span class="pr">DeregisterCriticalServiceAfter</span> = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">1</span>)
+                }
+            });
+        });
+
+        <span class="cm">// Deregister on shutdown — clean exit</span>
+        <span class="pr">life</span>.<span class="pr">ApplicationStopping</span>.<span class="mt">Register</span>(() =>
+            <span class="pr">consul</span>.<span class="pr">Agent</span>.<span class="mt">ServiceDeregister</span>(<span class="pr">serviceId</span>).<span class="mt">Wait</span>());
+
+        <span class="kw">return</span> <span class="pr">app</span>;
+    }
+}
+
+<span class="cm">// Health check endpoint (Consul pings this)</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddHealthChecks</span>()
+    .<span class="mt">AddSqlServer</span>(<span class="pr">connStr</span>)
+    .<span class="mt">AddRedis</span>(<span class="pr">redisConn</span>);
+
+<span class="pr">app</span>.<span class="mt">MapHealthChecks</span>(<span class="st">"/health"</span>);</pre>
+</div>
+
+<!-- SECTION 4: POLLY -->
+<div class="section" id="polly">
+  <div class="section-title"><span class="num">4</span> Polly — Resilience Policies</div>
+
+  <pre><span class="cm">// NuGet: Microsoft.Extensions.Http.Resilience (Polly v8 — .NET 8+)</span>
+
+<span class="cm">// Program.cs — configure resilient HttpClient for StudentService calls</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddHttpClient</span>&lt;<span class="tp">IStudentServiceClient</span>, <span class="tp">StudentServiceClient</span>&gt;(<span class="pr">c</span> =>
+{
+    <span class="pr">c</span>.<span class="pr">BaseAddress</span> = <span class="kw">new</span> <span class="tp">Uri</span>(<span class="st">"http://student-service"</span>);
+    <span class="pr">c</span>.<span class="pr">Timeout</span>     = <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">30</span>);
+})
+.<span class="mt">AddResilienceHandler</span>(<span class="st">"student-pipeline"</span>, <span class="pr">pipeline</span> =>
+{
+    <span class="cm">// 1. Retry — 3 attempts, exponential backoff</span>
+    <span class="pr">pipeline</span>.<span class="mt">AddRetry</span>(<span class="kw">new</span> <span class="tp">HttpRetryStrategyOptions</span>
+    {
+        <span class="pr">MaxRetryAttempts</span> = <span class="nm">3</span>,
+        <span class="pr">BackoffType</span>      = <span class="tp">DelayBackoffType</span>.<span class="pr">Exponential</span>,
+        <span class="pr">UseJitter</span>        = <span class="kw">true</span>,  <span class="cm">// avoids thundering herd</span>
+        <span class="pr">Delay</span>            = <span class="tp">TimeSpan</span>.<span class="mt">FromMilliseconds</span>(<span class="nm">500</span>)
+    });
+
+    <span class="cm">// 2. Circuit Breaker — open after 5 failures</span>
+    <span class="pr">pipeline</span>.<span class="mt">AddCircuitBreaker</span>(<span class="kw">new</span> <span class="tp">HttpCircuitBreakerStrategyOptions</span>
+    {
+        <span class="pr">SamplingDuration</span>       = <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">30</span>),
+        <span class="pr">FailureRatio</span>           = <span class="nm">0.5</span>,  <span class="cm">// 50% failure rate → open</span>
+        <span class="pr">MinimumThroughput</span>      = <span class="nm">10</span>,   <span class="cm">// need at least 10 calls to evaluate</span>
+        <span class="pr">BreakDuration</span>          = <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">30</span>),
+        <span class="pr">OnOpened</span>               = <span class="pr">args</span> =>
+        {
+            <span class="pr">_log</span>.<span class="mt">LogWarning</span>(<span class="st">"StudentService circuit OPENED — fast-fail mode"</span>);
+            <span class="kw">return</span> <span class="tp">ValueTask</span>.<span class="pr">CompletedTask</span>;
+        }
+    });
+
+    <span class="cm">// 3. Timeout per attempt</span>
+    <span class="pr">pipeline</span>.<span class="mt">AddTimeout</span>(<span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">5</span>));
+});</pre>
+</div>
+
+<!-- SECTION 5: CIRCUIT BREAKER -->
+<div class="section" id="circuit">
+  <div class="section-title"><span class="num">5</span> Circuit Breaker — States + ZenCampus Fallback</div>
+
+  <div class="movie">
+    <span class="film">🎬 96 — When connection fails, protect yourself. Don't keep trying. Circuit Breaker = same. Stop hammering a dead service. Protect cascading failure.</span>
+    <p>96 film-la Ram keeps calling Janu. After N failures — stop. Circuit opens. Wait. Try again later (half-open). This is exactly the Circuit Breaker pattern. FeeService calling StudentService 1000 times when it's down = kills both services. CB prevents cascade!</p>
+  </div>
+
+  <div style="margin:14px 0">
+    <span class="state-box st-closed">🟢 CLOSED — normal, requests flow</span>
+    <span style="color:#888;margin:0 8px">→ failures exceed threshold →</span>
+    <span class="state-box st-open">🔴 OPEN — fast-fail, no calls to service</span>
+    <span style="color:#888;margin:0 8px">→ break duration expires →</span>
+    <span class="state-box st-half">🟡 HALF-OPEN — test call, if success → CLOSED, if fail → OPEN</span>
+  </div>
+
+  <pre><span class="cm">// Fallback when circuit is OPEN — serve stale data instead of error</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">StudentDto</span>?&gt; <span class="mt">GetStudentAsync</span>(<span class="kw">int</span> <span class="pr">studentId</span>)
+{
+    <span class="kw">try</span>
+    {
+        <span class="kw">return</span> <span class="kw">await</span> <span class="pr">_httpClient</span>.<span class="mt">GetFromJsonAsync</span>&lt;<span class="tp">StudentDto</span>&gt;(
+            <span class="st">$"/api/students/{studentId}"</span>);
+    }
+    <span class="kw">catch</span> (<span class="tp">BrokenCircuitException</span>)
+    {
+        <span class="cm">// Circuit is OPEN — don't wait, fail fast!</span>
+        <span class="pr">_log</span>.<span class="mt">LogWarning</span>(<span class="st">"StudentService unavailable — returning cached data"</span>);
+
+        <span class="cm">// Fallback 1: Redis stale cache</span>
+        <span class="kw">var</span> <span class="pr">cached</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">GetAsync</span>&lt;<span class="tp">StudentDto</span>&gt;(<span class="st">$"student:{studentId}"</span>);
+        <span class="kw">if</span> (<span class="pr">cached</span> <span class="kw">is not null</span>) <span class="kw">return</span> <span class="pr">cached</span>;
+
+        <span class="cm">// Fallback 2: return null (fee service shows "Student unavailable")</span>
+        <span class="kw">return null</span>;
+    }
+    <span class="kw">catch</span> (<span class="tp">HttpRequestException</span> <span class="pr">ex</span>)
+    {
+        <span class="pr">_log</span>.<span class="mt">LogError</span>(<span class="pr">ex</span>, <span class="st">"StudentService HTTP error for student {Id}"</span>, <span class="pr">studentId</span>);
+        <span class="kw">throw</span>;
+    }
+}</pre>
+</div>
+
+<!-- SECTION 6: INTER-SERVICE COMMUNICATION -->
+<div class="section" id="comms">
+  <div class="section-title"><span class="num">6</span> Inter-service Communication — Sync vs Async</div>
+
+  <table>
+    <tr><th>Pattern</th><th>Protocol</th><th>When</th><th>ZenCampus Example</th></tr>
+    <tr><td class="em">Synchronous</td><td>HTTP/REST</td><td>Caller needs response immediately</td><td>FeeService → StudentService: "is student enrolled?"</td></tr>
+    <tr><td class="em">Synchronous</td><td>gRPC</td><td>Low latency, high throughput, typed contracts</td><td>AttendanceService → StudentService: bulk student list</td></tr>
+    <tr><td class="em">Asynchronous</td><td>RabbitMQ/SB</td><td>Caller doesn't need response; fire event</td><td>FeeService publishes fee.paid → NotificationService SMS</td></tr>
+    <tr><td class="em">Async Stream</td><td>SignalR</td><td>Real-time push to browser</td><td>AttendanceDashboard live updates</td></tr>
+  </table>
+
+  <pre><span class="cm">// IHttpClientFactory — named client, proper connection pooling</span>
+<span class="cm">// Program.cs</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddHttpClient</span>(<span class="st">"StudentService"</span>, <span class="pr">c</span> =>
+{
+    <span class="pr">c</span>.<span class="pr">BaseAddress</span>             = <span class="kw">new</span> <span class="tp">Uri</span>(<span class="st">"http://student-service:5001"</span>);
+    <span class="pr">c</span>.<span class="pr">DefaultRequestHeaders</span>.<span class="mt">Add</span>(<span class="st">"Accept"</span>, <span class="st">"application/json"</span>);
+})
+.<span class="mt">AddResilienceHandler</span>(<span class="st">"student-pipeline"</span>, <span class="pr">p</span> => { <span class="cm">/* retry + CB */</span> });
+
+<span class="cm">// Usage — typed client</span>
+<span class="kw">public class</span> <span class="tp">StudentServiceClient</span>(<span class="tp">HttpClient</span> <span class="pr">http</span>) : <span class="tp">IStudentServiceClient</span>
+{
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">StudentDto</span>?&gt; <span class="mt">GetAsync</span>(<span class="kw">int</span> <span class="pr">id</span>) =>
+        <span class="kw">await</span> <span class="pr">http</span>.<span class="mt">GetFromJsonAsync</span>&lt;<span class="tp">StudentDto</span>&gt;(<span class="st">$"/api/students/{id}"</span>);
+
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">bool</span>&gt; <span class="mt">IsEnrolledAsync</span>(<span class="kw">int</span> <span class="pr">id</span>, <span class="kw">int</span> <span class="pr">schoolId</span>) =>
+        <span class="kw">await</span> <span class="pr">http</span>.<span class="mt">GetFromJsonAsync</span>&lt;<span class="kw">bool</span>&gt;(<span class="st">$"/api/students/{id}/enrolled/{schoolId}"</span>);
+}</pre>
+
+  <pre><span class="cm">// Async messaging — fee paid event (RabbitMQ / Azure Service Bus)</span>
+<span class="kw">public record</span> <span class="tp">FeePaidEvent</span>(
+    <span class="kw">int</span>     <span class="pr">StudentId</span>,
+    <span class="kw">int</span>     <span class="pr">SchoolId</span>,
+    <span class="kw">decimal</span> <span class="pr">Amount</span>,
+    <span class="kw">string</span>  <span class="pr">ReceiptNo</span>,
+    <span class="kw">string</span>  <span class="pr">ParentPhone</span>
+);
+
+<span class="cm">// FeeService — publisher (doesn't care who handles it)</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">CollectFeeAsync</span>(<span class="tp">FeeDto</span> <span class="pr">dto</span>)
+{
+    <span class="kw">var</span> <span class="pr">receipt</span> = <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">SaveAsync</span>(<span class="pr">dto</span>);
+
+    <span class="kw">await</span> <span class="pr">_bus</span>.<span class="mt">PublishAsync</span>(<span class="kw">new</span> <span class="tp">FeePaidEvent</span>(
+        <span class="pr">dto</span>.<span class="pr">StudentId</span>, <span class="pr">dto</span>.<span class="pr">SchoolId</span>,
+        <span class="pr">dto</span>.<span class="pr">Amount</span>, <span class="pr">receipt</span>.<span class="pr">ReceiptNo</span>, <span class="pr">dto</span>.<span class="pr">ParentPhone</span>));
+    <span class="cm">// ↑ Fire and forget. NotificationService will pick this up.</span>
+}
+
+<span class="cm">// NotificationService — subscriber (handles event, no coupling to FeeService)</span>
+<span class="kw">public class</span> <span class="tp">FeePaidHandler</span> : <span class="tp">IConsumer</span>&lt;<span class="tp">FeePaidEvent</span>&gt;
+{
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">Consume</span>(<span class="tp">ConsumeContext</span>&lt;<span class="tp">FeePaidEvent</span>&gt; <span class="pr">context</span>)
+    {
+        <span class="kw">var</span> <span class="pr">evt</span> = <span class="pr">context</span>.<span class="pr">Message</span>;
+        <span class="kw">await</span> <span class="pr">_sms</span>.<span class="mt">SendAsync</span>(
+            <span class="pr">evt</span>.<span class="pr">ParentPhone</span>,
+            <span class="st">$"Fee Rs.{evt.Amount} paid. Receipt: {evt.ReceiptNo}"</span>);
+    }
+}
+
+<span class="cm">// MassTransit setup (abstracts RabbitMQ/Azure SB)</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddMassTransit</span>(<span class="pr">x</span> =>
+{
+    <span class="pr">x</span>.<span class="mt">AddConsumer</span>&lt;<span class="tp">FeePaidHandler</span>&gt;();
+    <span class="pr">x</span>.<span class="mt">UsingRabbitMq</span>((<span class="pr">ctx</span>, <span class="pr">cfg</span>) =>
+    {
+        <span class="pr">cfg</span>.<span class="mt">Host</span>(<span class="st">"rabbitmq://rabbitmq"</span>);
+        <span class="pr">cfg</span>.<span class="mt">ConfigureEndpoints</span>(<span class="pr">ctx</span>);
+    });
+});</pre>
+</div>
+
+<!-- SECTION 7: gRPC -->
+<div class="section" id="grpc">
+  <div class="section-title"><span class="num">7</span> gRPC — High-Performance Inter-service Calls</div>
+
+  <p style="color:#a0c0a0;margin-bottom:10px">gRPC = Google RPC. Binary (Protocol Buffers), typed contracts, bidirectional streaming. Faster than REST for service-to-service. HTTP/2 multiplexing. NOT human-readable — use for internal service calls only.</p>
+
+  <pre><span class="cm">// student.proto — contract-first API definition</span>
+syntax = <span class="st">"proto3"</span>;
+package students;
+
+<span class="kw">service</span> StudentService {
+    rpc <span class="mt">GetStudent</span>     (StudentRequest) returns (StudentResponse);
+    rpc <span class="mt">GetStudentsBulk</span>(BulkRequest)    returns (BulkResponse);
+    rpc <span class="mt">StreamStudents</span> (SchoolRequest)  returns (stream StudentResponse); <span class="cm">// streaming!</span>
+}
+
+<span class="kw">message</span> StudentRequest  { <span class="kw">int32</span> student_id = 1; }
+<span class="kw">message</span> StudentResponse {
+    <span class="kw">int32</span>  student_id  = 1;
+    <span class="kw">string</span> name        = 2;
+    <span class="kw">int32</span>  school_id   = 3;
+    <span class="kw">string</span> grade       = 4;
+}
+<span class="kw">message</span> BulkRequest  { <span class="kw">repeated int32</span> student_ids = 1; }
+<span class="kw">message</span> BulkResponse { <span class="kw">repeated</span> StudentResponse students = 1; }
+<span class="kw">message</span> SchoolRequest { <span class="kw">int32</span> school_id = 1; }</pre>
+
+  <pre><span class="cm">// gRPC Server — StudentService</span>
+<span class="kw">public class</span> <span class="tp">StudentGrpcService</span> : <span class="tp">StudentService</span>.<span class="tp">StudentServiceBase</span>
+{
+    <span class="kw">public override async</span> <span class="tp">Task</span>&lt;<span class="tp">StudentResponse</span>&gt; <span class="mt">GetStudent</span>(
+        <span class="tp">StudentRequest</span> <span class="pr">request</span>, <span class="tp">ServerCallContext</span> <span class="pr">context</span>)
+    {
+        <span class="kw">var</span> <span class="pr">s</span> = <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">GetByIdAsync</span>(<span class="pr">request</span>.<span class="pr">StudentId</span>);
+        <span class="kw">return new</span> <span class="tp">StudentResponse</span>
+        {
+            <span class="pr">StudentId</span> = <span class="pr">s</span>.<span class="pr">Id</span>,
+            <span class="pr">Name</span>      = <span class="pr">s</span>.<span class="pr">Name</span>,
+            <span class="pr">SchoolId</span>  = <span class="pr">s</span>.<span class="pr">SchoolId</span>,
+            <span class="pr">Grade</span>     = <span class="pr">s</span>.<span class="pr">Grade</span>
+        };
+    }
+
+    <span class="cm">// Server-side streaming — stream all students for a school</span>
+    <span class="kw">public override async</span> <span class="tp">Task</span> <span class="mt">StreamStudents</span>(
+        <span class="tp">SchoolRequest</span> <span class="pr">request</span>, <span class="tp">IServerStreamWriter</span>&lt;<span class="tp">StudentResponse</span>&gt; <span class="pr">stream</span>,
+        <span class="tp">ServerCallContext</span> <span class="pr">context</span>)
+    {
+        <span class="kw">var</span> <span class="pr">students</span> = <span class="pr">_repo</span>.<span class="mt">GetBySchoolAsync</span>(<span class="pr">request</span>.<span class="pr">SchoolId</span>, <span class="pr">context</span>.<span class="pr">CancellationToken</span>);
+        <span class="kw">await foreach</span> (<span class="kw">var</span> <span class="pr">s</span> <span class="kw">in</span> <span class="pr">students</span>)
+            <span class="kw">await</span> <span class="pr">stream</span>.<span class="mt">WriteAsync</span>(<span class="kw">new</span> <span class="tp">StudentResponse</span> { <span class="pr">StudentId</span> = <span class="pr">s</span>.<span class="pr">Id</span>, <span class="pr">Name</span> = <span class="pr">s</span>.<span class="pr">Name</span> });
+    }
+}
+
+<span class="cm">// gRPC Client — AttendanceService calling StudentService</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddGrpcClient</span>&lt;<span class="tp">StudentService</span>.<span class="tp">StudentServiceClient</span>&gt;(<span class="pr">o</span> =>
+    <span class="pr">o</span>.<span class="pr">Address</span> = <span class="kw">new</span> <span class="tp">Uri</span>(<span class="st">"http://student-service:5001"</span>))
+    .<span class="mt">AddResilienceHandler</span>(<span class="st">"grpc-pipeline"</span>, <span class="pr">p</span> => { <span class="cm">/* retry + CB */</span> });
+
+<span class="cm">// Usage</span>
+<span class="kw">var</span> <span class="pr">response</span> = <span class="kw">await</span> <span class="pr">_grpcClient</span>.<span class="mt">GetStudentAsync</span>(<span class="kw">new</span> <span class="tp">StudentRequest</span> { <span class="pr">StudentId</span> = <span class="nm">101</span> });</pre>
+
+  <table>
+    <tr><th></th><th>REST/HTTP</th><th>gRPC</th></tr>
+    <tr><td>Format</td><td>JSON (human-readable)</td><td class="green">Binary Protobuf (3-10x smaller)</td></tr>
+    <tr><td>Speed</td><td>Slower (text parsing)</td><td class="green">Faster (binary, HTTP/2)</td></tr>
+    <tr><td>Contract</td><td>OpenAPI (optional)</td><td class="green">Proto (mandatory, strict)</td></tr>
+    <tr><td>Browser</td><td class="green">Yes</td><td class="red">No (needs grpc-web proxy)</td></tr>
+    <tr><td>Streaming</td><td>SSE/WebSocket</td><td class="green">Built-in bidirectional streaming</td></tr>
+    <tr><td>Use</td><td>Public API, browser clients</td><td>Internal service-to-service</td></tr>
+  </table>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">8</span> 🎯 Scenarios — Interview + Production + Critical</div>
+
+  <!-- S1 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num warn">1</div>
+      <div><div class="scenario-title">FeeService → StudentService down → cascade failure! <span class="hot-badge">🔥 Production</span> <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "StudentService pod crashed in Kubernetes. FeeService calls StudentService for every fee validation — 1000 calls/min. All fail with 30s timeout. FeeService thread pool exhausted. FeeService also crashes! Entire ZenCampus down. Fix?"</div>
+    <button class="reveal-btn warn-btn" onclick="toggle(this)">🔥 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label warn">✅ CIRCUIT BREAKER + TIMEOUT + FALLBACK = NO CASCADE</div>
+      <pre><span class="cm">// Root cause: 30s timeout × 1000 concurrent = 30,000 seconds of thread blocking
+// Fix: timeout 3s + circuit breaker + Redis fallback</span>
+
+<span class="cm">// 1. Short timeout — fail fast, don't wait 30s</span>
+<span class="pr">pipeline</span>.<span class="mt">AddTimeout</span>(<span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">3</span>)); <span class="cm">// was 30s!</span>
+
+<span class="cm">// 2. Circuit Breaker — after 5 failures in 10s → OPEN for 30s</span>
+<span class="pr">pipeline</span>.<span class="mt">AddCircuitBreaker</span>(<span class="kw">new</span> <span class="tp">HttpCircuitBreakerStrategyOptions</span>
+{
+    <span class="pr">FailureRatio</span>       = <span class="nm">0.5</span>,
+    <span class="pr">SamplingDuration</span>   = <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">10</span>),
+    <span class="pr">MinimumThroughput</span>  = <span class="nm">5</span>,
+    <span class="pr">BreakDuration</span>      = <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">30</span>)
+});
+<span class="cm">// Now: 5 failures → circuit OPENS → next 1000 calls get BrokenCircuitException INSTANTLY
+// No thread blocking. No cascade. FeeService stays healthy!</span>
+
+<span class="cm">// 3. Fallback — serve stale Redis cache</span>
+<span class="kw">catch</span> (<span class="tp">BrokenCircuitException</span>)
+{
+    <span class="kw">var</span> <span class="pr">cached</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">GetAsync</span>&lt;<span class="tp">StudentDto</span>&gt;(<span class="st">$"student:{id}"</span>);
+    <span class="kw">if</span> (<span class="pr">cached</span> <span class="kw">is not null</span>) <span class="kw">return</span> <span class="pr">cached</span>; <span class="cm">// serve stale!</span>
+    <span class="kw">throw new</span> <span class="tp">ServiceUnavailableException</span>(<span class="st">"StudentService unavailable"</span>);
+}</span></pre>
+      <div class="gold"><div class="gold-label">⭐ Senior Add-On: Bulkhead Pattern</div><p>"Add <code>AddConcurrencyLimiter(10)</code> — limits FeeService to 10 concurrent StudentService calls. Even if CB doesn't trigger, bulkhead prevents thread exhaustion. Defense in depth!"</p></div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div><div class="scenario-title">API Gateway — how does JWT validation work at scale? <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'ZenCampus microservices — 5 services. Each service validates JWT? Or gateway validates? What if teacher's role changes — how does it propagate?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ GATEWAY VALIDATES — SERVICES TRUST CLAIMS</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong>Architecture:</strong> JWT validated ONCE at API Gateway (Ocelot/YARP). If valid, gateway forwards request with claims as headers (X-UserId, X-Role, X-SchoolId). Downstream services trust these headers — no re-validation needed. Saves CPU across all services.</p>
+        <p><strong>Role change propagation:</strong> JWT has 15-min TTL. Role change → old JWT still valid until expiry. To revoke immediately: (1) JTI blacklist in Redis — gateway checks blacklist on every request (O(1)). (2) Or force logout via refresh token revocation — next token refresh fails, user must re-login with new role.</p>
+        <p><strong>Service-to-service:</strong> When StudentService calls FeeService internally, it passes a service-account JWT (not user's JWT). Use client credentials grant (OAuth2 machine-to-machine). FeeService validates this service JWT to ensure only StudentService can call it — not any external actor.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div><div class="scenario-title">REST vs gRPC — when to use in ZenCampus? <span class="diff easy">Easy</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'gRPC vs REST — for ZenCampus microservices, which services should use gRPC and which REST?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ CLEAR DECISION FRAMEWORK</div>
+      <table style="font-size:0.83em">
+        <tr><th>Call</th><th>Protocol</th><th>Why</th></tr>
+        <tr><td>Browser → API Gateway</td><td class="green">REST/JSON</td><td>Browser can't call gRPC directly</td></tr>
+        <tr><td>Mobile App → API Gateway</td><td class="green">REST/JSON</td><td>Wide SDK support</td></tr>
+        <tr><td>FeeService → StudentService (single record)</td><td class="green">REST</td><td>Simple, low frequency</td></tr>
+        <tr><td>AttendanceService → StudentService (500 students bulk)</td><td class="em">gRPC + streaming</td><td>Binary = 3x smaller, streaming = no large JSON payload</td></tr>
+        <tr><td>ReportService → all services (complex aggregation)</td><td class="em">gRPC</td><td>Typed contracts, faster, streaming</td></tr>
+        <tr><td>FeeService → NotificationService</td><td class="yellow">RabbitMQ (async)</td><td>Don't need response, decouple!</td></tr>
+      </table>
+      <div class="gold"><div class="gold-label">⭐ Interview Quote</div><p>"External/browser = REST. Internal high-throughput service-to-service = gRPC. Events/notifications = message queue. This is our ZenCampus communication strategy."</p></div>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div><div class="scenario-title">Distributed transaction — fee + attendance in 2 services, one fails <span class="diff hard">Hard</span> <span class="diff senior">Senior</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Student fee paid → mark as fee-cleared in FeeService ✅. Then update StudentService attendance-eligible flag. StudentService crashes. Fee marked paid but student flagged ineligible. How to handle distributed transaction?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ SAGA PATTERN — NO DISTRIBUTED TRANSACTION</div>
+      <pre><span class="cm">// Microservices DON'T do 2-phase commit (2PC) — too slow, too coupled
+// Solution: Saga Pattern (choreography-based)</span>
+
+<span class="cm">// Step 1: FeeService saves fee, publishes event</span>
+<span class="kw">await</span> <span class="pr">_feeRepo</span>.<span class="mt">SaveAsync</span>(<span class="pr">fee</span>);
+<span class="kw">await</span> <span class="pr">_bus</span>.<span class="mt">PublishAsync</span>(<span class="kw">new</span> <span class="tp">FeeClearedEvent</span>(<span class="pr">studentId</span>, <span class="pr">fee</span>.<span class="pr">Id</span>));
+<span class="cm">// ✅ FeeService done. StudentService crash doesn't affect Fee!</span>
+
+<span class="cm">// Step 2: StudentService handles event (independently)</span>
+<span class="kw">public class</span> <span class="tp">FeeClearedHandler</span> : <span class="tp">IConsumer</span>&lt;<span class="tp">FeeClearedEvent</span>&gt;
+{
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">Consume</span>(<span class="tp">ConsumeContext</span>&lt;<span class="tp">FeeClearedEvent</span>&gt; <span class="pr">ctx</span>)
+    {
+        <span class="kw">await</span> <span class="pr">_studentRepo</span>.<span class="mt">SetFeeEligibleAsync</span>(<span class="pr">ctx</span>.<span class="pr">Message</span>.<span class="pr">StudentId</span>);
+    }
+    <span class="cm">// If StudentService crashes here → RabbitMQ redelivers message!
+    // Message stays in queue until ACK. Retry = Saga compensation</span>
+}
+
+<span class="cm">// Step 3: Compensating action if StudentService can't process</span>
+<span class="cm">// After X retries → publish FeeClearedFailed event</span>
+<span class="cm">// FeeService handles it → mark fee as "pending-sync" + alert admin</span>
+
+<span class="cm">// Key: Each service's operation is atomic in its own DB.
+// Eventual consistency — not immediate. OK for ZenCampus!</span></pre>
+      <div class="gold"><div class="gold-label">⭐ Interview Key Points</div><p>"No 2PC in microservices. Saga pattern — choreography (events) or orchestration (saga orchestrator). Each step commits locally. Failure = compensating action. Eventual consistency acceptable for fee/student sync."</p></div>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num warn">5</div>
+      <div><div class="scenario-title">Duplicate message — fee paid event processed twice! <span class="hot-badge">🔥 Production</span> <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "RabbitMQ redelivers fee.paid event because consumer crashed after processing but before ACK. Student gets 2 SMS. NotificationService sends duplicate receipt. Parent angry — 'amount debited twice!'"</div>
+    <button class="reveal-btn warn-btn" onclick="toggle(this)">🔥 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label warn">✅ IDEMPOTENT CONSUMER — REDIS DEDUP</div>
+      <pre><span class="cm">// Message must carry unique ID — event ID or correlation ID</span>
+<span class="kw">public record</span> <span class="tp">FeePaidEvent</span>(
+    <span class="tp">Guid</span>    <span class="pr">EventId</span>,      <span class="cm">// unique per event — used for dedup!</span>
+    <span class="kw">int</span>     <span class="pr">StudentId</span>,
+    <span class="kw">decimal</span> <span class="pr">Amount</span>,
+    <span class="kw">string</span>  <span class="pr">ReceiptNo</span>
+);
+
+<span class="kw">public class</span> <span class="tp">FeePaidHandler</span> : <span class="tp">IConsumer</span>&lt;<span class="tp">FeePaidEvent</span>&gt;
+{
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">Consume</span>(<span class="tp">ConsumeContext</span>&lt;<span class="tp">FeePaidEvent</span>&gt; <span class="pr">ctx</span>)
+    {
+        <span class="kw">var</span> <span class="pr">evt</span>    = <span class="pr">ctx</span>.<span class="pr">Message</span>;
+        <span class="kw">var</span> <span class="pr">dedupKey</span> = <span class="st">$"processed:event:{evt.EventId}"</span>;
+
+        <span class="cm">// Redis NX — only set if NOT already processed</span>
+        <span class="kw">var</span> <span class="pr">isNew</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">StringSetAsync</span>(
+            <span class="pr">dedupKey</span>, <span class="st">"1"</span>, <span class="tp">TimeSpan</span>.<span class="mt">FromDays</span>(<span class="nm">7</span>), <span class="tp">When</span>.<span class="pr">NotExists</span>);
+
+        <span class="kw">if</span> (!<span class="pr">isNew</span>)
+        {
+            <span class="pr">_log</span>.<span class="mt">LogWarning</span>(<span class="st">"Duplicate event {Id} — skipping"</span>, <span class="pr">evt</span>.<span class="pr">EventId</span>);
+            <span class="kw">return</span>; <span class="cm">// ACK but don't process — idempotent!</span>
+        }
+
+        <span class="cm">// Process only if new</span>
+        <span class="kw">await</span> <span class="pr">_sms</span>.<span class="mt">SendAsync</span>(<span class="pr">evt</span>.<span class="pr">StudentId</span>, <span class="pr">evt</span>.<span class="pr">ReceiptNo</span>);
+    }
+}
+<span class="cm">// Redis NX = atomic check-and-set. Even if 2 consumers race → only 1 processes!</span></pre>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div><div class="scenario-title">Health checks — what to check in each service <span class="diff easy">Easy</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Kubernetes liveness vs readiness probe — what's the difference? ZenCampus StudentService — what to check in each?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ LIVENESS vs READINESS — CLEAR DISTINCTION</div>
+      <pre><span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddHealthChecks</span>()
+    .<span class="mt">AddCheck</span>(<span class="st">"self"</span>, () => <span class="tp">HealthCheckResult</span>.<span class="mt">Healthy</span>(), tags: <span class="kw">new</span>[] { <span class="st">"live"</span> })
+    <span class="cm">// Liveness — is the process alive? If dead → k8s restarts pod</span>
+
+    .<span class="mt">AddSqlServer</span>(<span class="pr">connStr</span>, tags: <span class="kw">new</span>[] { <span class="st">"ready"</span> })
+    <span class="cm">// Readiness — can we serve traffic? If DB unreachable → remove from LB</span>
+
+    .<span class="mt">AddRedis</span>(<span class="pr">redisConn</span>, tags: <span class="kw">new</span>[] { <span class="st">"ready"</span> })
+    .<span class="mt">AddUrlGroup</span>(<span class="kw">new</span> <span class="tp">Uri</span>(<span class="st">"http://student-service:5001/health"</span>), tags: <span class="kw">new</span>[] { <span class="st">"ready"</span> });
+
+<span class="cm">// Separate endpoints for k8s</span>
+<span class="pr">app</span>.<span class="mt">MapHealthChecks</span>(<span class="st">"/health/live"</span>, <span class="kw">new</span> <span class="tp">HealthCheckOptions</span>
+    { <span class="pr">Predicate</span> = <span class="pr">h</span> => <span class="pr">h</span>.<span class="pr">Tags</span>.<span class="mt">Contains</span>(<span class="st">"live"</span>) });
+
+<span class="pr">app</span>.<span class="mt">MapHealthChecks</span>(<span class="st">"/health/ready"</span>, <span class="kw">new</span> <span class="tp">HealthCheckOptions</span>
+    { <span class="pr">Predicate</span> = <span class="pr">h</span> => <span class="pr">h</span>.<span class="pr">Tags</span>.<span class="mt">Contains</span>(<span class="st">"ready"</span>) });</pre>
+      <div style="background:#0a0a1a;padding:12px;border-radius:6px;margin-top:8px;font-size:0.87em;color:#c0c0d0">
+        <strong style="color:#6ee7b7">Liveness</strong> — is process alive? Check: /health/live → just "I'm running". k8s: if fail → restart pod.<br>
+        <strong style="color:#f39c12">Readiness</strong> — can I handle traffic? Check: DB connectivity, Redis, dependencies. k8s: if fail → stop sending traffic (but don't restart). Wait for dependencies to recover.
+      </div>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div><div class="scenario-title">Slow API — which microservice is causing latency? <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "ZenCampus dashboard API takes 4 seconds. It calls StudentService + FeeService + AttendanceService. Which one is slow? How to find out in microservices architecture?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ DISTRIBUTED TRACING — OPENTELEMETRY</div>
+      <pre><span class="cm">// OpenTelemetry — distributed tracing across services</span>
+<span class="cm">// NuGet: OpenTelemetry.Extensions.Hosting, OpenTelemetry.Instrumentation.AspNetCore</span>
+
+<span class="cm">// Every service — add same tracing setup</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddOpenTelemetry</span>()
+    .<span class="mt">WithTracing</span>(<span class="pr">tracing</span> => <span class="pr">tracing</span>
+        .<span class="mt">AddAspNetCoreInstrumentation</span>()
+        .<span class="mt">AddHttpClientInstrumentation</span>()  <span class="cm">// tracks all HttpClient calls!</span>
+        .<span class="mt">AddEntityFrameworkCoreInstrumentation</span>()
+        .<span class="mt">SetResourceBuilder</span>(<span class="tp">ResourceBuilder</span>.<span class="mt">CreateDefault</span>()
+            .<span class="mt">AddService</span>(<span class="st">"student-service"</span>)) <span class="cm">// service name in trace!</span>
+        .<span class="mt">AddOtlpExporter</span>(<span class="pr">o</span> =>
+            <span class="pr">o</span>.<span class="pr">Endpoint</span> = <span class="kw">new</span> <span class="tp">Uri</span>(<span class="st">"http://jaeger:4317"</span>))); <span class="cm">// Jaeger/Zipkin</span>
+
+<span class="cm">// HTTP header propagation — trace follows across services!
+// Request comes in: X-B3-TraceId: abc123
+// StudentService → FeeService: same TraceId forwarded automatically
+// In Jaeger: see timeline: GatewayIn(10ms) → StudentService(50ms) → FeeService(3900ms!) → response
+// → FeeService is the bottleneck! Drill into FeeService spans → SQL query is slow!</span></pre>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div><div class="scenario-title">Monolith to microservices — strangler fig pattern <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'How would you migrate ZenCampus monolith to microservices without breaking production?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ STRANGLER FIG PATTERN — INCREMENTAL MIGRATION</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong>Strangler Fig Pattern:</strong> Don't rewrite all at once — strangle the monolith gradually.</p>
+        <p><strong>Step 1 — API Gateway first:</strong> Put YARP in front of monolith. All traffic → Gateway → Monolith (unchanged). Zero downtime.</p>
+        <p><strong>Step 2 — Extract least-coupled service:</strong> NotificationService first — pure output, no shared DB. Route /api/notifications/* → new NotificationService. Gateway handles routing. Monolith unaffected.</p>
+        <p><strong>Step 3 — Extract next service (FeeService):</strong> Create FeeService with its own DB. Copy fee data. Switch reads to new service. Validate. Switch writes. Monolith fee module becomes dead code.</p>
+        <p><strong>Step 4 — Repeat:</strong> StudentService, AttendanceService. Monolith shrinks. Eventually empty → decommission.</p>
+        <p><strong>Anti-pattern:</strong> Never do big-bang rewrite. Strangler Fig = zero-downtime, reversible at each step.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div><div class="scenario-title">Circuit Breaker states — explain OPEN/CLOSED/HALF-OPEN <span class="diff easy">Easy</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Circuit Breaker pattern — explain states with ZenCampus real example.'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ STATES WITH REAL EXAMPLE</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><span class="state-box st-closed">🟢 CLOSED</span> <strong>— Normal operations.</strong> FeeService calls StudentService. All succeeds. Failure counter resets on success. This is the happy path.</p>
+        <p><span class="state-box st-open">🔴 OPEN</span> <strong>— Fast-fail mode.</strong> StudentService crashed. 5 failures in 10s → circuit opens. Next 1000 calls to StudentService get BrokenCircuitException INSTANTLY — no HTTP call made. Polly serves fallback (Redis cache or 503). FeeService protected!</p>
+        <p><span class="state-box st-half">🟡 HALF-OPEN</span> <strong>— Testing recovery.</strong> After 30s break → 1 test call allowed. If StudentService responds OK → circuit CLOSES (normal). If still fails → OPENS again for another 30s. Prevents premature recovery.</p>
+        <p><strong>Analogy:</strong> Electrical circuit breaker at home. Overload → breaker trips (OPEN). Wait → manually reset (HALF-OPEN). If stable → stays reset (CLOSED). If overloads again → trips again.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div><div class="scenario-title">"Microservices experience sollu" — Full interview answer <span class="diff senior">Senior</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Tell me about your microservices experience in ZenCampus. What patterns did you use?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE STRUCTURED ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p>"ZenCampus serves 50,000 students across 200 schools. We started with a monolith and are now extracting services using the Strangler Fig pattern."</p>
+        <p><strong>API Gateway (YARP):</strong> Single entry point. JWT validated once at gateway — headers forwarded. Rate limiting 100 req/sec per route. Load balancing across 2-3 instances of each service."</p>
+        <p><strong>Resilience (Polly v8):</strong> Every HttpClient has: retry (3 attempts, exponential backoff + jitter), circuit breaker (50% failure rate → 30s open, fallback to Redis stale cache), 3-second timeout. This prevented cascade failure when StudentService crashed — FeeService continued with stale data."</p>
+        <p><strong>Communication:</strong> Browser/mobile → REST at gateway. Internal high-volume (bulk student fetch for attendance) → gRPC (3x faster, streaming). Events (fee.paid, student.admitted) → RabbitMQ via MassTransit. Idempotent consumers via Redis NX dedup prevent duplicate SMS on redelivery."</p>
+        <p><strong>Saga pattern:</strong> Fee payment → FeeService commits locally → publishes FeePaidEvent → StudentService handles independently. No 2PC. Eventual consistency — acceptable for ZenCampus."</p>
+        <p><strong>Observability:</strong> OpenTelemetry distributed tracing → Jaeger. Found a 3.9s FeeService SQL query via trace timeline. Liveness + readiness health checks for Kubernetes probes."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">9</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: Circuit Breaker HALF-OPEN state — how many requests are allowed?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) All requests — same as CLOSED state</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) One test request — success → CLOSED, failure → back to OPEN</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Five requests, then evaluate</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Random percentage of requests</div>
+    <div class="quiz-fb ok">✅ HALF-OPEN = probe state. 1 test request allowed after break duration. Success = service recovered → CLOSED. Failure = still broken → OPEN for another break period. This prevents premature recovery that would just flood a recovering service!</div>
+    <div class="quiz-fb nope">❌ HALF-OPEN allows exactly 1 test request! If that succeeds → CLOSED (normal). If it fails → back to OPEN for another break period. This cautious approach protects a recovering service from immediate flood.</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: Kubernetes liveness probe fails — what happens?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Pod removed from load balancer, but still running</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Pod is restarted by Kubernetes</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Pod traffic reduced to 50%</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Alert sent but no action taken</div>
+    <div class="quiz-fb ok">✅ Liveness fail → k8s RESTARTS the pod. It means "process is stuck/dead". Readiness fail → removes from load balancer but doesn't restart (dependencies might just be temporarily unavailable). ZenCampus: liveness = just "I'm alive" check. Readiness = "I can handle traffic" (DB + Redis ok).</div>
+    <div class="quiz-fb nope">❌ Liveness = "is process alive?" Fail → k8s RESTARTS pod. Readiness = "can I handle traffic?" Fail → removed from LB (no restart). That's the key difference! Map healthchecks to /health/live (self) and /health/ready (DB, Redis, dependencies).</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: Microservices-la each service has own database — why?</p>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Loose coupling — service can change its DB schema without impacting others. Independent deploy/scale.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Reduces cost — multiple small DBs cheaper than one big DB</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Microservices technically can't share a DB</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Easier backups with separate DBs</div>
+    <div class="quiz-fb ok">✅ Database-per-service = loose coupling! FeeService can migrate from SQL Server to PostgreSQL without touching StudentService. Schema changes don't break other services. Independent scaling (FeeService DB can be on beefier server). Trade-off: no direct SQL joins → must use API calls or eventual consistency.</div>
+    <div class="quiz-fb nope">❌ Database-per-service is about COUPLING, not cost. Each service owns its data → schema changes don't break other services → independent deploy and scale. ZenCampus FeeService DB schema can change without StudentService knowing. Trade-off: no cross-service SQL joins!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: IHttpClientFactory vs new HttpClient() — main difference?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) IHttpClientFactory is async, HttpClient is synchronous</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) No difference — IHttpClientFactory just provides HttpClient</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) IHttpClientFactory manages connection pool — prevents socket exhaustion. new HttpClient() per request = too many sockets!</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) IHttpClientFactory only works in ASP.NET Core, not Worker Services</div>
+    <div class="quiz-fb ok">✅ new HttpClient() per request = socket exhaustion (each creates new TCP connection, not released immediately due to TIME_WAIT). IHttpClientFactory pools and reuses connections. Also handles lifetime properly — avoids DNS caching issue where long-lived HttpClient ignores DNS updates (k8s pod IP changes!).</div>
+    <div class="quiz-fb nope">❌ new HttpClient() per request = socket exhaustion! Each opens a socket, socket stays in TIME_WAIT after close (2 minutes). Under load = "port exhaustion" error. IHttpClientFactory pools connections. Also solves DNS caching issue — IHttpClientFactory rotates handlers so DNS changes propagate (important in k8s!)</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">10</span> ✅ Day 13 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory</h3>
+      <ul class="check-list">
+        <li>Monolith vs Microservices trade-offs</li>
+        <li>API Gateway — YARP vs Ocelot config</li>
+        <li>Service Discovery — Consul registration</li>
+        <li>Polly v8 — retry, circuit breaker, timeout</li>
+        <li>Circuit breaker states CLOSED/OPEN/HALF-OPEN</li>
+        <li>REST vs gRPC — when to use</li>
+        <li>MassTransit + RabbitMQ — event publishing</li>
+        <li>Saga pattern — no 2PC, eventual consistency</li>
+        <li>OpenTelemetry distributed tracing</li>
+        <li>Strangler Fig migration pattern</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"Circuit breaker prevented cascade — FeeService safe"</li>
+        <li>"JWT validated once at gateway — services trust headers"</li>
+        <li>"Saga pattern, not 2PC — eventual consistency"</li>
+        <li>"Idempotent consumer via Redis NX dedup"</li>
+        <li>"IHttpClientFactory prevents socket exhaustion"</li>
+        <li>"gRPC for internal, REST for external/browser"</li>
+        <li>"Strangler Fig — zero-downtime migration"</li>
+        <li>"Liveness = restart pod. Readiness = remove from LB"</li>
+        <li>"BrokenCircuitException + Redis fallback"</li>
+        <li>"OpenTelemetry trace → found 3.9s FeeService SQL"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#001a0f,#0a0a1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🏗️ Day 13 Motivation</div>
+    <p style="color:#6ee7b7;font-style:italic">"Enthiran-la Chitti army = Microservices. One Chitti falls → army continues. Circuit Breaker = CB doesn't waste time hitting a dead service. Saga = each Chitti commits own mission, sends signal for next. <strong>Interview-la 'cascade failure prevent பண்ணேன் — Circuit Breaker + 3s timeout + Redis fallback, 30x improvement in resilience' சொன்னா — architect-level thinking confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 13/60 ✅ | Tomorrow: Day 14 — Docker + Kubernetes (Containers, Pods, Services, Deployments, ConfigMaps, Secrets)</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:21.7%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">13 of 60 days (21.7%) — Microservices Fundamentals mastered!</div>
+  </div>
+</div>
+
+</div>
+<footer>
+  <p>Day 13 – Microservices | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🏗️ "API Gateway = single door. Circuit Breaker = stop hitting dead service. Saga = no 2PC. gRPC internal, REST external. Strangler Fig = safe migration. IHttpClientFactory = no socket exhaustion!"</p>
+</footer>
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent=btn.classList.contains('warn-btn')?'🔥 Answer Reveal':'💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

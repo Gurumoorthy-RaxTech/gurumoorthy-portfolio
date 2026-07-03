@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenCampus JavaScript Complete Guide - 20 Concepts + 50 Interview Q&A</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --accent:#38bdf8; --text:#e2e8f0; --muted:#94a3b8; --code:#0b1220; --green:#22c55e;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI',Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  header{ background:linear-gradient(135deg,#1e3a8a,#0f172a); padding:36px 20px; text-align:center; border-bottom:3px solid var(--accent); }
+  header h1{ margin:0 0 8px; font-size:1.9rem; color:#fff; }
+  header p{ margin:0; color:var(--muted); }
+  .tabs{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; background:#0b1220; padding:14px; position:sticky; top:0; z-index:20; border-bottom:1px solid #334155; }
+  .tab-btn{ padding:10px 20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--muted); cursor:pointer; font-weight:600; font-size:0.9rem; }
+  .tab-btn.active{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+  .container{ max-width:920px; margin:0 auto; padding:30px 20px 80px; }
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
+
+  .search-box{ width:100%; padding:12px 16px; margin-bottom:20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--text); font-size:1rem; }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .filter-btn{ padding:6px 14px; border-radius:20px; border:1px solid #334155; background:transparent; color:var(--muted); cursor:pointer; font-size:0.85rem; }
+  .filter-btn.active, .filter-btn:hover{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+
+  .day-block{ margin-bottom:36px; }
+  .day-title{ color:var(--accent); font-size:1.3rem; margin-bottom:14px; border-left:4px solid var(--accent); padding-left:10px; }
+
+  .qa{ background:var(--card); border-radius:10px; margin-bottom:14px; overflow:hidden; border:1px solid #334155; scroll-margin-top:140px; }
+  .q{ padding:16px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; gap:12px; }
+  .q:hover{ background:#25344d; }
+  .q .num{ color:var(--accent); margin-right:8px; }
+  .q .tag{ font-size:0.7rem; font-weight:400; padding:2px 8px; border-radius:10px; background:#0b1220; color:var(--accent); white-space:nowrap; }
+  .a{ max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 18px; color:var(--muted); border-top:1px solid transparent; }
+  .qa.open .a{ max-height:1200px; padding:0 18px 18px; border-top:1px solid #334155; }
+  .a code, .a pre{ background:var(--code); color:#a5f3fc; padding:2px 6px; border-radius:4px; font-family:Consolas,Monaco,monospace; font-size:0.86rem; }
+  .a pre{ display:block; padding:12px; overflow-x:auto; white-space:pre-wrap; margin:10px 0; }
+  .movie-ref{ background:#3b1e5e; color:#e9d5ff; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .zen-ref{ background:#0e3b2e; color:#bbf7d0; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .toggle-icon{ transition:transform .25s; color:var(--accent); font-size:1.1rem; }
+  .qa.open .toggle-icon{ transform:rotate(45deg); }
+  .count{ color:var(--accent); font-weight:600; }
+
+  .checklist{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media(max-width:600px){ .checklist{ grid-template-columns:1fr; } }
+  .check-item{ background:var(--card); border:1px solid #334155; border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .check-item:hover{ border-color:var(--accent); }
+  .check-item .badge{ color:var(--green); font-size:1.1rem; }
+  .check-item .num{ color:var(--muted); font-size:0.8rem; min-width:20px; }
+
+  footer{ text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🚀 ZenCampus JavaScript Complete Guide</h1>
+  <p>20 Core Concepts (5-Day Plan) + 50 Interview Q&A — All-in-One</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="guide">📘 5-Day Guide</button>
+  <button class="tab-btn" data-tab="interview">🎯 Interview Q&A</button>
+  <button class="tab-btn" data-tab="coverage">✅ Topic Coverage</button>
+</div>
+
+<div class="container">
+
+  <!-- ================= GUIDE TAB ================= -->
+  <div class="tab-content active" id="tab-guide">
+    <div id="guideList"></div>
+  </div>
+
+  <!-- ================= INTERVIEW TAB ================= -->
+  <div class="tab-content" id="tab-interview">
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search a question (e.g. closure, promise, hoisting)...">
+    <div class="filters" id="filters"></div>
+    <p style="color:var(--muted); font-size:0.85rem;">Showing <span class="count" id="visibleCount">50</span> / 50 questions</p>
+    <div id="qaList"></div>
+  </div>
+
+  <!-- ================= COVERAGE TAB ================= -->
+  <div class="tab-content" id="tab-coverage">
+    <p style="color:var(--muted);">All 20 concepts from the reference infographic, mapped to where they're covered in this guide. Click any item to jump to it.</p>
+    <div class="checklist" id="checklist"></div>
+  </div>
+
+</div>
+
+<footer>Built for ZenCampus JS learning • 2026-07-02</footer>
+
+<script>
+// ============ 20 CONCEPTS MAPPED TO 5 DAYS (4 topics/day, matches the infographic) ============
+const guideDays = [
+{
+  day:1, title:"Day 1 — JS Basics, Variables, Data Types, Primitive vs Reference",
+  topics:[
+    { name:"1. JavaScript Basics",
+      movie:"🎬 Baahubali — before building the kingdom, you need the foundation stones. JS is the foundation stone of every interactive webpage — it makes buttons clickable, forms validate, and pages update without a full reload.",
+      explain:"JavaScript is a single-threaded, interpreted scripting language that runs in the browser (and on servers via Node.js). It handles interactivity: DOM updates, form validation, API calls, animations.",
+      zen:"Every `.cshtml` view in ZenCampus (Bill, Hostel, StudentAttendance) has paired JS that validates forms before submission and updates the page live using AJAX/fetch, without a full page reload.",
+      code:"// A simple interactive script\ndocument.getElementById('btnSave').addEventListener('click', () => {\n  alert('Saved!');\n});" },
+    { name:"2. var, let, and const",
+      movie:"🎬 Vikram — Kamal's old identity (var) is messy and function-scoped; the modern identities (let/const) follow cleaner block-scoped rules introduced in ES6.",
+      explain:"`var` is function-scoped and hoisted as `undefined`. `let` is block-scoped and reassignable. `const` is block-scoped and cannot be reassigned (but object/array contents can still be mutated).",
+      zen:"Use `let` for a running fee total that changes with discounts; use `const` for a fixed GST_RATE.",
+      code:"let totalFee = 50000;\nconst GST_RATE = 0.18;\ntotalFee += totalFee * GST_RATE;" },
+    { name:"3. Data Types",
+      movie:"🎬 Anniyan — three personalities (Ambi, Remo, Anniyan) live in one body, just like JS has multiple types living under one language: primitives and objects.",
+      explain:"7 primitives: String, Number, BigInt, Boolean, Undefined, Null, Symbol. Plus Object (includes arrays, functions, dates).",
+      zen:"A student record mixes types: `id` (Number), `name` (String), `feesPaid` (Boolean), `subjects` (Array/Object).",
+      code:"const student = {\n  id: 101,            // Number\n  name: 'Arjun',       // String\n  feesPaid: true,      // Boolean\n  subjects: ['Maths','Science'] // Object (Array)\n};" },
+    { name:"4. Primitive vs Reference Types",
+      movie:"🎬 Jigarthanda — the original raw footage (primitive) is a fixed, standalone copy. But the 'edited master file' (reference/object) — if two people hold the same reel, editing one changes it for both.",
+      explain:"Primitives (String, Number, Boolean...) are copied BY VALUE — changing a copy doesn't affect the original. Objects/Arrays are copied BY REFERENCE — both variables point to the same memory, so mutating one affects the other.",
+      zen:"Common ZenCampus bug source: copying a `studentFilter` object with `let copy = originalFilter` then editing `copy` also silently changes `originalFilter`. Use `{...originalFilter}` (spread) to avoid this.",
+      code:"let a = 10;\nlet b = a;\nb = 20;\nconsole.log(a); // 10 (unaffected - primitive)\n\nlet obj1 = { fee: 5000 };\nlet obj2 = obj1;\nobj2.fee = 9000;\nconsole.log(obj1.fee); // 9000 (affected! - same reference)\n\n// Safe copy:\nlet obj3 = { ...obj1 };" }
+  ]
+},
+{
+  day:2, title:"Day 2 — Type Coercion, Truthy/Falsy, Scope, Hoisting",
+  topics:[
+    { name:"5. Type Coercion",
+      movie:"🎬 Baasha — Manikam the mild auto driver vs Baasha the feared don — same person, different 'type' depending on context. JS silently converts types depending on context too — sometimes helpful, sometimes it bites back.",
+      explain:"JS automatically converts types in certain operations. `'5' + 3` becomes `'53'` (string wins), but `'5' - 3` becomes `2` (number wins, since `-` has no string meaning).",
+      zen:"API responses often send numeric IDs as strings (e.g. `studentId: '101'`). Always coerce explicitly with `Number()` before comparing with `===` to avoid silent bugs.",
+      code:"console.log('5' + 3);   // '53'\nconsole.log('5' - 3);   // 2\nconsole.log(1 == '1');  // true  (avoid loose equality)\nconsole.log(1 === '1'); // false (use strict equality)\nconsole.log(Number('101') === Number(selectedId));" },
+    { name:"6. Truthy and Falsy Values",
+      movie:"🎬 96 — Ram evaluates whether old memories still 'count' as real or not. JS does the same with values in an `if` — some values are treated as 'false-like' even though they aren't the boolean `false`.",
+      explain:"Falsy values: `false, 0, '', null, undefined, NaN`. Everything else — including `'0'` (string) and `[]` (empty array) — is truthy.",
+      zen:"A common bug: `if (feeAmount)` fails silently when `feeAmount = 0` (a valid value meaning 'fully paid'), because 0 is falsy. Use `if (feeAmount !== undefined)` instead.",
+      code:"if (0) console.log('runs');        // skipped - falsy\nif ('0') console.log('runs');       // RUNS - non-empty string is truthy\nif ([]) console.log('runs');        // RUNS - empty array is truthy" },
+    { name:"7. Scope",
+      movie:"🎬 Kaithi — Dilli can only access rooms he currently has clearance to enter. Similarly, a variable can only be accessed within the 'room' (scope) it was declared in, or from within nested rooms.",
+      explain:"Global scope (accessible everywhere), function scope, and block scope (`{ }` with let/const). Inner scopes can read outer variables, but not vice versa.",
+      zen:"A `let` declared inside an `if` block inside a fetch handler (e.g. `feeStatus`) is NOT accessible outside that block — this is by design, preventing accidental global leaks.",
+      code:"function checkFee(amount) {\n  if (amount > 0) {\n    let status = 'Due'; // block-scoped\n    console.log(status); // OK here\n  }\n  console.log(status); // ReferenceError - out of scope\n}" },
+    { name:"8. Hoisting",
+      movie:"🎬 Vikram Vedha — the ending is revealed early through flashback structure before the full story unfolds, similar to how JS 'moves' declarations to the top before running the code line by line.",
+      explain:"JS moves declarations (not initializations) to the top of their scope during compilation. `var` becomes `undefined` before assignment; function declarations are fully hoisted (callable before definition); `let/const` are hoisted but stay in the 'Temporal Dead Zone' until their line runs.",
+      zen:"Calling `calculateFee()` before its `function calculateFee(){}` declaration works fine (hoisted); but calling `feeUtil()` defined as `const feeUtil = () => {}` before that line throws an error.",
+      code:"console.log(x); // undefined (hoisted, not yet assigned)\nvar x = 5;\n\ngreet(); // Works! function declarations fully hoist\nfunction greet(){ console.log('hi'); }\n\nconsole.log(y); // ReferenceError - TDZ\nlet y = 10;" }
+  ]
+},
+{
+  day:3, title:"Day 3 — Functions, Arrow Functions, Closures, Execution Context",
+  topics:[
+    { name:"9. Function Declarations vs Expressions",
+      movie:"🎬 Indian (1996) — Senapathy the freedom fighter (the original, always-present 'declaration') vs Chandru the son (defined later in the story, an 'expression' assigned partway through). One exists from the very start of the film; the other is introduced along the way.",
+      explain:"Function declarations (`function foo(){}`) are hoisted fully — callable before their line. Function expressions (`const foo = function(){}`) are not usable until that line executes.",
+      zen:"Utility functions used everywhere (like `formatCurrency`) are often declared as function declarations at the top of a script file so they're safely usable anywhere below.",
+      code:"function calculateAttendancePercent(present, total) {\n  return (present / total) * 100;\n}\n\nconst calcFee = function(base, discount) {\n  return base - discount;\n};" },
+    { name:"10. Arrow Functions",
+      movie:"🎬 Enthiran (Robot) — Chitti 2.0 is leaner, faster, with no unnecessary baggage compared to the original. Arrow functions are the 'Chitti 2.0' of functions — concise syntax, and they don't have their own `this`.",
+      explain:"Arrow functions have no own `this`, `arguments`, or `super` — they inherit `this` from the enclosing scope. They can't be used as constructors with `new`.",
+      zen:"Perfect for short one-line array transformations, like checking exam eligibility from an attendance percentage.",
+      code:"const isEligibleForExam = (attendancePercent) => attendancePercent >= 75;\nconst names = students.map(s => s.name);" },
+    { name:"11. Closures",
+      movie:"🎬 Anniyan — Ambi's three personalities share the same body but each keeps its own private 'memory' that persists even when another personality is active. A closure is a function that remembers variables from its outer scope even after that outer function has finished running.",
+      explain:"An inner function retains access to its outer function's variables via a closure, even after the outer function returns. Great for private state and counters.",
+      zen:"Used for generating sequential receipt numbers or visitor pass numbers without exposing the counter variable globally.",
+      code:"function createBillCounter() {\n  let receiptNo = 1000; // private\n  return function generateReceipt() {\n    receiptNo++;\n    return `RCPT-${receiptNo}`;\n  };\n}\nconst nextReceipt = createBillCounter();\nnextReceipt(); // RCPT-1001" },
+    { name:"12. Execution Context & Call Stack",
+      movie:"🎬 Thani Oruvan — Mithran investigates layers of Mahanadhi Shiva's operations, digging one level deeper into each lead, then returning back up once each lead is resolved — exactly like the call stack pushing a new execution context for every function call and popping it once that function returns.",
+      explain:"Every function call creates a new 'execution context' (its own variables, `this`, scope chain) pushed onto the Call Stack. When the function finishes, its context is popped off. The Global Execution Context is created first and sits at the bottom.",
+      zen:"When `submitFeePayment()` calls `calculateGST()` calls `roundToTwoDecimals()`, three execution contexts stack up, then unwind in reverse order as each returns — this is why a deeply nested/recursive function can cause a 'Maximum call stack size exceeded' error.",
+      code:"function a(){ b(); }\nfunction b(){ c(); }\nfunction c(){ console.log('deepest'); }\na();\n// Call stack: a -> b -> c -> (c pops) -> (b pops) -> (a pops)" }
+  ]
+},
+{
+  day:4, title:"Day 4 — Event Loop, Sync vs Async, Promises, Async/Await",
+  topics:[
+    { name:"13. Event Loop",
+      movie:"🎬 Vikram Vedha — Vikram (the main thread) handles the primary investigation, while Vedha's flashback stories get 'queued' and told one at a time whenever Vikram pauses to listen. That's the event loop: sync code runs first, async callbacks wait in a queue and run once the main thread is free.",
+      explain:"JS is single-threaded. The call stack executes synchronous code first. Promise callbacks (microtasks) run before setTimeout/setInterval callbacks (macrotasks), but both only run once the stack is empty.",
+      zen:"This is why a `console.log` right after a `fetch()` call runs BEFORE the fetched data arrives — fetch is async and gets queued.",
+      code:"console.log('1. Start');\nsetTimeout(() => console.log('3. Timeout'), 0);\nPromise.resolve().then(() => console.log('2.5 Promise'));\nconsole.log('2. End');\n// Order: 1, 2, 2.5, 3" },
+    { name:"14. Synchronous vs Asynchronous Programming",
+      movie:"🎬 Master — JD waits patiently for the right moment instead of reacting instantly and chaotically. Async programming lets your code 'wait' for a slow operation (like a network call) without freezing the entire page.",
+      explain:"Synchronous code blocks — each line waits for the previous to finish. Asynchronous code (callbacks, Promises, async/await) lets long-running tasks (API calls, timers, file reads) happen in the background without blocking the UI.",
+      zen:"Fetching a student's fee history should NOT freeze the whole ZenCampus page — it must be async so the user can still interact with other UI elements while data loads.",
+      code:"// Sync - blocks\nconst result = someHeavyCalculation();\n\n// Async - non-blocking\nfetch('/api/Bill/GetDetails').then(res => res.json());" },
+    { name:"15. Promises",
+      movie:"🎬 Ratsasan — Arun Kumar makes a promise to catch the killer. That promise has 3 states: pending (investigation ongoing), resolved (killer caught ✅), or rejected (case goes cold ❌).",
+      explain:"A Promise represents a value that will be available in the future. States: pending → fulfilled or rejected. Chained with `.then()` / `.catch()` / `.finally()`.",
+      zen:"Wrapping any AJAX/fetch call to `Controllers` (BillController, StudentController) in a Promise-based chain to handle success and failure cleanly.",
+      code:"function fetchFeeDetails(studentId) {\n  return fetch(`/api/Bill/GetFeeDetails?id=${studentId}`)\n    .then(res => res.ok ? res.json() : Promise.reject('Failed'))\n}\nfetchFeeDetails(101).then(data => console.log(data)).catch(err => console.error(err));" },
+    { name:"16. Async/Await",
+      movie:"🎬 Master again — calm, step-by-step waiting instead of chaotic reaction. `async/await` lets you write asynchronous code that reads top-to-bottom like normal synchronous code.",
+      explain:"`async` marks a function as returning a Promise. `await` pauses execution inside that function until the Promise settles — without blocking the rest of the page.",
+      zen:"The cleanest, most common pattern for calling ZenCampus APIs from a `.cshtml` page's JS file.",
+      code:"async function loadStudentFeePage(studentId) {\n  try {\n    const response = await fetch(`/api/Bill/GetFeeDetails?id=${studentId}`);\n    if (!response.ok) throw new Error('Failed to load');\n    const feeData = await response.json();\n    document.getElementById('lblTotalFee').textContent = `₹${feeData.totalFee}`;\n  } catch (error) {\n    console.error(error);\n  }\n}" }
+  ]
+},
+{
+  day:5, title:"Day 5 — Callbacks, 'this' Keyword, Objects, Destructuring",
+  topics:[
+    { name:"17. Callback Functions",
+      movie:"🎬 Thani Oruvan — Mithran tells his team, 'once you finish surveillance, call me back with the report.' That's a callback: 'do this task, and when done, call this function.'",
+      explain:"A callback is a function passed as an argument to another function, invoked after that function completes its task. Foundation of async JS before Promises existed. Overusing nested callbacks leads to 'callback hell.'",
+      zen:"Older jQuery-based ZenCampus AJAX calls used `success` and `error` callback functions before the codebase started migrating to Promise-based fetch/async patterns.",
+      code:"function fetchStudentList(callback) {\n  setTimeout(() => {\n    callback(['Arjun', 'Divya', 'Karthik']);\n  }, 1000);\n}\nfetchStudentList((students) => console.log('Report:', students));" },
+    { name:"18. The 'this' Keyword",
+      movie:"🎬 Vaaranam Aayiram — Suriya plays Krishna across different life stages (college student, army officer, businessman) — same person, but his 'role' (this) changes completely depending on which 'scene' (context) he's in.",
+      explain:"`this` refers to the object executing the current function — determined by HOW a function is called, not where it's defined (except arrow functions, which inherit `this` lexically from their enclosing scope).",
+      zen:"In an object method like `studentObj.markPresent()`, `this` refers to `studentObj`. But inside a regular callback passed to `setTimeout`, `this` no longer refers to the object — arrow functions fix this by inheriting the outer `this`.",
+      code:"const billModule = {\n  total: 5000,\n  showTotal: function() {\n    console.log(this.total); // 5000 - 'this' = billModule\n  },\n  showTotalBroken: function() {\n    setTimeout(function() {\n      console.log(this.total); // undefined - 'this' lost\n    }, 100);\n  },\n  showTotalFixed: function() {\n    setTimeout(() => {\n      console.log(this.total); // 5000 - arrow inherits 'this'\n    }, 100);\n  }\n};" },
+    { name:"19. JavaScript Objects",
+      movie:"🎬 Vaaranam Aayiram again — one snapshot/frame of Krishna at a specific point in time, bundled with all his traits at that moment (age, job, relationships). An object is exactly that — a bundle of key-value properties.",
+      explain:"Objects store related data as key-value pairs and can include methods (functions as properties). Created via literals `{}`, constructors, or classes.",
+      zen:"Every entity in ZenCampus — Student, Staff, HostelRoom, DVRDevice, Bill — is naturally modeled as a JS object on the frontend, mirroring the C# models in `Models/` on the backend.",
+      code:"const student = {\n  id: 101,\n  name: 'Arjun',\n  className: '10-A',\n  feesPaid: true,\n  markAttendance(status) {\n    console.log(`${this.name} marked ${status}`);\n  }\n};\nstudent.markAttendance('Present');" },
+    { name:"20. Destructuring",
+      movie:"🎬 96 — Ram recalls only specific, meaningful memories out of everything from his past, instead of reliving the whole timeline. Destructuring lets you pull out only the specific properties you need from an object or array.",
+      explain:"A syntax to unpack values from arrays or properties from objects directly into variables, often used with function parameters and API responses.",
+      zen:"Extracting just `staffName` and `department` from a large staff API response object, or pulling out specific fields from a fee-details response.",
+      code:"const { name, className } = student;\nconsole.log(`${name} studies in ${className}`);\n\nconst [firstMark, secondMark] = [78, 85, 90];\n\n// destructuring in function params\nfunction printFee({ totalFee, dueDate }) {\n  console.log(`₹${totalFee} due on ${dueDate}`);\n}" }
+  ]
+}
+];
+
+// ============ 50 INTERVIEW QUESTIONS ============
+const questions = [
+  {level:"Basic", q:"What are the different data types in JavaScript?", a:"JS has 7 primitive types: <code>String, Number, BigInt, Boolean, Undefined, Null, Symbol</code>, plus one non-primitive: <code>Object</code> (which includes arrays and functions)."},
+  {level:"Basic", q:"Difference between var, let, and const?", a:"<code>var</code> is function-scoped and hoisted with 'undefined'. <code>let</code> and <code>const</code> are block-scoped and live in the 'temporal dead zone' until initialized. <code>const</code> cannot be reassigned (but object contents can still change)."},
+  {level:"Basic", q:"What is hoisting?", a:"JS moves variable and function declarations to the top of their scope during compilation. <pre>console.log(x); // undefined\nvar x = 5;</pre> Function declarations are fully hoisted; <code>let/const</code> are hoisted but stay in the TDZ (Temporal Dead Zone)."},
+  {level:"Basic", q:"Difference between == and ===?", a:"<code>==</code> compares values after type coercion. <code>===</code> (strict equality) compares both value and type without conversion. Always prefer <code>===</code>."},
+  {level:"Basic", q:"What is NaN and how to check for it?", a:"NaN means 'Not a Number', returned from invalid math operations. Use <code>Number.isNaN(value)</code> instead of the global <code>isNaN()</code> since the global version coerces the value first."},
+  {level:"Basic", q:"What is the difference between null and undefined?", a:"<code>undefined</code> means a variable has been declared but not assigned. <code>null</code> is an intentional assignment representing 'no value'. <code>typeof undefined === 'undefined'</code>, <code>typeof null === 'object'</code> (a known JS quirk)."},
+  {level:"Basic", q:"What are template literals?", a:"Strings wrapped in backticks that allow embedded expressions: <pre>const name='Arjun';\nconsole.log(`Hello ${name}, total is ${10+5}`);</pre>"},
+  {level:"Basic", q:"Explain truthy and falsy values.", a:"Falsy values: <code>false, 0, '', null, undefined, NaN</code>. Everything else (including <code>'0'</code> and <code>[]</code>) is truthy."},
+  {level:"Basic", q:"What is the difference between function declaration and function expression?", a:"Function declarations (<code>function foo(){}</code>) are hoisted fully and callable before definition. Function expressions (<code>const foo = function(){}</code>) are not hoisted with their assignment, so they can't be called before the line executes."},
+  {level:"Basic", q:"What are arrow functions and how do they differ from regular functions?", a:"Arrow functions have no own <code>this</code>, <code>arguments</code>, or <code>super</code> — they inherit <code>this</code> from the enclosing scope. They also cannot be used as constructors (<code>new</code>)."},
+  {level:"Basic", q:"What is the difference between primitive and reference types?", a:"Primitives (String, Number, Boolean, etc.) are copied BY VALUE — each variable holds an independent copy. Objects/Arrays are copied BY REFERENCE — variables point to the same memory location, so mutating one affects all references to it."},
+  {level:"Basic", q:"What is the Execution Context and Call Stack?", a:"Every function call creates an Execution Context (its own variables, scope, <code>this</code>) which is pushed onto the Call Stack. When the function returns, its context is popped off. Deep/infinite recursion overflows the stack ('Maximum call stack size exceeded')."},
+  {level:"Intermediate", q:"What is a closure? Give a real example.", a:"A closure is a function that remembers variables from its outer scope even after that outer function has returned. <pre>function counter(){\n  let count=0;\n  return () => ++count;\n}\nconst inc = counter();\ninc(); inc(); // 2</pre> Used in ZenCampus for receipt-number generators, debounce, and private state."},
+  {level:"Intermediate", q:"Explain the JavaScript event loop.", a:"JS is single-threaded. The call stack executes synchronous code first. Async callbacks (Promises = microtasks, setTimeout = macrotasks) wait in queues and run only when the call stack is empty. Microtasks always run before macrotasks."},
+  {level:"Intermediate", q:"What is the difference between call, apply, and bind?", a:"All three set the <code>this</code> context of a function. <code>call(thisArg, a, b)</code> invokes immediately with individual args. <code>apply(thisArg, [a,b])</code> invokes immediately with an args array. <code>bind(thisArg)</code> returns a new function without invoking it."},
+  {level:"Intermediate", q:"What is event delegation?", a:"Attaching a single event listener to a parent element to handle events from its children (using event bubbling), instead of attaching listeners to every child. Efficient for dynamically added rows in a student/fee table."},
+  {level:"Intermediate", q:"What is the difference between synchronous and asynchronous code?", a:"Synchronous code runs line by line, blocking further execution until done. Asynchronous code (Promises, callbacks, async/await) lets other code run while waiting for a task (like an API call) to finish."},
+  {level:"Intermediate", q:"Explain Promises and their states.", a:"A Promise represents a future value with 3 states: <code>pending</code>, <code>fulfilled</code> (resolved), or <code>rejected</code>. <pre>fetch(url).then(res=>res.json()).catch(err=>console.log(err));</pre>"},
+  {level:"Intermediate", q:"What is async/await and how does it relate to Promises?", a:"Syntactic sugar over Promises that makes async code look synchronous. <code>await</code> pauses execution inside an <code>async</code> function until the Promise settles, without blocking the main thread."},
+  {level:"Intermediate", q:"What is the difference between map(), filter(), and reduce()?", a:"<code>map()</code> transforms each element into a new array of the same length. <code>filter()</code> returns a subset matching a condition. <code>reduce()</code> combines all elements into a single accumulated value."},
+  {level:"Intermediate", q:"What is destructuring?", a:"A syntax to unpack values from arrays or properties from objects into variables. <pre>const {name, age} = student;\nconst [first, second] = marksArray;</pre>"},
+  {level:"Intermediate", q:"What is the spread operator vs rest parameter?", a:"Spread (<code>...</code>) expands an iterable into individual elements (e.g. <code>[...arr1, ...arr2]</code>). Rest collects multiple arguments into a single array (e.g. <code>function sum(...nums){}</code>). Same syntax, opposite direction."},
+  {level:"Intermediate", q:"What is 'this' in JavaScript and how does it behave differently in arrow vs regular functions?", a:"<code>this</code> refers to the object executing the current function. Regular functions get <code>this</code> based on how they're called (dynamic). Arrow functions inherit <code>this</code> lexically from their enclosing scope (static) — they never have their own <code>this</code>."},
+  {level:"Intermediate", q:"What are debounce and throttle used for?", a:"Debounce delays execution until the user stops triggering an event for X ms (ideal for search boxes). Throttle limits execution to at most once every X ms (ideal for scroll/resize handlers)."},
+  {level:"Intermediate", q:"What is JSON and how do you parse/stringify it?", a:"JSON (JavaScript Object Notation) is a text data format. <code>JSON.parse(str)</code> converts a JSON string to a JS object. <code>JSON.stringify(obj)</code> converts a JS object to a JSON string — commonly used when sending data to ASP.NET Controllers via fetch/AJAX."},
+  {level:"Intermediate", q:"Explain prototypal inheritance.", a:"Every JS object has an internal link (<code>[[Prototype]]</code>) to another object, forming a prototype chain. When a property isn't found on an object, JS looks up the chain. <code>class</code> syntax is sugar over this prototype mechanism."},
+  {level:"Intermediate", q:"What is the difference between a shallow copy and a deep copy?", a:"A shallow copy (<code>{...obj}</code> or <code>Object.assign</code>) copies only the top-level properties — nested objects are still shared by reference. A deep copy duplicates every nested level, e.g. via <code>structuredClone(obj)</code> or <code>JSON.parse(JSON.stringify(obj))</code>."},
+  {level:"Intermediate", q:"What are callback functions and what problem do Promises solve for them?", a:"A callback is a function passed to run after another finishes. Deeply nested callbacks create unreadable 'callback hell'. Promises flatten this into readable <code>.then()</code> chains, and async/await flattens it further into linear code."},
+  {level:"Advanced", q:"What is the difference between microtasks and macrotasks?", a:"Microtasks (Promise callbacks, <code>queueMicrotask</code>) run immediately after the current synchronous code finishes, before rendering. Macrotasks (<code>setTimeout</code>, <code>setInterval</code>, I/O) run in the next event loop cycle, after all pending microtasks."},
+  {level:"Advanced", q:"Explain currying in JavaScript.", a:"Currying transforms a function with multiple arguments into a sequence of functions each taking one argument. <pre>const add = a => b => a + b;\nadd(5)(10); // 15</pre> Useful for creating reusable, pre-configured functions (e.g. a fee calculator pre-set with GST rate)."},
+  {level:"Advanced", q:"What is memoization?", a:"An optimization technique that caches the results of expensive function calls and returns the cached result when the same inputs occur again. Useful for repeated attendance/fee percentage calculations."},
+  {level:"Advanced", q:"What are Web APIs vs the JS engine?", a:"The JS engine (e.g., V8) only understands core language features. APIs like <code>setTimeout</code>, <code>fetch</code>, and the DOM are provided by the browser (Web APIs), not JS itself. This is why Node.js and browsers can have different behavior for the same code."},
+  {level:"Advanced", q:"What is the difference between Object.freeze() and const?", a:"<code>const</code> prevents reassignment of the variable binding, but object properties can still be mutated. <code>Object.freeze(obj)</code> prevents modification of the object's existing properties (shallow freeze only)."},
+  {level:"Advanced", q:"Explain the concept of the 'temporal dead zone' (TDZ).", a:"The time between entering a scope and the actual declaration line where a <code>let</code>/<code>const</code> variable exists but cannot be accessed. Accessing it throws a <code>ReferenceError</code>, unlike <code>var</code> which returns <code>undefined</code>."},
+  {level:"Advanced", q:"What is a higher-order function?", a:"A function that takes another function as an argument and/or returns a function. Examples: <code>map</code>, <code>filter</code>, <code>reduce</code>, or a custom <code>debounce(fn, delay)</code>."},
+  {level:"Advanced", q:"Explain the module pattern and ES6 modules (import/export).", a:"ES6 modules let you split code into files with explicit <code>export</code>/<code>import</code>, each module having its own scope (no global pollution). Older code used IIFEs to achieve similar encapsulation before native modules existed."},
+  {level:"Advanced", q:"What is an IIFE and why use it?", a:"Immediately Invoked Function Expression: <pre>(function(){ /* private scope */ })();</pre> Used to avoid polluting the global namespace — common in older jQuery-based page scripts."},
+  {level:"Advanced", q:"What is the difference between Promise.all, Promise.allSettled, Promise.race, and Promise.any?", a:"<code>all</code> resolves when every promise resolves, rejects if any one rejects. <code>allSettled</code> waits for all regardless of outcome and returns each result/status. <code>race</code> settles as soon as the first promise settles (win or lose). <code>any</code> resolves as soon as the first one succeeds, ignoring rejections unless all fail."},
+  {level:"Advanced", q:"What are generators in JavaScript?", a:"Functions that can pause and resume execution using <code>yield</code>, defined with <code>function*</code>. Useful for creating custom iterators or handling async flows before async/await existed."},
+  {level:"Advanced", q:"What is the difference between deep equality and reference equality for objects?", a:"Two objects with identical properties are NOT <code>===</code> equal unless they reference the exact same memory location. <pre>{a:1} === {a:1} // false</pre> Deep equality needs manual comparison or a utility function/library."},
+  {level:"Advanced", q:"What is debouncing used for in a real project like ZenCampus?", a:"Preventing an API call from firing on every keystroke in a student/staff search box — waiting until the user pauses typing for e.g. 400ms before calling the search API, reducing server load."},
+  {level:"Advanced", q:"Explain event bubbling and capturing.", a:"When an event fires on an element, it 'bubbles' up through its ancestors by default (bubbling phase). 'Capturing' is the opposite — the event travels from the root down to the target first. <code>addEventListener(type, fn, true)</code> enables capture phase."},
+  {level:"Advanced", q:"What is the difference between local storage, session storage, and cookies?", a:"localStorage persists indefinitely (until cleared) and is ~5-10MB. sessionStorage clears when the tab closes. Cookies are small (~4KB), sent with every HTTP request, and can have expiry dates — useful for server-readable auth tokens."},
+  {level:"Advanced", q:"What is a WeakMap and why would you use one?", a:"A Map whose keys must be objects and are held weakly — allowing garbage collection when there are no other references to the key. Useful for attaching private metadata to DOM elements without causing memory leaks."},
+  {level:"Advanced", q:"Explain optional chaining (?.) and nullish coalescing (??).", a:"<code>obj?.prop</code> safely accesses a nested property, returning <code>undefined</code> instead of throwing if any part is null/undefined. <code>value ?? 'default'</code> returns the right side only if the left is <code>null</code>/<code>undefined</code> (unlike <code>||</code>, which also triggers on 0 or '')."},
+  {level:"Advanced", q:"What is the difference between synchronous try/catch and handling errors in Promises?", a:"<code>try/catch</code> only catches synchronous errors and errors from <code>await</code>ed promises inside an async function. Unhandled Promise rejections outside <code>await</code> need <code>.catch()</code> or a global <code>window.onunhandledrejection</code> handler."},
+  {level:"Advanced", q:"What are Symbols used for in JavaScript?", a:"A primitive type that creates guaranteed unique values, often used as non-colliding object property keys or to define custom iterator behavior via <code>Symbol.iterator</code>."},
+  {level:"Advanced", q:"What is tree shaking?", a:"A bundler optimization (Webpack/Rollup/Vite) that removes unused exported code from the final bundle by statically analyzing ES module <code>import</code>/<code>export</code> statements, reducing bundle size."},
+  {level:"Advanced", q:"What is a Proxy in JavaScript?", a:"An object that wraps another object/function and intercepts fundamental operations (get, set, delete) via 'traps'. Used for validation, logging, or reactive frameworks (e.g. Vue 3's reactivity system is built on Proxy)."},
+  {level:"Advanced", q:"How would you optimize a page in ZenCampus that renders a large student table with 5000+ rows?", a:"Use pagination or virtual scrolling (render only visible rows), debounce filter/search inputs, use <code>DocumentFragment</code> for batch DOM insertion instead of updating the DOM in a loop, and avoid re-querying the DOM repeatedly inside loops — cache element references first."}
+];
+
+// ============ COVERAGE CHECKLIST (matches the 20-topic infographic) ============
+const coverageTopics = guideDays.flatMap(day => day.topics.map(t => ({ name: t.name, day: day.day })));
+
+// ============ RENDER: TABS ============
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ============ RENDER: GUIDE ============
+const guideListEl = document.getElementById('guideList');
+guideListEl.innerHTML = guideDays.map(day => `
+  <div class="day-block" id="day-${day.day}">
+    <h2 class="day-title">${day.title}</h2>
+    ${day.topics.map((t, i) => `
+      <div class="qa" id="topic-${t.name.split('.')[0].trim()}">
+        <div class="q">
+          <span>${t.name}</span>
+          <span class="toggle-icon">+</span>
+        </div>
+        <div class="a">
+          <div class="movie-ref">${t.movie}</div>
+          <p>${t.explain}</p>
+          <pre>${t.code.replace(/</g,'&lt;')}</pre>
+          <div class="zen-ref"><strong>ZenCampus use case:</strong> ${t.zen}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+`).join('');
+guideListEl.querySelectorAll('.q').forEach(qEl=>{
+  qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+});
+
+// ============ RENDER: INTERVIEW Q&A ============
+const listEl = document.getElementById('qaList');
+const filtersEl = document.getElementById('filters');
+const searchBox = document.getElementById('searchBox');
+const visibleCountEl = document.getElementById('visibleCount');
+const levels = ["All", "Basic", "Intermediate", "Advanced"];
+let activeLevel = "All";
+
+function renderFilters(){
+  filtersEl.innerHTML = levels.map(lvl =>
+    `<button class="filter-btn ${lvl===activeLevel?'active':''}" data-level="${lvl}">${lvl}</button>`
+  ).join('');
+  filtersEl.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeLevel = btn.dataset.level;
+      renderFilters();
+      renderQAList();
+    });
+  });
+}
+
+function renderQAList(){
+  const searchTerm = searchBox.value.trim().toLowerCase();
+  const filtered = questions
+    .map((item, idx)=>({...item, idx}))
+    .filter(item => activeLevel==="All" || item.level===activeLevel)
+    .filter(item => !searchTerm || item.q.toLowerCase().includes(searchTerm) || item.a.toLowerCase().includes(searchTerm));
+
+  visibleCountEl.textContent = filtered.length;
+
+  listEl.innerHTML = filtered.map(item => `
+    <div class="qa" data-idx="${item.idx}">
+      <div class="q">
+        <span><span class="num">Q${item.idx+1}.</span>${item.q}</span>
+        <span style="display:flex; align-items:center; gap:10px;">
+          <span class="tag">${item.level}</span>
+          <span class="toggle-icon">+</span>
+        </span>
+      </div>
+      <div class="a">${item.a}</div>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.q').forEach(qEl=>{
+    qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+  });
+}
+searchBox.addEventListener('input', renderQAList);
+renderFilters();
+renderQAList();
+
+// ============ RENDER: COVERAGE CHECKLIST ============
+const checklistEl = document.getElementById('checklist');
+checklistEl.innerHTML = coverageTopics.map((t) => `
+  <div class="check-item" data-target="topic-${t.name.split('.')[0].trim()}" data-day="${t.day}">
+    <span class="badge">✅</span>
+    <span class="num">${t.name.split('.')[0]}</span>
+    <span>${t.name.split('. ')[1]} <em style="color:var(--muted); font-size:0.8rem;">(Day ${t.day})</em></span>
+  </div>
+`).join('');
+checklistEl.querySelectorAll('.check-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelector('.tab-btn[data-tab="guide"]').click();
+    setTimeout(()=>{
+      const target = document.getElementById(item.dataset.target);
+      if(target){
+        target.classList.add('open');
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }, 50);
+  });
+});
+</script>
+
+</body>
+</html>

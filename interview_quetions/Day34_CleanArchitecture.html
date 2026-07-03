@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 34 — Clean Architecture | ZenCampus .NET Interview Prep</title>
+<style>
+  :root{--accent:#a21caf;--accent-dim:#86198f;--accent-subtle:rgba(162,28,175,0.08);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(162,28,175,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.1rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  p{margin-bottom:.6rem;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.3rem;margin-bottom:1rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .movie{background:linear-gradient(135deg,rgba(162,28,175,.12),rgba(162,28,175,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .layer{border-radius:12px;padding:1rem 1.3rem;margin:.5rem 0;}
+  .l1{background:rgba(162,28,175,.15);border:1px solid rgba(162,28,175,.4);}
+  .l2{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);}
+  .l3{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);}
+  .l4{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">DAY 34-36</span>
+  <a href="#layers">Layers</a><a href="#domain">Domain Layer</a><a href="#app">Application Layer</a>
+  <a href="#infra">Infrastructure</a><a href="#solid">SOLID Applied</a>
+  <a href="#scenarios">Interview Q</a><a href="#quiz">Quiz</a>
+</nav>
+<div class="hero">
+  <h1>Clean Architecture + Onion Architecture</h1>
+  <p>Domain · Application · Infrastructure · Presentation · Dependency Rule</p>
+  <div class="tags">
+    <span class="tag">Clean Architecture</span><span class="tag">Onion Architecture</span>
+    <span class="tag">ZenCampus Restructured</span><span class="tag">Day 34–36 / 60</span>
+    <span class="tag" style="background:rgba(162,28,175,.2);border-color:#a21caf;color:#a21caf;">Deep Fuchsia #a21caf</span>
+  </div>
+</div>
+<main>
+
+<section id="layers">
+  <h2>🏛️ The 4 Layers — ZenCampus Structure</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Vikram Vedha (2017) — Layers of Truth</div>
+    <div class="mb">Vikram Vedha-la story layers-la reveal aagum — outer layer nee theriyum, but inner moral truth different. Clean Architecture same: outer layers (Web, Infrastructure) change aagalaam — inner Domain layer never changes! Dependency always points INWARD.</div></div>
+  </div>
+
+  <div class="layer l1">
+    <strong style="color:#e879f9;">🟣 Domain Layer (Core — never changes)</strong><br>
+    Entities, Value Objects, Domain Events, Interfaces. NO dependency on any other layer. Pure C# — no EF, no HTTP, no external packages.
+  </div>
+  <div class="layer l2">
+    <strong style="color:#38bdf8;">🔵 Application Layer</strong><br>
+    Use Cases (Commands, Queries), Application Services, DTOs, Validators. Depends on Domain only. No EF, no HTTP — only domain interfaces.
+  </div>
+  <div class="layer l3">
+    <strong style="color:#22c55e;">🟢 Infrastructure Layer</strong><br>
+    EF Core implementations, Dapper repos, SMS clients, Email, Azure Blob. Implements Domain interfaces. Depends on Application + Domain.
+  </div>
+  <div class="layer l4">
+    <strong style="color:#f59e0b;">🟡 Presentation Layer (Web/API)</strong><br>
+    Controllers, Minimal API endpoints, Program.cs, DI registration. Depends on Application layer (sends commands/queries). Never directly calls Infrastructure.
+  </div>
+
+  <h3>ZenCampus Project Structure</h3>
+  <pre><code><span class="cm">ZenCampus.sln
+├── ZenCampus.Domain/              ← Core — zero external dependencies
+│   ├── Entities/
+│   │   ├── Student.cs             ← Rich domain entity
+│   │   ├── FeeRecord.cs
+│   │   └── School.cs
+│   ├── ValueObjects/
+│   │   ├── Address.cs             ← Owned type
+│   │   └── Money.cs
+│   ├── Events/
+│   │   └── StudentAdmittedEvent.cs
+│   └── Interfaces/
+│       ├── IStudentRepository.cs  ← Interface defined HERE
+│       └── IUnitOfWork.cs
+│
+├── ZenCampus.Application/         ← Use cases, depends on Domain only
+│   ├── Students/
+│   │   ├── Commands/
+│   │   │   ├── CreateStudentCommand.cs
+│   │   │   └── CreateStudentCommandHandler.cs
+│   │   └── Queries/
+│   │       ├── GetStudentQuery.cs
+│   │       └── GetStudentQueryHandler.cs
+│   ├── Common/
+│   │   └── Behaviours/
+│   │       ├── LoggingBehavior.cs
+│   │       └── ValidationBehavior.cs
+│   └── DTOs/
+│       └── StudentDetailDto.cs
+│
+├── ZenCampus.Infrastructure/      ← EF, Dapper, SMS — implements interfaces
+│   ├── Persistence/
+│   │   ├── ZenCampusDbContext.cs
+│   │   └── Repositories/
+│   │       └── EfStudentRepository.cs  ← implements IStudentRepository
+│   ├── ExternalServices/
+│   │   └── Msg91SmsClient.cs
+│   └── DependencyInjection.cs     ← RegisterInfrastructure(services)
+│
+└── ZenCampus.Web/                 ← ASP.NET Core app
+    ├── Controllers/
+    │   └── StudentsController.cs  ← only sends Commands/Queries
+    ├── Program.cs
+    └── appsettings.json</span></code></pre>
+</section>
+
+<section id="domain">
+  <h2>🎯 Domain Layer — Rich Entities, Not Anemic</h2>
+  <pre><code><span class="cm">// Anemic Domain Model — WRONG (just data bags)</span>
+<span class="kw">public class</span> <span class="cl">Student</span>
+{
+    <span class="kw">public int</span>    Id      { <span class="kw">get; set;</span> }
+    <span class="kw">public string</span> Name    { <span class="kw">get; set;</span> } = <span class="str">""</span>;
+    <span class="kw">public bool</span>   IsActive { <span class="kw">get; set;</span> }
+}
+<span class="cm">// Service does all the logic — entity is dumb</span>
+
+<span class="cm">// Rich Domain Model — CORRECT</span>
+<span class="kw">public class</span> <span class="cl">Student</span>
+{
+    <span class="kw">public int</span>    Id              { <span class="kw">get; private set;</span> }
+    <span class="kw">public string</span> Name            { <span class="kw">get; private set;</span> }
+    <span class="kw">public bool</span>   IsActive        { <span class="kw">get; private set;</span> }
+    <span class="kw">public int</span>    SchoolId        { <span class="kw">get; private set;</span> }
+    <span class="kw">private readonly</span> <span class="cl">List</span>&lt;<span class="cl">IDomainEvent</span>&gt; _events = [];
+
+    <span class="cm">// Factory method — business rules enforced at creation</span>
+    <span class="kw">public static</span> <span class="cl">Student</span> Create(<span class="kw">string</span> name, <span class="kw">string</span> admNo, <span class="kw">int</span> classId, <span class="kw">int</span> schoolId)
+    {
+        <span class="kw">if</span> (<span class="kw">string</span>.IsNullOrWhiteSpace(name))
+            <span class="kw">throw new</span> <span class="cl">DomainException</span>(<span class="str">"Student name cannot be empty"</span>);
+        <span class="kw">var</span> s = <span class="kw">new</span> <span class="cl">Student</span> { Name = name, AdmissionNumber = admNo, ClassId = classId, SchoolId = schoolId, IsActive = <span class="kw">true</span> };
+        s._events.Add(<span class="kw">new</span> <span class="cl">StudentAdmittedEvent</span>(s.Id, s.Name, s.SchoolId));
+        <span class="kw">return</span> s;
+    }
+
+    <span class="cm">// Domain behaviour — logic lives in entity</span>
+    <span class="kw">public void</span> Deactivate(<span class="kw">string</span> reason)
+    {
+        <span class="kw">if</span> (!IsActive) <span class="kw">throw new</span> <span class="cl">DomainException</span>(<span class="str">"Student already inactive"</span>);
+        IsActive = <span class="kw">false</span>;
+        _events.Add(<span class="kw">new</span> <span class="cl">StudentDeactivatedEvent</span>(Id, reason));
+    }
+
+    <span class="kw">public</span> <span class="cl">IReadOnlyList</span>&lt;<span class="cl">IDomainEvent</span>&gt; GetDomainEvents() =&gt; _events.AsReadOnly();
+    <span class="kw">public void</span> ClearDomainEvents() =&gt; _events.Clear();
+}</code></pre>
+</section>
+
+<section id="app">
+  <h2>⚙️ Application Layer — Orchestration</h2>
+  <pre><code><span class="cm">// Application layer depends on Domain interfaces only — no EF, no HTTP</span>
+<span class="kw">public class</span> <span class="cl">AdmitStudentUseCase</span>(
+    <span class="cl">IStudentRepository</span>    _repo,    <span class="cm">// Domain interface</span>
+    <span class="cl">IUnitOfWork</span>           _uow,     <span class="cm">// Domain interface</span>
+    <span class="cl">ISmsService</span>           _sms,     <span class="cm">// Domain interface (impl in Infrastructure)</span>
+    <span class="cl">ILogger</span>&lt;<span class="cl">AdmitStudentUseCase</span>&gt; _log)
+{
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="kw">int</span>&gt; ExecuteAsync(<span class="cl">AdmitStudentDto</span> dto, <span class="cl">CancellationToken</span> ct)
+    {
+        <span class="kw">if</span> (<span class="kw">await</span> _repo.ExistsAsync(dto.SchoolId, dto.AdmissionNumber, ct))
+            <span class="kw">throw new</span> <span class="cl">ConflictException</span>(<span class="str">"Admission number already taken"</span>);
+
+        <span class="kw">var</span> student = <span class="cl">Student</span>.Create(dto.Name, dto.AdmissionNumber, dto.ClassId, dto.SchoolId);
+        <span class="kw">await</span> _repo.AddAsync(student, ct);
+        <span class="kw">await</span> _uow.CommitAsync(ct);
+
+        <span class="cm">// Publish domain events</span>
+        <span class="kw">foreach</span> (<span class="kw">var</span> evt <span class="kw">in</span> student.GetDomainEvents())
+            <span class="kw">await</span> _mediator.Publish(evt, ct);
+
+        <span class="kw">return</span> student.Id;
+    }
+}</code></pre>
+</section>
+
+<section id="infra">
+  <h2>🔧 Infrastructure — Implements Domain Contracts</h2>
+  <pre><code><span class="cm">// Infrastructure DI extension — self-contained registration</span>
+<span class="kw">public static class</span> <span class="cl">InfrastructureServiceExtensions</span>
+{
+    <span class="kw">public static</span> <span class="cl">IServiceCollection</span> AddInfrastructure(
+        <span class="kw">this</span> <span class="cl">IServiceCollection</span> services, <span class="cl">IConfiguration</span> config)
+    {
+        services.AddDbContext&lt;<span class="cl">ZenCampusDbContext</span>&gt;(opts =&gt;
+            opts.UseSqlServer(config.GetConnectionString(<span class="str">"ZenCampusDb"</span>)));
+
+        services.AddScoped&lt;<span class="cl">IStudentRepository</span>, <span class="cl">EfStudentRepository</span>&gt;();
+        services.AddScoped&lt;<span class="cl">IFeeRepository</span>, <span class="cl">EfFeeRepository</span>&gt;();
+        services.AddScoped&lt;<span class="cl">IUnitOfWork</span>, <span class="cl">EfUnitOfWork</span>&gt;();
+        services.AddSingleton&lt;<span class="cl">ISmsService</span>, <span class="cl">Msg91SmsService</span>&gt;();
+        services.AddSingleton&lt;<span class="cl">IFileStorage</span>, <span class="cl">AzureBlobStorageService</span>&gt;();
+        <span class="kw">return</span> services;
+    }
+}
+
+<span class="cm">// Program.cs — clean startup</span>
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();  <span class="cm">// MediatR, validators</span></code></pre>
+
+  <h3>The Dependency Rule</h3>
+  <table>
+    <tr><th>Layer</th><th>Can Depend On</th><th>Cannot Depend On</th></tr>
+    <tr><td>Domain</td><td>Nothing (pure C#)</td><td>Application, Infrastructure, Web</td></tr>
+    <tr><td>Application</td><td>Domain only</td><td>Infrastructure, Web, EF Core</td></tr>
+    <tr><td>Infrastructure</td><td>Domain + Application</td><td>Web controllers</td></tr>
+    <tr><td>Web/API</td><td>Application (commands/queries)</td><td>Infrastructure directly</td></tr>
+  </table>
+</section>
+
+<section id="solid">
+  <h2>🔑 SOLID in Clean Architecture</h2>
+  <table>
+    <tr><th>Principle</th><th>How Clean Architecture Enforces It</th><th>ZenCampus Example</th></tr>
+    <tr><td>S — Single Responsibility</td><td>Each layer has one job</td><td>Domain = business rules only</td></tr>
+    <tr><td>O — Open/Closed</td><td>New use case = new handler class</td><td>AddFeeWaiver = new command + handler</td></tr>
+    <tr><td>L — Liskov Substitution</td><td>Implementations honour interface contracts</td><td>Dapper repo can replace EF repo</td></tr>
+    <tr><td>I — Interface Segregation</td><td>Separate IStudentRepository, IFeeRepository</td><td>Handlers inject only what they need</td></tr>
+    <tr><td>D — Dependency Inversion</td><td>Domain defines interfaces; Infra implements</td><td>IStudentRepository in Domain, EfStudentRepository in Infra</td></tr>
+  </table>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is the Dependency Rule in Clean Architecture?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Dependencies only point inward. Domain layer has zero external dependencies. Application depends on Domain only. Infrastructure implements Domain interfaces — the dependency flows toward Domain via Dependency Inversion. Web/API depends on Application. No outer layer is referenced by an inner layer. If you change the database (Infrastructure), Domain and Application need zero changes.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Where should IStudentRepository be defined — Domain or Infrastructure?</span><span class="st">Architecture</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Domain layer. The interface represents what the application needs from persistence — it's a domain concern. EfStudentRepository (the implementation) lives in Infrastructure. This is Dependency Inversion: Infrastructure depends on Domain interface, not the other way around. Swapping from EF Core to Dapper means only Infrastructure changes.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is the difference between Rich Domain Model and Anemic Domain Model?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Anemic: entities are data bags (public get/set, no methods). All business logic in service layer — Student class has no behaviour. Rich: entities encapsulate behaviour. student.Deactivate(reason) — business rules validated, events raised, state changed. All in the entity. Rich model = self-validating, event-emitting, true object orientation. Clean Architecture favours rich domain models.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">Can a query handler use EF Core DbContext directly, bypassing the repository?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>In practice, yes — many teams inject DbContext directly into query handlers for flexibility (AsNoTracking, Select projections, Split queries). The Dependency Rule is slightly bent but justified for reads: query handlers never change state. Strict Clean Architecture would use a read-only repository interface. Pragmatic choice: query handlers use DbContext, command handlers use repositories with UoW.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">How is Clean Architecture different from N-Tier Architecture?</span><span class="st">Comparison</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>N-Tier (classic): UI → Business Logic → Data Access → DB. Dependencies flow downward — UI depends on BL, BL depends on DAL, DAL depends on DB. Clean Architecture: Domain at center, all dependencies point inward via interfaces. Business logic (Domain) has ZERO external dependencies. N-Tier BL typically depends on DAL — tight coupling. Clean Arch BL never knows about EF Core.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">Where does FluentValidation live in Clean Architecture?</span><span class="st">Placement</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Application layer — validators for Commands/Queries live alongside the commands in Application. Domain validation (business invariants) lives in Domain entities/value objects (throw DomainException). Application validation (input format, required fields) lives in Application validators. Infrastructure has no validators.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">You need to switch ZenCampus from SQL Server to PostgreSQL. What changes in Clean Architecture?</span><span class="st">Test of Understanding</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Only Infrastructure changes: (1) Change EF Core provider: <code>UseNpgsql</code> instead of <code>UseSqlServer</code>. (2) Update migrations. (3) Any SQL-Server-specific raw SQL. Domain, Application, and Web layers: ZERO changes. This is the proof that Clean Architecture works — the business rules don't care which database is underneath.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">Explain the difference between Domain Events and Application Events.</span><span class="st">Architecture</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Domain Events: raised by domain entities, represent something that happened in the domain (StudentAdmitted, FeeRecorded). Dispatched in Application layer after commit. Application Events: raised between application use cases (integration events), may cross bounded contexts. Domain Events = synchronous, in-process. Integration Events = async, via message bus (RabbitMQ, Azure Service Bus).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">Why should entities have private setters in Clean Architecture?</span><span class="st">Design</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Private setters enforce that state changes only happen through domain methods. With public setters: student.IsActive = false anywhere — business rules bypassed. With private setters + student.Deactivate(reason): business rules (check currently active, raise event, log reason) always enforced. EF Core can still set private properties via constructor or reflection.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">What is a Value Object and how does it differ from an Entity?</span><span class="st">DDD</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Entity: has identity (Id) — two students with same name are different entities. Value Object: no identity — defined by its values alone. Address(Street="Main St", City="Chennai") == Address(Street="Main St", City="Chennai") — same. In ZenCampus: Address, Money, ContactNumber are Value Objects. Immutable (private setters or record). No separate table if OwnsOne. Equality by value, not ID.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. In Clean Architecture, can the Domain layer reference EF Core's DbContext?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Domain must have zero external dependencies — EF Core is Infrastructure.')">Yes, for defining entity configurations</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Domain has ZERO external dependencies. Not EF Core, not HttpClient, nothing. Pure C# interfaces and classes only.')">Never — Domain has zero external dependencies</button>
+    <button class="qb" onclick="ans(this,'wrong','Even read-only access would violate the Dependency Rule.')">Only read-only access is allowed</button>
+    <button class="qb" onclick="ans(this,'wrong','There is no exception — Domain must be completely isolated.')">Yes, when using owned types</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. Where should ZenCampus's ISmsService interface be defined?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Infrastructure implements interfaces — it does not define them.')">Infrastructure layer</button>
+    <button class="qb" onclick="ans(this,'wrong','Web layer should not define service contracts.')">Web/API layer</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Domain or Application layer defines interfaces. Infrastructure provides the implementation (Msg91SmsService).')">Domain or Application layer</button>
+    <button class="qb" onclick="ans(this,'wrong','Shared libraries are for utility code — not architectural interfaces.')">Shared library project</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. A new developer puts EF Core code directly in a Controller. What architectural principle is violated?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','SRP is violated but the primary Clean Architecture violation is the Dependency Rule.')">Single Responsibility Principle only</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Dependency Rule: Presentation (controller) should only depend on Application layer. Direct DbContext access skips Application + bypasses the repository abstraction.')">The Dependency Rule — Presentation depends on Infrastructure</button>
+    <button class="qb" onclick="ans(this,'wrong','Interface Segregation is about interface design — not layer dependencies.')">Interface Segregation Principle</button>
+    <button class="qb" onclick="ans(this,'wrong','While OCP is related, the primary violation is the Dependency Rule.')">Open/Closed Principle</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. Rich Domain Model means?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','ORMs like EF are Infrastructure — not part of domain model richness.')">Entities use ORM attributes</button>
+    <button class="qb" onclick="ans(this,'wrong','More properties does not equal rich model — it could still be anemic.')">Entities have many properties</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Rich Domain Model: entities have behaviour (methods), enforce invariants, raise events. Not just data bags with public get/set.')">Entities have behaviour, enforce business rules, raise events</button>
+    <button class="qb" onclick="ans(this,'wrong','Database stored procedures are Infrastructure — not domain model richness.')">Entities map to stored procedures</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can draw the 4 layers and their dependency directions</li>
+    <li onclick="ck(this)"><input type="checkbox">I know where each type of class belongs (interface vs implementation)</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write a Rich Domain Entity with private setters</li>
+    <li onclick="ck(this)"><input type="checkbox">I can explain Dependency Inversion in Clean Architecture</li>
+    <li onclick="ck(this)"><input type="checkbox">I can explain Value Object vs Entity</li>
+    <li onclick="ck(this)"><input type="checkbox">I know how SOLID maps to Clean Architecture layers</li>
+    <li onclick="ck(this)"><input type="checkbox">I can restructure ZenCampus into 4 projects</li>
+    <li onclick="ck(this)"><input type="checkbox">I can explain the difference from N-Tier Architecture</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Day 34–36 Complete ✓ — Clean Architecture</p>
+  <p>Accent: Deep Fuchsia #a21caf · Next: Day 37 — Unit Testing + Integration Testing</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

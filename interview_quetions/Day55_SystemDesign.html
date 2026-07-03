@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 55 — System Design for ZenCampus Scale | Interview Prep</title>
+<style>
+  :root{--accent:#9d174d;--accent-dim:#831843;--accent-subtle:rgba(157,23,77,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(157,23,77,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.1rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .movie{background:linear-gradient(135deg,rgba(157,23,77,.12),rgba(157,23,77,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;}
+  .arch{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.9;margin:1rem 0;color:var(--info);}
+  .arch .label{color:var(--accent);font-weight:700;}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">DAY 55-58</span>
+  <a href="#scaling">Horizontal Scaling</a><a href="#db">DB Scaling</a><a href="#messaging">Message Queue</a>
+  <a href="#cdn">CDN + Cache</a><a href="#microservices">Microservices</a><a href="#scenarios">Interview Q</a>
+</nav>
+<div class="hero">
+  <h1>System Design for ZenCampus Scale</h1>
+  <p>Load Balancing · Horizontal Scaling · DB Sharding · CDN · Message Queues · Microservices</p>
+  <div class="tags">
+    <span class="tag">50K Students</span><span class="tag">200 Schools</span><span class="tag">High Availability</span>
+    <span class="tag">Day 55–58 / 60</span>
+    <span class="tag" style="background:rgba(157,23,77,.2);border-color:#9d174d;color:#9d174d;">Rose Maroon #9d174d</span>
+  </div>
+</div>
+<main>
+
+<section>
+  <h2>🏗️ ZenCampus System Architecture</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Sivaji (2007) — System build panna, scale-a first-a think</div>
+    <div class="mb">Sivaji-la Rajini, oru school-a settle aana-piragu 200 school-ku scale-up panrar. ZenCampus same: oru school POC-la works, 200 schools + 50,000 students-ku works aganum. System design = foresight. Exam season-la 10x traffic handle panna, single server podhuma? Load balancer, multiple instances, Redis cache, CDN — all needed!</div></div>
+  </div>
+  <div class="arch">
+    <span class="label">Internet</span>
+      → <span class="label">Azure CDN</span> (static files: JS, CSS, images)
+      → <span class="label">Azure Application Gateway</span> (WAF + Load Balancer)
+          → <span class="label">ZenCampus API</span> (App Service × 3 instances, auto-scale)
+              → <span class="label">Redis Cache</span> (student data, fee structures, sessions)
+              → <span class="label">Azure SQL</span> (Elastic Pool: 200 school databases)
+              → <span class="label">Azure Blob Storage</span> (student photos, documents, reports)
+              → <span class="label">Azure Service Bus</span> (SMS queue, email queue, audit events)
+              → <span class="label">Hangfire Workers</span> (SMS sending, report generation)
+  </div>
+</section>
+
+<section id="scaling">
+  <h2>⚖️ Horizontal vs Vertical Scaling</h2>
+  <table>
+    <tr><th>Dimension</th><th>Vertical Scaling</th><th>Horizontal Scaling</th></tr>
+    <tr><td>What</td><td>Bigger machine (more CPU/RAM)</td><td>More machines</td></tr>
+    <tr><td>Limit</td><td>Hardware ceiling</td><td>Virtually unlimited</td></tr>
+    <tr><td>Downtime</td><td>Restart required</td><td>Zero downtime (rolling deploy)</td></tr>
+    <tr><td>Cost</td><td>Exponentially expensive</td><td>Linear cost growth</td></tr>
+    <tr><td>State</td><td>Easy (one server)</td><td>Stateless app required</td></tr>
+    <tr><td>ZenCampus</td><td>B2 → P1v3 during exams</td><td>1 → 5 instances during exams</td></tr>
+  </table>
+  <div class="good-box">
+    <strong>For ZenCampus to scale horizontally:</strong> sessions must be external (Redis), no local file writes, no in-process cache (use Redis). Stateless API + Redis sessions + Azure SQL = can add instances any time. App Service auto-scale handles it automatically.
+  </div>
+</section>
+
+<section id="db">
+  <h2>🗄️ Database Scaling Strategies</h2>
+  <h3>Read Replica — ZenCampus Report Queries</h3>
+  <pre><code><span class="cm">// DbContext factory — route reads to replica, writes to primary</span>
+<span class="kw">public class</span> <span class="cl">ZenCampusDbContextFactory</span>
+{
+    <span class="kw">public</span> <span class="cl">ZenCampusDbContext</span> CreateForRead()   =&gt; CreateContext(_replicaConnStr);
+    <span class="kw">public</span> <span class="cl">ZenCampusDbContext</span> CreateForWrite()  =&gt; CreateContext(_primaryConnStr);
+}
+
+<span class="cm">// Report service always uses read replica</span>
+<span class="kw">public class</span> <span class="cl">AttendanceReportService</span>(<span class="cl">ZenCampusDbContextFactory</span> _factory)
+{
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">AttendanceReportDto</span>&gt; GetMonthlyReportAsync(<span class="kw">int</span> schoolId)
+    {
+        <span class="kw">using var</span> db = _factory.CreateForRead();  <span class="cm">// read replica</span>
+        <span class="kw">return await</span> db.Attendances
+            .AsNoTracking()
+            .Where(a =&gt; a.SchoolId == schoolId)
+            .GroupBy(a =&gt; a.StudentId)
+            .Select(g =&gt; <span class="kw">new</span> { StudentId = g.Key, Present = g.Count(a =&gt; a.IsPresent) })
+            .ToListAsync();
+    }
+}</code></pre>
+
+  <h3>Database per Tenant — ZenCampus Schools</h3>
+  <table>
+    <tr><th>Strategy</th><th>Pros</th><th>Cons</th><th>ZenCampus Fit</th></tr>
+    <tr><td>Shared DB</td><td>Simple, cheap</td><td>SchoolId filter everywhere, data bleed risk</td><td>Small deployments (&lt;10 schools)</td></tr>
+    <tr><td>Schema per school</td><td>Isolated, same DB server</td><td>Complex migrations</td><td>Medium scale</td></tr>
+    <tr><td>DB per school</td><td>Full isolation, compliance</td><td>More expensive, elastic pool helps</td><td>Large scale (200 schools)</td></tr>
+  </table>
+</section>
+
+<section id="messaging">
+  <h2>📨 Message Queue — Azure Service Bus</h2>
+  <pre><code><span class="cm">// Send message to queue (non-blocking)</span>
+<span class="kw">public class</span> <span class="cl">SmsQueuePublisher</span>(<span class="cl">ServiceBusSender</span> _sender)
+{
+    <span class="kw">public async</span> <span class="cl">Task</span> EnqueueSmsAsync(<span class="kw">string</span> phone, <span class="kw">string</span> message)
+    {
+        <span class="kw">var</span> msg = <span class="kw">new</span> <span class="cl">ServiceBusMessage</span>(<span class="cl">JsonSerializer</span>.Serialize(<span class="kw">new</span> { phone, message }))
+        {
+            ContentType = <span class="str">"application/json"</span>,
+            MessageId   = <span class="cl">Guid</span>.NewGuid().ToString(),
+            TimeToLive  = <span class="cl">TimeSpan</span>.FromHours(<span class="num">24</span>)
+        };
+        <span class="kw">await</span> _sender.SendMessageAsync(msg);
+        <span class="cm">// Returns immediately — SMS sent by worker process, not HTTP request</span>
+    }
+}
+
+<span class="cm">// Worker reads from queue</span>
+<span class="kw">public class</span> <span class="cl">SmsWorker</span>(<span class="cl">ServiceBusProcessor</span> _processor, <span class="cl">ISmsService</span> _sms) : <span class="cl">BackgroundService</span>
+{
+    <span class="kw">protected override async</span> <span class="cl">Task</span> ExecuteAsync(<span class="cl">CancellationToken</span> stoppingToken)
+    {
+        _processor.ProcessMessageAsync += <span class="kw">async</span> args =&gt;
+        {
+            <span class="kw">var</span> payload = args.Message.Body.ToObjectFromJson&lt;<span class="cl">SmsPayload</span>&gt;();
+            <span class="kw">await</span> _sms.SendAsync(payload.Phone, payload.Message);
+            <span class="kw">await</span> args.CompleteMessageAsync(args.Message); <span class="cm">// remove from queue</span>
+        };
+        _processor.ProcessErrorAsync += args =&gt;
+        {
+            <span class="cm">// Message goes to dead-letter queue after max retry attempts</span>
+            <span class="kw">return</span> <span class="cl">Task</span>.CompletedTask;
+        };
+        <span class="kw">await</span> _processor.StartProcessingAsync(stoppingToken);
+    }
+}</code></pre>
+</section>
+
+<section id="cdn">
+  <h2>🌍 CDN + Caching Strategy</h2>
+  <table>
+    <tr><th>Content Type</th><th>Cache Location</th><th>TTL</th></tr>
+    <tr><td>React app JS/CSS bundle</td><td>Azure CDN (global)</td><td>1 year (with content hash in filename)</td></tr>
+    <tr><td>Student photos</td><td>Azure CDN + Blob</td><td>30 min (SAS token window)</td></tr>
+    <tr><td>Fee structure</td><td>Redis</td><td>1 hour</td></tr>
+    <tr><td>Student data</td><td>Redis</td><td>30 min (invalidate on update)</td></tr>
+    <tr><td>API responses</td><td>ASP.NET Output Cache</td><td>30 sec (for read-heavy)</td></tr>
+    <tr><td>Authentication tokens</td><td>Client + Redis (revocation)</td><td>JWT expiry (15 min)</td></tr>
+  </table>
+</section>
+
+<section id="microservices">
+  <h2>🔲 Microservices — When ZenCampus Should Split</h2>
+  <table>
+    <tr><th>Service</th><th>Reason to Split</th><th>Technology</th></tr>
+    <tr><td>Student Service</td><td>Core domain, independently deployable</td><td>.NET Web API + Azure SQL</td></tr>
+    <tr><td>Fee Service</td><td>Payment gateway integration, compliance</td><td>.NET Web API + Azure SQL</td></tr>
+    <tr><td>Notification Service</td><td>High volume, separate scaling, multiple providers</td><td>.NET + Azure Service Bus + Redis</td></tr>
+    <tr><td>Report Service</td><td>CPU-intensive, separate worker pool</td><td>.NET + Azure Blob + Hangfire</td></tr>
+    <tr><td>Auth Service</td><td>Shared across all services</td><td>.NET + Azure AD B2C or custom JWT</td></tr>
+  </table>
+  <div class="good-box">
+    <strong>Don't split too early.</strong> ZenCampus at 200 schools? Monolith with good domain separation is fine. At 2,000 schools with different teams per domain? Microservices. The cost: distributed transactions, service discovery, network overhead, deployment complexity. Start monolith, split when team/scale demands it.
+  </div>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">ZenCampus has 50,000 students, exam results are released — 500 concurrent users. How do you handle this?</span><span class="st">System Design</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Multi-layer approach: CDN serves static React app (zero API load). Azure App Service scales out to 5 instances automatically. Redis caches exam results per student (30 min TTL). Azure SQL read replica for result queries. Output Cache on API endpoint (30 sec). Rate limiting on result endpoint. Pre-generate PDF results in Hangfire before release time. Most users served from cache — DB barely touched.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Explain database sharding vs partitioning vs read replica.</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Read Replica: copy of primary, only for read queries. Reduces read load on primary. Replication lag = slightly stale data. Partitioning: split large table across multiple filegroups/files (same DB server). Attendance table partitioned by month — queries for "this month" hit only one partition. Sharding: distribute data across multiple database servers by shard key. ZenCampus: shard by SchoolId — school 1-100 on DB server 1, 101-200 on DB server 2. Complex to implement, requires shard-aware app code.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is eventual consistency and when is it acceptable in ZenCampus?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Eventual consistency: writes propagate through system eventually, not instantly. Acceptable: parent sees attendance SMS 2 minutes after teacher marks it — fine. Not acceptable: fee payment marked but balance not updated immediately — parent charged twice. Rule: for money/critical data, strong consistency. For notifications, reports, audit logs — eventual consistency acceptable. Service Bus gives reliable at-least-once delivery with eventual consistency.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">How would you ensure ZenCampus has 99.9% uptime?</span><span class="st">Design</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Multiple layers: Azure App Service with min 2 instances (single instance = planned downtime for updates). Azure SQL with geo-redundant backup + active geo-replication to secondary region. Azure Redis with geo-replication. Deployment slots for zero-downtime deploys. Health endpoints + App Service health probes. Application Insights alerts for p95 latency spikes. Runbook for failover. 99.9% = 8.7 hours downtime per year allowed.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">What is the CAP theorem and how does it apply to ZenCampus?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>CAP: distributed system can guarantee only 2 of 3: Consistency, Availability, Partition tolerance. Azure SQL: CP (consistent + partition tolerant, may be briefly unavailable during failover). Redis: AP (available + partition tolerant, may serve slightly stale data). For ZenCampus: fee payments = CP (consistency over availability). Attendance dashboard = AP (available even if 30 sec stale). Choose based on business criticality.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">Why use a message queue instead of direct HTTP calls between services?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Direct HTTP: if SMS service is down when teacher marks attendance, the HTTP call fails, teacher gets error, attendance may be lost. Message queue: attendance saved → event enqueued. If SMS service is down, message waits in queue. When SMS service recovers, processes backlog. Decoupling = services can fail independently. Also: queue absorbs bursts (10,000 SMS at 6 PM). No thundering herd on SMS provider.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">How do you handle multi-tenancy in ZenCampus — 200 schools, data isolation?</span><span class="st">Design</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Options: 1) Row-level isolation: all schools in one DB, every query has WHERE SchoolId = @CurrentSchool. Risk: missing filter = data leak. EF Global Query Filters mitigate this. 2) Schema per school: isolated schemas in same DB server. Better isolation, complex migrations. 3) DB per school in Elastic Pool: full isolation, compliance-friendly, cost-effective with pool. For ZenCampus at scale: DB per school + Elastic Pool. Auth layer extracts SchoolId from JWT — impossible to cross-school.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">What is the difference between a monolith, SOA, and microservices?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Monolith: one deployable unit. Simple to develop, debug, deploy. Scales as a unit. ZenCampus current state. SOA: large services communicating via enterprise bus. Heavyweight, XML/SOAP. Microservices: small, independently deployable services with their own DB. Each team owns a service. Complex: distributed transactions, service discovery, network overhead. Best fit: microservices when teams > services and independent scaling is needed per domain.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">How would you implement rate limiting for ZenCampus API?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>.NET 7+ built-in: builder.Services.AddRateLimiter(opts => { opts.AddFixedWindowLimiter("school", o => { o.Window = TimeSpan.FromMinutes(1); o.PermitLimit = 1000; o.QueueLimit = 0; }); }). app.UseRateLimiter(); Apply [EnableRateLimiting("school")] on controllers. For distributed (multi-instance): use Redis-backed rate limiter (StackExchange.Redis.Extensions.RateLimiter). Rate limit by SchoolId (extracted from JWT) — prevents one school from starving others.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">Design the ZenCampus fee payment flow end-to-end with high availability in mind.</span><span class="st">Design</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>1. Parent initiates payment → API validates student/amount → creates pending FeeTransaction record (idempotency key = UUID). 2. Redirect to payment gateway. 3. Webhook from gateway → API updates FeeTransaction to Completed/Failed (idempotent check — reject duplicate webhooks). 4. Publish FeePaymentCompleted event to Service Bus (fire-and-forget). 5. Worker sends receipt SMS + email. 6. Worker updates parent portal balance. Idempotency prevents double payment. Outbox pattern ensures event published even if API restarts mid-request.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. Why must ZenCampus API be stateless for horizontal scaling?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Stateless doesn\'t directly affect database query performance.')">Faster database queries</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! If session state is in-memory on Server 1, request routed to Server 2 loses the session. Stateless: sessions in Redis, no local file state, no in-process cache — any instance can serve any request.')">Any server instance can serve any request — no server-specific state to worry about</button>
+    <button class="qb" onclick="ans(this,'wrong','Docker doesn\'t require stateless apps specifically.')">Required by Docker containers</button>
+    <button class="qb" onclick="ans(this,'wrong','Stateless doesn\'t reduce DB calls — caching does.')">Reduces database calls</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What is the main advantage of Azure SQL Elastic Pool for 200 schools?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Elastic Pool doesn\'t guarantee faster queries.')">Faster query execution</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Each school has isolated database but shares pool resources. Schools spike at different times — a school having exams borrows pool resources from quiet schools. 60-80% cost reduction vs 200 independent databases.')">Shared compute resources — cost-effective, databases borrow from pool when they spike</button>
+    <button class="qb" onclick="ans(this,'wrong','Full isolation is actually a benefit of DB-per-school in Elastic Pool.')">Single database for all schools</button>
+    <button class="qb" onclick="ans(this,'wrong','Elastic Pool doesn\'t eliminate need for backups.')">No need for backups</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. Why use Azure Service Bus instead of direct HTTP calls for sending attendance SMS?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Service Bus doesn\'t compress SMS messages.')">Service Bus compresses SMS content</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! If SMS provider is down, queue holds messages until provider recovers. Direct HTTP = teacher gets error. Queue = teacher gets success, SMS sent when possible. Decoupling + reliability + burst absorption.')">If SMS provider is down, messages wait in queue and retry — teacher isn\'t blocked</button>
+    <button class="qb" onclick="ans(this,'wrong','Service Bus doesn\'t directly affect authentication.')">Service Bus handles authentication</button>
+    <button class="qb" onclick="ans(this,'wrong','HTTP is not slower than Service Bus for immediate calls.')">HTTP is slower than Service Bus</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. When should ZenCampus move from monolith to microservices?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Day 1 microservices is a common anti-pattern — premature complexity.')">From day one — microservices are always better</button>
+    <button class="qb" onclick="ans(this,'wrong','100 users is tiny — monolith handles this trivially.')">When user count exceeds 100</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Split when: independent teams need independent deployments, one domain (fees) needs different scaling than another (attendance), deployment conflicts slow down releases. Not for 200 schools — good monolith architecture is enough.')">When teams own different domains and need independent deployments and scaling</button>
+    <button class="qb" onclick="ans(this,'wrong','Docker can run monolithic apps — containerization != microservices.')">When switching to Docker containers</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can explain horizontal vs vertical scaling trade-offs</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand read replica vs sharding vs partitioning</li>
+    <li onclick="ck(this)"><input type="checkbox">I can design message queue flow for async processing</li>
+    <li onclick="ck(this)"><input type="checkbox">I know multi-tenancy patterns (row/schema/DB isolation)</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand CAP theorem and when to prefer CP vs AP</li>
+    <li onclick="ck(this)"><input type="checkbox">I can design CDN + cache strategy by content type</li>
+    <li onclick="ck(this)"><input type="checkbox">I know when to use monolith vs microservices</li>
+    <li onclick="ck(this)"><input type="checkbox">I can describe ZenCampus full system architecture</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Day 55–58 Complete ✓ — System Design: Scale, Cache, Queue, Multi-Tenancy</p>
+  <p>Accent: Rose Maroon #9d174d · Next: Day 59 — AI Integration with .NET (OpenAI + Semantic Kernel)</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

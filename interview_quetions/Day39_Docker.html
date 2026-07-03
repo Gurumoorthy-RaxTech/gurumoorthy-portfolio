@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 39 — Docker + Containerize ZenCampus | .NET Interview Prep</title>
+<style>
+  :root{--accent:#0369a1;--accent-dim:#075985;--accent-subtle:rgba(3,105,161,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(3,105,161,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.1rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .movie{background:linear-gradient(135deg,rgba(3,105,161,.12),rgba(3,105,161,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;}
+  .warn-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">DAY 39-41</span>
+  <a href="#basics">Docker Basics</a><a href="#dockerfile">Dockerfile</a><a href="#multistage">Multi-Stage</a>
+  <a href="#compose">docker-compose</a><a href="#scenarios">Interview Q</a><a href="#quiz">Quiz</a>
+</nav>
+<div class="hero">
+  <h1>Docker — Containerize ZenCampus</h1>
+  <p>Dockerfile · Multi-Stage Builds · docker-compose · .dockerignore · Health Checks</p>
+  <div class="tags">
+    <span class="tag">Docker</span><span class="tag">docker-compose</span><span class="tag">Multi-Stage Build</span>
+    <span class="tag">Day 39–41 / 60</span>
+    <span class="tag" style="background:rgba(3,105,161,.2);border-color:#0369a1;color:#0369a1;">Deep Cerulean #0369a1</span>
+  </div>
+</div>
+<main>
+
+<section id="basics">
+  <h2>🐳 Docker Core Concepts</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Enthiran (2010) — Chitti-oda packaging</div>
+    <div class="mb">Chitti-ya create pannina time-la, exact same environment-la assemble panna - oru machine-la works, inoru machine-la works-nu guarantee panna venum. Docker same way: ZenCampus container-a build panna, dev-la works andha same container production-layum works. "Works on my machine" problem solved!</div></div>
+  </div>
+  <table>
+    <tr><th>Concept</th><th>What It Is</th><th>ZenCampus Analogy</th></tr>
+    <tr><td>Image</td><td>Read-only blueprint (layers)</td><td>ZenCampus compiled app + runtime packaged</td></tr>
+    <tr><td>Container</td><td>Running instance of an image</td><td>Running ZenCampus process in isolated box</td></tr>
+    <tr><td>Dockerfile</td><td>Instructions to build the image</td><td>Recipe: copy code → install → build → run</td></tr>
+    <tr><td>Registry</td><td>Image store (Docker Hub / ACR)</td><td>Azure Container Registry for ZenCampus images</td></tr>
+    <tr><td>Volume</td><td>Persistent storage outside container</td><td>ZenCampus uploaded student photos persist</td></tr>
+    <tr><td>Network</td><td>Container communication</td><td>API container talks to SQL container</td></tr>
+  </table>
+</section>
+
+<section id="dockerfile">
+  <h2>📄 Production Dockerfile for ZenCampus API</h2>
+  <pre><code><span class="cm"># Good Dockerfile for .NET 8 Web API</span>
+<span class="kw">FROM</span> mcr.microsoft.com/dotnet/sdk:<span class="num">8.0</span> <span class="kw">AS</span> build
+<span class="kw">WORKDIR</span> /src
+
+<span class="cm"># Copy csproj and restore first (layer caching)</span>
+<span class="kw">COPY</span> [<span class="str">"ZenCampusWeb/ZenCampusWeb.csproj"</span>, <span class="str">"ZenCampusWeb/"</span>]
+<span class="kw">RUN</span> dotnet restore <span class="str">"ZenCampusWeb/ZenCampusWeb.csproj"</span>
+
+<span class="cm"># Copy all source, then build</span>
+<span class="kw">COPY</span> . .
+<span class="kw">WORKDIR</span> /src/ZenCampusWeb
+<span class="kw">RUN</span> dotnet build <span class="str">"ZenCampusWeb.csproj"</span> -c Release -o /app/build
+
+<span class="cm">---</span>
+<span class="cm"># .dockerignore (avoid copying unnecessary files)</span>
+bin/
+obj/
+*.user
+.vs/
+appsettings.Development.json
+<span class="str"># Never include secrets in the image</span></code></pre>
+
+  <div class="warn-box">
+    <strong>NEVER bake secrets into Docker images.</strong> No connection strings, API keys, or passwords in Dockerfile or image layers. Use environment variables, Azure Key Vault, or Docker secrets at runtime.
+  </div>
+</section>
+
+<section id="multistage">
+  <h2>🏗️ Multi-Stage Build — Production-Grade</h2>
+  <pre><code><span class="cm"># Stage 1: Build</span>
+<span class="kw">FROM</span> mcr.microsoft.com/dotnet/sdk:<span class="num">8.0</span> <span class="kw">AS</span> build
+<span class="kw">WORKDIR</span> /src
+<span class="kw">COPY</span> [<span class="str">"ZenCampusWeb.csproj"</span>, <span class="str">"."</span>]
+<span class="kw">RUN</span> dotnet restore
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> dotnet publish <span class="str">"ZenCampusWeb.csproj"</span> \
+    -c Release \
+    -o /app/publish \
+    --no-restore \
+    /p:UseAppHost=<span class="kw">false</span>
+
+<span class="cm"># Stage 2: Final runtime image (much smaller!)</span>
+<span class="kw">FROM</span> mcr.microsoft.com/dotnet/aspnet:<span class="num">8.0</span> <span class="kw">AS</span> final
+
+<span class="cm"># Run as non-root user (security best practice)</span>
+<span class="kw">RUN</span> adduser --disabled-password --gecos <span class="str">""</span> appuser
+<span class="kw">USER</span> appuser
+
+<span class="kw">WORKDIR</span> /app
+<span class="kw">EXPOSE</span> <span class="num">8080</span>
+<span class="kw">ENV</span> ASPNETCORE_URLS=http://+:<span class="num">8080</span>
+<span class="kw">ENV</span> ASPNETCORE_ENVIRONMENT=Production
+
+<span class="cm"># Copy only published output from build stage</span>
+<span class="kw">COPY</span> --from=build /app/publish .
+
+<span class="cm"># Health check</span>
+<span class="kw">HEALTHCHECK</span> --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  <span class="kw">CMD</span> curl -f http://localhost:<span class="num">8080</span>/health || exit <span class="num">1</span>
+
+<span class="kw">ENTRYPOINT</span> [<span class="str">"dotnet"</span>, <span class="str">"ZenCampusWeb.dll"</span>]</code></pre>
+  <div class="good-box">
+    <strong>Why multi-stage?</strong> SDK image (~800MB) only used for building. Final image uses aspnet runtime (~220MB). Production containers are 4x smaller, faster to pull, less attack surface.
+  </div>
+</section>
+
+<section id="compose">
+  <h2>🎼 docker-compose for ZenCampus Local Dev</h2>
+  <pre><code><span class="cm"># docker-compose.yml — ZenCampus local environment</span>
+version: <span class="str">'3.9'</span>
+
+services:
+  zencampus-api:
+    build:
+      context: .
+      dockerfile: ZenCampusWeb/Dockerfile
+      target: final
+    container_name: zencampus-api
+    ports:
+      - <span class="str">"8080:8080"</span>
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ZenCampusDb=Server=sqlserver;Database=ZenCampusDb;User Id=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True
+      - Redis__ConnectionString=redis:6379
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - zencampus-net
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: zencampus-sql
+    ports:
+      - <span class="str">"1433:1433"</span>
+    environment:
+      - SA_PASSWORD=${SQL_PASSWORD}
+      - ACCEPT_EULA=Y
+    healthcheck:
+      test: [<span class="str">"CMD"</span>, <span class="str">"/opt/mssql-tools/bin/sqlcmd"</span>, <span class="str">"-S"</span>, <span class="str">"localhost"</span>, <span class="str">"-U"</span>, <span class="str">"sa"</span>, <span class="str">"-P"</span>, <span class="str">"${SQL_PASSWORD}"</span>, <span class="str">"-Q"</span>, <span class="str">"SELECT 1"</span>]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+    volumes:
+      - sqldata:/var/opt/mssql
+    networks:
+      - zencampus-net
+
+  redis:
+    image: redis:<span class="num">7</span>-alpine
+    container_name: zencampus-redis
+    ports:
+      - <span class="str">"6379:6379"</span>
+    healthcheck:
+      test: [<span class="str">"CMD"</span>, <span class="str">"redis-cli"</span>, <span class="str">"ping"</span>]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - zencampus-net
+
+volumes:
+  sqldata:
+
+networks:
+  zencampus-net:
+    driver: bridge</code></pre>
+  <pre><code><span class="cm"># .env file (never commit to git!)</span>
+SQL_PASSWORD=ZenCampus@123!</code></pre>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is the difference between a Docker image and a container?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Image: read-only, layered blueprint with app + dependencies. Container: running instance of an image — adds a writable layer on top. One image can spawn many containers. Analogy: image = class definition, container = object instance. Images are stored in registry (Docker Hub, ACR). Containers are ephemeral — delete container, image stays.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Explain multi-stage Docker builds and why you'd use them for ZenCampus.</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Multi-stage: multiple FROM statements in one Dockerfile. Build stage uses SDK image (800MB) with full compiler. Final stage uses aspnet runtime (220MB) — COPY --from=build only copies the published output. Final image has no build tools, no source code, no SDK. Result: 4x smaller image, faster pulls, less security attack surface. For ZenCampus: dev builds take 800MB SDK; prod image only 220MB.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">Why should connection strings NOT be in the Dockerfile?</span><span class="st">Security</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Docker image layers are permanent — once a secret is added to a layer, docker history can reveal it even if later layers delete it. Images are often pushed to registries. Anyone with registry access sees the secret. Correct approach: pass via environment variables at runtime (docker run -e), Docker secrets, Kubernetes secrets, or Azure Key Vault with Managed Identity. Never bake secrets into the image.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What is .dockerignore and why does it matter?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>.dockerignore tells Docker which files to exclude from the build context sent to the daemon. Without it: bin/, obj/, node_modules/, .git/, and appsettings.Development.json (with dev secrets) all get copied to the daemon — huge context, slow builds, potential secret leak. With .dockerignore: only source files sent, build is faster, secrets stay off the image.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">Why do we COPY csproj files and RUN dotnet restore BEFORE copying all source code?</span><span class="st">Optimization</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Docker layer caching: each instruction is cached. If only C# source files change but csproj hasn't changed, Docker reuses the cached restore layer. NuGet packages (often 100–300MB) are not re-downloaded on every build — only when package versions change. Without this pattern: every code change triggers full dotnet restore = very slow CI builds.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">What does depends_on with condition: service_healthy do in docker-compose?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>depends_on alone only waits for the container to START — not for the service to be READY. SQL Server takes 15–30 seconds after starting before accepting connections. With condition: service_healthy, docker-compose waits until the healthcheck passes before starting the dependent service. For ZenCampus: API container waits until SQL Server health check (SELECT 1) succeeds before starting.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">Explain the difference between COPY and ADD in Dockerfile.</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>COPY: simply copies files from build context to the image. Transparent and predictable. ADD: does everything COPY does, plus can auto-extract tar.gz archives and download from URLs. Best practice: always use COPY unless you specifically need ADD's extra features. ADD's implicit behaviors (auto-extract, URL download) can cause unexpected build behavior.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">What is a Docker volume and when would ZenCampus need one?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Docker containers have ephemeral writable layers — data is lost when container stops. Volumes provide persistent storage outside the container. ZenCampus needs volumes for: SQL Server data files (sqldata:/var/opt/mssql), uploaded student photos/documents (if stored locally), Hangfire job database. Without volumes: restart SQL Server container = all student data gone!</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">Why run the container as non-root user?</span><span class="st">Security</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Container breakout: if an attacker exploits the app and escapes the container, running as root means they have root on the host. Non-root user limits blast radius. Best practice: create a dedicated user (adduser appuser), switch to it before ENTRYPOINT. Azure App Service on Linux does this by default. Also: helps with compliance requirements in education sector.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">How would you apply EF Core migrations in a containerized ZenCampus setup?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Options: 1) Run migrations at startup in Program.cs (simple but risky — parallel instances all try to migrate). 2) Separate migration job container that runs and exits before API starts. 3) Use idempotent migration scripts applied by DBA/CI pipeline. Best: option 3 for production (migrations are audited, reviewed). Option 1 OK for dev/staging. docker-compose: add a migration service that depends_on sqlserver: healthy.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. Why copy csproj first and run restore BEFORE copying all source?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Copy order does not affect security — .dockerignore handles that.')">Security — avoid exposing source code</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Docker layer caching: if only C# code changes, the restore layer is reused — packages not re-downloaded. Massive CI speed improvement.')">Layer caching — avoid re-downloading NuGet packages on every code change</button>
+    <button class="qb" onclick="ans(this,'wrong','dotnet restore works regardless of copy order.')">dotnet restore fails without csproj first</button>
+    <button class="qb" onclick="ans(this,'wrong','Order does not affect the final image size.')">Smaller final image</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What makes multi-stage builds valuable for .NET APIs?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Multi-stage builds don\'t directly affect build speed.')">Faster build times</button>
+    <button class="qb" onclick="ans(this,'wrong','Multi-stage doesn\'t affect network configuration.')">Better container networking</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Final image uses runtime (220MB) not SDK (800MB). No compiler, no source code in prod. Smaller, faster to pull, less attack surface.')">Much smaller production image — runtime only, no SDK or source code</button>
+    <button class="qb" onclick="ans(this,'wrong','Secrets management is handled separately from build stages.')">Better secret management</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. In docker-compose, what does "condition: service_healthy" ensure?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Container start ≠ service ready. SQL Server needs ~30s after starting.')">The SQL container process has started</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Waits for HEALTHCHECK to pass (SELECT 1 succeeds) before starting the API. Without this, API container starts before SQL Server is ready and crashes on first DB call.')">The healthcheck passes — service is actually ready to accept connections</button>
+    <button class="qb" onclick="ans(this,'wrong','service_healthy does not check network connectivity.')">Correct network configuration</button>
+    <button class="qb" onclick="ans(this,'wrong','Volume mounts are not validated by healthcheck conditions.')">Volume mounts are accessible</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. Where should connection strings go in a production Docker deployment?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Secrets in Dockerfile become part of the image — visible via docker history.')">Directly in the Dockerfile as ENV instruction</button>
+    <button class="qb" onclick="ans(this,'wrong','appsettings.json can be included in the image — never put secrets there.')">appsettings.Production.json inside the image</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Environment variables injected at runtime (not build time), or fetched from Key Vault with Managed Identity — never baked into the image layers.')">Environment variables at runtime, or Azure Key Vault via Managed Identity</button>
+    <button class="qb" onclick="ans(this,'wrong','.dockerignore excludes files from build context but doesn\'t inject secrets.')">The .dockerignore file</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can write a multi-stage Dockerfile for .NET 8 Web API</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand layer caching and why csproj goes first</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write a docker-compose.yml with health checks and depends_on</li>
+    <li onclick="ck(this)"><input type="checkbox">I know to never put secrets in Dockerfile/image layers</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand volumes for SQL Server data persistence</li>
+    <li onclick="ck(this)"><input type="checkbox">I know the difference between SDK and aspnet runtime images</li>
+    <li onclick="ck(this)"><input type="checkbox">I can explain .dockerignore purpose and contents</li>
+    <li onclick="ck(this)"><input type="checkbox">I can run ZenCampus locally with docker-compose up</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Day 39–41 Complete ✓ — Docker + Containerize ZenCampus</p>
+  <p>Accent: Deep Cerulean Navy #0369a1 · Next: Day 42 — Azure App Service + Azure SQL + Key Vault</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

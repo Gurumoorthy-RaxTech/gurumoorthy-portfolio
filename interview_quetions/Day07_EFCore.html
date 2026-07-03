@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 7 – Entity Framework Core | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#1a0010,#300020,#1a0010);padding:36px 20px;text-align:center;border-bottom:3px solid #e11d48}
+header h1{font-size:2em;color:#e11d48;text-shadow:0 0 20px #e11d4855}
+header p{color:#c0a0a8;margin-top:6px}
+.badge{display:inline-block;background:#e11d4822;border:1px solid #e11d4855;color:#e11d48;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#e11d48;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#e11d48;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.c-kw{color:#569cd6}.c-type{color:#4ec9b0}.c-str{color:#ce9178}.c-num{color:#b5cea8}.c-cmt{color:#6a9955;font-style:italic}.c-prop{color:#9cdcfe}.c-method{color:#dcdcaa}
+code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#1a0010;border-left:4px solid #9b59b6;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#c39bd3;font-size:0.9em;margin-top:4px}
+.tip{background:#1a1500;border-left:4px solid #f9ca24;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#f9ca24;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#f0dc82;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.perf{background:#0a1a0a;border-left:4px solid #2ecc71;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.perf .p-label{color:#2ecc71;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.perf p{color:#a9dfbf;font-size:0.9em}
+.info{background:#0a1020;border-left:4px solid #3498db;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.info p{color:#85c1e9;font-size:0.9em}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.s-num{background:#e11d48;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#2a0a4a;color:#a855f7}
+.real{background:#0a1a2a;color:#3498db;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#1a0010;border:1px solid #e11d48;color:#e11d48;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#e11d48;color:#fff}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1a0010}
+.answer.shown{display:block}
+.answer .a-label{color:#e11d48;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.gold{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:700px){.comparison{grid-template-columns:1fr}}
+.bad-box{background:#1f0a0a;border:1px solid #e74c3c44;border-radius:8px;padding:14px}
+.good-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:8px;padding:14px}
+.box-label{font-size:0.78em;font-weight:bold;margin-bottom:8px}
+.bad-box .box-label{color:#e74c3c}
+.good-box .box-label{color:#2ecc71}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#1a0010;color:#e11d48;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a1a35}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.blue{color:#3498db}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#e11d48;color:#e11d48}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#e11d48}
+h3{color:#f87171;margin:16px 0 8px;font-size:1em}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#f87171;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1a0010}
+.sticky-nav a:hover{background:#1a0010}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#e11d48,#f97316)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+.alert-box{background:#1a0a00;border:1px solid #f97316;border-radius:8px;padding:14px;margin:12px 0}
+.alert-box .a-t{color:#f97316;font-weight:bold;font-size:0.85em;margin-bottom:6px}
+.n1-demo{background:#0a0a1a;border:2px solid #e74c3c;border-radius:8px;padding:14px;margin:12px 0}
+.n1-demo .title{color:#e74c3c;font-weight:bold;font-size:0.85em;margin-bottom:8px}
+.sql-line{color:#f1948a;font-family:'Consolas',monospace;font-size:0.82em;margin:3px 0;padding:3px 8px;background:#1a0a0a;border-radius:4px}
+.query-count{color:#e74c3c;font-weight:bold}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#f97316;font-size:0.85em;margin-bottom:6px">📅 Day 7 of 60 | Phase 1: Advanced C#</div>
+  <h1>🗄️ Entity Framework Core — Deep Dive</h1>
+  <p>N+1 Problem · Query Optimization · Migrations · Relationships · Performance Fixes</p>
+  <div style="margin-top:12px">
+    <span class="badge">N+1 Bug</span><span class="badge">AsNoTracking</span><span class="badge">Include</span>
+    <span class="badge">Migrations</span><span class="badge">BulkInsert</span><span class="badge">Compiled Queries</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#basics">📦 Basics</a>
+  <a href="#n1">🔴 N+1</a>
+  <a href="#loading">📂 Loading</a>
+  <a href="#tracking">👁️ Tracking</a>
+  <a href="#migrations">🔄 Migrations</a>
+  <a href="#perf">⚡ Perf</a>
+  <a href="#bulk">📦 Bulk</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SECTION 1: BASICS -->
+<div class="section" id="basics">
+  <div class="section-title"><span class="num">1</span> DbContext + DbSet — ZenCampus Setup</div>
+
+  <div class="movie">
+    <span class="film">🎬 Ratsasan — Investigation board with all evidence connected</span>
+    <p>DbContext = investigation board. DbSet = each evidence category (suspects, clues, weapons). Context saves everything together. Change Tracker = board-la enna change aachu track பண்றான்!</p>
+  </div>
+
+  <pre><span class="c-cmt">// ZenCampus DbContext</span>
+<span class="c-kw">public class</span> <span class="c-type">ZenCampusContext</span> : <span class="c-type">DbContext</span>
+{
+    <span class="c-kw">public</span> <span class="c-method">ZenCampusContext</span>(<span class="c-type">DbContextOptions</span>&lt;<span class="c-type">ZenCampusContext</span>&gt; <span class="c-prop">opts</span>) : <span class="c-kw">base</span>(<span class="c-prop">opts</span>) { }
+
+    <span class="c-kw">public</span> <span class="c-type">DbSet</span>&lt;<span class="c-type">Student</span>&gt;     <span class="c-prop">Students</span>     { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public</span> <span class="c-type">DbSet</span>&lt;<span class="c-type">FeeRecord</span>&gt;   <span class="c-prop">FeeRecords</span>   { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public</span> <span class="c-type">DbSet</span>&lt;<span class="c-type">Attendance</span>&gt;  <span class="c-prop">Attendances</span>  { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public</span> <span class="c-type">DbSet</span>&lt;<span class="c-type">School</span>&gt;      <span class="c-prop">Schools</span>      { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+
+    <span class="c-kw">protected override void</span> <span class="c-method">OnModelCreating</span>(<span class="c-type">ModelBuilder</span> <span class="c-prop">mb</span>)
+    {
+        <span class="c-cmt">// Student → School relationship</span>
+        <span class="c-prop">mb</span>.<span class="c-method">Entity</span>&lt;<span class="c-type">Student</span>&gt;()
+          .<span class="c-method">HasOne</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">School</span>)
+          .<span class="c-method">WithMany</span>(<span class="c-prop">sc</span> => <span class="c-prop">sc</span>.<span class="c-prop">Students</span>)
+          .<span class="c-method">HasForeignKey</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span>)
+          .<span class="c-method">OnDelete</span>(<span class="c-type">DeleteBehavior</span>.<span class="c-prop">Restrict</span>); <span class="c-cmt">// school delete → students block</span>
+
+        <span class="c-cmt">// Composite index — speed up school+class queries</span>
+        <span class="c-prop">mb</span>.<span class="c-method">Entity</span>&lt;<span class="c-type">Student</span>&gt;()
+          .<span class="c-method">HasIndex</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span> { <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span>, <span class="c-prop">s</span>.<span class="c-prop">ClassName</span> });
+
+        <span class="c-cmt">// Value conversion — store enum as string in DB</span>
+        <span class="c-prop">mb</span>.<span class="c-method">Entity</span>&lt;<span class="c-type">Student</span>&gt;()
+          .<span class="c-method">Property</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Status</span>)
+          .<span class="c-method">HasConversion</span>&lt;<span class="c-kw">string</span>&gt;();
+    }
+}
+
+<span class="c-cmt">// Entity models</span>
+<span class="c-kw">public class</span> <span class="c-type">Student</span>
+{
+    <span class="c-kw">public int</span>      <span class="c-prop">Id</span>        { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public string</span>   <span class="c-prop">Name</span>      { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>;
+    <span class="c-kw">public string</span>   <span class="c-prop">ClassName</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>;
+    <span class="c-kw">public int</span>      <span class="c-prop">SchoolId</span>  { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public</span> <span class="c-type">School</span>   <span class="c-prop">School</span>    { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-kw">null</span>!; <span class="c-cmt">// nav property</span>
+    <span class="c-kw">public</span> <span class="c-type">List</span>&lt;<span class="c-type">FeeRecord</span>&gt; <span class="c-prop">FeeRecords</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = [];
+    <span class="c-kw">public</span> <span class="c-type">StudentStatus</span> <span class="c-prop">Status</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+}
+
+<span class="c-cmt">// Program.cs registration</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddDbContext</span>&lt;<span class="c-type">ZenCampusContext</span>&gt;(<span class="c-prop">opts</span> =>
+    <span class="c-prop">opts</span>.<span class="c-method">UseSqlServer</span>(<span class="c-prop">builder</span>.<span class="c-prop">Configuration</span>.<span class="c-method">GetConnectionString</span>(<span class="c-str">"ZenCampus"</span>))
+        .<span class="c-method">EnableSensitiveDataLogging</span>() <span class="c-cmt">// dev only!</span>
+        .<span class="c-method">LogTo</span>(<span class="c-type">Console</span>.<span class="c-prop">WriteLine</span>, <span class="c-type">LogLevel</span>.<span class="c-prop">Information</span>));</pre>
+
+  <div class="tip">
+    <div class="t-label">💡 DbContext Lifetime — ALWAYS Scoped (per request)</div>
+    <p>DbContext = Scoped. NEVER Singleton (data races, stale data). NEVER Transient (performance, connection waste). If background service needs it — use IDbContextFactory&lt;T&gt;.</p>
+  </div>
+</div>
+
+<!-- SECTION 2: N+1 -->
+<div class="section" id="n1">
+  <div class="section-title"><span class="num">2</span> 🔴 N+1 Problem — Biggest EF Core Interview Topic</div>
+
+  <div class="movie">
+    <span class="film">🎬 Kaithi — Dilli one trip plan, ஆனா 100 trips ஆச்சு</span>
+    <p>Oru trip-la all evidence collect பண்ணலாம். ஆனா N+1 = 1 query + ஒவ்வொரு record-ku 1 more query. 1000 students → 1001 queries! API slow ஆகும் reason NUMBER ONE!</p>
+  </div>
+
+  <div class="n1-demo">
+    <div class="title">❌ N+1 Problem — 1001 SQL queries fired!</div>
+    <div class="sql-line">SELECT * FROM Students WHERE SchoolId = 1  <span style="color:#888">-- 1 query → 1000 students</span></div>
+    <div class="sql-line">SELECT * FROM Schools WHERE Id = 1         <span style="color:#888">-- for student[0]</span></div>
+    <div class="sql-line">SELECT * FROM Schools WHERE Id = 1         <span style="color:#888">-- for student[1]</span></div>
+    <div class="sql-line">SELECT * FROM Schools WHERE Id = 1         <span style="color:#888">-- for student[2]</span></div>
+    <div style="color:#666;font-family:monospace;font-size:0.82em;padding:4px 8px">... <span class="query-count">997 more queries!</span></div>
+    <div class="sql-line">SELECT * FROM Schools WHERE Id = 1         <span style="color:#888">-- for student[999]</span></div>
+    <div style="color:#e74c3c;font-size:0.85em;margin-top:8px;font-weight:bold">Total: 1001 round trips to DB = API 8-10 seconds!</div>
+  </div>
+
+  <div class="comparison">
+    <div class="bad-box">
+      <div class="box-label">❌ N+1 TRIGGER CODE</div>
+      <pre style="font-size:0.82em"><span class="c-cmt">// Looks innocent — IS NOT!</span>
+<span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span> == <span class="c-prop">id</span>)
+    .<span class="c-method">ToListAsync</span>();
+
+<span class="c-cmt">// Each .School access = NEW query!</span>
+<span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">s</span> <span class="c-kw">in</span> <span class="c-prop">students</span>)
+{
+    <span class="c-prop">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-prop">s</span>.<span class="c-prop">School</span>.<span class="c-prop">Name</span>);
+    <span class="c-cmt">// ↑ triggers SELECT * FROM Schools!</span>
+}</pre>
+    </div>
+    <div class="good-box">
+      <div class="box-label">✅ INCLUDE FIX — 1 SQL query (JOIN)</div>
+      <pre style="font-size:0.82em"><span class="c-cmt">// Include = SQL JOIN = 1 query!</span>
+<span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span> == <span class="c-prop">id</span>)
+    .<span class="c-method">Include</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">School</span>)
+    .<span class="c-method">ToListAsync</span>();
+
+<span class="c-cmt">// .School already loaded — no new queries!</span>
+<span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">s</span> <span class="c-kw">in</span> <span class="c-prop">students</span>)
+{
+    <span class="c-prop">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-prop">s</span>.<span class="c-prop">School</span>.<span class="c-prop">Name</span>);
+    <span class="c-cmt">// ↑ in-memory! 0 extra queries!</span>
+}</pre>
+    </div>
+  </div>
+
+  <pre><span class="c-cmt">// ThenInclude — deeper navigation</span>
+<span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">Include</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">School</span>)          <span class="c-cmt">// JOIN Schools</span>
+    .<span class="c-method">Include</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">FeeRecords</span>)      <span class="c-cmt">// JOIN FeeRecords</span>
+    .<span class="c-method">ThenInclude</span>(<span class="c-prop">f</span> => <span class="c-prop">f</span>.<span class="c-prop">PaymentMethod</span>) <span class="c-cmt">// JOIN PaymentMethods (from FeeRecord)</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span> == <span class="c-prop">id</span>)
+    .<span class="c-method">ToListAsync</span>();
+<span class="c-cmt">// All data in 1 query with multiple JOINs</span>
+
+<span class="c-cmt">// BUT — Include can return too much data!
+// BEST PRACTICE: Include only when you NEED navigation. Use Select projection otherwise!</span>
+<span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span> == <span class="c-prop">id</span>)
+    .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span>
+    {
+        <span class="c-prop">s</span>.<span class="c-prop">Id</span>, <span class="c-prop">s</span>.<span class="c-prop">Name</span>,
+        <span class="c-prop">SchoolName</span> = <span class="c-prop">s</span>.<span class="c-prop">School</span>.<span class="c-prop">Name</span>  <span class="c-cmt">// EF auto-JOINs, no Include needed!</span>
+    })
+    .<span class="c-method">ToListAsync</span>();
+<span class="c-cmt">// Returns ONLY needed columns — fastest!</span></pre>
+
+  <div class="danger">
+    <div class="d-label">⚠️ Lazy Loading — Silent N+1 Generator</div>
+    <p>Lazy loading (virtual nav properties + UseLazyLoadingProxies()) = automatic N+1. Convenient in dev, disaster in prod. ZenCampus-la lazy loading OFF — always explicit Include/Select.</p>
+  </div>
+</div>
+
+<!-- SECTION 3: LOADING STRATEGIES -->
+<div class="section" id="loading">
+  <div class="section-title"><span class="num">3</span> Loading Strategies — Eager vs Explicit vs Lazy</div>
+
+  <table>
+    <tr><th>Strategy</th><th>How</th><th>When Loaded</th><th>ZenCampus Use</th><th>N+1 Risk</th></tr>
+    <tr>
+      <td><span class="green">Eager</span></td>
+      <td><code>.Include()</code></td>
+      <td>Same query (JOIN)</td>
+      <td>Student + School always together</td>
+      <td class="green">None</td>
+    </tr>
+    <tr>
+      <td><span class="yellow">Explicit</span></td>
+      <td><code>.Entry().Collection().LoadAsync()</code></td>
+      <td>Separate query, on-demand</td>
+      <td>Fee records — load only when user opens fee tab</td>
+      <td class="yellow">Controlled</td>
+    </tr>
+    <tr>
+      <td><span class="red">Lazy</span></td>
+      <td><code>virtual</code> nav props</td>
+      <td>On first access (auto)</td>
+      <td class="red">Avoid in ZenCampus</td>
+      <td class="red">HIGH — silent!</td>
+    </tr>
+    <tr>
+      <td><span class="green">Projection</span></td>
+      <td><code>.Select()</code></td>
+      <td>Only needed columns</td>
+      <td>API list endpoints, dashboards</td>
+      <td class="green">None</td>
+    </tr>
+  </table>
+
+  <pre><span class="c-cmt">// Explicit loading — load on demand</span>
+<span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>.<span class="c-method">FindAsync</span>(<span class="c-prop">studentId</span>);
+
+<span class="c-cmt">// User opens fee tab — load now!</span>
+<span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">Entry</span>(<span class="c-prop">student</span>)
+          .<span class="c-method">Collection</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">FeeRecords</span>)
+          .<span class="c-method">LoadAsync</span>();
+
+<span class="c-cmt">// User opens school info tab — load reference</span>
+<span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">Entry</span>(<span class="c-prop">student</span>)
+          .<span class="c-method">Reference</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">School</span>)
+          .<span class="c-method">LoadAsync</span>();
+
+<span class="c-cmt">// With filter — explicit load only pending fees!</span>
+<span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">Entry</span>(<span class="c-prop">student</span>)
+          .<span class="c-method">Collection</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">FeeRecords</span>)
+          .<span class="c-method">Query</span>()
+          .<span class="c-method">Where</span>(<span class="c-prop">f</span> => !<span class="c-prop">f</span>.<span class="c-prop">IsPaid</span>)
+          .<span class="c-method">LoadAsync</span>();</pre>
+</div>
+
+<!-- SECTION 4: TRACKING -->
+<div class="section" id="tracking">
+  <div class="section-title"><span class="num">4</span> AsNoTracking — Read-only Query Boost</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram — Undercover agent கண்காணிக்கிறான், ஆனா CBI case-la unnecessary surveillance waste</span>
+    <p>EF Core normally tracks EVERY entity (Change Tracker). Read-only dashboard-ku tracking வேண்டாம் — extra memory, extra CPU, zero benefit. AsNoTracking = tracking OFF = 30-40% faster reads!</p>
+  </div>
+
+  <div class="comparison">
+    <div class="bad-box">
+      <div class="box-label">❌ WITH TRACKING (Read-only use)</div>
+      <pre style="font-size:0.82em"><span class="c-cmt">// EF tracks ALL 1000 entities
+// Change Tracker snapshots every property
+// Memory: ~2x, CPU: extra comparison work</span>
+<span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span> == <span class="c-prop">id</span>)
+    .<span class="c-method">ToListAsync</span>();
+<span class="c-cmt">// Dashboard display — never modifying!</span>
+<span class="c-cmt">// Tracking = useless overhead here</span></pre>
+    </div>
+    <div class="good-box">
+      <div class="box-label">✅ ASNOTRACKING — Read-only fast!</div>
+      <pre style="font-size:0.82em"><span class="c-cmt">// No tracking = no snapshot = less memory!</span>
+<span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">AsNoTracking</span>()  <span class="c-cmt">// ← just ONE method!</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span> == <span class="c-prop">id</span>)
+    .<span class="c-method">ToListAsync</span>();
+<span class="c-cmt">// 30-40% faster for read-only scenarios
+// Use for: GET endpoints, reports, dashboards</span></pre>
+    </div>
+  </div>
+
+  <pre><span class="c-cmt">// Global AsNoTracking — all queries in context</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddDbContext</span>&lt;<span class="c-type">ZenCampusContext</span>&gt;(<span class="c-prop">opts</span> =>
+{
+    <span class="c-prop">opts</span>.<span class="c-method">UseSqlServer</span>(<span class="c-prop">cs</span>);
+    <span class="c-prop">opts</span>.<span class="c-method">UseQueryTrackingBehavior</span>(<span class="c-type">QueryTrackingBehavior</span>.<span class="c-prop">NoTracking</span>); <span class="c-cmt">// global!</span>
+});
+<span class="c-cmt">// Then use AsTracking() ONLY when you want to update</span>
+
+<span class="c-cmt">// UPDATE flow — must track!</span>
+<span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">AsTracking</span>()  <span class="c-cmt">// explicit tracking for update</span>
+    .<span class="c-method">FirstOrDefaultAsync</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Id</span> == <span class="c-prop">studentId</span>);
+<span class="c-prop">student</span>!.<span class="c-prop">Name</span> = <span class="c-str">"Updated Name"</span>;
+<span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">SaveChangesAsync</span>(); <span class="c-cmt">// Change Tracker detects, generates UPDATE SQL</span></pre>
+</div>
+
+<!-- SECTION 5: MIGRATIONS -->
+<div class="section" id="migrations">
+  <div class="section-title"><span class="num">5</span> Migrations — DB Schema Version Control</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram Vedha — Every case has version, chain of events</span>
+    <p>Migration = DB schema-ku Git commit மாதிரி. ஒவ்வொரு change-um tracked, rollback பண்ணலாம். Production-la migration ஒண்ணு fail ஆச்சுன்னா — previous version-ku roll back பண்ணலாம்!</p>
+  </div>
+
+  <pre><span class="c-cmt">// Migration Commands</span>
+dotnet ef migrations add <span class="c-str">InitialCreate</span>         <span class="c-cmt">// create first migration</span>
+dotnet ef migrations add <span class="c-str">AddStudentPhoneColumn</span>  <span class="c-cmt">// schema change</span>
+dotnet ef database update                        <span class="c-cmt">// apply to DB</span>
+dotnet ef database update <span class="c-str">InitialCreate</span>        <span class="c-cmt">// rollback to specific!</span>
+dotnet ef migrations remove                      <span class="c-cmt">// undo last migration (dev only)</span>
+dotnet ef migrations list                        <span class="c-cmt">// list all migrations</span>
+
+<span class="c-cmt">// Script — for production (never run dotnet ef in prod directly!)</span>
+dotnet ef migrations script --output schema.sql  <span class="c-cmt">// generate SQL script</span>
+dotnet ef migrations script <span class="c-str">Migration1</span> <span class="c-str">Migration2</span> <span class="c-cmt">// diff script</span></pre>
+
+  <pre><span class="c-cmt">// Migration file — auto-generated, can customize</span>
+<span class="c-kw">public partial class</span> <span class="c-type">AddStudentPhoneColumn</span> : <span class="c-type">Migration</span>
+{
+    <span class="c-kw">protected override void</span> <span class="c-method">Up</span>(<span class="c-type">MigrationBuilder</span> <span class="c-prop">mb</span>)
+    {
+        <span class="c-prop">mb</span>.<span class="c-method">AddColumn</span>&lt;<span class="c-kw">string</span>&gt;(
+            <span class="c-prop">name</span>:      <span class="c-str">"PhoneNumber"</span>,
+            <span class="c-prop">table</span>:     <span class="c-str">"Students"</span>,
+            <span class="c-prop">nullable</span>:  <span class="c-kw">true</span>,
+            <span class="c-prop">maxLength</span>: <span class="c-num">15</span>);
+
+        <span class="c-cmt">// Custom: add index in migration</span>
+        <span class="c-prop">mb</span>.<span class="c-method">CreateIndex</span>(
+            <span class="c-prop">name</span>:    <span class="c-str">"IX_Students_PhoneNumber"</span>,
+            <span class="c-prop">table</span>:   <span class="c-str">"Students"</span>,
+            <span class="c-prop">column</span>:  <span class="c-str">"PhoneNumber"</span>);
+    }
+
+    <span class="c-kw">protected override void</span> <span class="c-method">Down</span>(<span class="c-type">MigrationBuilder</span> <span class="c-prop">mb</span>)
+    {
+        <span class="c-prop">mb</span>.<span class="c-method">DropIndex</span>(<span class="c-str">"IX_Students_PhoneNumber"</span>, <span class="c-str">"Students"</span>);
+        <span class="c-prop">mb</span>.<span class="c-method">DropColumn</span>(<span class="c-str">"PhoneNumber"</span>, <span class="c-str">"Students"</span>); <span class="c-cmt">// rollback!</span>
+    }
+}
+
+<span class="c-cmt">// Auto-migrate on startup (dev/staging only!)</span>
+<span class="c-kw">using var</span> <span class="c-prop">scope</span> = <span class="c-prop">app</span>.<span class="c-prop">Services</span>.<span class="c-method">CreateScope</span>();
+<span class="c-kw">var</span> <span class="c-prop">db</span> = <span class="c-prop">scope</span>.<span class="c-prop">ServiceProvider</span>.<span class="c-method">GetRequiredService</span>&lt;<span class="c-type">ZenCampusContext</span>&gt;();
+<span class="c-kw">await</span> <span class="c-prop">db</span>.<span class="c-prop">Database</span>.<span class="c-method">MigrateAsync</span>(); <span class="c-cmt">// applies pending migrations</span></pre>
+
+  <div class="danger">
+    <div class="d-label">⚠️ Production Migration Rules</div>
+    <p>1. NEVER run <code>dotnet ef database update</code> in production directly<br>
+    2. Generate SQL script, review with DBA, then apply<br>
+    3. Additive changes (add column nullable) = safe. Destructive (drop column, rename) = dangerous!<br>
+    4. Large tables — add column nullable first, backfill data, then add NOT NULL constraint in separate migration</p>
+  </div>
+</div>
+
+<!-- SECTION 6: PERFORMANCE -->
+<div class="section" id="perf">
+  <div class="section-title"><span class="num">6</span> ⚡ Query Performance — API Slow Fix Toolkit</div>
+
+  <div class="movie">
+    <span class="film">🎬 Bigil — Teamwork optimize பண்ணுது, one player slow ஆனா whole team loses</span>
+    <p>API performance = weakest DB query-a fix பண்று. One slow query = entire request slow. Bigil coach = profiler. Players = queries. Identify slow player → fix → team wins!</p>
+  </div>
+
+  <h3>1. Select Projection — Don't fetch what you don't need</h3>
+  <div class="comparison">
+    <div class="bad-box">
+      <div class="box-label">❌ Fetching 50 columns for 2</div>
+      <pre style="font-size:0.82em"><span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">ToListAsync</span>();
+<span class="c-cmt">// SELECT * — all 50 columns!
+// 1000 students × 50 cols = huge payload</span></pre>
+    </div>
+    <div class="good-box">
+      <div class="box-label">✅ Select only needed</div>
+      <pre style="font-size:0.82em"><span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span> <span class="c-type">StudentListDto</span>
+    {
+        <span class="c-prop">Id</span>   = <span class="c-prop">s</span>.<span class="c-prop">Id</span>,
+        <span class="c-prop">Name</span> = <span class="c-prop">s</span>.<span class="c-prop">Name</span>
+    }).<span class="c-method">ToListAsync</span>();
+<span class="c-cmt">// SELECT Id, Name — only 2 columns!</span></pre>
+    </div>
+  </div>
+
+  <h3>2. Pagination — Never return all records</h3>
+  <pre><span class="c-cmt">// ❌ WRONG — loading 50,000 students!</span>
+<span class="c-kw">var</span> <span class="c-prop">all</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>.<span class="c-method">ToListAsync</span>();
+
+<span class="c-cmt">// ✅ CORRECT — Keyset pagination (fastest!)</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">PagedResult</span>&lt;<span class="c-type">StudentDto</span>&gt;&gt; <span class="c-method">GetStudentsAsync</span>(<span class="c-kw">int</span> <span class="c-prop">page</span>, <span class="c-kw">int</span> <span class="c-prop">size</span> = <span class="c-num">20</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">total</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>.<span class="c-method">CountAsync</span>();
+
+    <span class="c-kw">var</span> <span class="c-prop">items</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+        .<span class="c-method">AsNoTracking</span>()
+        .<span class="c-method">OrderBy</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Id</span>)   <span class="c-cmt">// MUST order for stable pagination!</span>
+        .<span class="c-method">Skip</span>((<span class="c-prop">page</span> - <span class="c-num">1</span>) * <span class="c-prop">size</span>)
+        .<span class="c-method">Take</span>(<span class="c-prop">size</span>)
+        .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span> <span class="c-type">StudentDto</span> { <span class="c-prop">Id</span> = <span class="c-prop">s</span>.<span class="c-prop">Id</span>, <span class="c-prop">Name</span> = <span class="c-prop">s</span>.<span class="c-prop">Name</span> })
+        .<span class="c-method">ToListAsync</span>();
+
+    <span class="c-kw">return new</span> <span class="c-type">PagedResult</span>&lt;<span class="c-type">StudentDto</span>&gt;
+    {
+        <span class="c-prop">Items</span>      = <span class="c-prop">items</span>,
+        <span class="c-prop">TotalCount</span> = <span class="c-prop">total</span>,
+        <span class="c-prop">PageNumber</span> = <span class="c-prop">page</span>,
+        <span class="c-prop">PageSize</span>   = <span class="c-prop">size</span>
+    };
+}</pre>
+
+  <h3>3. Compiled Queries — Reuse query plan</h3>
+  <pre><span class="c-cmt">// EF Core compiles LINQ → SQL every call (parsing + translation overhead)
+// Compiled query: parse once, reuse!</span>
+
+<span class="c-kw">private static readonly</span> <span class="c-type">Func</span>&lt;<span class="c-type">ZenCampusContext</span>, <span class="c-kw">int</span>, <span class="c-type">Task</span>&lt;<span class="c-type">Student</span>?&gt;&gt;
+    <span class="c-prop">GetStudentById</span> = <span class="c-type">EF</span>.<span class="c-method">CompileAsyncQuery</span>(
+        (<span class="c-type">ZenCampusContext</span> <span class="c-prop">ctx</span>, <span class="c-kw">int</span> <span class="c-prop">id</span>) =>
+            <span class="c-prop">ctx</span>.<span class="c-prop">Students</span>.<span class="c-method">FirstOrDefault</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Id</span> == <span class="c-prop">id</span>));
+
+<span class="c-cmt">// Usage — zero compilation overhead on repeated calls</span>
+<span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-kw">await</span> <span class="c-prop">GetStudentById</span>(<span class="c-prop">_ctx</span>, <span class="c-prop">studentId</span>);</pre>
+
+  <h3>4. Raw SQL — when LINQ can't express it</h3>
+  <pre><span class="c-cmt">// Stored procedure or complex SQL — use FromSqlRaw</span>
+<span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">FromSqlRaw</span>(<span class="c-str">@"
+        SELECT s.* FROM Students s
+        INNER JOIN FeeRecords f ON f.StudentId = s.Id
+        WHERE f.DueDate < GETDATE() AND f.IsPaid = 0
+        GROUP BY s.Id HAVING COUNT(f.Id) > 2"</span>)
+    .<span class="c-method">AsNoTracking</span>()
+    .<span class="c-method">ToListAsync</span>();
+
+<span class="c-cmt">// NEVER concatenate params — SQL injection!</span>
+<span class="c-cmt">// ❌ WRONG:</span>
+<span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>.<span class="c-method">FromSqlRaw</span>(<span class="c-str">$"SELECT * FROM Students WHERE Name = '{name}'"</span>);
+
+<span class="c-cmt">// ✅ CORRECT — parameterized:</span>
+<span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>.<span class="c-method">FromSqlInterpolated</span>(<span class="c-str">$"SELECT * FROM Students WHERE Name = {name}"</span>);
+<span class="c-cmt">// OR:
+_ctx.Students.FromSqlRaw("SELECT * WHERE Name = @p0", name);</span></pre>
+</div>
+
+<!-- SECTION 7: BULK -->
+<div class="section" id="bulk">
+  <div class="section-title"><span class="num">7</span> Bulk Operations — Handle Thousands of Records</div>
+
+  <div class="movie">
+    <span class="film">🎬 Sarpatta Parambarai — Mass training camp, not one-by-one</span>
+    <p>1000 boxers ஒவ்வொருத்தரையும் ஒவ்வொரு day train பண்றது slow. Batch training = fast. EF Core SaveChanges per record = slow. AddRange + single SaveChanges = fast. Bulk library = fastest!</p>
+  </div>
+
+  <div class="comparison">
+    <div class="bad-box">
+      <div class="box-label">❌ Loop Save — 1000 DB round trips!</div>
+      <pre style="font-size:0.82em"><span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">student</span> <span class="c-kw">in</span> <span class="c-prop">importList</span>)
+{
+    <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>.<span class="c-method">Add</span>(<span class="c-prop">student</span>);
+    <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">SaveChangesAsync</span>(); <span class="c-cmt">// 1000 calls!</span>
+}
+<span class="c-cmt">// 1000 INSERT statements, 1000 round trips!</span></pre>
+    </div>
+    <div class="good-box">
+      <div class="box-label">✅ AddRange — 1 SaveChanges</div>
+      <pre style="font-size:0.82em"><span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>.<span class="c-method">AddRangeAsync</span>(<span class="c-prop">importList</span>);
+<span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">SaveChangesAsync</span>(); <span class="c-cmt">// 1 call!</span>
+<span class="c-cmt">// Still 1000 INSERTs but 1 round trip!
+// Good for &lt; 500 records</span></pre>
+    </div>
+  </div>
+
+  <pre><span class="c-cmt">// ExecuteUpdate / ExecuteDelete — EF Core 7+ (zero tracking overhead!)</span>
+
+<span class="c-cmt">// ✅ Bulk update — single UPDATE statement, no entity load!</span>
+<span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span> == <span class="c-prop">schoolId</span> && <span class="c-prop">s</span>.<span class="c-prop">Status</span> == <span class="c-type">StudentStatus</span>.<span class="c-prop">Active</span>)
+    .<span class="c-method">ExecuteUpdateAsync</span>(<span class="c-prop">calls</span> =>
+        <span class="c-prop">calls</span>.<span class="c-method">SetProperty</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Status</span>, <span class="c-type">StudentStatus</span>.<span class="c-prop">Graduated</span>));
+<span class="c-cmt">// Generates: UPDATE Students SET Status='Graduated' WHERE SchoolId=@p0 AND Status='Active'
+// Zero entity loading! FASTEST bulk update.</span>
+
+<span class="c-cmt">// ✅ Bulk delete — single DELETE statement!</span>
+<span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Attendances</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">a</span> => <span class="c-prop">a</span>.<span class="c-prop">Date</span> < <span class="c-type">DateTime</span>.<span class="c-prop">Now</span>.<span class="c-method">AddYears</span>(-<span class="c-num">3</span>))
+    .<span class="c-method">ExecuteDeleteAsync</span>();
+<span class="c-cmt">// DELETE FROM Attendances WHERE Date &lt; @p0
+// No load, no track, no loop — single SQL!</span>
+
+<span class="c-cmt">// Chunk import — for very large files (10,000+ records)</span>
+<span class="c-kw">const int</span> <span class="c-prop">chunkSize</span> = <span class="c-num">500</span>;
+<span class="c-kw">for</span> (<span class="c-kw">int</span> <span class="c-prop">i</span> = <span class="c-num">0</span>; <span class="c-prop">i</span> < <span class="c-prop">importList</span>.<span class="c-prop">Count</span>; <span class="c-prop">i</span> += <span class="c-prop">chunkSize</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">chunk</span> = <span class="c-prop">importList</span>.<span class="c-method">GetRange</span>(<span class="c-prop">i</span>, <span class="c-type">Math</span>.<span class="c-method">Min</span>(<span class="c-prop">chunkSize</span>, <span class="c-prop">importList</span>.<span class="c-prop">Count</span> - <span class="c-prop">i</span>));
+    <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>.<span class="c-method">AddRangeAsync</span>(<span class="c-prop">chunk</span>);
+    <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">SaveChangesAsync</span>();
+    <span class="c-prop">_ctx</span>.<span class="c-method">ChangeTracker</span>.<span class="c-method">Clear</span>(); <span class="c-cmt">// clear after each chunk — prevents memory bloat!</span>
+}</pre>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">8</span> 🎯 Scenario-Based Interview Questions</div>
+
+  <!-- S1 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">1</div>
+      <div>
+        <div class="scenario-title">API slow aana — முதல்ல என்ன பார்ப்பே? <span class="diff real">Real Interview</span> <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Production-la /api/students/class/10A endpoint 8 seconds edukுது. Tomorrow client demo iruku. Night 11 PM call வருது — en fix பண்ணுவ? Step by step சொல்லு."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ REAL ANSWER — Diagnosis → Fix → Verify</div>
+      <div style="background:#0a1a0a;padding:14px;border-radius:8px;margin-bottom:10px;font-size:0.9em;line-height:1.9">
+        <p><strong style="color:#2ecc71">Step 1 — Check SQL queries fired</strong></p>
+        <p>EnableSensitiveDataLogging + LogTo → console-la actual SQL பாப்பன். N+1 இருந்தா 100+ queries தெரியும்!</p>
+        <p><strong style="color:#f39c12">Step 2 — EF Core query check</strong></p>
+        <p>AsNoTracking missing? Include missing? Select பண்றோமா இல்ல SELECT * பண்றோமா?</p>
+        <p><strong style="color:#3498db">Step 3 — DB side check</strong></p>
+        <p>SQL Server Profiler / SSMS Execution Plan — missing index? Table scan?</p>
+        <p><strong style="color:#e11d48">Step 4 — Fix apply</strong></p>
+        <p>Include() + AsNoTracking() + Select projection → test → usually 90% improvement</p>
+      </div>
+      <pre><span class="c-cmt">// Before fix — N+1 + no tracking + SELECT *</span>
+<span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">ClassName</span> == <span class="c-str">"10A"</span>)
+    .<span class="c-method">ToListAsync</span>(); <span class="c-cmt">// 8 seconds!</span>
+<span class="c-cmt">// Later: s.School.Name → N+1!</span>
+
+<span class="c-cmt">// After fix — 3 changes, 8s → 0.3s</span>
+<span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">AsNoTracking</span>()              <span class="c-cmt">// Fix 1: no tracking overhead</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">ClassName</span> == <span class="c-str">"10A"</span>)
+    .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span>             <span class="c-cmt">// Fix 2: only needed data</span>
+    {
+        <span class="c-prop">s</span>.<span class="c-prop">Id</span>, <span class="c-prop">s</span>.<span class="c-prop">Name</span>,
+        <span class="c-prop">SchoolName</span> = <span class="c-prop">s</span>.<span class="c-prop">School</span>.<span class="c-prop">Name</span>  <span class="c-cmt">// Fix 3: auto-join, no N+1</span>
+    })
+    .<span class="c-method">ToListAsync</span>(); <span class="c-cmt">// 300ms!</span></pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Senior Answer Addition</div>
+        <p>"After immediate fix, I'd add missing DB index on ClassName column (or composite SchoolId+ClassName), and monitor with Application Insights / SQL Profiler for 24hr to confirm fix holds under load."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div>
+        <div class="scenario-title">Loop la matikichuna — foreach DB call pattern <span class="diff real">Real Interview</span> <span class="diff hard">Hard</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Fee reminder batch job-la 5000 students-ku ஒவ்வொருத்தரோட unpaid fees check பண்றோம். Job 45 minutes edukுது. என் fix பண்ணுவ?"
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">studentId</span> <span class="c-kw">in</span> <span class="c-prop">allStudentIds</span>) <span class="c-cmt">// 5000!</span>
+{
+    <span class="c-kw">var</span> <span class="c-prop">fees</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">FeeRecords</span>
+        .<span class="c-method">Where</span>(<span class="c-prop">f</span> => <span class="c-prop">f</span>.<span class="c-prop">StudentId</span> == <span class="c-prop">studentId</span> &amp;&amp; !<span class="c-prop">f</span>.<span class="c-prop">IsPaid</span>)
+        .<span class="c-method">ToListAsync</span>(); <span class="c-cmt">// 5000 queries!</span>
+    <span class="c-kw">if</span> (<span class="c-prop">fees</span>.<span class="c-prop">Any</span>()) <span class="c-kw">await</span> <span class="c-prop">_sms</span>.<span class="c-method">SendReminderAsync</span>(...);
+}</span></pre>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ FIX — Single query replaces 5000!</div>
+      <pre><span class="c-cmt">// ✅ Pull all pending fees in ONE query, then group in memory</span>
+<span class="c-kw">var</span> <span class="c-prop">pendingByStudent</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">FeeRecords</span>
+    .<span class="c-method">AsNoTracking</span>()
+    .<span class="c-method">Where</span>(<span class="c-prop">f</span> => !<span class="c-prop">f</span>.<span class="c-prop">IsPaid</span>)                       <span class="c-cmt">// all unpaid — 1 query!</span>
+    .<span class="c-method">Select</span>(<span class="c-prop">f</span> => <span class="c-kw">new</span> { <span class="c-prop">f</span>.<span class="c-prop">StudentId</span>, <span class="c-prop">f</span>.<span class="c-prop">Amount</span>, <span class="c-prop">f</span>.<span class="c-prop">DueDate</span> })
+    .<span class="c-method">ToListAsync</span>();                                 <span class="c-cmt">// 1 DB round trip</span>
+
+<span class="c-kw">var</span> <span class="c-prop">grouped</span> = <span class="c-prop">pendingByStudent</span>
+    .<span class="c-method">GroupBy</span>(<span class="c-prop">f</span> => <span class="c-prop">f</span>.<span class="c-prop">StudentId</span>)                    <span class="c-cmt">// group in memory</span>
+    .<span class="c-method">ToDictionary</span>(<span class="c-prop">g</span> => <span class="c-prop">g</span>.<span class="c-prop">Key</span>, <span class="c-prop">g</span> => <span class="c-prop">g</span>.<span class="c-method">ToList</span>());
+
+<span class="c-cmt">// Now send SMS for students who have pending fees</span>
+<span class="c-kw">var</span> <span class="c-prop">tasks</span> = <span class="c-prop">grouped</span>.<span class="c-method">Select</span>(<span class="c-prop">kvp</span> =>
+    <span class="c-prop">_sms</span>.<span class="c-method">SendReminderAsync</span>(<span class="c-prop">kvp</span>.<span class="c-prop">Key</span>, <span class="c-prop">kvp</span>.<span class="c-prop">Value</span>));
+
+<span class="c-cmt">// Parallel SMS — but rate-limit to 50 at a time!</span>
+<span class="c-kw">var</span> <span class="c-prop">semaphore</span> = <span class="c-kw">new</span> <span class="c-type">SemaphoreSlim</span>(<span class="c-num">50</span>);
+<span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">grouped</span>.<span class="c-method">Select</span>(<span class="c-kw">async</span> <span class="c-prop">kvp</span> =>
+{
+    <span class="c-kw">await</span> <span class="c-prop">semaphore</span>.<span class="c-method">WaitAsync</span>();
+    <span class="c-kw">try</span>   { <span class="c-kw">await</span> <span class="c-prop">_sms</span>.<span class="c-method">SendReminderAsync</span>(<span class="c-prop">kvp</span>.<span class="c-prop">Key</span>, <span class="c-prop">kvp</span>.<span class="c-prop">Value</span>); }
+    <span class="c-kw">finally</span> { <span class="c-prop">semaphore</span>.<span class="c-method">Release</span>(); }
+}));</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Result: 45 min → ~2 min</div>
+        <p>5000 DB queries → 1 query. Sequential SMS → 50 parallel. This is the loop-in-loop DB anti-pattern fix — every experienced interviewer asks this!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div>
+        <div class="scenario-title">Migration fail aachu production la — ena panuvaa? <span class="diff real">Real Interview</span> <span class="diff hard">Hard</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Friday evening production migration apply பண்ணோம் — AddColumn NOT NULL without default. Migration half-way fail ஆச்சு. DB inconsistent state-la இருக்கு. Monday morning client வருவாங்க. என் பண்ணுவ?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Rollback + Prevention</div>
+      <div style="background:#0a1a0a;padding:14px;border-radius:8px;font-size:0.9em;line-height:1.9;margin-bottom:10px">
+        <p><strong style="color:#e74c3c">Immediate — Rollback</strong></p>
+        <p>SQL Server — wrap migration in transaction. If failed → auto rollback. EF Core migrations use transactions by default for DDL in SQL Server.</p>
+        <p>Manual rollback: <code>dotnet ef database update PreviousMigrationName</code> → runs Down() method.</p>
+        <p><strong style="color:#f39c12">If DB in inconsistent state</strong></p>
+        <p>Restore from backup (always take backup before migration!). Fix manually if no backup. Update <code>__EFMigrationsHistory</code> table to reflect actual state.</p>
+        <p><strong style="color:#2ecc71">Prevention — Safe Pattern</strong></p>
+      </div>
+      <pre><span class="c-cmt">// Safe NOT NULL column addition — 2 migrations!</span>
+
+<span class="c-cmt">// Migration 1: Add nullable first</span>
+<span class="c-prop">mb</span>.<span class="c-method">AddColumn</span>&lt;<span class="c-kw">string</span>&gt;(<span class="c-str">"PhoneNumber"</span>, <span class="c-str">"Students"</span>, <span class="c-prop">nullable</span>: <span class="c-kw">true</span>);
+<span class="c-cmt">// Deploy to prod, run without issue (nullable = no constraint violation)</span>
+
+<span class="c-cmt">// Migration 2: Backfill + add NOT NULL (separate deployment!)</span>
+<span class="c-prop">mb</span>.<span class="c-method">Sql</span>(<span class="c-str">"UPDATE Students SET PhoneNumber = 'Unknown' WHERE PhoneNumber IS NULL"</span>);
+<span class="c-prop">mb</span>.<span class="c-method">AlterColumn</span>&lt;<span class="c-kw">string</span>&gt;(<span class="c-str">"PhoneNumber"</span>, <span class="c-str">"Students"</span>, <span class="c-prop">nullable</span>: <span class="c-kw">false</span>);
+<span class="c-cmt">// Safe — all rows have value before NOT NULL applied!</span>
+
+<span class="c-cmt">// Always: backup → script → review → apply
+dotnet ef migrations script LastGoodMigration CurrentMigration --output delta.sql
+// DBA reviews delta.sql, then runs on prod manually</span></pre>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div>
+        <div class="scenario-title">10,000 students import Excel — ena strategy? <span class="diff real">Real Interview</span> <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "New school join பண்றாங்க — Excel-la 10,000 students import பண்ணணும். API timeout ஆகுது. Memory out of exception வருது. என் handle பண்ணுவ?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Chunked + Background + Progress</div>
+      <pre><span class="c-cmt">// ✅ Strategy: Parse → Validate → Queue → Background Process</span>
+
+<span class="c-cmt">// Controller — accept file, queue job, return immediately</span>
+[<span class="c-type">HttpPost</span>(<span class="c-str">"import"</span>)]
+<span class="c-kw">public async</span> <span class="c-type">IActionResult</span> <span class="c-method">ImportStudents</span>(<span class="c-type">IFormFile</span> <span class="c-prop">file</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">jobId</span> = <span class="c-type">Guid</span>.<span class="c-method">NewGuid</span>();
+    <span class="c-kw">await</span> <span class="c-prop">_queue</span>.<span class="c-method">EnqueueAsync</span>(<span class="c-kw">new</span> <span class="c-type">ImportJob</span> { <span class="c-prop">JobId</span> = <span class="c-prop">jobId</span>, <span class="c-prop">FilePath</span> = <span class="c-prop">savedPath</span> });
+    <span class="c-kw">return</span> <span class="c-method">Accepted</span>(<span class="c-kw">new</span> { <span class="c-prop">JobId</span> = <span class="c-prop">jobId</span>, <span class="c-prop">Status</span> = <span class="c-str">"Processing"</span> });
+    <span class="c-cmt">// Return immediately — no timeout!</span>
+}
+
+<span class="c-cmt">// Background worker — chunked processing</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">ProcessImportAsync</span>(<span class="c-type">ImportJob</span> <span class="c-prop">job</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">rows</span> = <span class="c-prop">_excelParser</span>.<span class="c-method">Parse</span>(<span class="c-prop">job</span>.<span class="c-prop">FilePath</span>); <span class="c-cmt">// streaming parse!</span>
+
+    <span class="c-kw">const int</span> <span class="c-prop">chunk</span> = <span class="c-num">200</span>;
+    <span class="c-kw">var</span> <span class="c-prop">total</span>     = <span class="c-num">0</span>;
+    <span class="c-kw">var</span> <span class="c-prop">failed</span>    = <span class="c-kw">new</span> <span class="c-type">List</span>&lt;<span class="c-kw">string</span>&gt;();
+
+    <span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">batch</span> <span class="c-kw">in</span> <span class="c-prop">rows</span>.<span class="c-method">Chunk</span>(<span class="c-prop">chunk</span>)) <span class="c-cmt">// .NET 6+ Chunk</span>
+    {
+        <span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-prop">batch</span>.<span class="c-method">Select</span>(<span class="c-prop">MapToStudent</span>).<span class="c-method">ToList</span>();
+        <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>.<span class="c-method">AddRangeAsync</span>(<span class="c-prop">students</span>);
+        <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">SaveChangesAsync</span>();
+        <span class="c-prop">_ctx</span>.<span class="c-prop">ChangeTracker</span>.<span class="c-method">Clear</span>(); <span class="c-cmt">// prevent memory bloat!</span>
+        <span class="c-prop">total</span> += <span class="c-prop">students</span>.<span class="c-prop">Count</span>;
+        <span class="c-kw">await</span> <span class="c-prop">_progress</span>.<span class="c-method">UpdateAsync</span>(<span class="c-prop">job</span>.<span class="c-prop">JobId</span>, <span class="c-prop">total</span>); <span class="c-cmt">// progress tracking!</span>
+    }
+}</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Senior Add-On</div>
+        <p>"Also add duplicate check with HashSet of admission numbers before insert, validation errors collected in List&lt;string&gt; and returned in final job result. User polls /import/{jobId}/status endpoint."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div>
+        <div class="scenario-title">DbContext Singleton inject pannirukaanga — bug trace <span class="diff hard">Hard</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Production-la intermittently wrong student data show ஆகுது. School A students-ku School B data வருது. Rare, random. Code review-la பாத்தோம் — <code>services.AddSingleton&lt;ZenCampusContext&gt;()</code> இருக்கு. What happened?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ROOT CAUSE — DbContext Singleton = Race Condition</div>
+      <div style="background:#1f0a0a;padding:14px;border-radius:8px;font-size:0.9em;line-height:1.9;margin-bottom:10px">
+        <p><strong style="color:#e74c3c">Root Cause:</strong> DbContext NOT thread-safe. Singleton = shared across all requests. Two concurrent requests = both writing to same Change Tracker = corrupted entity state = wrong data.</p>
+        <p><strong style="color:#f39c12">Why intermittent:</strong> Only happens under concurrent load. Low traffic = rarely two simultaneous requests = rarely corrupts.</p>
+      </div>
+      <pre><span class="c-cmt">// ❌ WRONG — Singleton!</span>
+<span class="c-prop">services</span>.<span class="c-method">AddSingleton</span>&lt;<span class="c-type">ZenCampusContext</span>&gt;();
+
+<span class="c-cmt">// ✅ FIX — Scoped (one per request)</span>
+<span class="c-prop">services</span>.<span class="c-method">AddDbContext</span>&lt;<span class="c-type">ZenCampusContext</span>&gt;(<span class="c-prop">opts</span> =>
+    <span class="c-prop">opts</span>.<span class="c-method">UseSqlServer</span>(<span class="c-prop">cs</span>));
+<span class="c-cmt">// AddDbContext registers as Scoped automatically!</span>
+
+<span class="c-cmt">// Background service needs DbContext?
+// Use IDbContextFactory — creates new context per operation!</span>
+<span class="c-prop">services</span>.<span class="c-method">AddDbContextFactory</span>&lt;<span class="c-type">ZenCampusContext</span>&gt;(<span class="c-prop">opts</span> =>
+    <span class="c-prop">opts</span>.<span class="c-method">UseSqlServer</span>(<span class="c-prop">cs</span>));
+
+<span class="c-kw">public class</span> <span class="c-type">ImportBackgroundService</span> : <span class="c-type">BackgroundService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IDbContextFactory</span>&lt;<span class="c-type">ZenCampusContext</span>&gt; <span class="c-prop">_factory</span>;
+
+    <span class="c-kw">protected override async</span> <span class="c-type">Task</span> <span class="c-method">ExecuteAsync</span>(<span class="c-type">CancellationToken</span> <span class="c-prop">ct</span>)
+    {
+        <span class="c-kw">await using var</span> <span class="c-prop">ctx</span> = <span class="c-kw">await</span> <span class="c-prop">_factory</span>.<span class="c-method">CreateDbContextAsync</span>(<span class="c-prop">ct</span>);
+        <span class="c-cmt">// Short-lived, fresh context per operation!</span>
+    }
+}</pre>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div>
+        <div class="scenario-title">Fee payment — DB inconsistency, half save aachu <span class="diff hard">Hard</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Student fee pay பண்றான். Payment gateway success. ஆனா FeeRecord save ஆகுது, Student.FeesPaid = true update ஆகல. Network error! DB inconsistent. Fix?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Transactions</div>
+      <pre><span class="c-cmt">// ✅ EF Core transaction — both save or neither!</span>
+<span class="c-kw">await using var</span> <span class="c-prop">tx</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Database</span>.<span class="c-method">BeginTransactionAsync</span>();
+<span class="c-kw">try</span>
+{
+    <span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>.<span class="c-method">FindAsync</span>(<span class="c-prop">studentId</span>);
+    student.FeesPaid = <span class="c-kw">true</span>;
+
+    <span class="c-kw">var</span> <span class="c-prop">fee</span> = <span class="c-kw">new</span> <span class="c-type">FeeRecord</span> { <span class="c-prop">StudentId</span> = <span class="c-prop">studentId</span>, <span class="c-prop">Amount</span> = <span class="c-prop">amount</span>, <span class="c-prop">IsPaid</span> = <span class="c-kw">true</span> };
+    <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">FeeRecords</span>.<span class="c-method">AddAsync</span>(<span class="c-prop">fee</span>);
+
+    <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">SaveChangesAsync</span>(); <span class="c-cmt">// both changes atomic!</span>
+    <span class="c-kw">await</span> <span class="c-prop">tx</span>.<span class="c-method">CommitAsync</span>();        <span class="c-cmt">// commit!</span>
+}
+<span class="c-kw">catch</span>
+{
+    <span class="c-kw">await</span> <span class="c-prop">tx</span>.<span class="c-method">RollbackAsync</span>(); <span class="c-cmt">// both revert!</span>
+    <span class="c-kw">throw</span>;
+}</pre>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div>
+        <div class="scenario-title">Report 50,000 records — memory overflow <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Annual report generate பண்றோம் — 50,000 student records load பண்றோம். Server OutOfMemoryException குடுக்குது. Fix?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Streaming with IAsyncEnumerable</div>
+      <pre><span class="c-cmt">// ❌ WRONG — loads ALL 50,000 into memory!</span>
+<span class="c-kw">var</span> <span class="c-prop">all</span> = <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>.<span class="c-method">ToListAsync</span>(); <span class="c-cmt">// OutOfMemory!</span>
+
+<span class="c-cmt">// ✅ CORRECT — stream row by row (never holds all in memory)</span>
+<span class="c-kw">public async</span> <span class="c-type">IAsyncEnumerable</span>&lt;<span class="c-type">StudentReportDto</span>&gt; <span class="c-method">StreamStudentsAsync</span>(<span class="c-kw">int</span> <span class="c-prop">schoolId</span>)
+{
+    <span class="c-kw">await foreach</span> (<span class="c-kw">var</span> <span class="c-prop">s</span> <span class="c-kw">in</span> <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+        .<span class="c-method">AsNoTracking</span>()
+        .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span> == <span class="c-prop">schoolId</span>)
+        .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span> <span class="c-type">StudentReportDto</span> { <span class="c-prop">Id</span> = <span class="c-prop">s</span>.<span class="c-prop">Id</span>, <span class="c-prop">Name</span> = <span class="c-prop">s</span>.<span class="c-prop">Name</span> })
+        .<span class="c-method">AsAsyncEnumerable</span>()) <span class="c-cmt">// stream from DB!</span>
+    {
+        <span class="c-kw">yield return</span> <span class="c-prop">s</span>; <span class="c-cmt">// yield one at a time to Excel writer</span>
+    }
+}
+<span class="c-cmt">// Memory: ~1 row at a time instead of 50,000!</span></pre>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div>
+        <div class="scenario-title">Where pota DB la filter aaguthu illaya? <span class="diff medium">Medium</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Enna SQL generate aagirukkunu theriyala, ஆனா query slow. Code-la Where() potturukkoma — DB-la filter aagirukkaa, application-la aagirukkaa?" — How to verify?
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Check generated SQL</div>
+      <pre><span class="c-cmt">// Method 1: Log to console (dev)</span>
+<span class="c-prop">opts</span>.<span class="c-method">LogTo</span>(<span class="c-type">Console</span>.<span class="c-prop">WriteLine</span>, <span class="c-type">LogLevel</span>.<span class="c-prop">Information</span>)
+    .<span class="c-method">EnableSensitiveDataLogging</span>(); <span class="c-cmt">// shows param values</span>
+
+<span class="c-cmt">// Method 2: ToQueryString() — see exact SQL before execution</span>
+<span class="c-kw">var</span> <span class="c-prop">query</span> = <span class="c-prop">_ctx</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Name</span>.<span class="c-method">Contains</span>(<span class="c-str">"Kumar"</span>))
+    .<span class="c-method">AsNoTracking</span>();
+
+<span class="c-prop">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-prop">query</span>.<span class="c-method">ToQueryString</span>()); <span class="c-cmt">// PRINTS SQL — no execution!</span>
+<span class="c-cmt">// Output: SELECT * FROM Students WHERE Name LIKE '%Kumar%'
+// ← WHERE in SQL = filter in DB. Good!</span>
+
+<span class="c-cmt">// ⚠️ Client evaluation trap — LINQ can't translate to SQL!</span>
+<span class="c-cmt">// This used to silently load ALL data to memory in EF Core 2!
+// EF Core 3+ throws InvalidOperationException for untranslatable LINQ
+// Custom C# methods in Where() = client eval!</span>
+
+<span class="c-cmt">// ❌ Forces client eval (EF can't translate MyCustomMethod)</span>
+._ctx.Students.Where(s => MyCustomMethod(s.Name, "Kumar")).ToList();
+
+<span class="c-cmt">// ✅ Fix: move custom logic out, use translatable predicates</span>
+._ctx.Students.Where(s => s.Name.Contains("Kumar")).ToList();</pre>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div>
+        <div class="scenario-title">Concurrent update — lost update problem <span class="diff senior">Senior</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Two teachers same time student grade update பண்றாங்க. Teacher 1 save பண்றான். Teacher 2 save பண்றான். Teacher 1 changes lost! Optimistic concurrency explain பண்ணு."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Optimistic Concurrency with RowVersion</div>
+      <pre><span class="c-cmt">// Add RowVersion (timestamp) to entity</span>
+<span class="c-kw">public class</span> <span class="c-type">Student</span>
+{
+    <span class="c-kw">public int</span>     <span class="c-prop">Id</span>         { <span class="c-kw">get</span>; <span class="c-kw">set</span>; }
+    <span class="c-kw">public string</span>  <span class="c-prop">Grade</span>      { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = <span class="c-str">""</span>;
+
+    [<span class="c-type">Timestamp</span>]  <span class="c-cmt">// EF auto-increments on every update</span>
+    <span class="c-kw">public byte</span>[] <span class="c-prop">RowVersion</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } = [];
+}
+
+<span class="c-cmt">// On update — EF includes RowVersion in WHERE!</span>
+<span class="c-cmt">// SQL: UPDATE Students SET Grade=@g WHERE Id=@id AND RowVersion=@rv
+// If RowVersion changed (someone else saved) → 0 rows affected
+// → EF throws DbUpdateConcurrencyException!</span>
+
+<span class="c-kw">try</span>
+{
+    <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">SaveChangesAsync</span>();
+}
+<span class="c-kw">catch</span> (<span class="c-type">DbUpdateConcurrencyException</span> <span class="c-prop">ex</span>)
+{
+    <span class="c-cmt">// Conflict! Tell user to refresh and retry</span>
+    <span class="c-kw">var</span> <span class="c-prop">entry</span> = <span class="c-prop">ex</span>.<span class="c-prop">Entries</span>[<span class="c-num">0</span>];
+    <span class="c-kw">var</span> <span class="c-prop">dbValues</span> = <span class="c-kw">await</span> <span class="c-prop">entry</span>.<span class="c-method">GetDatabaseValuesAsync</span>();
+    <span class="c-kw">throw new</span> <span class="c-type">ConflictException</span>(<span class="c-str">"Another user updated this record. Please refresh."</span>);
+}</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Pessimistic vs Optimistic</div>
+        <p><strong>Optimistic</strong> = no lock, detect conflict on save (RowVersion). Use when conflicts rare.<br>
+        <strong>Pessimistic</strong> = lock row on read (<code>WITH (UPDLOCK)</code>). Use when conflicts frequent. Higher contention.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div>
+        <div class="scenario-title">"EF Core experience sollu" — Complete ZenCampus Answer <span class="diff senior">Senior</span></div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "EF Core-a real project-la use பண்ணீங்களா? Performance issues face பண்ணீங்களா? How did you solve?" — Full structured answer.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE INTERVIEW ANSWER</div>
+      <div style="background:#0a1a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p>"Yes, ZenCampus — 50,000 students across 200 schools — EF Core 8 with SQL Server."</p>
+        <p><strong>Issue 1 — N+1:</strong> Student list API was 8 seconds. Found 1001 DB queries via EnableSensitiveDataLogging. Fixed with <code>.Select()</code> projection auto-joining School name. Down to 300ms.</p>
+        <p><strong>Issue 2 — Bulk import:</strong> 10,000 student Excel import was timing out. Moved to background job with channel-based queue, chunked 200 records per SaveChanges with ChangeTracker.Clear() to prevent memory bloat.</p>
+        <p><strong>Issue 3 — Report memory:</strong> Annual report was hitting OutOfMemory. Switched to IAsyncEnumerable streaming with AsAsyncEnumerable() — processes one row at a time.</p>
+        <p><strong>Standard practices:</strong> AsNoTracking on all GET endpoints, compiled queries for frequent lookups, ExecuteUpdateAsync for batch updates (no entity load), transactions for multi-table atomic writes, migration scripts generated and reviewed before production apply.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">9</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: N+1 problem — exact cause enna?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Missing index in DB</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Using async/await incorrectly</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) Loading collection of entities then accessing navigation property for each — triggers 1 query per entity</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) DbContext registered as Singleton</div>
+    <div class="quiz-fb ok">✅ N+1 = 1 query to get N entities + N more queries to get navigation property for each. Fix: .Include() (JOIN) or .Select() (projection with auto-JOIN)!</div>
+    <div class="quiz-fb nope">❌ N+1 = 1 main query + N per-record queries when accessing navigation property in loop. Include() = single JOIN query = fix!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: AsNoTracking — when NOT to use it?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) List endpoints</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Dashboard queries</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) When you're going to update the entity and call SaveChanges</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Reports</div>
+    <div class="quiz-fb ok">✅ AsNoTracking = EF won't track changes. If you modify entity and SaveChanges, no UPDATE generated (no tracking = no change detection). Use tracking only for update/delete flows!</div>
+    <div class="quiz-fb nope">❌ AsNoTracking is wrong for updates! Without tracking, EF can't detect property changes → SaveChanges generates no UPDATE SQL → update silently lost!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: ExecuteUpdateAsync — advantage over load + modify + save?</p>
+    <div class="quiz-opt" onclick="ans(this,'correct')">A) Zero entity loading — single UPDATE SQL, no Change Tracker overhead, fastest for bulk updates</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Better error handling</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Works with Singleton DbContext</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Supports transactions better</div>
+    <div class="quiz-fb ok">✅ ExecuteUpdateAsync = no entity load, no Change Tracker, single UPDATE SQL for all matching rows. Bulk update 1000 rows = 1 SQL instead of 1000 loads + 1000 tracks + 1000 updates!</div>
+    <div class="quiz-fb nope">❌ ExecuteUpdateAsync skips loading entirely — generates single bulk UPDATE SQL. No entity hydration, no change tracking. Fastest for bulk updates by far!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: Migration — "dotnet ef database update" production-la run panna safe aa?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Yes, always safe</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Safe if you test in staging first</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) No — generate SQL script, review with DBA, run manually. Never CLI directly on production.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Safe for small changes only</div>
+    <div class="quiz-fb ok">✅ Production migration = generate SQL script (dotnet ef migrations script), DBA reviews for data loss / locking risks, run manually with ability to stop. CLI direct = no review, no rollback plan!</div>
+    <div class="quiz-fb nope">❌ Never run dotnet ef database update on production directly! Generate SQL script → review → manual apply. Large table DDL can lock table for minutes, causing downtime!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">10</span> ✅ Day 7 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory (45 min)</h3>
+      <ul class="check-list">
+        <li>DbContext setup + OnModelCreating</li>
+        <li>N+1 problem — cause and all 3 fixes</li>
+        <li>Include vs ThenInclude vs Select</li>
+        <li>Eager / Explicit / Lazy loading</li>
+        <li>AsNoTracking — when to use / not use</li>
+        <li>Migration commands + production rules</li>
+        <li>ExecuteUpdateAsync / ExecuteDeleteAsync</li>
+      </ul>
+    </div>
+    <div>
+      <h3>💻 Hands-On (60 min)</h3>
+      <ul class="check-list">
+        <li>Create ZenCampusContext with relationships</li>
+        <li>Run first migration + dotnet ef database update</li>
+        <li>Write N+1 bug, then fix with Include</li>
+        <li>Add AsNoTracking to all GET methods</li>
+        <li>Try ExecuteUpdateAsync bulk update</li>
+        <li>Chunk import with ChangeTracker.Clear()</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Key Scenarios</h3>
+      <ul class="check-list">
+        <li>S1: API slow → N+1 diagnosis steps</li>
+        <li>S2: Loop DB call → single query + group</li>
+        <li>S3: Migration fail → rollback strategy</li>
+        <li>S4: 10k import → background + chunk</li>
+        <li>S5: DbContext Singleton bug</li>
+        <li>S10: Full EF Core experience answer</li>
+      </ul>
+    </div>
+    <div>
+      <h3>⭐ Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"N+1 = 1 + N queries — Include fixes it"</li>
+        <li>"AsNoTracking = 30-40% faster reads"</li>
+        <li>"ExecuteUpdateAsync = zero entity load"</li>
+        <li>"DbContext = Scoped, never Singleton"</li>
+        <li>"Migration prod = SQL script + DBA review"</li>
+        <li>"IAsyncEnumerable = streaming, no OOM"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#1a0010,#0a0a1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🎬 Day 7 Motivation</div>
+    <p style="color:#f97316;font-style:italic">"Kaithi-la Dilli 100 trips போகல — ஒரே trip-la எல்லாத்தையும் முடிச்சான். EF Core-லயும் அதே — N+1 queries-a ஒரே Include-la fix பண்ணு. <strong>Interview-la 'API slow fix பண்ணினேன், N+1 இருந்துச்சு, Include + AsNoTracking + Select — 8 seconds to 300ms' சொன்னா — job confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 7/60 ✅ | Tomorrow: ASP.NET Core Web API — Controllers, Middleware, Filters, Routing</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:11.6%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">7 of 60 days (11.6%) — EF Core mastered!</div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p>Day 7 – Entity Framework Core | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🎬 "Ratsasan = DbContext. Kaithi = N+1 fix. Bigil = query optimization. Sarpatta = bulk ops. Vikram Vedha = migrations!"</p>
+</footer>
+
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent='💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

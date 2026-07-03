@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 21 - Background Jobs & Queues | .NET Interview Prep</title>
+    <style>
+        :root {
+            --accent: #d97706;
+            --accent-light: #fcd34d;
+            --accent-dark: #78350f;
+            --accent-glow: rgba(217,119,6,0.35);
+            --bg: #0d0d1a;
+            --bg2: #1a1208;
+            --bg3: #1c1505;
+            --card: #111827;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --text-bright: #fffbeb;
+            --border: #44301a;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; line-height:1.6; }
+        .progress-bar { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-light)); width:0%; z-index:200; transition:width 0.1s; }
+        nav { position:sticky; top:0; z-index:100; background:rgba(13,13,26,0.95); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); padding:0.75rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+        .nav-brand { font-size:0.9rem; font-weight:700; color:var(--accent-light); }
+        .nav-links { display:flex; gap:1rem; list-style:none; }
+        .nav-links a { color:var(--text-dim); text-decoration:none; font-size:0.8rem; transition:color 0.2s; }
+        .nav-links a:hover { color:var(--accent-light); }
+        .hero { padding:4rem 2rem 2rem; text-align:center; background:radial-gradient(ellipse at top,rgba(217,119,6,0.15) 0%,transparent 70%); }
+        .day-badge { display:inline-block; background:linear-gradient(135deg,var(--accent),var(--accent-light)); color:#1a0a00; padding:0.3rem 1rem; border-radius:2rem; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; margin-bottom:1rem; }
+        .hero h1 { font-size:2.5rem; font-weight:800; background:linear-gradient(135deg,var(--accent-light),#fff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:0.5rem; }
+        .hero-sub { color:var(--text-dim); font-size:1rem; max-width:600px; margin:0 auto 1.5rem; }
+        .hero-tags { display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap; }
+        .tag { background:rgba(217,119,6,0.12); border:1px solid rgba(217,119,6,0.35); color:var(--accent-light); padding:0.25rem 0.75rem; border-radius:1rem; font-size:0.75rem; }
+        .container { max-width:1100px; margin:0 auto; padding:0 1.5rem; }
+        .section-title { font-size:1.5rem; font-weight:700; color:var(--accent-light); margin:2.5rem 0 1rem; display:flex; align-items:center; gap:0.5rem; }
+        .section-title::before { content:''; display:inline-block; width:4px; height:1.5rem; background:linear-gradient(180deg,var(--accent),var(--accent-light)); border-radius:2px; }
+        .concept-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; position:relative; overflow:hidden; }
+        .concept-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-light)); }
+        .concept-title { font-size:1.1rem; font-weight:700; color:var(--text-bright); margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+        pre { background:#050a14; border:1px solid var(--border); border-radius:8px; padding:1rem 1.25rem; overflow-x:auto; font-family:'Cascadia Code','Fira Code',monospace; font-size:0.82rem; line-height:1.7; margin:0.75rem 0; }
+        .kw { color:#60a5fa; } .kw2 { color:#c084fc; } .str { color:#86efac; } .num { color:#fcd34d; }
+        .cmt { color:#6b7280; } .attr { color:#f9a8d4; } .mth { color:#fbbf24; } .cls { color:#fde68a; }
+        .info-box { background:rgba(217,119,6,0.1); border:1px solid rgba(217,119,6,0.4); border-left:4px solid var(--accent); border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .warn-box { background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.4); border-left:4px solid #f59e0b; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .danger-box { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .good-box { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.3); border-left:4px solid #22c55e; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        table { width:100%; border-collapse:collapse; margin:0.75rem 0; font-size:0.85rem; }
+        th { background:#1c1505; color:var(--accent-light); padding:0.6rem 0.8rem; text-align:left; border:1px solid var(--border); font-weight:600; }
+        td { padding:0.6rem 0.8rem; border:1px solid var(--border); vertical-align:top; }
+        tr:nth-child(even) td { background:rgba(255,255,255,0.02); }
+        .movie-box { background:linear-gradient(135deg,rgba(217,119,6,0.1),rgba(252,211,77,0.03)); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; display:flex; gap:1rem; align-items:flex-start; }
+        .movie-icon { font-size:2rem; flex-shrink:0; }
+        .movie-content h4 { color:var(--accent-light); font-size:0.9rem; font-weight:700; margin-bottom:0.3rem; }
+        .movie-content p { color:var(--text-dim); font-size:0.85rem; }
+        .scenario-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .scenario-header { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+        .scenario-q { font-size:0.95rem; font-weight:600; color:var(--text-bright); flex:1; }
+        .scenario-type { font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:1rem; font-weight:600; white-space:nowrap; flex-shrink:0; }
+        .type-prod { background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.3); }
+        .type-design { background:rgba(217,119,6,0.2); color:#fcd34d; border:1px solid rgba(217,119,6,0.3); }
+        .type-perf { background:rgba(245,158,11,0.2); color:#fcd34d; border:1px solid rgba(245,158,11,0.3); }
+        .type-concept { background:rgba(168,85,247,0.2); color:#d8b4fe; border:1px solid rgba(168,85,247,0.3); }
+        .type-exp { background:rgba(34,197,94,0.2); color:#86efac; border:1px solid rgba(34,197,94,0.3); }
+        .reveal-btn { background:none; border:1px solid var(--border); color:var(--accent-light); padding:0.4rem 0.9rem; border-radius:6px; cursor:pointer; font-size:0.8rem; margin-top:0.75rem; transition:all 0.2s; display:block; }
+        .reveal-btn:hover { background:var(--accent); border-color:var(--accent); color:#1a0a00; }
+        .answer { display:none; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); font-size:0.88rem; line-height:1.7; color:var(--text); }
+        .answer.visible { display:block; }
+        .answer pre { font-size:0.78rem; }
+        .quiz-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .quiz-q { font-size:0.95rem; font-weight:600; color:var(--text-bright); margin-bottom:0.75rem; }
+        .quiz-options { display:grid; gap:0.5rem; }
+        .quiz-opt { background:#1c1505; border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.9rem; cursor:pointer; font-size:0.85rem; color:var(--text); text-align:left; transition:all 0.2s; }
+        .quiz-opt:hover:not(:disabled) { border-color:var(--accent); }
+        .quiz-opt.correct { background:rgba(34,197,94,0.15); border-color:#22c55e; color:#86efac; }
+        .quiz-opt.wrong { background:rgba(239,68,68,0.15); border-color:#ef4444; color:#fca5a5; }
+        .quiz-feedback { display:none; margin-top:0.5rem; font-size:0.82rem; padding:0.5rem 0.75rem; border-radius:6px; }
+        .quiz-feedback.show { display:block; }
+        .checklist { list-style:none; display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:0.5rem; margin:1rem 0; }
+        .checklist li { display:flex; align-items:flex-start; gap:0.5rem; font-size:0.85rem; }
+        .checklist input[type="checkbox"] { accent-color:var(--accent-light); width:16px; height:16px; cursor:pointer; flex-shrink:0; margin-top:2px; }
+        .checklist label { cursor:pointer; color:var(--text-dim); }
+        .checklist input:checked + label { color:var(--text); text-decoration:line-through; }
+        .two-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        code { background:rgba(217,119,6,0.15); border:1px solid rgba(217,119,6,0.35); border-radius:4px; padding:0.1rem 0.4rem; font-family:'Cascadia Code',monospace; font-size:0.85em; color:var(--accent-light); }
+        .tanglish { color:var(--accent-light); font-style:italic; }
+        .flow-diagram { background:#050a14; border:1px solid var(--border); border-radius:8px; padding:1rem; margin:0.75rem 0; font-family:'Cascadia Code',monospace; font-size:0.82rem; line-height:2; }
+        .flow-arrow { color:var(--accent-light); }
+        footer { text-align:center; padding:2rem; color:var(--text-dim); font-size:0.8rem; border-top:1px solid var(--border); margin-top:3rem; }
+        @media (max-width:768px) { .two-col { grid-template-columns:1fr; } .hero h1 { font-size:1.8rem; } nav { padding:0.75rem 1rem; } .nav-links { display:none; } }
+    </style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<nav>
+    <div class="nav-brand">🎓 Day 21 / 60 — Background Jobs & Queues</div>
+    <ul class="nav-links">
+        <li><a href="#hosted">IHostedService</a></li>
+        <li><a href="#hangfire">Hangfire</a></li>
+        <li><a href="#servicebus">Service Bus</a></li>
+        <li><a href="#outbox">Outbox Pattern</a></li>
+        <li><a href="#compare">Compare</a></li>
+        <li><a href="#scenarios">Scenarios</a></li>
+        <li><a href="#quiz">Quiz</a></li>
+    </ul>
+</nav>
+
+<div class="hero">
+    <div class="day-badge">DAY 21 OF 60</div>
+    <h1>Background Jobs & Queues</h1>
+    <p class="hero-sub">IHostedService, Hangfire, Azure Service Bus, Outbox Pattern — ZenCampus fee reminders, SMS jobs, and reliable messaging</p>
+    <div class="hero-tags">
+        <span class="tag">IHostedService</span>
+        <span class="tag">BackgroundService</span>
+        <span class="tag">Hangfire</span>
+        <span class="tag">Azure Service Bus</span>
+        <span class="tag">Outbox Pattern</span>
+        <span class="tag">At-Least-Once Delivery</span>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- ===== WHY BACKGROUND JOBS ===== -->
+<h2 class="section-title">Why Background Jobs?</h2>
+<div class="concept-card">
+    <div class="concept-title"><span>⚡</span> HTTP Request-Response vs Background Processing</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Fee collect panna click pannum po</span> — student-ku SMS send pannanum, receipt PDF generate pannanum, fee balance update pannanum. All these in the HTTP request? That's 3+ seconds. User thinks it's frozen!</p>
+    <div class="two-col">
+        <div>
+            <div class="danger-box">❌ <strong>Doing everything in HTTP request</strong><br>
+            1. Save to DB (50ms)<br>
+            2. Send SMS via Msg91 (800ms)<br>
+            3. Generate PDF receipt (500ms)<br>
+            4. Update analytics (200ms)<br>
+            <strong>Total: ~1.5s+ timeout risk</strong></div>
+        </div>
+        <div>
+            <div class="good-box">✅ <strong>Background job approach</strong><br>
+            1. Save to DB (50ms)<br>
+            2. Enqueue job → return 201 (60ms)<br>
+            — Background worker sends SMS<br>
+            — Background worker generates PDF<br>
+            <strong>Request: 110ms, user happy!</strong></div>
+        </div>
+    </div>
+    <p style="margin:0.75rem 0;color:var(--text-dim)"><span class="tanglish">Three tools available pannom</span> — different use cases, different strengths:</p>
+    <table>
+        <tr><th>Tool</th><th>Best For</th><th>Persistence</th><th>Retry</th><th>ZenCampus Use</th></tr>
+        <tr><td><strong>IHostedService</strong></td><td>Scheduled/periodic tasks</td><td>In-memory</td><td>Manual</td><td>Midnight fee reminders, daily sync</td></tr>
+        <tr><td><strong>Hangfire</strong></td><td>Fire-and-forget, scheduled jobs</td><td>SQL Server / Redis</td><td>Auto (10 retries)</td><td>SMS, PDF, email after admission</td></tr>
+        <tr><td><strong>Azure Service Bus</strong></td><td>Cross-service async messaging</td><td>Azure cloud</td><td>Dead-letter queue</td><td>Fee payment event → multiple consumers</td></tr>
+    </table>
+</div>
+
+<!-- ===== IHOSTEDSERVICE ===== -->
+<h2 class="section-title" id="hosted">IHostedService / BackgroundService</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🔄</span> Built-in ASP.NET Core — No External Packages</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">ASP.NET Core built-in-a irukku</span> — NuGet package வேண்டாம். Long-running background work or scheduled periodic tasks-ku use pannrom.</p>
+
+    <pre><span class="cmt">// Option 1: IHostedService — manual start/stop</span>
+<span class="kw">public class</span> <span class="cls">FeeReminderHostedService</span> : <span class="cls">IHostedService</span>, <span class="cls">IDisposable</span>
+{
+    <span class="kw">private</span> <span class="cls">Timer</span>? _timer;
+
+    <span class="kw">public</span> Task <span class="mth">StartAsync</span>(<span class="cls">CancellationToken</span> ct)
+    {
+        <span class="cmt">// Run immediately, then every 24 hours</span>
+        _timer = <span class="kw">new</span> <span class="cls">Timer</span>(<span class="mth">SendFeeReminders</span>, <span class="kw">null</span>,
+            TimeSpan.Zero, TimeSpan.<span class="mth">FromHours</span>(<span class="num">24</span>));
+        <span class="kw">return</span> Task.CompletedTask;
+    }
+
+    <span class="kw">private async void</span> <span class="mth">SendFeeReminders</span>(<span class="kw">object</span>? state)
+    {
+        <span class="cmt">// ⚠️ Can't inject scoped services directly — must create scope!</span>
+        <span class="kw">using var</span> scope = _sp.<span class="mth">CreateScope</span>();
+        <span class="kw">var</span> repo = scope.ServiceProvider.<span class="mth">GetRequiredService</span>&lt;<span class="cls">IStudentRepository</span>&gt;();
+        <span class="kw">var</span> sms  = scope.ServiceProvider.<span class="mth">GetRequiredService</span>&lt;<span class="cls">ISmsService</span>&gt;();
+
+        <span class="kw">var</span> overdue = <span class="kw">await</span> repo.<span class="mth">GetOverdueFeeStudentsAsync</span>();
+        <span class="kw">foreach</span> (<span class="kw">var</span> student <span class="kw">in</span> overdue)
+            <span class="kw">await</span> sms.<span class="mth">SendReminderAsync</span>(student.ParentPhone, student.FeeDue);
+    }
+
+    <span class="kw">public</span> Task <span class="mth">StopAsync</span>(<span class="cls">CancellationToken</span> ct)
+    {
+        _timer?.<span class="mth">Change</span>(<span class="cls">Timeout</span>.Infinite, <span class="num">0</span>);
+        <span class="kw">return</span> Task.CompletedTask;
+    }
+
+    <span class="kw">public void</span> <span class="mth">Dispose</span>() => _timer?.<span class="mth">Dispose</span>();
+}</pre>
+
+    <pre><span class="cmt">// Option 2: BackgroundService — cleaner, abstract class with ExecuteAsync</span>
+<span class="kw">public class</span> <span class="cls">AttendanceSyncService</span> : <span class="cls">BackgroundService</span>
+{
+    <span class="kw">private readonly</span> <span class="cls">IServiceProvider</span> _sp;
+    <span class="kw">private readonly</span> <span class="cls">ILogger</span>&lt;<span class="cls">AttendanceSyncService</span>&gt; _log;
+
+    <span class="kw">public</span> <span class="cls">AttendanceSyncService</span>(<span class="cls">IServiceProvider</span> sp, <span class="cls">ILogger</span>&lt;<span class="cls">AttendanceSyncService</span>&gt; log)
+        => (_sp, _log) = (sp, log);
+
+    <span class="kw">protected override async</span> Task <span class="mth">ExecuteAsync</span>(<span class="cls">CancellationToken</span> stoppingToken)
+    {
+        _log.<span class="mth">LogInformation</span>(<span class="str">"Attendance sync service started"</span>);
+
+        <span class="kw">while</span> (!stoppingToken.IsCancellationRequested)
+        {
+            <span class="kw">try</span>
+            {
+                <span class="kw">await</span> <span class="mth">SyncAttendanceAsync</span>(stoppingToken);
+            }
+            <span class="kw">catch</span> (<span class="cls">Exception</span> ex) <span class="kw">when</span> (ex <span class="kw">is not</span> <span class="cls">OperationCanceledException</span>)
+            {
+                _log.<span class="mth">LogError</span>(ex, <span class="str">"Attendance sync failed, will retry in 5 minutes"</span>);
+            }
+
+            <span class="cmt">// Wait until midnight or 5 min on error</span>
+            <span class="kw">var</span> delay = <span class="mth">TimeUntilMidnight</span>();
+            <span class="kw">await</span> Task.<span class="mth">Delay</span>(delay, stoppingToken);
+        }
+    }
+
+    <span class="kw">private async</span> Task <span class="mth">SyncAttendanceAsync</span>(<span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">using var</span> scope = _sp.<span class="mth">CreateScope</span>();
+        <span class="kw">var</span> service = scope.ServiceProvider.<span class="mth">GetRequiredService</span>&lt;<span class="cls">IAttendanceService</span>&gt;();
+        <span class="kw">await</span> service.<span class="mth">SyncAllSchoolsAsync</span>(ct);
+    }
+}
+
+<span class="cmt">// Program.cs</span>
+builder.Services.<span class="mth">AddHostedService</span>&lt;<span class="cls">AttendanceSyncService</span>&gt;();
+builder.Services.<span class="mth">AddHostedService</span>&lt;<span class="cls">FeeReminderHostedService</span>&gt;();</pre>
+
+    <div class="warn-box"><strong>Critical:</strong> IHostedService is <strong>singleton</strong> — you cannot inject scoped services (DbContext, repositories) directly! Always use <code>IServiceProvider.CreateScope()</code> inside the job method. Forgetting this causes "Cannot consume scoped service from singleton" exception at startup.</div>
+</div>
+
+<!-- ===== HANGFIRE ===== -->
+<h2 class="section-title" id="hangfire">Hangfire — Persistent Background Jobs</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🔧</span> Fire-and-Forget, Scheduled, Recurring — Persisted in SQL</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">IHostedService-la job fail aana</span> — server restart aana — job gone! Hangfire persists jobs to SQL Server. Auto-retry 10 times. Dashboard-la all job status kaanalam.</p>
+
+    <pre><span class="cmt">// NuGet: Hangfire, Hangfire.SqlServer, Hangfire.AspNetCore</span>
+<span class="cmt">// Program.cs</span>
+builder.Services.<span class="mth">AddHangfire</span>(config => config
+    .<span class="mth">SetDataCompatibilityLevel</span>(CompatibilityLevel.Version_180)
+    .<span class="mth">UseSimpleAssemblyNameTypeSerializer</span>()
+    .<span class="mth">UseRecommendedSerializerSettings</span>()
+    .<span class="mth">UseSqlServerStorage</span>(builder.Configuration.<span class="mth">GetConnectionString</span>(<span class="str">"HangfireDb"</span>)));
+
+builder.Services.<span class="mth">AddHangfireServer</span>(opts =>
+{
+    opts.WorkerCount = <span class="num">5</span>;             <span class="cmt">// 5 parallel workers</span>
+    opts.Queues = [<span class="str">"critical"</span>, <span class="str">"default"</span>, <span class="str">"low"</span>]; <span class="cmt">// Priority queues</span>
+});
+
+<span class="cmt">// Dashboard — Dev only! Exposes job details</span>
+<span class="kw">if</span> (app.Environment.<span class="mth">IsDevelopment</span>())
+    app.<span class="mth">UseHangfireDashboard</span>(<span class="str">"/hangfire"</span>);</pre>
+
+    <pre><span class="cmt">// 4 types of Hangfire jobs</span>
+
+<span class="cmt">// 1. Fire-and-forget — enqueue, run once ASAP</span>
+<span class="kw">var</span> jobId = <span class="cls">BackgroundJob</span>.<span class="mth">Enqueue</span>(
+    () => _smsService.<span class="mth">SendWelcomeSmsAsync</span>(student.ParentPhone, student.Name));
+<span class="cmt">// Called in AdmitStudentCommandHandler → HTTP request returns immediately</span>
+
+<span class="cmt">// 2. Delayed — run after X time</span>
+<span class="cls">BackgroundJob</span>.<span class="mth">Schedule</span>(
+    () => _emailService.<span class="mth">SendFeeReminderAsync</span>(student.Id),
+    TimeSpan.<span class="mth">FromDays</span>(<span class="num">7</span>));  <span class="cmt">// 7 days after admission</span>
+
+<span class="cmt">// 3. Recurring — cron schedule</span>
+<span class="cls">RecurringJob</span>.<span class="mth">AddOrUpdate</span>(
+    recurringJobId: <span class="str">"midnight-fee-reminder"</span>,
+    methodCall:     () => _feeReminderService.<span class="mth">SendAllRemindersAsync</span>(),
+    cronExpression: <span class="str">"0 0 * * *"</span>);  <span class="cmt">// Every midnight (cron)</span>
+
+<span class="cmt">// 4. Continuation — run B only if A succeeds</span>
+<span class="kw">var</span> admitJobId = <span class="cls">BackgroundJob</span>.<span class="mth">Enqueue</span>(
+    () => _admissionService.<span class="mth">CreateFeeStructureAsync</span>(student.Id));
+<span class="cls">BackgroundJob</span>.<span class="mth">ContinueJobWith</span>(admitJobId,
+    () => _emailService.<span class="mth">SendWelcomePackAsync</span>(student.Id));
+<span class="cmt">// Welcome pack email only if fee structure was created successfully</span></pre>
+
+    <pre><span class="cmt">// Priority queues — [Queue] attribute</span>
+<span class="kw">public class</span> <span class="cls">SmsJobService</span>
+{
+    [<span class="attr">Queue</span>(<span class="str">"critical"</span>)]  <span class="cmt">// Processed first</span>
+    <span class="kw">public async</span> Task <span class="mth">SendPaymentReceiptSmsAsync</span>(<span class="kw">int</span> receiptId) { ... }
+
+    [<span class="attr">Queue</span>(<span class="str">"default"</span>)]
+    <span class="kw">public async</span> Task <span class="mth">SendWelcomeSmsAsync</span>(<span class="kw">string</span> phone, <span class="kw">string</span> name) { ... }
+
+    [<span class="attr">Queue</span>(<span class="str">"low"</span>)]      <span class="cmt">// Processed last</span>
+    <span class="kw">public async</span> Task <span class="mth">SendMonthlyNewsletterAsync</span>(<span class="kw">int</span> schoolId) { ... }
+}
+
+<span class="cmt">// Retry policy — default 10 retries with exponential backoff</span>
+[<span class="attr">AutomaticRetry</span>(Attempts = <span class="num">5</span>, OnAttemptsExceeded = AttemptsExceededAction.Fail)]
+<span class="kw">public async</span> Task <span class="mth">SendSmsAsync</span>(<span class="kw">string</span> phone, <span class="kw">string</span> message)
+{
+    <span class="kw">await</span> _msg91Client.<span class="mth">SendAsync</span>(phone, message);
+    <span class="cmt">// If Msg91 is down: retry at 1m, 10m, 30m, 1h, 2h intervals</span>
+}</pre>
+
+    <div class="info-box"><strong>Production setup:</strong> Use separate connection string for Hangfire DB — <code>"HangfireDb"</code>. This prevents Hangfire's job tables from polluting your main ZenCampus DB. On Azure: use Redis as Hangfire storage (<code>Hangfire.Pro.Redis</code>) for better performance with 200 schools enqueuing simultaneously.</div>
+</div>
+
+<!-- ===== AZURE SERVICE BUS ===== -->
+<h2 class="section-title" id="servicebus">Azure Service Bus</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>☁️</span> Cross-Service Async Messaging — Fan-Out, Dead-Letter Queue</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Fee payment aana po</span> — SMS service, balance update service, analytics service, parent app notification — all must know. Service Bus = one message, multiple consumers. Decoupled! Service down-a irundha — message waits in queue, not lost.</p>
+
+    <div class="flow-diagram">
+<span style="color:#fcd34d">Fee Payment API</span>  <span class="flow-arrow">──► publishes ──►</span>  <span style="color:#22d3ee">Service Bus Topic</span>  <span style="color:#6b7280">(fee-payment-events)</span>
+                               <span class="flow-arrow">│</span>
+             <span class="flow-arrow">┌──────────────┴──────────────┐──────────────────┐</span>
+             <span class="flow-arrow">▼</span>                            <span class="flow-arrow">▼</span>                  <span class="flow-arrow">▼</span>
+<span style="color:#86efac">SMS Subscription</span>     <span style="color:#86efac">Analytics Subscription</span>    <span style="color:#86efac">ParentApp Subscription</span>
+<span style="color:#6b7280">(send receipt SMS)  (update fee analytics)    (push notification)</span>
+    </div>
+
+    <pre><span class="cmt">// NuGet: Azure.Messaging.ServiceBus</span>
+<span class="cmt">// Program.cs</span>
+builder.Services.<span class="mth">AddSingleton</span>(<span class="kw">new</span> <span class="cls">ServiceBusClient</span>(
+    builder.Configuration[<span class="str">"ServiceBus:ConnectionString"</span>]!));
+
+builder.Services.<span class="mth">AddSingleton</span>&lt;<span class="cls">IEventPublisher</span>, <span class="cls">ServiceBusEventPublisher</span>&gt;();
+builder.Services.<span class="mth">AddHostedService</span>&lt;<span class="cls">FeePaymentEventConsumer</span>&gt;();</pre>
+
+    <pre><span class="cmt">// Publisher — sends message to Topic</span>
+<span class="kw">public class</span> <span class="cls">ServiceBusEventPublisher</span>(<span class="cls">ServiceBusClient</span> _client) : <span class="cls">IEventPublisher</span>
+{
+    <span class="kw">public async</span> Task <span class="mth">PublishAsync</span>&lt;T&gt;(T @event, <span class="kw">string</span> topicName, <span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">await using var</span> sender = _client.<span class="mth">CreateSender</span>(topicName);
+
+        <span class="kw">var</span> json    = <span class="cls">JsonSerializer</span>.<span class="mth">Serialize</span>(@event);
+        <span class="kw">var</span> message = <span class="kw">new</span> <span class="cls">ServiceBusMessage</span>(json)
+        {
+            MessageId      = <span class="cls">Guid</span>.<span class="mth">NewGuid</span>().<span class="mth">ToString</span>(), <span class="cmt">// Dedup key</span>
+            ContentType    = <span class="str">"application/json"</span>,
+            Subject        = <span class="kw">typeof</span>(T).Name,
+            SessionId      = @event is <span class="cls">ISchoolEvent</span> se ? se.SchoolId.<span class="mth">ToString</span>() : <span class="kw">null</span>
+        };
+        <span class="kw">await</span> sender.<span class="mth">SendMessageAsync</span>(message, ct);
+    }
+}
+
+<span class="cmt">// Usage in CollectFeeCommandHandler</span>
+<span class="kw">await</span> _publisher.<span class="mth">PublishAsync</span>(
+    <span class="kw">new</span> <span class="cls">FeePaymentCollectedEvent</span>(receipt.ReceiptNo, student.ParentPhone, receipt.Amount),
+    topicName: <span class="str">"fee-payment-events"</span>,
+    ct);</pre>
+
+    <pre><span class="cmt">// Consumer — BackgroundService processing messages</span>
+<span class="kw">public class</span> <span class="cls">FeePaymentEventConsumer</span>(<span class="cls">ServiceBusClient</span> _client, <span class="cls">IServiceProvider</span> _sp)
+    : <span class="cls">BackgroundService</span>
+{
+    <span class="kw">protected override async</span> Task <span class="mth">ExecuteAsync</span>(<span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">await using var</span> processor = _client.<span class="mth">CreateProcessor</span>(
+            topicName:        <span class="str">"fee-payment-events"</span>,
+            subscriptionName: <span class="str">"sms-subscription"</span>,
+            <span class="kw">new</span> <span class="cls">ServiceBusProcessorOptions</span>
+            {
+                MaxConcurrentCalls = <span class="num">5</span>,
+                AutoCompleteMessages = <span class="kw">false</span>  <span class="cmt">// Manual ack — we control when to complete</span>
+            });
+
+        processor.ProcessMessageAsync += <span class="mth">HandleMessageAsync</span>;
+        processor.ProcessErrorAsync   += <span class="mth">HandleErrorAsync</span>;
+
+        <span class="kw">await</span> processor.<span class="mth">StartProcessingAsync</span>(ct);
+        <span class="kw">await</span> Task.<span class="mth">Delay</span>(<span class="cls">Timeout</span>.Infinite, ct); <span class="cmt">// Keep alive</span>
+        <span class="kw">await</span> processor.<span class="mth">StopProcessingAsync</span>(ct);
+    }
+
+    <span class="kw">private async</span> Task <span class="mth">HandleMessageAsync</span>(<span class="cls">ProcessMessageEventArgs</span> args)
+    {
+        <span class="kw">var</span> @event = <span class="cls">JsonSerializer</span>.<span class="mth">Deserialize</span>&lt;<span class="cls">FeePaymentCollectedEvent</span>&gt;(
+            args.Message.Body.<span class="mth">ToString</span>())!;
+
+        <span class="kw">using var</span> scope = _sp.<span class="mth">CreateScope</span>();
+        <span class="kw">var</span> sms = scope.ServiceProvider.<span class="mth">GetRequiredService</span>&lt;<span class="cls">ISmsService</span>&gt;();
+
+        <span class="kw">await</span> sms.<span class="mth">SendReceiptAsync</span>(@event.ParentPhone, @event.ReceiptNo, @event.Amount);
+
+        <span class="kw">await</span> args.<span class="mth">CompleteMessageAsync</span>(args.Message); <span class="cmt">// ✅ Remove from queue</span>
+        <span class="cmt">// If exception thrown → message goes back to queue → retry up to MaxDeliveryCount</span>
+        <span class="cmt">// After MaxDeliveryCount → Dead Letter Queue (DLQ) for manual inspection</span>
+    }
+}</pre>
+
+    <div class="info-box"><strong>Dead Letter Queue (DLQ):</strong> After 10 failed deliveries (configurable), message moves to DLQ. Our ops team monitors DLQ — manually inspect why SMS failed (number invalid? Msg91 down?). Fix issue, re-process from DLQ. Never silently drop failed messages!</div>
+</div>
+
+<!-- ===== OUTBOX PATTERN ===== -->
+<h2 class="section-title" id="outbox">Outbox Pattern — Guaranteed Message Delivery</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>📬</span> The Problem: DB Saved but Event Not Published</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Student admit panna</span> — DB-la save achu, but Service Bus publish panna before server crash! Student DB-la irukku but fee record create aagala, SMS pogala. <strong>Data inconsistency!</strong> Outbox pattern solves this.</p>
+
+    <div class="danger-box">❌ <strong>The race condition without Outbox:</strong>
+<pre style="margin-top:0.5rem;font-size:0.78rem"><span class="kw">await</span> _db.<span class="mth">SaveChangesAsync</span>();      <span class="cmt">// ← Student saved ✅</span>
+<span class="kw">await</span> _bus.<span class="mth">PublishAsync</span>(event);     <span class="cmt">// ← CRASH HERE! Event lost ❌</span>
+<span class="cmt">// Student exists in DB, but FeeCreatedEvent never reached Service Bus</span>
+<span class="cmt">// Fee record never created → student has no fee structure → billing broken</span></pre>
+    </div>
+
+    <div class="good-box">✅ <strong>Outbox Pattern — same DB transaction:</strong><br>Save domain event to <code>OutboxMessages</code> table in SAME transaction as domain changes. Separate background worker reads outbox table and publishes to Service Bus. If publish fails — retry from outbox. Atomic by design.</div>
+
+    <pre><span class="cmt">// Outbox message table</span>
+<span class="kw">public class</span> <span class="cls">OutboxMessage</span>
+{
+    <span class="kw">public</span> <span class="cls">Guid</span>     Id          { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="cls">Guid</span>.<span class="mth">NewGuid</span>();
+    <span class="kw">public string</span>   EventType   { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="kw">string</span>.Empty; <span class="cmt">// "StudentAdmittedEvent"</span>
+    <span class="kw">public string</span>   Payload     { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="kw">string</span>.Empty; <span class="cmt">// JSON</span>
+    <span class="kw">public</span> DateTime OccurredAt  { <span class="kw">get</span>; <span class="kw">set</span>; } = DateTime.UtcNow;
+    <span class="kw">public</span> DateTime? ProcessedAt { <span class="kw">get</span>; <span class="kw">set</span>; }  <span class="cmt">// null = not yet published</span>
+    <span class="kw">public string</span>?  Error       { <span class="kw">get</span>; <span class="kw">set</span>; }   <span class="cmt">// last failure reason</span>
+}
+
+<span class="cmt">// EF Core entity + migration for outbox table</span>
+modelBuilder.<span class="mth">Entity</span>&lt;<span class="cls">OutboxMessage</span>&gt;(b =>
+{
+    b.<span class="mth">HasIndex</span>(x => x.ProcessedAt);  <span class="cmt">// Query unprocessed fast</span>
+    b.<span class="mth">HasIndex</span>(x => x.OccurredAt);
+});</pre>
+
+    <pre><span class="cmt">// Command handler — save student + outbox in ONE transaction</span>
+<span class="kw">public async</span> Task&lt;<span class="cls">AdmitStudentResult</span>&gt; <span class="mth">Handle</span>(<span class="cls">AdmitStudentCommand</span> cmd, <span class="cls">CancellationToken</span> ct)
+{
+    <span class="kw">var</span> student = <span class="kw">new</span> <span class="cls">Student</span> { Name = cmd.Name, SchoolId = cmd.SchoolId };
+    _db.Students.<span class="mth">Add</span>(student);
+
+    <span class="cmt">// Save domain event to Outbox — SAME transaction!</span>
+    <span class="kw">var</span> outboxMsg = <span class="kw">new</span> <span class="cls">OutboxMessage</span>
+    {
+        EventType = <span class="kw">nameof</span>(<span class="cls">StudentAdmittedEvent</span>),
+        Payload   = <span class="cls">JsonSerializer</span>.<span class="mth">Serialize</span>(
+            <span class="kw">new</span> <span class="cls">StudentAdmittedEvent</span>(student.Id, student.SchoolId, cmd.ParentPhone))
+    };
+    _db.OutboxMessages.<span class="mth">Add</span>(outboxMsg);
+
+    <span class="kw">await</span> _db.<span class="mth">SaveChangesAsync</span>(ct);
+    <span class="cmt">// ↑ Both student AND outbox message committed atomically</span>
+    <span class="cmt">// If this fails → neither saved → consistent</span>
+    <span class="cmt">// If this succeeds → both saved → background worker will publish event</span>
+
+    <span class="kw">return new</span> <span class="cls">AdmitStudentResult</span>(student.Id);
+}</pre>
+
+    <pre><span class="cmt">// Outbox processor — BackgroundService polling outbox table</span>
+<span class="kw">public class</span> <span class="cls">OutboxProcessorService</span>(<span class="cls">IServiceProvider</span> _sp, <span class="cls">IEventPublisher</span> _publisher)
+    : <span class="cls">BackgroundService</span>
+{
+    <span class="kw">protected override async</span> Task <span class="mth">ExecuteAsync</span>(<span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">while</span> (!ct.IsCancellationRequested)
+        {
+            <span class="kw">await</span> <span class="mth">ProcessPendingMessagesAsync</span>(ct);
+            <span class="kw">await</span> Task.<span class="mth">Delay</span>(<span class="cls">TimeSpan</span>.<span class="mth">FromSeconds</span>(<span class="num">5</span>), ct); <span class="cmt">// Poll every 5s</span>
+        }
+    }
+
+    <span class="kw">private async</span> Task <span class="mth">ProcessPendingMessagesAsync</span>(<span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">using var</span> scope = _sp.<span class="mth">CreateScope</span>();
+        <span class="kw">var</span> db = scope.ServiceProvider.<span class="mth">GetRequiredService</span>&lt;<span class="cls">ZenCampusDbContext</span>&gt;();
+
+        <span class="kw">var</span> pending = <span class="kw">await</span> db.OutboxMessages
+            .<span class="mth">Where</span>(m => m.ProcessedAt == <span class="kw">null</span>)
+            .<span class="mth">OrderBy</span>(m => m.OccurredAt)
+            .<span class="mth">Take</span>(<span class="num">20</span>)          <span class="cmt">// Batch of 20</span>
+            .<span class="mth">ToListAsync</span>(ct);
+
+        <span class="kw">foreach</span> (<span class="kw">var</span> msg <span class="kw">in</span> pending)
+        {
+            <span class="kw">try</span>
+            {
+                <span class="kw">await</span> _publisher.<span class="mth">PublishRawAsync</span>(msg.EventType, msg.Payload, ct);
+                msg.ProcessedAt = DateTime.UtcNow;
+            }
+            <span class="kw">catch</span> (<span class="cls">Exception</span> ex)
+            {
+                msg.Error = ex.Message;
+                <span class="cmt">// ProcessedAt stays null → will retry next poll</span>
+            }
+        }
+
+        <span class="kw">await</span> db.<span class="mth">SaveChangesAsync</span>(ct);
+    }
+}</pre>
+
+    <div class="info-box"><strong>Idempotency:</strong> Service Bus consumer must handle duplicate messages (at-least-once delivery). Store processed <code>MessageId</code> in <code>ProcessedMessages</code> table. Check before processing: <code>if (await IsAlreadyProcessed(messageId)) { complete; return; }</code> — this makes consumer idempotent.</div>
+</div>
+
+<!-- ===== COMPARISON ===== -->
+<h2 class="section-title" id="compare">When to Use What — Decision Matrix</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🎯</span> Pick the Right Tool</div>
+    <table>
+        <tr><th>Scenario</th><th>Best Choice</th><th>Why</th></tr>
+        <tr><td>Daily midnight fee reminder email to 50,000 parents</td><td>BackgroundService + Hangfire RecurringJob</td><td>Scheduled, persisted, auto-retry if Msg91 down</td></tr>
+        <tr><td>Send welcome SMS immediately after student admitted</td><td>Hangfire fire-and-forget</td><td>Offload from HTTP, retry on failure, dashboard visibility</td></tr>
+        <tr><td>Fee paid → notify SMS service + analytics + parent app</td><td>Azure Service Bus Topic</td><td>Fan-out to multiple subscribers, decoupled services</td></tr>
+        <tr><td>Ensure fee event published even if Service Bus temporarily down</td><td>Outbox Pattern</td><td>Atomic with DB transaction, guaranteed delivery</td></tr>
+        <tr><td>Clean up expired sessions every hour</td><td>BackgroundService (IHostedService)</td><td>Simple, no persistence needed, in-process</td></tr>
+        <tr><td>Generate 500-page PDF attendance report</td><td>Hangfire + return job ID to client</td><td>Long-running, shouldn't block HTTP, client polls</td></tr>
+        <tr><td>Process fee payment from multiple schools in order</td><td>Service Bus with Sessions</td><td>SessionId = SchoolId → ordered delivery per school</td></tr>
+    </table>
+</div>
+
+<!-- ===== MOVIE REFERENCES ===== -->
+<h2 class="section-title" id="movies">🎬 Tamil Movie Memory Anchors</h2>
+
+<div class="movie-box">
+    <div class="movie-icon">🔄</div>
+    <div class="movie-content">
+        <h4>IHostedService — "Theri" (2016)</h4>
+        <p>Vijay-la character background-la always working — protecting family silently. IHostedService same: runs in background, application starts → service starts, application stops → service stops. Midnight-la fee reminder send pannum — user doesn't see it, it just happens. Always running, always protecting ZenCampus data!</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">🔧</div>
+    <div class="movie-content">
+        <h4>Hangfire — "Singam" (2010)</h4>
+        <p>Singam-la Suriya: "Naan oru thadava sonna nooru thadava sonna mathiri." Hangfire same: job fail aana auto-retry 10 times. Server crash aana — restart aana — pending jobs still there (SQL-la saved). <code>Attempts = 5</code> = "5 thadava try pannuven, fail aana DLQ." Reliable, persistent, never gives up until max retries!</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">☁️</div>
+    <div class="movie-content">
+        <h4>Azure Service Bus — "Indian" (1996)</h4>
+        <p>Kamal's Indian (Senapathi) sends one judgment/decision — multiple departments act on it independently. Service Bus Topic same: FeePaymentCollectedEvent published once → SMS subscription, Analytics subscription, ParentApp subscription all receive it and process independently. One message, multiple handlers, fully decoupled!</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">📬</div>
+    <div class="movie-content">
+        <h4>Outbox Pattern — "96" (2018)</h4>
+        <p>96-la Ram's promise to Janu — a commitment that must be kept even if life intervenes. Outbox Pattern same: student admitted = commitment (outbox message saved). Even if Service Bus crashes at that moment, the promise (outbox row) exists in DB. Background processor delivers it when Service Bus recovers. Commitment never broken — at-least-once guaranteed!</p>
+    </div>
+</div>
+
+<!-- ===== SCENARIOS ===== -->
+<h2 class="section-title" id="scenarios">🎯 10 Interview Scenarios</h2>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q1. What is IHostedService vs BackgroundService? What's the difference?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>IHostedService</strong> is the interface — you implement <code>StartAsync</code> and <code>StopAsync</code> manually.</p>
+        <p style="margin-top:0.5rem"><strong>BackgroundService</strong> is an abstract class that implements <code>IHostedService</code> — you override only <code>ExecuteAsync(CancellationToken)</code>. It handles the boilerplate: CancellationToken wiring, exception handling skeleton, proper lifecycle.</p>
+        <pre><span class="cmt">// IHostedService — more control, more boilerplate</span>
+<span class="kw">public class</span> <span class="cls">MyService</span> : <span class="cls">IHostedService</span>
+{
+    <span class="kw">public</span> Task <span class="mth">StartAsync</span>(<span class="cls">CancellationToken</span> ct) { <span class="cmt">/* start timer/thread */</span> }
+    <span class="kw">public</span> Task <span class="mth">StopAsync</span>(<span class="cls">CancellationToken</span> ct)  { <span class="cmt">/* cleanup */</span> }
+}
+
+<span class="cmt">// BackgroundService — cleaner, recommended</span>
+<span class="kw">public class</span> <span class="cls">MyService</span> : <span class="cls">BackgroundService</span>
+{
+    <span class="kw">protected override async</span> Task <span class="mth">ExecuteAsync</span>(<span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">while</span> (!ct.IsCancellationRequested) { <span class="cmt">/* work */</span> }
+    }
+}</pre>
+        <p><strong>ZenCampus:</strong> "We use BackgroundService for all our hosted services — AttendanceSyncService, OutboxProcessorService. It's simpler and the CancellationToken propagation is handled correctly."</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q2. Production Bug: Fee reminder SMS scheduled job is failing silently — parents never get reminders, but no error in logs. How do you diagnose?</div>
+        <span class="scenario-type type-prod">Production Bug</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Most likely causes (check in order):</strong></p>
+        <ol style="margin-left:1.5rem">
+            <li><strong>Scoped service in singleton:</strong> If IHostedService directly injects <code>IStudentRepository</code> (scoped) — DI throws at startup but may be swallowed. Check: use <code>IServiceProvider.CreateScope()</code></li>
+            <li><strong>async void timer callback:</strong> <code>private async void TimerCallback()</code> — exceptions in async void are unobserved and swallowed! Change to <code>async Task</code> and await properly</li>
+            <li><strong>Hangfire workers not running:</strong> Check <code>/hangfire</code> dashboard — are workers active? Is HangfireDb connection string valid?</li>
+            <li><strong>RecurringJob not registered:</strong> <code>RecurringJob.AddOrUpdate</code> must be called after app builds — not during <code>builder.Services</code> phase</li>
+        </ol>
+        <pre><span class="cmt">// ❌ Silent exception swallower</span>
+<span class="kw">private async void</span> <span class="mth">OnTimer</span>(<span class="kw">object</span>? state)  <span class="cmt">// async void = exception disappears!</span>
+{
+    <span class="kw">await</span> _smsService.<span class="mth">SendRemindersAsync</span>(); <span class="cmt">// throws → nobody hears it</span>
+}
+
+<span class="cmt">// ✅ Fix — catch and log</span>
+<span class="kw">private async void</span> <span class="mth">OnTimer</span>(<span class="kw">object</span>? state)
+{
+    <span class="kw">try</span> { <span class="kw">await</span> _smsService.<span class="mth">SendRemindersAsync</span>(); }
+    <span class="kw">catch</span> (<span class="cls">Exception</span> ex) { _log.<span class="mth">LogError</span>(ex, <span class="str">"Fee reminder job failed"</span>); }
+}
+<span class="cmt">// Better: use Hangfire — it logs all job failures automatically</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q3. When do you choose Hangfire over IHostedService? When do you choose Azure Service Bus over Hangfire?</div>
+        <span class="scenario-type type-design">Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Hangfire over IHostedService when:</strong></p>
+        <ul style="margin-left:1.5rem">
+            <li>Job must survive server restarts (IHostedService = in-memory)</li>
+            <li>Need dashboard to see job status, retry history, failures</li>
+            <li>Need auto-retry with backoff (Hangfire: 10 retries, exponential delay)</li>
+            <li>Need to enqueue jobs from within a request (fire-and-forget)</li>
+            <li>Need scheduled/delayed jobs dynamically (<code>BackgroundJob.Schedule(delay)</code>)</li>
+        </ul>
+        <p style="margin-top:0.5rem"><strong>Azure Service Bus over Hangfire when:</strong></p>
+        <ul style="margin-left:1.5rem">
+            <li>Multiple <strong>different services</strong> must react to same event (fan-out)</li>
+            <li>Producer and consumer are in separate microservices/processes</li>
+            <li>Need <strong>ordering guarantees</strong> (Sessions: per-school ordered processing)</li>
+            <li>Need <strong>Dead Letter Queue</strong> for poison messages</li>
+            <li>Scale: millions of messages/day (Service Bus handles unlimited; Hangfire limited by SQL)</li>
+            <li>Event-driven architecture (EDA) between domains</li>
+        </ul>
+        <p style="margin-top:0.5rem"><strong>ZenCampus:</strong> "We use all three: IHostedService for daily sync (simple, in-process), Hangfire for SMS/PDF after admission (fire-and-forget with retry), Service Bus for fee payment events (multiple consumers across modules)."</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q4. Explain the Outbox Pattern. Why do you need it? What problem does it solve?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>The Problem:</strong> You save to DB, then publish to Service Bus. If the server crashes between these two operations — DB has the data but the event was never published. Fee record not created, SMS not sent — data inconsistency.</p>
+        <p style="margin-top:0.5rem"><strong>Two-phase commit</strong> (distributed transactions) could solve it but is slow and complex.</p>
+        <p style="margin-top:0.5rem"><strong>Outbox Pattern solution:</strong></p>
+        <ol style="margin-left:1.5rem">
+            <li>Save domain data + outbox message in <strong>same DB transaction</strong></li>
+            <li>Background OutboxProcessor polls outbox table, publishes to Service Bus</li>
+            <li>Marks message as processed (<code>ProcessedAt = DateTime.UtcNow</code>)</li>
+            <li>If publish fails → <code>ProcessedAt</code> stays null → retry next poll</li>
+        </ol>
+        <p style="margin-top:0.5rem"><strong>Guarantees:</strong> At-least-once delivery (not exactly-once — consumer must be idempotent). <br>
+        <strong>Library:</strong> MassTransit + EntityFramework outbox, or Quartz.NET — both implement this pattern built-in.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q5. Service Bus consumer processes a fee payment message, sends SMS, then DB update fails. Message is completed. Parent gets SMS but DB has no record. How to fix?</div>
+        <span class="scenario-type type-prod">Production Bug</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Root cause:</strong> SMS sent and message completed before DB update. Operations not atomic.</p>
+        <p style="margin-top:0.5rem"><strong>Fix — correct order + idempotency:</strong></p>
+        <pre><span class="kw">private async</span> Task <span class="mth">HandleMessageAsync</span>(<span class="cls">ProcessMessageEventArgs</span> args)
+{
+    <span class="kw">var</span> @event = <span class="cls">JsonSerializer</span>.<span class="mth">Deserialize</span>&lt;<span class="cls">FeePaymentEvent</span>&gt;(args.Message.Body.<span class="mth">ToString</span>())!;
+
+    <span class="cmt">// 1. Check idempotency — already processed?</span>
+    <span class="kw">if</span> (<span class="kw">await</span> _db.ProcessedMessages.<span class="mth">AnyAsync</span>(m => m.MessageId == args.Message.MessageId))
+    {
+        <span class="kw">await</span> args.<span class="mth">CompleteMessageAsync</span>(args.Message);
+        <span class="kw">return</span>; <span class="cmt">// Already done — safe to complete</span>
+    }
+
+    <span class="cmt">// 2. DB update FIRST (if this fails → message goes back to queue → retry OK)</span>
+    <span class="kw">await</span> _feeRepo.<span class="mth">UpdateBalanceAsync</span>(@event.StudentId, @event.Amount);
+    _db.ProcessedMessages.<span class="mth">Add</span>(<span class="kw">new</span> <span class="cls">ProcessedMessage</span> { MessageId = args.Message.MessageId });
+    <span class="kw">await</span> _db.<span class="mth">SaveChangesAsync</span>();
+
+    <span class="cmt">// 3. SMS after DB commit (SMS failure won't affect DB — idempotent retry is fine for SMS)</span>
+    <span class="kw">await</span> _sms.<span class="mth">SendReceiptAsync</span>(@event.Phone, @event.ReceiptNo);
+
+    <span class="cmt">// 4. Complete LAST — only after everything succeeded</span>
+    <span class="kw">await</span> args.<span class="mth">CompleteMessageAsync</span>(args.Message);
+}</pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q6. How does Hangfire handle retries? What happens after all retries fail?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Default behavior (AutomaticRetry attribute):</strong></p>
+        <ul style="margin-left:1.5rem">
+            <li>Default: 10 retry attempts</li>
+            <li>Backoff: ~1min, 10min, 30min, 1h, 2h, 4h, 8h, 16h, 24h, 24h</li>
+            <li>Job state after attempt: <code>Failed</code> → scheduled retry → <code>Processing</code> → <code>Failed</code> again</li>
+            <li>After all retries: job moves to <code>Failed</code> final state (stays in DB for inspection)</li>
+        </ul>
+        <pre><span class="cmt">// Custom retry policy</span>
+[<span class="attr">AutomaticRetry</span>(Attempts = <span class="num">3</span>, DelaysInSeconds = <span class="kw">new</span>[] { <span class="num">60</span>, <span class="num">300</span>, <span class="num">3600</span> },
+    OnAttemptsExceeded = AttemptsExceededAction.Delete)] <span class="cmt">// Or .Fail</span>
+<span class="kw">public async</span> Task <span class="mth">SendSmsAsync</span>(<span class="kw">string</span> phone, <span class="kw">string</span> message) { ... }
+
+<span class="cmt">// Monitor failed jobs</span>
+<span class="kw">var</span> monitor = <span class="cls">JobStorage</span>.Current.<span class="mth">GetMonitoringApi</span>();
+<span class="kw">var</span> failed = monitor.<span class="mth">FailedJobs</span>(<span class="num">0</span>, <span class="num">50</span>);
+<span class="cmt">// Or check /hangfire dashboard in dev</span></pre>
+        <p style="margin-top:0.5rem"><strong>Production alert:</strong> Set up alert when failed job count > 0 — use Azure Monitor or Hangfire's <code>GlobalJobFilters</code> to send alert when jobs hit final failed state.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q7. Service Bus sends duplicate messages sometimes (at-least-once delivery). How do you handle duplicates in ZenCampus?</div>
+        <span class="scenario-type type-design">Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>At-least-once delivery</strong> is guaranteed — exactly-once is not (and is expensive). Solution: <strong>Idempotent consumer</strong>.</p>
+        <ol style="margin-left:1.5rem">
+            <li>Every message has unique <code>MessageId</code> (we set it to <code>Guid.NewGuid()</code>)</li>
+            <li>Consumer checks <code>ProcessedMessages</code> table before processing</li>
+            <li>If already processed → complete message and return (skip)</li>
+            <li>If new → process, save to ProcessedMessages, complete</li>
+        </ol>
+        <p style="margin-top:0.5rem"><strong>Alternatively:</strong> Enable Service Bus <strong>duplicate detection</strong> at Topic level — deduplicate window (5min to 7 days). Service Bus itself discards duplicates within that window. Combine both for belt-and-suspenders.</p>
+        <pre><span class="cmt">// Idempotency check table</span>
+<span class="kw">public class</span> <span class="cls">ProcessedMessage</span>
+{
+    <span class="kw">public string</span>   MessageId   { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="kw">string</span>.Empty;
+    <span class="kw">public string</span>   EventType   { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="kw">string</span>.Empty;
+    <span class="kw">public</span> DateTime ProcessedAt { <span class="kw">get</span>; <span class="kw">set</span>; } = DateTime.UtcNow;
+}
+<span class="cmt">// Index on MessageId for fast dedup check</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q8. Student admitted at 11:59 PM, server crashes at midnight during Hangfire job processing. Will the welcome SMS be sent?</div>
+        <span class="scenario-type type-prod">Resilience</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>With Hangfire: Yes, eventually.</strong></p>
+        <ol style="margin-left:1.5rem">
+            <li>Job enqueued → saved to <code>HangfireDb</code> (SQL)</li>
+            <li>Server crashes while job is <code>Processing</code></li>
+            <li>Server restarts → Hangfire checks for jobs stuck in <code>Processing</code> state</li>
+            <li>Jobs stuck > 30 minutes (configurable) → moved back to <code>Enqueued</code></li>
+            <li>Worker picks it up and processes → SMS sent</li>
+        </ol>
+        <p style="margin-top:0.5rem"><strong>Without Hangfire (fire-and-forget thread):</strong> No — in-memory thread is lost on crash.</p>
+        <p style="margin-top:0.5rem"><strong>With IHostedService timer:</strong> No — next trigger is at next timer tick, job state lost.</p>
+        <p style="margin-top:0.5rem"><strong>Hangfire config:</strong> <code>opts.InvisibilityTimeout = TimeSpan.FromMinutes(30)</code> — how long before stuck jobs are re-queued.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q9. 200 schools all collect fees simultaneously. Service Bus consumer falls behind — messages pile up. How do you scale?</div>
+        <span class="scenario-type type-perf">Performance</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Multiple scaling options:</strong></p>
+        <ol style="margin-left:1.5rem">
+            <li><strong>Increase MaxConcurrentCalls</strong> in ServiceBusProcessorOptions: <code>MaxConcurrentCalls = 20</code> — process 20 messages in parallel per consumer instance</li>
+            <li><strong>Multiple consumer instances</strong>: Deploy 3 instances of ZenCampus API — each has its own BackgroundService consumer. Service Bus distributes messages across all instances (competing consumers pattern)</li>
+            <li><strong>Partitioned Queue/Topic</strong>: Enable partitioning in Service Bus — messages distributed across 16 partitions, multiple consumers process in parallel</li>
+            <li><strong>Scale out on Azure Container Apps / AKS</strong>: KEDA (Kubernetes Event-Driven Autoscaling) — auto-scale consumer pods based on Service Bus queue depth</li>
+        </ol>
+        <pre><span class="cmt">// Consumer with higher concurrency</span>
+<span class="kw">var</span> processor = _client.<span class="mth">CreateProcessor</span>(<span class="str">"fee-payment-events"</span>, <span class="str">"sms-subscription"</span>,
+    <span class="kw">new</span> <span class="cls">ServiceBusProcessorOptions</span>
+    {
+        MaxConcurrentCalls   = <span class="num">20</span>,   <span class="cmt">// 20 parallel</span>
+        PrefetchCount        = <span class="num">50</span>,   <span class="cmt">// Prefetch for throughput</span>
+        AutoCompleteMessages = <span class="kw">false</span>
+    });</pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q10. "Tell me about your experience with background processing." — Full ZenCampus answer</div>
+        <span class="scenario-type type-exp">Experience</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p>"In ZenCampus — serving 50,000 students across 200 schools — we built a layered background processing system because doing everything in HTTP requests caused timeouts and poor UX.</p>
+        <p style="margin-top:0.5rem"><strong>IHostedService:</strong> We use BackgroundService for our nightly attendance sync — runs every midnight using <code>ExecuteAsync</code> with a CancellationToken loop. Key lesson: inject <code>IServiceProvider</code> and create scope per execution — direct scoped service injection from singleton hosted service throws at startup.</p>
+        <p style="margin-top:0.5rem"><strong>Hangfire:</strong> Used for fire-and-forget after student admission — welcome SMS, fee structure creation, PDF welcome pack. The key benefit over raw threads: jobs survive server restarts (persisted in SQL), auto-retry on Msg91 downtime (10 retries with exponential backoff), and the dashboard shows every job status. We had a silent failure bug where async void timer callbacks swallowed exceptions — migrating to Hangfire made failures visible immediately.</p>
+        <p style="margin-top:0.5rem"><strong>Azure Service Bus + Outbox:</strong> Fee payment events fan out to SMS, analytics, and parent app notification — three different consumers. We implement the Outbox Pattern — fee + outbox message in same DB transaction, background processor publishes. This ensures we never lose events even if Service Bus is momentarily down. Consumers are idempotent — check <code>ProcessedMessages</code> table before acting.</p>
+        <p style="margin-top:0.5rem">Result: API response time for fee collection dropped from 1.5s to 110ms."</p>
+    </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<h2 class="section-title" id="quiz">🧠 Quick Quiz</h2>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q1. You inject <code>IStudentRepository</code> (Scoped) directly into a BackgroundService (Singleton). What happens?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Works fine — DI resolves it automatically</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">B) Runtime NullReferenceException when first job runs</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">C) InvalidOperationException at app startup — cannot consume scoped from singleton</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Works but creates a memory leak</button>
+    </div>
+    <div class="quiz-feedback">InvalidOperationException at startup — ASP.NET Core validates service scope at startup by default. Fix: inject IServiceProvider and call CreateScope() inside ExecuteAsync. This is one of the most common IHostedService mistakes in interviews.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q2. Hangfire job fails (Msg91 throws exception). What happens by default?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Job is permanently deleted from queue</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">B) Exception is swallowed, job marked as succeeded</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">C) Job is retried up to 10 times with exponential backoff</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Application crashes and restarts</button>
+    </div>
+    <div class="quiz-feedback">Auto-retry 10 times with exponential backoff — this is Hangfire's default [AutomaticRetry] behavior. After 10 failures, job moves to Failed state (visible in dashboard). Backoff: ~1min, 10min, 30min, 1h, 2h... This is why Hangfire is better than manual fire-and-forget for SMS jobs.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q3. Service Bus delivers a fee payment message TWICE (at-least-once delivery). Your consumer processes it twice — parent gets 2 SMS. How to prevent?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Switch to exactly-once delivery in Service Bus settings</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">B) Implement idempotent consumer — check ProcessedMessages table by MessageId before processing</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) Wrap in try/catch — second SMS will fail</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Use Service Bus Sessions — they prevent duplicates automatically</button>
+    </div>
+    <div class="quiz-feedback">Idempotent consumer — store MessageId in ProcessedMessages table after first processing. Check before processing: if already exists, complete and return. Service Bus exactly-once is not available (only duplicate detection within a time window). Sessions provide ordering, not deduplication.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q4. Student admitted → save to DB → server crashes before Service Bus publish. Fee record never created. Which pattern prevents this?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Saga Pattern</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">B) Two-Phase Commit (2PC)</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">C) Outbox Pattern — save event to DB in same transaction, background worker publishes</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Retry pattern — wrap Service Bus publish in Polly retry</button>
+    </div>
+    <div class="quiz-feedback">Outbox Pattern — saves domain event to OutboxMessages table in same DB transaction as domain data. Background OutboxProcessor polls and publishes. If publish fails, retry next poll. Atomic by design. 2PC is slow/complex. Polly retry doesn't help if server crashes after DB save. Saga is for orchestrating multi-step workflows, not guaranteed publishing.</div>
+</div>
+
+<!-- ===== CHECKLIST ===== -->
+<h2 class="section-title">✅ Day 21 Mastery Checklist</h2>
+<ul class="checklist">
+    <li><input type="checkbox" id="c1"><label for="c1">BackgroundService: override ExecuteAsync + CancellationToken while loop</label></li>
+    <li><input type="checkbox" id="c2"><label for="c2">Scoped-in-singleton trap: always use IServiceProvider.CreateScope() in hosted services</label></li>
+    <li><input type="checkbox" id="c3"><label for="c3">async void timer callback swallows exceptions — catch and log explicitly</label></li>
+    <li><input type="checkbox" id="c4"><label for="c4">Hangfire: fire-and-forget, delayed, recurring (cron), continuation — 4 job types</label></li>
+    <li><input type="checkbox" id="c5"><label for="c5">Hangfire persists to SQL — survives server restart; IHostedService is in-memory</label></li>
+    <li><input type="checkbox" id="c6"><label for="c6">[AutomaticRetry(Attempts=5)] — custom retry with exponential backoff</label></li>
+    <li><input type="checkbox" id="c7"><label for="c7">Hangfire dashboard Dev-only (exposes job details — security risk in prod)</label></li>
+    <li><input type="checkbox" id="c8"><label for="c8">Service Bus Topic = fan-out; Queue = single consumer; Session = ordered per key</label></li>
+    <li><input type="checkbox" id="c9"><label for="c9">AutoCompleteMessages = false → manual CompleteMessageAsync after success</label></li>
+    <li><input type="checkbox" id="c10"><label for="c10">DLQ: after MaxDeliveryCount failures → Dead Letter Queue for inspection</label></li>
+    <li><input type="checkbox" id="c11"><label for="c11">Outbox Pattern: domain + event in same transaction → background publisher</label></li>
+    <li><input type="checkbox" id="c12"><label for="c12">Idempotent consumer: ProcessedMessages table + MessageId dedup check</label></li>
+</ul>
+
+<div style="text-align:center;margin:2rem 0;padding:1.5rem;background:var(--card);border-radius:12px;border:1px solid var(--border);">
+    <div style="font-size:1.5rem;font-weight:800;color:var(--accent-light)">Day 21 Complete! 🎯</div>
+    <div style="color:var(--text-dim);margin-top:0.5rem">35% of the 60-day journey done</div>
+    <div style="color:var(--text-dim);font-size:0.85rem;margin-top:0.25rem">Tomorrow: Day 22 — Caching (IMemoryCache, IDistributedCache, Redis, Cache-Aside, Cache Invalidation)</div>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+    <div>Day 21 / 60 — Background Jobs &amp; Queues | ZenCampus .NET Interview Prep</div>
+    <div style="margin-top:0.25rem;color:var(--accent)">Accent: Warm Saffron #d97706 | Days 1–21 colors all unique ✓</div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const p = (doc.scrollTop || document.body.scrollTop) / (doc.scrollHeight - doc.clientHeight) * 100;
+    document.getElementById('progressBar').style.width = p + '%';
+});
+function toggle(btn) {
+    const a = btn.nextElementSibling;
+    a.classList.toggle('visible');
+    btn.textContent = a.classList.contains('visible') ? 'Hide Answer' : 'Reveal Answer';
+}
+function quiz(btn, correct) {
+    const card = btn.closest('.quiz-card');
+    card.querySelectorAll('.quiz-opt').forEach(o => o.disabled = true);
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    if (!correct)
+        card.querySelectorAll('.quiz-opt').forEach(o => {
+            if (o.getAttribute('onclick').includes('true')) o.classList.add('correct');
+        });
+    const fb = card.querySelector('.quiz-feedback');
+    fb.classList.add('show');
+    fb.style.cssText = `background:${correct?'rgba(34,197,94,0.1)':'rgba(239,68,68,0.1)'};color:${correct?'#86efac':'#fca5a5'};border:1px solid ${correct?'rgba(34,197,94,0.3)':'rgba(239,68,68,0.3)'};`;
+}
+</script>
+</body>
+</html>

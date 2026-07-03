@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 46 — CI/CD with GitHub Actions | ZenCampus Interview Prep</title>
+<style>
+  :root{--accent:#0f766e;--accent-dim:#0d5e57;--accent-subtle:rgba(15,118,110,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(15,118,110,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.1rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.78rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .movie{background:linear-gradient(135deg,rgba(15,118,110,.12),rgba(15,118,110,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;}
+  .pipeline{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin:1rem 0;}
+  .pstep{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.4rem .9rem;border-radius:8px;font-weight:700;font-size:.85rem;}
+  .parrow{color:var(--muted);font-size:1.2rem;}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">DAY 46-48</span>
+  <a href="#concepts">CI/CD Concepts</a><a href="#workflow">Workflow YAML</a><a href="#secrets">Secrets</a>
+  <a href="#environments">Environments</a><a href="#scenarios">Interview Q</a><a href="#quiz">Quiz</a>
+</nav>
+<div class="hero">
+  <h1>CI/CD with GitHub Actions</h1>
+  <p>workflow.yml · Build → Test → Docker Build → Push → Deploy to Azure</p>
+  <div class="tags">
+    <span class="tag">GitHub Actions</span><span class="tag">CI/CD</span><span class="tag">workflow.yml</span><span class="tag">Azure Deploy</span>
+    <span class="tag">Day 46–48 / 60</span>
+    <span class="tag" style="background:rgba(15,118,110,.2);border-color:#0f766e;color:#0f766e;">Teal #0f766e</span>
+  </div>
+</div>
+<main>
+
+<section id="concepts">
+  <h2>🔄 CI/CD — The ZenCampus Assembly Line</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Mersal (2017) — System mattum podhum, process venum</div>
+    <div class="mb">Mersal-la Vijay character oru corruption-free health system build panrar — process autommated, accountable. CI/CD same way: ZenCampus code push panna auto trigger, tests run, build verify, deploy happens — human error-a eliminate panna. Every merge = tested, verified, deployed automatically!</div></div>
+  </div>
+  <div class="pipeline">
+    <div class="pstep">📝 Code Push</div><div class="parrow">→</div>
+    <div class="pstep">🔨 Build</div><div class="parrow">→</div>
+    <div class="pstep">🧪 Tests</div><div class="parrow">→</div>
+    <div class="pstep">🐳 Docker Build</div><div class="parrow">→</div>
+    <div class="pstep">📦 Push to ACR</div><div class="parrow">→</div>
+    <div class="pstep">🚀 Deploy Staging</div><div class="parrow">→</div>
+    <div class="pstep">✅ Deploy Prod</div>
+  </div>
+</section>
+
+<section id="workflow">
+  <h2>📄 Full ZenCampus CI/CD Workflow</h2>
+  <pre><code><span class="cm"># .github/workflows/zencampus-cicd.yml</span>
+name: ZenCampus CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  AZURE_WEBAPP_NAME: zencampus-api
+  ACR_REGISTRY: zencampusacr.azurecr.io
+  IMAGE_NAME: zencampus-api
+
+jobs:
+  <span class="cm"># ── Job 1: Build + Test ────────────────────────────</span>
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ZenCampusWeb/ZenCampusWeb.csproj
+
+      - name: Build
+        run: dotnet build ZenCampusWeb/ZenCampusWeb.csproj \
+          -c Release --no-restore
+
+      - name: Run tests
+        run: dotnet test ZenCampusWeb.Tests/ZenCampusWeb.Tests.csproj \
+          --no-build -c Release \
+          --logger "trx;LogFileName=test-results.trx" \
+          --collect:"XPlat Code Coverage"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: '**/test-results.trx'
+
+      - name: Check code coverage
+        run: |
+          COVERAGE=$(dotnet tool run reportgenerator -reports:"**/coverage.cobertura.xml" \
+            -targetdir:"coverage" -reporttypes:TextSummary 2>&1 | grep "Line coverage")
+          echo "$COVERAGE"
+
+  <span class="cm"># ── Job 2: Docker Build + Push to ACR ──────────────</span>
+  docker-build-push:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.ACR_REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE_TAG=${{ env.ACR_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          LATEST_TAG=${{ env.ACR_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+          docker build -t $IMAGE_TAG -t $LATEST_TAG \
+            -f ZenCampusWeb/Dockerfile .
+
+          docker push $IMAGE_TAG
+          docker push $LATEST_TAG
+
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+  <span class="cm"># ── Job 3: Deploy to Staging ────────────────────────</span>
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: docker-build-push
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    steps:
+      - name: Deploy to Azure App Service (staging slot)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          slot-name: staging
+          images: ${{ env.ACR_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}
+
+  <span class="cm"># ── Job 4: Deploy to Production ─────────────────────</span>
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: docker-build-push
+    if: github.ref == 'refs/heads/main'
+    environment: production  <span class="cm"># requires manual approval</span>
+    steps:
+      - name: Azure Login (OIDC / Workload Identity — no password!)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to Azure App Service (production)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          images: ${{ env.ACR_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+</code></pre>
+</section>
+
+<section id="secrets">
+  <h2>🔐 Secrets Management in GitHub Actions</h2>
+  <table>
+    <tr><th>Secret Name</th><th>Value</th><th>Where to Set</th></tr>
+    <tr><td>ACR_USERNAME</td><td>Azure Container Registry username</td><td>Repo → Settings → Secrets</td></tr>
+    <tr><td>ACR_PASSWORD</td><td>ACR password/token</td><td>Repo → Settings → Secrets</td></tr>
+    <tr><td>AZURE_CLIENT_ID</td><td>App Registration client ID (OIDC)</td><td>Repo → Settings → Secrets</td></tr>
+    <tr><td>AZURE_TENANT_ID</td><td>Azure AD tenant ID</td><td>Repo → Settings → Secrets</td></tr>
+    <tr><td>AZURE_SUBSCRIPTION_ID</td><td>Azure subscription</td><td>Repo → Settings → Secrets</td></tr>
+    <tr><td>AZURE_WEBAPP_PUBLISH_PROFILE_STAGING</td><td>Staging slot publish profile XML</td><td>Environment: staging → Secrets</td></tr>
+  </table>
+  <div class="good-box">
+    <strong>Best approach: OIDC (OpenID Connect) / Workload Identity.</strong> No Azure passwords stored in GitHub. GitHub Actions gets a short-lived token via federated credential. Configure once in Azure, reference client-id/tenant-id/subscription-id in workflow. Zero long-lived secrets.
+  </div>
+</section>
+
+<section id="environments">
+  <h2>🌍 GitHub Environments + Protection Rules</h2>
+  <pre><code><span class="cm"># GitHub Settings → Environments → "production"</span>
+<span class="cm"># Required reviewers: add yourself or team lead</span>
+<span class="cm"># Deployment branches: only main</span>
+
+<span class="cm"># In workflow: environment: production</span>
+<span class="cm"># When workflow reaches deploy-production job:</span>
+<span class="cm"># → GitHub pauses, sends notification</span>
+<span class="cm"># → Required reviewer must approve</span>
+<span class="cm"># → Only then does deploy proceed</span>
+
+<span class="cm"># This gives you: automated testing + human gate for production</span>
+<span class="cm"># ZenCampus: staging deploys automatically on every push to develop</span>
+<span class="cm"># Production requires Gurumoorthy sir to approve before 50,000 students affected</span></code></pre>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is the difference between CI and CD?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>CI (Continuous Integration): automatically build and test every code push. Catches integration bugs early. CD (Continuous Deployment): automatically deploy to production after tests pass. Or Continuous Delivery: deploy to staging automatically, manual gate for production. For ZenCampus: CI = every PR triggers build + tests. CD = main branch automatically deploys to staging, production requires approval.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Why use a Docker image tag with git SHA instead of "latest"?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>SHA tag (zencampus-api:abc123f) is immutable — always points to exactly the code at that commit. "latest" is mutable — overwritten by every new build. With SHA tags: you can redeploy any previous version by specifying its SHA. You can trace which exact code is running in production. If bug found, rollback = redeploy the previous SHA tag. "latest" is fine for local dev, but production needs SHA tags.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is OIDC/Workload Identity Federation in GitHub Actions?</span><span class="st">Security</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Instead of storing Azure service principal password in GitHub Secrets: configure Azure to trust GitHub's identity provider. When workflow runs, GitHub gets a short-lived JWT. Azure validates the JWT and issues a short-lived access token. No long-lived secrets stored anywhere. Zero credential rotation. If GitHub is compromised, the token expires in minutes — no persistent access.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What does "needs: build-and-test" do in a GitHub Actions workflow?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Creates a dependency between jobs. The docker-build-push job will not start until build-and-test job completes successfully. If tests fail, the build job never runs — no Docker image built, no deployment happens. Without needs: jobs run in parallel. With needs: forms a directed acyclic graph (DAG) of dependencies. Critical for ZenCampus: never deploy code that has failing tests.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">How do you use GitHub Environments for production deployment approval?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Create environment "production" in GitHub Settings. Add required reviewers. Add branch protection: only main. In workflow: specify "environment: production" on deploy job. When workflow reaches that job, GitHub pauses and notifies reviewers. Reviewer sees what's being deployed (SHA, message, who triggered). Approve = deployment proceeds. Reject = workflow fails. Perfect for ZenCampus: automated pipeline + human gate for 50,000 students' data.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">Why do tests run before the Docker image is built in the CI pipeline?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Fail fast: tests are faster than Docker build. If tests fail (20-30 seconds), save the 5-minute Docker build and registry push. Don't waste CI minutes building and pushing an image that's known-broken. For ZenCampus: unit tests catch fee calculation bugs before they're packaged and deployed. Order: restore → build → test → docker build → push → deploy. Each step gates the next.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">How would you handle EF Core migrations in a CI/CD pipeline?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Option 1: Generate migration script in CI (dotnet ef migrations script --idempotent -o migration.sql), upload as artifact, DBA reviews and applies before deployment. Option 2: Add a migration step before deploy job that runs the script against staging DB. Option 3: App applies migrations on startup (Program.cs: dbContext.Database.MigrateAsync()). Production: Option 1 or 2 — migrations reviewed before 50,000-student database is touched.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">What is the purpose of "if: always()" on an upload-artifact step?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>By default, steps are skipped if a previous step fails. "if: always()" means this step runs regardless — even if tests failed. Critical for test result artifacts: if tests FAIL, you especially need the test result files to diagnose what failed. Without always(): test fails → artifact step skipped → no report → you can't see what failed. With always(): test results always uploaded for review.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">How do you handle different config per environment (staging vs production) in GitHub Actions?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Environment-level secrets in GitHub: staging environment has STAGING_SQL_CONN, production environment has PROD_SQL_CONN. When job specifies "environment: staging", it gets staging secrets. Job with "environment: production" gets production secrets. App Service config (connection strings, Key Vault URIs) set separately per slot. Image is the same — only runtime config differs between environments.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">What is a branch protection rule and why should main require CI to pass?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Branch protection: rules enforced before code can merge to protected branch. Required status checks: "build-and-test" job must pass before PR can merge to main. No direct push to main (all changes via PR). Code owners review required. For ZenCampus: developer can't merge fee calculation change until tests pass. Can't push directly to main. Senior developer reviews before merge. Prevents broken code from reaching production pipeline.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. What prevents a developer from merging broken code to the main branch?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Code review alone doesn\'t verify the code compiles or tests pass.')">Code review</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Branch protection rules with required status checks ensure CI (build + tests) must pass before any PR can be merged to main.')">Branch protection rules with required status checks (CI must pass)</button>
+    <button class="qb" onclick="ans(this,'wrong','dotnet build runs locally — it doesn\'t gate GitHub merges.')">dotnet build command</button>
+    <button class="qb" onclick="ans(this,'wrong','docker-compose is for local development, not merge gates.')">docker-compose healthcheck</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What is the benefit of tagging Docker images with the git commit SHA?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','SHA tags are longer than "latest" — not more concise.')">More concise image names</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! SHA tags are immutable — you can always redeploy any specific version. "latest" is mutable and loses history. SHA tags enable precise rollback and audit trail.')">Immutable reference — enables precise rollback to any previous version</button>
+    <button class="qb" onclick="ans(this,'wrong','SHA tags don\'t compress images.')">Smaller image size</button>
+    <button class="qb" onclick="ans(this,'wrong','ACR doesn\'t require SHA tags specifically.')">Required by Azure Container Registry</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. What does "if: always()" on an upload-artifact step ensure?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','always() doesn\'t affect tests themselves.')">Tests always pass</button>
+    <button class="qb" onclick="ans(this,'wrong','Docker builds don\'t depend on always() on artifact steps.')">Docker build runs always</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! When tests fail, this step still uploads the test result files — critical for diagnosing what failed. Without always(), failed tests skip artifact upload and you can\'t see why.')">Test result files are uploaded even when tests fail — so you can diagnose failures</button>
+    <button class="qb" onclick="ans(this,'wrong','Deployment is controlled by the deploy jobs, not always() on artifact upload.')">Deployment always happens</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. What is the advantage of OIDC over storing Azure service principal password in GitHub Secrets?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','OIDC doesn\'t change the number of deployments.')">Allows more parallel deployments</button>
+    <button class="qb" onclick="ans(this,'wrong','Deploying to Azure is possible with both approaches.')">Enables deployment to Azure</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! OIDC uses short-lived tokens — no long-lived passwords stored in GitHub. If GitHub is compromised, tokens expire in minutes. No rotation needed. Zero stored credentials.')">No long-lived secrets — short-lived tokens, nothing to rotate or leak</button>
+    <button class="qb" onclick="ans(this,'wrong','OIDC doesn\'t affect Docker Hub authentication directly.')">Enables Docker Hub push</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can write a GitHub Actions workflow with multiple jobs</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand job dependencies with "needs:"</li>
+    <li onclick="ck(this)"><input type="checkbox">I know the build → test → docker build → push → deploy pipeline order</li>
+    <li onclick="ck(this)"><input type="checkbox">I can configure GitHub Environments with required reviewers</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand OIDC vs service principal password for Azure auth</li>
+    <li onclick="ck(this)"><input type="checkbox">I know why SHA tags are better than "latest" for production</li>
+    <li onclick="ck(this)"><input type="checkbox">I can explain branch protection rules and required status checks</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand the CI/CD flow for ZenCampus from push to production</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Day 46–48 Complete ✓ — CI/CD with GitHub Actions + Azure Deploy</p>
+  <p>Accent: Teal #0f766e · Next: Day 49 — Redis + Hangfire Background Jobs</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

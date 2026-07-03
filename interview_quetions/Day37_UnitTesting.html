@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 37 — Unit Testing + Integration Testing | ZenCampus .NET Interview Prep</title>
+<style>
+  :root{--accent:#b45309;--accent-dim:#92400e;--accent-subtle:rgba(180,83,9,0.08);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(180,83,9,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.1rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  p{margin-bottom:.6rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}.ok{color:var(--good);font-weight:700;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .movie{background:linear-gradient(135deg,rgba(180,83,9,.12),rgba(180,83,9,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">DAY 37-38</span>
+  <a href="#aaa">AAA Pattern</a><a href="#moq">Moq</a><a href="#doubles">Test Doubles</a>
+  <a href="#integration">Integration Tests</a><a href="#scenarios">Interview Q</a><a href="#quiz">Quiz</a>
+</nav>
+<div class="hero">
+  <h1>Unit Testing + Integration Testing</h1>
+  <p>xUnit · Moq · Arrange-Act-Assert · WebApplicationFactory · TestContainers</p>
+  <div class="tags">
+    <span class="tag">xUnit</span><span class="tag">Moq</span><span class="tag">FluentAssertions</span>
+    <span class="tag">Day 37–38 / 60</span>
+    <span class="tag" style="background:rgba(180,83,9,.2);border-color:#b45309;color:#b45309;">Warm Coffee #b45309</span>
+  </div>
+</div>
+<main>
+
+<section id="aaa">
+  <h2>🧪 Arrange-Act-Assert — The Testing Blueprint</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Roja (1992) — Prove Everything, Trust Nothing</div>
+    <div class="mb">Roja-la Rishi Kumar irukkaan nu prove panna vendiyadhu — every claim verified, nothing assumed. Unit tests same: every business rule, every edge case — prove it. Don't assume your admission logic works — test it!</div></div>
+  </div>
+  <pre><code><span class="cm">// NuGet: xunit, xunit.runner.visualstudio, Moq, FluentAssertions</span>
+
+<span class="kw">public class</span> <span class="cl">CreateStudentCommandHandlerTests</span>
+{
+    <span class="kw">private readonly</span> <span class="cl">Mock</span>&lt;<span class="cl">IStudentRepository</span>&gt; _mockRepo;
+    <span class="kw">private readonly</span> <span class="cl">Mock</span>&lt;<span class="cl">IUnitOfWork</span>&gt;        _mockUow;
+    <span class="kw">private readonly</span> <span class="cl">CreateStudentCommandHandler</span> _sut; <span class="cm">// System Under Test</span>
+
+    <span class="kw">public</span> <span class="cl">CreateStudentCommandHandlerTests</span>()
+    {
+        _mockRepo = <span class="kw">new</span> <span class="cl">Mock</span>&lt;<span class="cl">IStudentRepository</span>&gt;();
+        _mockUow  = <span class="kw">new</span> <span class="cl">Mock</span>&lt;<span class="cl">IUnitOfWork</span>&gt;();
+        _sut = <span class="kw">new</span> <span class="cl">CreateStudentCommandHandler</span>(
+            _mockRepo.Object, _mockUow.Object,
+            <span class="cl">NullLogger</span>&lt;<span class="cl">CreateStudentCommandHandler</span>&gt;.Instance);
+    }
+
+    <span class="dec">[Fact]</span>
+    <span class="kw">public async</span> <span class="cl">Task</span> Handle_NewStudent_ReturnsSuccessWithId()
+    {
+        <span class="cm">// Arrange</span>
+        <span class="kw">var</span> cmd = <span class="kw">new</span> <span class="cl">CreateStudentCommand</span>(<span class="str">"Basha Kumar"</span>, <span class="str">"ADM2026001"</span>,
+            <span class="cl">DateOnly</span>.Parse(<span class="str">"2010-06-15"</span>), ClassId: <span class="num">5</span>, SchoolId: <span class="num">1</span>, ParentPhone: <span class="str">"9876543210"</span>);
+        _mockRepo.Setup(r =&gt; r.ExistsAsync(<span class="num">1</span>, <span class="str">"ADM2026001"</span>, <span class="kw">default</span>)).ReturnsAsync(<span class="kw">false</span>);
+        _mockRepo.Setup(r =&gt; r.AddAsync(<span class="cl">It</span>.IsAny&lt;<span class="cl">Student</span>&gt;(), <span class="kw">default</span>))
+                 .Callback&lt;<span class="cl">Student</span>, <span class="cl">CancellationToken</span>&gt;((s, _) =&gt; s.SetId(<span class="num">42</span>)) <span class="cm">// simulate DB id</span>
+                 .Returns(<span class="cl">Task</span>.CompletedTask);
+
+        <span class="cm">// Act</span>
+        <span class="kw">var</span> result = <span class="kw">await</span> _sut.Handle(cmd, <span class="kw">default</span>);
+
+        <span class="cm">// Assert (FluentAssertions)</span>
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(<span class="num">42</span>);
+        _mockRepo.Verify(r =&gt; r.AddAsync(<span class="cl">It</span>.Is&lt;<span class="cl">Student</span>&gt;(s =&gt; s.Name == <span class="str">"Basha Kumar"</span>), <span class="kw">default</span>), <span class="cl">Times</span>.Once);
+        _mockUow.Verify(u =&gt; u.CommitAsync(<span class="kw">default</span>), <span class="cl">Times</span>.Once);
+    }
+
+    <span class="dec">[Fact]</span>
+    <span class="kw">public async</span> <span class="cl">Task</span> Handle_DuplicateAdmissionNumber_ReturnsFailure()
+    {
+        <span class="cm">// Arrange</span>
+        _mockRepo.Setup(r =&gt; r.ExistsAsync(<span class="num">1</span>, <span class="str">"ADM001"</span>, <span class="kw">default</span>)).ReturnsAsync(<span class="kw">true</span>);
+        <span class="kw">var</span> cmd = <span class="kw">new</span> <span class="cl">CreateStudentCommand</span>(<span class="str">"Test"</span>, <span class="str">"ADM001"</span>, <span class="cl">DateOnly</span>.Today, <span class="num">1</span>, <span class="num">1</span>, <span class="str">"9999999999"</span>);
+
+        <span class="cm">// Act</span>
+        <span class="kw">var</span> result = <span class="kw">await</span> _sut.Handle(cmd, <span class="kw">default</span>);
+
+        <span class="cm">// Assert</span>
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Contain(<span class="str">"Admission number"</span>);
+        _mockRepo.Verify(r =&gt; r.AddAsync(<span class="cl">It</span>.IsAny&lt;<span class="cl">Student</span>&gt;(), <span class="kw">default</span>), <span class="cl">Times</span>.Never); <span class="cm">// never called</span>
+        _mockUow.Verify(u =&gt; u.CommitAsync(<span class="kw">default</span>), <span class="cl">Times</span>.Never);
+    }
+
+    <span class="dec">[Theory]</span>
+    <span class="dec">[InlineData("")]</span>
+    <span class="dec">[InlineData("   ")]</span>
+    <span class="dec">[InlineData(null)]</span>
+    <span class="kw">public async</span> <span class="cl">Task</span> Handle_EmptyName_ThrowsDomainException(<span class="kw">string</span>? name)
+    {
+        <span class="kw">var</span> cmd = <span class="kw">new</span> <span class="cl">CreateStudentCommand</span>(name!, <span class="str">"ADM001"</span>, <span class="cl">DateOnly</span>.Today, <span class="num">1</span>, <span class="num">1</span>, <span class="str">"9999"</span>);
+        <span class="kw">var</span> act = () =&gt; _sut.Handle(cmd, <span class="kw">default</span>);
+        <span class="kw">await</span> act.Should().ThrowAsync&lt;<span class="cl">DomainException</span>&gt;();
+    }
+}</code></pre>
+</section>
+
+<section id="moq">
+  <h2>🎭 Moq — Mock, Setup, Verify</h2>
+  <pre><code><span class="cm">// Mock setup patterns</span>
+<span class="kw">var</span> mockRepo = <span class="kw">new</span> <span class="cl">Mock</span>&lt;<span class="cl">IStudentRepository</span>&gt;();
+
+<span class="cm">// Setup return value</span>
+mockRepo.Setup(r =&gt; r.GetByIdAsync(<span class="num">1</span>, <span class="kw">default</span>)).ReturnsAsync(<span class="kw">new</span> <span class="cl">Student</span> { Id = <span class="num">1</span>, Name = <span class="str">"Basha"</span> });
+
+<span class="cm">// Setup with any parameter</span>
+mockRepo.Setup(r =&gt; r.GetByIdAsync(<span class="cl">It</span>.IsAny&lt;<span class="kw">int</span>&gt;(), <span class="kw">default</span>)).ReturnsAsync((<span class="cl">Student</span>?)<span class="kw">null</span>);
+
+<span class="cm">// Setup with condition</span>
+mockRepo.Setup(r =&gt; r.GetByIdAsync(<span class="cl">It</span>.Is&lt;<span class="kw">int</span>&gt;(id =&gt; id &gt; <span class="num">0</span>), <span class="kw">default</span>))
+        .ReturnsAsync(<span class="kw">new</span> <span class="cl">Student</span>());
+
+<span class="cm">// Setup to throw</span>
+mockRepo.Setup(r =&gt; r.GetByIdAsync(<span class="num">-1</span>, <span class="kw">default</span>))
+        .ThrowsAsync(<span class="kw">new</span> <span class="cl">NotFoundException</span>(<span class="str">"Student not found"</span>));
+
+<span class="cm">// Callback — capture what was passed</span>
+<span class="cl">Student</span>? capturedStudent = <span class="kw">null</span>;
+mockRepo.Setup(r =&gt; r.AddAsync(<span class="cl">It</span>.IsAny&lt;<span class="cl">Student</span>&gt;(), <span class="kw">default</span>))
+        .Callback&lt;<span class="cl">Student</span>, <span class="cl">CancellationToken</span>&gt;((s, _) =&gt; capturedStudent = s)
+        .Returns(<span class="cl">Task</span>.CompletedTask);
+
+<span class="cm">// Verify — assert methods were called</span>
+mockRepo.Verify(r =&gt; r.AddAsync(<span class="cl">It</span>.IsAny&lt;<span class="cl">Student</span>&gt;(), <span class="kw">default</span>), <span class="cl">Times</span>.Once);
+mockRepo.Verify(r =&gt; r.AddAsync(<span class="cl">It</span>.IsAny&lt;<span class="cl">Student</span>&gt;(), <span class="kw">default</span>), <span class="cl">Times</span>.Never);
+mockRepo.Verify(r =&gt; r.AddAsync(<span class="cl">It</span>.IsAny&lt;<span class="cl">Student</span>&gt;(), <span class="kw">default</span>), <span class="cl">Times</span>.Exactly(<span class="num">2</span>));
+mockRepo.VerifyNoOtherCalls();  <span class="cm">// no unexpected calls happened</span></code></pre>
+</section>
+
+<section id="doubles">
+  <h2>🪆 Test Doubles — Mock vs Stub vs Fake</h2>
+  <table>
+    <tr><th>Type</th><th>What It Does</th><th>ZenCampus Use</th></tr>
+    <tr><td>Mock</td><td>Records calls, verify interactions</td><td>Mock&lt;IStudentRepository&gt;, verify AddAsync called once</td></tr>
+    <tr><td>Stub</td><td>Returns fixed values, no verification</td><td>Setup().ReturnsAsync() — just provide test data</td></tr>
+    <tr><td>Fake</td><td>Simplified working implementation</td><td>InMemoryStudentRepository for integration tests</td></tr>
+    <tr><td>Spy</td><td>Real implementation + records calls</td><td>Not common in .NET — Moq CallBase=true approximates</td></tr>
+    <tr><td>Dummy</td><td>Passed but never used</td><td>Mock.Of&lt;ILogger&gt;() when logging not under test</td></tr>
+  </table>
+</section>
+
+<section id="integration">
+  <h2>🌐 Integration Testing with WebApplicationFactory</h2>
+  <pre><code><span class="cm">// Integration test — real HTTP stack, in-memory or real DB</span>
+<span class="kw">public class</span> <span class="cl">StudentsApiTests</span>(<span class="cl">WebApplicationFactory</span>&lt;<span class="cl">Program</span>&gt; factory)
+    : <span class="cl">IClassFixture</span>&lt;<span class="cl">WebApplicationFactory</span>&lt;<span class="cl">Program</span>&gt;&gt;
+{
+    <span class="kw">private readonly</span> <span class="cl">HttpClient</span> _client = factory.WithWebHostBuilder(builder =&gt;
+    {
+        builder.ConfigureTestServices(services =&gt;
+        {
+            <span class="cm">// Replace real DB with in-memory</span>
+            services.RemoveAll&lt;<span class="cl">DbContextOptions</span>&lt;<span class="cl">ZenCampusDbContext</span>&gt;&gt;();
+            services.AddDbContext&lt;<span class="cl">ZenCampusDbContext</span>&gt;(opts =&gt;
+                opts.UseInMemoryDatabase(<span class="str">"TestDb"</span>));
+
+            <span class="cm">// Replace SMS client with fake</span>
+            services.RemoveAll&lt;<span class="cl">ISmsService</span>&gt;();
+            services.AddSingleton&lt;<span class="cl">ISmsService</span>, <span class="cl">FakeSmsService</span>&gt;();
+        });
+    }).CreateClient();
+
+    <span class="dec">[Fact]</span>
+    <span class="kw">public async</span> <span class="cl">Task</span> POST_Students_ValidRequest_Returns201()
+    {
+        <span class="cm">// Arrange</span>
+        <span class="kw">var</span> cmd = <span class="kw">new</span> { Name = <span class="str">"Test Student"</span>, AdmissionNumber = <span class="str">"ADM999"</span>, SchoolId = <span class="num">1</span> };
+        <span class="kw">var</span> content = <span class="kw">new</span> <span class="cl">StringContent</span>(<span class="cl">JsonSerializer</span>.Serialize(cmd),
+            <span class="cl">Encoding</span>.UTF8, <span class="str">"application/json"</span>);
+        _client.DefaultRequestHeaders.Authorization =
+            <span class="kw">new</span> <span class="cl">AuthenticationHeaderValue</span>(<span class="str">"Bearer"</span>, GetTestJwt());
+
+        <span class="cm">// Act</span>
+        <span class="kw">var</span> response = <span class="kw">await</span> _client.PostAsync(<span class="str">"/api/students"</span>, content);
+
+        <span class="cm">// Assert</span>
+        response.StatusCode.Should().Be(<span class="cl">HttpStatusCode</span>.Created);
+        <span class="kw">var</span> body = <span class="kw">await</span> response.Content.ReadFromJsonAsync&lt;CreatedResponse&gt;();
+        body!.Id.Should().BeGreaterThan(<span class="num">0</span>);
+    }
+
+    <span class="dec">[Fact]</span>
+    <span class="kw">public async</span> <span class="cl">Task</span> POST_Students_MissingName_Returns400()
+    {
+        <span class="kw">var</span> response = <span class="kw">await</span> _client.PostAsJsonAsync(<span class="str">"/api/students"</span>,
+            <span class="kw">new</span> { AdmissionNumber = <span class="str">"ADM001"</span>, SchoolId = <span class="num">1</span> }); <span class="cm">// Name missing</span>
+        response.StatusCode.Should().Be(<span class="cl">HttpStatusCode</span>.BadRequest);
+        <span class="kw">var</span> pd = <span class="kw">await</span> response.Content.ReadFromJsonAsync&lt;<span class="cl">ProblemDetails</span>&gt;();
+        pd!.Title.Should().Contain(<span class="str">"Validation"</span>);
+    }
+}</code></pre>
+  <div class="good-box">
+    <strong>Golden Rule:</strong> Unit tests = fast, isolated, test business logic. Integration tests = test HTTP pipeline, middleware, auth, validation, serialization. Both needed — unit tests find logic bugs, integration tests find wiring bugs.
+  </div>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is the difference between a unit test and an integration test?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Unit test: tests a single class/method in isolation. All dependencies mocked. No DB, no HTTP. Fast (&lt;100ms). Finds logic bugs. Integration test: tests multiple components together — actual HTTP stack, real or test DB, middleware, auth. Slower. Finds wiring bugs. Both needed: unit tests prove business rules work, integration tests prove the system assembles correctly.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What does Mock.Verify() check vs Mock.Setup()?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Setup() configures what the mock returns when a method is called. Verify() asserts that a method was called (or not called) with specific parameters. Setup = arrange phase. Verify = assert phase. Example: Setup AddAsync to do nothing, then Verify it was called Once with a student matching certain criteria.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">How do you test a method that throws an exception?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>// FluentAssertions
+var act = () => _sut.Handle(invalidCmd, default);
+await act.Should().ThrowAsync&lt;DomainException&gt;()
+         .WithMessage("*name*");
+
+// xUnit Assert.ThrowsAsync
+var ex = await Assert.ThrowsAsync&lt;DomainException&gt;(() => _sut.Handle(invalidCmd, default));
+Assert.Contains("name", ex.Message);</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What is [Theory] + [InlineData] in xUnit?</span><span class="st">xUnit</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Theory runs the same test with different input values. [InlineData] provides each set of inputs. In ZenCampus: test that empty name, whitespace name, and null name all throw DomainException — three test cases, one method: [Theory] [InlineData("")] [InlineData("   ")] [InlineData(null)]. Reduces code duplication in tests.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">How do you replace a service in WebApplicationFactory for integration tests?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Use <code>WithWebHostBuilder</code> + <code>ConfigureTestServices</code>: remove the real registration, add the test replacement. Common replacements: InMemory database instead of SQL Server, FakeSmsService instead of Msg91Client, fake Azure Blob storage. Tests run without real external dependencies.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">What is test isolation and why does it matter?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Each test must not depend on or affect other tests. If Test A adds data to DB and Test B expects clean DB — tests fail depending on order. Isolation means each test creates its own state, cleans up, and doesn't share state. For integration tests: use a fresh DB per test class (IClassFixture), reset between tests, or use transactions rolled back after each test.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">Difference between NullLogger.Instance and Mock&lt;ILogger&gt;()?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>NullLogger.Instance: does nothing, no overhead. Use when logging is NOT under test — you just need something to pass to the constructor. Mock&lt;ILogger&gt;(): allows verifying specific log calls were made. Use when testing that "LogError was called when exception occurs". Most tests: NullLogger. Tests verifying error logging: Mock&lt;ILogger&gt;.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">What code coverage percentage should ZenCampus target?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>80% is a common target. But coverage % is misleading — 100% coverage doesn't mean bug-free. Better: cover all business logic (domain entities, command handlers, validators), all happy paths, all error paths. Don't chase coverage on trivial getters/setters. Focus on: critical fee calculation logic (100%), admission flow (100%), authentication (100%). Generated code, migrations — exclude from coverage.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">How would you test that a FluentValidation rule works for the student admission form?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>public class CreateStudentCommandValidatorTests
+{
+    private readonly CreateStudentCommandValidator _validator = new();
+
+    [Theory]
+    [InlineData("", "ADM001", false)]  // name empty = invalid
+    [InlineData("Basha", "", false)]   // admission no empty = invalid
+    [InlineData("Basha", "ADM001", true)] // both valid = valid
+    public void Validate_ReturnsExpected(string name, string admNo, bool expectedValid)
+    {
+        var cmd = new CreateStudentCommand(name, admNo, DateOnly.Today, 1, 1, "9999");
+        var result = _validator.Validate(cmd);
+        result.IsValid.Should().Be(expectedValid);
+    }
+}</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">What is the difference between [Fact] and [Theory] in xUnit?</span><span class="st">xUnit</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>[Fact]: test that is always true regardless of input. No parameters. Runs once. [Theory]: test that is true for a specific set of data. Parameterized. Runs once per [InlineData] set. Rule: if you find yourself writing nearly identical tests with different values — use [Theory]. Single test case = [Fact].</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. Which xUnit attribute tests the same logic with multiple input values?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','[Fact] runs once with no parameters.')">Fact</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! [Theory] with [InlineData] runs the test for each set of values — great for boundary and edge case testing.')">Theory + InlineData</button>
+    <button class="qb" onclick="ans(this,'wrong','[DataRow] is MSTest attribute, not xUnit.')">DataRow</button>
+    <button class="qb" onclick="ans(this,'wrong','[TestCase] is NUnit attribute, not xUnit.')">TestCase</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. Mock.Verify() throws an exception when?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Setup failure throws at execution time, not Verify time.')">A Setup() call fails</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Verify throws MockException when the expected call count doesn\'t match — e.g., expected Once but called Never or Twice.')">The expected call count doesn't match actual calls</button>
+    <button class="qb" onclick="ans(this,'wrong','Verify checks call count, not return value accuracy.')">The mock returned wrong value</button>
+    <button class="qb" onclick="ans(this,'wrong','Verify does not throw on unused setup — VerifyNoOtherCalls() checks that.')">Any method on the mock was not called</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. In WebApplicationFactory integration tests, why replace the SMS service with a Fake?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Authentication is handled by test JWT configuration, not the SMS service.')">To bypass JWT authentication</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Integration tests must not send real SMS. FakeSmsService records calls without sending — tests run without network, cost, or side effects.')">Avoid sending real SMS messages and remove external dependency</button>
+    <button class="qb" onclick="ans(this,'wrong','WebApplicationFactory does not require SMS to run.')">SMS service crashes the test server</button>
+    <button class="qb" onclick="ans(this,'wrong','MS Graph has nothing to do with SMS testing.')">MS Graph API requires real credentials</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. What does VerifyNoOtherCalls() check in Moq?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Return values are checked by Verify(), not VerifyNoOtherCalls().')">All return values were correct</button>
+    <button class="qb" onclick="ans(this,'wrong','VerifyNoOtherCalls doesn\'t check setup correctness.')">All Setup() calls were executed</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! VerifyNoOtherCalls throws if any method was called that was NOT verified. Ensures no unexpected repository methods were triggered.')">No unexpected method calls happened beyond what was explicitly Verified</button>
+    <button class="qb" onclick="ans(this,'wrong','Exceptions are caught by the test framework — not by VerifyNoOtherCalls.')">No exceptions were thrown</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can write an xUnit test with Arrange-Act-Assert</li>
+    <li onclick="ck(this)"><input type="checkbox">I can use Moq Setup, Callback, Verify</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write [Theory] with [InlineData] for edge cases</li>
+    <li onclick="ck(this)"><input type="checkbox">I can test exception throwing with FluentAssertions</li>
+    <li onclick="ck(this)"><input type="checkbox">I can configure WebApplicationFactory with test overrides</li>
+    <li onclick="ck(this)"><input type="checkbox">I know Mock vs Stub vs Fake differences</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand test isolation and why it matters</li>
+    <li onclick="ck(this)"><input type="checkbox">I can test FluentValidation validators independently</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Day 37–38 Complete ✓ — Unit Testing + Integration Testing</p>
+  <p>Accent: Warm Coffee #b45309 · Next: Day 39 — Docker Fundamentals + Containerize ZenCampus</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

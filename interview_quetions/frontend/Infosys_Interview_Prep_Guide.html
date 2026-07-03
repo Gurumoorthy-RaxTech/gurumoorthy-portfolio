@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infosys Interview Prep Guide - .NET, C#, EF, Azure &amp; Angular (41 Q&amp;A)</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --accent:#818cf8; --text:#e2e8f0; --muted:#94a3b8; --code:#0b1220; --green:#22c55e;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI',Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  header{ background:linear-gradient(135deg,#3730a3,#0f172a); padding:36px 20px; text-align:center; border-bottom:3px solid var(--accent); }
+  header h1{ margin:0 0 8px; font-size:1.9rem; color:#fff; }
+  header p{ margin:0; color:var(--muted); }
+  .container{ max-width:960px; margin:0 auto; padding:30px 20px 80px; }
+
+  .search-box{ width:100%; padding:12px 16px; margin-bottom:16px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--text); font-size:1rem; }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; position:sticky; top:0; background:var(--bg); padding:10px 0; z-index:20; }
+  .filter-btn{ padding:6px 14px; border-radius:20px; border:1px solid #334155; background:transparent; color:var(--muted); cursor:pointer; font-size:0.85rem; }
+  .filter-btn.active, .filter-btn:hover{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+  .count-line{ color:var(--muted); font-size:0.85rem; margin-bottom:18px; }
+  .count{ color:var(--accent); font-weight:600; }
+
+  .qa{ background:var(--card); border-radius:10px; margin-bottom:14px; overflow:hidden; border:1px solid #334155; scroll-margin-top:120px; }
+  .q{ padding:16px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; gap:12px; }
+  .q:hover{ background:#221f45; }
+  .q .num{ color:var(--accent); margin-right:8px; }
+  .q .tag{ font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:10px; background:#0b1220; color:var(--accent); white-space:nowrap; }
+  .a{ max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 18px; color:var(--muted); border-top:1px solid transparent; }
+  .qa.open .a{ max-height:3000px; padding:0 18px 18px; border-top:1px solid #334155; }
+  .a code{ background:var(--code); color:#a5b4fc; padding:2px 6px; border-radius:4px; font-family:Consolas,Monaco,monospace; font-size:0.86rem; }
+  .a pre{ display:block; background:var(--code); color:#a5b4fc; padding:12px; overflow-x:auto; white-space:pre; margin:10px 0; border-radius:6px; font-family:Consolas,Monaco,monospace; font-size:0.84rem; }
+  .a table{ border-collapse:collapse; width:100%; margin:10px 0; font-size:0.85rem; }
+  .a th,.a td{ border:1px solid #334155; padding:6px 10px; text-align:left; }
+  .a th{ background:#0b1220; color:var(--accent); }
+  .toggle-icon{ transition:transform .25s; color:var(--accent); font-size:1.1rem; flex-shrink:0; }
+  .qa.open .toggle-icon{ transform:rotate(45deg); }
+  .cat-title{ color:var(--accent); font-size:1.25rem; margin:34px 0 14px; border-left:4px solid var(--accent); padding-left:10px; }
+  footer{ text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>💼 Infosys Interview Prep Guide</h1>
+  <p>41 Real Questions from Infosys First Round — C#, .NET Core, EF, LINQ, SOLID, Azure &amp; Angular — with live code examples</p>
+</header>
+
+<div class="container">
+  <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search a question (e.g. IQueryable, DI, SOLID, Kestrel, Angular)...">
+  <div class="filters" id="filters"></div>
+  <p class="count-line">Showing <span class="count" id="visibleCount">41</span> / 41 questions</p>
+  <div id="qaList"></div>
+</div>
+
+<footer>Built for Infosys interview preparation • 2026-07-03</footer>
+
+<script>
+const qaData = [
+// ===================== HR / INTRO =====================
+{cat:"HR & Intro", q:"Tell me about yourself", a:`
+<p>Structure the answer as <strong>Present → Past → Future</strong> in under 90 seconds:</p>
+<ul>
+<li><strong>Present:</strong> Current role, tech stack, and one concrete responsibility. e.g. "I currently work as a .NET Full Stack Developer building a School/College ERP product called ZenCampus, using ASP.NET Core Web API, C#, SQL Server and Angular/JS on the frontend."</li>
+<li><strong>Past:</strong> How you got there — education, prior projects, key skills gained.</li>
+<li><strong>Future:</strong> Why this role/company excites you and what you want to contribute.</li>
+</ul>
+<pre>"I'm a .NET Full Stack Developer with experience building ASP.NET Core Web APIs,
+Entity Framework data layers, and Angular/JS frontends for a live product used by
+real schools (ZenCampus - Student, Fee, Attendance, Transport modules).
+I enjoy designing clean REST APIs and solving real production bugs.
+I'm looking to join Infosys to work on larger-scale enterprise systems and grow
+my skills in cloud (Azure) and microservices architecture."</pre>
+<p><strong>Tip:</strong> Keep it job-relevant, avoid reciting your resume line by line, and always tailor the "why this company" part to the role you're interviewing for.</p>`},
+
+{cat:"HR & Intro", q:"Explain your project", a:`
+<p>Use the <strong>STAR-ish</strong> structure: What it is → Your role → Tech stack → One challenge you solved → Impact.</p>
+<pre>"ZenCampus is a multi-module School/College ERP web application.
+It covers Student Admission, Fee/Billing, Attendance, Hostel, Transport, Timetable
+and DVR/CCTV integration modules, used by real institutions.
+
+My role: I work on the backend (ASP.NET Core Web API + C# + SQL Server via EF/ADO.NET)
+and the Angular/JS frontend, building REST endpoints, business logic services,
+and UI screens.
+
+Example: In the Fee module, I built an API that calculates due fees per student,
+applies concessions, and generates a payment receipt - calling a stored procedure
+via a repository layer, exposed through a versioned REST controller, and consumed
+by an Angular component with reactive forms and validation.
+
+Challenge: We had performance issues on the attendance report for large classes -
+I optimized the SQL query and added response caching, cutting load time from
+~4s to under 500ms.
+
+Impact: The module is now used daily by staff to manage 1000+ students."</pre>
+<p><strong>Tip:</strong> Always have ONE specific technical challenge + numeric impact ready — interviewers probe deeper here more than any other question.</p>`},
+
+// ===================== HTTP =====================
+{cat:"Web API & Architecture", q:"How many HTTP codes do you know, explain them", a:`
+<p>HTTP status codes are grouped into 5 classes:</p>
+<table>
+<tr><th>Class</th><th>Meaning</th><th>Common codes</th></tr>
+<tr><td>1xx</td><td>Informational</td><td>100 Continue</td></tr>
+<tr><td>2xx</td><td>Success</td><td>200 OK, 201 Created, 204 No Content</td></tr>
+<tr><td>3xx</td><td>Redirection</td><td>301 Moved Permanently, 302 Found, 304 Not Modified</td></tr>
+<tr><td>4xx</td><td>Client Error</td><td>400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict</td></tr>
+<tr><td>5xx</td><td>Server Error</td><td>500 Internal Server Error, 502 Bad Gateway, 503 Service Unavailable</td></tr>
+</table>
+<pre>[HttpGet("{id}")]
+public IActionResult GetStudent(int id)
+{
+    var student = _service.GetById(id);
+    if (student == null) return NotFound();           // 404
+    return Ok(student);                                // 200
+}
+
+[HttpPost]
+public IActionResult Create(StudentDto dto)
+{
+    if (!ModelState.IsValid) return BadRequest(ModelState); // 400
+    var created = _service.Create(dto);
+    return CreatedAtAction(nameof(GetStudent), new { id = created.Id }, created); // 201
+}</pre>
+<p><strong>Live example:</strong> 401 = not logged in at all; 403 = logged in but not allowed (e.g. a teacher trying to access Admin-only fee settings).</p>`},
+
+{cat:"Web API & Architecture", q:"Explain Microservices", a:`
+<p>Microservices architecture splits a large application into small, independently deployable services, each owning its own data and responsibility, communicating over lightweight protocols (HTTP/REST, gRPC, message queues).</p>
+<pre>Monolith:                      Microservices:
+┌───────────────────┐          ┌───────────┐  ┌───────────┐
+│  Student           │          │ Student    │  │ Billing    │
+│  Billing            │  --->   │ Service    │  │ Service    │
+│  Attendance         │          └───────────┘  └───────────┘
+│  Transport          │          ┌───────────┐  ┌───────────┐
+│  (one deployable)   │          │Attendance  │  │Transport   │
+└───────────────────┘          │ Service    │  │ Service    │
+                                 └───────────┘  └───────────┘</pre>
+<p><strong>Example:</strong> Instead of one big ZenCampus app, you'd have a <code>StudentService</code>, <code>BillingService</code>, <code>TransportService</code> (as seen in real folder structures like <code>StudentService</code>, <code>TransportService</code>, <code>HostelService</code>), each with its own DB, deployed and scaled independently, talking via REST APIs or a message bus (RabbitMQ/Azure Service Bus).</p>
+<p><strong>Pros:</strong> independent deployment/scaling, technology freedom, fault isolation.<br><strong>Cons:</strong> distributed system complexity, network latency, need for API gateway, service discovery, distributed tracing.</p>`},
+
+{cat:"Web API & Architecture", q:"Explain MVC", a:`
+<p><strong>MVC (Model-View-Controller)</strong> separates an application into three responsibilities:</p>
+<ul>
+<li><strong>Model</strong> — data + business rules (e.g. <code>Student.cs</code>)</li>
+<li><strong>View</strong> — the UI/presentation (e.g. <code>.cshtml</code> Razor page)</li>
+<li><strong>Controller</strong> — receives requests, talks to the model, chooses which view to render</li>
+</ul>
+<pre>// Model
+public class Student { public int Id; public string Name; public double Attendance; }
+
+// Controller
+public class StudentController : Controller
+{
+    public IActionResult Details(int id)
+    {
+        Student model = _service.GetById(id);   // talks to Model
+        return View(model);                      // picks the View
+    }
+}
+
+// View (Details.cshtml)
+&lt;h2&gt;@Model.Name&lt;/h2&gt;
+&lt;p&gt;Attendance: @Model.Attendance%&lt;/p&gt;</pre>
+<p><strong>Why it matters:</strong> keeps UI, data and control-flow logic decoupled — a change to the UI (View) doesn't touch business logic (Model), and vice versa.</p>`},
+
+{cat:".NET Core & C#", q:"Appsettings.json", a:`
+<p><code>appsettings.json</code> is the default configuration file in ASP.NET Core — stores connection strings, logging levels, custom app settings, and can have environment-specific overrides like <code>appsettings.Development.json</code>.</p>
+<pre>// appsettings.json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=.;Database=ZenCampus;Trusted_Connection=True;"
+  },
+  "Logging": {
+    "LogLevel": { "Default": "Information", "Microsoft": "Warning" }
+  },
+  "JwtSettings": {
+    "Issuer": "ZenCampus",
+    "ExpiryMinutes": 60
+  }
+}
+
+// Program.cs - reading it via IConfiguration
+var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
+var expiry  = builder.Configuration.GetValue&lt;int&gt;("JwtSettings:ExpiryMinutes");
+
+// Strongly typed binding
+builder.Services.Configure&lt;JwtSettings&gt;(builder.Configuration.GetSection("JwtSettings"));</pre>
+<p><strong>Environment-specific:</strong> <code>appsettings.Production.json</code> overrides base values automatically based on <code>ASPNETCORE_ENVIRONMENT</code>. Secrets like real passwords should NOT live here in production — use <strong>Azure Key Vault</strong> or environment variables instead.</p>`},
+
+// ===================== OOP =====================
+{cat:"C# & OOP", q:"OOPs - explanation", a:`
+<p>The 4 pillars of Object-Oriented Programming:</p>
+<table>
+<tr><th>Pillar</th><th>Meaning</th></tr>
+<tr><td><strong>Encapsulation</strong></td><td>Bundling data + methods together, hiding internal state via private fields / public properties</td></tr>
+<tr><td><strong>Inheritance</strong></td><td>A class reuses/extends another class's members</td></tr>
+<tr><td><strong>Polymorphism</strong></td><td>Same method name behaves differently — via overriding (runtime) or overloading (compile-time)</td></tr>
+<tr><td><strong>Abstraction</strong></td><td>Exposing only essential details, hiding implementation via abstract classes/interfaces</td></tr>
+</table>
+<pre>public abstract class Person                 // Abstraction
+{
+    public string Name { get; set; }          // Encapsulation (property)
+    private string _ssn;                      // Encapsulation (hidden field)
+    public abstract string GetRole();          // must be implemented by children
+}
+
+public class Student : Person                 // Inheritance
+{
+    public override string GetRole() => "Student";  // Polymorphism (override)
+}
+
+public class Staff : Person
+{
+    public override string GetRole() => "Staff";     // Polymorphism (override)
+}
+
+Person p1 = new Student();
+Person p2 = new Staff();
+Console.WriteLine(p1.GetRole());  // "Student" - decided at RUNTIME</pre>`},
+
+{cat:"C# & OOP", q:"Method overriding and method overloading", a:`
+<table>
+<tr><th>Overloading</th><th>Overriding</th></tr>
+<tr><td>Same method name, different parameters, SAME class</td><td>Same signature, redefined in a DERIVED class</td></tr>
+<tr><td>Resolved at COMPILE time (static polymorphism)</td><td>Resolved at RUNTIME (dynamic polymorphism)</td></tr>
+<tr><td>No keyword needed</td><td>Requires <code>virtual</code> (base) + <code>override</code> (derived)</td></tr>
+</table>
+<pre>// OVERLOADING - same class, different parameter lists
+public class Calculator
+{
+    public int Add(int a, int b) =&gt; a + b;
+    public double Add(double a, double b) =&gt; a + b;
+    public int Add(int a, int b, int c) =&gt; a + b + c;
+}
+
+// OVERRIDING - base/derived, same signature
+public class FeeCalculator
+{
+    public virtual decimal CalculateFee(int studentId) =&gt; 5000m;
+}
+
+public class ScholarshipFeeCalculator : FeeCalculator
+{
+    public override decimal CalculateFee(int studentId) =&gt; 3000m; // discounted
+}
+
+FeeCalculator calc = new ScholarshipFeeCalculator();
+calc.CalculateFee(101);   // returns 3000 - runtime decides which override runs</pre>`},
+
+{cat:"Web API & Architecture", q:"RestAPIs", a:`
+<p>REST (Representational State Transfer) is an architectural style where each URL is a resource (noun) and HTTP verbs represent actions on it, typically exchanging JSON.</p>
+<pre>[ApiController]
+[Route("api/[controller]")]
+public class StudentController : ControllerBase
+{
+    private readonly IStudentService _service;
+    public StudentController(IStudentService service) =&gt; _service = service;
+
+    [HttpGet]
+    public IActionResult GetAll() =&gt; Ok(_service.GetAll());
+
+    [HttpGet("{id}")]
+    public IActionResult GetById(int id)
+    {
+        var student = _service.GetById(id);
+        return student is null ? NotFound() : Ok(student);
+    }
+
+    [HttpPost]
+    public IActionResult Create(StudentDto dto)
+        =&gt; CreatedAtAction(nameof(GetById), new { id = 1 }, dto);   // 201
+
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, StudentDto dto) =&gt; NoContent(); // 204
+
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id) =&gt; NoContent();
+}</pre>
+<p><strong>REST principles:</strong> stateless (no server-side session between requests), resource-based URLs, uses standard HTTP verbs/status codes, cacheable, uniform interface.</p>`},
+
+{cat:"C# & OOP", q:"Delegates", a:`
+<p>A delegate is a type-safe function pointer — a variable that holds a reference to a method with a matching signature, allowing methods to be passed as parameters (the foundation of events and LINQ).</p>
+<pre>// Custom delegate
+public delegate decimal FeeDiscountHandler(decimal amount);
+
+public class FeeProcessor
+{
+    public decimal ApplyDiscount(decimal amount, FeeDiscountHandler handler)
+        =&gt; handler(amount);
+}
+
+decimal TenPercentOff(decimal amt) =&gt; amt * 0.9m;
+
+var processor = new FeeProcessor();
+decimal result = processor.ApplyDiscount(5000, TenPercentOff);   // 4500
+
+// Built-in delegates: Func, Action, Predicate
+Func&lt;int, int, int&gt; add = (a, b) =&gt; a + b;         // returns a value
+Action&lt;string&gt; log = msg =&gt; Console.WriteLine(msg);  // returns void
+Predicate&lt;int&gt; isAdult = age =&gt; age &gt;= 18;           // returns bool
+
+// Multicast delegate - calls multiple methods in sequence
+Action&lt;string&gt; notify = SendEmail;
+notify += SendSms;
+notify("Fee due reminder");   // calls BOTH methods</pre>
+<p><strong>Real use:</strong> Events (<code>OnPaymentCompleted += SendReceipt;</code>) and LINQ (<code>.Where(x =&gt; x.Age &gt; 18)</code> takes a <code>Func&lt;T,bool&gt;</code> delegate).</p>`},
+
+{cat:"C# & OOP", q:"Array and ArrayList", a:`
+<table>
+<tr><th>Array</th><th>ArrayList</th></tr>
+<tr><td>Fixed size, set at creation</td><td>Dynamic/resizable</td></tr>
+<tr><td>Strongly typed (type-safe)</td><td>Stores <code>object</code> — no type safety, needs boxing/unboxing for value types</td></tr>
+<tr><td>Faster (no boxing overhead)</td><td>Slower for value types</td></tr>
+<tr><td><code>System</code> namespace</td><td><code>System.Collections</code> (legacy, prefer <code>List&lt;T&gt;</code> instead)</td></tr>
+</table>
+<pre>// Array - fixed size, typed
+int[] marks = new int[3] { 90, 85, 78 };
+// marks[3] = 50;   // ERROR - index out of range, can't grow
+
+// ArrayList - legacy, untyped
+ArrayList list = new ArrayList();
+list.Add(90);
+list.Add("Arjun");     // allowed - no type safety! risky
+int mark = (int)list[0]; // needs manual casting (unboxing)
+
+// Modern replacement - List&lt;T&gt;: dynamic AND type-safe
+List&lt;int&gt; typedMarks = new List&lt;int&gt;();
+typedMarks.Add(90);
+typedMarks.Add(85);     // grows automatically, no casting needed</pre>
+<p><strong>Interview tip:</strong> In modern C#, prefer <code>List&lt;T&gt;</code> over <code>ArrayList</code> — it's the generic, type-safe replacement.</p>`},
+
+{cat:"C# & OOP", q:"Partial, sealed keyword diff", a:`
+<table>
+<tr><th><code>partial</code></th><th><code>sealed</code></th></tr>
+<tr><td>Splits ONE class across multiple files</td><td>PREVENTS a class from being inherited further</td></tr>
+<tr><td>Used for large classes / auto-generated + custom code</td><td>Used to lock down a design, or for performance (JIT can optimize non-virtual calls)</td></tr>
+</table>
+<pre>// PARTIAL - same class split across 2 files
+// File1: StudentController.cs
+public partial class StudentController : ControllerBase
+{
+    [HttpGet] public IActionResult GetAll() =&gt; Ok();
+}
+// File2: StudentController.Admission.cs
+public partial class StudentController
+{
+    [HttpPost("admit")] public IActionResult Admit() =&gt; Ok();
+}
+// Compiler merges both into ONE class at compile time
+
+// SEALED - stop inheritance
+public sealed class FeeCalculator
+{
+    public decimal Calculate() =&gt; 5000m;
+}
+// public class DiscountFeeCalculator : FeeCalculator { }  // COMPILE ERROR
+
+// You can also seal just an override:
+public class Base { public virtual void Run() { } }
+public class Mid : Base { public sealed override void Run() { } }
+public class Leaf : Mid { public override void Run() { } }  // ERROR - Run is sealed</pre>`},
+
+{cat:"Web API & Architecture", q:"Routing", a:`
+<p>Routing maps an incoming URL to the controller/action that should handle it. ASP.NET Core supports <strong>attribute routing</strong> (preferred for Web APIs) and <strong>conventional routing</strong> (typical for MVC views).</p>
+<pre>// Attribute routing (Web API)
+[ApiController]
+[Route("api/[controller]")]           // becomes api/Student
+public class StudentController : ControllerBase
+{
+    [HttpGet("{id:int}")]              // GET api/Student/101 (constraint: must be int)
+    public IActionResult GetById(int id) =&gt; Ok();
+
+    [HttpGet("search/{name}")]         // GET api/Student/search/Arjun
+    public IActionResult Search(string name) =&gt; Ok();
+}
+
+// Conventional routing (Program.cs, typical MVC)
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");</pre>
+<p><strong>Route constraints</strong> (<code>{id:int}</code>, <code>{id:guid}</code>) reject invalid requests with a 404 automatically before the action even runs.</p>`},
+
+{cat:"Web API & Architecture", q:"Authorization and authentication", a:`
+<table>
+<tr><th>Authentication</th><th>Authorization</th></tr>
+<tr><td>WHO are you? (verifying identity — login)</td><td>WHAT can you do? (checking permissions)</td></tr>
+<tr><td>Happens first</td><td>Happens after authentication</td></tr>
+<tr><td>401 Unauthorized if it fails</td><td>403 Forbidden if it fails</td></tr>
+</table>
+<pre>// Program.cs - JWT Authentication setup
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =&gt;
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+    });
+
+builder.Services.AddAuthorization(options =&gt;
+{
+    options.AddPolicy("AdminOnly", p =&gt; p.RequireRole("Admin"));
+});
+
+app.UseAuthentication();   // WHO are you
+app.UseAuthorization();    // WHAT can you access
+
+// Controller
+[Authorize(Roles = "Admin")]              // Authorization check
+[HttpDelete("{id}")]
+public IActionResult DeleteStudent(int id) =&gt; NoContent();
+
+[Authorize]                                // just needs to be logged in
+[HttpGet("profile")]
+public IActionResult GetProfile() =&gt; Ok(User.Identity.Name);</pre>`},
+
+// ===================== AZURE =====================
+{cat:"Azure & DevOps", q:"Azure services", a:`
+<p>Commonly used Azure services in a .NET enterprise app:</p>
+<table>
+<tr><th>Service</th><th>Purpose</th></tr>
+<tr><td>App Service</td><td>Host web apps / APIs (PaaS, no VM management)</td></tr>
+<tr><td>Azure SQL Database</td><td>Managed relational database</td></tr>
+<tr><td>Blob Storage</td><td>Store files/images/documents</td></tr>
+<tr><td>Key Vault</td><td>Securely store secrets, connection strings, certificates</td></tr>
+<tr><td>Azure Functions</td><td>Serverless, event-driven compute</td></tr>
+<tr><td>Service Bus / Event Grid</td><td>Messaging between microservices</td></tr>
+<tr><td>Azure DevOps / Pipelines</td><td>CI/CD automation</td></tr>
+<tr><td>Application Insights</td><td>Monitoring, logging, telemetry</td></tr>
+<tr><td>AKS (Kubernetes Service)</td><td>Container orchestration for microservices</td></tr>
+</table>
+<p><strong>Example:</strong> ZenCampus-style app deployed as an App Service, with student photos in Blob Storage, DB connection string secured in Key Vault, and deployment automated through Azure Pipelines.</p>`},
+
+{cat:"Azure & DevOps", q:"Key vault", a:`
+<p>Azure Key Vault securely stores secrets (connection strings, API keys, certificates) outside of source code / appsettings.json, with access controlled via Azure AD + RBAC.</p>
+<pre>// 1. Install: Azure.Security.KeyVault.Secrets, Azure.Identity
+
+// Program.cs - load secrets into configuration at startup
+builder.Configuration.AddAzureKeyVault(
+    new Uri("https://zencampus-kv.vault.azure.net/"),
+    new DefaultAzureCredential());
+
+// 2. Read secret like any other config value
+var connStr = builder.Configuration["SqlConnectionString"];
+
+// Or read directly via SDK
+var client = new SecretClient(
+    new Uri("https://zencampus-kv.vault.azure.net/"),
+    new DefaultAzureCredential());
+KeyVaultSecret secret = await client.GetSecretAsync("SqlConnectionString");
+string value = secret.Value;</pre>
+<p><strong>Why it matters:</strong> avoids hardcoding passwords/API keys in appsettings.json or source control — a common security review finding.</p>`},
+
+{cat:"Azure & DevOps", q:"Blob storage", a:`
+<p>Azure Blob Storage stores unstructured data — images, documents, videos, backups — organized into <strong>Containers</strong> holding <strong>Blobs</strong> (files).</p>
+<pre>// Install: Azure.Storage.Blobs
+
+var blobServiceClient = new BlobServiceClient(connectionString);
+var containerClient = blobServiceClient.GetBlobContainerClient("student-photos");
+await containerClient.CreateIfNotExistsAsync();
+
+// Upload
+var blobClient = containerClient.GetBlobClient("student_101.jpg");
+await blobClient.UploadAsync(fileStream, overwrite: true);
+
+// Get URL to store in DB
+string photoUrl = blobClient.Uri.ToString();
+
+// Download
+BlobDownloadInfo download = await blobClient.DownloadAsync();
+
+// Delete
+await blobClient.DeleteIfExistsAsync();</pre>
+<p><strong>Blob types:</strong> Block Blobs (files, most common), Append Blobs (logs), Page Blobs (VHD/disk images).<br><strong>Access tiers:</strong> Hot (frequent access), Cool (infrequent), Archive (rarely accessed, cheapest, slow retrieval).</p>`},
+
+{cat:"Azure & DevOps", q:"Explain CI/CD", a:`
+<p><strong>CI (Continuous Integration):</strong> every code push automatically triggers a build + run of automated tests, catching integration issues early.<br>
+<strong>CD (Continuous Delivery/Deployment):</strong> automatically deploys the tested build to staging/production.</p>
+<pre># azure-pipelines.yml
+trigger:
+  - main
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    version: '8.x'
+
+- script: dotnet restore
+  displayName: 'Restore packages'
+
+- script: dotnet build --configuration Release
+  displayName: 'Build'
+
+- script: dotnet test
+  displayName: 'Run unit tests'          # CI - fails pipeline if tests fail
+
+- task: AzureWebApp@1                     # CD - auto-deploy on success
+  inputs:
+    azureSubscription: 'ZenCampus-Sub'
+    appName: 'zencampus-api'
+    package: '$(Build.ArtifactStagingDirectory)/**/*.zip'</pre>
+<p><strong>Benefit:</strong> catches bugs immediately (CI) and eliminates slow, error-prone manual deployments (CD) — a bad build never reaches production because the pipeline gates it on passing tests.</p>`},
+
+// ===================== ANGULAR =====================
+{cat:"Angular", q:"What is Angular", a:`
+<p>Angular is a TypeScript-based front-end framework (by Google) for building Single Page Applications (SPAs), providing components, two-way data binding, dependency injection, routing and HTTP client out of the box.</p>
+<pre>// main.ts - bootstraps the app
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app/app.component';
+
+bootstrapApplication(AppComponent);
+
+// app.component.ts
+@Component({
+  selector: 'app-root',
+  template: \`&lt;h1&gt;Welcome to {{ appName }}&lt;/h1&gt;\`
+})
+export class AppComponent {
+  appName = 'ZenCampus';
+}</pre>
+<p><strong>Key building blocks:</strong> Components (UI + logic), Modules (grouping), Services (shared logic/data), Directives (DOM behavior), Pipes (data formatting), Router (navigation).</p>`},
+
+{cat:"Angular", q:"Directives", a:`
+<p>Directives add behavior to DOM elements. Three types:</p>
+<table>
+<tr><th>Type</th><th>Purpose</th><th>Example</th></tr>
+<tr><td>Component</td><td>Directive WITH a template</td><td><code>@Component</code></td></tr>
+<tr><td>Structural</td><td>Add/remove elements from the DOM</td><td><code>*ngIf</code>, <code>*ngFor</code>, <code>*ngSwitch</code></td></tr>
+<tr><td>Attribute</td><td>Change appearance/behavior of an existing element</td><td><code>ngClass</code>, <code>ngStyle</code>, custom</td></tr>
+</table>
+<pre>&lt;!-- Structural directives --&gt;
+&lt;div *ngIf="student.attendance &gt;= 75"&gt;Eligible for exam&lt;/div&gt;
+&lt;li *ngFor="let s of students"&gt;{{ s.name }}&lt;/li&gt;
+
+&lt;!-- Attribute directive --&gt;
+&lt;div [ngClass]="{ 'low-attendance': student.attendance &lt; 75 }"&gt;{{ student.name }}&lt;/div&gt;
+
+// Custom attribute directive
+@Directive({ selector: '[highlightLow]' })
+export class HighlightLowDirective {
+  @Input() set highlightLow(attendance: number) {
+    this.el.nativeElement.style.backgroundColor = attendance &lt; 75 ? 'red' : 'transparent';
+  }
+  constructor(private el: ElementRef) {}
+}
+// Usage: &lt;div [highlightLow]="student.attendance"&gt;{{student.name}}&lt;/div&gt;</pre>`},
+
+{cat:"Angular", q:"Component", a:`
+<p>A Component is the core building block of an Angular UI — a TypeScript class decorated with <code>@Component</code>, paired with an HTML template and CSS, controlling one piece of the screen.</p>
+<pre>// student-card.component.ts
+@Component({
+  selector: 'app-student-card',
+  templateUrl: './student-card.component.html',
+  styleUrls: ['./student-card.component.css']
+})
+export class StudentCardComponent {
+  @Input() student!: Student;          // data coming IN from parent
+  @Output() selected = new EventEmitter&lt;number&gt;();  // event going OUT to parent
+
+  onClick() {
+    this.selected.emit(this.student.id);
+  }
+}</pre>
+<pre>&lt;!-- student-card.component.html --&gt;
+&lt;div class="card" (click)="onClick()"&gt;
+  &lt;h3&gt;{{ student.name }}&lt;/h3&gt;
+  &lt;p&gt;Attendance: {{ student.attendance }}%&lt;/p&gt;
+&lt;/div&gt;</pre>`},
+
+{cat:"Angular", q:"Routes in angular", a:`
+<p>Angular's Router maps URL paths to components, enabling SPA navigation without full page reloads.</p>
+<pre>// app.routes.ts
+const routes: Routes = [
+  { path: '', component: DashboardComponent },
+  { path: 'students', component: StudentListComponent },
+  { path: 'students/:id', component: StudentDetailComponent },
+  { path: 'fee', loadComponent: () =&gt;
+      import('./fee/fee.component').then(m =&gt; m.FeeComponent) },  // lazy loading
+  { path: '**', component: NotFoundComponent }               // wildcard/404
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule {}</pre>
+<pre>&lt;!-- template --&gt;
+&lt;a routerLink="/students"&gt;Students&lt;/a&gt;
+&lt;router-outlet&gt;&lt;/router-outlet&gt;   &lt;!-- matched component renders here --&gt;
+
+// reading a route param in a component
+constructor(private route: ActivatedRoute) {
+  const id = this.route.snapshot.paramMap.get('id');
+}</pre>`},
+
+{cat:"Angular", q:"How do you connect components in angular", a:`
+<p>Parent-child communication uses <code>@Input()</code> (parent → child) and <code>@Output()</code> + <code>EventEmitter</code> (child → parent). Unrelated components communicate via a shared <strong>Service</strong> with RxJS Subjects/BehaviorSubjects.</p>
+<pre>// PARENT template
+&lt;app-student-card [student]="selectedStudent" (selected)="onStudentSelected($event)"&gt;
+&lt;/app-student-card&gt;
+
+// PARENT component
+onStudentSelected(id: number) { console.log('Selected:', id); }
+
+// CHILD component
+@Input() student!: Student;
+@Output() selected = new EventEmitter&lt;number&gt;();
+
+// SIBLING-to-sibling via a shared Service
+@Injectable({ providedIn: 'root' })
+export class StudentStateService {
+  private selectedSource = new BehaviorSubject&lt;Student | null&gt;(null);
+  selected$ = this.selectedSource.asObservable();
+  select(student: Student) { this.selectedSource.next(student); }
+}
+// Component A calls service.select(student), Component B subscribes to selected$</pre>`},
+
+{cat:"Angular", q:"DI in angular", a:`
+<p>Angular's Dependency Injection provides services to components/other services automatically via the constructor, instead of components creating dependencies themselves — improving testability and reuse.</p>
+<pre>// student.service.ts
+@Injectable({ providedIn: 'root' })   // registered app-wide as a Singleton
+export class StudentService {
+  constructor(private http: HttpClient) {}   // HttpClient is ALSO injected
+
+  getAll(): Observable&lt;Student[]&gt; {
+    return this.http.get&lt;Student[]&gt;('/api/student');
+  }
+}
+
+// student-list.component.ts
+@Component({ selector: 'app-student-list', templateUrl: './student-list.component.html' })
+export class StudentListComponent implements OnInit {
+  students: Student[] = [];
+
+  constructor(private studentService: StudentService) {}  // Angular injects it automatically
+
+  ngOnInit() {
+    this.studentService.getAll().subscribe(data =&gt; this.students = data);
+  }
+}</pre>
+<p><strong>Providers scope:</strong> <code>providedIn: 'root'</code> = app-wide singleton; provided in a component's <code>providers: []</code> array = new instance per component tree.</p>`},
+
+// ===================== EF / LINQ =====================
+{cat:"EF & LINQ", q:"Ienumerable vs iqerable", a:`
+<table>
+<tr><th>IEnumerable</th><th>IQueryable</th></tr>
+<tr><td><code>System.Collections</code> namespace</td><td><code>System.Linq</code> namespace</td></tr>
+<tr><td>Executes query in MEMORY (client-side)</td><td>Builds an expression tree, executes on the DATABASE (server-side)</td></tr>
+<tr><td>Good for in-memory collections (List, Array)</td><td>Good for remote data sources (EF Core, SQL)</td></tr>
+<tr><td>Filtering happens AFTER data is loaded</td><td>Filtering (WHERE) is translated to SQL and happens IN the database</td></tr>
+</table>
+<pre>// IEnumerable - loads ALL students into memory FIRST, then filters in C#
+IEnumerable&lt;Student&gt; students = _context.Students.ToList();
+var result = students.Where(s =&gt; s.Attendance &gt; 75);
+// SQL: SELECT * FROM Students   (fetches everything!)
+
+// IQueryable - filter is translated to SQL and runs on the DATABASE
+IQueryable&lt;Student&gt; query = _context.Students;
+var result2 = query.Where(s =&gt; s.Attendance &gt; 75);
+// SQL: SELECT * FROM Students WHERE Attendance &gt; 75   (only matching rows fetched)</pre>
+<p><strong>Interview gotcha:</strong> calling <code>.ToList()</code> too early converts <code>IQueryable</code> to <code>IEnumerable</code>, forcing all subsequent filters to run in memory instead of the database — a common performance bug.</p>`},
+
+{cat:"EF & LINQ", q:"LINQ-coding question", a:`
+<p>Typical LINQ interview task: given a list of students, filter/group/aggregate.</p>
+<pre>List&lt;Student&gt; students = new()
+{
+    new Student { Name="Arjun", Class="10-A", Attendance=82, Fee=5000 },
+    new Student { Name="Priya", Class="10-A", Attendance=68, Fee=5000 },
+    new Student { Name="Karthik", Class="10-B", Attendance=91, Fee=4500 },
+};
+
+// 1. Filter + Sort (Method syntax)
+var eligible = students
+    .Where(s =&gt; s.Attendance &gt;= 75)
+    .OrderByDescending(s =&gt; s.Attendance)
+    .Select(s =&gt; s.Name)
+    .ToList();
+// -&gt; ["Karthik", "Arjun"]
+
+// 2. Group By class, get average attendance
+var byClass = students
+    .GroupBy(s =&gt; s.Class)
+    .Select(g =&gt; new { Class = g.Key, AvgAttendance = g.Average(s =&gt; s.Attendance) });
+
+// 3. Query syntax (equivalent to #1)
+var eligible2 = from s in students
+                 where s.Attendance &gt;= 75
+                 orderby s.Attendance descending
+                 select s.Name;
+
+// 4. Total fee collected
+decimal totalFee = students.Sum(s =&gt; s.Fee);
+
+// 5. Any / All
+bool anyBelow75 = students.Any(s =&gt; s.Attendance &lt; 75);   // true</pre>`},
+
+{cat:"EF & LINQ", q:"First and firstordefault", a:`
+<table>
+<tr><th><code>First()</code></th><th><code>FirstOrDefault()</code></th></tr>
+<tr><td>Throws <code>InvalidOperationException</code> if no match found</td><td>Returns <code>default(T)</code> (e.g. <code>null</code> for objects, <code>0</code> for int) if no match</td></tr>
+<tr><td>Use when a match is GUARANTEED to exist</td><td>Use when a match MIGHT not exist</td></tr>
+</table>
+<pre>var students = new List&lt;Student&gt; { new Student { Id=1, Name="Arjun" } };
+
+var s1 = students.First(s =&gt; s.Id == 1);         // OK - returns Arjun
+var s2 = students.First(s =&gt; s.Id == 99);        // THROWS InvalidOperationException!
+
+var s3 = students.FirstOrDefault(s =&gt; s.Id == 99); // returns null - safe
+
+// Safe pattern - always check for null
+var student = students.FirstOrDefault(s =&gt; s.Id == 99);
+if (student is null) return NotFound();
+return Ok(student);</pre>
+<p>Both return the FIRST matching element if the sequence has multiple matches (they don't care about uniqueness) — that distinction belongs to Single/SingleOrDefault.</p>`},
+
+{cat:"EF & LINQ", q:"Single and singleordefault", a:`
+<table>
+<tr><th><code>Single()</code></th><th><code>SingleOrDefault()</code></th></tr>
+<tr><td>Throws if ZERO matches OR MORE THAN ONE match</td><td>Returns <code>default(T)</code> if zero matches; still THROWS if more than one match</td></tr>
+<tr><td>Use when EXACTLY one record must exist (e.g. lookup by unique ID/email)</td><td>Use when zero-or-one record is valid, but duplicates would be a data bug</td></tr>
+</table>
+<pre>var students = new List&lt;Student&gt;
+{
+    new Student { Id=1, Email="a@zc.com" },
+    new Student { Id=2, Email="a@zc.com" }   // duplicate email - data bug!
+};
+
+var s1 = students.Single(s =&gt; s.Id == 1);                 // OK - exactly one match
+
+var s2 = students.Single(s =&gt; s.Email == "a@zc.com");      // THROWS - 2 matches found!
+
+var s3 = students.SingleOrDefault(s =&gt; s.Id == 99);        // returns null, no throw
+
+var s4 = students.SingleOrDefault(s =&gt; s.Email == "a@zc.com"); // still THROWS - 2 matches</pre>
+<p><strong>Rule of thumb:</strong> use Single/SingleOrDefault on fields expected to be UNIQUE (primary key, unique email) so it also acts as a safety check that catches accidental duplicate data.</p>`},
+
+{cat:".NET Core & C#", q:"Managed code and unmanaged code", a:`
+<table>
+<tr><th>Managed code</th><th>Unmanaged code</th></tr>
+<tr><td>Runs under CLR (Common Language Runtime)</td><td>Runs directly on the OS, no runtime supervision</td></tr>
+<tr><td>Automatic memory management (Garbage Collector)</td><td>Manual memory management (malloc/free, new/delete)</td></tr>
+<tr><td>Type-safe, bounds-checked by the runtime</td><td>No built-in safety checks — prone to memory leaks, buffer overruns</td></tr>
+<tr><td>Example: C#, VB.NET compiled to IL, run by CLR</td><td>Example: C/C++ compiled directly to native machine code</td></tr>
+</table>
+<pre>// Managed - C#, GC automatically frees this when no longer referenced
+public void CreateStudent()
+{
+    var student = new Student();   // CLR + GC manage this memory
+}   // no manual free needed - GC handles it eventually
+
+// Calling UNMANAGED code from C# via P/Invoke
+[DllImport("user32.dll")]
+public static extern int MessageBox(IntPtr hWnd, string text, string caption, int type);
+// This calls native unmanaged Windows API code from managed C#</pre>
+<p><strong>IDisposable/using:</strong> for unmanaged resources wrapped by managed classes (file handles, DB connections), implement <code>IDisposable</code> and use <code>using</code> blocks to release them deterministically instead of waiting on the GC.</p>`},
+
+{cat:".NET Core & C#", q:"Explain Caching", a:`
+<p>Caching stores frequently-accessed data in a fast-access layer to avoid repeated expensive operations (DB calls, external API calls).</p>
+<table>
+<tr><th>Type</th><th>Where it lives</th><th>Use case</th></tr>
+<tr><td>In-Memory Cache</td><td>App server's RAM</td><td>Single-server apps, fast lookups</td></tr>
+<tr><td>Distributed Cache (Redis)</td><td>External cache server, shared across instances</td><td>Load-balanced/multi-server apps</td></tr>
+<tr><td>Response Caching</td><td>HTTP response level (browser/proxy/server)</td><td>Cache entire API/page responses</td></tr>
+</table>
+<pre>// In-Memory Cache
+public class FeeService
+{
+    private readonly IMemoryCache _cache;
+    public FeeService(IMemoryCache cache) =&gt; _cache = cache;
+
+    public FeeStructure GetFeeStructure(string className)
+    {
+        return _cache.GetOrCreate($"fee_{className}", entry =&gt;
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+            return _db.FeeStructures.First(f =&gt; f.Class == className);  // expensive DB call - cached
+        });
+    }
+}
+
+// Distributed Cache (Redis) - Program.cs
+builder.Services.AddStackExchangeRedisCache(options =&gt;
+    options.Configuration = "localhost:6379");
+
+// Response caching attribute
+[ResponseCache(Duration = 60)]
+[HttpGet("timetable/{classId}")]
+public IActionResult GetTimetable(int classId) =&gt; Ok(_service.Get(classId));</pre>`},
+
+{cat:"EF & LINQ", q:"ENTITY FRAMEWORK - types(database approaches)", a:`
+<p>Entity Framework (EF Core) is an ORM mapping C# objects to database tables. Three development approaches:</p>
+<table>
+<tr><th>Approach</th><th>How it works</th></tr>
+<tr><td><strong>Code First</strong></td><td>Write C# entity classes → EF generates the DB schema via migrations. Most common in new projects.</td></tr>
+<tr><td><strong>Database First</strong></td><td>Existing DB already exists → scaffold C# entity classes FROM it (<code>Scaffold-DbContext</code>).</td></tr>
+<tr><td><strong>Model First</strong></td><td>Design a visual EDMX model → generates both DB and classes (legacy, EF6 only, rarely used now).</td></tr>
+</table>
+<pre>// Code First - entity + DbContext
+public class Student
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public double Attendance { get; set; }
+}
+
+public class ZenCampusContext : DbContext
+{
+    public DbSet&lt;Student&gt; Students { get; set; }
+    protected override void OnModelCreating(ModelBuilder mb)
+    {
+        mb.Entity&lt;Student&gt;().HasIndex(s =&gt; s.Name);
+    }
+}
+
+// Terminal - generate & apply migration
+// dotnet ef migrations add InitialCreate
+// dotnet ef database update
+
+// Querying
+var lowAttendance = await _context.Students
+    .Where(s =&gt; s.Attendance &lt; 75)
+    .ToListAsync();</pre>`},
+
+// ===================== DI / SOLID =====================
+{cat:"DI & SOLID", q:"Explain SOLID PRINCIPLES", a:`
+<table>
+<tr><th>Letter</th><th>Principle</th><th>Meaning</th></tr>
+<tr><td><strong>S</strong></td><td>Single Responsibility</td><td>A class should have ONE reason to change</td></tr>
+<tr><td><strong>O</strong></td><td>Open/Closed</td><td>Open for extension, closed for modification</td></tr>
+<tr><td><strong>L</strong></td><td>Liskov Substitution</td><td>Subtypes must be substitutable for their base type without breaking behavior</td></tr>
+<tr><td><strong>I</strong></td><td>Interface Segregation</td><td>Prefer many small interfaces over one bloated interface</td></tr>
+<tr><td><strong>D</strong></td><td>Dependency Inversion</td><td>Depend on abstractions, not concrete implementations</td></tr>
+</table>
+<pre>// S - Single Responsibility: FeeCalculator only calculates, doesn't send email
+public class FeeCalculator { public decimal Calculate(int id) =&gt; 5000m; }
+public class EmailService { public void Send(string to, string msg) { } }
+
+// O - Open/Closed: add new discount types WITHOUT modifying existing code
+public interface IDiscountStrategy { decimal Apply(decimal fee); }
+public class ScholarshipDiscount : IDiscountStrategy { public decimal Apply(decimal f) =&gt; f * 0.7m; }
+public class SiblingDiscount : IDiscountStrategy { public decimal Apply(decimal f) =&gt; f * 0.9m; }
+// New discount? Add a new class, don't touch existing ones.
+
+// L - Liskov: Square shouldn't break behavior expected of Rectangle - avoid such traps
+
+// I - Interface Segregation: split instead of one fat interface
+public interface IStudentReader { Student Get(int id); }
+public interface IStudentWriter { void Save(Student s); }
+
+// D - Dependency Inversion: depend on the interface, not FeeService directly
+public class BillController
+{
+    private readonly IFeeService _feeService;               // abstraction
+    public BillController(IFeeService feeService) =&gt; _feeService = feeService;
+}</pre>`},
+
+{cat:"DI & SOLID", q:"What is Dependency injection", a:`
+<p>Dependency Injection (DI) is a design pattern where an object's dependencies are supplied from the OUTSIDE (usually via constructor) instead of the object creating them itself — reducing coupling and improving testability.</p>
+<pre>// WITHOUT DI - tightly coupled, hard to test/mock
+public class BillController
+{
+    private FeeService _feeService = new FeeService(new SqlFeeRepository());  // hardcoded!
+}
+
+// WITH DI - dependency is INJECTED via constructor
+public interface IFeeService { decimal GetDue(int studentId); }
+public class FeeService : IFeeService
+{
+    private readonly IFeeRepository _repo;
+    public FeeService(IFeeRepository repo) =&gt; _repo = repo;   // repo injected too
+    public decimal GetDue(int studentId) =&gt; _repo.GetFee(studentId);
+}
+
+public class BillController : ControllerBase
+{
+    private readonly IFeeService _feeService;
+    public BillController(IFeeService feeService) =&gt; _feeService = feeService; // injected by DI container
+}
+
+// Program.cs - register with the built-in DI container
+builder.Services.AddScoped&lt;IFeeService, FeeService&gt;();
+builder.Services.AddScoped&lt;IFeeRepository, SqlFeeRepository&gt;();
+// ASP.NET Core automatically resolves & injects the whole chain at request time</pre>
+<p><strong>Benefit:</strong> in unit tests you can inject a MOCK <code>IFeeService</code> instead of a real DB-backed one.</p>`},
+
+{cat:"DI & SOLID", q:"All Service lifetimes in DI", a:`
+<table>
+<tr><th>Lifetime</th><th>Instance created</th><th>Use case</th></tr>
+<tr><td><strong>Transient</strong></td><td>New instance EVERY time it's requested</td><td>Lightweight, stateless services</td></tr>
+<tr><td><strong>Scoped</strong></td><td>ONE instance PER HTTP request</td><td>DbContext, request-specific services (most common for EF)</td></tr>
+<tr><td><strong>Singleton</strong></td><td>ONE instance for the ENTIRE application lifetime</td><td>Caching, configuration, logging</td></tr>
+</table>
+<pre>builder.Services.AddTransient&lt;IEmailSender, EmailSender&gt;();     // new instance every injection
+builder.Services.AddScoped&lt;IFeeService, FeeService&gt;();           // one per HTTP request
+builder.Services.AddSingleton&lt;ICacheService, MemoryCacheService&gt;(); // one for app lifetime
+
+// DANGER: injecting a Scoped service into a Singleton throws an exception at runtime
+// (Singleton would outlive the Scoped service's intended per-request lifecycle)
+public class BadSingleton
+{
+    public BadSingleton(IFeeService feeService) { }   // IFeeService is Scoped - ERROR!
+}</pre>
+<p><strong>Rule of thumb:</strong> <code>DbContext</code> is always Scoped (registered automatically by <code>AddDbContext</code>) — never make it Singleton, since EF's DbContext isn't thread-safe for concurrent requests.</p>`},
+
+{cat:"DI & SOLID", q:"Singleton explaination", a:`
+<p>Singleton ensures only ONE instance of a class exists for its entire scope. In DI, <code>AddSingleton</code> creates one instance for the whole application lifetime, shared across ALL requests.</p>
+<pre>// DI Singleton - ASP.NET Core managed
+builder.Services.AddSingleton&lt;ICacheService, MemoryCacheService&gt;();
+// Every controller/service that injects ICacheService gets the SAME instance
+
+// Classic Singleton design pattern (without DI container)
+public sealed class ConfigManager
+{
+    private static readonly Lazy&lt;ConfigManager&gt; _instance =
+        new(() =&gt; new ConfigManager());
+
+    public static ConfigManager Instance =&gt; _instance.Value;
+
+    private ConfigManager() { }   // private constructor - can't "new" it externally
+
+    public string ApiKey { get; set; }
+}
+
+// Usage
+ConfigManager.Instance.ApiKey = "abc123";
+var key = ConfigManager.Instance.ApiKey;  // same instance everywhere</pre>
+<p><strong>Caution:</strong> Singletons must be thread-safe since multiple concurrent requests share the same instance — avoid storing per-request mutable state in one.</p>`},
+
+// ===================== C# / .NET =====================
+{cat:".NET Core & C#", q:"What is c#", a:`
+<p>C# is a modern, object-oriented, type-safe programming language developed by Microsoft, running on the .NET platform. It compiles to Intermediate Language (IL), which the CLR then JIT-compiles to native machine code at runtime.</p>
+<pre>using System;
+
+namespace ZenCampus
+{
+    public class Program
+    {
+        static void Main(string[] args)
+        {
+            Student s = new Student { Name = "Arjun", Attendance = 82 };
+            Console.WriteLine($"{s.Name} - {s.Attendance}%");
+        }
+    }
+
+    public class Student
+    {
+        public string Name { get; set; }
+        public double Attendance { get; set; }
+    }
+}</pre>
+<p><strong>Key features:</strong> strongly typed, garbage collected, supports OOP + functional (LINQ, lambdas) + async/await, cross-platform via .NET Core/.NET 5+.</p>`},
+
+{cat:".NET Core & C#", q:".net vs .net core", a:`
+<table>
+<tr><th>.NET Framework</th><th>.NET Core / .NET (5+)</th></tr>
+<tr><td>Windows-only</td><td>Cross-platform (Windows, Linux, macOS)</td></tr>
+<tr><td>Not open-source (mostly)</td><td>Fully open-source</td></tr>
+<tr><td>Slower, heavier, older IIS-only hosting</td><td>Faster, modular, can self-host via Kestrel</td></tr>
+<tr><td>Legacy, in maintenance mode (no new versions past 4.8)</td><td>Actively developed (.NET 6, 8, 9...)</td></tr>
+<tr><td>Uses <code>web.config</code></td><td>Uses <code>appsettings.json</code></td></tr>
+</table>
+<pre>// .NET Framework - MVC 5 style
+public class HomeController : Controller
+{
+    public ActionResult Index() =&gt; View();
+}
+
+// .NET Core / .NET 8 - minimal hosting model
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
+var app = builder.Build();
+app.MapControllers();
+app.Run();</pre>
+<p><strong>Recommendation given today:</strong> all new projects should target .NET (the unified, cross-platform successor) — .NET Framework is legacy-only.</p>`},
+
+{cat:"C# & OOP", q:"Abstract class vs interface", a:`
+<table>
+<tr><th>Abstract class</th><th>Interface</th></tr>
+<tr><td>CAN have implemented methods + fields</td><td>Traditionally no implementation (C# 8+ allows default methods, rarely used)</td></tr>
+<tr><td>Single inheritance only (one base class)</td><td>A class can implement MULTIPLE interfaces</td></tr>
+<tr><td>Can have constructors</td><td>Cannot have constructors</td></tr>
+<tr><td>Use when classes SHARE common base behavior</td><td>Use to define a CONTRACT/capability across unrelated classes</td></tr>
+</table>
+<pre>// Abstract class - shared base behavior
+public abstract class Person
+{
+    public string Name { get; set; }
+    public void Greet() =&gt; Console.WriteLine($"Hello, {Name}");  // shared implementation
+    public abstract string GetRole();                             // must be implemented
+}
+public class Student : Person { public override string GetRole() =&gt; "Student"; }
+
+// Interface - contract, multiple implementable
+public interface IPayable { decimal GetDue(); }
+public interface INotifiable { void Notify(string msg); }
+
+public class Student : Person, IPayable, INotifiable   // can implement MANY interfaces
+{
+    public override string GetRole() =&gt; "Student";
+    public decimal GetDue() =&gt; 5000m;
+    public void Notify(string msg) =&gt; Console.WriteLine(msg);
+}</pre>`},
+
+{cat:".NET Core & C#", q:"What is Constructor", a:`
+<p>A constructor is a special method that runs automatically when an object is created, used to initialize its state. It has the SAME name as the class and no return type.</p>
+<pre>public class Student
+{
+    public string Name;
+    public double Attendance;
+
+    // Default constructor
+    public Student() { Name = "Unknown"; }
+
+    // Parameterized constructor
+    public Student(string name, double attendance)
+    {
+        Name = name;
+        Attendance = attendance;
+    }
+
+    // Constructor chaining with 'this'
+    public Student(string name) : this(name, 0) { }
+
+    // Static constructor - runs ONCE, before first use of the class
+    static Student() { Console.WriteLine("Student class loaded"); }
+}
+
+var s1 = new Student();                    // uses default constructor
+var s2 = new Student("Arjun", 82.5);       // uses parameterized constructor
+
+// Dependency Injection uses constructors to inject dependencies:
+public class BillController
+{
+    private readonly IFeeService _feeService;
+    public BillController(IFeeService feeService) =&gt; _feeService = feeService; // constructor injection
+}</pre>`},
+
+{cat:".NET Core & C#", q:"Explain Kestrel", a:`
+<p>Kestrel is the default, lightweight, cross-platform web server built into ASP.NET Core — it's what actually listens for HTTP requests and hosts the app, on Windows, Linux or macOS.</p>
+<pre>// Program.cs - Kestrel runs by default with minimal hosting
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+app.MapGet("/", () =&gt; "Hello from Kestrel!");
+app.Run();     // starts Kestrel listening (default: https://localhost:5001)
+
+// Customizing Kestrel options
+builder.WebHost.ConfigureKestrel(options =&gt;
+{
+    options.ListenAnyIP(5000);                       // HTTP
+    options.ListenAnyIP(5001, listenOptions =&gt;
+        listenOptions.UseHttps());                    // HTTPS
+    options.Limits.MaxConcurrentConnections = 100;
+});</pre>
+<p><strong>In production:</strong> Kestrel is usually placed BEHIND a reverse proxy like IIS, Nginx, or Apache — the proxy handles things like SSL termination, request buffering and load balancing, while Kestrel handles the actual app logic. This combo is called "Kestrel + reverse proxy" hosting.</p>`},
+
+{cat:"Web API & Architecture", q:"What is Web api", a:`
+<p>Web API is a framework for building HTTP-based services that return data (typically JSON) instead of HTML — consumed by browsers (via JS/Angular/React), mobile apps, or other services.</p>
+<table>
+<tr><th>MVC Controller</th><th>Web API Controller</th></tr>
+<tr><td>Returns Views (HTML)</td><td>Returns data (JSON/XML)</td></tr>
+<tr><td>Inherits <code>Controller</code></td><td>Inherits <code>ControllerBase</code> (lighter, no View support needed)</td></tr>
+<tr><td>Used for full server-rendered pages</td><td>Used for SPA backends, mobile backends, service-to-service calls</td></tr>
+</table>
+<pre>[ApiController]
+[Route("api/[controller]")]
+public class BillController : ControllerBase
+{
+    private readonly IFeeService _feeService;
+    public BillController(IFeeService feeService) =&gt; _feeService = feeService;
+
+    [HttpGet("{studentId}")]
+    public IActionResult GetDue(int studentId)
+    {
+        var due = _feeService.GetDue(studentId);
+        return Ok(new { studentId, due });   // returned as JSON automatically
+    }
+}
+// Angular calls it: this.http.get('/api/Bill/101').subscribe(res =&gt; this.due = res.due);</pre>`},
+
+];
+
+// ---------- render ----------
+const categories = [...new Set(qaData.map(x => x.cat))];
+const filtersEl = document.getElementById('filters');
+const qaListEl = document.getElementById('qaList');
+const searchBox = document.getElementById('searchBox');
+const visibleCountEl = document.getElementById('visibleCount');
+let activeCat = 'All';
+
+function buildFilters() {
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-btn active';
+  allBtn.textContent = 'All';
+  allBtn.dataset.cat = 'All';
+  filtersEl.appendChild(allBtn);
+  categories.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.textContent = c;
+    btn.dataset.cat = c;
+    filtersEl.appendChild(btn);
+  });
+  filtersEl.addEventListener('click', e => {
+    if (!e.target.classList.contains('filter-btn')) return;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    activeCat = e.target.dataset.cat;
+    render();
+  });
+}
+
+function render() {
+  const term = searchBox.value.trim().toLowerCase();
+  qaListEl.innerHTML = '';
+  let visible = 0;
+  qaData.forEach((item, idx) => {
+    const matchesCat = activeCat === 'All' || item.cat === activeCat;
+    const matchesSearch = !term || item.q.toLowerCase().includes(term) || item.a.toLowerCase().includes(term);
+    if (!matchesCat || !matchesSearch) return;
+    visible++;
+    const div = document.createElement('div');
+    div.className = 'qa';
+    div.innerHTML = `
+      <div class="q">
+        <span><span class="num">${idx + 1}.</span>${item.q} <span class="tag">${item.cat}</span></span>
+        <span class="toggle-icon">+</span>
+      </div>
+      <div class="a">${item.a}</div>
+    `;
+    div.querySelector('.q').addEventListener('click', () => div.classList.toggle('open'));
+    qaListEl.appendChild(div);
+  });
+  visibleCountEl.textContent = visible;
+}
+
+searchBox.addEventListener('input', render);
+buildFilters();
+render();
+</script>
+</body>
+</html>

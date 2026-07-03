@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenCampus Web API Complete Guide - 20 Concepts + 50 Interview/Coding Q&A</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --accent:#818cf8; --text:#e2e8f0; --muted:#94a3b8; --code:#0b1220; --green:#22c55e;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI',Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  header{ background:linear-gradient(135deg,#3730a3,#0f172a); padding:36px 20px; text-align:center; border-bottom:3px solid var(--accent); }
+  header h1{ margin:0 0 8px; font-size:1.9rem; color:#fff; }
+  header p{ margin:0; color:var(--muted); }
+  .tabs{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; background:#0b1220; padding:14px; position:sticky; top:0; z-index:20; border-bottom:1px solid #334155; }
+  .tab-btn{ padding:10px 20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--muted); cursor:pointer; font-weight:600; font-size:0.9rem; }
+  .tab-btn.active{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+  .container{ max-width:920px; margin:0 auto; padding:30px 20px 80px; }
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
+
+  .search-box{ width:100%; padding:12px 16px; margin-bottom:20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--text); font-size:1rem; }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .filter-btn{ padding:6px 14px; border-radius:20px; border:1px solid #334155; background:transparent; color:var(--muted); cursor:pointer; font-size:0.85rem; }
+  .filter-btn.active, .filter-btn:hover{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+
+  .day-block{ margin-bottom:36px; }
+  .day-title{ color:var(--accent); font-size:1.3rem; margin-bottom:14px; border-left:4px solid var(--accent); padding-left:10px; }
+
+  .qa{ background:var(--card); border-radius:10px; margin-bottom:14px; overflow:hidden; border:1px solid #334155; scroll-margin-top:140px; }
+  .q{ padding:16px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; gap:12px; }
+  .q:hover{ background:#221f45; }
+  .q .num{ color:var(--accent); margin-right:8px; }
+  .q .tag{ font-size:0.7rem; font-weight:400; padding:2px 8px; border-radius:10px; background:#0b1220; color:var(--accent); white-space:nowrap; }
+  .q .tag2{ font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:10px; background:#0b1220; white-space:nowrap; }
+  .tag-concept{ color:#818cf8; }
+  .tag-code{ color:#fb923c; }
+  .a{ max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 18px; color:var(--muted); border-top:1px solid transparent; }
+  .qa.open .a{ max-height:1500px; padding:0 18px 18px; border-top:1px solid #334155; }
+  .a code, .a pre{ background:var(--code); color:#a5b4fc; padding:2px 6px; border-radius:4px; font-family:Consolas,Monaco,monospace; font-size:0.86rem; }
+  .a pre{ display:block; padding:12px; overflow-x:auto; white-space:pre-wrap; margin:10px 0; }
+  .movie-ref{ background:#3b1e5e; color:#e9d5ff; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .zen-ref{ background:#0e3b2e; color:#bbf7d0; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .toggle-icon{ transition:transform .25s; color:var(--accent); font-size:1.1rem; }
+  .qa.open .toggle-icon{ transform:rotate(45deg); }
+  .count{ color:var(--accent); font-weight:600; }
+
+  .checklist{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media(max-width:600px){ .checklist{ grid-template-columns:1fr; } }
+  .check-item{ background:var(--card); border:1px solid #334155; border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .check-item:hover{ border-color:var(--accent); }
+  .check-item .badge{ color:var(--green); font-size:1.1rem; }
+  .check-item .num{ color:var(--muted); font-size:0.8rem; min-width:20px; }
+
+  footer{ text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌐 ZenCampus Web API Complete Guide</h1>
+  <p>20 Core Concepts (5-Day Plan) + 50 Interview &amp; Coding Q&A — All-in-One</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="guide">📘 5-Day Guide</button>
+  <button class="tab-btn" data-tab="interview">🎯 Interview &amp; Coding Q&A</button>
+  <button class="tab-btn" data-tab="coverage">✅ Topic Coverage</button>
+</div>
+
+<div class="container">
+
+  <div class="tab-content active" id="tab-guide">
+    <div id="guideList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-interview">
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search a question (e.g. JWT, middleware, status code, DI)...">
+    <div class="filters" id="filters"></div>
+    <p style="color:var(--muted); font-size:0.85rem;">Showing <span class="count" id="visibleCount">50</span> / 50 questions</p>
+    <div id="qaList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-coverage">
+    <p style="color:var(--muted);">All 20 core Web API concepts every ZenCampus backend dev should know. Click any item to jump to it.</p>
+    <div class="checklist" id="checklist"></div>
+  </div>
+
+</div>
+
+<footer>Built for ZenCampus Web API learning • 2026-07-02</footer>
+
+<script>
+// ============ 20 CONCEPTS ACROSS 5 DAYS (4 topics/day) ============
+const guideDays = [
+{
+  day:1, title:"Day 1 — REST &amp; Web API Basics (HTTP Methods, Status Codes, Routing)",
+  topics:[
+    { name:"1. What is REST &amp; Web API",
+      movie:"🎬 Jai Bhim — Chandru follows a clear, standardized PROCESS for handling any case: intake, investigate, present evidence, deliver verdict — a consistent protocol regardless of which case it is. REST is that same standardized protocol for how clients and servers communicate over HTTP.",
+      explain:"REST (Representational State Transfer) is an architectural style where each URL represents a RESOURCE (a noun, like 'students'), and HTTP methods represent the ACTION performed on it. A Web API is a server application exposing these resources over HTTP, returning data (usually JSON) instead of HTML pages — the backend counterpart to ZenCampus's Razor-rendered pages.",
+      zen:"ZenCampus's `Controllers/BillController.cs` likely exposes REST-style endpoints like `GET /api/Bill/GetFeeDetails/101` — the frontend JS calls these via fetch/AJAX to get JSON data instead of a full server-rendered page.",
+      code:"// Resource-oriented URL design:\n// GET    /api/students        -> list all students\n// GET    /api/students/101    -> get one student\n// POST   /api/students        -> create a student\n// PUT    /api/students/101    -> update a student\n// DELETE /api/students/101    -> delete a student" },
+    { name:"2. HTTP Methods (GET, POST, PUT, PATCH, DELETE)",
+      movie:"🎬 96 — Ram RECALLS a memory (GET, read-only, no side effects), CREATES a brand new one (POST), FULLY REWRITES an old memory (PUT), makes a small EDIT to part of it (PATCH), or lets one go entirely (DELETE).",
+      explain:"<code>GET</code> retrieves data, must be safe (no side effects) and idempotent (calling it repeatedly gives the same result). <code>POST</code> creates a new resource, NOT idempotent (calling twice creates two records). <code>PUT</code> fully replaces a resource, IS idempotent. <code>PATCH</code> partially updates a resource. <code>DELETE</code> removes a resource, idempotent (deleting an already-deleted resource has the same end state).",
+      zen:"ZenCampus's Bill payment flow: `GET /api/Bill/{id}` to view a bill, `POST /api/Bill` to generate a NEW bill, `PUT /api/Bill/{id}` to fully update it, `PATCH /api/Bill/{id}` to just mark `FeesPaid = true` without resending every field.",
+      code:"[HttpGet(\"{id}\")]\npublic IActionResult GetBill(int id) { ... }\n\n[HttpPost]\npublic IActionResult CreateBill([FromBody] BillDto dto) { ... }\n\n[HttpPatch(\"{id}\")]\npublic IActionResult MarkPaid(int id) { ... }" },
+    { name:"3. HTTP Status Codes",
+      movie:"🎬 Vikram Vedha — every encounter between Vikram and Vedha ends with a CLEAR outcome code: success, need more info, forbidden, not found, or a genuine system failure — never an ambiguous silence.",
+      explain:"<strong>2xx Success</strong>: 200 OK, 201 Created (after POST), 204 No Content (after DELETE, nothing to return). <strong>3xx Redirection</strong>: 301/302. <strong>4xx Client Error</strong>: 400 Bad Request (invalid input), 401 Unauthorized (not logged in), 403 Forbidden (logged in but not allowed), 404 Not Found. <strong>5xx Server Error</strong>: 500 Internal Server Error. Returning the CORRECT status code (not always 200) is one of the most commonly checked API design habits in interviews.",
+      zen:"ZenCampus's `POST /api/Student` should return `201 Created` with the new student's URL, and a staff member trying to access another school's data should get `403 Forbidden`, not a silent `200 OK` with empty data.",
+      code:"if (student == null) return NotFound();           // 404\nif (!ModelState.IsValid) return BadRequest(ModelState); // 400\nif (!userHasAccess) return Forbid();                // 403\nreturn CreatedAtAction(nameof(GetById), new { id = student.Id }, student); // 201" },
+    { name:"4. Routing &amp; Route Attributes",
+      movie:"🎬 Kaithi — Dilli navigates a very SPECIFIC, well-mapped path through the hospital's corridors and rooms to reach his goal — routing maps a URL path exactly the same way to the specific controller/action that should handle it.",
+      explain:"<code>[Route(\"api/[controller]\")]</code> on the controller + <code>[HttpGet(\"{id}\")]</code> on actions defines attribute-based routing. Route parameters (<code>{id}</code>) bind directly to action method parameters. Route constraints (<code>{id:int}</code>) validate the parameter's type/format before the action even runs.",
+      zen:"`[Route(\"api/[controller]\")]` on `StudentController` automatically becomes `api/Student`, and `[HttpGet(\"{id:int}\")]` ensures `GET /api/Student/abc` returns a 404 automatically (not even reaching the method) since 'abc' isn't a valid int.",
+      code:"[ApiController]\n[Route(\"api/[controller]\")]\npublic class StudentController : ControllerBase\n{\n    [HttpGet(\"{id:int}\")]\n    public IActionResult GetById(int id) { ... } // matches GET /api/Student/101\n\n    [HttpGet(\"search/{name}\")]\n    public IActionResult Search(string name) { ... } // matches GET /api/Student/search/Arjun\n}" }
+  ]
+},
+{
+  day:2, title:"Day 2 — Controllers, Model Binding, Action Results &amp; Validation",
+  topics:[
+    { name:"5. Controllers &amp; Action Methods",
+      movie:"🎬 Master — JD is the single point of authority handling every incoming request from students/staff in the hostel, routing each to the right response. A controller is that same central handler for a group of related requests.",
+      explain:"A controller (inheriting <code>ControllerBase</code> for pure APIs, or <code>Controller</code> if it also serves views) groups related action methods under one resource. <code>[ApiController]</code> attribute enables automatic model validation, binding source inference, and automatic 400 responses for invalid models — reducing boilerplate significantly.",
+      zen:"ZenCampus's `Controllers/BillController.cs` groups every bill-related endpoint (`GetFeeDetails`, `SubmitPayment`, `GetDueList`) under one class, keeping related logic together instead of scattering it across unrelated files.",
+      code:"[ApiController]\n[Route(\"api/[controller]\")]\npublic class BillController : ControllerBase\n{\n    private readonly IBillService _billService;\n    public BillController(IBillService billService) => _billService = billService;\n\n    [HttpGet(\"{studentId}\")]\n    public IActionResult GetFeeDetails(int studentId)\n        =&gt; Ok(_billService.GetFeeDetails(studentId));\n}" },
+    { name:"6. Model Binding",
+      movie:"🎬 Vaaranam Aayiram — Krishna's raw scattered memories get automatically organized into a coherent, structured life story. Model binding automatically converts raw incoming HTTP data (query string, route, JSON body) into a structured C# object parameter.",
+      explain:"ASP.NET Core automatically maps incoming data to action parameters: <code>[FromRoute]</code> (URL segment), <code>[FromQuery]</code> (query string, <code>?name=Arjun</code>), <code>[FromBody]</code> (JSON request body, typically for POST/PUT), <code>[FromHeader]</code> (HTTP headers). With <code>[ApiController]</code>, these are often inferred automatically without explicit attributes.",
+      zen:"`GET /api/Student/search?className=10-A&minAttendance=75` binds directly into `Search(string className, int minAttendance)` parameters, while `POST /api/Student` with a JSON body binds into a `[FromBody] StudentDto dto` parameter — no manual parsing needed.",
+      code:"[HttpGet(\"search\")]\npublic IActionResult Search([FromQuery] string className, [FromQuery] int minAttendance)\n{\n    // GET /api/Student/search?className=10-A&amp;minAttendance=75\n}\n\n[HttpPost]\npublic IActionResult Create([FromBody] StudentDto dto)\n{\n    // JSON request body auto-mapped to StudentDto\n}" },
+    { name:"7. Action Results (IActionResult, ActionResult&lt;T&gt;)",
+      movie:"🎬 Ratsasan — Arun Kumar's investigation always ends in one of several PRECISE, distinct conclusions (arrest made, insufficient evidence, case closed) — never a vague, undefined outcome. Action results give that same precise, typed HTTP response.",
+      explain:"<code>IActionResult</code> is the flexible return type letting an action return different result types depending on logic: <code>Ok(data)</code> (200), <code>NotFound()</code> (404), <code>BadRequest(errors)</code> (400), <code>CreatedAtAction(...)</code> (201). <code>ActionResult&lt;T&gt;</code> combines a specific return TYPE with the flexibility to still return those helper results — giving better Swagger/OpenAPI documentation of the expected response shape.",
+      zen:"`GetFeeDetails` returns `Ok(feeData)` when found, but `NotFound($\"No student with ID {id}\")` when the student doesn't exist — the SAME method returning genuinely different HTTP outcomes based on what actually happened.",
+      code:"[HttpGet(\"{id}\")]\npublic ActionResult&lt;Student&gt; GetById(int id)\n{\n    var student = _studentService.GetById(id);\n    if (student == null)\n        return NotFound($\"No student with ID {id}\");\n    return Ok(student);\n}" },
+    { name:"8. Validation (Data Annotations &amp; ModelState)",
+      movie:"🎬 Sarkar — every vote is CHECKED for validity before being counted; invalid ones are rejected immediately, before they ever affect the outcome. Model validation rejects bad data before it ever reaches your business logic.",
+      explain:"Data annotations (<code>[Required]</code>, <code>[MaxLength(100)]</code>, <code>[Range(0,100)]</code>, <code>[EmailAddress]</code>) declaratively define validation rules directly on a DTO/model class. With <code>[ApiController]</code>, invalid <code>ModelState</code> automatically triggers a 400 response BEFORE your action code even runs — you don't need to manually check <code>ModelState.IsValid</code> in most cases (though it's good to understand what's happening underneath).",
+      zen:"ZenCampus's `StudentDto` uses `[Required] public string Name`, `[Range(0,100)] public decimal AttendancePercent` — an invalid admission POST (missing name, or attendance = 150) is rejected automatically with a 400 and a clear error message, before ever touching the database.",
+      code:"public class StudentDto\n{\n    [Required(ErrorMessage = \"Name is required\")]\n    [MaxLength(100)]\n    public string Name { get; set; }\n\n    [Range(0, 100)]\n    public decimal AttendancePercent { get; set; }\n\n    [EmailAddress]\n    public string ParentEmail { get; set; }\n}\n// [ApiController] auto-returns 400 with these errors if invalid - no manual check needed" }
+  ]
+},
+{
+  day:3, title:"Day 3 — Dependency Injection, DTOs, Async Endpoints",
+  topics:[
+    { name:"9. Dependency Injection (DI)",
+      movie:"🎬 Vikram — Amar doesn't manufacture his own weapons and gadgets from scratch; the agency SUPPLIES exactly what he needs for each mission. DI supplies a class with the dependencies it needs from OUTSIDE, instead of it constructing them itself.",
+      explain:"ASP.NET Core has a built-in DI container. Services are registered in <code>Program.cs</code> with a lifetime: <code>AddTransient</code> (new instance every time requested), <code>AddScoped</code> (one instance per HTTP request — the most common for services/repositories), <code>AddSingleton</code> (one instance for the app's entire lifetime). A controller then simply declares the interface it needs in its constructor, and the framework 'injects' the right implementation automatically.",
+      zen:"ZenCampus registers `builder.Services.AddScoped&lt;IBillService, BillService&gt;()` once in `Program.cs`; every controller needing bill logic just asks for `IBillService` in its constructor — swapping the real implementation for a test mock during unit testing requires zero changes to the controller itself.",
+      code:"// Program.cs\nbuilder.Services.AddScoped&lt;IBillService, BillService&gt;();\n\n// BillController.cs\npublic class BillController : ControllerBase\n{\n    private readonly IBillService _billService;\n    public BillController(IBillService billService) // injected automatically\n    {\n        _billService = billService;\n    }\n}" },
+    { name:"10. DTOs (Data Transfer Objects) &amp; Mapping",
+      movie:"🎬 Indian (1996) — Senapathy only reveals to the outside world exactly what's needed for a given situation, never his full raw internal file. A DTO is that same curated, purpose-built 'public face' of your data — never the raw database entity.",
+      explain:"A DTO is a plain class shaped specifically for what an API endpoint needs to send/receive — decoupling your public API contract from your internal database entity structure (which might have extra fields, navigation properties, or sensitive data you never want exposed). Mapping between entity ↔ DTO is done manually or via a library like AutoMapper.",
+      zen:"ZenCampus's `Student` database entity might include internal fields like `PasswordHash` or `InternalNotes` — the `StudentDto` returned from the API deliberately excludes these, exposing only `Name`, `ClassName`, `AttendancePercent` to the frontend.",
+      code:"// Internal entity (never returned directly from an API)\npublic class Student { public int Id; public string Name; public string PasswordHash; }\n\n// Public-facing DTO (safe to expose)\npublic class StudentDto { public int Id; public string Name; }\n\nvar dto = new StudentDto { Id = student.Id, Name = student.Name }; // manual mapping" },
+    { name:"11. Async Controller Actions",
+      movie:"🎬 Master — JD handles multiple ongoing hostel matters simultaneously without getting stuck waiting on just one. Async controller actions let the web server handle OTHER incoming requests while one request is waiting on a slow database/API call.",
+      explain:"Marking action methods <code>async Task&lt;IActionResult&gt;</code> and using <code>await</code> for I/O calls (database, external API) frees the server's thread pool thread during the wait, letting it serve other requests — critical for throughput under load. Using synchronous blocking calls for I/O in a busy API can exhaust the thread pool and cause the whole app to slow down for everyone.",
+      zen:"ZenCampus's `GetFeeDetails` action awaits `await _dbContext.Bills.FindAsync(id)` instead of the blocking `.Find(id)`, so the web server can keep handling other students'/staff's requests while this one database call is in flight.",
+      code:"[HttpGet(\"{id}\")]\npublic async Task&lt;IActionResult&gt; GetFeeDetails(int id)\n{\n    var bill = await _dbContext.Bills.FindAsync(id); // non-blocking\n    if (bill == null) return NotFound();\n    return Ok(bill);\n}" },
+    { name:"12. Repository Pattern in Web API",
+      movie:"🎬 Enthiran (Robot) — Chitti presents a clean, simple interface to the user while ALL the messy internal mechanics stay hidden underneath. The Repository pattern hides raw data-access details behind a clean, simple interface the controller can rely on.",
+      explain:"A repository (<code>IStudentRepository</code>/<code>StudentRepository</code>) wraps direct database access (Entity Framework, raw ADO.NET, or stored procedure calls) behind a simple interface (<code>GetById</code>, <code>Add</code>, <code>Update</code>), so controllers and services never touch the database directly — improving testability (mock the interface) and letting you swap the underlying data-access technology without touching business logic.",
+      zen:"ZenCampus's `Services/StudentService.cs` likely depends on `IStudentRepository` rather than directly writing SQL/EF queries inline in the controller — this is exactly why the C# guide's generic `Repository&lt;T&gt;` pattern is so directly reusable here.",
+      code:"public interface IStudentRepository\n{\n    Task&lt;Student&gt; GetByIdAsync(int id);\n    Task AddAsync(Student student);\n}\n\npublic class StudentService\n{\n    private readonly IStudentRepository _repo;\n    public StudentService(IStudentRepository repo) =&gt; _repo = repo;\n\n    public async Task&lt;Student&gt; GetStudentAsync(int id) =&gt; await _repo.GetByIdAsync(id);\n}" }
+  ]
+},
+{
+  day:4, title:"Day 4 — Security &amp; Middleware (JWT Auth, Authorization, CORS)",
+  topics:[
+    { name:"13. Authentication with JWT",
+      movie:"🎬 Vikram — the agency issues Amar a verifiable, tamper-proof credential that proves his identity on every mission, without needing to re-verify from scratch each time. A JWT (JSON Web Token) is that same portable, verifiable proof of identity sent with every API request.",
+      explain:"After login, the server issues a signed JWT containing claims (user ID, role, expiry) that the client stores and sends in the <code>Authorization: Bearer &lt;token&gt;</code> header on subsequent requests. The server verifies the signature (proving it wasn't tampered with) WITHOUT needing to check a database/session store on every request — this statelessness is what makes JWT scale well for APIs.",
+      zen:"After a staff member logs into ZenCampus, the API issues a JWT containing their `StaffId` and `Role` claims; every subsequent API call (like fetching fee reports) includes that token, letting the API verify identity instantly without a database round-trip just to check who's calling.",
+      code:"[HttpPost(\"login\")]\npublic IActionResult Login(LoginDto dto)\n{\n    // ... validate credentials ...\n    var token = GenerateJwt(staffId, role); // signed token with claims\n    return Ok(new { token });\n}\n\n// Client sends on every request after:\n// Authorization: Bearer eyJhbGciOiJIUzI1NiIs..." },
+    { name:"14. Authorization ([Authorize], Roles, Policies)",
+      movie:"🎬 Baahubali — being recognized as a member of the kingdom (authenticated) is not the same as being allowed to sit on the throne (authorized) — those are two DIFFERENT checks entirely.",
+      explain:"Authentication answers 'WHO are you?'. Authorization answers 'What are you ALLOWED to do?'. <code>[Authorize]</code> requires ANY valid authenticated user. <code>[Authorize(Roles = \"Admin\")]</code> further restricts to a specific role claim from the JWT. Policy-based authorization (<code>[Authorize(Policy = \"CanApproveFees\")]</code>) allows more complex, reusable rules beyond simple role checks.",
+      zen:"ZenCampus's `[HttpDelete] DeleteStudent` action would be marked `[Authorize(Roles = \"Admin\")]` so only Admin-role staff can delete a student record, while `[Authorize]` alone on `GetFeeDetails` just requires ANY logged-in staff member.",
+      code:"[Authorize] // any authenticated user\n[HttpGet(\"{id}\")]\npublic IActionResult GetFeeDetails(int id) { ... }\n\n[Authorize(Roles = \"Admin\")] // only Admin role\n[HttpDelete(\"{id}\")]\npublic IActionResult DeleteStudent(int id) { ... }" },
+    { name:"15. Middleware Pipeline",
+      movie:"🎬 Kaithi — every visitor to the hospital passes through a SEQUENCE of checkpoints (security check, ID verification, room assignment) in a defined order before reaching their destination. The ASP.NET Core middleware pipeline processes every request through an ordered sequence of components.",
+      explain:"Middleware components in <code>Program.cs</code> (<code>app.UseAuthentication()</code>, <code>app.UseAuthorization()</code>, <code>app.UseCors()</code>, custom middleware) form a PIPELINE — each request passes through them in the ORDER they're registered, and each can short-circuit the pipeline (e.g. reject unauthenticated requests before they ever reach a controller) or pass control to the next component.",
+      zen:"ZenCampus's `Program.cs` registers middleware in order: exception handling first (catches errors from everything after it), then authentication, then authorization, then routing to controllers — getting this ORDER wrong (e.g. authorization before authentication) silently breaks security checks.",
+      code:"var app = builder.Build();\n\napp.UseExceptionHandler(\"/error\"); // catches errors from everything below\napp.UseHttpsRedirection();\napp.UseAuthentication();  // WHO are you\napp.UseAuthorization();   // WHAT can you do\napp.MapControllers();     // route to the matching controller/action\n\napp.Run();" },
+    { name:"16. CORS (Cross-Origin Resource Sharing)",
+      movie:"🎬 Thani Oruvan — Mithran's undercover operation only lets TRUSTED, pre-vetted contacts through, rejecting unknown outsiders trying to access sensitive information from outside the approved circle.",
+      explain:"By default, browsers block a webpage from one origin (domain+port) from calling an API on a DIFFERENT origin, for security. CORS is a server-side policy that explicitly WHITELISTS which origins are allowed to call the API, configured via <code>AddCors()</code> and <code>app.UseCors()</code> — necessary when a frontend (e.g. a separate React app on a different port) needs to call the API from a different origin than where it's hosted.",
+      zen:"If a new React-based ZenCampus module were hosted separately from the main ASP.NET app during development (e.g. `localhost:3000` calling `localhost:5000/api`), CORS must explicitly allow that origin, or every fetch call would be silently blocked by the browser with a CORS error.",
+      code:"builder.Services.AddCors(options =&gt;\n{\n    options.AddPolicy(\"AllowZenCampusFrontend\", policy =&gt;\n        policy.WithOrigins(\"https://zencampus.example.com\")\n              .AllowAnyMethod()\n              .AllowAnyHeader());\n});\n\napp.UseCors(\"AllowZenCampusFrontend\");" }
+  ]
+},
+{
+  day:5, title:"Day 5 — Advanced Web API (Error Handling, Versioning, Swagger, Performance)",
+  topics:[
+    { name:"17. Global Exception Handling",
+      movie:"🎬 Soorarai Pottru — Maara has ONE central emergency protocol for handling ANY in-flight failure, instead of every individual crew member improvising their own separate response. Global exception handling gives an API that same single, consistent failure-response strategy.",
+      explain:"Instead of wrapping every single action in try/catch, a global exception handling MIDDLEWARE (or <code>app.UseExceptionHandler()</code> / a custom filter) catches unhandled exceptions ANYWHERE in the pipeline and returns a consistent, safe error response — critical for never leaking internal stack traces or sensitive details to API clients in production.",
+      zen:"ZenCampus registers one global exception handler that catches any unhandled error from any controller, logs the full details server-side, but returns a generic `{ \"error\": \"Something went wrong\" }` with a 500 status to the client — instead of leaking a raw C# stack trace in the API response.",
+      code:"app.UseExceptionHandler(errorApp =&gt;\n{\n    errorApp.Run(async context =&gt;\n    {\n        context.Response.StatusCode = 500;\n        context.Response.ContentType = \"application/json\";\n        var error = context.Features.Get&lt;IExceptionHandlerFeature&gt;()?.Error;\n        LogError(error); // full details logged server-side\n        await context.Response.WriteAsJsonAsync(new { error = \"Something went wrong\" });\n    });\n});" },
+    { name:"18. API Versioning",
+      movie:"🎬 Vaaranam Aayiram — different chapters of Krishna's life are still clearly recognizable as 'him' but reflect different versions of who he was at each stage. API versioning lets an API evolve over time while old client versions KEEP working against the version they were built for.",
+      explain:"As an API evolves, breaking changes (removing a field, changing a response shape) can break existing client apps still calling the old contract. Versioning strategies: URL-based (<code>/api/v1/students</code> vs <code>/api/v2/students</code>, most explicit and common), header-based, or query-string-based — letting old and new clients coexist during a migration period.",
+      zen:"If ZenCampus's fee API response shape needed to change significantly, `/api/v1/Bill` keeps serving the OLD mobile app version still in use by some parents, while `/api/v2/Bill` serves the new shape to the updated web frontend — both running side by side until the old app is fully retired.",
+      code:"[ApiController]\n[Route(\"api/v1/[controller]\")]\npublic class BillController : ControllerBase { /* old shape */ }\n\n[ApiController]\n[Route(\"api/v2/[controller]\")]\npublic class BillV2Controller : ControllerBase { /* new shape */ }" },
+    { name:"19. Swagger / OpenAPI Documentation",
+      movie:"🎬 Jai Bhim — a clear, well-organized case file lets ANYONE reviewing it later understand exactly what evidence exists and how it connects, without needing Chandru to personally explain it each time. Swagger auto-generates that same clear, browsable documentation for your API.",
+      explain:"Swagger/OpenAPI (via <code>Swashbuckle.AspNetCore</code> in .NET) automatically scans your controllers, DTOs, and attributes to generate interactive API documentation — showing every endpoint, expected request/response shapes, and even letting you TEST calls directly from a browser UI, without needing Postman or writing separate docs by hand.",
+      zen:"A new developer joining the ZenCampus team can open `/swagger` and immediately see every available endpoint (Student, Bill, Hostel, Exam APIs), their expected parameters, and try a live test call — dramatically faster onboarding than reading through controller source code cold.",
+      code:"// Program.cs\nbuilder.Services.AddEndpointsApiExplorer();\nbuilder.Services.AddSwaggerGen();\n\nif (app.Environment.IsDevelopment())\n{\n    app.UseSwagger();\n    app.UseSwaggerUI(); // browsable docs at /swagger\n}" },
+    { name:"20. Caching &amp; API Performance",
+      movie:"🎬 Ratsasan — Arun Kumar doesn't re-investigate a fact he's already conclusively confirmed; he refers back to his existing notes instead of redoing the same legwork. Caching stores a previous API response so repeated identical requests don't redo the same expensive work.",
+      explain:"<code>[ResponseCache(Duration = 60)]</code> caches an HTTP response at the client/proxy level for a set duration. In-memory caching (<code>IMemoryCache</code>) caches expensive computed/queried data SERVER-SIDE across requests. Distributed caching (Redis) extends this across multiple server instances. Combined with pagination for large result sets, these are the standard toolkit for API performance under load.",
+      zen:"A ZenCampus dashboard summary endpoint (`GET /api/Dashboard/Summary`) that recalculates totals across thousands of students on every single request is a strong caching candidate — cache the result for 60 seconds via `IMemoryCache`, since the dashboard doesn't need up-to-the-millisecond freshness.",
+      code:"[HttpGet(\"summary\")]\npublic IActionResult GetSummary()\n{\n    if (!_cache.TryGetValue(\"dashboard_summary\", out DashboardDto summary))\n    {\n        summary = _dashboardService.CalculateSummary(); // expensive\n        _cache.Set(\"dashboard_summary\", summary, TimeSpan.FromSeconds(60));\n    }\n    return Ok(summary);\n}" }
+  ]
+}
+];
+
+// ============ 50 INTERVIEW &amp; CODING QUESTIONS ============
+const questions = [
+  {level:"Basic", type:"Concept", q:"What is the difference between a Web API and a traditional MVC controller?", a:"An MVC controller typically returns rendered HTML Views for browsers. A Web API controller returns raw data (usually JSON) meant to be consumed by any client — a JS frontend, a mobile app, or another service — with no HTML rendering involved."},
+  {level:"Basic", type:"Concept", q:"What is the difference between GET and POST?", a:"GET retrieves data, is safe (no side effects) and idempotent, and typically sends parameters via the URL/query string. POST creates/submits data, has side effects, is NOT idempotent (calling twice can create two records), and sends data in the request body."},
+  {level:"Basic", type:"Concept", q:"What does idempotent mean, and which HTTP methods are idempotent?", a:"An idempotent operation produces the SAME end state no matter how many times it's called. GET, PUT, and DELETE are idempotent (calling PUT with the same data repeatedly results in the same final state; deleting an already-deleted resource has no further effect). POST is NOT idempotent."},
+  {level:"Basic", type:"Concept", q:"What is the difference between 401 Unauthorized and 403 Forbidden?", a:"401 means the request lacks valid authentication credentials — the server doesn't know who you are (or your credentials are invalid). 403 means the server DOES know who you are, but you don't have permission to perform that specific action."},
+  {level:"Basic", type:"Concept", q:"What is the difference between PUT and PATCH?", a:"PUT replaces the ENTIRE resource with the data provided — omitted fields are typically reset/cleared. PATCH applies a PARTIAL update, modifying only the specific fields included in the request, leaving the rest untouched."},
+  {level:"Basic", type:"Concept", q:"What status code should a successful POST that creates a new resource return?", a:"201 Created, ideally along with a Location header pointing to the newly created resource's URL, commonly returned via CreatedAtAction() in ASP.NET Core."},
+  {level:"Basic", type:"Concept", q:"What is JSON and why is it the standard format for Web APIs?", a:"JavaScript Object Notation — a lightweight, human-readable, language-independent text format for structured data. It's the standard for APIs because nearly every language/platform can parse it natively or with minimal libraries, unlike more verbose formats like XML."},
+  {level:"Basic", type:"Concept", q:"What is the [ApiController] attribute used for in ASP.NET Core?", a:"Enables several automatic API-specific behaviors: automatic 400 Bad Request responses on invalid model state, automatic inference of parameter binding sources (route/query/body), and requiring attribute routing — reducing boilerplate compared to a plain MVC controller."},
+  {level:"Basic", type:"Concept", q:"What is model binding?", a:"The process by which ASP.NET Core automatically converts incoming HTTP request data (route values, query string, form data, JSON body) into strongly-typed C# action method parameters."},
+  {level:"Basic", type:"Concept", q:"What is the purpose of Data Annotations like [Required] and [Range]?", a:"Declarative validation rules placed directly on a model/DTO's properties, automatically checked against incoming data — combined with [ApiController], invalid data is automatically rejected with a 400 response before your action logic even runs."},
+  {level:"Intermediate", type:"Concept", q:"What is Dependency Injection and what are the three main service lifetimes in ASP.NET Core?", a:"DI supplies a class's dependencies from an external container rather than the class creating them itself. Lifetimes: Transient (new instance every time requested), Scoped (one instance per HTTP request), Singleton (one instance for the entire application lifetime)."},
+  {level:"Intermediate", type:"Concept", q:"What is a DTO and why not just return your database entity directly from an API?", a:"A Data Transfer Object is a class shaped specifically for what an API endpoint needs to expose. Returning entities directly risks leaking sensitive/internal fields, tightly couples your public API contract to internal database structure, and can cause serialization issues with circular navigation properties in ORMs like Entity Framework."},
+  {level:"Intermediate", type:"Concept", q:"Why should I/O-bound Web API actions be async?", a:"Awaiting async I/O calls (database, HTTP calls to other services) frees the thread handling that request back to the thread pool during the wait, allowing the server to handle MORE concurrent requests with the same limited thread pool — synchronous blocking I/O calls can exhaust the thread pool under load."},
+  {level:"Intermediate", type:"Concept", q:"What is the middleware pipeline in ASP.NET Core and why does registration ORDER matter?", a:"Middleware components registered in Program.cs process each request in the exact order they're added, each able to act before/after passing control to the next. Order matters critically — e.g. UseAuthentication() must run before UseAuthorization(), and exception handling middleware should be registered FIRST so it can catch errors from everything after it."},
+  {level:"Intermediate", type:"Concept", q:"What is JWT and what are its three parts?", a:"JSON Web Token: a compact, self-contained, signed token proving identity, sent via the Authorization header. Three base64-encoded parts separated by dots: Header (algorithm/type), Payload (claims like user ID, role, expiry), and Signature (verifies the token hasn't been tampered with)."},
+  {level:"Intermediate", type:"Concept", q:"What is the difference between authentication and authorization?", a:"Authentication verifies WHO the user is (login/identity check). Authorization determines WHAT that authenticated user is allowed to do (permissions/roles/policies) — authentication always happens first, authorization decisions depend on its result."},
+  {level:"Intermediate", type:"Concept", q:"What is CORS and why does a browser block cross-origin API calls by default?", a:"Cross-Origin Resource Sharing is a security mechanism preventing a webpage from one origin from making requests to an API on a different origin unless explicitly permitted, protecting users from malicious sites silently making authenticated requests to unrelated APIs on their behalf. The API server must explicitly opt-in specific allowed origins via a CORS policy."},
+  {level:"Intermediate", type:"Concept", q:"What is the Repository pattern and why use it in a Web API?", a:"An abstraction layer that hides direct data-access logic (EF Core queries, stored procedure calls) behind a simple interface. Benefits: controllers/services depend on an interface (testable via mocking) rather than a concrete data-access technology, and the underlying data source can be swapped without touching business logic."},
+  {level:"Intermediate", type:"Concept", q:"What is the difference between IActionResult and ActionResult<T>?", a:"IActionResult is a flexible base type allowing any of the built-in result helpers (Ok, NotFound, BadRequest) with no compile-time indication of the success payload's shape. ActionResult&lt;T&gt; combines that same flexibility with a strongly-typed success return, which also improves auto-generated Swagger/OpenAPI documentation accuracy."},
+  {level:"Intermediate", type:"Concept", q:"What is content negotiation in a Web API?", a:"The process by which a client specifies its preferred response format via the Accept header (e.g. application/json, application/xml), and the server selects a matching formatter to serialize the response accordingly — ASP.NET Core defaults to JSON but can support multiple formats."},
+  {level:"Advanced", type:"Concept", q:"What is the difference between AddScoped and AddSingleton, and what bug can occur from misusing them?", a:"Scoped creates one instance per HTTP request; Singleton creates one instance for the app's entire lifetime, shared across ALL requests/threads. Injecting a Scoped service (like a DbContext, which is NOT thread-safe) into a Singleton service causes it to be captured once and reused across unrelated requests concurrently — a serious threading/data-corruption bug known as 'captive dependency'."},
+  {level:"Advanced", type:"Concept", q:"How does ASP.NET Core route matching resolve ambiguity between multiple matching routes?", a:"It uses a specificity-based scoring system — routes with more literal segments and fewer/more-constrained parameters are considered more specific and win over more general routes. Truly ambiguous matches (identical specificity) throw an AmbiguousMatchException at runtime."},
+  {level:"Advanced", type:"Concept", q:"What is the difference between a filter (like an Action Filter) and middleware?", a:"Middleware operates at the ASP.NET Core PIPELINE level, seeing every request regardless of which controller/action (or even if no controller matches at all). Filters (Action Filters, Exception Filters, Authorization Filters) operate within the MVC/API framework's request lifecycle, with more granular access to the specific action, its arguments, and model binding results — used for cross-cutting concerns scoped specifically to controller actions."},
+  {level:"Advanced", type:"Concept", q:"How would you implement rate limiting on a Web API and why is it needed?", a:"Rate limiting caps how many requests a client can make in a given time window (via ASP.NET Core's built-in Rate Limiting middleware or a gateway/reverse proxy), returning 429 Too Many Requests once exceeded — protecting the API from abuse, accidental client bugs causing request floods, and ensuring fair resource usage across all consumers."},
+  {level:"Advanced", type:"Concept", q:"What is HATEOAS and why is it rarely fully implemented in practice?", a:"Hypermedia as the Engine of Application State — a REST maturity level where API responses include LINKS to related/next possible actions, letting clients navigate the API dynamically rather than hardcoding URLs. Rarely fully implemented because it adds significant complexity for marginal benefit in most typical CRUD APIs, where clients already know the URL structure in advance."},
+  {level:"Coding", type:"Coding", q:"How would you write an endpoint that returns 404 if a student doesn't exist, and 200 with the data if it does?", a:"Fetch the entity, check for null, and branch the return: <pre>[HttpGet(\"{id}\")]\npublic async Task&lt;IActionResult&gt; GetById(int id)\n{\n    var student = await _repo.GetByIdAsync(id);\n    if (student == null) return NotFound();\n    return Ok(student);\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you design an endpoint to paginate a large list of students instead of returning all of them at once?", a:"Accept pageNumber and pageSize as query parameters, apply Skip/Take in the query, and return both the page of data and total count for the client to render pagination controls: <pre>var students = query.Skip((page - 1) * size).Take(size).ToList();\nvar total = query.Count();\nreturn Ok(new { data = students, totalCount = total, page, size });</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you validate that a fee payment amount is positive and reject the request otherwise, using ASP.NET Core's built-in validation?", a:"Add a [Range] data annotation on the DTO property rather than manually checking in the action body: <pre>public class PaymentDto\n{\n    [Range(0.01, double.MaxValue, ErrorMessage = \"Amount must be positive\")]\n    public decimal Amount { get; set; }\n}\n// [ApiController] auto-rejects with 400 if violated, no manual check needed</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you write a global exception filter that logs the error and returns a generic message without leaking stack traces?", a:"Implement IExceptionFilter (or use middleware) to intercept unhandled exceptions: <pre>public class ApiExceptionFilter : IExceptionFilter\n{\n    public void OnException(ExceptionContext context)\n    {\n        _logger.LogError(context.Exception, \"Unhandled error\");\n        context.Result = new ObjectResult(new { error = \"Something went wrong\" }) { StatusCode = 500 };\n        context.ExceptionHandled = true;\n    }\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you protect an endpoint so only users with the 'Admin' role can delete a record?", a:"Combine [Authorize] with a role restriction directly on the action: <pre>[Authorize(Roles = \"Admin\")]\n[HttpDelete(\"{id}\")]\npublic async Task&lt;IActionResult&gt; Delete(int id)\n{\n    await _repo.DeleteAsync(id);\n    return NoContent(); // 204\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you write an async endpoint that calls two independent services and combines their results?", a:"Kick off both async calls before awaiting either, then use Task.WhenAll to run them concurrently instead of sequentially: <pre>var feeTask = _billService.GetFeeDetailsAsync(id);\nvar attendanceTask = _attendanceService.GetSummaryAsync(id);\nawait Task.WhenAll(feeTask, attendanceTask);\nreturn Ok(new { fee = feeTask.Result, attendance = attendanceTask.Result });</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you implement basic in-memory caching for an expensive dashboard summary endpoint?", a:"Inject IMemoryCache, check for a cached value before recomputing, and set an expiry: <pre>[HttpGet(\"summary\")]\npublic IActionResult GetSummary()\n{\n    if (!_cache.TryGetValue(\"summary\", out object result))\n    {\n        result = _service.CalculateExpensiveSummary();\n        _cache.Set(\"summary\", result, TimeSpan.FromMinutes(1));\n    }\n    return Ok(result);\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you return a 201 Created response with a Location header pointing to the newly created resource?", a:"Use CreatedAtAction, referencing the GET action and its route values: <pre>[HttpPost]\npublic async Task&lt;IActionResult&gt; Create(StudentDto dto)\n{\n    var created = await _repo.AddAsync(dto);\n    return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you accept an optional query parameter with a default value in an endpoint?", a:"Give the parameter a C# default value directly in the method signature: <pre>[HttpGet]\npublic IActionResult GetStudents([FromQuery] int page = 1, [FromQuery] int pageSize = 20)\n{\n    // GET /api/Student defaults to page=1, pageSize=20 if not supplied\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you prevent a duplicate admission number from being inserted via the API, combining both a DB constraint and a clean API error?", a:"Rely on a UNIQUE constraint at the database level as the source of truth, but catch the resulting exception in the API and translate it into a friendly 409 Conflict rather than a raw 500: <pre>try { await _repo.AddAsync(student); }\ncatch (DbUpdateException) when (IsDuplicateKeyError())\n{\n    return Conflict(\"Admission number already exists\");\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you structure an endpoint that accepts a file upload (e.g. bulk student import via Excel)?", a:"Accept an IFormFile parameter bound automatically from multipart form data: <pre>[HttpPost(\"bulk-import\")]\npublic async Task&lt;IActionResult&gt; Import(IFormFile file)\n{\n    if (file == null || file.Length == 0) return BadRequest(\"No file uploaded\");\n    using var stream = file.OpenReadStream();\n    var result = await _importService.ProcessAsync(stream);\n    return Ok(result);\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you write an endpoint supporting partial updates (PATCH) to just one or two fields of a student record?", a:"Accept a DTO with nullable properties representing only the fields that MAY be updated, and only apply the ones actually provided: <pre>[HttpPatch(\"{id}\")]\npublic async Task&lt;IActionResult&gt; Patch(int id, StudentPatchDto dto)\n{\n    var student = await _repo.GetByIdAsync(id);\n    if (student == null) return NotFound();\n    if (dto.Name != null) student.Name = dto.Name;\n    if (dto.ClassName != null) student.ClassName = dto.ClassName;\n    await _repo.UpdateAsync(student);\n    return NoContent();\n}</pre>"}
+];
+
+// ============ COVERAGE CHECKLIST ============
+const coverageTopics = guideDays.flatMap(day => day.topics.map(t => ({ name: t.name, day: day.day })));
+
+// ============ RENDER: TABS ============
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ============ RENDER: GUIDE ============
+const guideListEl = document.getElementById('guideList');
+guideListEl.innerHTML = guideDays.map(day => `
+  <div class="day-block" id="day-${day.day}">
+    <h2 class="day-title">${day.title}</h2>
+    ${day.topics.map((t) => `
+      <div class="qa" id="topic-${t.name.split('.')[0].trim()}">
+        <div class="q">
+          <span>${t.name}</span>
+          <span class="toggle-icon">+</span>
+        </div>
+        <div class="a">
+          <div class="movie-ref">${t.movie}</div>
+          <p>${t.explain}</p>
+          <pre>${t.code}</pre>
+          <div class="zen-ref"><strong>ZenCampus use case:</strong> ${t.zen}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+`).join('');
+guideListEl.querySelectorAll('.q').forEach(qEl=>{
+  qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+});
+
+// ============ RENDER: INTERVIEW Q&A ============
+const listEl = document.getElementById('qaList');
+const filtersEl = document.getElementById('filters');
+const searchBox = document.getElementById('searchBox');
+const visibleCountEl = document.getElementById('visibleCount');
+const levels = ["All", "Concept", "Coding", "Basic", "Intermediate", "Advanced"];
+let activeLevel = "All";
+
+function matchesFilter(item){
+  if(activeLevel==="All") return true;
+  if(activeLevel==="Concept" || activeLevel==="Coding") return item.type===activeLevel;
+  return item.level===activeLevel;
+}
+
+function renderFilters(){
+  filtersEl.innerHTML = levels.map(lvl =>
+    `<button class="filter-btn ${lvl===activeLevel?'active':''}" data-level="${lvl}">${lvl}</button>`
+  ).join('');
+  filtersEl.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeLevel = btn.dataset.level;
+      renderFilters();
+      renderQAList();
+    });
+  });
+}
+
+function renderQAList(){
+  const searchTerm = searchBox.value.trim().toLowerCase();
+  const filtered = questions
+    .map((item, idx)=>({...item, idx}))
+    .filter(matchesFilter)
+    .filter(item => !searchTerm || item.q.toLowerCase().includes(searchTerm) || item.a.toLowerCase().includes(searchTerm));
+
+  visibleCountEl.textContent = filtered.length;
+
+  listEl.innerHTML = filtered.map(item => `
+    <div class="qa" data-idx="${item.idx}">
+      <div class="q">
+        <span><span class="num">Q${item.idx+1}.</span>${item.q}</span>
+        <span style="display:flex; align-items:center; gap:8px;">
+          <span class="tag2 ${item.type==='Coding'?'tag-code':'tag-concept'}">${item.type}</span>
+          <span class="tag">${item.level}</span>
+          <span class="toggle-icon">+</span>
+        </span>
+      </div>
+      <div class="a">${item.a}</div>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.q').forEach(qEl=>{
+    qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+  });
+}
+searchBox.addEventListener('input', renderQAList);
+renderFilters();
+renderQAList();
+
+// ============ RENDER: COVERAGE CHECKLIST ============
+const checklistEl = document.getElementById('checklist');
+checklistEl.innerHTML = coverageTopics.map((t) => `
+  <div class="check-item" data-target="topic-${t.name.split('.')[0].trim()}" data-day="${t.day}">
+    <span class="badge">✅</span>
+    <span class="num">${t.name.split('.')[0]}</span>
+    <span>${t.name.split('. ')[1].replace(/&amp;/g,'&')} <em style="color:var(--muted); font-size:0.8rem;">(Day ${t.day})</em></span>
+  </div>
+`).join('');
+checklistEl.querySelectorAll('.check-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelector('.tab-btn[data-tab="guide"]').click();
+    setTimeout(()=>{
+      const target = document.getElementById(item.dataset.target);
+      if(target){
+        target.classList.add('open');
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }, 50);
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Basics — var, let, const, async/await, DOM | ZenCampus</title>
+<style>
+  :root{--accent:#ca8a04;--accent-dim:#a16207;--accent-subtle:rgba(202,138,4,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(202,138,4,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.05rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}.fn{color:#82aaff;}
+  .movie{background:linear-gradient(135deg,rgba(202,138,4,.12),rgba(202,138,4,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.9rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.5rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .warn-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">JS BASICS</span>
+  <a href="#vars">Variables</a><a href="#funcs">Functions</a><a href="#arrays">Arrays/Objects</a>
+  <a href="#async">Async/Await</a><a href="#dom">DOM</a><a href="#scenarios">Interview Q</a>
+</nav>
+<div class="hero">
+  <h1>JavaScript Basics</h1>
+  <p>var/let/const · Functions · Arrays · Objects · Promises · async/await · DOM</p>
+  <div class="tags">
+    <span class="tag">ES6+</span><span class="tag">Promises</span><span class="tag">async/await</span><span class="tag">DOM</span>
+    <span class="tag" style="background:rgba(202,138,4,.2);border-color:#ca8a04;color:#ca8a04;">Dark Yellow #ca8a04</span>
+  </div>
+</div>
+<main>
+
+<section id="vars">
+  <h2>📦 var, let, const — Variable Declarations</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Vinnaithaandi Varuvaayaa (2010) — Scope matters in love and code</div>
+    <div class="mb">VTV-la Jesse scope-a understand pannala — yenna paesanum, yenna pesal koodaadhu nu clarity illa. JavaScript var hoisting panna scope problem create pannudhu — function scope, block-la declare pannalum everywhere visible. let = block scope, const = immutable reference. Modern JS-la var use pannatheenga — let/const use pannunga!</div></div>
+  </div>
+  <pre><code><span class="cm">// var — function scoped, hoisted (AVOID in modern JS)</span>
+<span class="kw">var</span> studentName = <span class="str">"Basha"</span>;    <span class="cm">// accessible before declaration (undefined)</span>
+<span class="kw">var</span> studentName = <span class="str">"Priya"</span>;    <span class="cm">// re-declaration allowed! (bug-prone)</span>
+
+<span class="cm">// let — block scoped, not hoisted (USE THIS)</span>
+<span class="kw">let</span> admissionNo = <span class="str">"ADM001"</span>;  <span class="cm">// block scoped</span>
+<span class="kw">if</span> (<span class="kw">true</span>) {
+    <span class="kw">let</span> temp = <span class="str">"inside block"</span>;
+}
+<span class="cm">// console.log(temp); ← ReferenceError: not accessible outside block</span>
+
+<span class="cm">// const — block scoped, cannot be reassigned (USE FOR VALUES THAT DON'T CHANGE)</span>
+<span class="kw">const</span> MAX_STUDENTS = <span class="num">50</span>;     <span class="cm">// cannot reassign</span>
+<span class="kw">const</span> student = { name: <span class="str">"Basha"</span>, classId: <span class="num">5</span> };
+student.name = <span class="str">"Raja"</span>;       <span class="cm">// ALLOWED — const prevents reassignment, not mutation</span>
+<span class="cm">// student = { name: "Other" }; ← Error: cannot reassign const</span>
+
+<span class="cm">// Scope rules</span>
+<span class="kw">let</span> schoolId = <span class="num">1</span>;
+<span class="kw">function</span> <span class="fn">getStudents</span>() {
+    console.log(schoolId);  <span class="cm">// ✓ outer scope accessible</span>
+    <span class="kw">let</span> page = <span class="num">1</span>;           <span class="cm">// only inside this function</span>
+}
+<span class="cm">// console.log(page); ← ReferenceError</span></code></pre>
+  <table>
+    <tr><th>Feature</th><th>var</th><th>let</th><th>const</th></tr>
+    <tr><td>Scope</td><td>Function</td><td>Block</td><td>Block</td></tr>
+    <tr><td>Hoisting</td><td>Yes (undefined)</td><td>No (TDZ error)</td><td>No (TDZ error)</td></tr>
+    <tr><td>Re-declare</td><td>Yes ❌</td><td>No ✓</td><td>No ✓</td></tr>
+    <tr><td>Re-assign</td><td>Yes</td><td>Yes</td><td>No ✓</td></tr>
+    <tr><td>Use?</td><td>Never in modern JS</td><td>When value changes</td><td>Default choice</td></tr>
+  </table>
+</section>
+
+<section id="funcs">
+  <h2>⚡ Functions — Multiple Ways to Define</h2>
+  <pre><code><span class="cm">// 1. Function declaration — hoisted (can call before definition)</span>
+<span class="kw">function</span> <span class="fn">calculateFee</span>(studentId, term) {
+    <span class="kw">return</span> studentId * term * <span class="num">1000</span>;
+}
+
+<span class="cm">// 2. Function expression — not hoisted</span>
+<span class="kw">const</span> getFeeLabel = <span class="kw">function</span>(amount) {
+    <span class="kw">return</span> <span class="str">`Fee: ₹${amount}`</span>;
+};
+
+<span class="cm">// 3. Arrow function — shorter syntax, no own 'this'</span>
+<span class="kw">const</span> double = (x) =&gt; x * <span class="num">2</span>;
+<span class="kw">const</span> add = (a, b) =&gt; a + b;
+<span class="kw">const</span> greet = name =&gt; <span class="str">`Hello, ${name}!`</span>;  <span class="cm">// single param, no parens needed</span>
+<span class="kw">const</span> getStudent = (id) =&gt; {             <span class="cm">// multi-line needs braces + return</span>
+    <span class="kw">const</span> student = db.find(id);
+    <span class="kw">return</span> student;
+};
+
+<span class="cm">// Destructuring parameters</span>
+<span class="kw">const</span> displayStudent = ({ name, admNo, classId }) =&gt; {
+    console.log(<span class="str">`${name} | ${admNo} | Class ${classId}`</span>);
+};
+displayStudent({ name: <span class="str">"Basha"</span>, admNo: <span class="str">"ADM001"</span>, classId: <span class="num">5</span> });
+
+<span class="cm">// Default parameters</span>
+<span class="kw">const</span> getStudents = (schoolId, page = <span class="num">1</span>, size = <span class="num">20</span>) =&gt; {
+    <span class="cm">// page=1, size=20 if not passed</span>
+};
+
+<span class="cm">// Rest parameters</span>
+<span class="kw">const</span> sumFees = (...amounts) =&gt; amounts.reduce((sum, a) =&gt; sum + a, <span class="num">0</span>);</code></pre>
+</section>
+
+<section id="arrays">
+  <h2>📋 Arrays and Objects</h2>
+  <pre><code><span class="cm">// Arrays</span>
+<span class="kw">const</span> students = [<span class="str">"Basha"</span>, <span class="str">"Priya"</span>, <span class="str">"Raja"</span>];
+
+<span class="cm">// Array methods (all return NEW array — original unchanged)</span>
+students.map(s =&gt; s.toUpperCase())         <span class="cm">// transform: ["BASHA", "PRIYA", "RAJA"]</span>
+students.filter(s =&gt; s.length &gt; <span class="num">4</span>)       <span class="cm">// filter: ["Basha", "Priya"]</span>
+students.find(s =&gt; s === <span class="str">"Priya"</span>)        <span class="cm">// first match: "Priya" (or undefined)</span>
+students.some(s =&gt; s === <span class="str">"Basha"</span>)        <span class="cm">// any match: true</span>
+students.every(s =&gt; s.length &gt; <span class="num">3</span>)        <span class="cm">// all match: true</span>
+students.includes(<span class="str">"Raja"</span>)               <span class="cm">// contains: true</span>
+students.indexOf(<span class="str">"Priya"</span>)               <span class="cm">// position: 1</span>
+students.reduce((acc, s) =&gt; acc + <span class="str">" "</span> + s) <span class="cm">// accumulate: "Basha Priya Raja"</span>
+students.forEach(s =&gt; console.log(s))      <span class="cm">// iterate (no return value)</span>
+students.sort()                            <span class="cm">// sort alphabetically (mutates original!)</span>
+
+<span class="cm">// Spread operator</span>
+<span class="kw">const</span> allStudents = [...students, <span class="str">"Arun"</span>, <span class="str">"Kavya"</span>];  <span class="cm">// merge arrays</span>
+
+<span class="cm">// Objects</span>
+<span class="kw">const</span> student = {
+    id: <span class="num">1</span>,
+    name: <span class="str">"Basha"</span>,
+    admNo: <span class="str">"ADM001"</span>,
+    isActive: <span class="kw">true</span>,
+    address: { city: <span class="str">"Chennai"</span>, state: <span class="str">"TN"</span> }
+};
+
+<span class="cm">// Access</span>
+student.name;          <span class="cm">// "Basha" — dot notation</span>
+student[<span class="str">"admNo"</span>];    <span class="cm">// "ADM001" — bracket notation (for dynamic keys)</span>
+student.address.city;  <span class="cm">// "Chennai" — nested</span>
+
+<span class="cm">// Destructuring</span>
+<span class="kw">const</span> { name, admNo, isActive } = student;  <span class="cm">// extract properties</span>
+<span class="kw">const</span> { name: studentName, id } = student;  <span class="cm">// rename while destructuring</span>
+<span class="kw">const</span> { address: { city } } = student;      <span class="cm">// nested destructuring</span>
+
+<span class="cm">// Spread for copying/merging objects</span>
+<span class="kw">const</span> updated = { ...student, name: <span class="str">"Raja"</span>, isActive: <span class="kw">false</span> }; <span class="cm">// shallow copy + update</span>
+
+<span class="cm">// Optional chaining</span>
+<span class="kw">const</span> city = student?.address?.city ?? <span class="str">"Unknown"</span>;  <span class="cm">// safe nested access</span></code></pre>
+</section>
+
+<section id="async">
+  <h2>⏳ Promises and async/await</h2>
+  <pre><code><span class="cm">// Promise — represents a future value</span>
+<span class="kw">const</span> fetchStudent = (id) =&gt; {
+    <span class="kw">return new</span> Promise((resolve, reject) =&gt; {
+        <span class="kw">if</span> (id &gt; <span class="num">0</span>) {
+            resolve({ id, name: <span class="str">"Basha"</span> });  <span class="cm">// success</span>
+        } <span class="kw">else</span> {
+            reject(<span class="kw">new</span> Error(<span class="str">"Invalid student ID"</span>));  <span class="cm">// failure</span>
+        }
+    });
+};
+
+<span class="cm">// .then/.catch (old way)</span>
+fetchStudent(<span class="num">1</span>)
+    .then(student =&gt; console.log(student.name))
+    .catch(err =&gt; console.error(err.message));
+
+<span class="cm">// async/await (modern, preferred — reads like sync code)</span>
+<span class="kw">async function</span> <span class="fn">loadStudentData</span>(studentId) {
+    <span class="kw">try</span> {
+        <span class="kw">const</span> student = <span class="kw">await</span> fetchStudent(studentId);      <span class="cm">// waits for promise</span>
+        <span class="kw">const</span> fees    = <span class="kw">await</span> fetchFees(student.id);         <span class="cm">// sequential</span>
+        <span class="kw">const</span> attendance = <span class="kw">await</span> fetchAttendance(student.id);
+        <span class="kw">return</span> { student, fees, attendance };
+    } <span class="kw">catch</span> (error) {
+        console.error(<span class="str">"Failed to load:"</span>, error.message);
+        <span class="kw">throw</span> error;  <span class="cm">// re-throw for caller to handle</span>
+    }
+}
+
+<span class="cm">// Parallel execution — don't await one by one if independent</span>
+<span class="kw">const</span> [student, fees] = <span class="kw">await</span> Promise.all([
+    fetchStudent(studentId),
+    fetchFees(studentId)
+]);  <span class="cm">// both run in parallel — faster!</span>
+
+<span class="cm">// Promise.allSettled — get results even if some fail</span>
+<span class="kw">const</span> results = <span class="kw">await</span> Promise.allSettled([
+    sendSms(parent1),
+    sendSms(parent2),
+    sendSms(parent3)
+]);  <span class="cm">// results[i].status = 'fulfilled' or 'rejected'</span>
+
+<span class="cm">// fetch API — built-in HTTP client</span>
+<span class="kw">async function</span> <span class="fn">getStudentsFromApi</span>(schoolId) {
+    <span class="kw">const</span> response = <span class="kw">await</span> fetch(<span class="str">`/api/students?schoolId=${schoolId}`</span>, {
+        headers: { <span class="str">'Authorization'</span>: <span class="str">`Bearer ${getToken()}`</span> }
+    });
+    <span class="kw">if</span> (!response.ok) <span class="kw">throw new</span> Error(<span class="str">`HTTP ${response.status}`</span>);
+    <span class="kw">const</span> data = <span class="kw">await</span> response.json();  <span class="cm">// parse JSON</span>
+    <span class="kw">return</span> data;
+}</code></pre>
+</section>
+
+<section id="dom">
+  <h2>🌐 DOM Manipulation Basics</h2>
+  <pre><code><span class="cm">// Select elements</span>
+<span class="kw">const</span> btn     = document.getElementById(<span class="str">"admitBtn"</span>);
+<span class="kw">const</span> table   = document.querySelector(<span class="str">"#studentTable"</span>);   <span class="cm">// first match</span>
+<span class="kw">const</span> rows    = document.querySelectorAll(<span class="str">".student-row"</span>); <span class="cm">// all matches</span>
+
+<span class="cm">// Read/Write content</span>
+<span class="kw">const</span> nameDiv = document.getElementById(<span class="str">"studentName"</span>);
+nameDiv.textContent = <span class="str">"Basha Kumar"</span>;     <span class="cm">// safe — no HTML injection</span>
+nameDiv.innerHTML   = <span class="str">"&lt;b&gt;Basha&lt;/b&gt;"</span>;   <span class="cm">// renders HTML (XSS risk if user input!)</span>
+
+<span class="cm">// CSS Classes</span>
+nameDiv.classList.add(<span class="str">"active"</span>);
+nameDiv.classList.remove(<span class="str">"inactive"</span>);
+nameDiv.classList.toggle(<span class="str">"highlight"</span>);  <span class="cm">// add if absent, remove if present</span>
+nameDiv.classList.contains(<span class="str">"active"</span>);  <span class="cm">// true/false</span>
+
+<span class="cm">// Attributes</span>
+btn.setAttribute(<span class="str">"disabled"</span>, <span class="str">""</span>);
+btn.removeAttribute(<span class="str">"disabled"</span>);
+<span class="kw">const</span> id = btn.getAttribute(<span class="str">"data-id"</span>);
+
+<span class="cm">// Events</span>
+btn.addEventListener(<span class="str">"click"</span>, <span class="kw">async</span> (event) =&gt; {
+    event.preventDefault();  <span class="cm">// stop default behavior (form submit)</span>
+    <span class="kw">const</span> studentId = event.target.dataset.id;
+    <span class="kw">await</span> admitStudent(studentId);
+});
+
+<span class="cm">// Create and insert elements dynamically</span>
+<span class="kw">function</span> <span class="fn">renderStudentRow</span>(student) {
+    <span class="kw">const</span> tr = document.createElement(<span class="str">"tr"</span>);
+    tr.innerHTML = <span class="str">`
+        &lt;td&gt;${student.name}&lt;/td&gt;
+        &lt;td&gt;${student.admNo}&lt;/td&gt;
+        &lt;td class="fee"&gt;₹${student.feeAmount}&lt;/td&gt;
+    `</span>;
+    document.getElementById(<span class="str">"tbody"</span>).appendChild(tr);
+}
+
+<span class="cm">// Form values</span>
+<span class="kw">const</span> name = document.getElementById(<span class="str">"nameInput"</span>).value.trim();
+<span class="kw">const</span> isChecked = document.getElementById(<span class="str">"activeChk"</span>).checked;</code></pre>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is the difference between var, let, and const?</span><span class="st">Basics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>var: function-scoped, hoisted as undefined, can be re-declared. Bug source. let: block-scoped, not hoisted (TDZ), cannot re-declare. const: block-scoped, cannot be reassigned (but object properties can change). Rule: default to const. Use let when you need to reassign. Never use var in modern JS. Hoisting: var declarations move to top of function scope. let/const are in "Temporal Dead Zone" — accessing before declaration throws ReferenceError.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What is the difference between == and === in JavaScript?</span><span class="st">Basics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>==: loose equality. Converts types before comparing. "5" == 5 → true. null == undefined → true. === : strict equality. No type conversion. "5" === 5 → false. null === undefined → false. Always use ===. == leads to unexpected bugs. Famous example: [] == false → true (type coercion). ZenCampus: always === for ID comparisons, status checks.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is 'this' in JavaScript arrow functions vs regular functions?</span><span class="st">Functions</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Regular function: 'this' is determined at call time. Inside an event listener: this = the element. Inside a method called as function(): this = undefined (strict) or global. Arrow function: 'this' lexically bound — inherited from surrounding scope. Never has its own 'this'. In class methods: use arrow functions for callbacks to keep 'this' as the class instance. document.addEventListener('click', () => this.handleClick()) — 'this' is the class, not the element.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What is a Promise and how does async/await relate to it?</span><span class="st">Async</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Promise: object representing eventual completion or failure of async operation. Three states: pending → fulfilled or rejected. async/await is syntactic sugar over Promises. async function always returns a Promise. await pauses execution until promise resolves. Equivalent: await fetchStudent(1) === fetchStudent(1).then(result => result). async/await makes async code look and feel like synchronous code — easier to read, debug, and handle errors with try/catch.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">What is the difference between map() and forEach() in JavaScript arrays?</span><span class="st">Arrays</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>map(): transforms each element, RETURNS NEW ARRAY. students.map(s => s.name) → ["Basha", "Priya"]. forEach(): iterates, RETURNS UNDEFINED. Cannot chain after forEach. Use map when you need transformed array. Use forEach when you just want to execute something for each item (logging, DOM updates). Never forEach to build an array — that's what map is for. ZenCampus: .map(s => renderStudentRow(s)) to create row elements.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">What is event delegation and why is it useful?</span><span class="st">DOM</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Instead of adding click listener to each student row (100 listeners for 100 rows), add ONE listener to the parent table. When any row is clicked, event bubbles up to table. Check event.target to identify which row. Benefits: works for dynamically added rows, better performance (1 listener vs N). ZenCampus student table: tbody.addEventListener('click', (e) => { const row = e.target.closest('tr'); const id = row.dataset.id; })</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">What is the spread operator (...) and when to use it?</span><span class="st">ES6</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Spread: "unfolds" an array/object. Arrays: [...arr1, ...arr2] = merge. [...arr] = copy. Math.max(...arr) = pass as args. Objects: {...obj1, ...obj2} = merge/override properties. {...student, isActive: false} = copy with one property changed. Immutable update — create new object instead of mutating. React state updates use spread: setStudent({...student, name: newName}).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">What is closure in JavaScript?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Closure: inner function remembers and accesses outer function's variables even after outer function returns. const makeCounter = () => { let count = 0; return () => ++count; }; const counter = makeCounter(); counter() → 1, counter() → 2. ZenCampus: function that "remembers" the schoolId: const getStudents = (schoolId) => (page) => fetch(`/api/students?schoolId=${schoolId}&page=${page}`). The returned function closes over schoolId.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">What is the difference between null and undefined?</span><span class="st">Basics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>undefined: variable declared but not assigned. Function returns undefined if no return statement. Accessing missing property: obj.nonExistent → undefined. null: explicitly assigned "no value." typeof null === 'object' (historic JS bug). null == undefined → true (loose), null === undefined → false (strict). ZenCampus: API returns null for "not found" — use null check. Default function parameters and uninitialized variables → undefined.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">Explain Promise.all vs Promise.allSettled.</span><span class="st">Async</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Promise.all: runs all promises in parallel. Returns array of results when ALL resolve. If ANY rejects — immediately rejects (fail-fast). Use when: all must succeed or abort. Promise.allSettled: runs all promises. Returns array of {status, value/reason} for EACH. Never rejects. Use when: best-effort — some may fail. ZenCampus: Sending SMS to 100 parents: Promise.allSettled — one failure shouldn't stop others. Loading student + fee + attendance for display: Promise.all — need all to render page.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. What does 'const' prevent in JavaScript?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','const object properties CAN be modified — only the variable binding is constant.')">Modifying object properties</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! const prevents reassignment of the variable binding itself. const student = {}; student = {} would throw. But student.name = "Basha" is allowed.')">Reassigning the variable to a different value</button>
+    <button class="qb" onclick="ans(this,'wrong','const is block-scoped — it is accessible in the current block.')">Accessing the variable outside its scope</button>
+    <button class="qb" onclick="ans(this,'wrong','const doesn\'t affect hoisting behavior — it causes TDZ error if accessed before declaration.')">Hoisting of the variable</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What is the result of: typeof null in JavaScript?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','null is not undefined — they are different values.')">\"undefined\"</button>
+    <button class="qb" onclick="ans(this,'wrong','null is not a number type.')">\"null\"</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! typeof null === "object" is a famous JavaScript bug from 1995. It was never fixed for backwards compatibility. null is not actually an object — this is a design flaw in JS.')">\"object\" (historic JavaScript bug)</button>
+    <button class="qb" onclick="ans(this,'wrong','null is not a boolean type.')">\"boolean\"</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. What does array.map() return?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','forEach returns undefined, not map.')">undefined</button>
+    <button class="qb" onclick="ans(this,'wrong','map doesn\'t modify the original — immutable transformation.')">The original array modified in place</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! map() transforms each element and returns a NEW array of the same length. Original array is unchanged. Use when: converting data format, extracting properties.')">A new array with each element transformed</button>
+    <button class="qb" onclick="ans(this,'wrong','map returns an array, not a single value. reduce() returns a single accumulated value.')">A single accumulated value</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. What happens if one Promise rejects in Promise.all()?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Promise.all fails fast — doesn\'t wait for others.')">Waits for all promises to complete</button>
+    <button class="qb" onclick="ans(this,'wrong','Promise.all doesn\'t skip failed ones — it rejects immediately.')">Skips the failed promise and returns results of others</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Promise.all rejects immediately with the rejection reason of the first failed promise. Use Promise.allSettled if you need all results even when some fail.')">Immediately rejects the entire Promise.all</button>
+    <button class="qb" onclick="ans(this,'wrong','Promise.all doesn\'t retry automatically.')">Automatically retries the failed promise</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I use const by default, let when needed, never var</li>
+    <li onclick="ck(this)"><input type="checkbox">I always use === instead of ==</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write arrow functions in all forms</li>
+    <li onclick="ck(this)"><input type="checkbox">I can use destructuring for objects and arrays</li>
+    <li onclick="ck(this)"><input type="checkbox">I can use map, filter, find, reduce on arrays</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write async functions with try/catch</li>
+    <li onclick="ck(this)"><input type="checkbox">I know when to use Promise.all vs allSettled</li>
+    <li onclick="ck(this)"><input type="checkbox">I can manipulate DOM elements safely (textContent not innerHTML for user data)</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">JavaScript Basics Complete ✓ — var/let/const, Functions, Arrays, async/await, DOM!</p>
+  <p>Accent: Dark Yellow #ca8a04 · Next: TypeScript Basics</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

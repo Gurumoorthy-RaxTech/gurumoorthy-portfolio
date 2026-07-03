@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 12 – Background Jobs | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#1a0015,#0d001a,#1a0015);padding:36px 20px;text-align:center;border-bottom:3px solid #d946ef}
+header h1{font-size:2em;color:#f0abfc;text-shadow:0 0 20px #d946ef55}
+header p{color:#c080c8;margin-top:6px}
+.badge{display:inline-block;background:#d946ef22;border:1px solid #d946ef55;color:#f0abfc;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#f0abfc;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#d946ef;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.kw{color:#569cd6}.tp{color:#4ec9b0}.st{color:#ce9178}.nm{color:#b5cea8}.cm{color:#6a9955;font-style:italic}.pr{color:#9cdcfe}.mt{color:#dcdcaa}.at{color:#c586c0}
+code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#100010;border-left:4px solid #d946ef;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#e879f9;font-size:0.9em;margin-top:4px}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-card.hot{border-color:#d946ef55;background:#100010}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.s-num{background:#d946ef;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.s-num.warn{background:#f97316;color:#fff}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#1a001a;color:#d946ef}
+.real{background:#1a001a;color:#d946ef;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.hot-badge{background:#1a0800;color:#f97316;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #f9731655}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#100010;border:1px solid #d946ef;color:#f0abfc;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#d946ef;color:#fff}
+.reveal-btn.warn-btn{border-color:#f97316;color:#fb923c}
+.reveal-btn.warn-btn:hover{background:#f97316;color:#fff}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1e1e3a}
+.answer.shown{display:block}
+.answer .a-label{color:#f0abfc;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.answer .a-label.warn{color:#f97316}
+.gold{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:700px){.comparison,.two-col{grid-template-columns:1fr}}
+.bad-box{background:#1f0a0a;border:1px solid #e74c3c44;border-radius:8px;padding:14px}
+.good-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:8px;padding:14px}
+.box-label{font-size:0.78em;font-weight:bold;margin-bottom:8px}
+.bad-box .box-label{color:#e74c3c}.good-box .box-label{color:#2ecc71}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#100010;color:#f0abfc;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a1a35}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.pink{color:#f0abfc}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#d946ef;color:#f0abfc}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#d946ef}
+h3{color:#e879f9;margin:16px 0 8px;font-size:1em}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#e879f9;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1e1e3a}
+.sticky-nav a:hover{background:#100010}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#d946ef,#f0abfc)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+.flow-box{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;align-items:center}
+.flow-step{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:8px 14px;font-size:0.82em;color:#c0c8e0;text-align:center;min-width:80px}
+.flow-step.http{border-color:#d946ef;color:#f0abfc;background:#100010}
+.flow-step.bg{border-color:#22c55e;color:#bbf7d0;background:#001500}
+.flow-step.q{border-color:#f39c12;color:#f0dc82;background:#1a1000}
+.flow-arr{color:#888;font-size:1.1em}
+.arch-box{background:#0a0a1a;border:1px solid #2a2a5a;border-radius:10px;padding:16px;margin:14px 0;font-family:'Consolas',monospace;font-size:0.82em}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#f0abfc;font-size:0.85em;margin-bottom:6px">📅 Day 12 of 60 | Phase 1: Advanced C#</div>
+  <h1>⚙️ Background Jobs — Hangfire · IHostedService · Worker Services · Queues</h1>
+  <p>Fire-and-Forget · Recurring · Delayed · Channel&lt;T&gt; · BackgroundService · Retry · Progress</p>
+  <div style="margin-top:12px">
+    <span class="badge">IHostedService</span><span class="badge">BackgroundService</span><span class="badge">Hangfire</span>
+    <span class="badge">Channel&lt;T&gt;</span><span class="badge">Worker Service</span><span class="badge">Queue</span><span class="badge">Retry</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#why">🤔 Why BG?</a>
+  <a href="#hosted">🏠 IHostedService</a>
+  <a href="#bgservice">🔄 BackgroundService</a>
+  <a href="#hangfire">🔥 Hangfire</a>
+  <a href="#channel">📬 Channel&lt;T&gt;</a>
+  <a href="#worker">🏭 Worker Service</a>
+  <a href="#patterns">🏗️ Patterns</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SECTION 1: WHY BACKGROUND JOBS -->
+<div class="section" id="why">
+  <div class="section-title"><span class="num">1</span> Why Background Jobs? — Don't Block the HTTP Request!</div>
+
+  <div class="movie">
+    <span class="film">🎬 Kaithi — Silent background work. No flashy action in the front. Results appear without ceremony.</span>
+    <p>Dilli works in background — no camera, no drama. Background job = same. Fee paid → HTTP response "Success" immediately → SMS sent in background. User doesn't wait for SMS gateway! ZenCampus ux = instant confirm, SMS arrives 2 seconds later.</p>
+  </div>
+
+  <div class="comparison">
+    <div class="bad-box">
+      <div class="box-label">❌ Blocking — User waits for everything</div>
+      <pre style="font-size:0.8em"><span class="cm">// POST /api/fees/collect</span>
+<span class="cm">// 1. Save to DB       — 50ms</span>
+<span class="cm">// 2. Send SMS         — 800ms ← user waits!</span>
+<span class="cm">// 3. Send Email       — 600ms ← user waits!</span>
+<span class="cm">// 4. Update dashboard — 200ms ← user waits!</span>
+<span class="cm">// 5. Generate receipt — 400ms ← user waits!</span>
+<span class="cm">// Total: 2050ms → bad UX!</span></pre>
+    </div>
+    <div class="good-box">
+      <div class="box-label">✅ Background — Instant response</div>
+      <pre style="font-size:0.8em"><span class="cm">// POST /api/fees/collect</span>
+<span class="cm">// 1. Save to DB — 50ms → return 200 OK!</span>
+<span class="cm">// ↓ Background (user already gone)</span>
+<span class="cm">// 2. SMS job enqueued</span>
+<span class="cm">// 3. Email job enqueued</span>
+<span class="cm">// 4. Dashboard refresh job</span>
+<span class="cm">// 5. Receipt generation job</span>
+<span class="cm">// Response: 50ms ✅ UX win!</span></pre>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>Tool</th><th>Best For</th><th>Persistence</th><th>ZenCampus Use</th></tr>
+    <tr><td><span class="pink">IHostedService</span></td><td>Startup/shutdown tasks, simple polling</td><td>In-memory</td><td>Cache warm-up at startup</td></tr>
+    <tr><td><span class="pink">BackgroundService</span></td><td>Long-running loops, queue consumers</td><td>In-memory</td><td>SMS gateway sync listener</td></tr>
+    <tr><td><span class="yellow">Hangfire</span></td><td>Fire-and-forget, recurring, delayed, retryable</td><td class="green">DB persisted ✅</td><td>SMS, email, monthly reminders, reports</td></tr>
+    <tr><td><span class="green">Channel&lt;T&gt;</span></td><td>In-process producer/consumer, high-throughput</td><td>In-memory</td><td>Attendance event stream</td></tr>
+    <tr><td><span class="green">Worker Service</span></td><td>Standalone background process (separate exe)</td><td>Depends</td><td>Report processor, email sender service</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 2: IHostedService -->
+<div class="section" id="hosted">
+  <div class="section-title"><span class="num">2</span> IHostedService — Startup & Shutdown Hooks</div>
+
+  <pre><span class="cm">// IHostedService — lifecycle hooks into ASP.NET Core host</span>
+<span class="kw">public class</span> <span class="tp">CacheWarmupService</span> : <span class="tp">IHostedService</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">IServiceProvider</span> <span class="pr">_sp</span>;
+    <span class="kw">private readonly</span> <span class="tp">ILogger</span>&lt;<span class="tp">CacheWarmupService</span>&gt; <span class="pr">_log</span>;
+
+    <span class="cm">// StartAsync — called when app starts (before first HTTP request!)</span>
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">StartAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"Warming up ZenCampus caches..."</span>);
+
+        <span class="cm">// IHostedService is Singleton — use IServiceScope for Scoped services!</span>
+        <span class="kw">using var</span> <span class="pr">scope</span>   = <span class="pr">_sp</span>.<span class="mt">CreateScope</span>();
+        <span class="kw">var</span> <span class="pr">schoolSvc</span>      = <span class="pr">scope</span>.<span class="pr">ServiceProvider</span>.<span class="mt">GetRequiredService</span>&lt;<span class="tp">ISchoolService</span>&gt;();
+
+        <span class="kw">var</span> <span class="pr">activeSchools</span>   = <span class="kw">await</span> <span class="pr">schoolSvc</span>.<span class="mt">GetAllActiveAsync</span>();
+        <span class="kw">await</span> <span class="tp">Parallel</span>.<span class="mt">ForEachAsync</span>(<span class="pr">activeSchools</span>,
+            <span class="kw">new</span> <span class="tp">ParallelOptions</span> { <span class="pr">MaxDegreeOfParallelism</span> = <span class="nm">5</span>, <span class="pr">CancellationToken</span> = <span class="pr">ct</span> },
+            <span class="kw">async</span> (<span class="pr">s</span>, <span class="pr">_</span>) => <span class="kw">await</span> <span class="pr">schoolSvc</span>.<span class="mt">WarmCacheAsync</span>(<span class="pr">s</span>.<span class="pr">Id</span>));
+
+        <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"Cache warm-up complete: {Count} schools"</span>, <span class="pr">activeSchools</span>.<span class="pr">Count</span>);
+    }
+
+    <span class="cm">// StopAsync — called on graceful shutdown (SIGTERM, app stop)</span>
+    <span class="kw">public</span> <span class="tp">Task</span> <span class="mt">StopAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"ZenCampus shutting down gracefully"</span>);
+        <span class="kw">return</span> <span class="tp">Task</span>.<span class="pr">CompletedTask</span>;
+    }
+}
+
+<span class="cm">// Register</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddHostedService</span>&lt;<span class="tp">CacheWarmupService</span>&gt;();</pre>
+
+  <div class="danger">
+    <div class="d-label">⚠️ IHostedService lifetime trap — Scoped services!</div>
+    <p>IHostedService is registered as Singleton. You CANNOT inject Scoped services (DbContext, repositories) directly — lifetime mismatch! Always use <code>IServiceProvider.CreateScope()</code> to resolve scoped services inside. This is the most common mistake in background service code!</p>
+  </div>
+</div>
+
+<!-- SECTION 3: BackgroundService -->
+<div class="section" id="bgservice">
+  <div class="section-title"><span class="num">3</span> BackgroundService — Long-Running Loops</div>
+
+  <div class="movie">
+    <span class="film">🎬 Ratsasan — Systematic background investigation, never stops, checks evidence periodically.</span>
+    <p>Ratsasan investigation loop = BackgroundService. Runs forever. Checks evidence (queue) every N seconds. Processes what's found. Sleeps. Repeats. CancellationToken = case closed (app shutting down).</p>
+  </div>
+
+  <pre><span class="cm">// BackgroundService — abstract class, override ExecuteAsync</span>
+<span class="kw">public class</span> <span class="tp">AttendanceSyncService</span> : <span class="tp">BackgroundService</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">IServiceProvider</span> <span class="pr">_sp</span>;
+    <span class="kw">private readonly</span> <span class="tp">ILogger</span>&lt;<span class="tp">AttendanceSyncService</span>&gt; <span class="pr">_log</span>;
+
+    <span class="cm">// ExecuteAsync — runs on a background thread, loop until cancellation</span>
+    <span class="kw">protected override async</span> <span class="tp">Task</span> <span class="mt">ExecuteAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"Attendance sync service started"</span>);
+
+        <span class="kw">while</span> (!<span class="pr">ct</span>.<span class="pr">IsCancellationRequested</span>)
+        {
+            <span class="kw">try</span>
+            {
+                <span class="kw">await</span> <span class="mt">ProcessPendingAttendanceAsync</span>(<span class="pr">ct</span>);
+            }
+            <span class="kw">catch</span> (<span class="tp">OperationCanceledException</span>) <span class="kw">when</span> (<span class="pr">ct</span>.<span class="pr">IsCancellationRequested</span>)
+            {
+                <span class="kw">break</span>; <span class="cm">// graceful shutdown — don't log as error!</span>
+            }
+            <span class="kw">catch</span> (<span class="tp">Exception</span> <span class="pr">ex</span>)
+            {
+                <span class="cm">// Log but KEEP RUNNING — don't let one failure kill the service!</span>
+                <span class="pr">_log</span>.<span class="mt">LogError</span>(<span class="pr">ex</span>, <span class="st">"Attendance sync failed — retrying in 30s"</span>);
+            }
+
+            <span class="cm">// Wait before next poll (use ct so Delay exits on shutdown!)</span>
+            <span class="kw">await</span> <span class="tp">Task</span>.<span class="mt">Delay</span>(<span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">30</span>), <span class="pr">ct</span>);
+        }
+
+        <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"Attendance sync service stopped"</span>);
+    }
+
+    <span class="kw">private async</span> <span class="tp">Task</span> <span class="mt">ProcessPendingAttendanceAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="kw">using var</span> <span class="pr">scope</span> = <span class="pr">_sp</span>.<span class="mt">CreateScope</span>(); <span class="cm">// new scope per iteration!</span>
+        <span class="kw">var</span> <span class="pr">svc</span>         = <span class="pr">scope</span>.<span class="pr">ServiceProvider</span>.<span class="mt">GetRequiredService</span>&lt;<span class="tp">IAttendanceSyncService</span>&gt;();
+        <span class="kw">var</span> <span class="pr">pending</span>     = <span class="kw">await</span> <span class="pr">svc</span>.<span class="mt">GetPendingAsync</span>(<span class="pr">ct</span>);
+
+        <span class="kw">if</span> (!<span class="pr">pending</span>.<span class="mt">Any</span>()) <span class="kw">return</span>; <span class="cm">// nothing to do</span>
+
+        <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"Processing {Count} attendance records"</span>, <span class="pr">pending</span>.<span class="pr">Count</span>);
+        <span class="kw">await</span> <span class="pr">svc</span>.<span class="mt">ProcessBatchAsync</span>(<span class="pr">pending</span>, <span class="pr">ct</span>);
+    }
+}
+
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddHostedService</span>&lt;<span class="tp">AttendanceSyncService</span>&gt;();</pre>
+
+  <div class="tip">
+    <div class="t-label">💡 Key Rules for BackgroundService</div>
+    <p>1. Always pass <code>CancellationToken</code> to Task.Delay — else app hangs on shutdown waiting for delay!<br>
+    2. New <code>IServiceScope</code> per iteration — prevents DbContext connection leaks<br>
+    3. Catch exceptions inside loop — one failure should NOT kill the entire service<br>
+    4. Separate <code>OperationCanceledException</code> from real errors — graceful shutdown ≠ error</p>
+  </div>
+</div>
+
+<!-- SECTION 4: HANGFIRE -->
+<div class="section" id="hangfire">
+  <div class="section-title"><span class="num">4</span> Hangfire — Persistent, Retryable, Schedulable Jobs</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vivegam — Missions scheduled with precision. If one fails, retry protocol kicks in. Mission data stored in vault (DB).</span>
+    <p>Vivegam team = Hangfire job workers. Mission brief = job parameters. Vault = SQL Server job storage. Retry protocol = automatic retry on failure. Mission log = Hangfire dashboard. App crash = mission resumes after restart!</p>
+  </div>
+
+  <pre><span class="cm">// NuGet: Hangfire, Hangfire.AspNetCore, Hangfire.SqlServer</span>
+
+<span class="cm">// Program.cs — Hangfire setup</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddHangfire</span>(<span class="pr">cfg</span> => <span class="pr">cfg</span>
+    .<span class="mt">SetDataCompatibilityLevel</span>(<span class="tp">CompatibilityLevel</span>.<span class="pr">Version_180</span>)
+    .<span class="mt">UseSimpleAssemblyNameTypeSerializer</span>()
+    .<span class="mt">UseRecommendedSerializerSettings</span>()
+    .<span class="mt">UseSqlServerStorage</span>(<span class="pr">connectionString</span>, <span class="kw">new</span> <span class="tp">SqlServerStorageOptions</span>
+    {
+        <span class="pr">CommandBatchMaxTimeout</span>      = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">5</span>),
+        <span class="pr">SlidingInvisibilityTimeout</span>  = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">5</span>),
+        <span class="pr">QueuePollInterval</span>           = <span class="tp">TimeSpan</span>.<span class="mt">Zero</span>,
+        <span class="pr">UseRecommendedIsolationLevel</span> = <span class="kw">true</span>
+    }));
+
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddHangfireServer</span>(<span class="pr">opts</span> =>
+{
+    <span class="pr">opts</span>.<span class="pr">WorkerCount</span> = <span class="nm">5</span>;          <span class="cm">// 5 concurrent job workers</span>
+    <span class="pr">opts</span>.<span class="pr">Queues</span>     = <span class="kw">new</span>[] { <span class="st">"critical"</span>, <span class="st">"default"</span>, <span class="st">"low"</span> };
+});
+
+<span class="cm">// Dashboard (development — secure in production!)</span>
+<span class="pr">app</span>.<span class="mt">UseHangfireDashboard</span>(<span class="st">"/hangfire"</span>, <span class="kw">new</span> <span class="tp">DashboardOptions</span>
+{
+    <span class="pr">Authorization</span> = <span class="kw">new</span>[] { <span class="kw">new</span> <span class="tp">HangfireAdminAuthFilter</span>() }
+});</pre>
+
+  <pre><span class="cm">// 1. Fire-and-Forget — enqueue immediately, run ASAP</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">ActionResult</span>&gt; <span class="mt">CollectFeeAsync</span>(<span class="tp">FeeDto</span> <span class="pr">dto</span>)
+{
+    <span class="kw">var</span> <span class="pr">receipt</span> = <span class="kw">await</span> <span class="pr">_feeSvc</span>.<span class="mt">CollectAsync</span>(<span class="pr">dto</span>); <span class="cm">// synchronous part</span>
+
+    <span class="cm">// Fire-and-forget — return immediately, SMS sent later</span>
+    <span class="tp">BackgroundJob</span>.<span class="mt">Enqueue</span>&lt;<span class="tp">ISmsService</span>&gt;(<span class="pr">sms</span> =>
+        <span class="pr">sms</span>.<span class="mt">SendFeeReceiptAsync</span>(<span class="pr">dto</span>.<span class="pr">ParentPhone</span>, <span class="pr">receipt</span>.<span class="pr">ReceiptNo</span>, <span class="pr">receipt</span>.<span class="pr">Amount</span>));
+
+    <span class="tp">BackgroundJob</span>.<span class="mt">Enqueue</span>&lt;<span class="tp">IEmailService</span>&gt;(<span class="pr">em</span> =>
+        <span class="pr">em</span>.<span class="mt">SendReceiptEmailAsync</span>(<span class="pr">dto</span>.<span class="pr">ParentEmail</span>, <span class="pr">receipt</span>.<span class="pr">ReceiptNo</span>));
+
+    <span class="kw">return</span> <span class="mt">Ok</span>(<span class="pr">receipt</span>);
+}
+
+<span class="cm">// 2. Delayed — run after specified time</span>
+<span class="tp">BackgroundJob</span>.<span class="mt">Schedule</span>&lt;<span class="tp">INotificationService</span>&gt;(
+    <span class="pr">n</span> => <span class="pr">n</span>.<span class="mt">SendFeeReminderAsync</span>(<span class="pr">studentId</span>),
+    <span class="tp">TimeSpan</span>.<span class="mt">FromDays</span>(<span class="nm">3</span>));  <span class="cm">// remind after 3 days if still unpaid</span>
+
+<span class="cm">// 3. Recurring — cron schedule</span>
+<span class="tp">RecurringJob</span>.<span class="mt">AddOrUpdate</span>&lt;<span class="tp">IFeeReminderService</span>&gt;(
+    <span class="st">"monthly-fee-reminder"</span>,
+    <span class="pr">svc</span> => <span class="pr">svc</span>.<span class="mt">SendMonthlyRemindersAsync</span>(),
+    <span class="st">"0 9 1 * *"</span>); <span class="cm">// 9 AM on 1st of every month</span>
+
+<span class="tp">RecurringJob</span>.<span class="mt">AddOrUpdate</span>&lt;<span class="tp">IDashboardService</span>&gt;(
+    <span class="st">"dashboard-warmup"</span>,
+    <span class="pr">svc</span> => <span class="pr">svc</span>.<span class="mt">WarmAllCachesAsync</span>(),
+    <span class="st">"30 8 * * 1-6"</span>); <span class="cm">// 8:30 AM Mon-Sat</span>
+
+<span class="tp">RecurringJob</span>.<span class="mt">AddOrUpdate</span>&lt;<span class="tp">IAttendanceReportService</span>&gt;(
+    <span class="st">"daily-attendance-report"</span>,
+    <span class="pr">svc</span> => <span class="pr">svc</span>.<span class="mt">GenerateDailyReportAsync</span>(),
+    <span class="st">"0 18 * * 1-6"</span>); <span class="cm">// 6 PM Mon-Sat</span>
+
+<span class="cm">// 4. Continuation — chained jobs (A completes → then B)</span>
+<span class="kw">var</span> <span class="pr">jobId</span> = <span class="tp">BackgroundJob</span>.<span class="mt">Enqueue</span>&lt;<span class="tp">IReportService</span>&gt;(
+    <span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">GenerateAnnualReportAsync</span>(<span class="pr">schoolId</span>));
+
+<span class="tp">BackgroundJob</span>.<span class="mt">ContinueJobWith</span>&lt;<span class="tp">IEmailService</span>&gt;(
+    <span class="pr">jobId</span>,
+    <span class="pr">em</span> => <span class="pr">em</span>.<span class="mt">SendReportReadyEmailAsync</span>(<span class="pr">principalEmail</span>, <span class="pr">schoolId</span>));</pre>
+
+  <pre><span class="cm">// Queue priority — critical first!</span>
+[<span class="at">Queue</span>(<span class="st">"critical"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">SendOtpSmsAsync</span>(<span class="kw">string</span> <span class="pr">phone</span>, <span class="kw">string</span> <span class="pr">otp</span>) { }
+
+[<span class="at">Queue</span>(<span class="st">"default"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">SendFeeReceiptSmsAsync</span>(<span class="kw">string</span> <span class="pr">phone</span>, <span class="kw">string</span> <span class="pr">receipt</span>) { }
+
+[<span class="at">Queue</span>(<span class="st">"low"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">SendNewsletterAsync</span>(<span class="kw">string</span> <span class="pr">email</span>) { }
+
+<span class="cm">// Retry config — automatic retry on failure</span>
+[<span class="at">AutomaticRetry</span>(<span class="pr">Attempts</span> = <span class="nm">3</span>, <span class="pr">DelaysInSeconds</span> = <span class="kw">new</span>[] { <span class="nm">60</span>, <span class="nm">300</span>, <span class="nm">3600</span> })]
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">SendSmsAsync</span>(<span class="kw">string</span> <span class="pr">phone</span>, <span class="kw">string</span> <span class="pr">msg</span>)
+{
+    <span class="cm">// If SMS gateway fails → retry after 1min, 5min, 1hour</span>
+    <span class="cm">// After 3 attempts → moves to "Failed" in dashboard</span>
+}</pre>
+</div>
+
+<!-- SECTION 5: CHANNEL -->
+<div class="section" id="channel">
+  <div class="section-title"><span class="num">5</span> Channel&lt;T&gt; — In-Process Producer/Consumer Queue</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram — Message relay between agents. Producer drops message, consumer picks up. No direct interaction needed.</span>
+    <p>Amar drops attendance data into channel. Vikram (consumer) picks it up, processes it. HTTP request (producer) doesn't wait for consumer. Decoupled! Channel = in-memory, thread-safe, backpressure-aware queue.</p>
+  </div>
+
+  <div class="flow-box">
+    <div class="flow-step http">HTTP Request (Producer)</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step q">Channel&lt;AttendanceEvent&gt;</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step bg">BackgroundService (Consumer)</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step bg">DB Save + SMS</div>
+  </div>
+
+  <pre><span class="cm">// Attendance event model</span>
+<span class="kw">public record</span> <span class="tp">AttendanceEvent</span>(
+    <span class="kw">int</span>      <span class="pr">StudentId</span>,
+    <span class="kw">int</span>      <span class="pr">SchoolId</span>,
+    <span class="tp">DateOnly</span> <span class="pr">Date</span>,
+    <span class="kw">bool</span>     <span class="pr">IsPresent</span>,
+    <span class="kw">string</span>?  <span class="pr">Remarks</span>
+);
+
+<span class="cm">// Register Channel as Singleton (shared between producer and consumer)</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddSingleton</span>(<span class="tp">Channel</span>.<span class="mt">CreateBounded</span>&lt;<span class="tp">AttendanceEvent</span>&gt;(
+    <span class="kw">new</span> <span class="tp">BoundedChannelOptions</span>(<span class="pr">capacity</span>: <span class="nm">1000</span>)
+    {
+        <span class="pr">FullMode</span>          = <span class="tp">BoundedChannelFullMode</span>.<span class="pr">Wait</span>, <span class="cm">// backpressure!</span>
+        <span class="pr">SingleReader</span>      = <span class="kw">true</span>,                         <span class="cm">// 1 consumer</span>
+        <span class="pr">SingleWriter</span>      = <span class="kw">false</span>                         <span class="cm">// many producers</span>
+    }));
+
+<span class="cm">// Producer — in the controller/API handler</span>
+<span class="kw">public class</span> <span class="tp">AttendanceController</span> : <span class="tp">ControllerBase</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">ChannelWriter</span>&lt;<span class="tp">AttendanceEvent</span>&gt; <span class="pr">_writer</span>;
+
+    [<span class="at">HttpPost</span>]
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="mt">MarkAttendanceAsync</span>(<span class="tp">AttendanceDto</span> <span class="pr">dto</span>)
+    {
+        <span class="kw">var</span> <span class="pr">evt</span> = <span class="kw">new</span> <span class="tp">AttendanceEvent</span>(
+            <span class="pr">dto</span>.<span class="pr">StudentId</span>, <span class="pr">dto</span>.<span class="pr">SchoolId</span>,
+            <span class="tp">DateOnly</span>.<span class="mt">FromDateTime</span>(<span class="tp">DateTime</span>.<span class="pr">Today</span>),
+            <span class="pr">dto</span>.<span class="pr">IsPresent</span>, <span class="pr">dto</span>.<span class="pr">Remarks</span>);
+
+        <span class="cm">// Non-blocking write — returns immediately!</span>
+        <span class="kw">await</span> <span class="pr">_writer</span>.<span class="mt">WriteAsync</span>(<span class="pr">evt</span>); <span class="cm">// waits only if channel full (backpressure)</span>
+
+        <span class="kw">return</span> <span class="mt">Accepted</span>(); <span class="cm">// 202 — queued, processing in background</span>
+    }
+}
+
+<span class="cm">// Consumer — BackgroundService</span>
+<span class="kw">public class</span> <span class="tp">AttendanceProcessorService</span> : <span class="tp">BackgroundService</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">ChannelReader</span>&lt;<span class="tp">AttendanceEvent</span>&gt; <span class="pr">_reader</span>;
+    <span class="kw">private readonly</span> <span class="tp">IServiceProvider</span> <span class="pr">_sp</span>;
+
+    <span class="kw">protected override async</span> <span class="tp">Task</span> <span class="mt">ExecuteAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="cm">// ReadAllAsync — async stream, blocks until item available</span>
+        <span class="kw">await foreach</span> (<span class="kw">var</span> <span class="pr">evt</span> <span class="kw">in</span> <span class="pr">_reader</span>.<span class="mt">ReadAllAsync</span>(<span class="pr">ct</span>))
+        {
+            <span class="kw">try</span>
+            {
+                <span class="kw">using var</span> <span class="pr">scope</span> = <span class="pr">_sp</span>.<span class="mt">CreateScope</span>();
+                <span class="kw">var</span> <span class="pr">svc</span>         = <span class="pr">scope</span>.<span class="pr">ServiceProvider</span>
+                    .<span class="mt">GetRequiredService</span>&lt;<span class="tp">IAttendanceService</span>&gt;();
+
+                <span class="kw">await</span> <span class="pr">svc</span>.<span class="mt">SaveAsync</span>(<span class="pr">evt</span>);
+
+                <span class="cm">// Notify parent if absent (fire-and-forget SMS)</span>
+                <span class="kw">if</span> (!<span class="pr">evt</span>.<span class="pr">IsPresent</span>)
+                    <span class="tp">BackgroundJob</span>.<span class="mt">Enqueue</span>&lt;<span class="tp">ISmsService</span>&gt;(<span class="pr">s</span> =>
+                        <span class="pr">s</span>.<span class="mt">SendAbsentAlertAsync</span>(<span class="pr">evt</span>.<span class="pr">StudentId</span>));
+            }
+            <span class="kw">catch</span> (<span class="tp">Exception</span> <span class="pr">ex</span>)
+            {
+                <span class="pr">_log</span>.<span class="mt">LogError</span>(<span class="pr">ex</span>, <span class="st">"Failed to process attendance for Student {Id}"</span>, <span class="pr">evt</span>.<span class="pr">StudentId</span>);
+                <span class="cm">// Continue — don't let one failure block the channel!</span>
+            }
+        }
+    }
+}</pre>
+
+  <table style="font-size:0.85em">
+    <tr><th>Channel Type</th><th>Capacity</th><th>Full Behavior</th><th>Use</th></tr>
+    <tr><td><span class="pink">Bounded (Wait)</span></td><td>Fixed (e.g. 1000)</td><td>Writer awaits — backpressure!</td><td>ZenCampus attendance — don't lose data</td></tr>
+    <tr><td><span class="yellow">Bounded (DropOldest)</span></td><td>Fixed</td><td>Drops oldest item</td><td>Live dashboard events — newest wins</td></tr>
+    <tr><td><span class="green">Unbounded</span></td><td>Infinite</td><td>Never blocks</td><td>Low-volume, burst OK — risk OOM</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 6: WORKER SERVICE -->
+<div class="section" id="worker">
+  <div class="section-title"><span class="num">6</span> Worker Service — Standalone Background Process</div>
+
+  <pre><span class="cm">// dotnet new worker -n ZenCampus.EmailWorker
+// Separate exe — independent deploy, scale separately</span>
+
+<span class="cm">// Program.cs — Worker Service</span>
+<span class="kw">var</span> <span class="pr">host</span> = <span class="tp">Host</span>.<span class="mt">CreateDefaultBuilder</span>(<span class="pr">args</span>)
+    .<span class="mt">ConfigureServices</span>(<span class="pr">services</span> =>
+    {
+        <span class="pr">services</span>.<span class="mt">AddHostedService</span>&lt;<span class="tp">EmailWorker</span>&gt;();
+        <span class="pr">services</span>.<span class="mt">AddDbContext</span>&lt;<span class="tp">ZenCampusDbContext</span>&gt;(...);
+        <span class="pr">services</span>.<span class="mt">AddSingleton</span>&lt;<span class="tp">IConnectionMultiplexer</span>&gt;(...); <span class="cm">// Redis</span>
+        <span class="pr">services</span>.<span class="mt">AddHangfire</span>(...);
+        <span class="pr">services</span>.<span class="mt">AddHangfireServer</span>();
+    })
+    .<span class="mt">UseWindowsService</span>()   <span class="cm">// run as Windows Service</span>
+    .<span class="mt">UseSystemd</span>()           <span class="cm">// or Linux systemd service</span>
+    .<span class="mt">Build</span>();
+
+<span class="kw">await</span> <span class="pr">host</span>.<span class="mt">RunAsync</span>();
+
+<span class="cm">// EmailWorker.cs</span>
+<span class="kw">public class</span> <span class="tp">EmailWorker</span> : <span class="tp">BackgroundService</span>
+{
+    <span class="kw">protected override async</span> <span class="tp">Task</span> <span class="mt">ExecuteAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="kw">while</span> (!<span class="pr">ct</span>.<span class="pr">IsCancellationRequested</span>)
+        {
+            <span class="kw">await</span> <span class="mt">ProcessEmailQueueAsync</span>(<span class="pr">ct</span>);
+            <span class="kw">await</span> <span class="tp">Task</span>.<span class="mt">Delay</span>(<span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">10</span>), <span class="pr">ct</span>);
+        }
+    }
+}</span></pre>
+</div>
+
+<!-- SECTION 7: PATTERNS -->
+<div class="section" id="patterns">
+  <div class="section-title"><span class="num">7</span> Progress Tracking + Job Status Pattern</div>
+
+  <pre><span class="cm">// Long-running job — user polls for status</span>
+<span class="cm">// Pattern: Enqueue → return jobId → client polls /jobs/{id}/status</span>
+
+<span class="kw">public class</span> <span class="tp">ReportController</span> : <span class="tp">ControllerBase</span>
+{
+    [<span class="at">HttpPost</span>(<span class="st">"generate"</span>)]
+    <span class="kw">public</span> <span class="tp">IActionResult</span> <span class="mt">GenerateReport</span>(<span class="tp">ReportRequestDto</span> <span class="pr">dto</span>)
+    {
+        <span class="cm">// Enqueue and return job ID immediately</span>
+        <span class="kw">var</span> <span class="pr">jobId</span> = <span class="tp">BackgroundJob</span>.<span class="mt">Enqueue</span>&lt;<span class="tp">IReportService</span>&gt;(
+            <span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">GenerateAsync</span>(<span class="pr">dto</span>.<span class="pr">SchoolId</span>, <span class="pr">dto</span>.<span class="pr">Year</span>, <span class="kw">null</span>));
+
+        <span class="kw">return</span> <span class="mt">Accepted</span>(<span class="kw">new</span> { <span class="pr">JobId</span> = <span class="pr">jobId</span>, <span class="pr">StatusUrl</span> = <span class="st">$"/api/jobs/{jobId}/status"</span> });
+    }
+
+    [<span class="at">HttpGet</span>(<span class="st">"{jobId}/status"</span>)]
+    <span class="kw">public</span> <span class="tp">IActionResult</span> <span class="mt">GetStatus</span>(<span class="kw">string</span> <span class="pr">jobId</span>)
+    {
+        <span class="kw">var</span> <span class="pr">jobDetails</span> = <span class="tp">JobStorage</span>.<span class="pr">Current</span>.<span class="mt">GetConnection</span>().<span class="mt">GetJobData</span>(<span class="pr">jobId</span>);
+        <span class="kw">return</span> <span class="mt">Ok</span>(<span class="kw">new</span>
+        {
+            <span class="pr">Status</span>    = <span class="pr">jobDetails</span>?.<span class="pr">State</span>,      <span class="cm">// Enqueued, Processing, Succeeded, Failed</span>
+            <span class="pr">CreatedAt</span> = <span class="pr">jobDetails</span>?.<span class="pr">CreatedAt</span>,
+        });
+    }
+}
+
+<span class="cm">// Report service — update progress in Redis</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">GenerateAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>, <span class="kw">string</span> <span class="pr">year</span>, <span class="tp">PerformContext</span>? <span class="pr">ctx</span>)
+{
+    <span class="cm">// PerformContext — access to Hangfire job context</span>
+    <span class="pr">ctx</span>?.<span class="mt">WriteLine</span>(<span class="st">$"Starting report for school {schoolId}"</span>);
+
+    <span class="kw">var</span> <span class="pr">students</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Students</span>.<span class="mt">Where</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">SchoolId</span> == <span class="pr">schoolId</span>).<span class="mt">ToListAsync</span>();
+    <span class="kw">var</span> <span class="pr">total</span>    = <span class="pr">students</span>.<span class="pr">Count</span>;
+
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="pr">i</span> = <span class="nm">0</span>; <span class="pr">i</span> &lt; <span class="pr">total</span>; <span class="pr">i</span>++)
+    {
+        <span class="kw">await</span> <span class="mt">ProcessStudentReportAsync</span>(<span class="pr">students</span>[<span class="pr">i</span>]);
+
+        <span class="cm">// Update progress every 100 students</span>
+        <span class="kw">if</span> (<span class="pr">i</span> % <span class="nm">100</span> == <span class="nm">0</span>)
+        {
+            <span class="kw">var</span> <span class="pr">pct</span> = (<span class="pr">i</span> * <span class="nm">100</span>) / <span class="pr">total</span>;
+            <span class="pr">ctx</span>?.<span class="mt">WriteLine</span>(<span class="st">$"Progress: {pct}% ({i}/{total})"</span>);
+            <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">StringSetAsync</span>(<span class="st">$"job:progress:{ctx?.BackgroundJob.Id}"</span>, <span class="pr">pct</span>);
+        }
+    }
+}</pre>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">8</span> 🎯 Scenarios — Interview + Production + Critical</div>
+
+  <!-- S1 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">1</div>
+      <div><div class="scenario-title">Fee payment API — 3 seconds response due to SMS gateway delay <span class="diff hard">Hard</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "ZenCampus fee collection API — response takes 3 seconds. Profiling shows: DB save = 50ms, SMS gateway call = 800ms, Email = 600ms, Dashboard update = 200ms, Receipt PDF = 400ms. Users complaining API is slow. Fix it."</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ FIRE-AND-FORGET + CONTINUATION CHAIN</div>
+      <pre><span class="cm">// Before: all synchronous = 50+800+600+200+400 = 2050ms</span>
+<span class="cm">// After: only DB save is synchronous = 50ms response!</span>
+
+[<span class="at">HttpPost</span>(<span class="st">"collect"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">ActionResult</span>&lt;<span class="tp">FeeReceiptDto</span>&gt;&gt; <span class="mt">CollectFeeAsync</span>(<span class="tp">FeeDto</span> <span class="pr">dto</span>)
+{
+    <span class="cm">// Synchronous — user must have confirmation</span>
+    <span class="kw">var</span> <span class="pr">receipt</span> = <span class="kw">await</span> <span class="pr">_feeSvc</span>.<span class="mt">CollectAsync</span>(<span class="pr">dto</span>); <span class="cm">// 50ms</span>
+
+    <span class="cm">// Fire-and-forget — SMS (critical queue, 3 retries)</span>
+    <span class="tp">BackgroundJob</span>.<span class="mt">Enqueue</span>&lt;<span class="tp">ISmsService</span>&gt;(<span class="pr">sms</span> =>
+        <span class="pr">sms</span>.<span class="mt">SendReceiptAsync</span>(<span class="pr">dto</span>.<span class="pr">ParentPhone</span>, <span class="pr">receipt</span>.<span class="pr">ReceiptNo</span>, <span class="pr">receipt</span>.<span class="pr">Amount</span>));
+
+    <span class="cm">// Fire-and-forget — Email</span>
+    <span class="tp">BackgroundJob</span>.<span class="mt">Enqueue</span>&lt;<span class="tp">IEmailService</span>&gt;(<span class="pr">em</span> =>
+        <span class="pr">em</span>.<span class="mt">SendReceiptEmailAsync</span>(<span class="pr">dto</span>.<span class="pr">ParentEmail</span>, <span class="pr">receipt</span>));
+
+    <span class="cm">// Fire-and-forget — Dashboard cache invalidation</span>
+    <span class="tp">BackgroundJob</span>.<span class="mt">Enqueue</span>&lt;<span class="tp">IDashboardService</span>&gt;(<span class="pr">d</span> =>
+        <span class="pr">d</span>.<span class="mt">InvalidateFeeCountAsync</span>(<span class="pr">dto</span>.<span class="pr">SchoolId</span>));
+
+    <span class="cm">// Delayed — generate PDF receipt after 5s (let DB settle)</span>
+    <span class="tp">BackgroundJob</span>.<span class="mt">Schedule</span>&lt;<span class="tp">IReceiptService</span>&gt;(
+        <span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">GeneratePdfAsync</span>(<span class="pr">receipt</span>.<span class="pr">ReceiptId</span>),
+        <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">5</span>));
+
+    <span class="kw">return</span> <span class="mt">Ok</span>(<span class="pr">receipt</span>); <span class="cm">// Returns in 50ms!</span>
+}
+<span class="cm">// Result: 3 seconds → 50ms. 60x improvement. All notifications delivered!</span></pre>
+      <div class="gold"><div class="gold-label">⭐ Senior Add-On</div><p>"Hangfire persists jobs to SQL Server. If server crashes after DB save, SMS/Email jobs still in Hangfire queue — processed on restart. With BackgroundJob.Enqueue, no notification is ever lost!"</p></div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div><div class="scenario-title">Monthly fee reminder — 50,000 parents, SMS gateway rate limit <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "1st of every month — 50,000 parents-ku fee pending SMS remind பண்ணணும். SMS gateway = max 100 SMS/second. Naive approach = all 50k at once → rate limit error. Design the job."</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ BATCH + THROTTLED RECURRING JOB</div>
+      <pre><span class="cm">// Recurring job — triggers orchestrator on 1st of month</span>
+[<span class="at">AutomaticRetry</span>(<span class="pr">Attempts</span> = <span class="nm">0</span>)] <span class="cm">// orchestrator shouldn't retry</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">SendMonthlyRemindersAsync</span>()
+{
+    <span class="cm">// Load all pending fees — students who owe money</span>
+    <span class="kw">var</span> <span class="pr">pending</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Students</span>
+        .<span class="mt">Where</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Status</span> == <span class="st">"Active"</span> && <span class="pr">s</span>.<span class="pr">PendingFees</span> > <span class="nm">0</span>)
+        .<span class="mt">Select</span>(<span class="pr">s</span> => <span class="kw">new</span> { <span class="pr">s</span>.<span class="pr">Id</span>, <span class="pr">s</span>.<span class="pr">ParentPhone</span>, <span class="pr">s</span>.<span class="pr">PendingFees</span> })
+        .<span class="mt">ToListAsync</span>();
+
+    <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"Scheduling {Count} fee reminder SMSes"</span>, <span class="pr">pending</span>.<span class="pr">Count</span>);
+
+    <span class="cm">// Batch into groups of 100 (gateway rate = 100/sec)</span>
+    <span class="cm">// Each batch = 1 Hangfire job, delay = batchIndex seconds</span>
+    <span class="kw">var</span> <span class="pr">batches</span> = <span class="pr">pending</span>.<span class="mt">Chunk</span>(<span class="nm">100</span>);
+    <span class="kw">int</span> <span class="pr">delaySeconds</span> = <span class="nm">0</span>;
+
+    <span class="kw">foreach</span> (<span class="kw">var</span> <span class="pr">batch</span> <span class="kw">in</span> <span class="pr">batches</span>)
+    {
+        <span class="kw">var</span> <span class="pr">studentIds</span> = <span class="pr">batch</span>.<span class="mt">Select</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Id</span>).<span class="mt">ToList</span>();
+        <span class="tp">BackgroundJob</span>.<span class="mt">Schedule</span>&lt;<span class="tp">ISmsService</span>&gt;(
+            <span class="pr">sms</span> => <span class="pr">sms</span>.<span class="mt">SendBatchReminderAsync</span>(<span class="pr">studentIds</span>),
+            <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="pr">delaySeconds</span>));
+
+        <span class="pr">delaySeconds</span>++; <span class="cm">// next batch 1 second later</span>
+    }
+    <span class="cm">// 50k students → 500 batches → 500 jobs → 500 seconds = ~8 min total
+    // Gateway never sees more than 100 SMS/sec. Zero rate limit errors!</span>
+}</pre>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num warn">3</div>
+      <div><div class="scenario-title">Hangfire job fails — SMS not delivered, no retry! Production bug <span class="hot-badge">🔥 Critical</span> <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "SMS gateway intermittently fails (503). Hangfire job throws exception. No retry configured. Job goes to 'Failed' state. Parents don't get receipt SMS. How to fix + monitor?"</div>
+    <button class="reveal-btn warn-btn" onclick="toggle(this)">🔥 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label warn">✅ RETRY + DEAD LETTER + MONITORING</div>
+      <pre><span class="cm">// Fix 1: AutomaticRetry attribute — exponential backoff</span>
+[<span class="at">AutomaticRetry</span>(
+    <span class="pr">Attempts</span>       = <span class="nm">5</span>,
+    <span class="pr">DelaysInSeconds</span> = <span class="kw">new</span>[] { <span class="nm">60</span>, <span class="nm">300</span>, <span class="nm">1800</span>, <span class="nm">3600</span>, <span class="nm">86400</span> })]
+<span class="cm">// Retries: 1min, 5min, 30min, 1hr, 24hr</span>
+[<span class="at">Queue</span>(<span class="st">"critical"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">SendSmsAsync</span>(<span class="kw">string</span> <span class="pr">phone</span>, <span class="kw">string</span> <span class="pr">msg</span>)
+{
+    <span class="kw">await</span> <span class="pr">_smsGateway</span>.<span class="mt">SendAsync</span>(<span class="pr">phone</span>, <span class="pr">msg</span>);
+    <span class="cm">// Throws on 503 → Hangfire retries automatically!</span>
+}
+
+<span class="cm">// Fix 2: Global exception filter — alert on job failure</span>
+<span class="kw">public class</span> <span class="tp">JobFailureFilter</span> : <span class="tp">JobFilterAttribute</span>, <span class="tp">IApplyStateFilter</span>
+{
+    <span class="kw">public void</span> <span class="mt">OnStateApplied</span>(<span class="tp">ApplyStateContext</span> <span class="pr">ctx</span>, <span class="tp">IWriteOnlyTransaction</span> <span class="pr">tx</span>)
+    {
+        <span class="kw">if</span> (<span class="pr">ctx</span>.<span class="pr">NewState</span> <span class="kw">is</span> <span class="tp">FailedState</span> <span class="pr">failed</span>)
+        {
+            <span class="pr">_log</span>.<span class="mt">LogError</span>(
+                <span class="st">"Job {Id} failed permanently: {Method} — {Error}"</span>,
+                <span class="pr">ctx</span>.<span class="pr">BackgroundJob</span>.<span class="pr">Id</span>,
+                <span class="pr">ctx</span>.<span class="pr">BackgroundJob</span>.<span class="pr">Job</span>.<span class="pr">Method</span>.<span class="pr">Name</span>,
+                <span class="pr">failed</span>.<span class="pr">ExceptionMessage</span>);
+
+            <span class="cm">// Alert team via Slack/email</span>
+            <span class="pr">_alertSvc</span>.<span class="mt">SendAsync</span>(<span class="st">$"🚨 ZenCampus job {ctx.BackgroundJob.Id} failed!"</span>);
+        }
+    }
+    <span class="kw">public void</span> <span class="mt">OnStateUnapplied</span>(<span class="tp">ApplyStateContext</span> <span class="pr">ctx</span>, <span class="tp">IWriteOnlyTransaction</span> <span class="pr">tx</span>) { }
+}
+
+<span class="cm">// Register filter globally</span>
+<span class="tp">GlobalJobFilters</span>.<span class="pr">Filters</span>.<span class="mt">Add</span>(<span class="kw">new</span> <span class="tp">JobFailureFilter</span>());</pre>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div><div class="scenario-title">BackgroundService crash — IHostedService stops working <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Attendance sync BackgroundService — unhandled exception threw out of ExecuteAsync. Service stopped completely! Attendance from SMS gateway no longer syncing. How to make it crash-resilient?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ RESILIENT EXECUTEASYC — NEVER THROW OUT!</div>
+      <pre><span class="cm">// Default behavior: uncaught exception in ExecuteAsync
+// = BackgroundService STOPS. ASP.NET doesn't restart it!
+// (unless IHostOptions.BackgroundServiceExceptionBehavior = StopHost)</span>
+
+<span class="kw">protected override async</span> <span class="tp">Task</span> <span class="mt">ExecuteAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+{
+    <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"[AttendanceSync] Service started"</span>);
+
+    <span class="kw">while</span> (!<span class="pr">ct</span>.<span class="pr">IsCancellationRequested</span>)
+    {
+        <span class="kw">try</span>
+        {
+            <span class="kw">await</span> <span class="mt">ProcessAsync</span>(<span class="pr">ct</span>);
+        }
+        <span class="kw">catch</span> (<span class="tp">OperationCanceledException</span>) <span class="kw">when</span> (<span class="pr">ct</span>.<span class="pr">IsCancellationRequested</span>)
+        {
+            <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"[AttendanceSync] Graceful shutdown"</span>);
+            <span class="kw">return</span>; <span class="cm">// exit cleanly</span>
+        }
+        <span class="kw">catch</span> (<span class="tp">Exception</span> <span class="pr">ex</span>)
+        {
+            <span class="cm">// NEVER propagate — log and continue!</span>
+            <span class="pr">_log</span>.<span class="mt">LogError</span>(<span class="pr">ex</span>, <span class="st">"[AttendanceSync] Error — retrying in 30s"</span>);
+            <span class="pr">_metrics</span>.<span class="mt">IncrementCounter</span>(<span class="st">"background_service.errors"</span>);
+
+            <span class="kw">try</span>
+            {
+                <span class="kw">await</span> <span class="tp">Task</span>.<span class="mt">Delay</span>(<span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">30</span>), <span class="pr">ct</span>);
+            }
+            <span class="kw">catch</span> (<span class="tp">OperationCanceledException</span>) { <span class="kw">return</span>; }
+        }
+    }
+}
+
+<span class="cm">// Configure: unhandled exception in ANY hosted service = stop host</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">Configure</span>&lt;<span class="tp">HostOptions</span>&gt;(<span class="pr">opts</span> =>
+    <span class="pr">opts</span>.<span class="pr">BackgroundServiceExceptionBehavior</span> =
+        <span class="tp">BackgroundServiceExceptionBehavior</span>.<span class="pr">Ignore</span>); <span class="cm">// don't crash host!</span></pre>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num warn">5</div>
+      <div><div class="scenario-title">Year-end promotion — app restart mid-job, 25,000 students processed! <span class="hot-badge">🔥 Production</span> <span class="diff senior">Senior</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Year-end: promote 50,000 students to next grade. Job started — 25,000 done. Server restart (Azure deployment). All 50,000 get double-promoted! How to design idempotent resumable job?"</div>
+    <button class="reveal-btn warn-btn" onclick="toggle(this)">🔥 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label warn">✅ IDEMPOTENT JOB — SAFE TO RUN MULTIPLE TIMES</div>
+      <pre><span class="cm">// Idempotency key — track processed students</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">PromoteStudentsAsync</span>(<span class="kw">string</span> <span class="pr">academicYear</span>)
+{
+    <span class="cm">// Get ONLY students not yet promoted (idempotent!)</span>
+    <span class="kw">var</span> <span class="pr">toPromote</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Students</span>
+        .<span class="mt">Where</span>(<span class="pr">s</span> =>
+            <span class="pr">s</span>.<span class="pr">Status</span>        == <span class="st">"Active"</span>       &&
+            <span class="pr">s</span>.<span class="pr">AcademicYear</span>  != <span class="pr">academicYear</span>  && <span class="cm">// not already promoted!</span>
+            <span class="pr">s</span>.<span class="pr">PromotionDate</span>  == <span class="kw">null</span>             <span class="cm">// not yet processed</span>
+        )
+        .<span class="mt">ToListAsync</span>();
+
+    <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"Promoting {Count} students (already done: {Done})"</span>,
+        <span class="pr">toPromote</span>.<span class="pr">Count</span>,
+        <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Students</span>.<span class="mt">CountAsync</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">AcademicYear</span> == <span class="pr">academicYear</span>));
+
+    <span class="cm">// Process in small batches with per-batch commit</span>
+    <span class="kw">foreach</span> (<span class="kw">var</span> <span class="pr">batch</span> <span class="kw">in</span> <span class="pr">toPromote</span>.<span class="mt">Chunk</span>(<span class="nm">100</span>))
+    {
+        <span class="kw">foreach</span> (<span class="kw">var</span> <span class="pr">student</span> <span class="kw">in</span> <span class="pr">batch</span>)
+        {
+            <span class="pr">student</span>.<span class="pr">Grade</span>         = <span class="pr">student</span>.<span class="pr">Grade</span> + <span class="nm">1</span>;
+            <span class="pr">student</span>.<span class="pr">AcademicYear</span>  = <span class="pr">academicYear</span>;
+            <span class="pr">student</span>.<span class="pr">PromotionDate</span> = <span class="tp">DateTime</span>.<span class="pr">UtcNow</span>; <span class="cm">// mark processed!</span>
+        }
+        <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="mt">SaveChangesAsync</span>(); <span class="cm">// commit each batch</span>
+        <span class="kw">await</span> <span class="tp">Task</span>.<span class="mt">Delay</span>(<span class="nm">100</span>);          <span class="cm">// breathe!</span>
+    }
+}
+<span class="cm">// Restart after 25k done:
+// WHERE AcademicYear != newYear AND PromotionDate IS NULL
+// → 0 students matched (already done) if previous batch committed
+// → picks up remaining 25k if mid-batch crash
+// Idempotent = safe to re-run anytime!</span></pre>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div><div class="scenario-title">IHostedService vs BackgroundService vs Worker — interview question <span class="diff easy">Easy</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'IHostedService, BackgroundService, Worker Service — difference? When to use each in ZenCampus?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ CLEAR ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong style="color:#f0abfc">IHostedService:</strong> Interface with StartAsync + StopAsync. Full control over lifecycle. Use for startup tasks (cache warm-up, DB migration check, seed data). Not looping — runs once on start.</p>
+        <p><strong style="color:#f39c12">BackgroundService:</strong> Abstract class that implements IHostedService. Adds ExecuteAsync — your long-running loop. Use for: periodic polling (attendance sync every 30s), queue consumers, Channel readers. Lives in the same process as the web app.</p>
+        <p><strong style="color:#2ecc71">Worker Service:</strong> Separate project (dotnet new worker) — standalone exe with its own host. No HTTP pipeline. Runs as Windows Service / Linux systemd. Use when background work is heavy enough to warrant its own process and independent scaling. ZenCampus example: EmailWorker.exe — 5 instances on separate VMs, processes email queue independently from web app.</p>
+        <p><strong style="color:#d946ef">ZenCampus:</strong> IHostedService for cache warm-up. BackgroundService for attendance sync + Channel consumer. Worker Service for EmailWorker. Hangfire for everything else (reliably persisted, retryable, dashboard).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div><div class="scenario-title">Duplicate job — recurring job re-triggers before previous completes <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Monthly fee reminder job — scheduled 1st of month 9 AM. But it takes 12 minutes to process 50k SMSes. Next trigger at 9:01 AM (because cron is wrong — '* 9 1 * *'). Duplicate SMSes flood parents!"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ DUPLICATE PREVENTION + CORRECT CRON</div>
+      <pre><span class="cm">// Wrong cron: "* 9 1 * *" = EVERY MINUTE at 9 AM on 1st!</span>
+<span class="cm">// Correct:    "0 9 1 * *" = 9:00 AM on 1st of month (once!)</span>
+<span class="tp">RecurringJob</span>.<span class="mt">AddOrUpdate</span>&lt;<span class="tp">IFeeReminderService</span>&gt;(
+    <span class="st">"monthly-fee-reminder"</span>,
+    <span class="pr">svc</span> => <span class="pr">svc</span>.<span class="mt">SendMonthlyRemindersAsync</span>(),
+    <span class="st">"0 9 1 * *"</span>); <span class="cm">// ← correct!</span>
+
+<span class="cm">// Hangfire built-in: DisableConcurrentExecution prevents overlap!</span>
+[<span class="at">DisableConcurrentExecution</span>(<span class="pr">timeoutInSeconds</span>: <span class="nm">3600</span>)] <span class="cm">// 1 hour lock</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">SendMonthlyRemindersAsync</span>()
+{
+    <span class="cm">// Only ONE instance of this job runs at a time across all servers!
+    // If already running, new trigger is queued but won't start until first finishes</span>
+}
+
+<span class="cm">// Idempotency guard — SMS sent flag per student per month</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">SendReminderAsync</span>(<span class="kw">int</span> <span class="pr">studentId</span>, <span class="kw">string</span> <span class="pr">month</span>)
+{
+    <span class="kw">var</span> <span class="pr">key</span>  = <span class="st">$"sms:sent:{studentId}:{month}"</span>;
+    <span class="kw">var</span> <span class="pr">sent</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">StringSetAsync</span>(<span class="pr">key</span>, <span class="st">"1"</span>,
+        <span class="tp">TimeSpan</span>.<span class="mt">FromDays</span>(<span class="nm">35</span>), <span class="tp">When</span>.<span class="pr">NotExists</span>); <span class="cm">// NX = only if not exists</span>
+
+    <span class="kw">if</span> (!<span class="pr">sent</span>) { <span class="pr">_log</span>.<span class="mt">LogWarning</span>(<span class="st">"Duplicate prevented: {Id} {Month}"</span>, <span class="pr">studentId</span>, <span class="pr">month</span>); <span class="kw">return</span>; }
+
+    <span class="kw">await</span> <span class="pr">_smsGateway</span>.<span class="mt">SendAsync</span>(...);
+}</pre>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div><div class="scenario-title">Channel backpressure — producer faster than consumer <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Attendance marking — 500 teachers simultaneously submitting. Channel producer writes at 500/sec. Consumer processes at 100/sec. Channel fills up → WriteAsync blocks → API endpoints slow down! Fix?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ MULTIPLE CONSUMERS + DROP STRATEGY</div>
+      <pre><span class="cm">// Option 1: Multiple consumer tasks (parallel processing)</span>
+<span class="kw">protected override async</span> <span class="tp">Task</span> <span class="mt">ExecuteAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+{
+    <span class="cm">// Spin up 5 consumers in parallel!</span>
+    <span class="kw">var</span> <span class="pr">consumers</span> = <span class="tp">Enumerable</span>.<span class="mt">Range</span>(<span class="nm">0</span>, <span class="nm">5</span>)
+        .<span class="mt">Select</span>(<span class="pr">i</span> => <span class="mt">ConsumeAsync</span>(<span class="pr">i</span>, <span class="pr">ct</span>));
+    <span class="kw">await</span> <span class="tp">Task</span>.<span class="mt">WhenAll</span>(<span class="pr">consumers</span>); <span class="cm">// 5x throughput!</span>
+}
+
+<span class="kw">private async</span> <span class="tp">Task</span> <span class="mt">ConsumeAsync</span>(<span class="kw">int</span> <span class="pr">workerId</span>, <span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+{
+    <span class="kw">await foreach</span> (<span class="kw">var</span> <span class="pr">evt</span> <span class="kw">in</span> <span class="pr">_reader</span>.<span class="mt">ReadAllAsync</span>(<span class="pr">ct</span>))
+    {
+        <span class="kw">await</span> <span class="mt">ProcessAsync</span>(<span class="pr">evt</span>);
+    }
+}
+
+<span class="cm">// Option 2: DropNewest for non-critical events (live dashboard updates)</span>
+<span class="tp">Channel</span>.<span class="mt">CreateBounded</span>&lt;<span class="tp">DashboardEvent</span>&gt;(<span class="kw">new</span> <span class="tp">BoundedChannelOptions</span>(<span class="nm">100</span>)
+{
+    <span class="pr">FullMode</span> = <span class="tp">BoundedChannelFullMode</span>.<span class="pr">DropNewest</span> <span class="cm">// if full → drop incoming</span>
+});
+<span class="cm">// Dashboard updates are optional — drop OK. Attendance = use Wait!</span>
+
+<span class="cm">// Option 3: TryWrite instead of WriteAsync — non-blocking, handle rejection</span>
+<span class="kw">if</span> (!<span class="pr">_writer</span>.<span class="mt">TryWrite</span>(<span class="pr">evt</span>))
+{
+    <span class="pr">_log</span>.<span class="mt">LogWarning</span>(<span class="st">"Channel full — falling back to Hangfire for {Id}"</span>, <span class="pr">evt</span>.<span class="pr">StudentId</span>);
+    <span class="tp">BackgroundJob</span>.<span class="mt">Enqueue</span>&lt;<span class="tp">IAttendanceService</span>&gt;(<span class="pr">s</span> => <span class="pr">s</span>.<span class="mt">SaveAsync</span>(<span class="pr">evt</span>));
+}</pre>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div><div class="scenario-title">Hangfire vs Channel vs BackgroundService — choose the right tool <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Given these ZenCampus tasks — which background tool for each: (A) SMS after fee payment (B) 500 attendance events/sec (C) Monthly report generation (D) Cache warm-up at startup'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ DECISION FRAMEWORK</div>
+      <table style="font-size:0.83em">
+        <tr><th>Task</th><th>Tool</th><th>Why</th></tr>
+        <tr><td>A — SMS after fee payment</td><td class="pink">Hangfire Fire-and-Forget</td><td>Persisted (survives crash), retryable (SMS gateway failures), dashboard monitoring</td></tr>
+        <tr><td>B — 500 attendance events/sec</td><td class="green">Channel&lt;T&gt; + BackgroundService</td><td>In-process, high-throughput, no DB overhead for queuing, backpressure handling</td></tr>
+        <tr><td>C — Monthly report generation</td><td class="pink">Hangfire Recurring + Continuation</td><td>Persisted, retry on failure, progress tracking, continuation (email when done)</td></tr>
+        <tr><td>D — Cache warm-up at startup</td><td class="yellow">IHostedService (StartAsync)</td><td>Runs once at startup, simple, no retry needed, part of web app process</td></tr>
+        <tr><td>E — Daily attendance report 6 PM</td><td class="pink">Hangfire Recurring</td><td>Scheduled cron, persisted, retry on DB failure</td></tr>
+        <tr><td>F — Email queue processor</td><td class="green">Worker Service (separate)</td><td>Isolated, independently scalable, Windows Service / systemd</td></tr>
+      </table>
+      <div class="gold"><div class="gold-label">⭐ Decision Rule</div><p>Need persistence + retry + schedule? → Hangfire. High-throughput in-process? → Channel&lt;T&gt;. Simple startup task? → IHostedService. Long-running loop in same app? → BackgroundService. Separate scalable process? → Worker Service.</p></div>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div><div class="scenario-title">"Background job experience sollu" — Complete Interview Answer <span class="diff senior">Senior</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Background processing — ZenCampus-la what did you use? How did you handle failures, scheduling, high throughput?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE INTERVIEW ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p>"ZenCampus — multi-layer background processing architecture."</p>
+        <p><strong>Hangfire (SQL Server backed):</strong> Fee payment → fire-and-forget SMS + email. Monthly reminders → recurring job with batch throttling (100 SMS/sec gateway limit). Report generation → delayed with ContinueJobWith email notification. AutomaticRetry with exponential backoff [60s, 5min, 30min, 1h, 24h]. DisableConcurrentExecution to prevent duplicate monthly jobs. GlobalJobFilter for failure alerting to Slack. Result: 3-second fee API → 50ms."</p>
+        <p><strong>Channel&lt;T&gt; + BackgroundService:</strong> Attendance marking — 500 teachers simultaneously, 500 events/sec. BoundedChannel(1000, Wait) for backpressure. 5 parallel consumers — 100 records each / second. TryWrite fallback to Hangfire if channel full."</p>
+        <p><strong>IHostedService:</strong> Cache warm-up at startup — 200 schools loaded to Redis before first HTTP request."</p>
+        <p><strong>Key lessons:</strong> Idempotent jobs — PromotionDate flag prevents double promotion on restart. OperationCanceledException separation — graceful shutdown vs real errors. IServiceScope per iteration — prevent DbContext leaks. BackgroundServiceExceptionBehavior.Ignore — one failure doesn't kill all services."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">9</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: IHostedService-la DbContext inject பண்ணலாமா directly?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Yes — AddDbContext registers as Singleton by default</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) No — DbContext is Scoped, IHostedService is Singleton. Use IServiceProvider.CreateScope()!</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Yes if using AddDbContextFactory</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Only if AddDbContext is called before AddHostedService</div>
+    <div class="quiz-fb ok">✅ IHostedService = Singleton lifetime. DbContext = Scoped. Injecting Scoped into Singleton = captive dependency = same DbContext shared forever = concurrency issues + connection leaks! Always CreateScope() and resolve DbContext fresh per operation!</div>
+    <div class="quiz-fb nope">❌ Lifetime mismatch! IHostedService = Singleton (lives forever). DbContext = Scoped (per-request). Direct injection = one DbContext shared for app lifetime = race conditions! Use IServiceProvider.CreateScope() to get fresh DbContext per operation!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: Task.Delay(30000) — no CancellationToken. App shutdown ஆனா?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) App shuts down immediately — Delay is cancelled automatically</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) App waits 30 seconds before shutting down — delay ignores shutdown signal!</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Task.Delay always respects application shutdown</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Task.Delay throws on app shutdown</div>
+    <div class="quiz-fb ok">✅ Task.Delay without CancellationToken = ignores shutdown! App will wait the full 30 seconds. ASP.NET Core has a 5-second shutdown timeout — if delay exceeds it, process is killed hard. Always: Task.Delay(TimeSpan, cancellationToken) in BackgroundService loops!</div>
+    <div class="quiz-fb nope">❌ Task.Delay without ct = shutdown-blind! App waits full duration. Always pass the CancellationToken: await Task.Delay(TimeSpan.FromSeconds(30), ct) — this throws OperationCanceledException on shutdown, exits cleanly!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: Hangfire vs BackgroundService — main difference for reliability?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Hangfire is faster — uses in-memory queue</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Hangfire persists jobs to DB — survives app restart. BackgroundService = in-memory, lost on restart!</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Both are equally reliable</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) BackgroundService is more reliable — closer to runtime</div>
+    <div class="quiz-fb ok">✅ Key difference! Hangfire → SQL Server → job survives crash/restart/deploy. BackgroundService → in-memory → app restart = all queued work lost. For SMS/email after fee payment, always Hangfire — never lose a notification due to deploy!</div>
+    <div class="quiz-fb nope">❌ Persistence is the key! BackgroundService = in-memory queue. Deploy, crash, or restart = pending work LOST. Hangfire stores every job in SQL Server — process it was enqueued, picked up after restart. For critical work (SMS, email) = always Hangfire!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: Channel&lt;T&gt; BoundedChannelFullMode.Wait — producer behavior when channel is full?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Throws ChannelFullException immediately</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Drops the message silently</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) WriteAsync awaits until consumer reads an item and space frees up (backpressure!)</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Writes to overflow buffer automatically</div>
+    <div class="quiz-fb ok">✅ BoundedChannelFullMode.Wait = backpressure! WriteAsync suspends caller until consumer reads. This slows the producer naturally — prevents OOM. API response will be slightly delayed when channel is full, but no data is lost. Alternative: TryWrite + fallback to Hangfire!</div>
+    <div class="quiz-fb nope">❌ Wait mode = producer waits! WriteAsync is async and suspends until a slot opens. This is backpressure — the consumer's processing speed naturally caps the producer. No data loss, but producer (API request) feels the pressure. Use TryWrite for non-blocking check!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">10</span> ✅ Day 12 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory (60 min)</h3>
+      <ul class="check-list">
+        <li>IHostedService — StartAsync/StopAsync lifecycle</li>
+        <li>BackgroundService — ExecuteAsync loop</li>
+        <li>Hangfire — fire-and-forget, delayed, recurring</li>
+        <li>Hangfire — retry, queue priority, continuation</li>
+        <li>Channel&lt;T&gt; — bounded vs unbounded, FullMode</li>
+        <li>Worker Service — standalone exe host</li>
+        <li>IServiceScope per iteration — scoped DI</li>
+        <li>Idempotent jobs — safe to re-run</li>
+        <li>DisableConcurrentExecution — prevent duplicates</li>
+      </ul>
+    </div>
+    <div>
+      <h3>💻 Hands-On (60 min)</h3>
+      <ul class="check-list">
+        <li>Setup Hangfire with SqlServer storage</li>
+        <li>Fee payment → fire-and-forget SMS job</li>
+        <li>Monthly fee reminder recurring cron</li>
+        <li>AutomaticRetry with custom delays</li>
+        <li>Channel&lt;T&gt; attendance producer/consumer</li>
+        <li>CacheWarmupService IHostedService</li>
+        <li>GlobalJobFilter for failure alerting</li>
+        <li>DisableConcurrentExecution on recurring job</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"Fire-and-forget — 3s response → 50ms"</li>
+        <li>"Hangfire persisted — survives restart"</li>
+        <li>"BackgroundService never let exception escape loop"</li>
+        <li>"Always pass CancellationToken to Task.Delay"</li>
+        <li>"Channel backpressure — Wait mode"</li>
+        <li>"Idempotent job — safe to re-run"</li>
+        <li>"CreateScope per iteration — DbContext fresh"</li>
+        <li>"DisableConcurrentExecution — no duplicate job"</li>
+      </ul>
+    </div>
+    <div>
+      <h3>⚠️ Common Mistakes</h3>
+      <ul class="check-list">
+        <li>DbContext injected into IHostedService directly</li>
+        <li>Task.Delay without CancellationToken</li>
+        <li>Exception escaping ExecuteAsync loop</li>
+        <li>Wrong cron "* 9 1 * *" vs "0 9 1 * *"</li>
+        <li>Non-idempotent jobs (double-process on restart)</li>
+        <li>No retry on Hangfire SMS/email jobs</li>
+        <li>BackgroundService with Channel — single consumer bottleneck</li>
+        <li>Hangfire dashboard unprotected in production</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#1a0015,#0a0a1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">⚙️ Day 12 Motivation</div>
+    <p style="color:#f0abfc;font-style:italic">"Kaithi-la Dilli background-la silent-aa work panuvan. HTTP request = Dilli is busy. Don't wait — fire-and-forget! ZenCampus fee payment: 3 seconds → 50ms. Hangfire = DB-persisted, retry-protected, dashboard-visible. <strong>Interview-la 'SMS + Email background-la move பண்ணேன், 60x faster, Hangfire retry with AutomaticRetry, monthly reminder cron job with DisableConcurrentExecution' சொன்னா — production-grade developer confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 12/60 ✅ | Tomorrow: Day 13 — Microservices Fundamentals (API Gateway, Service Discovery, Circuit Breaker, Inter-service Communication)</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:20%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">12 of 60 days (20%) — Background Jobs mastered!</div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p>Day 12 – Background Jobs | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">⚙️ "Kaithi = BackgroundService. Vivegam = Hangfire missions. Channel = Vikram relay. Idempotent = safe restart. CreateScope = fresh DbContext. CancellationToken in Delay = graceful shutdown!"</p>
+</footer>
+
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent=btn.classList.contains('warn-btn')?'🔥 Answer Reveal':'💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

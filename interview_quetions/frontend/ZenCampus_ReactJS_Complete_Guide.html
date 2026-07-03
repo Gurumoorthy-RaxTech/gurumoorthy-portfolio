@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenCampus React JS Complete Guide - 20 Concepts + 50 Interview Q&A</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --accent:#22d3ee; --text:#e2e8f0; --muted:#94a3b8; --code:#0b1220; --green:#22c55e;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI',Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  header{ background:linear-gradient(135deg,#0e7490,#0f172a); padding:36px 20px; text-align:center; border-bottom:3px solid var(--accent); }
+  header h1{ margin:0 0 8px; font-size:1.9rem; color:#fff; }
+  header p{ margin:0; color:var(--muted); }
+  .tabs{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; background:#0b1220; padding:14px; position:sticky; top:0; z-index:20; border-bottom:1px solid #334155; }
+  .tab-btn{ padding:10px 20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--muted); cursor:pointer; font-weight:600; font-size:0.9rem; }
+  .tab-btn.active{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+  .container{ max-width:920px; margin:0 auto; padding:30px 20px 80px; }
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
+
+  .search-box{ width:100%; padding:12px 16px; margin-bottom:20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--text); font-size:1rem; }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .filter-btn{ padding:6px 14px; border-radius:20px; border:1px solid #334155; background:transparent; color:var(--muted); cursor:pointer; font-size:0.85rem; }
+  .filter-btn.active, .filter-btn:hover{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+
+  .day-block{ margin-bottom:36px; }
+  .day-title{ color:var(--accent); font-size:1.3rem; margin-bottom:14px; border-left:4px solid var(--accent); padding-left:10px; }
+
+  .qa{ background:var(--card); border-radius:10px; margin-bottom:14px; overflow:hidden; border:1px solid #334155; scroll-margin-top:140px; }
+  .q{ padding:16px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; gap:12px; }
+  .q:hover{ background:#153042; }
+  .q .num{ color:var(--accent); margin-right:8px; }
+  .q .tag{ font-size:0.7rem; font-weight:400; padding:2px 8px; border-radius:10px; background:#0b1220; color:var(--accent); white-space:nowrap; }
+  .a{ max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 18px; color:var(--muted); border-top:1px solid transparent; }
+  .qa.open .a{ max-height:1300px; padding:0 18px 18px; border-top:1px solid #334155; }
+  .a code, .a pre{ background:var(--code); color:#67e8f9; padding:2px 6px; border-radius:4px; font-family:Consolas,Monaco,monospace; font-size:0.86rem; }
+  .a pre{ display:block; padding:12px; overflow-x:auto; white-space:pre-wrap; margin:10px 0; }
+  .movie-ref{ background:#3b1e5e; color:#e9d5ff; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .zen-ref{ background:#0e3b2e; color:#bbf7d0; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .toggle-icon{ transition:transform .25s; color:var(--accent); font-size:1.1rem; }
+  .qa.open .toggle-icon{ transform:rotate(45deg); }
+  .count{ color:var(--accent); font-weight:600; }
+
+  .checklist{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media(max-width:600px){ .checklist{ grid-template-columns:1fr; } }
+  .check-item{ background:var(--card); border:1px solid #334155; border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .check-item:hover{ border-color:var(--accent); }
+  .check-item .badge{ color:var(--green); font-size:1.1rem; }
+  .check-item .num{ color:var(--muted); font-size:0.8rem; min-width:20px; }
+
+  footer{ text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚛️ ZenCampus React JS Complete Guide</h1>
+  <p>20 Core Concepts (5-Day Plan) + 50 Interview Q&A — All-in-One</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="guide">📘 5-Day Guide</button>
+  <button class="tab-btn" data-tab="interview">🎯 Interview Q&A</button>
+  <button class="tab-btn" data-tab="coverage">✅ Topic Coverage</button>
+</div>
+
+<div class="container">
+
+  <div class="tab-content active" id="tab-guide">
+    <div id="guideList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-interview">
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search a question (e.g. useEffect, hooks, virtual dom)...">
+    <div class="filters" id="filters"></div>
+    <p style="color:var(--muted); font-size:0.85rem;">Showing <span class="count" id="visibleCount">50</span> / 50 questions</p>
+    <div id="qaList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-coverage">
+    <p style="color:var(--muted);">All 20 core React concepts every ZenCampus frontend dev should know. Click any item to jump to it.</p>
+    <div class="checklist" id="checklist"></div>
+  </div>
+
+</div>
+
+<footer>Built for ZenCampus React learning • 2026-07-02</footer>
+
+<script>
+// ============ 20 CONCEPTS ACROSS 5 DAYS (4 topics/day) ============
+const guideDays = [
+{
+  day:1, title:"Day 1 — React Fundamentals (JSX, Components, Props, State)",
+  topics:[
+    { name:"1. What is React &amp; JSX",
+      movie:"🎬 Enthiran (Robot) — Chitti isn't built from scratch for every task; it's assembled from reusable, well-defined parts. React builds UI the same way — reusable components — and JSX is the syntax that lets you write HTML-like markup directly inside JS.",
+      explain:"React is a JS library for building UIs from reusable components. JSX (<code>&lt;div&gt;Hello&lt;/div&gt;</code> written inside JS) is syntactic sugar that compiles down to <code>React.createElement()</code> calls — it's not HTML, it's JS that LOOKS like HTML.",
+      zen:"If a ZenCampus module (e.g. a new interactive Student Dashboard) were rewritten in React instead of Razor + jQuery, the whole card layout would become one JSX component tree instead of scattered `.cshtml` partials and manual DOM updates.",
+      code:"function Welcome() {\n  return &lt;h1&gt;Welcome to ZenCampus&lt;/h1&gt;; // JSX\n}\n// Compiles to:\n// React.createElement('h1', null, 'Welcome to ZenCampus')" },
+    { name:"2. Components (Functional vs Class)",
+      movie:"🎬 Vikram — Kamal's character exists in an OLD form (class components, verbose lifecycle methods) and a NEW streamlined form (function components + hooks) — both do the same job, but modern React strongly favors the new form.",
+      explain:"Functional components are plain JS functions returning JSX (the modern standard, using Hooks for state/lifecycle). Class components use ES6 classes extending <code>React.Component</code> with a <code>render()</code> method (legacy pattern, still valid but rarely written in new code).",
+      zen:"A `StudentCard` component rendering one student's photo, name, and fee status — written once as a function component, reused across the dashboard, hostel allocation, and exam eligibility list.",
+      code:"// Functional component (modern, preferred)\nfunction StudentCard({ name, className }) {\n  return &lt;div className=\"card\"&gt;{name} - {className}&lt;/div&gt;;\n}\n\n// Class component (legacy)\nclass StudentCardOld extends React.Component {\n  render() {\n    return &lt;div&gt;{this.props.name}&lt;/div&gt;;\n  }\n}" },
+    { name:"3. Props",
+      movie:"🎬 Jai Bhim — Chandru is handed specific case files (props) from outside; he doesn't create the evidence himself, he just receives and uses it. Props are data passed INTO a component from its parent — read-only, never modified by the child.",
+      explain:"Props (short for 'properties') flow one-way, parent → child. A component receives props as a single object argument and must treat them as immutable — never reassign a prop inside the child.",
+      zen:"A `FeeDueList` parent passes each student's `name` and `dueAmount` as props into individual `FeeRow` child components, keeping the row component fully reusable and dumb (no internal API calls).",
+      code:"function FeeRow({ name, dueAmount }) {\n  return &lt;tr&gt;&lt;td&gt;{name}&lt;/td&gt;&lt;td&gt;₹{dueAmount}&lt;/td&gt;&lt;/tr&gt;;\n}\n\n// Parent usage:\n&lt;FeeRow name=\"Arjun\" dueAmount={5000} /&gt;" },
+    { name:"4. State (useState)",
+      movie:"🎬 96 — Ram's inner emotional state shifts throughout the story (nostalgic, hopeful, heartbroken) — and every shift causes a visible change in how he behaves on screen. React state works the same way: when state changes, the component automatically re-renders to reflect it.",
+      explain:"<code>const [value, setValue] = useState(initialValue)</code> gives a component its own local, reactive data. Calling the setter function updates the value AND triggers React to re-render that component with the new value — state should never be mutated directly.",
+      zen:"A search box in the ZenCampus Student search page holds its typed text in `useState`, and a fee payment modal tracks whether it's `open` or `closed` the same way.",
+      code:"function SearchBox() {\n  const [query, setQuery] = React.useState('');\n\n  return (\n    &lt;input\n      value={query}\n      onChange={(e) =&gt; setQuery(e.target.value)}\n    /&gt;\n  );\n}" }
+  ]
+},
+{
+  day:2, title:"Day 2 — Events, Rendering, Lists, Forms",
+  topics:[
+    { name:"5. Event Handling",
+      movie:"🎬 Master — JD reacts precisely to specific triggers (a student's action, a threat) with a defined response, not randomly. React events attach specific handler functions to specific DOM triggers, using camelCase syntax (<code>onClick</code>, not <code>onclick</code>).",
+      explain:"React wraps native DOM events into a cross-browser 'SyntheticEvent'. Handlers are passed as functions (not strings like in raw HTML): <code>onClick={handleClick}</code>, and can access the event object via the handler's parameter.",
+      zen:"A 'Mark Present' button in the ZenCampus Attendance module calls `onClick={() =&gt; markAttendance(studentId, 'Present')}`, directly wiring the click to a typed handler function instead of inline `onclick=\"...\"` HTML strings.",
+      code:"function AttendanceButton({ studentId }) {\n  function handleClick() {\n    markAttendance(studentId, 'Present');\n  }\n  return &lt;button onClick={handleClick}&gt;Mark Present&lt;/button&gt;;\n}" },
+    { name:"6. Conditional Rendering",
+      movie:"🎬 Vikram Vedha — the story shown to the audience literally CHANGES depending on which character's perspective is being followed at that moment. React renders different JSX depending on a condition, the same way.",
+      explain:"Common patterns: ternary (<code>condition ? &lt;A/&gt; : &lt;B/&gt;</code>), logical AND short-circuit (<code>condition &amp;&amp; &lt;A/&gt;</code> — renders nothing if false), or early <code>return null</code> inside the component.",
+      zen:"The Bill module shows a green 'Paid' badge or a red 'Due ₹X' badge depending on `feesPaid`, and only renders an 'Overdue' warning icon when `daysOverdue &gt; 0` using the `&amp;&amp;` pattern.",
+      code:"function FeeStatus({ feesPaid, dueAmount, daysOverdue }) {\n  return (\n    &lt;div&gt;\n      {feesPaid ? &lt;span className=\"badge-green\"&gt;Paid&lt;/span&gt; : &lt;span className=\"badge-red\"&gt;Due ₹{dueAmount}&lt;/span&gt;}\n      {daysOverdue &gt; 0 &amp;&amp; &lt;span className=\"warning\"&gt;⚠ Overdue&lt;/span&gt;}\n    &lt;/div&gt;\n  );\n}" },
+    { name:"7. Lists &amp; Keys",
+      movie:"🎬 Vaaranam Aayiram — Krishna's memories are told as a sequence of distinct, ordered moments — each one uniquely identifiable, never confused with another. React needs the exact same uniqueness: a stable `key` per list item so it can track which item is which across re-renders.",
+      explain:"Rendering arrays of data uses <code>.map()</code> to produce JSX for each item. Each top-level element in the resulting list MUST have a unique, STABLE <code>key</code> prop (ideally a database ID, never the array index if the list can reorder/filter) so React can efficiently diff and update only what changed.",
+      zen:"Rendering the Hostel room list: `rooms.map(room =&gt; &lt;RoomCard key={room.id} {...room} /&gt;)` — using `room.id` (not the array index) as the key ensures React doesn't mix up room cards when rooms are filtered or sorted.",
+      code:"function RoomList({ rooms }) {\n  return (\n    &lt;div&gt;\n      {rooms.map(room =&gt; (\n        &lt;RoomCard key={room.id} name={room.name} capacity={room.capacity} /&gt;\n      ))}\n    &lt;/div&gt;\n  );\n}" },
+    { name:"8. Forms &amp; Controlled Components",
+      movie:"🎬 Sarkar — every vote/input is tightly tracked and verified centrally, none left loosely floating unaccounted for. A 'controlled' form input has its value fully driven and tracked by React state, not left to the browser's own uncontrolled DOM state.",
+      explain:"A controlled input's <code>value</code> comes from state and updates via <code>onChange</code> — React state is the single source of truth. An uncontrolled input instead reads its value directly from the DOM via a <code>ref</code> only when needed (e.g. on submit).",
+      zen:"The Student Admission form in a React rewrite would keep every field (`name`, `email`, `phone`) as controlled inputs bound to a single `formData` state object, validating and disabling the Submit button reactively as the user types.",
+      code:"function AdmissionForm() {\n  const [formData, setFormData] = React.useState({ name: '', email: '' });\n\n  function handleChange(e) {\n    setFormData({ ...formData, [e.target.name]: e.target.value });\n  }\n\n  return (\n    &lt;form&gt;\n      &lt;input name=\"name\" value={formData.name} onChange={handleChange} /&gt;\n      &lt;input name=\"email\" value={formData.email} onChange={handleChange} /&gt;\n    &lt;/form&gt;\n  );\n}" }
+  ]
+},
+{
+  day:3, title:"Day 3 — Side Effects, Data Fetching, Lifting State, Composition",
+  topics:[
+    { name:"9. useEffect (Lifecycle &amp; Side Effects)",
+      movie:"🎬 Thani Oruvan — Mithran sets up a surveillance operation (the effect), lets it run in the background, and tears it down cleanly once the case closes (cleanup) — never leaving it running wastefully.",
+      explain:"<code>useEffect(fn, deps)</code> runs side effects (API calls, subscriptions, timers, manual DOM work) after render. The dependency array controls WHEN it re-runs: <code>[]</code> = once on mount, <code>[x]</code> = whenever x changes, omitted = every render (rarely desired). Returning a function from the effect defines cleanup, run before the next effect or on unmount.",
+      zen:"A live DVR feed viewer component sets up a polling interval in `useEffect` when it mounts, and clears that interval in the cleanup function when the user navigates away — preventing memory leaks from orphaned timers.",
+      code:"function DvrFeed({ deviceId }) {\n  React.useEffect(() =&gt; {\n    const interval = setInterval(() =&gt; refreshFeed(deviceId), 5000);\n    return () =&gt; clearInterval(interval); // cleanup on unmount\n  }, [deviceId]);\n\n  return &lt;video id=\"feed\" /&gt;;\n}" },
+    { name:"10. Fetching Data in React (useEffect + fetch)",
+      movie:"🎬 Jai Bhim — Chandru doesn't act on assumptions; he waits for verified evidence to come in before drawing conclusions, and clearly represents an in-progress investigation differently from a completed one.",
+      explain:"The standard pattern: call an async fetch inside <code>useEffect</code>, track <code>loading</code>/<code>error</code>/<code>data</code> in separate state, and render conditionally based on which state the request is currently in.",
+      zen:"A `StudentFeeDetails` component fetches `/api/Bill/GetFeeDetails?id=...` on mount, showing a spinner while `loading`, an error message on failure, and the real fee table once `data` arrives — mirroring the async/await patterns already used in ZenCampus's plain JS.",
+      code:"function StudentFeeDetails({ studentId }) {\n  const [data, setData] = React.useState(null);\n  const [loading, setLoading] = React.useState(true);\n\n  React.useEffect(() =&gt; {\n    setLoading(true);\n    fetch(`/api/Bill/GetFeeDetails?id=${studentId}`)\n      .then(res =&gt; res.json())\n      .then(setData)\n      .finally(() =&gt; setLoading(false));\n  }, [studentId]);\n\n  if (loading) return &lt;p&gt;Loading...&lt;/p&gt;;\n  return &lt;p&gt;Total Due: ₹{data.totalFee}&lt;/p&gt;;\n}" },
+    { name:"11. Lifting State Up",
+      movie:"🎬 Indian (1996) — Senapathy's authority and decisions flow DOWN to guide multiple 'children' (his followers), while important information about what's happening flows back UP to him so he can make the right call. React lifts shared state up to the nearest common parent so multiple children can stay in sync.",
+      explain:"When two sibling components need to share/sync state, that state is moved ('lifted') up to their closest common parent, which then passes the value down as props and a setter function down as a callback prop.",
+      zen:"A `FeeFilterBar` (sibling) and `FeeTable` (sibling) both need the current `selectedYear` filter — lifting that state to their shared parent `BillPage` component keeps both in sync without duplicating state.",
+      code:"function BillPage() {\n  const [selectedYear, setSelectedYear] = React.useState('2026');\n  return (\n    &lt;&gt;\n      &lt;FeeFilterBar year={selectedYear} onYearChange={setSelectedYear} /&gt;\n      &lt;FeeTable year={selectedYear} /&gt;\n    &lt;/&gt;\n  );\n}" },
+    { name:"12. Component Composition &amp; children",
+      movie:"🎬 Mersal — Vijay's three roles are distinct, but the STORY composes them together into one seamless film. Component composition builds complex UIs by combining smaller, focused components together, often via the special `children` prop.",
+      explain:"<code>props.children</code> lets a component render whatever JSX is nested between its opening and closing tags, enabling flexible wrapper/layout components (like a generic <code>Card</code> or <code>Modal</code>) that don't need to know their exact content in advance.",
+      zen:"A generic `&lt;Card&gt;` wrapper component used across ZenCampus (Hostel room cards, Fee summary cards, Exam result cards) — each page composes different content INSIDE the same reusable `Card` shell via `children`.",
+      code:"function Card({ title, children }) {\n  return (\n    &lt;div className=\"card\"&gt;\n      &lt;h3&gt;{title}&lt;/h3&gt;\n      {children}\n    &lt;/div&gt;\n  );\n}\n\n// Usage:\n&lt;Card title=\"Fee Summary\"&gt;\n  &lt;p&gt;Total Due: ₹5000&lt;/p&gt;\n&lt;/Card&gt;" }
+  ]
+},
+{
+  day:4, title:"Day 4 — Context, Refs, Memoization, useReducer",
+  topics:[
+    { name:"13. Context API",
+      movie:"🎬 Baahubali — the kingdom's core decree is announced once at the top and is instantly known and honored throughout every level of the kingdom, without a royal messenger relaying it person-to-person down every level. Context does the same for data — broadcasting it to any nested component without manually passing props through every level ('prop drilling').",
+      explain:"<code>React.createContext()</code> creates a Context object. A <code>&lt;Context.Provider value={...}&gt;</code> wraps a subtree, and any descendant can read that value directly via <code>useContext(Context)</code> — skipping intermediate components that don't need the data themselves.",
+      zen:"A `LoggedInUserContext` provides the current staff member's name/role at the app root, so deeply nested components (a report footer, a permissions check on a button) can read it directly without every intermediate component re-passing it as a prop.",
+      code:"const UserContext = React.createContext(null);\n\nfunction App() {\n  const user = { name: 'Admin', role: 'Staff' };\n  return (\n    &lt;UserContext.Provider value={user}&gt;\n      &lt;Dashboard /&gt;\n    &lt;/UserContext.Provider&gt;\n  );\n}\n\nfunction Dashboard() {\n  const user = React.useContext(UserContext); // no prop drilling needed\n  return &lt;p&gt;Welcome, {user.name}&lt;/p&gt;;\n}" },
+    { name:"14. useRef",
+      movie:"🎬 Ghajini — Sanjay needs a way to hold onto something (a photo, a note) that survives across time WITHOUT triggering a whole new 'scene' every time he touches it. `useRef` holds a mutable value across renders WITHOUT causing a re-render when it changes — unlike state.",
+      explain:"<code>useRef(initialValue)</code> returns a persistent object <code>{ current: value }</code>. Common uses: directly accessing a DOM node (<code>&lt;input ref={inputRef}&gt;</code>), or storing any mutable value (like a timer ID) that shouldn't trigger a re-render when updated.",
+      zen:"Auto-focusing the search input when the Student search page loads uses a ref: `inputRef.current.focus()` inside a `useEffect` that runs once on mount.",
+      code:"function SearchBox() {\n  const inputRef = React.useRef(null);\n\n  React.useEffect(() =&gt; {\n    inputRef.current.focus(); // auto-focus on mount\n  }, []);\n\n  return &lt;input ref={inputRef} /&gt;;\n}" },
+    { name:"15. useMemo &amp; useCallback",
+      movie:"🎬 Ratsasan — Arun Kumar doesn't re-investigate a lead he's already fully solved; he caches that conclusion and only redoes the work when genuinely NEW evidence appears. `useMemo`/`useCallback` cache expensive results so React skips redoing work unless the real dependencies actually changed.",
+      explain:"<code>useMemo(fn, deps)</code> caches the RETURN VALUE of an expensive calculation, recomputing only when a dependency changes. <code>useCallback(fn, deps)</code> caches the FUNCTION ITSELF (its reference), preventing unnecessary re-renders of child components that receive that function as a prop (especially when combined with <code>React.memo</code>).",
+      zen:"Recalculating the total fee collected across 5000 student records on every keystroke in an unrelated search box is wasteful — wrapping that calculation in `useMemo(() =&gt; calculateTotal(students), [students])` skips the recalculation unless `students` itself changes.",
+      code:"function FeeDashboard({ students }) {\n  const totalCollected = React.useMemo(\n    () =&gt; students.reduce((sum, s) =&gt; sum + (s.feesPaid ? s.fee : 0), 0),\n    [students] // only recompute when students changes\n  );\n  return &lt;p&gt;Total Collected: ₹{totalCollected}&lt;/p&gt;;\n}" },
+    { name:"16. useReducer",
+      movie:"🎬 Vikram Vedha — every twist in the story follows one clearly defined RULEBOOK of cause and effect, not scattered ad-hoc decisions from different directions. `useReducer` centralizes complex state updates into one predictable rulebook function instead of many scattered `setState` calls.",
+      explain:"<code>const [state, dispatch] = useReducer(reducerFn, initialState)</code>. Instead of directly setting state, components <code>dispatch({ type: 'ACTION_NAME', payload })</code> actions, and a single pure <code>reducer(state, action)</code> function decides the next state — ideal when state logic is complex or has many related sub-values that update together.",
+      zen:"A complex Fee Payment form with many interdependent fields (amount, discount, late fee, GST, final total) is cleaner managed via `useReducer` with actions like `SET_AMOUNT`, `APPLY_DISCOUNT`, than juggling 5 separate `useState` calls that must stay in sync manually.",
+      code:"function feeReducer(state, action) {\n  switch (action.type) {\n    case 'SET_AMOUNT': return { ...state, amount: action.payload };\n    case 'APPLY_DISCOUNT': return { ...state, discount: action.payload };\n    default: return state;\n  }\n}\n\nfunction FeeForm() {\n  const [state, dispatch] = React.useReducer(feeReducer, { amount: 0, discount: 0 });\n  return &lt;input onChange={(e) =&gt; dispatch({ type: 'SET_AMOUNT', payload: +e.target.value })} /&gt;;\n}" }
+  ]
+},
+{
+  day:5, title:"Day 5 — Custom Hooks, Routing, Performance, Error Boundaries",
+  topics:[
+    { name:"17. Custom Hooks",
+      movie:"🎬 Anniyan — Ambi's three personalities all share the SAME underlying reusable skillset (martial arts, disguise) even though each uses it differently. A custom hook extracts reusable stateful logic once, shared across many different components.",
+      explain:"A custom hook is just a JS function whose name starts with <code>use</code> and that calls other hooks internally, packaging up reusable logic (data fetching, form handling, debouncing) that can be dropped into any component.",
+      zen:"A `useFetch(url)` custom hook wraps the loading/error/data pattern once, reused across `StudentFeeDetails`, `HostelRoomList`, and `ExamResults` components instead of duplicating the same fetch-loading-error boilerplate in each.",
+      code:"function useFetch(url) {\n  const [data, setData] = React.useState(null);\n  const [loading, setLoading] = React.useState(true);\n\n  React.useEffect(() =&gt; {\n    setLoading(true);\n    fetch(url).then(r =&gt; r.json()).then(setData).finally(() =&gt; setLoading(false));\n  }, [url]);\n\n  return { data, loading };\n}\n\n// Reused anywhere:\nconst { data, loading } = useFetch('/api/Bill/GetFeeDetails?id=101');" },
+    { name:"18. React Router (Navigation)",
+      movie:"🎬 Kaithi — Dilli moves purposefully from one location to the next within a single continuous night, never restarting from scratch each time he changes rooms. React Router lets a Single Page App navigate between 'pages' by swapping components, without a full page reload.",
+      explain:"<code>react-router-dom</code> provides <code>&lt;BrowserRouter&gt;</code>, <code>&lt;Routes&gt;</code>/<code>&lt;Route path=\"...\" element={...}&gt;</code> to map URLs to components, and hooks like <code>useNavigate()</code> / <code>useParams()</code> for programmatic navigation and reading URL parameters.",
+      zen:"A React-based ZenCampus module could route `/students/:id` to a `StudentDetails` component, reading the id via `useParams()` instead of a full server round-trip for every profile view — much faster in-app navigation between related pages (attendance, fees, exam results for the same student).",
+      code:"import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';\n\nfunction StudentDetails() {\n  const { id } = useParams();\n  return &lt;p&gt;Showing details for student #{id}&lt;/p&gt;;\n}\n\nfunction App() {\n  return (\n    &lt;BrowserRouter&gt;\n      &lt;Routes&gt;\n        &lt;Route path=\"/students/:id\" element={&lt;StudentDetails /&gt;} /&gt;\n      &lt;/Routes&gt;\n    &lt;/BrowserRouter&gt;\n  );\n}" },
+    { name:"19. Performance Optimization (React.memo, Virtual DOM)",
+      movie:"🎬 Master — JD doesn't personally re-check every single student every single day; he focuses attention only where something has actually changed. React's Virtual DOM does the same — it diffs the previous and new UI tree and only updates the REAL DOM nodes that actually changed.",
+      explain:"React builds a lightweight Virtual DOM representation, diffs it against the previous version on every state change, and applies only the minimal real DOM updates needed (reconciliation) — far cheaper than re-rendering the whole page. <code>React.memo(Component)</code> additionally skips re-rendering a component entirely if its props haven't changed.",
+      zen:"Wrapping the individual `StudentRow` component in `React.memo` means that typing in an unrelated search box doesn't force all 5000 unchanged student rows to re-render — only the rows whose actual props changed get touched.",
+      code:"const StudentRow = React.memo(function StudentRow({ name, feesPaid }) {\n  console.log('Rendering', name); // only logs when props actually change\n  return &lt;tr&gt;&lt;td&gt;{name}&lt;/td&gt;&lt;/tr&gt;;\n});" },
+    { name:"20. Error Boundaries",
+      movie:"🎬 Soorarai Pottru — Maara has a backup plan and safety protocol for when something goes catastrophically wrong mid-flight, instead of letting the whole plane (app) go down. An Error Boundary catches a JS error in its child component tree and shows a fallback UI instead of crashing the ENTIRE app.",
+      explain:"A class component implementing <code>static getDerivedStateFromError()</code> and/or <code>componentDidCatch()</code> can catch rendering errors thrown by its children and render a fallback UI instead of a blank white screen. (Function components cannot yet define error boundaries themselves — this remains one of the few cases still requiring a class component, unless using a library wrapper.)",
+      zen:"Wrapping the Hostel room-allocation widget in an `ErrorBoundary` means that if one buggy room card throws an error, only that section shows 'Something went wrong, please refresh' — the rest of the ZenCampus dashboard (fees, attendance) keeps working normally.",
+      code:"class ErrorBoundary extends React.Component {\n  state = { hasError: false };\n  static getDerivedStateFromError() { return { hasError: true }; }\n  render() {\n    if (this.state.hasError) return &lt;p&gt;Something went wrong.&lt;/p&gt;;\n    return this.props.children;\n  }\n}\n\n&lt;ErrorBoundary&gt;\n  &lt;HostelRoomWidget /&gt;\n&lt;/ErrorBoundary&gt;" }
+  ]
+}
+];
+
+// ============ 50 INTERVIEW QUESTIONS ============
+const questions = [
+  {level:"Basic", q:"What is React and why is it used?", a:"React is a JavaScript library for building user interfaces from reusable, composable components. It's used for its declarative UI model, efficient Virtual DOM updates, and a huge ecosystem of tools/libraries."},
+  {level:"Basic", q:"What is JSX?", a:"A syntax extension that lets you write HTML-like markup directly inside JavaScript. It's not valid JS/HTML by itself — build tools (Babel) compile it down to <code>React.createElement()</code> calls."},
+  {level:"Basic", q:"What is the difference between a functional component and a class component?", a:"Functional components are plain functions returning JSX and use Hooks for state/lifecycle (the modern standard). Class components extend <code>React.Component</code>, use <code>this.state</code> and lifecycle methods like <code>componentDidMount</code> (legacy pattern)."},
+  {level:"Basic", q:"What are props in React?", a:"Read-only data passed from a parent component to a child component. Props flow one-way (top-down) and should never be mutated by the receiving child."},
+  {level:"Basic", q:"What is state in React and how is it different from props?", a:"State is data owned and managed INTERNALLY by a component (via <code>useState</code>/<code>useReducer</code>), and can change over time, triggering re-renders. Props come from OUTSIDE (the parent) and are read-only from the child's perspective."},
+  {level:"Basic", q:"What is the Virtual DOM?", a:"A lightweight in-memory representation of the real DOM. React diffs the new Virtual DOM against the previous version and applies only the minimal necessary changes to the real DOM (reconciliation), which is much faster than re-rendering everything directly."},
+  {level:"Basic", q:"Why do list items in React need a unique key prop?", a:"Keys help React identify which items changed, were added, or were removed between renders, so it can update the DOM efficiently and preserve component state correctly. Using array index as key can cause bugs when the list is reordered or filtered."},
+  {level:"Basic", q:"What is a controlled component?", a:"A form input whose value is driven entirely by React state (via <code>value</code> and <code>onChange</code>), making React the single source of truth, as opposed to an uncontrolled input that manages its own value internally in the DOM."},
+  {level:"Basic", q:"What does useState return?", a:"An array with exactly two elements: the current state value, and a setter function to update it and trigger a re-render — typically destructured as <code>const [value, setValue] = useState(initial)</code>."},
+  {level:"Basic", q:"What is conditional rendering in React?", a:"Rendering different JSX output based on a condition, commonly done with a ternary operator, logical <code>&amp;&amp;</code> short-circuit, or an early <code>return null</code>."},
+  {level:"Basic", q:"What is the difference between React and ReactDOM?", a:"<code>react</code> provides the core component/hook/JSX APIs, platform-agnostic. <code>react-dom</code> is the renderer that mounts React components into the actual browser DOM (via <code>createRoot().render()</code>) — React itself can also target other renderers like React Native."},
+  {level:"Intermediate", q:"What is useEffect and how does the dependency array control it?", a:"A hook for running side effects (fetching data, subscriptions, timers) after render. An empty array <code>[]</code> runs it once on mount; <code>[dep]</code> re-runs it whenever <code>dep</code> changes; omitting the array entirely re-runs it after every render."},
+  {level:"Intermediate", q:"What is the cleanup function in useEffect and when does it run?", a:"A function returned from inside <code>useEffect</code> that React calls before the effect runs again (if dependencies changed) and when the component unmounts — used to clear timers, cancel subscriptions, or remove event listeners to prevent memory leaks."},
+  {level:"Intermediate", q:"What is 'lifting state up'?", a:"Moving shared state to the closest common parent of two or more components that need to stay in sync, with the parent passing the value down as props and update functions down as callback props."},
+  {level:"Intermediate", q:"What is prop drilling and how does Context help avoid it?", a:"Prop drilling is passing a prop down through many intermediate components that don't actually need it, just to reach a deeply nested child. React Context lets that deeply nested child read the value directly via <code>useContext</code>, skipping the intermediate layers entirely."},
+  {level:"Intermediate", q:"What is the difference between useMemo and useCallback?", a:"<code>useMemo(fn, deps)</code> caches the RETURN VALUE of a computation. <code>useCallback(fn, deps)</code> caches the FUNCTION REFERENCE itself, useful for preventing unnecessary re-renders in memoized child components that receive that function as a prop."},
+  {level:"Intermediate", q:"What is React.memo and when should you use it?", a:"A higher-order component that skips re-rendering a component if its props haven't changed (shallow comparison). Useful for expensive components in large lists, but unnecessary overhead if overused on cheap components."},
+  {level:"Intermediate", q:"What is useRef used for besides accessing DOM elements?", a:"Storing any mutable value that persists across renders WITHOUT causing a re-render when changed — e.g. a timer ID, a previous value for comparison, or a flag tracking whether a component has already fetched data."},
+  {level:"Intermediate", q:"What is a custom hook and what naming convention must it follow?", a:"A reusable function that encapsulates stateful logic by calling other hooks internally. It must start with the prefix <code>use</code> (e.g. <code>useFetch</code>) so React's linter/rules-of-hooks can correctly track it as a hook."},
+  {level:"Intermediate", q:"What are the Rules of Hooks?", a:"1) Only call hooks at the top level of a function component or custom hook — never inside loops, conditions, or nested functions. 2) Only call hooks from React function components or other custom hooks, never from regular JS functions. This ensures hooks are called in the same order on every render."},
+  {level:"Intermediate", q:"What is the difference between useState and useReducer?", a:"<code>useState</code> is best for simple, independent state values. <code>useReducer</code> centralizes complex state transitions into one pure reducer function, dispatching named actions — better when multiple related state values update together via well-defined logic."},
+  {level:"Intermediate", q:"How do you fetch data in a React component and handle loading/error states?", a:"Call the async fetch inside <code>useEffect</code>, tracking <code>loading</code>, <code>error</code>, and <code>data</code> in separate state variables (or one combined state object), and conditionally render UI based on which state currently applies."},
+  {level:"Intermediate", q:"What is component composition and how does the children prop enable it?", a:"Building complex UIs by combining smaller, focused components together. <code>props.children</code> lets a wrapper component (like a generic Card or Modal) render whatever JSX is nested inside it, without needing to know that content's structure in advance."},
+  {level:"Intermediate", q:"What is React Router used for?", a:"A routing library that maps URL paths to components in a Single Page Application, enabling client-side navigation (no full page reload) via <code>&lt;Routes&gt;</code>/<code>&lt;Route&gt;</code>, plus hooks like <code>useNavigate</code> and <code>useParams</code>."},
+  {level:"Intermediate", q:"What is the difference between mounting, updating, and unmounting in the component lifecycle?", a:"Mounting is when a component is first created and inserted into the DOM. Updating happens on every subsequent re-render due to state/prop changes. Unmounting is when the component is removed from the DOM — cleanup (timers, subscriptions) should happen here."},
+  {level:"Advanced", q:"How does React's reconciliation algorithm work?", a:"React compares (diffs) the new Virtual DOM tree against the previous one, assuming elements of the same type produce similar trees. It uses keys to match list items across renders, and only patches the real DOM where actual differences are found, rather than re-rendering the whole tree."},
+  {level:"Advanced", q:"What is an Error Boundary and what are its limitations?", a:"A class component using <code>static getDerivedStateFromError</code>/<code>componentDidCatch</code> that catches rendering errors in its child tree and shows a fallback UI. Limitations: it does NOT catch errors in event handlers, async code, server-side rendering, or errors thrown in the boundary itself — only render-time errors in its children."},
+  {level:"Advanced", q:"What is the difference between useLayoutEffect and useEffect?", a:"<code>useEffect</code> runs asynchronously AFTER the browser has painted the screen. <code>useLayoutEffect</code> runs synchronously BEFORE the browser paints, blocking the visual update — used when you need to measure/mutate the DOM and apply changes before the user sees any flicker."},
+  {level:"Advanced", q:"What causes unnecessary re-renders in React and how do you prevent them?", a:"Common causes: passing a new object/array/function literal as a prop on every render (breaking memoization), unmemoized expensive calculations, or state updates higher in the tree than necessary. Prevented via <code>React.memo</code>, <code>useMemo</code>, <code>useCallback</code>, and keeping state as local/low in the tree as possible."},
+  {level:"Advanced", q:"What is the difference between controlled and uncontrolled components, and when would you choose uncontrolled?", a:"Controlled components sync every keystroke to React state (more re-renders, but full control/validation). Uncontrolled components let the DOM manage its own value, read only when needed via a ref — useful for simple forms, file inputs, or integrating with non-React libraries where per-keystroke re-renders aren't needed."},
+  {level:"Advanced", q:"What is React's batching behavior for state updates?", a:"React groups ('batches') multiple state updates that occur within the same event handler or lifecycle into a single re-render for performance. Since React 18, this batching also applies automatically inside promises, timeouts, and native event handlers, not just React's own synthetic events."},
+  {level:"Advanced", q:"What is a Higher-Order Component (HOC)?", a:"A function that takes a component and returns a new enhanced component, adding shared behavior (like injecting props or wrapping with logic) — a pattern largely superseded by custom hooks in modern React, but still found in some libraries."},
+  {level:"Advanced", q:"What is the useId hook used for?", a:"Generates a unique, stable ID string that's consistent between server and client rendering, used for linking form labels/inputs (<code>htmlFor</code>/<code>id</code>) via accessibility attributes without risking ID collisions or hydration mismatches."},
+  {level:"Advanced", q:"What is React Suspense used for?", a:"A mechanism that lets components 'wait' for something (like a lazily-loaded component via <code>React.lazy</code>, or data-fetching in newer patterns) before rendering, showing a fallback UI (like a spinner) in the meantime via <code>&lt;Suspense fallback={...}&gt;</code>."},
+  {level:"Advanced", q:"What is the difference between server-side rendering (SSR) and client-side rendering (CSR) in a React context?", a:"CSR ships a mostly empty HTML shell and renders everything via JS in the browser (slower first paint, better subsequent navigation). SSR renders the initial HTML on the server (faster first paint, better SEO), then 'hydrates' it with React on the client to make it interactive — frameworks like Next.js provide this out of the box."},
+  {level:"Advanced", q:"What is key-based reconciliation and why is using array index as a key dangerous for dynamic lists?", a:"React matches list items across renders by their <code>key</code>. If the index is used as the key and items are reordered/inserted/removed, React can incorrectly match a different item to the same DOM node/state, causing subtle bugs like form inputs retaining the wrong value after a reorder."},
+  {level:"Advanced", q:"How would you avoid prop drilling in a large ZenCampus React module without overusing Context (which can cause broad re-renders)?", a:"Split Context into smaller, purpose-specific providers (e.g. separate UserContext and ThemeContext) so unrelated updates don't re-render everything, use component composition (passing already-rendered children instead of drilling data through every layer), or use a dedicated state management library (Zustand, Redux Toolkit) for wide, frequently-changing global state."},
+  {level:"Advanced", q:"What is the difference between React.memo and useMemo?", a:"<code>React.memo</code> wraps a whole COMPONENT to skip re-rendering when its props are shallowly equal to the previous render. <code>useMemo</code> is used INSIDE a component to skip recomputing an expensive VALUE unless its dependencies changed — different tools for the component level vs. the value level."},
+  {level:"Advanced", q:"What is 'strict mode' in React used for during development?", a:"<code>&lt;React.StrictMode&gt;</code> intentionally double-invokes certain functions (component bodies, effects) in development only to help surface impure rendering logic and effects with missing cleanup, without affecting the production build's behavior."},
+  {level:"Advanced", q:"How do you optimize a React page rendering a 5000-row student table, similar to the ZenCampus fee/attendance reports?", a:"Combine: pagination or windowing/virtualization (render only visible rows, e.g. via react-window), <code>React.memo</code> on row components, stable keys from real IDs, debounced search/filter inputs, and <code>useMemo</code> for any derived aggregate calculations (totals, sorting) so they don't recompute on every unrelated re-render."}
+];
+
+// ============ COVERAGE CHECKLIST ============
+const coverageTopics = guideDays.flatMap(day => day.topics.map(t => ({ name: t.name, day: day.day })));
+
+// ============ RENDER: TABS ============
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ============ RENDER: GUIDE ============
+const guideListEl = document.getElementById('guideList');
+guideListEl.innerHTML = guideDays.map(day => `
+  <div class="day-block" id="day-${day.day}">
+    <h2 class="day-title">${day.title}</h2>
+    ${day.topics.map((t) => `
+      <div class="qa" id="topic-${t.name.split('.')[0].trim()}">
+        <div class="q">
+          <span>${t.name}</span>
+          <span class="toggle-icon">+</span>
+        </div>
+        <div class="a">
+          <div class="movie-ref">${t.movie}</div>
+          <p>${t.explain}</p>
+          <pre>${t.code}</pre>
+          <div class="zen-ref"><strong>ZenCampus use case:</strong> ${t.zen}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+`).join('');
+guideListEl.querySelectorAll('.q').forEach(qEl=>{
+  qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+});
+
+// ============ RENDER: INTERVIEW Q&A ============
+const listEl = document.getElementById('qaList');
+const filtersEl = document.getElementById('filters');
+const searchBox = document.getElementById('searchBox');
+const visibleCountEl = document.getElementById('visibleCount');
+const levels = ["All", "Basic", "Intermediate", "Advanced"];
+let activeLevel = "All";
+
+function renderFilters(){
+  filtersEl.innerHTML = levels.map(lvl =>
+    `<button class="filter-btn ${lvl===activeLevel?'active':''}" data-level="${lvl}">${lvl}</button>`
+  ).join('');
+  filtersEl.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeLevel = btn.dataset.level;
+      renderFilters();
+      renderQAList();
+    });
+  });
+}
+
+function renderQAList(){
+  const searchTerm = searchBox.value.trim().toLowerCase();
+  const filtered = questions
+    .map((item, idx)=>({...item, idx}))
+    .filter(item => activeLevel==="All" || item.level===activeLevel)
+    .filter(item => !searchTerm || item.q.toLowerCase().includes(searchTerm) || item.a.toLowerCase().includes(searchTerm));
+
+  visibleCountEl.textContent = filtered.length;
+
+  listEl.innerHTML = filtered.map(item => `
+    <div class="qa" data-idx="${item.idx}">
+      <div class="q">
+        <span><span class="num">Q${item.idx+1}.</span>${item.q}</span>
+        <span style="display:flex; align-items:center; gap:10px;">
+          <span class="tag">${item.level}</span>
+          <span class="toggle-icon">+</span>
+        </span>
+      </div>
+      <div class="a">${item.a}</div>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.q').forEach(qEl=>{
+    qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+  });
+}
+searchBox.addEventListener('input', renderQAList);
+renderFilters();
+renderQAList();
+
+// ============ RENDER: COVERAGE CHECKLIST ============
+const checklistEl = document.getElementById('checklist');
+checklistEl.innerHTML = coverageTopics.map((t) => `
+  <div class="check-item" data-target="topic-${t.name.split('.')[0].trim()}" data-day="${t.day}">
+    <span class="badge">✅</span>
+    <span class="num">${t.name.split('.')[0]}</span>
+    <span>${t.name.split('. ')[1].replace(/&amp;/g,'&')} <em style="color:var(--muted); font-size:0.8rem;">(Day ${t.day})</em></span>
+  </div>
+`).join('');
+checklistEl.querySelectorAll('.check-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelector('.tab-btn[data-tab="guide"]').click();
+    setTimeout(()=>{
+      const target = document.getElementById(item.dataset.target);
+      if(target){
+        target.classList.add('open');
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }, 50);
+  });
+});
+</script>
+
+</body>
+</html>

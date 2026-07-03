@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 11 – Redis Caching | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#0a1a00,#0d1500,#0a1a00);padding:36px 20px;text-align:center;border-bottom:3px solid #84cc16}
+header h1{font-size:2em;color:#bef264;text-shadow:0 0 20px #84cc1655}
+header p{color:#a8c080;margin-top:6px}
+.badge{display:inline-block;background:#84cc1622;border:1px solid #84cc1655;color:#bef264;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#bef264;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#84cc16;color:#0a1a00;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.kw{color:#569cd6}.tp{color:#4ec9b0}.st{color:#ce9178}.nm{color:#b5cea8}.cm{color:#6a9955;font-style:italic}.pr{color:#9cdcfe}.mt{color:#dcdcaa}.at{color:#c586c0}
+code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#080f00;border-left:4px solid #84cc16;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#a3e635;font-size:0.9em;margin-top:4px}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-card.hot{border-color:#84cc1655;background:#080f00}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.s-num{background:#84cc16;color:#0a1a00;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.s-num.warn{background:#f97316;color:#fff}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#0a1a0a;color:#84cc16}
+.real{background:#0a1a0a;color:#84cc16;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.hot-badge{background:#1a0800;color:#f97316;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #f9731655}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#080f00;border:1px solid #84cc16;color:#bef264;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#84cc16;color:#0a1a00}
+.reveal-btn.warn-btn{border-color:#f97316;color:#fb923c}
+.reveal-btn.warn-btn:hover{background:#f97316;color:#fff}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1e1e3a}
+.answer.shown{display:block}
+.answer .a-label{color:#bef264;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.answer .a-label.warn{color:#f97316}
+.gold{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:700px){.comparison,.two-col{grid-template-columns:1fr}}
+.bad-box{background:#1f0a0a;border:1px solid #e74c3c44;border-radius:8px;padding:14px}
+.good-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:8px;padding:14px}
+.box-label{font-size:0.78em;font-weight:bold;margin-bottom:8px}
+.bad-box .box-label{color:#e74c3c}.good-box .box-label{color:#2ecc71}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#080f00;color:#bef264;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a1a35}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.lime{color:#bef264}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#84cc16;color:#bef264}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#84cc16}
+h3{color:#a3e635;margin:16px 0 8px;font-size:1em}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#a3e635;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1e1e3a}
+.sticky-nav a:hover{background:#080f00}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#84cc16,#bef264)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+.flow-box{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;align-items:center}
+.flow-step{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:8px 14px;font-size:0.82em;color:#c0c8e0;text-align:center;min-width:80px}
+.flow-step.hit{border-color:#84cc16;color:#bef264;background:#080f00}
+.flow-step.miss{border-color:#e74c3c;color:#f1948a;background:#1f0a0a}
+.flow-step.db{border-color:#f39c12;color:#f0dc82}
+.flow-arr{color:#888;font-size:1.1em}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#bef264;font-size:0.85em;margin-bottom:6px">📅 Day 11 of 60 | Phase 1: Advanced C#</div>
+  <h1>⚡ Redis Caching — Speed up ZenCampus!</h1>
+  <p>Cache-Aside · TTL · Invalidation · Distributed Cache · Session · Stampede · Pub/Sub</p>
+  <div style="margin-top:12px">
+    <span class="badge">IDistributedCache</span><span class="badge">StackExchange.Redis</span><span class="badge">Cache-Aside</span>
+    <span class="badge">TTL</span><span class="badge">Invalidation</span><span class="badge">Stampede</span><span class="badge">Session</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#why">🤔 Why Redis</a>
+  <a href="#setup">⚙️ Setup</a>
+  <a href="#patterns">🏗️ Patterns</a>
+  <a href="#invalidation">🗑️ Invalidation</a>
+  <a href="#stampede">💥 Stampede</a>
+  <a href="#session">🪪 Session</a>
+  <a href="#pubsub">📡 Pub/Sub</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SECTION 1: WHY REDIS -->
+<div class="section" id="why">
+  <div class="section-title"><span class="num">1</span> Why Redis? Memory vs Disk Speed</div>
+
+  <div class="movie">
+    <span class="film">🎬 Baasha — Evidence-la first check பண்றான் notes-la (RAM). Illa-naa file room-ku (disk) poran. Notes fast, file room slow!</span>
+    <p>Redis = RAM-la store. SQL Server = Disk-la. RAM access = nanoseconds. Disk = milliseconds. 1000x faster! ZenCampus-la school master data, fee structure — every request same DB query. Redis = one time DB, next 1000 requests from RAM!</p>
+  </div>
+
+  <table>
+    <tr><th>Storage</th><th>Typical Latency</th><th>ZenCampus use</th></tr>
+    <tr><td><span class="lime">Redis (RAM)</span></td><td class="green">&lt;1ms</td><td>School names, fee structure, session, counters</td></tr>
+    <tr><td><span class="yellow">SQL Server (SSD)</span></td><td class="yellow">5–50ms</td><td>Student records, fee transactions, audit</td></tr>
+    <tr><td><span class="red">SQL Server (HDD)</span></td><td class="red">50–500ms</td><td>Archived old records</td></tr>
+  </table>
+
+  <div class="comparison">
+    <div class="bad-box">
+      <div class="box-label">❌ Without Redis — Every Request hits DB</div>
+      <pre style="font-size:0.8em"><span class="cm">// Dashboard loads every 2 seconds</span>
+<span class="cm">// 500 users simultaneously</span>
+<span class="cm">// = 250 SQL queries/second</span>
+<span class="cm">// SELECT COUNT(*) FROM Students</span>
+<span class="cm">// WHERE SchoolId = 42</span>
+<span class="cm">// × 500 users = DB on fire! 🔥</span></pre>
+    </div>
+    <div class="good-box">
+      <div class="box-label">✅ With Redis — DB called once</div>
+      <pre style="font-size:0.8em"><span class="cm">// First request: DB → Redis (5ms)</span>
+<span class="cm">// Next 499 requests: Redis (0.3ms)</span>
+<span class="cm">// TTL = 5 minutes</span>
+<span class="cm">// DB load: 250 queries/sec</span>
+<span class="cm">// → 1 query per 5 minutes!</span>
+<span class="cm">// 750x DB load reduction! ✅</span></pre>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>Feature</th><th>IMemoryCache (In-Process)</th><th>IDistributedCache / Redis</th></tr>
+    <tr><td>Storage</td><td>App server RAM</td><td>Separate Redis server RAM</td></tr>
+    <tr><td>Multi-server</td><td class="red">❌ Each server has own cache</td><td class="green">✅ All servers share one cache</td></tr>
+    <tr><td>App restart</td><td class="red">❌ Cache lost</td><td class="green">✅ Cache persists</td></tr>
+    <tr><td>Size limit</td><td class="yellow">Limited by app memory</td><td class="green">Separate Redis server</td></tr>
+    <tr><td>Best for</td><td>Single server, dev, small data</td><td>Production, load balanced, session</td></tr>
+    <tr><td>ZenCampus</td><td>Local dev only</td><td>Production (Azure Cache for Redis)</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 2: SETUP -->
+<div class="section" id="setup">
+  <div class="section-title"><span class="num">2</span> Setup — StackExchange.Redis + IDistributedCache</div>
+
+  <pre><span class="cm">// NuGet packages</span>
+<span class="cm">// StackExchange.Redis</span>
+<span class="cm">// Microsoft.Extensions.Caching.StackExchangeRedis</span>
+
+<span class="cm">// Program.cs</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddStackExchangeRedisCache</span>(<span class="pr">opts</span> =>
+{
+    <span class="pr">opts</span>.<span class="pr">Configuration</span>     = <span class="pr">builder</span>.<span class="pr">Configuration</span>[<span class="st">"Redis:ConnectionString"</span>];
+    <span class="pr">opts</span>.<span class="pr">InstanceName</span>      = <span class="st">"ZenCampus:"</span>; <span class="cm">// key prefix!</span>
+});
+
+<span class="cm">// appsettings.json</span>
+<span class="st">"Redis"</span>: {
+  <span class="st">"ConnectionString"</span>: <span class="st">"zencampus-redis.redis.cache.windows.net:6380,password=xxx,ssl=True"</span>
+}
+
+<span class="cm">// Direct StackExchange.Redis (for advanced features: pub/sub, Lua)</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddSingleton</span>&lt;<span class="tp">IConnectionMultiplexer</span>&gt;(<span class="pr">sp</span> =>
+    <span class="tp">ConnectionMultiplexer</span>.<span class="mt">Connect</span>(<span class="pr">builder</span>.<span class="pr">Configuration</span>[<span class="st">"Redis:ConnectionString"</span>]!));
+
+<span class="cm">// Register both — IDistributedCache for simple, IConnectionMultiplexer for advanced</span></pre>
+
+  <pre><span class="cm">// Redis Cache Service — ZenCampus wrapper</span>
+<span class="kw">public class</span> <span class="tp">RedisCacheService</span> : <span class="tp">ICacheService</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">IDistributedCache</span> <span class="pr">_cache</span>;
+    <span class="kw">private readonly</span> <span class="tp">JsonSerializerOptions</span> <span class="pr">_jsonOpts</span> = <span class="kw">new</span>() { <span class="pr">PropertyNameCaseInsensitive</span> = <span class="kw">true</span> };
+
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">T</span>?&gt; <span class="mt">GetAsync</span>&lt;<span class="tp">T</span>&gt;(<span class="kw">string</span> <span class="pr">key</span>)
+    {
+        <span class="kw">var</span> <span class="pr">bytes</span> = <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">GetAsync</span>(<span class="pr">key</span>);
+        <span class="kw">if</span> (<span class="pr">bytes</span> <span class="kw">is null</span>) <span class="kw">return default</span>;
+        <span class="kw">return</span> <span class="tp">JsonSerializer</span>.<span class="mt">Deserialize</span>&lt;<span class="tp">T</span>&gt;(<span class="pr">bytes</span>, <span class="pr">_jsonOpts</span>);
+    }
+
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">SetAsync</span>&lt;<span class="tp">T</span>&gt;(<span class="kw">string</span> <span class="pr">key</span>, <span class="tp">T</span> <span class="pr">value</span>, <span class="tp">TimeSpan</span> <span class="pr">ttl</span>)
+    {
+        <span class="kw">var</span> <span class="pr">bytes</span> = <span class="tp">JsonSerializer</span>.<span class="mt">SerializeToUtf8Bytes</span>(<span class="pr">value</span>, <span class="pr">_jsonOpts</span>);
+        <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">SetAsync</span>(<span class="pr">key</span>, <span class="pr">bytes</span>, <span class="kw">new</span> <span class="tp">DistributedCacheEntryOptions</span>
+        {
+            <span class="pr">AbsoluteExpirationRelativeToNow</span> = <span class="pr">ttl</span>
+        });
+    }
+
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">RemoveAsync</span>(<span class="kw">string</span> <span class="pr">key</span>)
+        => <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">RemoveAsync</span>(<span class="pr">key</span>);
+}</pre>
+</div>
+
+<!-- SECTION 3: PATTERNS -->
+<div class="section" id="patterns">
+  <div class="section-title"><span class="num">3</span> Cache Patterns — Cache-Aside, Write-Through, Write-Behind</div>
+
+  <div class="movie">
+    <span class="film">🎬 Magadheera — Memory lane check பண்றான். Yaadhu irundha, direct use. Illana, original history-ku po.</span>
+    <p>Cache-Aside = Magadheera memory. Check cache first. Hit = return. Miss = go to DB, store in cache, return. Next request = cache hit. That's the loop!</p>
+  </div>
+
+  <div class="flow-box">
+    <div class="flow-step hit">Request</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step hit">Check Redis</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step hit">HIT ✅</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step hit">Return (fast!)</div>
+  </div>
+  <div class="flow-box">
+    <div class="flow-step miss">Request</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step miss">Check Redis</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step miss">MISS ❌</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step db">Query DB</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step hit">Store Redis</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step hit">Return</div>
+  </div>
+
+  <pre><span class="cm">// Cache-Aside pattern — ZenCampus school master data</span>
+<span class="kw">public class</span> <span class="tp">SchoolService</span> : <span class="tp">ISchoolService</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">ICacheService</span>       <span class="pr">_cache</span>;
+    <span class="kw">private readonly</span> <span class="tp">ISchoolRepository</span>   <span class="pr">_repo</span>;
+
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">SchoolDto</span>?&gt; <span class="mt">GetByIdAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>)
+    {
+        <span class="kw">var</span> <span class="pr">cacheKey</span> = <span class="st">$"school:{schoolId}"</span>; <span class="cm">// "school:42"</span>
+
+        <span class="cm">// Step 1: Check cache</span>
+        <span class="kw">var</span> <span class="pr">cached</span> = <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">GetAsync</span>&lt;<span class="tp">SchoolDto</span>&gt;(<span class="pr">cacheKey</span>);
+        <span class="kw">if</span> (<span class="pr">cached</span> <span class="kw">is not null</span>) <span class="kw">return</span> <span class="pr">cached</span>; <span class="cm">// cache HIT!</span>
+
+        <span class="cm">// Step 2: Cache MISS → query DB</span>
+        <span class="kw">var</span> <span class="pr">school</span> = <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">GetByIdAsync</span>(<span class="pr">schoolId</span>);
+        <span class="kw">if</span> (<span class="pr">school</span> <span class="kw">is null</span>) <span class="kw">return null</span>;
+
+        <span class="cm">// Step 3: Store in cache — school data changes rarely, 1 hour TTL</span>
+        <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">SetAsync</span>(<span class="pr">cacheKey</span>, <span class="pr">school</span>, <span class="tp">TimeSpan</span>.<span class="mt">FromHours</span>(<span class="nm">1</span>));
+
+        <span class="kw">return</span> <span class="pr">school</span>;
+    }
+
+    <span class="cm">// Generic helper — GetOrCreateAsync pattern</span>
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">T</span>&gt; <span class="mt">GetOrCreateAsync</span>&lt;<span class="tp">T</span>&gt;(
+        <span class="kw">string</span> <span class="pr">key</span>,
+        <span class="tp">Func</span>&lt;<span class="tp">Task</span>&lt;<span class="tp">T</span>&gt;&gt; <span class="pr">factory</span>,
+        <span class="tp">TimeSpan</span> <span class="pr">ttl</span>)
+    {
+        <span class="kw">var</span> <span class="pr">cached</span> = <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">GetAsync</span>&lt;<span class="tp">T</span>&gt;(<span class="pr">key</span>);
+        <span class="kw">if</span> (<span class="pr">cached</span> <span class="kw">is not null</span>) <span class="kw">return</span> <span class="pr">cached</span>;
+
+        <span class="kw">var</span> <span class="pr">value</span> = <span class="kw">await</span> <span class="pr">factory</span>(); <span class="cm">// DB call</span>
+        <span class="kw">if</span> (<span class="pr">value</span> <span class="kw">is not null</span>)
+            <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">SetAsync</span>(<span class="pr">key</span>, <span class="pr">value</span>, <span class="pr">ttl</span>);
+        <span class="kw">return</span> <span class="pr">value</span>!;
+    }
+}
+
+<span class="cm">// Usage — clean, no boilerplate!</span>
+<span class="kw">var</span> <span class="pr">feeStructure</span> = <span class="kw">await</span> <span class="pr">_schoolSvc</span>.<span class="mt">GetOrCreateAsync</span>(
+    <span class="st">$"fee:structure:{schoolId}:{year}"</span>,
+    () => <span class="pr">_feeRepo</span>.<span class="mt">GetStructureAsync</span>(<span class="pr">schoolId</span>, <span class="pr">year</span>),
+    <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">30</span>));</pre>
+
+  <table style="font-size:0.85em">
+    <tr><th>Pattern</th><th>Who manages cache?</th><th>Use when</th><th>ZenCampus example</th></tr>
+    <tr><td><span class="lime">Cache-Aside</span></td><td>App code</td><td>Read-heavy, tolerate slight stale</td><td>School info, fee structure</td></tr>
+    <tr><td><span class="yellow">Write-Through</span></td><td>Cache + DB together</td><td>Strong consistency needed</td><td>Student balance (write to both)</td></tr>
+    <tr><td><span class="red">Write-Behind</span></td><td>Cache first, DB async</td><td>High-write, eventual consistency OK</td><td>View counts, click counters</td></tr>
+    <tr><td><span class="green">Read-Through</span></td><td>Cache layer auto-loads</td><td>Cache library handles miss</td><td>Rare in .NET, common in Java</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 4: TTL + KEY NAMING -->
+<div class="section">
+  <div class="section-title"><span class="num">4</span> TTL Strategy + Key Naming — ZenCampus</div>
+
+  <pre><span class="cm">// ZenCampus cache key conventions + TTL guide</span>
+<span class="kw">public static class</span> <span class="tp">CacheKeys</span>
+{
+    <span class="cm">// School — changes rarely (admin updates), 1 hour TTL</span>
+    <span class="kw">public static string</span> <span class="mt">School</span>(<span class="kw">int</span> <span class="pr">id</span>)     => <span class="st">$"school:{id}"</span>;
+    <span class="kw">public static string</span> <span class="mt">SchoolList</span>()       => <span class="st">"school:all"</span>;
+
+    <span class="cm">// Fee structure — changes per term, 30 min TTL</span>
+    <span class="kw">public static string</span> <span class="mt">FeeStructure</span>(<span class="kw">int</span> <span class="pr">schoolId</span>, <span class="kw">string</span> <span class="pr">year</span>)
+        => <span class="st">$"fee:structure:{schoolId}:{year}"</span>;
+
+    <span class="cm">// Student count dashboard — refresh every 5 min</span>
+    <span class="kw">public static string</span> <span class="mt">StudentCount</span>(<span class="kw">int</span> <span class="pr">schoolId</span>)
+        => <span class="st">$"dashboard:student_count:{schoolId}"</span>;
+
+    <span class="cm">// User session — expire on logout or 8 hours</span>
+    <span class="kw">public static string</span> <span class="mt">UserSession</span>(<span class="kw">string</span> <span class="pr">userId</span>)
+        => <span class="st">$"session:user:{userId}"</span>;
+
+    <span class="cm">// Rate limiting — expire after window</span>
+    <span class="kw">public static string</span> <span class="mt">RateLimit</span>(<span class="kw">string</span> <span class="pr">ip</span>, <span class="kw">string</span> <span class="pr">action</span>)
+        => <span class="st">$"rate:{action}:{ip}"</span>;
+
+    <span class="cm">// Lock — prevent duplicate processing</span>
+    <span class="kw">public static string</span> <span class="mt">ProcessLock</span>(<span class="kw">string</span> <span class="pr">jobId</span>)
+        => <span class="st">$"lock:job:{jobId}"</span>;
+}
+
+<span class="cm">// TTL guidelines — ZenCampus</span>
+<span class="kw">public static class</span> <span class="tp">CacheTtl</span>
+{
+    <span class="kw">public static readonly</span> <span class="tp">TimeSpan</span> <span class="pr">VeryShort</span>  = <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">30</span>);  <span class="cm">// live counters</span>
+    <span class="kw">public static readonly</span> <span class="tp">TimeSpan</span> <span class="pr">Short</span>      = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">5</span>);   <span class="cm">// dashboard</span>
+    <span class="kw">public static readonly</span> <span class="tp">TimeSpan</span> <span class="pr">Medium</span>     = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">30</span>);  <span class="cm">// fee structure</span>
+    <span class="kw">public static readonly</span> <span class="tp">TimeSpan</span> <span class="pr">Long</span>       = <span class="tp">TimeSpan</span>.<span class="mt">FromHours</span>(<span class="nm">1</span>);    <span class="cm">// school data</span>
+    <span class="kw">public static readonly</span> <span class="tp">TimeSpan</span> <span class="pr">Session</span>    = <span class="tp">TimeSpan</span>.<span class="mt">FromHours</span>(<span class="nm">8</span>);    <span class="cm">// user session</span>
+    <span class="kw">public static readonly</span> <span class="tp">TimeSpan</span> <span class="pr">Daily</span>      = <span class="tp">TimeSpan</span>.<span class="mt">FromHours</span>(<span class="nm">24</span>);   <span class="cm">// annual reports</span>
+}</pre>
+</div>
+
+<!-- SECTION 5: CACHE INVALIDATION -->
+<div class="section" id="invalidation">
+  <div class="section-title"><span class="num">5</span> Cache Invalidation — The Hardest Problem in CS!</div>
+
+  <div class="movie">
+    <span class="film">🎬 Thuppakki — Outdated intel = mission fail. Cache stale data = wrong fee amount shown!</span>
+    <p>"There are only two hard things in Computer Science: cache invalidation and naming things." — Phil Karlton. Fee structure update ஆச்சு — cache-la old amount. Student overpays! That's cache invalidation failure!</p>
+  </div>
+
+  <pre><span class="cm">// Strategy 1: Invalidate on write (most common — Cache-Aside)</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">UpdateFeeStructureAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>, <span class="tp">FeeStructureDto</span> <span class="pr">dto</span>)
+{
+    <span class="cm">// 1. Update DB first</span>
+    <span class="kw">await</span> <span class="pr">_feeRepo</span>.<span class="mt">UpdateAsync</span>(<span class="pr">dto</span>);
+
+    <span class="cm">// 2. Invalidate cache — next read will miss + reload from DB</span>
+    <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">RemoveAsync</span>(<span class="tp">CacheKeys</span>.<span class="mt">FeeStructure</span>(<span class="pr">schoolId</span>, <span class="pr">dto</span>.<span class="pr">AcademicYear</span>));
+
+    <span class="cm">// 3. Invalidate dependent caches!</span>
+    <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">RemoveAsync</span>(<span class="st">$"fee:total:{schoolId}:{dto.AcademicYear}"</span>);
+    <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">RemoveAsync</span>(<span class="st">$"dashboard:fee_summary:{schoolId}"</span>);
+}
+
+<span class="cm">// Strategy 2: Tag-based invalidation (StackExchange.Redis)</span>
+<span class="kw">private readonly</span> <span class="tp">IDatabase</span> <span class="pr">_redis</span>; <span class="cm">// from IConnectionMultiplexer</span>
+
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">InvalidateSchoolCacheAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>)
+{
+    <span class="cm">// Get all keys matching pattern — use SCAN, never KEYS in production!</span>
+    <span class="kw">var</span> <span class="pr">server</span>  = <span class="pr">_multiplexer</span>.<span class="mt">GetServer</span>(<span class="pr">_multiplexer</span>.<span class="pr">GetEndPoints</span>()[<span class="nm">0</span>]);
+    <span class="kw">var</span> <span class="pr">pattern</span> = <span class="st">$"ZenCampus:*:school:{schoolId}:*"</span>;
+
+    <span class="kw">await foreach</span> (<span class="kw">var</span> <span class="pr">key</span> <span class="kw">in</span> <span class="pr">server</span>.<span class="mt">KeysAsync</span>(<span class="pr">pattern</span>: <span class="pr">pattern</span>))
+    {
+        <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">KeyDeleteAsync</span>(<span class="pr">key</span>);
+    }
+}
+
+<span class="cm">// Strategy 3: Version-based invalidation — elegant!</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">FeeStructureDto</span>?&gt; <span class="mt">GetFeeStructureAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>)
+{
+    <span class="cm">// Version key — increment on every update</span>
+    <span class="kw">var</span> <span class="pr">version</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">StringGetAsync</span>(<span class="st">$"fee:version:{schoolId}"</span>);
+    <span class="kw">var</span> <span class="pr">key</span>     = <span class="st">$"fee:structure:{schoolId}:v{version}"</span>;
+
+    <span class="kw">var</span> <span class="pr">cached</span> = <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">GetAsync</span>&lt;<span class="tp">FeeStructureDto</span>&gt;(<span class="pr">key</span>);
+    <span class="kw">if</span> (<span class="pr">cached</span> <span class="kw">is not null</span>) <span class="kw">return</span> <span class="pr">cached</span>;
+    <span class="cm">// ... DB load ...</span>
+}
+
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">InvalidateFeeAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>)
+{
+    <span class="cm">// Just increment version — old keys auto-miss, TTL cleans them up!</span>
+    <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">StringIncrementAsync</span>(<span class="st">$"fee:version:{schoolId}"</span>);
+}</pre>
+
+  <div class="danger">
+    <div class="d-label">⚠️ KEYS command in production — NEVER!</div>
+    <p><code>KEYS *</code> blocks entire Redis server while scanning. With 1 million keys = 500ms block = all requests timeout! Use <code>SCAN</code> with cursor instead — iterates in small batches, non-blocking.</p>
+  </div>
+</div>
+
+<!-- SECTION 6: STAMPEDE -->
+<div class="section" id="stampede">
+  <div class="section-title"><span class="num">6</span> Cache Stampede — Thundering Herd Problem!</div>
+
+  <div class="movie">
+    <span class="film">🎬 Sarpatta — All fighters rush gate at same time — chaos! Cache miss + 1000 concurrent requests = all hit DB simultaneously!</span>
+    <p>9 AM school opens — 500 teachers login simultaneously. Cache expired (overnight). All 500 see cache miss → all 500 query DB → DB crashes! That's thundering herd. Stampede protection needed!</p>
+  </div>
+
+  <pre><span class="cm">// Problem: 500 simultaneous cache misses → 500 DB queries!</span>
+<span class="cm">// Fix: SemaphoreSlim lock — only one request fetches from DB</span>
+
+<span class="kw">public class</span> <span class="tp">StampedeProtectedCache</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">ICacheService</span>       <span class="pr">_cache</span>;
+    <span class="kw">private readonly</span> <span class="tp">ConcurrentDictionary</span>&lt;<span class="kw">string</span>, <span class="tp">SemaphoreSlim</span>&gt; <span class="pr">_locks</span> = <span class="kw">new</span>();
+
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">T</span>&gt; <span class="mt">GetOrCreateAsync</span>&lt;<span class="tp">T</span>&gt;(
+        <span class="kw">string</span> <span class="pr">key</span>,
+        <span class="tp">Func</span>&lt;<span class="tp">Task</span>&lt;<span class="tp">T</span>&gt;&gt; <span class="pr">factory</span>,
+        <span class="tp">TimeSpan</span> <span class="pr">ttl</span>)
+    {
+        <span class="cm">// Fast path — cache hit, no lock needed</span>
+        <span class="kw">var</span> <span class="pr">cached</span> = <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">GetAsync</span>&lt;<span class="tp">T</span>&gt;(<span class="pr">key</span>);
+        <span class="kw">if</span> (<span class="pr">cached</span> <span class="kw">is not null</span>) <span class="kw">return</span> <span class="pr">cached</span>;
+
+        <span class="cm">// Slow path — acquire per-key lock</span>
+        <span class="kw">var</span> <span class="pr">semaphore</span> = <span class="pr">_locks</span>.<span class="mt">GetOrAdd</span>(<span class="pr">key</span>, _ => <span class="kw">new</span> <span class="tp">SemaphoreSlim</span>(<span class="nm">1</span>, <span class="nm">1</span>));
+        <span class="kw">await</span> <span class="pr">semaphore</span>.<span class="mt">WaitAsync</span>();
+        <span class="kw">try</span>
+        {
+            <span class="cm">// Double-check after acquiring lock!</span>
+            <span class="cm">// (Another thread may have populated cache while we waited)</span>
+            <span class="pr">cached</span> = <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">GetAsync</span>&lt;<span class="tp">T</span>&gt;(<span class="pr">key</span>);
+            <span class="kw">if</span> (<span class="pr">cached</span> <span class="kw">is not null</span>) <span class="kw">return</span> <span class="pr">cached</span>; <span class="cm">// winner already cached it!</span>
+
+            <span class="cm">// Only ONE thread reaches here — fetch from DB</span>
+            <span class="kw">var</span> <span class="pr">value</span> = <span class="kw">await</span> <span class="pr">factory</span>();
+            <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">SetAsync</span>(<span class="pr">key</span>, <span class="pr">value</span>, <span class="pr">ttl</span>);
+            <span class="kw">return</span> <span class="pr">value</span>;
+        }
+        <span class="kw">finally</span>
+        {
+            <span class="pr">semaphore</span>.<span class="mt">Release</span>();
+            <span class="pr">_locks</span>.<span class="mt">TryRemove</span>(<span class="pr">key</span>, <span class="kw">out</span> _);
+        }
+    }
+}
+
+<span class="cm">// Alternative: Redis distributed lock (for multi-server stampede)</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">T</span>&gt; <span class="mt">GetOrCreateDistributedAsync</span>&lt;<span class="tp">T</span>&gt;(<span class="kw">string</span> <span class="pr">key</span>, <span class="tp">Func</span>&lt;<span class="tp">Task</span>&lt;<span class="tp">T</span>&gt;&gt; <span class="pr">factory</span>, <span class="tp">TimeSpan</span> <span class="pr">ttl</span>)
+{
+    <span class="kw">var</span> <span class="pr">cached</span> = <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">GetAsync</span>&lt;<span class="tp">T</span>&gt;(<span class="pr">key</span>);
+    <span class="kw">if</span> (<span class="pr">cached</span> <span class="kw">is not null</span>) <span class="kw">return</span> <span class="pr">cached</span>;
+
+    <span class="kw">var</span> <span class="pr">lockKey</span>     = <span class="st">$"lock:{key}"</span>;
+    <span class="kw">var</span> <span class="pr">lockAcquired</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">StringSetAsync</span>(
+        <span class="pr">lockKey</span>, <span class="st">"1"</span>,
+        <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">10</span>),
+        <span class="tp">When</span>.<span class="pr">NotExists</span>); <span class="cm">// NX flag — atomic set if not exists</span>
+
+    <span class="kw">if</span> (!<span class="pr">lockAcquired</span>)
+    {
+        <span class="cm">// Wait for winner, then read cache</span>
+        <span class="kw">await</span> <span class="tp">Task</span>.<span class="mt">Delay</span>(<span class="nm">100</span>);
+        <span class="kw">return</span> (<span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">GetAsync</span>&lt;<span class="tp">T</span>&gt;(<span class="pr">key</span>))!;
+    }
+
+    <span class="kw">try</span>
+    {
+        <span class="kw">var</span> <span class="pr">value</span> = <span class="kw">await</span> <span class="pr">factory</span>();
+        <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">SetAsync</span>(<span class="pr">key</span>, <span class="pr">value</span>, <span class="pr">ttl</span>);
+        <span class="kw">return</span> <span class="pr">value</span>;
+    }
+    <span class="kw">finally</span> { <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">KeyDeleteAsync</span>(<span class="pr">lockKey</span>); }
+}</pre>
+</div>
+
+<!-- SECTION 7: SESSION -->
+<div class="section" id="session">
+  <div class="section-title"><span class="num">7</span> Session Storage in Redis — ZenCampus Login</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram — Identity card distributed ops-la. Session = identity card stored in Redis shared vault.</span>
+    <p>Web app 3 servers-la load balance ஆகுது. User Server A-la login. Next request Server B-ku. Server B doesn't know him! In-process session = fails. Redis session = all servers share same vault. User always authenticated!</p>
+  </div>
+
+  <pre><span class="cm">// Program.cs — Redis distributed session</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddStackExchangeRedisCache</span>(...);
+
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddSession</span>(<span class="pr">opts</span> =>
+{
+    <span class="pr">opts</span>.<span class="pr">IdleTimeout</span>        = <span class="tp">TimeSpan</span>.<span class="mt">FromHours</span>(<span class="nm">8</span>);
+    <span class="pr">opts</span>.<span class="pr">Cookie</span>.<span class="pr">HttpOnly</span>  = <span class="kw">true</span>;
+    <span class="pr">opts</span>.<span class="pr">Cookie</span>.<span class="pr">IsEssential</span> = <span class="kw">true</span>;
+    <span class="pr">opts</span>.<span class="pr">Cookie</span>.<span class="pr">SecurePolicy</span> = <span class="tp">CookieSecurePolicy</span>.<span class="pr">Always</span>;
+});
+
+<span class="pr">app</span>.<span class="mt">UseSession</span>(); <span class="cm">// MUST be before UseAuthorization!</span>
+
+<span class="cm">// Custom user context stored in Redis</span>
+<span class="kw">public class</span> <span class="tp">UserContextService</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">ICacheService</span> <span class="pr">_cache</span>;
+
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">StoreAsync</span>(<span class="kw">string</span> <span class="pr">userId</span>, <span class="tp">UserContext</span> <span class="pr">ctx</span>)
+        => <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">SetAsync</span>(
+            <span class="tp">CacheKeys</span>.<span class="mt">UserSession</span>(<span class="pr">userId</span>),
+            <span class="pr">ctx</span>,
+            <span class="tp">CacheTtl</span>.<span class="pr">Session</span>);
+
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">UserContext</span>?&gt; <span class="mt">GetAsync</span>(<span class="kw">string</span> <span class="pr">userId</span>)
+        => <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">GetAsync</span>&lt;<span class="tp">UserContext</span>&gt;(<span class="tp">CacheKeys</span>.<span class="mt">UserSession</span>(<span class="pr">userId</span>));
+
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">InvalidateAsync</span>(<span class="kw">string</span> <span class="pr">userId</span>)
+        => <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">RemoveAsync</span>(<span class="tp">CacheKeys</span>.<span class="mt">UserSession</span>(<span class="pr">userId</span>)); <span class="cm">// logout!</span>
+}
+
+<span class="kw">public record</span> <span class="tp">UserContext</span>(
+    <span class="kw">int</span>    <span class="pr">UserId</span>,
+    <span class="kw">string</span> <span class="pr">Username</span>,
+    <span class="kw">string</span> <span class="pr">Role</span>,
+    <span class="kw">int</span>    <span class="pr">SchoolId</span>,
+    <span class="kw">string</span> <span class="pr">Theme</span>,         <span class="cm">// user preference</span>
+    <span class="kw">string</span> <span class="pr">Language</span>,      <span class="cm">// Tamil/English</span>
+    <span class="kw">bool</span>   <span class="pr">ShowDashboard</span>   <span class="cm">// last view</span>
+);</pre>
+</div>
+
+<!-- SECTION 8: PUB/SUB -->
+<div class="section" id="pubsub">
+  <div class="section-title"><span class="num">8</span> Redis Pub/Sub — Cache Invalidation Across Servers</div>
+
+  <pre><span class="cm">// Problem: Server A updates fee structure → invalidates its cache.
+// Server B, C still have stale cache! Need to tell ALL servers!
+// Solution: Redis Pub/Sub — broadcast invalidation event</span>
+
+<span class="cm">// Publisher — on fee structure update</span>
+<span class="kw">public class</span> <span class="tp">CacheInvalidationPublisher</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">ISubscriber</span> <span class="pr">_sub</span>;
+
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">PublishInvalidationAsync</span>(<span class="kw">string</span> <span class="pr">cacheKey</span>)
+        => <span class="kw">await</span> <span class="pr">_sub</span>.<span class="mt">PublishAsync</span>(<span class="st">"cache:invalidate"</span>, <span class="pr">cacheKey</span>);
+}
+
+<span class="cm">// Subscriber — ALL servers listen (IHostedService)</span>
+<span class="kw">public class</span> <span class="tp">CacheInvalidationListener</span> : <span class="tp">BackgroundService</span>
+{
+    <span class="kw">protected override async</span> <span class="tp">Task</span> <span class="mt">ExecuteAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="kw">var</span> <span class="pr">sub</span> = <span class="pr">_multiplexer</span>.<span class="mt">GetSubscriber</span>();
+        <span class="kw">await</span> <span class="pr">sub</span>.<span class="mt">SubscribeAsync</span>(<span class="st">"cache:invalidate"</span>, <span class="kw">async</span> (<span class="pr">channel</span>, <span class="pr">key</span>) =>
+        {
+            <span class="kw">await</span> <span class="pr">_memCache</span>.<span class="mt">RemoveAsync</span>(<span class="pr">key</span>.<span class="mt">ToString</span>()!);
+            <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"Cache invalidated: {Key}"</span>, <span class="pr">key</span>);
+        });
+
+        <span class="kw">await</span> <span class="tp">Task</span>.<span class="mt">Delay</span>(<span class="tp">Timeout</span>.<span class="pr">Infinite</span>, <span class="pr">ct</span>);
+    }
+}
+
+<span class="cm">// Fee update flow with pub/sub:</span>
+<span class="kw">await</span> <span class="pr">_feeRepo</span>.<span class="mt">UpdateAsync</span>(<span class="pr">dto</span>);                           <span class="cm">// 1. DB update</span>
+<span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">RemoveAsync</span>(<span class="tp">CacheKeys</span>.<span class="mt">FeeStructure</span>(...));      <span class="cm">// 2. Own cache</span>
+<span class="kw">await</span> <span class="pr">_publisher</span>.<span class="mt">PublishInvalidationAsync</span>(<span class="pr">cacheKey</span>);          <span class="cm">// 3. Broadcast!</span>
+<span class="cm">// → Server B, C receive message → remove from their cache!</span></pre>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">9</span> 🎯 Scenarios — Interview + Production + Critical</div>
+
+  <!-- S1 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">1</div>
+      <div><div class="scenario-title">Dashboard 8 seconds load — student/fee counts DB hit every refresh <span class="diff hard">Hard</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "ZenCampus principal dashboard — Total Students: 4823, Pending Fees: ₹2.3L, Attendance: 94%. Page refresh every 30 seconds. 200 schools × 200 principals = 40,000 dashboard queries/min. DB on fire!"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ CACHE-ASIDE + BACKGROUND REFRESH</div>
+      <pre><span class="cm">// Dashboard service with cache</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">DashboardDto</span>&gt; <span class="mt">GetDashboardAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>)
+{
+    <span class="kw">var</span> <span class="pr">key</span> = <span class="st">$"dashboard:{schoolId}"</span>;
+    <span class="kw">var</span> <span class="pr">cached</span> = <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">GetAsync</span>&lt;<span class="tp">DashboardDto</span>&gt;(<span class="pr">key</span>);
+    <span class="kw">if</span> (<span class="pr">cached</span> <span class="kw">is not null</span>) <span class="kw">return</span> <span class="pr">cached</span>;
+
+    <span class="kw">var</span> <span class="pr">data</span> = <span class="kw">new</span> <span class="tp">DashboardDto</span>
+    {
+        <span class="pr">TotalStudents</span>  = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Students</span>.<span class="mt">CountAsync</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">SchoolId</span> == <span class="pr">schoolId</span>),
+        <span class="pr">PendingFees</span>    = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">FeeRecords</span>.<span class="mt">Where</span>(<span class="pr">f</span> => <span class="pr">f</span>.<span class="pr">SchoolId</span> == <span class="pr">schoolId</span> && <span class="pr">f</span>.<span class="pr">Status</span> == <span class="st">"Pending"</span>).<span class="mt">SumAsync</span>(<span class="pr">f</span> => <span class="pr">f</span>.<span class="pr">Amount</span>),
+        <span class="pr">AttendanceRate</span> = <span class="kw">await</span> <span class="mt">CalcAttendanceAsync</span>(<span class="pr">schoolId</span>)
+    };
+    <span class="cm">// Cache 5 minutes — stale by 5 min is fine for a dashboard!</span>
+    <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">SetAsync</span>(<span class="pr">key</span>, <span class="pr">data</span>, <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">5</span>));
+    <span class="kw">return</span> <span class="pr">data</span>;
+}
+
+<span class="cm">// Background refresh — proactive warm-up before TTL expires!</span>
+<span class="cm">// Hangfire job every 4 min → refresh all active school dashboards</span>
+[<span class="at">RecurringJob</span>(<span class="st">"*/4 * * * *"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">WarmDashboardCacheAsync</span>()
+{
+    <span class="kw">var</span> <span class="pr">activeSchools</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Schools</span>
+        .<span class="mt">Where</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">IsActive</span>).<span class="mt">Select</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Id</span>).<span class="mt">ToListAsync</span>();
+    <span class="kw">foreach</span> (<span class="kw">var</span> <span class="pr">id</span> <span class="kw">in</span> <span class="pr">activeSchools</span>)
+        <span class="kw">await</span> <span class="mt">GetDashboardAsync</span>(<span class="pr">id</span>); <span class="cm">// miss → DB → cache</span>
+}
+<span class="cm">// Result: 40,000 queries/min → 50 queries every 4 minutes. 800x reduction!</span></pre>
+      <div class="gold"><div class="gold-label">⭐ Senior Add-On</div><p>"Used Stale-While-Revalidate: serve stale cache immediately, trigger background refresh. Zero wait for user, always fresh within 5 min. Dashboard load: 8s → 12ms."</p></div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num warn">2</div>
+      <div><div class="scenario-title">Fee structure update aachu — cached old amount shown to 500 students! <span class="hot-badge">🔥 Production Bug</span> <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "School admin fee structure ₹5000 → ₹5500 update பண்ணான். Fee payment page still ₹5000 show பண்றது (cache stale). 50 students ₹5000 pay பண்ணிட்டாங்க. Crisis!"</div>
+    <button class="reveal-btn warn-btn" onclick="toggle(this)">🔥 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label warn">✅ CACHE INVALIDATION ON WRITE — FIXED DESIGN</div>
+      <pre><span class="cm">// The bug: fee update doesn't invalidate cache!</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">UpdateFeeStructureAsync</span>(<span class="tp">FeeStructureDto</span> <span class="pr">dto</span>)
+{
+    <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">UpdateAsync</span>(<span class="pr">dto</span>);
+    <span class="cm">// BUG: no cache invalidation! Old data served for 30 min!</span>
+}
+
+<span class="cm">// THE FIX: always invalidate on write</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">UpdateFeeStructureAsync</span>(<span class="tp">FeeStructureDto</span> <span class="pr">dto</span>)
+{
+    <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">UpdateAsync</span>(<span class="pr">dto</span>);
+
+    <span class="cm">// Invalidate ALL related keys!</span>
+    <span class="kw">var</span> <span class="pr">tasks</span> = <span class="kw">new</span>[]
+    {
+        <span class="pr">_cache</span>.<span class="mt">RemoveAsync</span>(<span class="st">$"fee:structure:{dto.SchoolId}:{dto.Year}"</span>),
+        <span class="pr">_cache</span>.<span class="mt">RemoveAsync</span>(<span class="st">$"fee:total:{dto.SchoolId}"</span>),
+        <span class="pr">_cache</span>.<span class="mt">RemoveAsync</span>(<span class="st">$"dashboard:{dto.SchoolId}"</span>),
+        <span class="cm">// Broadcast to other servers via pub/sub</span>
+        <span class="pr">_publisher</span>.<span class="mt">PublishInvalidationAsync</span>(<span class="st">$"fee:structure:{dto.SchoolId}:{dto.Year}"</span>)
+    };
+    <span class="kw">await</span> <span class="tp">Task</span>.<span class="mt">WhenAll</span>(<span class="pr">tasks</span>);
+
+    <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"Fee structure updated + cache invalidated: School {Id}"</span>, <span class="pr">dto</span>.<span class="pr">SchoolId</span>);
+}
+
+<span class="cm">// For financial data — consider Write-Through (cache + DB together)</span>
+<span class="cm">// Or: don't cache fee amounts for payment pages — too critical for staleness!</span></pre>
+      <div class="gold"><div class="gold-label">⭐ Prevention Rule</div><p>"Never cache data that's directly used in financial transactions without explicit invalidation on update. Fee payment page should either have very short TTL (30s) or skip cache entirely — correctness &gt; performance for money!"</p></div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num warn">3</div>
+      <div><div class="scenario-title">9 AM — cache expire aachu, 500 teachers login, DB crash! Stampede! <span class="hot-badge">🔥 Critical</span> <span class="diff senior">Senior</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "School opens 9 AM. 500 teachers simultaneously login. Overnight cache expired. All 500 see miss → all 500 hit SQL Server simultaneously → DB CPU 100% → ZenCampus down. Morning chaos!"</div>
+    <button class="reveal-btn warn-btn" onclick="toggle(this)">🔥 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label warn">✅ STAMPEDE — 3-LAYER PROTECTION</div>
+      <pre><span class="cm">// Layer 1: Jitter TTL — prevent synchronized expiry!</span>
+<span class="kw">private</span> <span class="tp">TimeSpan</span> <span class="mt">WithJitter</span>(<span class="tp">TimeSpan</span> <span class="pr">base</span>)
+{
+    <span class="kw">var</span> <span class="pr">jitter</span> = <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="tp">Random</span>.<span class="pr">Shared</span>.<span class="mt">Next</span>(<span class="nm">0</span>, <span class="nm">60</span>));
+    <span class="kw">return</span> <span class="pr">base</span> + <span class="pr">jitter</span>; <span class="cm">// 1 hour + 0-60s random</span>
+}
+<span class="cm">// All 500 teacher caches won't expire at same time!</span>
+
+<span class="cm">// Layer 2: SemaphoreSlim lock (per server)</span>
+<span class="cm">// (from Section 6 — StampedeProtectedCache)</span>
+<span class="cm">// Only ONE thread per key hits DB, others wait</span>
+
+<span class="cm">// Layer 3: Background warm-up before school hours</span>
+<span class="cm">// Hangfire cron: 8:30 AM — warm all school caches</span>
+[<span class="at">RecurringJob</span>(<span class="st">"30 8 * * 1-6"</span>)] <span class="cm">// 8:30 AM Mon-Sat</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">PreWarmCachesAsync</span>()
+{
+    <span class="kw">var</span> <span class="pr">schools</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Schools</span>.<span class="mt">Where</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">IsActive</span>).<span class="mt">ToListAsync</span>();
+
+    <span class="cm">// Parallel warm — but throttled to not overwhelm DB</span>
+    <span class="kw">await</span> <span class="tp">Parallel</span>.<span class="mt">ForEachAsync</span>(<span class="pr">schools</span>,
+        <span class="kw">new</span> <span class="tp">ParallelOptions</span> { <span class="pr">MaxDegreeOfParallelism</span> = <span class="nm">10</span> },
+        <span class="kw">async</span> (<span class="pr">school</span>, <span class="pr">_</span>) =>
+        {
+            <span class="kw">await</span> <span class="mt">GetDashboardAsync</span>(<span class="pr">school</span>.<span class="pr">Id</span>);
+            <span class="kw">await</span> <span class="mt">GetFeeStructureAsync</span>(<span class="pr">school</span>.<span class="pr">Id</span>);
+            <span class="kw">await</span> <span class="mt">GetSchoolAsync</span>(<span class="pr">school</span>.<span class="pr">Id</span>);
+        });
+
+    <span class="pr">_log</span>.<span class="mt">LogInformation</span>(<span class="st">"Pre-warmed {Count} school caches"</span>, <span class="pr">schools</span>.<span class="pr">Count</span>);
+}
+<span class="cm">// 9 AM stampede → 500 teachers get pre-warmed cache hits!</span></pre>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div><div class="scenario-title">Redis down — ZenCampus completely down! Graceful degradation <span class="diff senior">Senior</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Azure Redis cache server restart ஆச்சு. ZenCampus app-la NullReferenceException everywhere — all cache reads fail. App completely down. Cache failure = app failure — that's wrong design!"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ RESILIENT CACHE — FALLBACK TO DB</div>
+      <pre><span class="cm">// Cache should NEVER be single point of failure!
+// If Redis down → slow (DB) but NOT down</span>
+
+<span class="kw">public class</span> <span class="tp">ResilientCacheService</span> : <span class="tp">ICacheService</span>
+{
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">T</span>?&gt; <span class="mt">GetAsync</span>&lt;<span class="tp">T</span>&gt;(<span class="kw">string</span> <span class="pr">key</span>)
+    {
+        <span class="kw">try</span>
+        {
+            <span class="kw">var</span> <span class="pr">bytes</span> = <span class="kw">await</span> <span class="pr">_cache</span>.<span class="mt">GetAsync</span>(<span class="pr">key</span>);
+            <span class="kw">return</span> <span class="pr">bytes</span> <span class="kw">is null</span>
+                ? <span class="kw">default</span>
+                : <span class="tp">JsonSerializer</span>.<span class="mt">Deserialize</span>&lt;<span class="tp">T</span>&gt;(<span class="pr">bytes</span>);
+        }
+        <span class="kw">catch</span> (<span class="tp">RedisException</span> <span class="pr">ex</span>)
+        {
+            <span class="cm">// Log but DON'T throw — Redis down = cache miss, not app crash!</span>
+            <span class="pr">_log</span>.<span class="mt">LogWarning</span>(<span class="pr">ex</span>, <span class="st">"Redis unavailable for key {Key} — falling back to DB"</span>, <span class="pr">key</span>);
+            <span class="kw">return default</span>; <span class="cm">// treat as cache miss</span>
+        }
+    }
+
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">SetAsync</span>&lt;<span class="tp">T</span>&gt;(<span class="kw">string</span> <span class="pr">key</span>, <span class="tp">T</span> <span class="pr">value</span>, <span class="tp">TimeSpan</span> <span class="pr">ttl</span>)
+    {
+        <span class="kw">try</span> { <span class="cm">/* normal set */</span> }
+        <span class="kw">catch</span> (<span class="tp">RedisException</span> <span class="pr">ex</span>)
+        {
+            <span class="pr">_log</span>.<span class="mt">LogWarning</span>(<span class="pr">ex</span>, <span class="st">"Redis set failed for {Key} — skipping cache"</span>, <span class="pr">key</span>);
+            <span class="cm">// Don't throw — app continues with DB-only mode!</span>
+        }
+    }
+}
+
+<span class="cm">// Add Polly resilience (recommended for prod)</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddResiliencePipeline</span>(<span class="st">"redis"</span>, <span class="pr">b</span> => <span class="pr">b</span>
+    .<span class="mt">AddCircuitBreaker</span>(<span class="kw">new</span> <span class="tp">CircuitBreakerStrategyOptions</span>
+    {
+        <span class="pr">FailureRatio</span>       = <span class="nm">0.5</span>,  <span class="cm">// 50% failure → open circuit</span>
+        <span class="pr">SamplingDuration</span>   = <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">10</span>),
+        <span class="pr">BreakDuration</span>      = <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">30</span>)
+    })
+    .<span class="mt">AddRetry</span>(<span class="kw">new</span> <span class="tp">RetryStrategyOptions</span> { <span class="pr">MaxRetryAttempts</span> = <span class="nm">2</span> }));</pre>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div><div class="scenario-title">Rate limiting for SMS OTP — Redis counter approach <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "ZenCampus parent login — SMS OTP. User can request OTP spam பண்றான் (100 OTPs/minute to same phone = ₹100 SMS cost + abuse). Rate limit implement பண்ணு using Redis."</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ REDIS COUNTER RATE LIMITER</div>
+      <pre><span class="cm">// Redis atomic increment — thread-safe, distributed!</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">bool</span>&gt; <span class="mt">IsAllowedAsync</span>(<span class="kw">string</span> <span class="pr">phone</span>)
+{
+    <span class="kw">var</span> <span class="pr">key</span>   = <span class="st">$"rate:otp:{phone}:{DateTime.UtcNow:yyyyMMddHHmm}"</span>; <span class="cm">// per minute</span>
+    <span class="kw">var</span> <span class="pr">count</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">StringIncrementAsync</span>(<span class="pr">key</span>); <span class="cm">// atomic +1</span>
+
+    <span class="kw">if</span> (<span class="pr">count</span> == <span class="nm">1</span>)
+        <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">KeyExpireAsync</span>(<span class="pr">key</span>, <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">1</span>)); <span class="cm">// set TTL on first hit</span>
+
+    <span class="kw">if</span> (<span class="pr">count</span> > <span class="nm">3</span>) <span class="cm">// max 3 OTPs per minute</span>
+    {
+        <span class="pr">_log</span>.<span class="mt">LogWarning</span>(<span class="st">"OTP rate limit hit for {Phone}"</span>, <span class="pr">phone</span>);
+        <span class="kw">return false</span>;
+    }
+    <span class="kw">return true</span>;
+}
+
+<span class="cm">// Sliding window — more precise</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">bool</span>&gt; <span class="mt">SlidingWindowAllowedAsync</span>(<span class="kw">string</span> <span class="pr">phone</span>)
+{
+    <span class="kw">var</span> <span class="pr">key</span> = <span class="st">$"rate:otp:sliding:{phone}"</span>;
+    <span class="kw">var</span> <span class="pr">now</span> = <span class="tp">DateTimeOffset</span>.<span class="pr">UtcNow</span>.<span class="pr">ToUnixTimeMilliseconds</span>();
+
+    <span class="cm">// Add current timestamp to sorted set</span>
+    <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">SortedSetAddAsync</span>(<span class="pr">key</span>, <span class="pr">now</span>.<span class="mt">ToString</span>(), <span class="pr">now</span>);
+    <span class="cm">// Remove entries older than 1 minute</span>
+    <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">SortedSetRemoveRangeByScoreAsync</span>(<span class="pr">key</span>, <span class="nm">0</span>, <span class="pr">now</span> - <span class="nm">60000</span>);
+    <span class="cm">// Count requests in last 1 minute</span>
+    <span class="kw">var</span> <span class="pr">count</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">SortedSetLengthAsync</span>(<span class="pr">key</span>);
+    <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">KeyExpireAsync</span>(<span class="pr">key</span>, <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">2</span>));
+
+    <span class="kw">return</span> <span class="pr">count</span> <= <span class="nm">3</span>;
+}</pre>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div><div class="scenario-title">IMemoryCache vs IDistributedCache — when to use which? <span class="diff easy">Easy</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Interviewer: 'IMemoryCache vs IDistributedCache — difference? ZenCampus-la both use பண்ணுவியா? When?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ CLEAR ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong style="color:#bef264">IMemoryCache:</strong> Stored in app server's own RAM. No network hop = ultra-fast (~0.01ms). But: each server has its own copy. Load balancer routes user to Server B — Server B has empty cache, misses! Data lost on restart. Only for single-server or data OK to be per-server (like compiled Razor pages, singleton config).</p>
+        <p><strong style="color:#f39c12">IDistributedCache (Redis):</strong> External Redis server. All app servers share same cache. Network hop = 0.3ms vs 0.01ms — but consistent! Session, fee structure, school data — one source of truth across all servers.</p>
+        <p><strong style="color:#2ecc71">ZenCampus:</strong> IMemoryCache for HttpContext.Items (request-scoped), static lookup tables loaded at startup. IDistributedCache (Redis) for everything else: school data, fee structure, user sessions, dashboard, rate limiting.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div><div class="scenario-title">Load balanced app — 3 servers, cache inconsistency bug <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "ZenCampus 3 app servers behind load balancer. School admin Server A-la fee update பண்றான். Server A cache invalidate ஆச்சு. Server B, C — still old fee amount cache-la. Teachers on B, C see wrong amount. How to fix?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ REDIS PUB/SUB BROADCAST</div>
+      <pre><span class="cm">// The problem: each server has its own IMemoryCache layer
+// Server A invalidates own memory cache. B, C don't know!
+
+// Fix Option 1: Don't use IMemoryCache at all — Redis only
+// All 3 servers share Redis — one invalidation = all servers updated!
+
+// Fix Option 2: IMemoryCache + Redis Pub/Sub (for ultra-performance)
+// Server A: update DB → remove Redis key → publish "cache:invalidate" event
+// Server B, C: subscribed → remove from their IMemoryCache too!</span>
+
+<span class="cm">// BackgroundService on ALL servers</span>
+<span class="kw">protected override async</span> <span class="tp">Task</span> <span class="mt">ExecuteAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+{
+    <span class="kw">var</span> <span class="pr">sub</span> = <span class="pr">_multiplexer</span>.<span class="mt">GetSubscriber</span>();
+    <span class="kw">await</span> <span class="pr">sub</span>.<span class="mt">SubscribeAsync</span>(<span class="st">"cache:invalidate"</span>, (<span class="pr">_</span>, <span class="pr">key</span>) =>
+    {
+        <span class="pr">_memCache</span>.<span class="mt">Remove</span>(<span class="pr">key</span>.<span class="mt">ToString</span>()!); <span class="cm">// Server B, C local cache cleared!</span>
+        <span class="pr">_log</span>.<span class="mt">LogDebug</span>(<span class="st">"Local cache cleared: {Key}"</span>, <span class="pr">key</span>);
+    });
+    <span class="kw">await</span> <span class="tp">Task</span>.<span class="mt">Delay</span>(<span class="tp">Timeout</span>.<span class="pr">Infinite</span>, <span class="pr">ct</span>);
+}
+<span class="cm">// Fee update: Server A → DB + Redis Pub/Sub
+// → Server B, C receive "fee:structure:42:2026-27" message
+// → Both remove local memory cache
+// → Next request: IMemoryCache miss → Redis (fresh) → return!
+// Consistency across all 3 servers!</span></pre>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div><div class="scenario-title">What NOT to cache — student payment record, exam result <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Interviewer: 'ZenCampus-la everything cache panna vendama? What should NOT be cached?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ WHAT NOT TO CACHE</div>
+      <table style="font-size:0.83em">
+        <tr><th>Data</th><th>Why NOT cache</th><th>Alternative</th></tr>
+        <tr><td class="red">Individual fee payment</td><td>Real-time accuracy needed, changes every payment</td><td>DB direct, short TTL (30s) max</td></tr>
+        <tr><td class="red">Live attendance marking</td><td>Teacher marking → must reflect immediately</td><td>Skip cache, DB write + invalidate</td></tr>
+        <tr><td class="red">Exam results (during entry)</td><td>Active changes, stale = wrong marks shown</td><td>Cache only AFTER finalization</td></tr>
+        <tr><td class="red">User permissions</td><td>Role change must take effect immediately</td><td>Short TTL (30s) or JWT claims-based</td></tr>
+        <tr><td class="yellow">Student balance</td><td>Financial — stale = wrong amount charged</td><td>Cache with write-through, invalidate on payment</td></tr>
+        <tr><td class="green">School master data</td><td>Changes rarely (school name, address)</td><td>1 hour TTL + invalidate on update ✅</td></tr>
+        <tr><td class="green">Fee structure</td><td>Per-term change, admin-controlled</td><td>30 min TTL + invalidate on update ✅</td></tr>
+        <tr><td class="green">Dashboard counts</td><td>Approximate OK (5 min stale fine)</td><td>5 min TTL ✅</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div><div class="scenario-title">Redis data structures — beyond strings <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Interviewer: 'Redis sirf string cache தான் use பண்ண முடியுமா? Other data structures use case sollu.'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ REDIS DATA STRUCTURES — ZenCampus USE CASES</div>
+      <pre><span class="cm">// String — JSON serialized objects (most common)</span>
+<span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">StringSetAsync</span>(<span class="st">"school:42"</span>, <span class="tp">JsonSerializer</span>.<span class="mt">Serialize</span>(<span class="pr">school</span>));
+
+<span class="cm">// Hash — user session (field-level access, no deserialization)</span>
+<span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">HashSetAsync</span>(<span class="st">"session:user:101"</span>, <span class="kw">new</span> <span class="tp">HashEntry</span>[]
+{
+    <span class="kw">new</span>(<span class="st">"role"</span>,     <span class="st">"Teacher"</span>),
+    <span class="kw">new</span>(<span class="st">"schoolId"</span>, <span class="st">"42"</span>),
+    <span class="kw">new</span>(<span class="st">"theme"</span>,    <span class="st">"dark"</span>)
+});
+<span class="kw">var</span> <span class="pr">role</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">HashGetAsync</span>(<span class="st">"session:user:101"</span>, <span class="st">"role"</span>);
+
+<span class="cm">// Set — online users per school (real-time presence)</span>
+<span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">SetAddAsync</span>(<span class="st">$"online:school:42"</span>, <span class="pr">userId</span>);
+<span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">SetRemoveAsync</span>(<span class="st">$"online:school:42"</span>, <span class="pr">userId</span>); <span class="cm">// logout</span>
+<span class="kw">var</span> <span class="pr">onlineCount</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">SetLengthAsync</span>(<span class="st">$"online:school:42"</span>);
+
+<span class="cm">// Sorted Set — leaderboard (attendance ranking, exam ranking)</span>
+<span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">SortedSetAddAsync</span>(<span class="st">"rank:exam:term1:school:42"</span>, <span class="st">"student:101"</span>, <span class="nm">95.5</span>);
+<span class="kw">var</span> <span class="pr">topStudents</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">SortedSetRangeByRankWithScoresAsync</span>(
+    <span class="st">"rank:exam:term1:school:42"</span>, <span class="nm">0</span>, <span class="nm">9</span>, <span class="tp">Order</span>.<span class="pr">Descending</span>); <span class="cm">// top 10</span>
+
+<span class="cm">// List — notification queue, recent activities</span>
+<span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">ListLeftPushAsync</span>(<span class="st">$"notifications:user:{userId}"</span>, <span class="pr">message</span>);
+<span class="kw">var</span> <span class="pr">recent</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">ListRangeAsync</span>(<span class="st">$"notifications:user:{userId}"</span>, <span class="nm">0</span>, <span class="nm">9</span>);
+
+<span class="cm">// Counter (atomic) — dashboard, rate limiting</span>
+<span class="kw">var</span> <span class="pr">todayLogins</span> = <span class="kw">await</span> <span class="pr">_redis</span>.<span class="mt">StringIncrementAsync</span>(<span class="st">$"counter:logins:{today}"</span>);</pre>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div><div class="scenario-title">"Redis caching experience sollu" — Full Interview Answer <span class="diff senior">Senior</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Interviewer: 'Redis/caching ZenCampus-la how did you use? Performance impact? Issues faced?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE INTERVIEW ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p>"ZenCampus — 200 schools, 50k students. Azure Cache for Redis (Standard tier). Used IDistributedCache + StackExchange.Redis directly for advanced features."</p>
+        <p><strong>Cache-Aside pattern:</strong> School master data (1h TTL), fee structure (30min), dashboard counts (5min). DB queries/min: 40,000 → 50 (800x reduction). Dashboard load: 8s → 12ms.</p>
+        <p><strong>Cache invalidation:</strong> On every write, invalidate related keys. Used Redis Pub/Sub to broadcast invalidation across 3 load-balanced app servers — all servers stay consistent.</p>
+        <p><strong>Stampede protection:</strong> Jitter TTL (avoid synchronized expiry) + SemaphoreSlim per-key lock + Hangfire background warm-up at 8:30 AM before school opens. Zero morning stampede incidents.</p>
+        <p><strong>Advanced features:</strong> Sorted sets for exam rank leaderboard. Hash for user session. Atomic INCR for OTP rate limiting (3/minute per phone). Set for online user presence per school.</p>
+        <p><strong>Resilience:</strong> Wrapped in try/catch — Redis failure = cache miss, NOT app crash. Polly circuit breaker: 50% Redis failures → open circuit 30 sec → prevent cascade.</p>
+        <p><strong>Issue faced:</strong> Cache stampede 9 AM + fee structure stale data. Fixed with pre-warm job + explicit invalidation on write. Learned: cache is optimization, correctness must not be sacrificed!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">10</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: 3 servers behind load balancer. IMemoryCache use பண்ணா — problem?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) No problem — all servers share IMemoryCache automatically</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Each server has its own cache — cache miss on different servers, inconsistency!</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) IMemoryCache works fine with load balancers</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Only problem if sticky sessions not enabled</div>
+    <div class="quiz-fb ok">✅ IMemoryCache = in-process, per-server. 3 servers = 3 independent caches. Server A caches school:42. User routed to Server B = cache miss! Use IDistributedCache (Redis) for shared cache across all servers!</div>
+    <div class="quiz-fb nope">❌ IMemoryCache lives in the app process — each server has completely separate memory! One server's cache is invisible to others. Multi-server = must use Redis (IDistributedCache)!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: Cache stampede fix — which is MOST effective?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Increase Redis server RAM</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Longer TTL — cache expires less often</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) SemaphoreSlim per-key lock + Jitter TTL + Background pre-warm</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Use NOLOCK hint in SQL</div>
+    <div class="quiz-fb ok">✅ Stampede = simultaneous cache miss → DB flood. 3-layer fix: (1) Jitter TTL — stagger expiry, not all at once. (2) Lock — only 1 request hits DB, others wait. (3) Pre-warm — cache ready before rush hour. No stampede!</div>
+    <div class="quiz-fb nope">❌ Longer TTL reduces frequency but doesn't prevent stampede when it expires! Need: Jitter TTL (stagger expiry) + distributed lock (1 DB call, others wait) + background pre-warm (proactive refresh)!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: KEYS * command production Redis-la use பண்ணலாமா?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Yes — it's the standard way to find keys by pattern</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Never! KEYS blocks entire Redis server — use SCAN with cursor instead</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) OK for Redis with fewer than 10,000 keys</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Only avoid in Azure, OK on self-hosted Redis</div>
+    <div class="quiz-fb ok">✅ KEYS is O(N) — blocks entire Redis while scanning. 1 million keys = 500ms block = all other Redis commands queued! Use SCAN cursor: iterates 100 keys at a time, non-blocking. Production Redis always SCAN, never KEYS!</div>
+    <div class="quiz-fb nope">❌ NEVER KEYS in production! Redis is single-threaded — KEYS blocks ALL other commands while it scans. With millions of keys = seconds of complete Redis unavailability. Always use SCAN (cursor-based, batched, non-blocking)!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: Redis down ஆனா — application down ஆகணுமா?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Yes — cache is critical infrastructure</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) No — cache miss → fallback to DB. Slow but functional!</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Only if using session storage</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Application should retry Redis forever</div>
+    <div class="quiz-fb ok">✅ Cache = performance optimization, NOT required for correctness. Redis down → catch RedisException → return default (cache miss) → DB handles it. App is slower but operational. Session in Redis needs special handling — cookie fallback or JWT!</div>
+    <div class="quiz-fb nope">❌ Cache is optional! Wrap all Redis calls in try/catch. Failure = treat as cache miss → fall through to DB. Polly circuit breaker stops retrying a dead Redis. App degrades gracefully — slower, not broken!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">11</span> ✅ Day 11 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory (60 min)</h3>
+      <ul class="check-list">
+        <li>IMemoryCache vs IDistributedCache — when each</li>
+        <li>Cache-Aside pattern — check, miss, load, store</li>
+        <li>TTL strategy per data type</li>
+        <li>Cache invalidation on write</li>
+        <li>Stampede — jitter + lock + pre-warm</li>
+        <li>Redis Pub/Sub for multi-server invalidation</li>
+        <li>SCAN vs KEYS (never KEYS in prod!)</li>
+        <li>Redis data structures — String/Hash/Set/SortedSet/List</li>
+        <li>Graceful degradation on Redis failure</li>
+      </ul>
+    </div>
+    <div>
+      <h3>💻 Hands-On (60 min)</h3>
+      <ul class="check-list">
+        <li>AddStackExchangeRedisCache in Program.cs</li>
+        <li>RedisCacheService wrapper — Get/Set/Remove</li>
+        <li>GetOrCreateAsync generic helper</li>
+        <li>School data cache + invalidation on update</li>
+        <li>StampedeProtectedCache with SemaphoreSlim</li>
+        <li>OTP rate limiter with StringIncrementAsync</li>
+        <li>User session Hash storage</li>
+        <li>Exam leaderboard with SortedSet</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Key Interview Phrases</h3>
+      <ul class="check-list">
+        <li>"Cache-Aside — check, miss, DB, store"</li>
+        <li>"Invalidate on write — stale data = bug"</li>
+        <li>"Stampede = jitter TTL + lock + pre-warm"</li>
+        <li>"NEVER KEYS in prod — use SCAN"</li>
+        <li>"Redis down = cache miss, not app crash"</li>
+        <li>"Pub/Sub for multi-server consistency"</li>
+        <li>"Don't cache financial transaction data"</li>
+        <li>"800x DB reduction with 5-min dashboard cache"</li>
+      </ul>
+    </div>
+    <div>
+      <h3>⚠️ Common Mistakes</h3>
+      <ul class="check-list">
+        <li>Caching without invalidation on update</li>
+        <li>IMemoryCache in load-balanced env</li>
+        <li>KEYS command in production Redis</li>
+        <li>No try/catch → Redis crash = app crash</li>
+        <li>Caching fee/payment amounts (stale risk)</li>
+        <li>Same TTL for all keys (synchronized expiry)</li>
+        <li>No double-check after acquiring lock</li>
+        <li>Forgetting to invalidate dependent keys</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#0a1a00,#0a0a1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">⚡ Day 11 Motivation</div>
+    <p style="color:#bef264;font-style:italic">"Baasha notes check பண்றான் — cache hit. File room po — cache miss. Redis = notes = RAM speed. ZenCampus dashboard 8 seconds → 12ms — that's cache power! <strong>Interview-la: 'Cache-Aside implement பண்ணி 800x DB load reduce பண்ணேன், Pub/Sub-la multi-server invalidation, Stampede protection with SemaphoreSlim + pre-warm' — Senior level confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 11/60 ✅ | Tomorrow: Day 12 — Background Jobs (Hangfire, IHostedService, Worker Services, Queues)</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:18.3%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">11 of 60 days (18.3%) — Caching mastered!</div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p>Day 11 – Redis Caching | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">⚡ "Cache-Aside = Baasha notes. Stampede = Sarpatta gate rush. Invalidation = Thuppakki outdated intel. SCAN not KEYS. Redis down ≠ App down!"</p>
+</footer>
+
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent=btn.classList.contains('warn-btn')?'🔥 Answer Reveal':'💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

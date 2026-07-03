@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 3 — Async/Await + LINQ + Generics + Delegates · ZenCampus</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; line-height: 1.7; }
+  header { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); padding: 32px 20px; text-align: center; border-bottom: 3px solid #e94560; }
+  header h1 { font-size: 2em; color: #e94560; text-shadow: 0 0 20px #e9456088; }
+  header p  { color: #a0a0c0; margin-top: 8px; }
+  .badge { display: inline-block; background: #e94560; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.78em; margin: 4px; }
+  .container { max-width: 1150px; margin: 0 auto; padding: 20px; }
+
+  /* sections */
+  .section { margin: 36px 0; border-radius: 12px; overflow: hidden; border: 1px solid #2a2a4a; }
+  .section-header { padding: 16px 24px; font-size: 1.2em; font-weight: bold; display: flex; align-items: center; gap: 12px; }
+  .section-body { padding: 20px 24px; background: #13132a; }
+  .async-sec  .section-header { background: linear-gradient(90deg, #1a3d5c, #1e6091); }
+  .linq-sec   .section-header { background: linear-gradient(90deg, #3d1a5c, #8e44ad); }
+  .gen-sec    .section-header { background: linear-gradient(90deg, #1a3d2a, #27ae60); }
+  .del-sec    .section-header { background: linear-gradient(90deg, #3d2a1a, #e67e22); }
+
+  /* cards */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; margin-top: 16px; }
+  .card { background: #1a1a35; border-radius: 10px; padding: 18px; border-left: 4px solid #e94560; transition: transform .2s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px #e9456033; }
+  .card-title { font-size: 1.05em; font-weight: bold; color: #fff; margin-bottom: 8px; }
+  .card-sub   { font-size: .78em; color: #e94560; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+
+  /* code */
+  pre  { background: #0d1117; border-radius: 8px; padding: 14px; overflow-x: auto; font-size: .82em; font-family: 'Consolas', monospace; color: #e0e0e0; margin: 10px 0; border: 1px solid #2a2a4a; line-height: 1.6; }
+  .kw  { color: #569cd6; }
+  .str { color: #ce9178; }
+  .cmt { color: #6a9955; }
+  .num { color: #b5cea8; }
+  .typ { color: #4ec9b0; }
+  .fn  { color: #dcdcaa; }
+  .prop{ color: #9cdcfe; }
+  code { background: #0d1117; color: #f97316; padding: 2px 7px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: .83em; }
+
+  /* callouts */
+  .movie-ref    { background: #1a0f2e; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #c39bd3; border-left: 3px solid #8e44ad; }
+  .movie-ref .film { color: #f39c12; font-weight: bold; }
+  .zencampus    { background: #0a2010; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #a8e6cf; border-left: 3px solid #27ae60; }
+  .zencampus .label { color: #2ecc71; font-weight: bold; font-size: .8em; }
+  .interview-qa { background: #1a0a0a; border-radius: 6px; padding: 12px 14px; margin: 10px 0; border-left: 3px solid #e74c3c; }
+  .interview-qa .q { color: #e74c3c; font-size: .8em; font-weight: bold; }
+  .interview-qa .a { color: #c0c0c0; font-size: .85em; margin-top: 4px; }
+  .tanglish     { background: #1a1500; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #f9ca24; border-left: 3px solid #f9ca24; }
+  .trap         { background: #1a0000; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #ff6b6b; border-left: 3px solid #e74c3c; }
+  .trap .label  { color: #e74c3c; font-weight: bold; }
+  .tip-box      { background: #1a1000; border: 1px solid #f39c12; border-radius: 8px; padding: 14px; margin: 14px 0; }
+  .tip-box .tip-title { color: #f39c12; font-weight: bold; margin-bottom: 6px; }
+  .good-bad     { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+  .good         { background: #0a2010; border-radius: 6px; padding: 10px; border-left: 3px solid #27ae60; font-size: .82em; }
+  .bad          { background: #1a0000; border-radius: 6px; padding: 10px; border-left: 3px solid #e74c3c; font-size: .82em; }
+  .good .lbl    { color: #2ecc71; font-weight: bold; font-size: .78em; }
+  .bad  .lbl    { color: #e74c3c; font-weight: bold; font-size: .78em; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .84em; }
+  th { background: #1e3a5f; color: #74b9ff; padding: 10px; text-align: left; }
+  td { padding: 8px 10px; border-bottom: 1px solid #2a2a4a; color: #c0c0c0; }
+  tr:hover td { background: #1a1a35; }
+  h3 { color: #74b9ff; margin: 18px 0 10px; font-size: 1em; }
+
+  footer { text-align: center; padding: 30px; color: #555; border-top: 1px solid #2a2a4a; margin-top: 40px; }
+  @media(max-width:600px){ .card-grid{ grid-template-columns:1fr; } .good-bad{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ Part 3 — Async/Await · LINQ · Generics · Delegates</h1>
+  <p>ZenCampus Edition · Syntax + Live Examples + Tamil Movie Memory + Interview Answers</p>
+  <div style="margin-top:10px">
+    <span class="badge">async / await</span>
+    <span class="badge">Task.WhenAll</span>
+    <span class="badge">CancellationToken</span>
+    <span class="badge">LINQ Operators</span>
+    <span class="badge">IQueryable vs IEnumerable</span>
+    <span class="badge">Generics</span>
+    <span class="badge">Delegates</span>
+    <span class="badge">Func / Action</span>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — ASYNC / AWAIT
+════════════════════════════════════════════ -->
+<div class="section async-sec" id="async">
+  <div class="section-header">⚡ Async / Await — Non-Blocking C#</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Enthiran (2010) — Chitti:</span>
+      Chitti oru nanosecond-la 1000 calculations parallel panuvan. <code>async/await</code> = same logic —
+      oru task wait panna, thread block aagaadu — parallel-a other work continue aagum.
+      <code>Task.WhenAll()</code> = Chitti's multi-threaded brain!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- BASIC ASYNC -->
+      <div class="card">
+        <div class="card-sub">Syntax — Foundation</div>
+        <div class="card-title">async / await — Basic Pattern</div>
+        <pre><span class="cmt">// async method — returns Task or Task&lt;T&gt;</span>
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">Student</span>&gt; <span class="fn">GetStudentAsync</span>(<span class="kw">int</span> <span class="prop">id</span>)
+{
+    <span class="cmt">// await = release thread until DB responds</span>
+    <span class="kw">var</span> <span class="prop">student</span> = <span class="kw">await</span> <span class="prop">_repo</span>
+                        .<span class="fn">GetByIdAsync</span>(<span class="prop">id</span>);
+
+    <span class="kw">if</span> (<span class="prop">student</span> <span class="kw">is null</span>)
+        <span class="kw">throw new</span> <span class="typ">KeyNotFoundException</span>(
+            <span class="str">$"Student {id} not found"</span>);
+
+    <span class="kw">return</span> <span class="prop">student</span>;
+}
+
+<span class="cmt">// void async — fire and forget (avoid in APIs!)</span>
+<span class="kw">public async void</span> <span class="fn">SendNotification</span>(<span class="kw">string</span> <span class="prop">msg</span>)
+{
+    <span class="kw">await</span> <span class="prop">_sms</span>.<span class="fn">SendAsync</span>(<span class="prop">msg</span>);
+}
+
+<span class="cmt">// Return types summary</span>
+<span class="kw">async</span> <span class="typ">Task</span>          <span class="fn">DoWorkAsync</span>()  { } <span class="cmt">// no return value</span>
+<span class="kw">async</span> <span class="typ">Task</span>&lt;<span class="kw">int</span>&gt;    <span class="fn">CountAsync</span>()  { <span class="kw">return</span> <span class="num">5</span>; }
+<span class="kw">async</span> <span class="typ">ValueTask</span>&lt;<span class="kw">int</span>&gt; <span class="fn">FastAsync</span>()  { <span class="kw">return</span> <span class="num">5</span>; }</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: What does await actually do?</div>
+          <div class="a">await = method-a pause panni current thread-a release pannum — thread pool-ku return aagum. DB response varum podhu, execution resume aagum (same or different thread). Thread block aagaadu = scalability!</div>
+        </div>
+        <div class="trap">
+          <div class="label">⚠️ Trap: async void — never use in APIs!</div>
+          Exception catch panna mudiyaadu. Fire-and-forget ok, but background jobs-ku
+          <code>Task</code> return + <code>_ = Task.Run(...)</code> use pannu.
+        </div>
+      </div>
+
+      <!-- TASK.WHENALL -->
+      <div class="card">
+        <div class="card-sub">Syntax — Parallel Await</div>
+        <div class="card-title">Task.WhenAll · Task.WhenAny · Task.Run</div>
+        <pre><span class="cmt">// Task.WhenAll — parallel execution</span>
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">StudentDashboard</span>&gt;
+    <span class="fn">GetDashboardAsync</span>(<span class="kw">int</span> <span class="prop">studentId</span>)
+{
+    <span class="cmt">// All 3 start simultaneously!</span>
+    <span class="kw">var</span> <span class="prop">studentTask</span>    = <span class="prop">_repo</span>.<span class="fn">GetStudentAsync</span>(<span class="prop">studentId</span>);
+    <span class="kw">var</span> <span class="prop">attendanceTask</span> = <span class="prop">_att</span>.<span class="fn">GetSummaryAsync</span>(<span class="prop">studentId</span>);
+    <span class="kw">var</span> <span class="prop">feesTask</span>       = <span class="prop">_fee</span>.<span class="fn">GetBalanceAsync</span>(<span class="prop">studentId</span>);
+
+    <span class="cmt">// Wait for ALL to complete</span>
+    <span class="kw">await</span> <span class="typ">Task</span>.<span class="fn">WhenAll</span>(<span class="prop">studentTask</span>,
+                        <span class="prop">attendanceTask</span>,
+                        <span class="prop">feesTask</span>);
+
+    <span class="kw">return new</span> <span class="typ">StudentDashboard</span>
+    {
+        <span class="prop">Student</span>    = <span class="prop">studentTask</span>.<span class="prop">Result</span>,
+        <span class="prop">Attendance</span> = <span class="prop">attendanceTask</span>.<span class="prop">Result</span>,
+        <span class="prop">FeeBalance</span> = <span class="prop">feesTask</span>.<span class="prop">Result</span>
+    };
+}
+
+<span class="cmt">// Task.WhenAny — first one wins</span>
+<span class="kw">var</span> <span class="prop">first</span> = <span class="kw">await</span> <span class="typ">Task</span>.<span class="fn">WhenAny</span>(
+    <span class="fn">TryPrimaryServer</span>(),
+    <span class="fn">TryFallbackServer</span>());
+<span class="kw">var</span> <span class="prop">result</span> = <span class="kw">await</span> <span class="prop">first</span>;
+
+<span class="cmt">// Task.Run — CPU-bound work off UI thread</span>
+<span class="kw">var</span> <span class="prop">report</span> = <span class="kw">await</span> <span class="typ">Task</span>.<span class="fn">Run</span>(() =&gt;
+    <span class="fn">GeneratePdfReport</span>(<span class="prop">data</span>));</pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus — Dashboard 3x faster:</div>
+          Sequential: 300ms + 200ms + 150ms = 650ms<br>
+          <code>Task.WhenAll</code>: max(300, 200, 150) = <strong>300ms only!</strong>
+        </div>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: WhenAll vs WhenAny?</div>
+          <div class="a">WhenAll = all complete aana mattum continue. WhenAny = first one complete aana continue. Timeout pattern-ku WhenAny + delay task use panrom.</div>
+        </div>
+      </div>
+
+      <!-- CANCELLATION TOKEN -->
+      <div class="card">
+        <div class="card-sub">Syntax — Cancellation</div>
+        <div class="card-title">CancellationToken — Stop Mid-Flight</div>
+        <pre><span class="cmt">// Controller — token auto-injected</span>
+[<span class="typ">HttpGet</span>(<span class="str">"{id}"</span>)]
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="fn">Get</span>(
+    <span class="kw">int</span> <span class="prop">id</span>,
+    <span class="typ">CancellationToken</span> <span class="prop">ct</span>)   <span class="cmt">// ← auto from HTTP</span>
+{
+    <span class="kw">var</span> <span class="prop">student</span> = <span class="kw">await</span> <span class="prop">_repo</span>
+                        .<span class="fn">GetByIdAsync</span>(<span class="prop">id</span>, <span class="prop">ct</span>);
+    <span class="kw">return</span> <span class="fn">Ok</span>(<span class="prop">student</span>);
+}
+
+<span class="cmt">// Repository — pass token to Dapper</span>
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">Student</span>&gt; <span class="fn">GetByIdAsync</span>(
+    <span class="kw">int</span> <span class="prop">id</span>, <span class="typ">CancellationToken</span> <span class="prop">ct</span>)
+{
+    <span class="kw">return await</span> <span class="prop">_db</span>.<span class="fn">QueryFirstOrDefaultAsync</span>&lt;<span class="typ">Student</span>&gt;(
+        <span class="kw">new</span> <span class="typ">CommandDefinition</span>(
+            <span class="str">"SELECT * FROM Students WHERE Id=@Id"</span>,
+            <span class="kw">new</span> { <span class="prop">Id</span> = <span class="prop">id</span> },
+            <span class="prop">cancellationToken</span>: <span class="prop">ct</span>));
+}
+
+<span class="cmt">// Manual cancel after timeout</span>
+<span class="kw">using var</span> <span class="prop">cts</span> =
+    <span class="kw">new</span> <span class="typ">CancellationTokenSource</span>(<span class="typ">TimeSpan</span>
+        .<span class="fn">FromSeconds</span>(<span class="num">5</span>));
+<span class="kw">await</span> <span class="fn">DoWorkAsync</span>(<span class="prop">cts</span>.<span class="prop">Token</span>);</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Why CancellationToken?</div>
+          <div class="a">User browser close panna / request cancel panna — DB query still runs waste aagum. CancellationToken = request cancelled-a DB query-um cancel aagum. Resource save! ZenCampus report generation-la use panrom.</div>
+        </div>
+      </div>
+
+      <!-- CONFIGUREAWAIT -->
+      <div class="card">
+        <div class="card-sub">Syntax — Advanced</div>
+        <div class="card-title">ConfigureAwait · Deadlock Prevention</div>
+        <pre><span class="cmt">// ConfigureAwait(false) — library code</span>
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="kw">string</span>&gt; <span class="fn">FetchDataAsync</span>()
+{
+    <span class="kw">var</span> <span class="prop">data</span> = <span class="kw">await</span> <span class="prop">_httpClient</span>
+        .<span class="fn">GetStringAsync</span>(<span class="prop">url</span>)
+        .<span class="fn">ConfigureAwait</span>(<span class="kw">false</span>); <span class="cmt">// ← no sync ctx</span>
+    <span class="kw">return</span> <span class="prop">data</span>;
+}
+
+<span class="cmt">// ❌ DEADLOCK — never do in async methods</span>
+<span class="kw">var</span> <span class="prop">result</span> = <span class="fn">GetStudentAsync</span>(<span class="num">1</span>).<span class="prop">Result</span>;   <span class="cmt">// blocks!</span>
+<span class="kw">var</span> <span class="prop">result</span> = <span class="fn">GetStudentAsync</span>(<span class="num">1</span>).<span class="fn">Wait</span>();   <span class="cmt">// blocks!</span>
+
+<span class="cmt">// ✅ CORRECT — always await</span>
+<span class="kw">var</span> <span class="prop">result</span> = <span class="kw">await</span> <span class="fn">GetStudentAsync</span>(<span class="num">1</span>);</pre>
+        <div class="tanglish">
+          💡 <strong>Rule:</strong> Web API / ASP.NET Core-la synchronisation context illai
+          — ConfigureAwait(false) optional. But class library code ezhuthum podhu
+          always <code>ConfigureAwait(false)</code> use pannu — caller context block aagathu!
+        </div>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: How does async deadlock happen?</div>
+          <div class="a">.Result or .Wait() = current thread block. await = same thread-la resume aaga wait. Thread blocked = deadlock! Fix: async all the way — top to bottom await use pannu.</div>
+        </div>
+      </div>
+
+    </div><!-- end card-grid async -->
+
+    <!-- ASYNC GOOD BAD -->
+    <h3>✅ Async — Do vs Don't</h3>
+    <div class="good-bad">
+      <div class="good">
+        <div class="lbl">✅ DO THIS</div>
+        <pre style="margin:6px 0; font-size:.8em"><span class="kw">await</span> <span class="fn">GetStudentAsync</span>(<span class="prop">id</span>);
+<span class="kw">await</span> <span class="typ">Task</span>.<span class="fn">WhenAll</span>(<span class="prop">t1</span>, <span class="prop">t2</span>);
+<span class="kw">async</span> <span class="typ">Task</span>&lt;<span class="typ">T</span>&gt; <span class="fn">MethodAsync</span>()
+.<span class="fn">ConfigureAwait</span>(<span class="kw">false</span>) <span class="cmt">// in libs</span></pre>
+      </div>
+      <div class="bad">
+        <div class="lbl">❌ NEVER DO</div>
+        <pre style="margin:6px 0; font-size:.8em"><span class="fn">GetStudentAsync</span>(<span class="prop">id</span>).<span class="prop">Result</span>
+<span class="fn">GetStudentAsync</span>(<span class="prop">id</span>).<span class="fn">Wait</span>()
+<span class="kw">async void</span> <span class="fn">Method</span>()  <span class="cmt">// in APIs</span>
+<span class="cmt">// missing await = fire &amp; forget bug</span></pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — LINQ
+════════════════════════════════════════════ -->
+<div class="section linq-sec" id="linq">
+  <div class="section-header">🟣 LINQ — Language Integrated Query</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Vikram (2022) — Rolex:</span>
+      Rolex — precise, chain-la move. LINQ-um same — data-a chain-la filter, transform, group, sort.
+      One clean pipeline — no messy loops!
+      <code>.Where().Select().GroupBy().OrderBy()</code> = Rolex watch gears!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- LINQ BASICS -->
+      <div class="card">
+        <div class="card-sub">Syntax — Core Operators</div>
+        <div class="card-title">Where · Select · OrderBy · First · Count</div>
+        <pre><span class="kw">var</span> <span class="prop">students</span> = <span class="kw">await</span> <span class="prop">_repo</span>.<span class="fn">GetAllAsync</span>();
+
+<span class="cmt">// WHERE — filter</span>
+<span class="kw">var</span> <span class="prop">active</span> = <span class="prop">students</span>
+    .<span class="fn">Where</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">IsActive</span>);
+
+<span class="cmt">// SELECT — project / transform</span>
+<span class="kw">var</span> <span class="prop">names</span> = <span class="prop">students</span>
+    .<span class="fn">Select</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Name</span>);
+
+<span class="cmt">// SELECT to anonymous type</span>
+<span class="kw">var</span> <span class="prop">dtos</span> = <span class="prop">students</span>
+    .<span class="fn">Select</span>(<span class="prop">s</span> =&gt; <span class="kw">new</span> {
+        <span class="prop">s</span>.<span class="prop">Name</span>, <span class="prop">s</span>.<span class="prop">Class</span>, <span class="prop">s</span>.<span class="prop">RollNo</span> });
+
+<span class="cmt">// ORDER BY</span>
+<span class="kw">var</span> <span class="prop">sorted</span> = <span class="prop">students</span>
+    .<span class="fn">OrderBy</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Name</span>);           <span class="cmt">// asc</span>
+<span class="kw">var</span> <span class="prop">desc</span>   = <span class="prop">students</span>
+    .<span class="fn">OrderByDescending</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Marks</span>); <span class="cmt">// desc</span>
+
+<span class="cmt">// FIRST / SINGLE / DEFAULT</span>
+<span class="kw">var</span> <span class="prop">first</span>  = <span class="prop">students</span>.<span class="fn">First</span>();
+<span class="kw">var</span> <span class="prop">safe</span>   = <span class="prop">students</span>.<span class="fn">FirstOrDefault</span>();
+<span class="kw">var</span> <span class="prop">one</span>    = <span class="prop">students</span>.<span class="fn">SingleOrDefault</span>(
+                 <span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">RollNo</span> == <span class="num">42</span>);
+
+<span class="cmt">// COUNT / ANY / ALL</span>
+<span class="kw">int</span>  <span class="prop">count</span>   = <span class="prop">students</span>.<span class="fn">Count</span>();
+<span class="kw">bool</span> <span class="prop">hasAny</span>  = <span class="prop">students</span>.<span class="fn">Any</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">IsActive</span>);
+<span class="kw">bool</span> <span class="prop">allPass</span> = <span class="prop">students</span>.<span class="fn">All</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Marks</span> &gt; <span class="num">35</span>);</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Any() vs Count() — which is better?</div>
+          <div class="a"><code>Any()</code> = first match kadaichudane stop. <code>Count()</code> = full collection traverse. Performance-a "exists check" panna Any() always use pannu. ZenCampus-la active student check = <code>students.Any(s => s.IsActive)</code>.</div>
+        </div>
+      </div>
+
+      <!-- GROUPBY, JOIN, SELECTMANY -->
+      <div class="card">
+        <div class="card-sub">Syntax — Grouping &amp; Joining</div>
+        <div class="card-title">GroupBy · Join · SelectMany · Distinct</div>
+        <pre><span class="cmt">// GROUP BY</span>
+<span class="kw">var</span> <span class="prop">byClass</span> = <span class="prop">students</span>
+    .<span class="fn">GroupBy</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Class</span>)
+    .<span class="fn">Select</span>(<span class="prop">g</span> =&gt; <span class="kw">new</span> {
+        <span class="prop">Class</span> = <span class="prop">g</span>.<span class="prop">Key</span>,
+        <span class="prop">Count</span> = <span class="prop">g</span>.<span class="fn">Count</span>(),
+        <span class="prop">AvgMarks</span> = <span class="prop">g</span>.<span class="fn">Average</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Marks</span>)
+    });
+
+<span class="cmt">// JOIN — two collections</span>
+<span class="kw">var</span> <span class="prop">result</span> = <span class="prop">students</span>
+    .<span class="fn">Join</span>(<span class="prop">feeRecords</span>,
+         <span class="prop">s</span>   =&gt; <span class="prop">s</span>.<span class="prop">Id</span>,
+         <span class="prop">fee</span> =&gt; <span class="prop">fee</span>.<span class="prop">StudentId</span>,
+         (<span class="prop">s</span>, <span class="prop">fee</span>) =&gt; <span class="kw">new</span> {
+             <span class="prop">s</span>.<span class="prop">Name</span>,
+             <span class="prop">fee</span>.<span class="prop">Amount</span>
+         });
+
+<span class="cmt">// SELECTMANY — flatten nested lists</span>
+<span class="kw">var</span> <span class="prop">allSubjects</span> = <span class="prop">classes</span>
+    .<span class="fn">SelectMany</span>(<span class="prop">c</span> =&gt; <span class="prop">c</span>.<span class="prop">Subjects</span>);
+
+<span class="cmt">// DISTINCT</span>
+<span class="kw">var</span> <span class="prop">uniqueClasses</span> = <span class="prop">students</span>
+    .<span class="fn">Select</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Class</span>)
+    .<span class="fn">Distinct</span>();
+
+<span class="cmt">// TAKE / SKIP — pagination</span>
+<span class="kw">var</span> <span class="prop">page2</span> = <span class="prop">students</span>
+    .<span class="fn">Skip</span>((<span class="prop">pageNo</span> - <span class="num">1</span>) * <span class="prop">pageSize</span>)
+    .<span class="fn">Take</span>(<span class="prop">pageSize</span>)
+    .<span class="fn">ToList</span>();</pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus — Class-wise attendance summary:</div>
+          <pre><span class="kw">var</span> <span class="prop">summary</span> = <span class="prop">attendanceList</span>
+    .<span class="fn">GroupBy</span>(<span class="prop">a</span> =&gt; <span class="prop">a</span>.<span class="prop">ClassName</span>)
+    .<span class="fn">Select</span>(<span class="prop">g</span> =&gt; <span class="kw">new</span> {
+        <span class="prop">Class</span>   = <span class="prop">g</span>.<span class="prop">Key</span>,
+        <span class="prop">Present</span> = <span class="prop">g</span>.<span class="fn">Count</span>(<span class="prop">a</span> =&gt; <span class="prop">a</span>.<span class="prop">IsPresent</span>),
+        <span class="prop">Absent</span>  = <span class="prop">g</span>.<span class="fn">Count</span>(<span class="prop">a</span> =&gt; !<span class="prop">a</span>.<span class="prop">IsPresent</span>)
+    }).<span class="fn">ToList</span>();</pre>
+        </div>
+      </div>
+
+      <!-- IQUERYABLE VS IENUMERABLE -->
+      <div class="card">
+        <div class="card-sub">Senior-Level Concept</div>
+        <div class="card-title">IQueryable vs IEnumerable — The Critical Difference</div>
+        <pre><span class="cmt">// IEnumerable — filter in MEMORY</span>
+<span class="typ">IEnumerable</span>&lt;<span class="typ">Student</span>&gt; <span class="prop">q1</span> = <span class="prop">_dbContext</span>
+    .<span class="prop">Students</span>             <span class="cmt">// loads ALL rows!</span>
+    .<span class="fn">AsEnumerable</span>()
+    .<span class="fn">Where</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">IsActive</span>);
+
+<span class="cmt">// IQueryable — filter in DATABASE (SQL)</span>
+<span class="typ">IQueryable</span>&lt;<span class="typ">Student</span>&gt; <span class="prop">q2</span> = <span class="prop">_dbContext</span>
+    .<span class="prop">Students</span>
+    .<span class="fn">Where</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">IsActive</span>);  <span class="cmt">// SQL WHERE</span>
+
+<span class="cmt">// Deferred execution — not run yet!</span>
+<span class="typ">IQueryable</span>&lt;<span class="typ">Student</span>&gt; <span class="prop">query</span> = <span class="prop">_dbContext</span>
+    .<span class="prop">Students</span>
+    .<span class="fn">Where</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">IsActive</span>);
+
+<span class="cmt">// Add more filters — still no DB call</span>
+<span class="prop">query</span> = <span class="prop">query</span>.<span class="fn">OrderBy</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Name</span>);
+
+<span class="cmt">// ToList() / First() = EXECUTES query</span>
+<span class="kw">var</span> <span class="prop">list</span> = <span class="kw">await</span> <span class="prop">query</span>.<span class="fn">ToListAsync</span>();</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: IQueryable vs IEnumerable — explain with example.</div>
+          <div class="a">IEnumerable = DB-la ALL rows load panni memory-la filter. IQueryable = filter-a SQL-la translate panni DB-la execute. 50,000 students irundha — IEnumerable = all 50k load! IQueryable = WHERE clause SQL-la = only matching rows. ZenCampus-la always IQueryable + deferred execution use panrom.</div>
+        </div>
+        <div class="tanglish">
+          💡 <strong>Deferred Execution:</strong> Query define panna execute aagaadu. <code>.ToList()</code>, <code>.First()</code>,
+          <code>foreach</code> — ithellam trigger aana matum DB-ku poidum. Itha therinja interview gold!
+        </div>
+      </div>
+
+      <!-- AGGREGATE -->
+      <div class="card">
+        <div class="card-sub">Syntax — Aggregation</div>
+        <div class="card-title">Sum · Min · Max · Average · Aggregate</div>
+        <pre><span class="cmt">// Aggregation operators</span>
+<span class="kw">decimal</span> <span class="prop">total</span>   = <span class="prop">fees</span>.<span class="fn">Sum</span>(<span class="prop">f</span> =&gt; <span class="prop">f</span>.<span class="prop">Amount</span>);
+<span class="kw">decimal</span> <span class="prop">min</span>     = <span class="prop">fees</span>.<span class="fn">Min</span>(<span class="prop">f</span> =&gt; <span class="prop">f</span>.<span class="prop">Amount</span>);
+<span class="kw">decimal</span> <span class="prop">max</span>     = <span class="prop">fees</span>.<span class="fn">Max</span>(<span class="prop">f</span> =&gt; <span class="prop">f</span>.<span class="prop">Amount</span>);
+<span class="kw">double</span>  <span class="prop">avg</span>     = <span class="prop">marks</span>.<span class="fn">Average</span>(<span class="prop">m</span> =&gt; <span class="prop">m</span>.<span class="prop">Score</span>);
+
+<span class="cmt">// Aggregate — custom accumulation</span>
+<span class="kw">string</span> <span class="prop">csv</span> = <span class="prop">students</span>
+    .<span class="fn">Select</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Name</span>)
+    .<span class="fn">Aggregate</span>((<span class="prop">a</span>, <span class="prop">b</span>) =&gt; <span class="str">$"{a},{b}"</span>);
+<span class="cmt">// "Ram,Sita,Guna,Priya"</span>
+
+<span class="cmt">// ToLookup — like Dictionary with multi-value</span>
+<span class="kw">var</span> <span class="prop">lookup</span> = <span class="prop">students</span>
+    .<span class="fn">ToLookup</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Class</span>);
+<span class="kw">var</span> <span class="prop">classA</span> = <span class="prop">lookup</span>[<span class="str">"10A"</span>]; <span class="cmt">// all 10A students</span>
+
+<span class="cmt">// ToDictionary</span>
+<span class="kw">var</span> <span class="prop">dict</span> = <span class="prop">students</span>
+    .<span class="fn">ToDictionary</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">RollNo</span>);</pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus — Fee collection report:</div>
+          <pre><span class="kw">var</span> <span class="prop">report</span> = <span class="kw">new</span> {
+    <span class="prop">TotalCollected</span> = <span class="prop">fees</span>.<span class="fn">Sum</span>(<span class="prop">f</span> =&gt; <span class="prop">f</span>.<span class="prop">Amount</span>),
+    <span class="prop">PendingCount</span>   = <span class="prop">fees</span>.<span class="fn">Count</span>(<span class="prop">f</span> =&gt; !<span class="prop">f</span>.<span class="prop">IsPaid</span>),
+    <span class="prop">MaxPayment</span>     = <span class="prop">fees</span>.<span class="fn">Max</span>(<span class="prop">f</span> =&gt; <span class="prop">f</span>.<span class="prop">Amount</span>)
+};</pre>
+        </div>
+      </div>
+
+      <!-- LINQ QUERY SYNTAX -->
+      <div class="card">
+        <div class="card-sub">Syntax — Query Style</div>
+        <div class="card-title">LINQ Query Syntax vs Method Syntax</div>
+        <pre><span class="cmt">// ✅ Method syntax (preferred, more powerful)</span>
+<span class="kw">var</span> <span class="prop">result1</span> = <span class="prop">students</span>
+    .<span class="fn">Where</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">IsActive</span> &amp;&amp; <span class="prop">s</span>.<span class="prop">Marks</span> &gt; <span class="num">60</span>)
+    .<span class="fn">OrderBy</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Marks</span>)
+    .<span class="fn">Select</span>(<span class="prop">s</span> =&gt; <span class="kw">new</span> { <span class="prop">s</span>.<span class="prop">Name</span>, <span class="prop">s</span>.<span class="prop">Marks</span> })
+    .<span class="fn">ToList</span>();
+
+<span class="cmt">// Query syntax (SQL-like, older style)</span>
+<span class="kw">var</span> <span class="prop">result2</span> =
+    <span class="kw">from</span> <span class="prop">s</span> <span class="kw">in</span> <span class="prop">students</span>
+    <span class="kw">where</span> <span class="prop">s</span>.<span class="prop">IsActive</span> &amp;&amp; <span class="prop">s</span>.<span class="prop">Marks</span> &gt; <span class="num">60</span>
+    <span class="kw">orderby</span> <span class="prop">s</span>.<span class="prop">Marks</span>
+    <span class="kw">select new</span> { <span class="prop">s</span>.<span class="prop">Name</span>, <span class="prop">s</span>.<span class="prop">Marks</span> };
+
+<span class="cmt">// Both produce identical SQL!</span>
+<span class="cmt">// Interview-la method syntax prefer pannu</span></pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: When is LINQ executed?</div>
+          <div class="a">Deferred execution — query object create panna execute aagaadu. <code>ToList()</code>, <code>ToArray()</code>, <code>First()</code>, <code>Count()</code>, <code>foreach</code> — ithellam trigger aana matum execute. Multiple iterations avoid panna result-a variable-la store pannu!</div>
+        </div>
+      </div>
+
+    </div><!-- end card-grid linq -->
+
+    <h3>🗺️ LINQ Operator Quick Reference</h3>
+    <table>
+      <tr><th>Category</th><th>Operators</th><th>Use Case</th></tr>
+      <tr><td>Filter</td><td>Where, OfType</td><td>Active students, type filter</td></tr>
+      <tr><td>Transform</td><td>Select, SelectMany</td><td>DTO mapping, flatten lists</td></tr>
+      <tr><td>Sort</td><td>OrderBy, OrderByDescending, ThenBy</td><td>Student ranking</td></tr>
+      <tr><td>Group</td><td>GroupBy, ToLookup</td><td>Class-wise summary</td></tr>
+      <tr><td>Join</td><td>Join, GroupJoin</td><td>Student + Fees merge</td></tr>
+      <tr><td>Aggregate</td><td>Sum, Min, Max, Average, Count, Aggregate</td><td>Fee totals, marks avg</td></tr>
+      <tr><td>Element</td><td>First, Last, Single, FirstOrDefault</td><td>Find by roll no</td></tr>
+      <tr><td>Quantifier</td><td>Any, All, Contains</td><td>Existence check</td></tr>
+      <tr><td>Partition</td><td>Take, Skip, TakeWhile, SkipWhile</td><td>Pagination</td></tr>
+      <tr><td>Convert</td><td>ToList, ToArray, ToDictionary, AsQueryable</td><td>Materialise results</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — GENERICS
+════════════════════════════════════════════ -->
+<div class="section gen-sec" id="generics">
+  <div class="section-header">🟢 Generics — Type-Safe Reusable Code</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Kamal Hassan — Dasavathaaram (2008):</span>
+      One actor, 10 different roles — same skill, different character. Generics = same code, works for ANY type.
+      Write once, use with Student, Staff, Fee, Report — type-safe at compile time!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- GENERIC CLASS -->
+      <div class="card">
+        <div class="card-sub">Syntax</div>
+        <div class="card-title">Generic Class · Generic Method</div>
+        <pre><span class="cmt">// Generic Repository — works for ANY entity</span>
+<span class="kw">public class</span> <span class="typ">Repository</span>&lt;<span class="typ">T</span>&gt; <span class="kw">where</span> <span class="typ">T</span> : <span class="kw">class</span>
+{
+    <span class="kw">private readonly</span> <span class="typ">IDbConnection</span> <span class="prop">_db</span>;
+
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">T</span>?&gt; <span class="fn">GetByIdAsync</span>(<span class="kw">int</span> <span class="prop">id</span>)
+        =&gt; <span class="kw">await</span> <span class="prop">_db</span>.<span class="fn">QueryFirstOrDefaultAsync</span>&lt;<span class="typ">T</span>&gt;(
+               <span class="str">$"SELECT * FROM {typeof(T).Name}s WHERE Id=@Id"</span>,
+               <span class="kw">new</span> { <span class="prop">Id</span> = <span class="prop">id</span> });
+
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">List</span>&lt;<span class="typ">T</span>&gt;&gt; <span class="fn">GetAllAsync</span>()
+        =&gt; (<span class="kw">await</span> <span class="prop">_db</span>.<span class="fn">QueryAsync</span>&lt;<span class="typ">T</span>&gt;(
+               <span class="str">$"SELECT * FROM {typeof(T).Name}s"</span>))
+               .<span class="fn">ToList</span>();
+}
+
+<span class="cmt">// Usage — same repo, different types</span>
+<span class="kw">var</span> <span class="prop">studentRepo</span> = <span class="kw">new</span> <span class="typ">Repository</span>&lt;<span class="typ">Student</span>&gt;();
+<span class="kw">var</span> <span class="prop">staffRepo</span>   = <span class="kw">new</span> <span class="typ">Repository</span>&lt;<span class="typ">Staff</span>&gt;();
+<span class="kw">var</span> <span class="prop">feeRepo</span>     = <span class="kw">new</span> <span class="typ">Repository</span>&lt;<span class="typ">Fee</span>&gt;();
+
+<span class="cmt">// Generic method</span>
+<span class="kw">public</span> <span class="typ">T</span> <span class="fn">ParseConfig</span>&lt;<span class="typ">T</span>&gt;(<span class="kw">string</span> <span class="prop">json</span>)
+    =&gt; <span class="typ">JsonSerializer</span>.<span class="fn">Deserialize</span>&lt;<span class="typ">T</span>&gt;(<span class="prop">json</span>)!;
+
+<span class="cmt">// Call</span>
+<span class="kw">var</span> <span class="prop">cfg</span> = <span class="fn">ParseConfig</span>&lt;<span class="typ">SchoolConfig</span>&gt;(<span class="prop">json</span>);</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: What are Generics? Why use them?</div>
+          <div class="a">Generics = type parameter &lt;T&gt; — compile-time type safety with code reuse. Without generics: separate repo for Student, Staff, Fee. With generics: one Repository&lt;T&gt; handles all. Casting illai, boxing illai = performance better!</div>
+        </div>
+      </div>
+
+      <!-- CONSTRAINTS + COMMON GENERICS -->
+      <div class="card">
+        <div class="card-sub">Syntax — Constraints</div>
+        <div class="card-title">Generic Constraints · ApiResponse&lt;T&gt;</div>
+        <pre><span class="cmt">// Constraints — restrict what T can be</span>
+<span class="kw">where</span> <span class="typ">T</span> : <span class="kw">class</span>           <span class="cmt">// reference type</span>
+<span class="kw">where</span> <span class="typ">T</span> : <span class="kw">struct</span>          <span class="cmt">// value type</span>
+<span class="kw">where</span> <span class="typ">T</span> : <span class="kw">new</span>()           <span class="cmt">// has default ctor</span>
+<span class="kw">where</span> <span class="typ">T</span> : <span class="typ">IEntity</span>         <span class="cmt">// implements interface</span>
+<span class="kw">where</span> <span class="typ">T</span> : <span class="typ">BaseEntity</span>      <span class="cmt">// inherits class</span>
+<span class="kw">where</span> <span class="typ">T</span> : <span class="typ">BaseEntity</span>, <span class="kw">new</span>() <span class="cmt">// multiple</span>
+
+<span class="cmt">// ZenCampus — Wrapper API response</span>
+<span class="kw">public class</span> <span class="typ">ApiResponse</span>&lt;<span class="typ">T</span>&gt;
+{
+    <span class="kw">public bool</span>   <span class="prop">Success</span> { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="typ">T</span>?     <span class="prop">Data</span>    { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public string</span> <span class="prop">Message</span> { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    <span class="kw">public static</span> <span class="typ">ApiResponse</span>&lt;<span class="typ">T</span>&gt; <span class="fn">Ok</span>(<span class="typ">T</span> <span class="prop">data</span>)
+        =&gt; <span class="kw">new</span>() { <span class="prop">Success</span>=<span class="kw">true</span>, <span class="prop">Data</span>=<span class="prop">data</span> };
+
+    <span class="kw">public static</span> <span class="typ">ApiResponse</span>&lt;<span class="typ">T</span>&gt; <span class="fn">Fail</span>(<span class="kw">string</span> <span class="prop">msg</span>)
+        =&gt; <span class="kw">new</span>() { <span class="prop">Success</span>=<span class="kw">false</span>, <span class="prop">Message</span>=<span class="prop">msg</span> };
+}
+
+<span class="cmt">// Usage in controller</span>
+<span class="kw">return</span> <span class="fn">Ok</span>(<span class="typ">ApiResponse</span>&lt;<span class="typ">Student</span>&gt;.<span class="fn">Ok</span>(<span class="prop">student</span>));
+<span class="kw">return</span> <span class="fn">BadRequest</span>(<span class="typ">ApiResponse</span>&lt;<span class="typ">Student</span>&gt;
+    .<span class="fn">Fail</span>(<span class="str">"Student not found"</span>));</pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus — consistent API response shape:</div>
+          <pre><span class="cmt">// All APIs return same envelope</span>
+<span class="cmt">// { success:true, data:{...}, message:"" }</span>
+<span class="cmt">// Frontend-ku predictable!</span></pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — DELEGATES, FUNC, ACTION
+════════════════════════════════════════════ -->
+<div class="section del-sec" id="delegates">
+  <div class="section-header">🟠 Delegates · Func · Action · Events · Lambda</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 96 (2018) — Ram:</span>
+      Ram always waiting for Janu's callback. Delegate = same concept — "call me when done".
+      You pass a method as a parameter — called back when the event fires.
+      Func, Action = modern shorthand for delegates!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- DELEGATE BASICS -->
+      <div class="card">
+        <div class="card-sub">Syntax — Foundation</div>
+        <div class="card-title">Delegate · Named + Anonymous</div>
+        <pre><span class="cmt">// Delegate — type for a method signature</span>
+<span class="kw">public delegate decimal</span>
+    <span class="typ">FeeCalculatorDelegate</span>(<span class="typ">Student</span> <span class="prop">s</span>);
+
+<span class="cmt">// Named method</span>
+<span class="kw">public decimal</span> <span class="fn">CalcTermFee</span>(<span class="typ">Student</span> <span class="prop">s</span>)
+    =&gt; <span class="num">15000m</span>;
+
+<span class="cmt">// Assign + invoke</span>
+<span class="typ">FeeCalculatorDelegate</span> <span class="prop">calc</span> = <span class="fn">CalcTermFee</span>;
+<span class="kw">decimal</span> <span class="prop">fee</span> = <span class="prop">calc</span>(<span class="prop">student</span>);
+
+<span class="cmt">// Anonymous method (older)</span>
+<span class="typ">FeeCalculatorDelegate</span> <span class="prop">anon</span> =
+    <span class="kw">delegate</span>(<span class="typ">Student</span> <span class="prop">s</span>) { <span class="kw">return</span> <span class="num">20000m</span>; };
+
+<span class="cmt">// Lambda (modern — prefer this)</span>
+<span class="typ">FeeCalculatorDelegate</span> <span class="prop">lambda</span> =
+    <span class="prop">s</span> =&gt; <span class="num">20000m</span>;
+
+<span class="cmt">// Multicast — chain methods</span>
+<span class="typ">FeeCalculatorDelegate</span> <span class="prop">multi</span> =
+    <span class="fn">CalcTermFee</span>;
+<span class="prop">multi</span> += <span class="fn">CalcBusFee</span>;  <span class="cmt">// both called</span></pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: What is a delegate?</div>
+          <div class="a">Delegate = type-safe function pointer. Method-a variable-la store panni later call panalaam. Callback patterns, event handlers, strategy pattern-la use panrom. ZenCampus-la fee calculation strategy panna delegate use panrom.</div>
+        </div>
+      </div>
+
+      <!-- FUNC + ACTION + PREDICATE -->
+      <div class="card">
+        <div class="card-sub">Syntax — Built-in Delegates</div>
+        <div class="card-title">Func · Action · Predicate</div>
+        <pre><span class="cmt">// Func — has return value</span>
+<span class="cmt">// Func&lt;input1, input2, ..., output&gt;</span>
+<span class="typ">Func</span>&lt;<span class="kw">int</span>, <span class="kw">string</span>&gt;       <span class="prop">f1</span> = <span class="prop">id</span>  =&gt; <span class="str">$"ID:{id}"</span>;
+<span class="typ">Func</span>&lt;<span class="kw">int</span>, <span class="kw">int</span>, <span class="kw">int</span>&gt;    <span class="prop">f2</span> = (<span class="prop">a</span>, <span class="prop">b</span>) =&gt; <span class="prop">a</span> + <span class="prop">b</span>;
+<span class="typ">Func</span>&lt;<span class="typ">Student</span>, <span class="kw">decimal</span>&gt; <span class="prop">calcFee</span> =
+    <span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">IsHosteller</span> ? <span class="num">45000m</span> : <span class="num">15000m</span>;
+
+<span class="cmt">// Action — no return value (void)</span>
+<span class="typ">Action</span>&lt;<span class="kw">string</span>&gt;    <span class="prop">log</span>    = <span class="prop">msg</span> =&gt;
+    <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">msg</span>);
+<span class="typ">Action</span>&lt;<span class="typ">Student</span>&gt;  <span class="prop">notify</span> = <span class="prop">s</span>   =&gt;
+    <span class="prop">_sms</span>.<span class="fn">Send</span>(<span class="prop">s</span>.<span class="prop">Phone</span>, <span class="str">"Fee due"</span>);
+
+<span class="cmt">// Predicate — bool return</span>
+<span class="typ">Predicate</span>&lt;<span class="typ">Student</span>&gt; <span class="prop">isActive</span> =
+    <span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">IsActive</span>;
+<span class="kw">bool</span> <span class="prop">result</span> = <span class="prop">isActive</span>(<span class="prop">student</span>);
+
+<span class="cmt">// Passing Func as parameter</span>
+<span class="kw">public</span> <span class="typ">List</span>&lt;<span class="typ">Student</span>&gt; <span class="fn">Filter</span>(
+    <span class="typ">List</span>&lt;<span class="typ">Student</span>&gt; <span class="prop">all</span>,
+    <span class="typ">Func</span>&lt;<span class="typ">Student</span>, <span class="kw">bool</span>&gt; <span class="prop">condition</span>)
+    =&gt; <span class="prop">all</span>.<span class="fn">Where</span>(<span class="prop">condition</span>).<span class="fn">ToList</span>();
+
+<span class="cmt">// Call with lambda</span>
+<span class="kw">var</span> <span class="prop">active</span> = <span class="fn">Filter</span>(<span class="prop">students</span>,
+    <span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">IsActive</span> &amp;&amp; <span class="prop">s</span>.<span class="prop">Marks</span> &gt; <span class="num">50</span>);</pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus — Fee strategy via Func:</div>
+          <pre><span class="typ">Func</span>&lt;<span class="typ">Student</span>, <span class="kw">decimal</span>&gt; <span class="prop">strategy</span> =
+    <span class="prop">student</span>.<span class="prop">Category</span> <span class="kw">switch</span>
+    {
+        <span class="str">"Hosteller"</span> =&gt; <span class="prop">s</span> =&gt; <span class="num">45000m</span>,
+        <span class="str">"Bus"</span>       =&gt; <span class="prop">s</span> =&gt; <span class="num">20000m</span>,
+        _           =&gt; <span class="prop">s</span> =&gt; <span class="num">15000m</span>
+    };
+
+<span class="kw">decimal</span> <span class="prop">fee</span> = <span class="prop">strategy</span>(<span class="prop">student</span>);</pre>
+        </div>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Func vs Action vs Predicate?</div>
+          <div class="a">Func = return value varum (last type = return). Action = return value illai (void). Predicate = bool return (same as Func&lt;T,bool&gt; but older). LINQ Where = Func&lt;T,bool&gt; internally!</div>
+        </div>
+      </div>
+
+      <!-- EVENTS -->
+      <div class="card">
+        <div class="card-sub">Syntax — Events</div>
+        <div class="card-title">Events — Publisher / Subscriber</div>
+        <pre><span class="cmt">// Publisher — raises event</span>
+<span class="kw">public class</span> <span class="typ">FeeService</span>
+{
+    <span class="cmt">// Event declaration</span>
+    <span class="kw">public event</span> <span class="typ">EventHandler</span>&lt;<span class="typ">FeeEventArgs</span>&gt;?
+        <span class="prop">FeePaid</span>;
+
+    <span class="kw">public void</span> <span class="fn">ProcessPayment</span>(
+        <span class="typ">Student</span> <span class="prop">s</span>, <span class="kw">decimal</span> <span class="prop">amount</span>)
+    {
+        <span class="cmt">// ... payment logic ...</span>
+
+        <span class="cmt">// Raise event (notify subscribers)</span>
+        <span class="prop">FeePaid</span>?.<span class="fn">Invoke</span>(<span class="kw">this</span>,
+            <span class="kw">new</span> <span class="typ">FeeEventArgs</span> {
+                <span class="prop">Student</span> = <span class="prop">s</span>,
+                <span class="prop">Amount</span>  = <span class="prop">amount</span>
+            });
+    }
+}
+
+<span class="cmt">// EventArgs</span>
+<span class="kw">public class</span> <span class="typ">FeeEventArgs</span> : <span class="typ">EventArgs</span>
+{
+    <span class="kw">public</span> <span class="typ">Student</span> <span class="prop">Student</span> { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public decimal</span> <span class="prop">Amount</span>  { <span class="kw">get</span>; <span class="kw">set</span>; }
+}
+
+<span class="cmt">// Subscriber — listens to event</span>
+<span class="prop">_feeService</span>.<span class="prop">FeePaid</span> += (<span class="prop">sender</span>, <span class="prop">e</span>) =&gt;
+{
+    <span class="prop">_sms</span>.<span class="fn">Send</span>(<span class="prop">e</span>.<span class="prop">Student</span>.<span class="prop">Phone</span>,
+        <span class="str">$"₹{e.Amount} received. Thank you!"</span>);
+    <span class="prop">_audit</span>.<span class="fn">Log</span>(<span class="str">"Fee paid"</span>, <span class="prop">e</span>.<span class="prop">Student</span>.<span class="prop">Id</span>);
+};</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Delegate vs Event?</div>
+          <div class="a">Both use same mechanism. Event = restricted delegate — subscribers can only += / -=, cannot invoke or reassign (=). Encapsulated pub-sub pattern. ZenCampus FeePaid event-la SMS + audit both subscribe panranga — decoupled!</div>
+        </div>
+      </div>
+
+      <!-- LAMBDA -->
+      <div class="card">
+        <div class="card-sub">Syntax — Lambda</div>
+        <div class="card-title">Lambda Expressions — Arrow Functions</div>
+        <pre><span class="cmt">// Expression lambda — single expression</span>
+<span class="typ">Func</span>&lt;<span class="kw">int</span>, <span class="kw">int</span>&gt; <span class="prop">square</span> = <span class="prop">x</span> =&gt; <span class="prop">x</span> * <span class="prop">x</span>;
+
+<span class="cmt">// Statement lambda — multiple lines</span>
+<span class="typ">Func</span>&lt;<span class="typ">Student</span>, <span class="kw">string</span>&gt; <span class="prop">grade</span> = <span class="prop">s</span> =&gt;
+{
+    <span class="kw">if</span> (<span class="prop">s</span>.<span class="prop">Marks</span> &gt;= <span class="num">90</span>) <span class="kw">return</span> <span class="str">"A+"</span>;
+    <span class="kw">if</span> (<span class="prop">s</span>.<span class="prop">Marks</span> &gt;= <span class="num">75</span>) <span class="kw">return</span> <span class="str">"A"</span>;
+    <span class="kw">return</span> <span class="str">"B"</span>;
+};
+
+<span class="cmt">// Closure — captures outer variable</span>
+<span class="kw">int</span> <span class="prop">minMarks</span> = <span class="num">60</span>;
+<span class="typ">Func</span>&lt;<span class="typ">Student</span>, <span class="kw">bool</span>&gt; <span class="prop">passed</span> =
+    <span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Marks</span> &gt;= <span class="prop">minMarks</span>; <span class="cmt">// captures minMarks</span>
+
+<span class="cmt">// Lambda in LINQ</span>
+<span class="kw">var</span> <span class="prop">toppers</span> = <span class="prop">students</span>
+    .<span class="fn">Where</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Marks</span> &gt; <span class="num">90</span>)
+    .<span class="fn">Select</span>(<span class="prop">s</span> =&gt; <span class="kw">new</span> { <span class="prop">s</span>.<span class="prop">Name</span>, <span class="prop">s</span>.<span class="prop">Marks</span> })
+    .<span class="fn">OrderByDescending</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Marks</span>)
+    .<span class="fn">Take</span>(<span class="num">3</span>)
+    .<span class="fn">ToList</span>();</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: What is a closure?</div>
+          <div class="a">Lambda outer scope variables capture pannum — closure. <code>minMarks</code> lambda-la inside use pannuvu — variable lifetime lambda-kaaga extend aagum. Loop-la closure trap: loop variable capture panna last value matum use aagum!</div>
+        </div>
+        <div class="trap">
+          <div class="label">⚠️ Classic Closure Trap in loops:</div>
+          <pre style="font-size:.78em"><span class="kw">var</span> <span class="prop">actions</span> = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="typ">Action</span>&gt;();
+<span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="num">0</span>; <span class="prop">i</span>&lt;<span class="num">3</span>; <span class="prop">i</span>++)
+    <span class="prop">actions</span>.<span class="fn">Add</span>(() =&gt; <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">i</span>));
+<span class="cmt">// Prints 3,3,3 NOT 0,1,2 ← closure trap!</span>
+<span class="cmt">// Fix: var local = i; use local inside</span></pre>
+        </div>
+      </div>
+
+    </div><!-- end card-grid delegates -->
+
+    <h3>📋 Delegates Quick Comparison</h3>
+    <table>
+      <tr><th>Type</th><th>Signature</th><th>Returns</th><th>Use Case</th></tr>
+      <tr><td><code>delegate</code></td><td>Custom</td><td>Anything</td><td>Custom callback type</td></tr>
+      <tr><td><code>Func&lt;T,R&gt;</code></td><td>Built-in</td><td>R (last type)</td><td>Transform, calculate</td></tr>
+      <tr><td><code>Action&lt;T&gt;</code></td><td>Built-in</td><td>void</td><td>Side effects, logging</td></tr>
+      <tr><td><code>Predicate&lt;T&gt;</code></td><td>Built-in</td><td>bool</td><td>Filter condition</td></tr>
+      <tr><td><code>EventHandler&lt;T&gt;</code></td><td>Built-in</td><td>void</td><td>Event subscription</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- MASTER INTERVIEW TABLE — Part 3 -->
+<div style="background:#13132a; border-radius:12px; padding:24px; margin:30px 0; border:1px solid #2a2a4a;">
+  <h2 style="color:#e94560; margin-bottom:16px">🎯 Part 3 — Top Interview Questions</h2>
+  <table>
+    <tr><th>#</th><th>Question</th><th>1-Line Answer</th><th>ZenCampus Hook</th></tr>
+    <tr><td>1</td><td>What does await do?</td><td>Release thread, resume after IO completes</td><td>Dashboard 3 APIs parallel fetch</td></tr>
+    <tr><td>2</td><td>Task.WhenAll vs WhenAny?</td><td>WhenAll=all complete, WhenAny=first wins</td><td>Dashboard vs fallback server</td></tr>
+    <tr><td>3</td><td>async void danger?</td><td>Exceptions uncatchable, fire-forget only</td><td>Never in controllers</td></tr>
+    <tr><td>4</td><td>CancellationToken use?</td><td>Cancel in-flight DB queries on client disconnect</td><td>Report generation cancel</td></tr>
+    <tr><td>5</td><td>Deferred execution in LINQ?</td><td>Query runs only on ToList/First/foreach</td><td>Students IQueryable chain</td></tr>
+    <tr><td>6</td><td>IQueryable vs IEnumerable?</td><td>IQueryable=DB filter, IEnumerable=memory filter</td><td>50k students — IQueryable!</td></tr>
+    <tr><td>7</td><td>Any() vs Count() > 0?</td><td>Any() stops at first match — faster</td><td>Active student exists check</td></tr>
+    <tr><td>8</td><td>What is Generic constraint?</td><td>Restrict T to class/interface/new()</td><td>Repository&lt;T&gt; where T:class</td></tr>
+    <tr><td>9</td><td>Func vs Action?</td><td>Func returns value, Action returns void</td><td>Fee strategy=Func, SMS send=Action</td></tr>
+    <tr><td>10</td><td>What is a closure?</td><td>Lambda captures outer variable by reference</td><td>minMarks captured in filter lambda</td></tr>
+  </table>
+</div>
+
+<!-- PART 3 END -->
+<div style="background:#13132a; border-radius:12px; padding:20px; margin:30px 0;
+            border:2px dashed #e94560; text-align:center;">
+  <p style="color:#e94560; font-size:1.1em; font-weight:bold;">✅ Part 3 Complete — Async/Await · LINQ · Generics · Delegates</p>
+  <p style="color:#a0a0c0; margin-top:6px">
+    Covered: async/await · Task.WhenAll/WhenAny · CancellationToken · ConfigureAwait ·
+    LINQ (Where/Select/GroupBy/Join/Aggregate) · IQueryable vs IEnumerable · Deferred Execution ·
+    Generics · ApiResponse&lt;T&gt; · Func/Action/Predicate · Events · Lambda · Closures<br>
+    <strong>Next → Part 4: SQL (JOINs · CTE · Window Functions · Stored Procs · Indexes)</strong>
+  </p>
+</div>
+
+</div><!-- end container -->
+
+<footer>
+  <p>ZenCampus Interview Syntax Bible · Part 3 of 7 — Async / LINQ / Generics / Delegates · Gurumoorthy M</p>
+  <p style="margin-top:4px; font-size:.8em">🎬 Enthiran parallel brain + Vikram chain precision + 96 callback wait = C# async + LINQ + delegates!</p>
+</footer>
+
+</body>
+</html>

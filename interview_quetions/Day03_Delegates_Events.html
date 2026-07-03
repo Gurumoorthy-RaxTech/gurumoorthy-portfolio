@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 3 – Delegates, Events, Func/Action | ZenCampus Edition</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#0a2010,#0f3020,#0a1a10);padding:36px 20px;text-align:center;border-bottom:3px solid #00c853}
+header h1{font-size:2em;color:#00c853;text-shadow:0 0 20px #00c85355}
+header p{color:#a0c0a0;margin-top:6px}
+.badge{display:inline-block;background:#00c85322;border:1px solid #00c85355;color:#00c853;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#00c853;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#00c853;color:#000;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.c-kw{color:#569cd6}.c-type{color:#4ec9b0}.c-str{color:#ce9178}.c-num{color:#b5cea8}.c-cmt{color:#6a9955;font-style:italic}.c-prop{color:#9cdcfe}.c-method{color:#dcdcaa}
+code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#1a0f2e;border-left:4px solid #9b59b6;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#c39bd3;font-size:0.9em;margin-top:4px}
+.kw-box{margin:10px 0}
+.kw{display:inline-block;background:#0d3b2e;color:#00c853;padding:3px 10px;border-radius:4px;font-size:0.76em;margin:3px;font-family:monospace;border:1px solid #1e5040}
+.proj{background:#0a1f0f;border-left:4px solid #27ae60;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.proj .label{color:#2ecc71;font-weight:bold;font-size:0.8em;margin-bottom:6px}
+.tip{background:#1a1500;border-left:4px solid #f9ca24;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#f9ca24;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#f0dc82;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.info{background:#0a1020;border-left:4px solid #3498db;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.info p{color:#85c1e9;font-size:0.9em}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.s-num{background:#00c853;color:#000;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#2a0a4a;color:#a855f7}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#0a2a0f;border:1px solid #00c853;color:#00c853;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#00c853;color:#000}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #0a2a0f}
+.answer.shown{display:block}
+.answer .a-label{color:#00c853;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.gold{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#0a2a10;color:#00c853;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a1a35}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#00c853;color:#00c853}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:700px){.two-col,.three-col{grid-template-columns:1fr}}
+.evolution-box{background:#0a1a0a;border:1px solid #1a3a1a;border-radius:8px;padding:14px;margin:10px 0}
+.evolution-box h4{color:#00c853;font-size:0.85em;margin-bottom:8px}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#00c853}
+h3{color:#69db7c;margin:16px 0 8px;font-size:1em}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.72em;font-weight:bold;margin-left:6px}
+.tag-i{background:#e94560;color:white}.tag-t{background:#f39c12;color:#000}.tag-p{background:#8e44ad;color:white}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#69db7c;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1a3a1a}
+.sticky-nav a:hover{background:#1a3a1a}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#00c853,#f39c12)}
+.compare-card{background:#0a1a0a;border:1px solid #1a3a1a;border-radius:8px;padding:14px}
+.compare-card h4{color:#00c853;font-size:0.88em;margin-bottom:10px;border-bottom:1px solid #1a3a1a;padding-bottom:6px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#f39c12;font-size:0.85em;margin-bottom:6px">📅 Day 3 of 60 | Phase 1: Advanced C#</div>
+  <h1>🎯 Delegates · Events · Func · Action</h1>
+  <p>Fee Strategy · Notification System · Plugin Pattern · ZenCampus Real Examples</p>
+  <div style="margin-top:12px">
+    <span class="badge">delegate</span>
+    <span class="badge">event</span>
+    <span class="badge">Func&lt;T&gt;</span>
+    <span class="badge">Action&lt;T&gt;</span>
+    <span class="badge">Predicate&lt;T&gt;</span>
+    <span class="badge">Multicast</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#concept">📘 Delegate</a>
+  <a href="#evolution">🔄 Evolution</a>
+  <a href="#builtin">⚡ Func/Action</a>
+  <a href="#events">🔔 Events</a>
+  <a href="#patterns">🏗️ Patterns</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+  <a href="#checklist">✅ Checklist</a>
+</nav>
+
+<div class="container">
+
+<!-- CONCEPT -->
+<div class="section" id="concept">
+  <div class="section-title"><span class="num">1</span> Delegate என்னன்னு — Simple-a புரிஞ்சுக்கோ</div>
+
+  <div class="movie">
+    <span class="film">🎬 Dasavathaaram (2008) — Kamal 10 Roles</span>
+    <p>Kamal — 10 different avatars, but oru director "action" solluvan — yaara-a anupuvan. <strong>Delegate = type-safe method pointer</strong>. "Which method to call" — runtime-la decide pannalaam. Same signature, different implementations — director maadhiri!</p>
+  </div>
+
+  <div class="tip">
+    <div class="t-label">💬 Tanglish — 1 Line Definition</div>
+    <p><strong>Delegate = method-ku reference vachu vaikka oru type.</strong> Variable maari method-a pass panalaam, return panalaam, store panalaam. Method itself = data!</p>
+  </div>
+
+  <h3>Step by Step — Delegate 3 steps:</h3>
+  <pre><span class="c-cmt">// STEP 1: Declare delegate type (signature define)</span>
+<span class="c-kw">public delegate decimal</span> <span class="c-type">FeeCalculator</span>(<span class="c-type">Student</span> <span class="c-prop">student</span>);
+<span class="c-cmt">//        ↑ return type  ↑ delegate name  ↑ parameters</span>
+
+<span class="c-cmt">// STEP 2: Create methods that MATCH the signature</span>
+<span class="c-kw">public decimal</span> <span class="c-method">CalculateTermFee</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) => <span class="c-prop">s</span>.<span class="c-prop">Grade</span> * <span class="c-num">500m</span>;
+<span class="c-kw">public decimal</span> <span class="c-method">CalculateBusFee</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>)  => <span class="c-prop">s</span>.<span class="c-prop">Distance</span> * <span class="c-num">20m</span>;
+<span class="c-kw">public decimal</span> <span class="c-method">CalculateHostelFee</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) => <span class="c-num">3000m</span>;
+
+<span class="c-cmt">// STEP 3: Create instance + point to a method</span>
+<span class="c-type">FeeCalculator</span> <span class="c-prop">calc</span> = <span class="c-prop">CalculateTermFee</span>;   <span class="c-cmt">// point to method</span>
+<span class="c-kw">decimal</span> <span class="c-prop">amount</span> = <span class="c-prop">calc</span>(<span class="c-prop">student</span>);          <span class="c-cmt">// INVOKE — like calling method!</span>
+
+<span class="c-cmt">// Switch at runtime — no if/else needed!</span>
+<span class="c-kw">if</span> (<span class="c-prop">student</span>.<span class="c-prop">HasBus</span>) <span class="c-prop">calc</span> = <span class="c-prop">CalculateBusFee</span>;
+<span class="c-kw">if</span> (<span class="c-prop">student</span>.<span class="c-prop">InHostel</span>) <span class="c-prop">calc</span> = <span class="c-prop">CalculateHostelFee</span>;</pre>
+
+  <h3>Multicast Delegate — Multiple methods, one call:</h3>
+  <div class="movie">
+    <span class="film">🎬 Bigil (2019) — Coach calls all players at once</span>
+    <p>Coach whistle adipaan — ellaa players-um action edukaanga. Multicast delegate = oru invoke-la multiple methods run aagum. <code>+=</code> add pannu, <code>-=</code> remove pannu!</p>
+  </div>
+  <pre><span class="c-kw">public delegate void</span> <span class="c-type">StudentAdmittedHandler</span>(<span class="c-type">Student</span> <span class="c-prop">student</span>);
+
+<span class="c-type">StudentAdmittedHandler</span> <span class="c-prop">onAdmit</span> = <span class="c-prop">SendWelcomeSms</span>;
+<span class="c-prop">onAdmit</span> += <span class="c-prop">CreateStudentPortal</span>;  <span class="c-cmt">// add second</span>
+<span class="c-prop">onAdmit</span> += <span class="c-prop">NotifyClassTeacher</span>;  <span class="c-cmt">// add third</span>
+
+<span class="c-prop">onAdmit</span>(<span class="c-prop">newStudent</span>);
+<span class="c-cmt">// Calls: SendWelcomeSms → CreateStudentPortal → NotifyClassTeacher
+// All three — ONE invoke!</span>
+
+<span class="c-prop">onAdmit</span> -= <span class="c-prop">CreateStudentPortal</span>; <span class="c-cmt">// remove specific</span></pre>
+
+  <div class="danger">
+    <div class="d-label">⚠️ Multicast Trap — Return Value Lost!</div>
+    <p>Multicast delegate with return value → only LAST method's return value kept! Others silently discarded. Void return use pannaa safe. Return value needed-a → single method delegate use pannu.</p>
+  </div>
+</div>
+
+<!-- EVOLUTION -->
+<div class="section" id="evolution">
+  <div class="section-title"><span class="num">2</span> Delegate Evolution — C# 1.0 → 3.0 → Today</div>
+
+  <div class="movie">
+    <span class="film">🎬 Enthiran → 2.0 → Robot 3.0 (evolution concept)</span>
+    <p>Chitti 1.0 → 2.0 — same core, better syntax. Delegates-um same — custom delegate → anonymous method → lambda → expression. Interview-la evolution therinjaa senior impression!</p>
+  </div>
+
+  <div class="evolution-box">
+    <h4>C# 1.0 — Named Method (verbose)</h4>
+    <pre><span class="c-kw">public decimal</span> <span class="c-method">TermFeeCalc</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) => <span class="c-prop">s</span>.<span class="c-prop">Grade</span> * <span class="c-num">500m</span>;
+<span class="c-type">FeeCalculator</span> <span class="c-prop">calc</span> = <span class="c-kw">new</span> <span class="c-type">FeeCalculator</span>(<span class="c-prop">TermFeeCalc</span>);</pre>
+  </div>
+
+  <div class="evolution-box">
+    <h4>C# 2.0 — Anonymous Method (no separate method needed)</h4>
+    <pre><span class="c-type">FeeCalculator</span> <span class="c-prop">calc</span> = <span class="c-kw">delegate</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) {
+    <span class="c-kw">return</span> <span class="c-prop">s</span>.<span class="c-prop">Grade</span> * <span class="c-num">500m</span>;
+};</pre>
+  </div>
+
+  <div class="evolution-box">
+    <h4>C# 3.0 — Lambda Expression (modern, clean) ✅ Use This!</h4>
+    <pre><span class="c-type">FeeCalculator</span> <span class="c-prop">calc</span> = <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Grade</span> * <span class="c-num">500m</span>;
+
+<span class="c-cmt">// Multi-line lambda:</span>
+<span class="c-type">FeeCalculator</span> <span class="c-prop">calc</span> = <span class="c-prop">s</span> => {
+    <span class="c-kw">var</span> <span class="c-prop">base</span> = <span class="c-prop">s</span>.<span class="c-prop">Grade</span> * <span class="c-num">500m</span>;
+    <span class="c-kw">var</span> <span class="c-prop">discount</span> = <span class="c-prop">s</span>.<span class="c-prop">Scholarship</span> ? <span class="c-num">0.1m</span> : <span class="c-num">0m</span>;
+    <span class="c-kw">return</span> <span class="c-prop">base</span> * (<span class="c-num">1</span> - <span class="c-prop">discount</span>);
+};</pre>
+  </div>
+
+  <div class="tip">
+    <div class="t-label">💡 Interview: Closure — Lambda captures outer variable</div>
+    <p>Lambda outer variable capture pannutu saapududu — <strong>closure</strong>. Variable value changes → lambda sees new value. Careful in loops!</p>
+    <pre style="font-size:0.82em"><span class="c-cmt">// Closure trap in loop</span>
+<span class="c-kw">var</span> <span class="c-prop">actions</span> = <span class="c-kw">new</span> <span class="c-type">List</span>&lt;<span class="c-type">Action</span>&gt;();
+<span class="c-kw">for</span> (<span class="c-kw">int</span> <span class="c-prop">i</span> = <span class="c-num">0</span>; <span class="c-prop">i</span> &lt; <span class="c-num">3</span>; <span class="c-prop">i</span>++)
+    <span class="c-prop">actions</span>.<span class="c-method">Add</span>(() => <span class="c-type">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-prop">i</span>)); <span class="c-cmt">// captures i ref!</span>
+
+<span class="c-prop">actions</span>.<span class="c-method">ForEach</span>(<span class="c-prop">a</span> => <span class="c-prop">a</span>()); <span class="c-cmt">// prints 3,3,3 NOT 0,1,2!</span>
+
+<span class="c-cmt">// Fix: capture local copy</span>
+<span class="c-kw">for</span> (<span class="c-kw">int</span> <span class="c-prop">i</span> = <span class="c-num">0</span>; <span class="c-prop">i</span> &lt; <span class="c-num">3</span>; <span class="c-prop">i</span>++)
+{
+    <span class="c-kw">int</span> <span class="c-prop">copy</span> = <span class="c-prop">i</span>;                              <span class="c-cmt">// local copy!</span>
+    <span class="c-prop">actions</span>.<span class="c-method">Add</span>(() => <span class="c-type">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-prop">copy</span>)); <span class="c-cmt">// prints 0,1,2</span>
+}</pre>
+  </div>
+</div>
+
+<!-- BUILT-IN -->
+<div class="section" id="builtin">
+  <div class="section-title"><span class="num">3</span> Built-in Delegates — Func, Action, Predicate <span class="tag tag-i">Most Asked!</span></div>
+
+  <div class="movie">
+    <span class="film">🎬 Baasha (1995) — Ready-made soldiers</span>
+    <p>Manikkam own army train panna vendam — already trained soldiers irukkaanga. <code>Func</code>, <code>Action</code>, <code>Predicate</code> = ready-made delegates — custom delegate declare pannaa vendam!</p>
+  </div>
+
+  <div class="three-col">
+    <div class="compare-card">
+      <h4>🔵 Func&lt;TIn, TOut&gt;</h4>
+      <p style="color:#a0a0c0;font-size:0.85em">Returns a value. Last type param = return type.</p>
+      <pre style="font-size:0.8em"><span class="c-cmt">// Func&lt;input, output&gt;</span>
+<span class="c-type">Func</span>&lt;<span class="c-type">Student</span>, <span class="c-kw">decimal</span>&gt; <span class="c-prop">calcFee</span>
+    = <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Grade</span> * <span class="c-num">500m</span>;
+
+<span class="c-cmt">// Multiple inputs</span>
+<span class="c-type">Func</span>&lt;<span class="c-kw">int</span>, <span class="c-kw">int</span>, <span class="c-kw">int</span>&gt; <span class="c-prop">add</span>
+    = (<span class="c-prop">a</span>, <span class="c-prop">b</span>) => <span class="c-prop">a</span> + <span class="c-prop">b</span>;
+
+<span class="c-cmt">// No input, returns value</span>
+<span class="c-type">Func</span>&lt;<span class="c-kw">string</span>&gt; <span class="c-prop">getTime</span>
+    = () => <span class="c-type">DateTime</span>.<span class="c-prop">Now</span>.<span class="c-method">ToString</span>();
+
+<span class="c-kw">decimal</span> <span class="c-prop">fee</span> = <span class="c-prop">calcFee</span>(<span class="c-prop">student</span>);</pre>
+    </div>
+    <div class="compare-card">
+      <h4>🟢 Action&lt;T&gt;</h4>
+      <p style="color:#a0a0c0;font-size:0.85em">No return value (void). Side effects only.</p>
+      <pre style="font-size:0.8em"><span class="c-cmt">// Action&lt;input&gt; — no return</span>
+<span class="c-type">Action</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-prop">sendSms</span>
+    = <span class="c-prop">s</span> => <span class="c-prop">_sms</span>.<span class="c-method">Send</span>(<span class="c-prop">s</span>.<span class="c-prop">Mobile</span>);
+
+<span class="c-cmt">// Multiple inputs</span>
+<span class="c-type">Action</span>&lt;<span class="c-kw">string</span>, <span class="c-kw">string</span>&gt; <span class="c-prop">log</span>
+    = (<span class="c-prop">level</span>, <span class="c-prop">msg</span>)
+        => <span class="c-prop">_logger</span>.<span class="c-method">Log</span>(<span class="c-prop">level</span>, <span class="c-prop">msg</span>);
+
+<span class="c-cmt">// No input, no return</span>
+<span class="c-type">Action</span> <span class="c-prop">clearCache</span>
+    = () => <span class="c-prop">_cache</span>.<span class="c-method">Clear</span>();
+
+<span class="c-prop">sendSms</span>(<span class="c-prop">student</span>); <span class="c-cmt">// invoke</span></pre>
+    </div>
+    <div class="compare-card">
+      <h4>🟡 Predicate&lt;T&gt;</h4>
+      <p style="color:#a0a0c0;font-size:0.85em">Returns bool. Same as Func&lt;T, bool&gt;.</p>
+      <pre style="font-size:0.8em"><span class="c-cmt">// Predicate&lt;T&gt; → bool</span>
+<span class="c-type">Predicate</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-prop">isEligible</span>
+    = <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Attendance</span> >= <span class="c-num">75</span>
+        &amp;&amp; !<span class="c-prop">s</span>.<span class="c-prop">HasFeesDue</span>;
+
+<span class="c-cmt">// Same as Func&lt;Student, bool&gt;</span>
+<span class="c-type">Func</span>&lt;<span class="c-type">Student</span>, <span class="c-kw">bool</span>&gt; <span class="c-prop">isActive</span>
+    = <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>;
+
+<span class="c-cmt">// Used in List.Find / Where</span>
+<span class="c-kw">var</span> <span class="c-prop">eligible</span> = <span class="c-prop">students</span>
+    .<span class="c-method">FindAll</span>(<span class="c-prop">isEligible</span>);
+
+<span class="c-kw">bool</span> <span class="c-prop">ok</span> = <span class="c-prop">isEligible</span>(<span class="c-prop">student</span>);</pre>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>Type</th><th>Signature</th><th>Return</th><th>ZenCampus Use</th></tr>
+    <tr><td><code>Func&lt;T, TResult&gt;</code></td><td>Input → Output</td><td class="green">Yes</td><td>Fee calculation, data transform</td></tr>
+    <tr><td><code>Action&lt;T&gt;</code></td><td>Input → void</td><td class="red">No</td><td>SMS send, log, notify</td></tr>
+    <tr><td><code>Predicate&lt;T&gt;</code></td><td>Input → bool</td><td class="green">bool</td><td>Student eligibility check</td></tr>
+    <tr><td><code>Func&lt;T, bool&gt;</code></td><td>Input → bool</td><td class="green">bool</td><td>Same as Predicate (LINQ Where)</td></tr>
+    <tr><td><code>Action</code></td><td>no input, void</td><td class="red">No</td><td>Cache clear, cleanup</td></tr>
+    <tr><td><code>Func&lt;TResult&gt;</code></td><td>no input → value</td><td class="green">Yes</td><td>Factory method, lazy init</td></tr>
+  </table>
+</div>
+
+<!-- EVENTS -->
+<div class="section" id="events">
+  <div class="section-title"><span class="num">4</span> Events — Notification System 🔔</div>
+
+  <div class="movie">
+    <span class="film">🎬 96 (2018) — Ram waits for Janu's call</span>
+    <p>Ram phone vanthuchu — "event raised!" Janu ketkudaa? Subscribe! Event raise panna — subscribers (handlers) automatically execute. Publish-Subscribe pattern = Event system!</p>
+  </div>
+
+  <div class="info">
+    <p><strong>Delegate vs Event:</strong> Delegate = method pointer (anyone can invoke). Event = delegate + restrictions (only publisher can invoke, outsiders only subscribe/unsubscribe). Event = encapsulated delegate!</p>
+  </div>
+
+  <pre><span class="c-cmt">// ZenCampus — Student Admission Event System</span>
+<span class="c-kw">public class</span> <span class="c-type">AdmissionService</span>
+{
+    <span class="c-cmt">// 1. Define EventArgs (data to pass with event)</span>
+    <span class="c-kw">public class</span> <span class="c-type">StudentAdmittedEventArgs</span> : <span class="c-type">EventArgs</span>
+    {
+        <span class="c-kw">public</span> <span class="c-type">Student</span> <span class="c-prop">Student</span> { <span class="c-kw">get</span>; <span class="c-kw">init</span>; }
+        <span class="c-kw">public</span> <span class="c-type">DateTime</span> <span class="c-prop">AdmittedAt</span> { <span class="c-kw">get</span>; <span class="c-kw">init</span>; }
+    }
+
+    <span class="c-cmt">// 2. Declare Event (uses EventHandler delegate)</span>
+    <span class="c-kw">public event</span> <span class="c-type">EventHandler</span>&lt;<span class="c-type">StudentAdmittedEventArgs</span>&gt; <span class="c-prop">StudentAdmitted</span>;
+
+    <span class="c-cmt">// 3. Raise event (publisher only)</span>
+    <span class="c-kw">public void</span> <span class="c-method">AdmitStudent</span>(<span class="c-type">Student</span> <span class="c-prop">student</span>)
+    {
+        <span class="c-cmt">// ... save to DB ...</span>
+
+        <span class="c-cmt">// Raise — null check (no subscribers = null)</span>
+        <span class="c-prop">StudentAdmitted</span>?.<span class="c-method">Invoke</span>(<span class="c-kw">this</span>, <span class="c-kw">new</span> <span class="c-type">StudentAdmittedEventArgs</span>
+        {
+            <span class="c-prop">Student</span> = <span class="c-prop">student</span>,
+            <span class="c-prop">AdmittedAt</span> = <span class="c-type">DateTime</span>.<span class="c-prop">Now</span>
+        });
+    }
+}
+
+<span class="c-cmt">// 4. Subscribers (multiple independent handlers)</span>
+<span class="c-kw">public class</span> <span class="c-type">SmsNotificationService</span>
+{
+    <span class="c-kw">public void</span> <span class="c-method">Subscribe</span>(<span class="c-type">AdmissionService</span> <span class="c-prop">svc</span>)
+        => <span class="c-prop">svc</span>.<span class="c-prop">StudentAdmitted</span> += <span class="c-prop">OnStudentAdmitted</span>;
+
+    <span class="c-kw">private void</span> <span class="c-method">OnStudentAdmitted</span>(<span class="c-kw">object</span>? <span class="c-prop">sender</span>, <span class="c-type">StudentAdmittedEventArgs</span> <span class="c-prop">e</span>)
+        => <span class="c-prop">_sms</span>.<span class="c-method">Send</span>(<span class="c-prop">e</span>.<span class="c-prop">Student</span>.<span class="c-prop">ParentMobile</span>, <span class="c-str">"Welcome to ZenCampus!"</span>);
+}
+
+<span class="c-kw">public class</span> <span class="c-type">PortalCreationService</span>
+{
+    <span class="c-kw">public void</span> <span class="c-method">Subscribe</span>(<span class="c-type">AdmissionService</span> <span class="c-prop">svc</span>)
+        => <span class="c-prop">svc</span>.<span class="c-prop">StudentAdmitted</span> += <span class="c-method">OnStudentAdmitted</span>;
+
+    <span class="c-kw">private void</span> <span class="c-method">OnStudentAdmitted</span>(<span class="c-kw">object</span>? <span class="c-prop">s</span>, <span class="c-type">StudentAdmittedEventArgs</span> <span class="c-prop">e</span>)
+        => <span class="c-prop">_portalSvc</span>.<span class="c-method">CreateLogin</span>(<span class="c-prop">e</span>.<span class="c-prop">Student</span>); <span class="c-cmt">// completely independent!</span>
+}</pre>
+
+  <div class="proj">
+    <div class="label">🏫 ZenCampus Flow — New Student Admitted:</div>
+    <p>AdmissionService.AdmitStudent() → raises StudentAdmitted event →<br>
+    SMS Service handler → sends welcome SMS<br>
+    Portal Service handler → creates student login<br>
+    Teacher Service handler → notifies class teacher<br>
+    <strong>All independent, all decoupled, one event!</strong></p>
+  </div>
+
+  <h3>Event Memory Leak — Unsubscribe pannaa vendam!</h3>
+  <pre><span class="c-cmt">// ❌ Leak — subscribe panni forget pannitaa</span>
+<span class="c-prop">admissionSvc</span>.<span class="c-prop">StudentAdmitted</span> += <span class="c-prop">OnStudentAdmitted</span>;
+<span class="c-cmt">// SmsService disposed aana-um, publisher holds reference → GC cannot collect!</span>
+
+<span class="c-cmt">// ✅ Fix — implement IDisposable</span>
+<span class="c-kw">public class</span> <span class="c-type">SmsNotificationService</span> : <span class="c-type">IDisposable</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">AdmissionService</span> <span class="c-prop">_svc</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">SmsNotificationService</span>(<span class="c-type">AdmissionService</span> <span class="c-prop">svc</span>)
+    {
+        <span class="c-prop">_svc</span> = <span class="c-prop">svc</span>;
+        <span class="c-prop">_svc</span>.<span class="c-prop">StudentAdmitted</span> += <span class="c-prop">OnStudentAdmitted</span>;
+    }
+
+    <span class="c-kw">public void</span> <span class="c-method">Dispose</span>()
+        => <span class="c-prop">_svc</span>.<span class="c-prop">StudentAdmitted</span> -= <span class="c-prop">OnStudentAdmitted</span>; <span class="c-cmt">// unsubscribe!</span>
+}</pre>
+</div>
+
+<!-- PATTERNS -->
+<div class="section" id="patterns">
+  <div class="section-title"><span class="num">5</span> Real Patterns — ZenCampus Usage</div>
+
+  <h3>Pattern 1: Strategy Pattern with Func — Fee Calculation</h3>
+  <div class="movie">
+    <span class="film">🎬 Anniyan (2005) — Multiple personalities, same body</span>
+    <p>Ambi/Anniyan/Remo — same person, different behavior. Strategy pattern — same interface, different algorithm. Fee calculation — Term/Bus/Hostel/Scholarship — each different, swappable!</p>
+  </div>
+  <pre><span class="c-kw">public class</span> <span class="c-type">FeeService</span>
+{
+    <span class="c-cmt">// Dictionary of strategies — type → calculator</span>
+    <span class="c-kw">private readonly</span> <span class="c-type">Dictionary</span>&lt;<span class="c-kw">string</span>, <span class="c-type">Func</span>&lt;<span class="c-type">Student</span>, <span class="c-kw">decimal</span>&gt;&gt; <span class="c-prop">_strategies</span> = <span class="c-kw">new</span>()
+    {
+        [<span class="c-str">"Term"</span>]        = <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Grade</span> * <span class="c-num">500m</span>,
+        [<span class="c-str">"Bus"</span>]         = <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Distance</span> * <span class="c-num">20m</span>,
+        [<span class="c-str">"Hostel"</span>]      = <span class="c-prop">s</span> => <span class="c-num">3000m</span>,
+        [<span class="c-str">"Scholarship"</span>] = <span class="c-prop">s</span> => -(<span class="c-prop">s</span>.<span class="c-prop">ScholarshipAmount</span>),
+    };
+
+    <span class="c-kw">public decimal</span> <span class="c-method">Calculate</span>(<span class="c-type">Student</span> <span class="c-prop">student</span>, <span class="c-kw">string</span> <span class="c-prop">feeType</span>)
+    {
+        <span class="c-kw">if</span> (!<span class="c-prop">_strategies</span>.<span class="c-method">TryGetValue</span>(<span class="c-prop">feeType</span>, <span class="c-kw">out var</span> <span class="c-prop">strategy</span>))
+            <span class="c-kw">throw new</span> <span class="c-type">ArgumentException</span>(<span class="c-str">$"Unknown fee type: {feeType}"</span>);
+        <span class="c-kw">return</span> <span class="c-prop">strategy</span>(<span class="c-prop">student</span>); <span class="c-cmt">// invoke the strategy!</span>
+    }
+
+    <span class="c-cmt">// Add new strategy at runtime — no code change needed!</span>
+    <span class="c-kw">public void</span> <span class="c-method">AddStrategy</span>(<span class="c-kw">string</span> <span class="c-prop">type</span>, <span class="c-type">Func</span>&lt;<span class="c-type">Student</span>, <span class="c-kw">decimal</span>&gt; <span class="c-prop">calc</span>)
+        => <span class="c-prop">_strategies</span>[<span class="c-prop">type</span>] = <span class="c-prop">calc</span>;
+}</pre>
+
+  <h3>Pattern 2: Pipeline with Action — Admission Processing</h3>
+  <pre><span class="c-kw">public class</span> <span class="c-type">AdmissionPipeline</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">List</span>&lt;<span class="c-type">Action</span>&lt;<span class="c-type">Student</span>&gt;&gt; <span class="c-prop">_steps</span> = <span class="c-kw">new</span>();
+
+    <span class="c-kw">public</span> <span class="c-type">AdmissionPipeline</span> <span class="c-method">AddStep</span>(<span class="c-type">Action</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-prop">step</span>)
+    {
+        <span class="c-prop">_steps</span>.<span class="c-method">Add</span>(<span class="c-prop">step</span>);
+        <span class="c-kw">return this</span>; <span class="c-cmt">// fluent!</span>
+    }
+
+    <span class="c-kw">public void</span> <span class="c-method">Execute</span>(<span class="c-type">Student</span> <span class="c-prop">student</span>)
+        => <span class="c-prop">_steps</span>.<span class="c-method">ForEach</span>(<span class="c-prop">step</span> => <span class="c-prop">step</span>(<span class="c-prop">student</span>));
+}
+
+<span class="c-cmt">// Usage — fluent chain!</span>
+<span class="c-kw">var</span> <span class="c-prop">pipeline</span> = <span class="c-kw">new</span> <span class="c-type">AdmissionPipeline</span>()
+    .<span class="c-method">AddStep</span>(<span class="c-prop">s</span> => <span class="c-prop">_validationSvc</span>.<span class="c-method">Validate</span>(<span class="c-prop">s</span>))
+    .<span class="c-method">AddStep</span>(<span class="c-prop">s</span> => <span class="c-prop">_repo</span>.<span class="c-method">Save</span>(<span class="c-prop">s</span>))
+    .<span class="c-method">AddStep</span>(<span class="c-prop">s</span> => <span class="c-prop">_sms</span>.<span class="c-method">SendWelcome</span>(<span class="c-prop">s</span>))
+    .<span class="c-method">AddStep</span>(<span class="c-prop">s</span> => <span class="c-prop">_portal</span>.<span class="c-method">CreateLogin</span>(<span class="c-prop">s</span>));
+
+<span class="c-prop">pipeline</span>.<span class="c-method">Execute</span>(<span class="c-prop">newStudent</span>);</pre>
+
+  <h3>Pattern 3: Func as Factory / Lazy Init</h3>
+  <pre><span class="c-cmt">// Lazy DB connection — only create when first needed</span>
+<span class="c-kw">public class</span> <span class="c-type">ReportService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">Func</span>&lt;<span class="c-type">IDbConnection</span>&gt; <span class="c-prop">_connectionFactory</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">ReportService</span>(<span class="c-type">Func</span>&lt;<span class="c-type">IDbConnection</span>&gt; <span class="c-prop">connectionFactory</span>)
+        => <span class="c-prop">_connectionFactory</span> = <span class="c-prop">connectionFactory</span>;
+
+    <span class="c-kw">public void</span> <span class="c-method">GenerateReport</span>()
+    {
+        <span class="c-kw">using var</span> <span class="c-prop">conn</span> = <span class="c-prop">_connectionFactory</span>(); <span class="c-cmt">// create NOW</span>
+        <span class="c-cmt">// use conn...</span>
+    }
+}
+
+<span class="c-cmt">// DI registration</span>
+<span class="c-prop">services</span>.<span class="c-method">AddScoped</span>(<span class="c-prop">sp</span> => <span class="c-kw">new</span> <span class="c-type">ReportService</span>(
+    () => <span class="c-kw">new</span> <span class="c-type">SqlConnection</span>(<span class="c-prop">connectionString</span>)));</pre>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">6</span> 🎯 Scenario-Based Interview Questions</div>
+
+  <!-- S1 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">1</div>
+      <div>
+        <div class="scenario-title">Delegate vs Interface — When to use which? <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Conceptual — most asked design question</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus fee calculation-ku "different algorithm" use pana — oru developer Interface use pannuvan, vera oru developer Func delegate use pannuvan. Interviewer kekuran: "Delegate vs Interface — eppoluthe ethai use pannuva? Real example kudu."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <table style="font-size:0.83em">
+        <tr><th>Aspect</th><th>Delegate / Func</th><th>Interface</th></tr>
+        <tr><td>Complexity</td><td class="green">Single method, simple</td><td class="yellow">Multiple methods, complex</td></tr>
+        <tr><td>State</td><td class="green">Stateless (usually)</td><td class="yellow">Can have state</td></tr>
+        <tr><td>Runtime swap</td><td class="green">Easy — just assign</td><td class="yellow">Need DI or factory</td></tr>
+        <tr><td>Testability</td><td class="green">Easy mock with lambda</td><td class="yellow">Mock framework needed</td></tr>
+        <tr><td>Use when</td><td>Callbacks, strategies, events</td><td>Complex behavior, multiple operations</td></tr>
+      </table>
+      <pre style="margin-top:10px"><span class="c-cmt">// ✅ Delegate — single operation, swappable</span>
+<span class="c-type">Func</span>&lt;<span class="c-type">Student</span>, <span class="c-kw">decimal</span>&gt; <span class="c-prop">calc</span> = <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Grade</span> * <span class="c-num">500</span>;
+<span class="c-cmt">// Test: Func&lt;Student, decimal&gt; mockCalc = s => 0; — done!</span>
+
+<span class="c-cmt">// ✅ Interface — multiple related operations</span>
+<span class="c-kw">public interface</span> <span class="c-type">IFeeCalculator</span>
+{
+    <span class="c-kw">decimal</span> <span class="c-method">Calculate</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>);
+    <span class="c-kw">bool</span> <span class="c-method">IsApplicable</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>);
+    <span class="c-kw">string</span> <span class="c-method">GetDescription</span>();
+}</span>
+<span class="c-cmt">// Multiple methods needed → Interface</span></pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Interview Answer</div>
+        <p>"Single callback or algorithm? → Func/Action — lighter, testable with lambda. Multiple related behaviors or state needed? → Interface. ZenCampus-la simple fee calculation → Func, but IFeeService (calculate + validate + describe) → Interface."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div>
+        <div class="scenario-title">New Fee Type Add Panna — Open/Closed with Func <span class="diff easy">Easy</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Strategy pattern with dictionary of Funcs</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus-la new "Lab Fee" add pannanum. Current code-la big if-else chain irukku:
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">public decimal</span> <span class="c-method">GetFee</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>, <span class="c-kw">string</span> <span class="c-prop">type</span>)
+{
+    <span class="c-kw">if</span> (<span class="c-prop">type</span> == <span class="c-str">"Term"</span>) <span class="c-kw">return</span> <span class="c-prop">s</span>.<span class="c-prop">Grade</span> * <span class="c-num">500m</span>;
+    <span class="c-kw">if</span> (<span class="c-prop">type</span> == <span class="c-str">"Bus"</span>) <span class="c-kw">return</span> <span class="c-prop">s</span>.<span class="c-prop">Distance</span> * <span class="c-num">20m</span>;
+    <span class="c-kw">if</span> (<span class="c-prop">type</span> == <span class="c-str">"Hostel"</span>) <span class="c-kw">return</span> <span class="c-num">3000m</span>;
+    <span class="c-kw">throw new</span> <span class="c-type">Exception</span>(<span class="c-str">"Unknown"</span>);
+    <span class="c-cmt">// New type add panna → this method MODIFY pannanum! (violates OCP)</span>
+}</pre>
+      Refactor panni SOLID Open/Closed follow panna code ezhudanum.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Dictionary of Funcs (OCP compliant)</div>
+      <pre><span class="c-kw">public class</span> <span class="c-type">FeeService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">Dictionary</span>&lt;<span class="c-kw">string</span>, <span class="c-type">Func</span>&lt;<span class="c-type">Student</span>, <span class="c-kw">decimal</span>&gt;&gt; <span class="c-prop">_calculators</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">FeeService</span>()
+    {
+        <span class="c-prop">_calculators</span> = <span class="c-kw">new</span>()
+        {
+            [<span class="c-str">"Term"</span>]    = <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Grade</span> * <span class="c-num">500m</span>,
+            [<span class="c-str">"Bus"</span>]     = <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Distance</span> * <span class="c-num">20m</span>,
+            [<span class="c-str">"Hostel"</span>]  = <span class="c-prop">s</span> => <span class="c-num">3000m</span>,
+        };
+    }
+
+    <span class="c-cmt">// Register new type — NO existing code change!</span>
+    <span class="c-kw">public void</span> <span class="c-method">Register</span>(<span class="c-kw">string</span> <span class="c-prop">type</span>, <span class="c-type">Func</span>&lt;<span class="c-type">Student</span>, <span class="c-kw">decimal</span>&gt; <span class="c-prop">calc</span>)
+        => <span class="c-prop">_calculators</span>[<span class="c-prop">type</span>] = <span class="c-prop">calc</span>;
+
+    <span class="c-kw">public decimal</span> <span class="c-method">GetFee</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>, <span class="c-kw">string</span> <span class="c-prop">type</span>)
+        => <span class="c-prop">_calculators</span>.<span class="c-method">TryGetValue</span>(<span class="c-prop">type</span>, <span class="c-kw">out var</span> <span class="c-prop">calc</span>)
+            ? <span class="c-prop">calc</span>(<span class="c-prop">s</span>)
+            : <span class="c-kw">throw new</span> <span class="c-type">ArgumentException</span>(<span class="c-str">$"Unknown fee: {type}"</span>);
+}
+
+<span class="c-cmt">// Startup-la register new type — zero existing code change!</span>
+<span class="c-prop">feeService</span>.<span class="c-method">Register</span>(<span class="c-str">"Lab"</span>, <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">HasLabSubject</span> ? <span class="c-num">500m</span> : <span class="c-num">0m</span>);</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ SOLID Connection</div>
+        <p>Open/Closed Principle: "Open for extension, closed for modification." Dictionary of Funcs = extension without modification. Interview-la SOLID + Delegate = double marks!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div>
+        <div class="scenario-title">Closure Trap — Capture Value vs Reference <span class="diff hard">Hard</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Lambda closure — classic interview trick</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus developer oru bug report pannuran — "5 buttons create pannom, each click different student ID show pannanum — aaana ellaa buttons-um last student ID show pannuthu!" Code:
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">new</span>[] { <span class="c-num">101</span>, <span class="c-num">102</span>, <span class="c-num">103</span>, <span class="c-num">104</span>, <span class="c-num">105</span> };
+<span class="c-kw">var</span> <span class="c-prop">handlers</span> = <span class="c-kw">new</span> <span class="c-type">List</span>&lt;<span class="c-type">Action</span>&gt;();
+
+<span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">id</span> <span class="c-kw">in</span> <span class="c-prop">students</span>)
+    <span class="c-prop">handlers</span>.<span class="c-method">Add</span>(() => <span class="c-type">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-str">$"Student: {id}"</span>));
+
+<span class="c-prop">handlers</span>.<span class="c-method">ForEach</span>(<span class="c-prop">h</span> => <span class="c-prop">h</span>());
+<span class="c-cmt">// Expected: 101, 102, 103, 104, 105
+// Actual: ???</span></pre>
+      Output enna varum? Bug enna? Fix pannu.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <p><strong>Actual Output: 105, 105, 105, 105, 105</strong></p>
+      <p style="margin-top:8px;color:#c0c0d0;font-size:0.9em"><strong>Why?</strong> <code>foreach</code> loop-la <code>id</code> = same variable, value changes each iteration. Lambda captures the <strong>variable reference</strong>, not the value. All 5 lambdas point to same <code>id</code>. Loop ends → id = 105. All lambdas print 105!</p>
+      <p style="margin-top:6px;color:#f39c12;font-size:0.85em">Note: <code>foreach</code> with <code>var</code> in C# 5+ actually creates new variable per iteration — so this may print 101-105 correctly in modern C#. But with <code>for(int i=0...)</code> it's definitely a trap!</p>
+      <pre><span class="c-cmt">// Guaranteed trap with for loop:</span>
+<span class="c-kw">for</span> (<span class="c-kw">int</span> <span class="c-prop">i</span> = <span class="c-num">0</span>; <span class="c-prop">i</span> &lt; <span class="c-prop">students</span>.<span class="c-prop">Length</span>; <span class="c-prop">i</span>++)
+    <span class="c-prop">handlers</span>.<span class="c-method">Add</span>(() => <span class="c-type">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-prop">students</span>[<span class="c-prop">i</span>])); <span class="c-cmt">// captures i ref!</span>
+<span class="c-cmt">// All print students[5] = IndexOutOfRange! OR last value</span>
+
+<span class="c-cmt">// ✅ Fix — capture local copy</span>
+<span class="c-kw">for</span> (<span class="c-kw">int</span> <span class="c-prop">i</span> = <span class="c-num">0</span>; <span class="c-prop">i</span> &lt; <span class="c-prop">students</span>.<span class="c-prop">Length</span>; <span class="c-prop">i</span>++)
+{
+    <span class="c-kw">int</span> <span class="c-prop">localI</span> = <span class="c-prop">i</span>;  <span class="c-cmt">// new variable each iteration!</span>
+    <span class="c-prop">handlers</span>.<span class="c-method">Add</span>(() => <span class="c-type">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-prop">students</span>[<span class="c-prop">localI</span>]));
+}</pre>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div>
+        <div class="scenario-title">Event Memory Leak — Object Not GC'd <span class="diff hard">Hard</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Event subscription leak — senior level</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus running for 6 months — memory slowly growing. Profiler-la pathuchu — old AdmissionService objects GC aagala! Code:
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">public class</span> <span class="c-type">SmsDashboard</span>
+{
+    <span class="c-kw">public</span> <span class="c-method">SmsDashboard</span>(<span class="c-type">AdmissionService</span> <span class="c-prop">svc</span>)
+    {
+        <span class="c-prop">svc</span>.<span class="c-prop">StudentAdmitted</span> += <span class="c-prop">OnAdmitted</span>; <span class="c-cmt">// subscribe</span>
+    }
+    <span class="c-kw">private void</span> <span class="c-method">OnAdmitted</span>(<span class="c-kw">object</span>? <span class="c-prop">s</span>, <span class="c-type">EventArgs</span> <span class="c-prop">e</span>) { }
+    <span class="c-cmt">// ← No unsubscribe!</span>
+}</span></pre>
+      Root cause enna? Fix pannu.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ROOT CAUSE + FIX</div>
+      <p><strong>Memory Leak Cause:</strong></p>
+      <p style="color:#c0c0d0;font-size:0.9em;margin:8px 0">Event subscription = publisher holds reference to subscriber. <code>AdmissionService.StudentAdmitted</code> holds reference to <code>SmsDashboard.OnAdmitted</code>. SmsDashboard "out of scope" aana-um — publisher still holds it → GC cannot collect → memory leak!</p>
+      <pre><span class="c-cmt">// ✅ Fix — IDisposable pattern</span>
+<span class="c-kw">public class</span> <span class="c-type">SmsDashboard</span> : <span class="c-type">IDisposable</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">AdmissionService</span> <span class="c-prop">_svc</span>;
+    <span class="c-kw">private bool</span> <span class="c-prop">_disposed</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">SmsDashboard</span>(<span class="c-type">AdmissionService</span> <span class="c-prop">svc</span>)
+    {
+        <span class="c-prop">_svc</span> = <span class="c-prop">svc</span>;
+        <span class="c-prop">_svc</span>.<span class="c-prop">StudentAdmitted</span> += <span class="c-prop">OnAdmitted</span>;
+    }
+
+    <span class="c-kw">public void</span> <span class="c-method">Dispose</span>()
+    {
+        <span class="c-kw">if</span> (!<span class="c-prop">_disposed</span>)
+        {
+            <span class="c-prop">_svc</span>.<span class="c-prop">StudentAdmitted</span> -= <span class="c-prop">OnAdmitted</span>; <span class="c-cmt">// unsubscribe!</span>
+            <span class="c-prop">_disposed</span> = <span class="c-kw">true</span>;
+        }
+    }
+
+    <span class="c-kw">private void</span> <span class="c-method">OnAdmitted</span>(<span class="c-kw">object</span>? <span class="c-prop">s</span>, <span class="c-type">EventArgs</span> <span class="c-prop">e</span>) { }
+}
+
+<span class="c-cmt">// Usage</span>
+<span class="c-kw">using var</span> <span class="c-prop">dashboard</span> = <span class="c-kw">new</span> <span class="c-type">SmsDashboard</span>(<span class="c-prop">admissionSvc</span>);
+<span class="c-cmt">// using block ends → Dispose() → unsubscribe → GC can collect!</span></pre>
+      <div class="gold">
+        <div class="gold-label">⭐ WeakReference alternative</div>
+        <p>WeakEventManager (WPF) or WeakReference pattern — publisher holds weak reference to subscriber. GC can collect subscriber even if subscribed. Advanced — mention in interview for bonus points!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div>
+        <div class="scenario-title">Multicast — Which Method's Return Value? <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Multicast delegate return value trap</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Developer oru multicast delegate create pannaan return value-oda. Output enna varum, yen?
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">delegate int</span> <span class="c-type">Calculate</span>(<span class="c-kw">int</span> <span class="c-prop">x</span>);
+
+<span class="c-type">Calculate</span> <span class="c-prop">calc</span> = <span class="c-prop">x</span> => <span class="c-prop">x</span> * <span class="c-num">2</span>;
+<span class="c-prop">calc</span> += <span class="c-prop">x</span> => <span class="c-prop">x</span> * <span class="c-num">3</span>;
+<span class="c-prop">calc</span> += <span class="c-prop">x</span> => <span class="c-prop">x</span> * <span class="c-num">10</span>;
+
+<span class="c-kw">int</span> <span class="c-prop">result</span> = <span class="c-prop">calc</span>(<span class="c-num">5</span>);
+<span class="c-type">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-prop">result</span>); <span class="c-cmt">// ??</span></pre>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <p><strong>Output: 50</strong> (last method's result = 5 × 10)</p>
+      <p style="color:#c0c0d0;font-size:0.9em;margin:8px 0">All 3 methods execute (10, 15, 50), but only LAST return value kept! Others silently discarded.</p>
+      <pre><span class="c-cmt">// To get ALL return values — iterate invocation list</span>
+<span class="c-kw">var</span> <span class="c-prop">allResults</span> = <span class="c-prop">calc</span>.<span class="c-method">GetInvocationList</span>()
+    .<span class="c-method">Select</span>(<span class="c-prop">d</span> => (<span class="c-kw">int</span>)<span class="c-prop">d</span>.<span class="c-method">DynamicInvoke</span>(<span class="c-num">5</span>))
+    .<span class="c-method">ToList</span>();
+<span class="c-cmt">// allResults = [10, 15, 50]</span>
+
+<span class="c-cmt">// Best Practice: Multicast = void return only!</span></pre>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div>
+        <div class="scenario-title">Func as Parameter — Flexible Filter <span class="diff easy">Easy</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Func&lt;T, bool&gt; as method parameter</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus reports module-la same GetStudents() method — different filters need: active only, grade 10 only, fee pending only, hostel only. 4 different methods ezhudaamal, <strong>one flexible method</strong> ezhudanum.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Func as filter parameter</div>
+      <pre><span class="c-cmt">// One method — Func&lt;Student, bool&gt; as filter!</span>
+<span class="c-kw">public</span> <span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-method">GetStudents</span>(
+    <span class="c-type">Func</span>&lt;<span class="c-type">Student</span>, <span class="c-kw">bool</span>&gt; <span class="c-prop">filter</span> = <span class="c-kw">null</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">query</span> = <span class="c-prop">_students</span>.<span class="c-method">AsQueryable</span>();
+    <span class="c-kw">if</span> (<span class="c-prop">filter</span> != <span class="c-kw">null</span>)
+        <span class="c-prop">query</span> = <span class="c-prop">query</span>.<span class="c-method">AsEnumerable</span>().<span class="c-method">Where</span>(<span class="c-prop">filter</span>).<span class="c-method">AsQueryable</span>();
+    <span class="c-kw">return</span> <span class="c-prop">query</span>.<span class="c-method">ToList</span>();
+}
+
+<span class="c-cmt">// Callers pass different filters — ONE method!</span>
+<span class="c-kw">var</span> <span class="c-prop">active</span>     = <span class="c-method">GetStudents</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>);
+<span class="c-kw">var</span> <span class="c-prop">grade10</span>    = <span class="c-method">GetStudents</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Grade</span> == <span class="c-num">10</span>);
+<span class="c-kw">var</span> <span class="c-prop">feePending</span> = <span class="c-method">GetStudents</span>(<span class="c-prop">s</span> => !<span class="c-prop">s</span>.<span class="c-prop">FeesPaid</span>);
+<span class="c-kw">var</span> <span class="c-prop">hostel</span>     = <span class="c-method">GetStudents</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">InHostel</span>);
+<span class="c-kw">var</span> <span class="c-prop">all</span>        = <span class="c-method">GetStudents</span>(); <span class="c-cmt">// no filter = all students</span>
+
+<span class="c-cmt">// Compose filters!</span>
+<span class="c-kw">var</span> <span class="c-prop">grade10Active</span> = <span class="c-method">GetStudents</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Grade</span> == <span class="c-num">10</span> &amp;&amp; <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>);</pre>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div>
+        <div class="scenario-title">Action Pipeline — Admission Steps <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Action list as configurable pipeline</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Student admission-la steps: validate → save → send SMS → create portal → notify teacher. Different schools different steps need. Configurable pipeline design pannu — Action list use panni.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-kw">public class</span> <span class="c-type">AdmissionPipeline</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">List</span>&lt;(<span class="c-kw">string</span> <span class="c-prop">Name</span>, <span class="c-type">Action</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-prop">Step</span>)&gt; <span class="c-prop">_steps</span> = <span class="c-kw">new</span>();
+
+    <span class="c-kw">public</span> <span class="c-type">AdmissionPipeline</span> <span class="c-method">Add</span>(<span class="c-kw">string</span> <span class="c-prop">name</span>, <span class="c-type">Action</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-prop">step</span>)
+    {
+        <span class="c-prop">_steps</span>.<span class="c-method">Add</span>((<span class="c-prop">name</span>, <span class="c-prop">step</span>));
+        <span class="c-kw">return this</span>;
+    }
+
+    <span class="c-kw">public void</span> <span class="c-method">Execute</span>(<span class="c-type">Student</span> <span class="c-prop">student</span>)
+    {
+        <span class="c-kw">foreach</span> (<span class="c-kw">var</span> (<span class="c-prop">name</span>, <span class="c-prop">step</span>) <span class="c-kw">in</span> <span class="c-prop">_steps</span>)
+        {
+            <span class="c-type">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-str">$"Executing: {name}"</span>);
+            <span class="c-prop">step</span>(<span class="c-prop">student</span>);
+        }
+    }
+}
+
+<span class="c-cmt">// School A — basic pipeline</span>
+<span class="c-kw">var</span> <span class="c-prop">schoolA</span> = <span class="c-kw">new</span> <span class="c-type">AdmissionPipeline</span>()
+    .<span class="c-method">Add</span>(<span class="c-str">"Validate"</span>,       <span class="c-prop">s</span> => <span class="c-prop">_validSvc</span>.<span class="c-method">Validate</span>(<span class="c-prop">s</span>))
+    .<span class="c-method">Add</span>(<span class="c-str">"Save"</span>,           <span class="c-prop">s</span> => <span class="c-prop">_repo</span>.<span class="c-method">Save</span>(<span class="c-prop">s</span>))
+    .<span class="c-method">Add</span>(<span class="c-str">"SMS"</span>,            <span class="c-prop">s</span> => <span class="c-prop">_sms</span>.<span class="c-method">SendWelcome</span>(<span class="c-prop">s</span>));
+
+<span class="c-cmt">// School B — extended pipeline</span>
+<span class="c-kw">var</span> <span class="c-prop">schoolB</span> = <span class="c-kw">new</span> <span class="c-type">AdmissionPipeline</span>()
+    .<span class="c-method">Add</span>(<span class="c-str">"Validate"</span>,       <span class="c-prop">s</span> => <span class="c-prop">_validSvc</span>.<span class="c-method">Validate</span>(<span class="c-prop">s</span>))
+    .<span class="c-method">Add</span>(<span class="c-str">"Save"</span>,           <span class="c-prop">s</span> => <span class="c-prop">_repo</span>.<span class="c-method">Save</span>(<span class="c-prop">s</span>))
+    .<span class="c-method">Add</span>(<span class="c-str">"Portal"</span>,         <span class="c-prop">s</span> => <span class="c-prop">_portal</span>.<span class="c-method">Create</span>(<span class="c-prop">s</span>))
+    .<span class="c-method">Add</span>(<span class="c-str">"Notify Teacher"</span>, <span class="c-prop">s</span> => <span class="c-prop">_notify</span>.<span class="c-method">TeacherAlert</span>(<span class="c-prop">s</span>));
+
+<span class="c-prop">schoolA</span>.<span class="c-method">Execute</span>(<span class="c-prop">newStudent</span>);</pre>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div>
+        <div class="scenario-title">Custom delegate vs Func — When prefer custom? <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Readability vs built-in tradeoff</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Code review-la: <code>Func&lt;Student, string, int, bool, decimal&gt;</code> nu irukku. Senior "Custom delegate ezhudu" nu solluran. Yen? Eppoluthe custom delegate prefer pannuva?
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-cmt">// ❌ Unreadable — what are all these params?</span>
+<span class="c-type">Func</span>&lt;<span class="c-type">Student</span>, <span class="c-kw">string</span>, <span class="c-kw">int</span>, <span class="c-kw">bool</span>, <span class="c-kw">decimal</span>&gt; <span class="c-prop">calc</span>;
+
+<span class="c-cmt">// ✅ Custom delegate — self-documenting!</span>
+<span class="c-kw">public delegate decimal</span> <span class="c-type">FeeCalculatorDelegate</span>(
+    <span class="c-type">Student</span> <span class="c-prop">student</span>,
+    <span class="c-kw">string</span> <span class="c-prop">feeType</span>,
+    <span class="c-kw">int</span> <span class="c-prop">termNumber</span>,
+    <span class="c-kw">bool</span> <span class="c-prop">applyDiscount</span>);
+
+<span class="c-type">FeeCalculatorDelegate</span> <span class="c-prop">calc</span>; <span class="c-cmt">// clear intention!</span></pre>
+      <div style="background:#0a1a0a;padding:10px;border-radius:6px;margin-top:8px;font-size:0.88em">
+        <p style="color:#69db7c"><strong>Use Custom Delegate when:</strong></p>
+        <p>• Complex signature — many params → readability!</p>
+        <p>• Domain-specific naming needed</p>
+        <p>• Public API — consumers need clear naming</p>
+        <p style="color:#69db7c;margin-top:6px"><strong>Use Func/Action when:</strong></p>
+        <p>• Simple 1-2 params — Func&lt;T, bool&gt; is clear</p>
+        <p>• Internal/private use</p>
+        <p>• LINQ-compatible (Where/Select take Func)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div>
+        <div class="scenario-title">Null Delegate Invoke — Safe Pattern <span class="diff easy">Easy</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: NullReferenceException when no subscribers</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus StudentAdmitted event raise panurom — subscriber illai-na crash aaguthu. Production-la NullReferenceException! Bug fix pannu + safe pattern explain.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-kw">public event</span> <span class="c-type">EventHandler</span>&lt;<span class="c-type">StudentAdmittedEventArgs</span>&gt; <span class="c-prop">StudentAdmitted</span>;
+
+<span class="c-cmt">// ❌ Crash if no subscribers!</span>
+<span class="c-prop">StudentAdmitted</span>(<span class="c-kw">this</span>, <span class="c-prop">args</span>); <span class="c-cmt">// NullReferenceException!</span>
+
+<span class="c-cmt">// ✅ Option 1 — Null check (old style)</span>
+<span class="c-kw">if</span> (<span class="c-prop">StudentAdmitted</span> != <span class="c-kw">null</span>)
+    <span class="c-prop">StudentAdmitted</span>(<span class="c-kw">this</span>, <span class="c-prop">args</span>);
+
+<span class="c-cmt">// ✅ Option 2 — Null conditional (modern, thread-safe)</span>
+<span class="c-prop">StudentAdmitted</span>?.<span class="c-method">Invoke</span>(<span class="c-kw">this</span>, <span class="c-prop">args</span>); <span class="c-cmt">// ← Best! Use this always</span>
+
+<span class="c-cmt">// ✅ Option 3 — Default null pattern</span>
+<span class="c-kw">public event</span> <span class="c-type">EventHandler</span>&lt;<span class="c-type">StudentAdmittedEventArgs</span>&gt; <span class="c-prop">StudentAdmitted</span>
+    = <span class="c-kw">delegate</span> { }; <span class="c-cmt">// always has at least one no-op handler</span>
+<span class="c-prop">StudentAdmitted</span>(<span class="c-kw">this</span>, <span class="c-prop">args</span>); <span class="c-cmt">// never null — safe!</span>
+
+<span class="c-cmt">// Protected virtual raise method — subclass can override</span>
+<span class="c-kw">protected virtual void</span> <span class="c-method">OnStudentAdmitted</span>(<span class="c-type">StudentAdmittedEventArgs</span> <span class="c-prop">e</span>)
+    => <span class="c-prop">StudentAdmitted</span>?.<span class="c-method">Invoke</span>(<span class="c-kw">this</span>, <span class="c-prop">e</span>);</pre>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div>
+        <div class="scenario-title">Real Interview — "Explain delegate with your project" <span class="diff senior">Senior</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Complete answer with ZenCampus context</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Interviewer kekuran: <em>"Delegate-a real project-la use pannirukkeengala? Explain panunga."</em> ZenCampus context-la complete answer thayyar panni vachu ko.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE INTERVIEW ANSWER</div>
+      <div style="background:#0a1a0a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.8">
+        <p>"Yes, in ZenCampus — our multi-school ERP — I've used delegates in several places."</p>
+        <br>
+        <p><strong>"1. Fee Calculation Strategy:"</strong> Different schools have different fee structures. Instead of if-else chains, I used a <code>Dictionary&lt;string, Func&lt;Student, decimal&gt;&gt;</code> — each fee type mapped to a lambda. New fee type add panna just dictionary-la new entry add pannuvu — existing code untouched. Open/Closed principle!"</p>
+        <br>
+        <p><strong>"2. Admission Event System:"</strong> Student admitted aana — SMS send, portal create, teacher notify — all independent. <code>event EventHandler&lt;StudentAdmittedEventArgs&gt;</code> declare panni, each service subscribe pannuvu. Publisher and subscriber completely decoupled. New notification add panna existing AdmissionService touch pannala!"</p>
+        <br>
+        <p><strong>"3. Pipeline with Action list:"</strong> Different schools need different admission steps. <code>List&lt;Action&lt;Student&gt;&gt;</code> — configure per school, execute sequentially. Fluent API design panni readable code."</p>
+        <br>
+        <p><strong>"4. Flexible filtering:"</strong> Reports module-la <code>Func&lt;Student, bool&gt;</code> as parameter — one method, caller provides filter. No method explosion."</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end scenarios -->
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">7</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: Func&lt;int, string, bool&gt; — how many input params? Return type?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) 3 inputs, no return</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) 2 inputs (int, string), returns bool</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) 1 input, returns bool</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) 3 inputs, returns bool</div>
+    <div class="quiz-fb ok">✅ Func — last type param = return type. Func&lt;int, string, bool&gt; = takes int + string, returns bool. "Last is return" — remember!</div>
+    <div class="quiz-fb nope">❌ Func — LAST type param is return. Func&lt;int, string, bool&gt; = int input, string input, bool return. Count inputs = total params - 1!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: Action&lt;string&gt; vs Func&lt;string&gt; — difference?</p>
+    <div class="quiz-opt" onclick="ans(this,'correct')">A) Action takes string param, returns void. Func takes no param, returns string.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Both same</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Action returns string, Func returns void</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Action = async, Func = sync</div>
+    <div class="quiz-fb ok">✅ Action&lt;T&gt; = takes T as input, returns void. Func&lt;T&gt; = no input, returns T. Key: Action = void always, Func = has return!</div>
+    <div class="quiz-fb nope">❌ Action&lt;string&gt; = input is string, void return. Func&lt;string&gt; = no input, returns string. Action = void always. Func = has return type always!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: Event vs Delegate — main protection difference?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) No difference — same thing</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Event restricts invoke — only declaring class can invoke. Delegate anyone can invoke.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Event is faster than delegate</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Delegate supports multiple subscribers, Event doesn't</div>
+    <div class="quiz-fb ok">✅ Event = encapsulated delegate. Outside code can only += (subscribe) or -= (unsubscribe). Cannot Invoke() directly. Publisher controls when to fire!</div>
+    <div class="quiz-fb nope">❌ Key difference: event = restricted delegate. Only publisher class can invoke. Outside world = subscribe/unsubscribe only. Encapsulation!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: Multicast delegate with return value — what happens when 3 methods return different values?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Exception thrown</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) All values returned as array</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) Only last method's return value kept</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) First method's return value kept</div>
+    <div class="quiz-fb ok">✅ Multicast with return = only LAST method's value! Others silently discarded. That's why multicast delegates should use void return. Use GetInvocationList() to capture all!</div>
+    <div class="quiz-fb nope">❌ Last one wins! All methods execute but only last return value survives. Multicast = void return recommended. GetInvocationList() for all results.</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section" id="checklist">
+  <div class="section-title"><span class="num">8</span> ✅ Day 3 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory (45 min)</h3>
+      <ul class="check-list">
+        <li>Delegate 3 steps — declare, match, invoke</li>
+        <li>Multicast — += and -= understand</li>
+        <li>Func/Action/Predicate signatures memorize</li>
+        <li>Event vs Delegate protection difference</li>
+        <li>Closure trap in loops</li>
+      </ul>
+    </div>
+    <div>
+      <h3>💻 Hands-On (60 min)</h3>
+      <ul class="check-list">
+        <li>ZenCampus FeeService — if-else → Func dictionary</li>
+        <li>AdmissionService — event system implement</li>
+        <li>Pipeline pattern with Action list</li>
+        <li>GetStudents(Func filter) method create</li>
+        <li>Closure bug reproduce in console app</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Scenarios (45 min)</h3>
+      <ul class="check-list">
+        <li>S1: Delegate vs Interface — explain clearly</li>
+        <li>S2: OCP with Func dictionary</li>
+        <li>S3: Closure trap output predict</li>
+        <li>S4: Memory leak + IDisposable fix</li>
+        <li>S10: Full interview answer rehearse!</li>
+      </ul>
+    </div>
+    <div>
+      <h3>⭐ Interview Keywords Ready</h3>
+      <ul class="check-list">
+        <li>"Delegate = type-safe method pointer"</li>
+        <li>"Func = has return, Action = void"</li>
+        <li>"Event = encapsulated delegate"</li>
+        <li>"Closure captures variable reference"</li>
+        <li>"Multicast = last return value only"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#0a2010,#0a1a20);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🎬 Day 3 Motivation</div>
+    <p style="color:#f39c12;font-style:italic">"Dasavathaaram-la Kamal 10 avatars — same director, different behavior. ZenCampus FeeService-la Func dictionary — same method call, different calculation. Delegate = <strong>behavior as data</strong>. Ithai therinja design patterns 70% automatic puriyum!"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 3/60 ✅ | Tomorrow: Collections — List, Dictionary, HashSet, Queue, Stack</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto">
+      <div class="progress-fill" style="width:5%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">3 of 60 days (5%)</div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p>Day 3 – Delegates, Events, Func/Action | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🎬 "Dasavathaaram maari — same signature, different behavior. That's delegate!"</p>
+</footer>
+
+<script>
+function toggle(btn){
+  var a=btn.nextElementSibling;
+  if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent='💡 Answer Reveal';}
+  else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}
+}
+function ans(el,type){
+  var p=el.parentElement;
+  p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});
+  p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));
+  el.classList.add(type);
+  var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));
+  if(fb)fb.classList.add('shown');
+}
+</script>
+</body>
+</html>

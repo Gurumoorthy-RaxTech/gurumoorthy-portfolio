@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C# · .NET · SQL Problem Solving Interview</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#0f0f1a; color:#e0e0e0; line-height:1.7; }
+  header { background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460); padding:28px 20px; text-align:center; border-bottom:3px solid #e94560; }
+  header h1 { font-size:1.9em; color:#e94560; }
+  header p  { color:#a0a0c0; margin-top:6px; }
+  .badge { display:inline-block; background:#e94560; color:#fff; padding:3px 10px; border-radius:20px; font-size:.75em; margin:3px; }
+  .container { max-width:1100px; margin:0 auto; padding:20px; }
+
+  /* TOC */
+  .toc { background:#13132a; border:1px solid #2a2a4a; border-radius:10px; padding:18px 24px; margin:20px 0; }
+  .toc h3 { color:#f39c12; margin-bottom:10px; }
+  .toc a  { color:#74b9ff; text-decoration:none; font-size:.88em; margin-right:16px; }
+  .toc a:hover { color:#e94560; }
+
+  /* Problem card */
+  .problem { background:#13132a; border-radius:12px; margin:28px 0; border:1px solid #2a2a4a; overflow:hidden; }
+  .problem-header { padding:14px 22px; display:flex; align-items:center; gap:12px; }
+  .p-num  { background:#e94560; color:#fff; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:.9em; flex-shrink:0; }
+  .p-title { font-size:1.1em; font-weight:bold; color:#fff; }
+  .p-tag  { font-size:.72em; padding:2px 8px; border-radius:12px; font-weight:bold; }
+  .tag-easy   { background:#0a2010; color:#2ecc71; border:1px solid #2ecc71; }
+  .tag-med    { background:#1a1000; color:#f39c12; border:1px solid #f39c12; }
+  .tag-hard   { background:#1a0000; color:#e74c3c; border:1px solid #e74c3c; }
+  .csharp-hdr { background:linear-gradient(90deg,#1a2030,#1e3a5f); }
+  .sql-hdr    { background:linear-gradient(90deg,#1a1000,#3d2000); }
+  .prob-body  { padding:18px 22px; }
+
+  /* approach tabs */
+  .approaches { margin:14px 0; }
+  .app-label  { font-size:.78em; color:#e94560; font-weight:bold; text-transform:uppercase; letter-spacing:1px; margin:14px 0 6px; }
+  .method-box { background:#0d1117; border-radius:8px; padding:14px; margin:8px 0; border-left:4px solid #e94560; }
+  .method-box.m2 { border-left-color:#f39c12; }
+  .method-box.m3 { border-left-color:#27ae60; }
+  .method-box.m4 { border-left-color:#8e44ad; }
+  .method-title { font-size:.82em; font-weight:bold; color:#74b9ff; margin-bottom:6px; }
+
+  pre  { background:#0d1117; border-radius:6px; padding:12px; overflow-x:auto; font-size:.8em; font-family:'Consolas',monospace; color:#e0e0e0; margin:8px 0; border:1px solid #2a2a4a; line-height:1.7; }
+  .kw  { color:#569cd6; }
+  .str { color:#ce9178; }
+  .cm  { color:#6a9955; }
+  .num { color:#b5cea8; }
+  .typ { color:#4ec9b0; }
+  .fn  { color:#dcdcaa; }
+  .prop{ color:#9cdcfe; }
+  .sql { color:#f39c12; }
+  .sqk { color:#569cd6; }  /* sql keyword */
+  .sqf { color:#dcdcaa; }  /* sql function */
+  code { background:#0d1117; color:#f97316; padding:2px 6px; border-radius:3px; font-size:.82em; font-family:'Consolas',monospace; }
+
+  .explain-box { background:#1a1a35; border-radius:6px; padding:12px 14px; margin:10px 0; border-left:3px solid #74b9ff; }
+  .explain-box .lbl { color:#74b9ff; font-size:.78em; font-weight:bold; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+  .exp-ans { background:#0a2010; border-radius:6px; padding:12px 14px; margin:10px 0; border-left:3px solid #2ecc71; }
+  .exp-ans .lbl { color:#2ecc71; font-size:.78em; font-weight:bold; }
+  .complexity { display:flex; gap:10px; margin:8px 0; flex-wrap:wrap; }
+  .c-box { background:#0d1117; border:1px solid #2a2a4a; border-radius:4px; padding:4px 10px; font-size:.78em; }
+  .c-box .cl { color:#f39c12; font-weight:bold; }
+  .output-box { background:#001a0a; border-radius:6px; padding:10px 14px; margin:8px 0; border-left:3px solid #27ae60; font-size:.82em; font-family:'Consolas',monospace; color:#a8e6cf; }
+  .divider { border:none; border-top:1px solid #2a2a4a; margin:14px 0; }
+
+  /* section headers */
+  .sec-title { background:linear-gradient(90deg,#1a1a2e,#16213e); border-radius:10px; padding:14px 20px; margin:30px 0 10px; display:flex; align-items:center; gap:12px; }
+  .sec-title h2 { color:#f39c12; font-size:1.1em; }
+
+  table { width:100%; border-collapse:collapse; font-size:.82em; margin:10px 0; }
+  th { background:#1e3a5f; color:#74b9ff; padding:8px 10px; text-align:left; }
+  td { padding:7px 10px; border-bottom:1px solid #2a2a4a; color:#c0c0c0; }
+  tr:hover td { background:#1a1a35; }
+
+  footer { text-align:center; padding:24px; color:#555; border-top:1px solid #2a2a4a; margin-top:40px; }
+  @media(max-width:600px){ .complexity{ flex-direction:column; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>💻 C# · .NET · SQL — Problem Solving Interview</h1>
+  <p>Multiple Approaches · Time Complexity · Senior Dev Answers · ZenCampus Context</p>
+  <div style="margin-top:8px">
+    <span class="badge">String Problems</span><span class="badge">Number Problems</span>
+    <span class="badge">Array/Collection</span><span class="badge">OOP Design</span>
+    <span class="badge">SQL Classic</span><span class="badge">SQL Window Fn</span>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- TOC -->
+<div class="toc">
+  <h3>📋 Quick Jump</h3>
+  <a href="#p1">1. Palindrome</a><a href="#p2">2. Reverse String</a><a href="#p3">3. Anagram</a>
+  <a href="#p4">4. Count Vowels</a><a href="#p5">5. Fibonacci</a><a href="#p6">6. Factorial</a>
+  <a href="#p7">7. Prime</a><a href="#p8">8. Armstrong</a><a href="#p9">9. Duplicate in Array</a>
+  <a href="#p10">10. Missing Number</a><a href="#p11">11. Two Sum</a><a href="#p12">12. FizzBuzz</a>
+  <a href="#sql1">13. 2nd Highest Salary</a><a href="#sql2">14. Nth Highest</a>
+  <a href="#sql3">15. Duplicates</a><a href="#sql4">16. Dept Max Salary</a>
+  <a href="#sql5">17. Running Total</a><a href="#sql6">18. Students without Fees</a>
+  <a href="#sql7">19. Top 3 per Class</a><a href="#sql8">20. YoY Growth</a>
+</div>
+
+<!-- ══════════════════════════════════
+     C# STRING PROBLEMS
+══════════════════════════════════ -->
+<div class="sec-title"><h2>🔵 C# String Problems</h2></div>
+
+<!-- P1 PALINDROME -->
+<div class="problem" id="p1">
+  <div class="problem-header csharp-hdr">
+    <div class="p-num">1</div>
+    <div class="p-title">Palindrome Check — "madam", "racecar", "ZenCampus"?</div>
+    <span class="p-tag tag-easy">Easy</span>
+  </div>
+  <div class="prob-body">
+
+    <div class="explain-box">
+      <div class="lbl">🎯 What interviewer really tests</div>
+      String manipulation, loop logic, two-pointer technique, ability to handle edge cases (null, spaces, case). Senior answer = give 3 methods + explain trade-offs!
+    </div>
+
+    <div class="app-label">Method 1 — Two Pointer (Best for interviews — O(n/2))</div>
+    <div class="method-box">
+      <div class="method-title">✅ Method 1: Two Pointer — Most Efficient + Explains Well</div>
+      <pre><span class="kw">public static bool</span> <span class="fn">IsPalindrome</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="kw">if</span> (<span class="kw">string</span>.<span class="fn">IsNullOrEmpty</span>(<span class="prop">s</span>)) <span class="kw">return true</span>;
+
+    <span class="prop">s</span> = <span class="prop">s</span>.<span class="fn">ToLower</span>().<span class="fn">Replace</span>(<span class="str">" "</span>, <span class="str">""</span>); <span class="cm">// normalize</span>
+
+    <span class="kw">int</span> <span class="prop">left</span>  = <span class="num">0</span>;
+    <span class="kw">int</span> <span class="prop">right</span> = <span class="prop">s</span>.<span class="prop">Length</span> - <span class="num">1</span>;
+
+    <span class="kw">while</span> (<span class="prop">left</span> &lt; <span class="prop">right</span>)
+    {
+        <span class="kw">if</span> (<span class="prop">s</span>[<span class="prop">left</span>] != <span class="prop">s</span>[<span class="prop">right</span>])
+            <span class="kw">return false</span>;
+        <span class="prop">left</span>++;
+        <span class="prop">right</span>--;
+    }
+    <span class="kw">return true</span>;
+}
+
+<span class="cm">// Test</span>
+<span class="fn">IsPalindrome</span>(<span class="str">"madam"</span>)   <span class="cm">// true</span>
+<span class="fn">IsPalindrome</span>(<span class="str">"racecar"</span>) <span class="cm">// true</span>
+<span class="fn">IsPalindrome</span>(<span class="str">"hello"</span>)   <span class="cm">// false</span>
+<span class="fn">IsPalindrome</span>(<span class="str">"A man a plan a canal Panama"</span>) <span class="cm">// true (with normalize)</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(n)</div>
+        <div class="c-box"><span class="cl">Space:</span> O(1)</div>
+        <div class="c-box"><span class="cl">Best for:</span> Large strings, memory sensitive</div>
+      </div>
+    </div>
+
+    <div class="app-label">Method 2 — Reverse and Compare (One-liner, clean)</div>
+    <div class="method-box m2">
+      <div class="method-title">Method 2: Reverse Compare — Clean, Readable</div>
+      <pre><span class="kw">public static bool</span> <span class="fn">IsPalindromeReverse</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="prop">s</span> = <span class="prop">s</span>.<span class="fn">ToLower</span>().<span class="fn">Replace</span>(<span class="str">" "</span>, <span class="str">""</span>);
+    <span class="kw">string</span> <span class="prop">reversed</span> = <span class="kw">new string</span>(<span class="prop">s</span>.<span class="fn">Reverse</span>().<span class="fn">ToArray</span>());
+    <span class="kw">return</span> <span class="prop">s</span> == <span class="prop">reversed</span>;
+}
+
+<span class="cm">// One-liner version (LINQ)</span>
+<span class="kw">public static bool</span> <span class="fn">IsPalindromeLinq</span>(<span class="kw">string</span> <span class="prop">s</span>) =&gt;
+    <span class="prop">s</span>.<span class="fn">SequenceEqual</span>(<span class="prop">s</span>.<span class="fn">Reverse</span>());</pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(n)</div>
+        <div class="c-box"><span class="cl">Space:</span> O(n) — creates reversed string</div>
+        <div class="c-box"><span class="cl">Best for:</span> Code readability, short strings</div>
+      </div>
+    </div>
+
+    <div class="app-label">Method 3 — StringBuilder (Interview shows you know StringBuilder)</div>
+    <div class="method-box m3">
+      <div class="method-title">Method 3: Using StringBuilder — Demonstrates knowledge</div>
+      <pre><span class="kw">public static bool</span> <span class="fn">IsPalindromeSB</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="prop">s</span> = <span class="prop">s</span>.<span class="fn">ToLower</span>().<span class="fn">Replace</span>(<span class="str">" "</span>, <span class="str">""</span>);
+    <span class="kw">var</span> <span class="prop">sb</span> = <span class="kw">new</span> <span class="typ">StringBuilder</span>();
+
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="prop">s</span>.<span class="prop">Length</span> - <span class="num">1</span>; <span class="prop">i</span> &gt;= <span class="num">0</span>; <span class="prop">i</span>--)
+        <span class="prop">sb</span>.<span class="fn">Append</span>(<span class="prop">s</span>[<span class="prop">i</span>]);
+
+    <span class="kw">return</span> <span class="prop">s</span> == <span class="prop">sb</span>.<span class="fn">ToString</span>();
+}</pre>
+    </div>
+
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Interview Answer (speak this!):</div>
+      "I'd use the Two-Pointer approach — O(n) time, O(1) space. Two pointers, one from each end, move towards center comparing characters. If mismatch found, return false immediately — short-circuits, no need to check full string. I'd also normalise — toLower and strip spaces — to handle 'A man a plan a canal Panama' type inputs. In production ZenCampus code, I'd add a null check upfront. The LINQ reverse approach is cleaner for readability but uses O(n) extra space for the reversed copy."
+    </div>
+  </div>
+</div>
+
+<!-- P2 REVERSE STRING -->
+<div class="problem" id="p2">
+  <div class="problem-header csharp-hdr">
+    <div class="p-num">2</div>
+    <div class="p-title">Reverse a String — without built-in Reverse()</div>
+    <span class="p-tag tag-easy">Easy</span>
+  </div>
+  <div class="prob-body">
+
+    <div class="app-label">Method 1 — Two Pointer Swap (Most asked!)</div>
+    <div class="method-box">
+      <div class="method-title">✅ Method 1: Two Pointer In-place Swap</div>
+      <pre><span class="kw">public static string</span> <span class="fn">ReverseString</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="kw">char</span>[] <span class="prop">chars</span> = <span class="prop">s</span>.<span class="fn">ToCharArray</span>();
+    <span class="kw">int</span> <span class="prop">left</span>  = <span class="num">0</span>;
+    <span class="kw">int</span> <span class="prop">right</span> = <span class="prop">chars</span>.<span class="prop">Length</span> - <span class="num">1</span>;
+
+    <span class="kw">while</span> (<span class="prop">left</span> &lt; <span class="prop">right</span>)
+    {
+        <span class="cm">// swap</span>
+        (<span class="prop">chars</span>[<span class="prop">left</span>], <span class="prop">chars</span>[<span class="prop">right</span>]) =
+            (<span class="prop">chars</span>[<span class="prop">right</span>], <span class="prop">chars</span>[<span class="prop">left</span>]);
+        <span class="prop">left</span>++;
+        <span class="prop">right</span>--;
+    }
+    <span class="kw">return new string</span>(<span class="prop">chars</span>);
+}
+<span class="cm">// "ZenCampus" → "supmaCreZ"</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(n/2) = O(n)</div>
+        <div class="c-box"><span class="cl">Space:</span> O(n) — char array</div>
+      </div>
+    </div>
+
+    <div class="app-label">Method 2 — StringBuilder backward loop</div>
+    <div class="method-box m2">
+      <div class="method-title">Method 2: StringBuilder Loop</div>
+      <pre><span class="kw">public static string</span> <span class="fn">ReverseWithSB</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="kw">var</span> <span class="prop">sb</span> = <span class="kw">new</span> <span class="typ">StringBuilder</span>(<span class="prop">s</span>.<span class="prop">Length</span>);
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="prop">s</span>.<span class="prop">Length</span> - <span class="num">1</span>; <span class="prop">i</span> &gt;= <span class="num">0</span>; <span class="prop">i</span>--)
+        <span class="prop">sb</span>.<span class="fn">Append</span>(<span class="prop">s</span>[<span class="prop">i</span>]);
+    <span class="kw">return</span> <span class="prop">sb</span>.<span class="fn">ToString</span>();
+}</pre>
+    </div>
+
+    <div class="app-label">Method 3 — Recursion (shows depth)</div>
+    <div class="method-box m3">
+      <div class="method-title">Method 3: Recursive</div>
+      <pre><span class="kw">public static string</span> <span class="fn">ReverseRecursive</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="kw">if</span> (<span class="prop">s</span>.<span class="prop">Length</span> &lt;= <span class="num">1</span>) <span class="kw">return</span> <span class="prop">s</span>;
+
+    <span class="kw">return</span> <span class="fn">ReverseRecursive</span>(<span class="prop">s</span>[<span class="num">1</span>..])   <span class="cm">// tail</span>
+           + <span class="prop">s</span>[<span class="num">0</span>];                          <span class="cm">// + first char</span>
+}
+<span class="cm">// "abc" → Reverse("bc") + 'a'
+//       → Reverse("c") + 'b' + 'a'
+//       → "c" + "b" + "a" = "cba"</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(n²) — string concat each level</div>
+        <div class="c-box"><span class="cl">Space:</span> O(n) call stack</div>
+        <div class="c-box"><span class="cl">Note:</span> Conceptually clean, not production ideal</div>
+      </div>
+    </div>
+
+    <div class="app-label">Bonus — Reverse words in a sentence</div>
+    <div class="method-box m4">
+      <div class="method-title">Bonus: Reverse Words (common follow-up!)</div>
+      <pre><span class="cm">// "ZenCampus School ERP" → "ERP School ZenCampus"</span>
+<span class="kw">public static string</span> <span class="fn">ReverseWords</span>(<span class="kw">string</span> <span class="prop">sentence</span>)
+{
+    <span class="kw">return string</span>.<span class="fn">Join</span>(<span class="str">" "</span>,
+        <span class="prop">sentence</span>.<span class="fn">Split</span>(<span class="str">' '</span>,
+            <span class="typ">StringSplitOptions</span>.<span class="prop">RemoveEmptyEntries</span>)
+        .<span class="fn">Reverse</span>());
+}</pre>
+    </div>
+
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Interview Answer:</div>
+      "Strings in C# are immutable, so I convert to char array first, then do an in-place two-pointer swap — left and right indices walking toward the center. This is O(n/2) swaps, O(n) space for the array. I'd mention that built-in Array.Reverse(chars) does the same, but if they say 'without built-in', I use the manual swap. For reversing words in a sentence, Split(' ').Reverse().Join(' ') is the cleanest production approach. I'd also validate null/empty upfront."
+    </div>
+  </div>
+</div>
+
+<!-- P3 ANAGRAM -->
+<div class="problem" id="p3">
+  <div class="problem-header csharp-hdr">
+    <div class="p-num">3</div>
+    <div class="p-title">Anagram Check — "listen" and "silent", "triangle" and "integral"</div>
+    <span class="p-tag tag-easy">Easy</span>
+  </div>
+  <div class="prob-body">
+
+    <div class="explain-box">
+      <div class="lbl">💡 Concept</div>
+      Two strings are anagrams if they contain the SAME characters with the SAME frequency. "listen" = "silent" — same 6 chars, same counts!
+    </div>
+
+    <div class="app-label">Method 1 — Sort and Compare</div>
+    <div class="method-box">
+      <div class="method-title">✅ Method 1: Sort Both Strings and Compare</div>
+      <pre><span class="kw">public static bool</span> <span class="fn">IsAnagram</span>(<span class="kw">string</span> <span class="prop">s1</span>, <span class="kw">string</span> <span class="prop">s2</span>)
+{
+    <span class="kw">if</span> (<span class="prop">s1</span>.<span class="prop">Length</span> != <span class="prop">s2</span>.<span class="prop">Length</span>) <span class="kw">return false</span>; <span class="cm">// quick exit</span>
+
+    <span class="kw">var</span> <span class="prop">a1</span> = <span class="prop">s1</span>.<span class="fn">ToLower</span>().<span class="fn">ToCharArray</span>();
+    <span class="kw">var</span> <span class="prop">a2</span> = <span class="prop">s2</span>.<span class="fn">ToLower</span>().<span class="fn">ToCharArray</span>();
+
+    <span class="typ">Array</span>.<span class="fn">Sort</span>(<span class="prop">a1</span>);
+    <span class="typ">Array</span>.<span class="fn">Sort</span>(<span class="prop">a2</span>);
+
+    <span class="kw">return</span> <span class="prop">a1</span>.<span class="fn">SequenceEqual</span>(<span class="prop">a2</span>);
+}
+<span class="cm">// "listen" sorted = "eilnst"
+// "silent" sorted = "eilnst" ✅ → true</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(n log n) — sorting</div>
+        <div class="c-box"><span class="cl">Space:</span> O(n)</div>
+      </div>
+    </div>
+
+    <div class="app-label">Method 2 — Dictionary Frequency Count (Best O(n))</div>
+    <div class="method-box m2">
+      <div class="method-title">✅ Method 2: Character Frequency Map — Optimal O(n)</div>
+      <pre><span class="kw">public static bool</span> <span class="fn">IsAnagramDict</span>(<span class="kw">string</span> <span class="prop">s1</span>, <span class="kw">string</span> <span class="prop">s2</span>)
+{
+    <span class="kw">if</span> (<span class="prop">s1</span>.<span class="prop">Length</span> != <span class="prop">s2</span>.<span class="prop">Length</span>) <span class="kw">return false</span>;
+
+    <span class="kw">var</span> <span class="prop">freq</span> = <span class="kw">new</span> <span class="typ">Dictionary</span>&lt;<span class="kw">char</span>, <span class="kw">int</span>&gt;();
+
+    <span class="kw">foreach</span> (<span class="kw">char</span> <span class="prop">c</span> <span class="kw">in</span> <span class="prop">s1</span>.<span class="fn">ToLower</span>())
+        <span class="prop">freq</span>[<span class="prop">c</span>] = <span class="prop">freq</span>.<span class="fn">GetValueOrDefault</span>(<span class="prop">c</span>) + <span class="num">1</span>;
+
+    <span class="kw">foreach</span> (<span class="kw">char</span> <span class="prop">c</span> <span class="kw">in</span> <span class="prop">s2</span>.<span class="fn">ToLower</span>())
+    {
+        <span class="kw">if</span> (!<span class="prop">freq</span>.<span class="fn">ContainsKey</span>(<span class="prop">c</span>) || <span class="prop">freq</span>[<span class="prop">c</span>] == <span class="num">0</span>)
+            <span class="kw">return false</span>;
+        <span class="prop">freq</span>[<span class="prop">c</span>]--;
+    }
+    <span class="kw">return true</span>;
+}
+<span class="cm">// "listen" builds: {l:1,i:1,s:1,t:1,e:1,n:1}
+// "silent" decrements each — all reach 0 → anagram!</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(n) — two passes</div>
+        <div class="c-box"><span class="cl">Space:</span> O(1) — max 26 chars</div>
+        <div class="c-box"><span class="cl">Best:</span> Preferred in interviews!</div>
+      </div>
+    </div>
+
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Answer:</div>
+      "Two approaches: Sort-and-compare is O(n log n) — easy to explain. Better is character frequency dictionary — O(n). Build frequency map from s1, then for each char in s2 decrement — if any char missing or count goes negative, not anagram. O(n) time, O(1) space since only 26 possible characters. I'd also do quick-fail on length mismatch first — saves processing."
+    </div>
+  </div>
+</div>
+
+<!-- P4 VOWELS -->
+<div class="problem" id="p4">
+  <div class="problem-header csharp-hdr">
+    <div class="p-num">4</div>
+    <div class="p-title">Count Vowels + Most Frequent Character + Remove Duplicates</div>
+    <span class="p-tag tag-easy">Easy</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">Count Vowels</div>
+      <pre><span class="kw">public static int</span> <span class="fn">CountVowels</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="kw">const string</span> <span class="prop">vowels</span> = <span class="str">"aeiouAEIOU"</span>;
+    <span class="kw">return</span> <span class="prop">s</span>.<span class="fn">Count</span>(<span class="prop">c</span> =&gt; <span class="prop">vowels</span>.<span class="fn">Contains</span>(<span class="prop">c</span>));
+}
+<span class="cm">// "ZenCampus" → 3 (e, a, u)</span></pre>
+    </div>
+    <div class="method-box m2">
+      <div class="method-title">Most Frequent Character</div>
+      <pre><span class="kw">public static char</span> <span class="fn">MostFrequent</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="kw">return</span> <span class="prop">s</span>.<span class="fn">ToLower</span>()
+             .<span class="fn">GroupBy</span>(<span class="prop">c</span> =&gt; <span class="prop">c</span>)
+             .<span class="fn">OrderByDescending</span>(<span class="prop">g</span> =&gt; <span class="prop">g</span>.<span class="prop">Count</span>())
+             .<span class="fn">First</span>().<span class="prop">Key</span>;
+}
+<span class="cm">// "aabbcca" → 'a' (appears 3 times)</span></pre>
+    </div>
+    <div class="method-box m3">
+      <div class="method-title">Remove Duplicate Characters (keep first occurrence)</div>
+      <pre><span class="kw">public static string</span> <span class="fn">RemoveDuplicateChars</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="kw">var</span> <span class="prop">seen</span> = <span class="kw">new</span> <span class="typ">HashSet</span>&lt;<span class="kw">char</span>&gt;();
+    <span class="kw">var</span> <span class="prop">sb</span>   = <span class="kw">new</span> <span class="typ">StringBuilder</span>();
+
+    <span class="kw">foreach</span> (<span class="kw">char</span> <span class="prop">c</span> <span class="kw">in</span> <span class="prop">s</span>)
+        <span class="kw">if</span> (<span class="prop">seen</span>.<span class="fn">Add</span>(<span class="prop">c</span>))  <span class="cm">// Add returns false if exists</span>
+            <span class="prop">sb</span>.<span class="fn">Append</span>(<span class="prop">c</span>);
+
+    <span class="kw">return</span> <span class="prop">sb</span>.<span class="fn">ToString</span>();
+}
+<span class="cm">// "ZenCampus" → "ZenCampus" (all unique here)
+// "aabbcc"   → "abc"</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     C# NUMBER PROBLEMS
+══════════════════════════════════ -->
+<div class="sec-title"><h2>🟡 C# Number Problems</h2></div>
+
+<!-- P5 FIBONACCI -->
+<div class="problem" id="p5">
+  <div class="problem-header csharp-hdr">
+    <div class="p-num">5</div>
+    <div class="p-title">Fibonacci Series — Print first N terms</div>
+    <span class="p-tag tag-easy">Easy</span>
+  </div>
+  <div class="prob-body">
+
+    <div class="explain-box">
+      <div class="lbl">💡 Fibonacci</div>
+      0, 1, 1, 2, 3, 5, 8, 13, 21... Each number = sum of previous two. F(0)=0, F(1)=1, F(n) = F(n-1) + F(n-2)
+    </div>
+
+    <div class="app-label">Method 1 — Iterative (Best!)</div>
+    <div class="method-box">
+      <div class="method-title">✅ Method 1: Iterative — O(n) time, O(1) space</div>
+      <pre><span class="kw">public static void</span> <span class="fn">PrintFibonacci</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">int</span> <span class="prop">a</span> = <span class="num">0</span>, <span class="prop">b</span> = <span class="num">1</span>;
+
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">0</span>; <span class="prop">i</span> &lt; <span class="prop">n</span>; <span class="prop">i</span>++)
+    {
+        <span class="fn">Console</span>.<span class="fn">Write</span>(<span class="str">$"{<span class="prop">a</span>} "</span>);
+        (<span class="prop">a</span>, <span class="prop">b</span>) = (<span class="prop">b</span>, <span class="prop">a</span> + <span class="prop">b</span>); <span class="cm">// tuple swap!</span>
+    }
+}
+<span class="cm">// n=8 → 0 1 1 2 3 5 8 13</span>
+
+<span class="cm">// Return as List</span>
+<span class="kw">public static</span> <span class="typ">List</span>&lt;<span class="kw">int</span>&gt; <span class="fn">GetFibonacci</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">var</span> <span class="prop">result</span> = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="kw">int</span>&gt;();
+    <span class="kw">int</span> <span class="prop">a</span> = <span class="num">0</span>, <span class="prop">b</span> = <span class="num">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">0</span>; <span class="prop">i</span> &lt; <span class="prop">n</span>; <span class="prop">i</span>++, (<span class="prop">a</span>, <span class="prop">b</span>) = (<span class="prop">b</span>, <span class="prop">a</span> + <span class="prop">b</span>))
+        <span class="prop">result</span>.<span class="fn">Add</span>(<span class="prop">a</span>);
+    <span class="kw">return</span> <span class="prop">result</span>;
+}</pre>
+    </div>
+
+    <div class="app-label">Method 2 — Recursive (shows recursion, but slow!)</div>
+    <div class="method-box m2">
+      <div class="method-title">Method 2: Recursive — O(2ⁿ) — Demo only, never production</div>
+      <pre><span class="kw">public static int</span> <span class="fn">FibRecursive</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">if</span> (<span class="prop">n</span> &lt;= <span class="num">1</span>) <span class="kw">return</span> <span class="prop">n</span>;
+    <span class="kw">return</span> <span class="fn">FibRecursive</span>(<span class="prop">n</span> - <span class="num">1</span>) + <span class="fn">FibRecursive</span>(<span class="prop">n</span> - <span class="num">2</span>);
+}
+<span class="cm">// F(40) = ~2 billion calls! Exponential growth</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(2ⁿ) — exponential, bad!</div>
+        <div class="c-box"><span class="cl">Space:</span> O(n) — call stack</div>
+      </div>
+    </div>
+
+    <div class="app-label">Method 3 — Memoization (Recursive + Cache = DP)</div>
+    <div class="method-box m3">
+      <div class="method-title">✅ Method 3: Memoization — O(n) with cache (Shows DP knowledge!)</div>
+      <pre><span class="kw">private static</span> <span class="typ">Dictionary</span>&lt;<span class="kw">int</span>, <span class="kw">long</span>&gt; <span class="prop">_memo</span> = <span class="kw">new</span>();
+
+<span class="kw">public static long</span> <span class="fn">FibMemo</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">if</span> (<span class="prop">n</span> &lt;= <span class="num">1</span>) <span class="kw">return</span> <span class="prop">n</span>;
+    <span class="kw">if</span> (<span class="prop">_memo</span>.<span class="fn">TryGetValue</span>(<span class="prop">n</span>, <span class="kw">out var</span> <span class="prop">cached</span>))
+        <span class="kw">return</span> <span class="prop">cached</span>;
+
+    <span class="kw">var</span> <span class="prop">result</span> = <span class="fn">FibMemo</span>(<span class="prop">n</span> - <span class="num">1</span>) + <span class="fn">FibMemo</span>(<span class="prop">n</span> - <span class="num">2</span>);
+    <span class="prop">_memo</span>[<span class="prop">n</span>] = <span class="prop">result</span>;
+    <span class="kw">return</span> <span class="prop">result</span>;
+}
+<span class="cm">// F(100) calculated in microseconds — each sub-result cached!</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(n) — each n computed once</div>
+        <div class="c-box"><span class="cl">Space:</span> O(n) — memo dict</div>
+      </div>
+    </div>
+
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Answer:</div>
+      "I present 3 approaches. Iterative is O(n) time O(1) space — best for production. Recursive is clean to understand but O(2ⁿ) — Fib(40) takes seconds! Memoization adds a dictionary cache to recursive — each value computed once, O(n) time and space. In an interview, I'd code iterative, then say 'if they want large values, I'd use memoization or the iterative is already optimal.' I'd also use long instead of int — Fib(93) overflows int!"
+    </div>
+  </div>
+</div>
+
+<!-- P6 FACTORIAL -->
+<div class="problem" id="p6">
+  <div class="problem-header csharp-hdr">
+    <div class="p-num">6</div>
+    <div class="p-title">Factorial — n! = 1 × 2 × 3 × ... × n</div>
+    <span class="p-tag tag-easy">Easy</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">✅ Iterative + Recursive + Validation</div>
+      <pre><span class="cm">// Iterative — O(n) time, O(1) space</span>
+<span class="kw">public static long</span> <span class="fn">FactorialIterative</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">if</span> (<span class="prop">n</span> &lt; <span class="num">0</span>) <span class="kw">throw new</span> <span class="typ">ArgumentException</span>(<span class="str">"n must be ≥ 0"</span>);
+    <span class="kw">long</span> <span class="prop">result</span> = <span class="num">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">2</span>; <span class="prop">i</span> &lt;= <span class="prop">n</span>; <span class="prop">i</span>++)
+        <span class="prop">result</span> *= <span class="prop">i</span>;
+    <span class="kw">return</span> <span class="prop">result</span>;
+}
+<span class="cm">// 5! = 120,  10! = 3628800</span>
+
+<span class="cm">// Recursive — elegant but O(n) stack</span>
+<span class="kw">public static long</span> <span class="fn">FactorialRecursive</span>(<span class="kw">int</span> <span class="prop">n</span>)
+    =&gt; <span class="prop">n</span> &lt;= <span class="num">1</span> ? <span class="num">1</span> : <span class="prop">n</span> * <span class="fn">FactorialRecursive</span>(<span class="prop">n</span> - <span class="num">1</span>);
+
+<span class="cm">// LINQ one-liner (shows language knowledge)</span>
+<span class="kw">public static long</span> <span class="fn">FactorialLinq</span>(<span class="kw">int</span> <span class="prop">n</span>)
+    =&gt; <span class="typ">Enumerable</span>.<span class="fn">Range</span>(<span class="num">1</span>, <span class="prop">n</span>)
+                  .<span class="fn">Aggregate</span>(<span class="num">1L</span>, (<span class="prop">acc</span>, <span class="prop">x</span>) =&gt; <span class="prop">acc</span> * <span class="prop">x</span>);</pre>
+    </div>
+    <div class="exp-ans">
+      <div class="lbl">🎤 Key point to mention:</div>
+      "0! = 1 by definition. I'd use long not int — 13! overflows int (2147483647). For very large factorials, I'd use BigInteger. Iterative is preferred over recursive to avoid StackOverflowException for large n."
+    </div>
+  </div>
+</div>
+
+<!-- P7 PRIME -->
+<div class="problem" id="p7">
+  <div class="problem-header csharp-hdr">
+    <div class="p-num">7</div>
+    <div class="p-title">Prime Number Check + Print all primes up to N (Sieve)</div>
+    <span class="p-tag tag-med">Medium</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">✅ IsPrime — O(√n) optimization</div>
+      <pre><span class="kw">public static bool</span> <span class="fn">IsPrime</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">if</span> (<span class="prop">n</span> &lt; <span class="num">2</span>) <span class="kw">return false</span>;
+    <span class="kw">if</span> (<span class="prop">n</span> == <span class="num">2</span>) <span class="kw">return true</span>;
+    <span class="kw">if</span> (<span class="prop">n</span> % <span class="num">2</span> == <span class="num">0</span>) <span class="kw">return false</span>; <span class="cm">// even > 2 = not prime</span>
+
+    <span class="cm">// Check up to √n only — if n=100, check up to 10</span>
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">3</span>; <span class="prop">i</span> * <span class="prop">i</span> &lt;= <span class="prop">n</span>; <span class="prop">i</span> += <span class="num">2</span>) <span class="cm">// skip evens</span>
+        <span class="kw">if</span> (<span class="prop">n</span> % <span class="prop">i</span> == <span class="num">0</span>) <span class="kw">return false</span>;
+
+    <span class="kw">return true</span>;
+}
+<span class="cm">// IsPrime(17)  → true
+// IsPrime(100) → false (100 = 10×10)</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(√n) — why? If n has factor &gt; √n, its pair must be &lt; √n</div>
+      </div>
+    </div>
+    <div class="method-box m2">
+      <div class="method-title">✅ Sieve of Eratosthenes — All primes up to N (Very impressive!)</div>
+      <pre><span class="kw">public static</span> <span class="typ">List</span>&lt;<span class="kw">int</span>&gt; <span class="fn">SieveOfEratosthenes</span>(<span class="kw">int</span> <span class="prop">limit</span>)
+{
+    <span class="kw">var</span> <span class="prop">isPrime</span> = <span class="kw">new bool</span>[<span class="prop">limit</span> + <span class="num">1</span>];
+    <span class="typ">Array</span>.<span class="fn">Fill</span>(<span class="prop">isPrime</span>, <span class="kw">true</span>);
+    <span class="prop">isPrime</span>[<span class="num">0</span>] = <span class="prop">isPrime</span>[<span class="num">1</span>] = <span class="kw">false</span>;
+
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">2</span>; <span class="prop">i</span> * <span class="prop">i</span> &lt;= <span class="prop">limit</span>; <span class="prop">i</span>++)
+        <span class="kw">if</span> (<span class="prop">isPrime</span>[<span class="prop">i</span>])
+            <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">j</span> = <span class="prop">i</span> * <span class="prop">i</span>; <span class="prop">j</span> &lt;= <span class="prop">limit</span>; <span class="prop">j</span> += <span class="prop">i</span>)
+                <span class="prop">isPrime</span>[<span class="prop">j</span>] = <span class="kw">false</span>; <span class="cm">// mark multiples</span>
+
+    <span class="kw">return</span> <span class="typ">Enumerable</span>.<span class="fn">Range</span>(<span class="num">2</span>, <span class="prop">limit</span> - <span class="num">1</span>)
+                      .<span class="fn">Where</span>(<span class="prop">i</span> =&gt; <span class="prop">isPrime</span>[<span class="prop">i</span>])
+                      .<span class="fn">ToList</span>();
+}
+<span class="cm">// limit=20 → [2,3,5,7,11,13,17,19]</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(n log log n)</div>
+        <div class="c-box"><span class="cl">Space:</span> O(n)</div>
+        <div class="c-box"><span class="cl">Best:</span> Generate ALL primes up to n efficiently</div>
+      </div>
+    </div>
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Answer — Why √n?</div>
+      "If n is NOT prime, it must have a factor ≤ √n. Because if both factors are &gt;√n, their product would exceed n. So checking up to √n is sufficient. For Sieve — we start marking multiples from i*i (not 2*i) because smaller multiples are already marked by previous primes. This is the most efficient bulk prime generator."
+    </div>
+  </div>
+</div>
+
+<!-- P8 ARMSTRONG -->
+<div class="problem" id="p8">
+  <div class="problem-header csharp-hdr">
+    <div class="p-num">8</div>
+    <div class="p-title">Armstrong Number — 153 = 1³ + 5³ + 3³</div>
+    <span class="p-tag tag-easy">Easy</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <pre><span class="kw">public static bool</span> <span class="fn">IsArmstrong</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">string</span> <span class="prop">digits</span> = <span class="prop">n</span>.<span class="fn">ToString</span>();
+    <span class="kw">int</span>    <span class="prop">power</span>  = <span class="prop">digits</span>.<span class="prop">Length</span>;  <span class="cm">// 3 for 153</span>
+
+    <span class="kw">int</span> <span class="prop">sum</span> = <span class="prop">digits</span>
+        .<span class="fn">Sum</span>(<span class="prop">c</span> =&gt; (<span class="kw">int</span>)<span class="typ">Math</span>.<span class="fn">Pow</span>(<span class="prop">c</span> - <span class="str">'0'</span>, <span class="prop">power</span>));
+
+    <span class="kw">return</span> <span class="prop">sum</span> == <span class="prop">n</span>;
+}
+<span class="cm">// 153: 1³+5³+3³ = 1+125+27 = 153 ✅
+// 370: 3³+7³+0³ = 27+343+0 = 370 ✅
+// 371: 3³+7³+1³ = 27+343+1 = 371 ✅
+// 407: 4³+0³+7³ = 64+0+343 = 407 ✅
+
+// Print all 3-digit Armstrong numbers
+<span class="typ">Enumerable</span>.<span class="fn">Range</span>(100, 900)
+           .Where(IsArmstrong)
+           .ToList()
+           .ForEach(Console.WriteLine);
+// → 153, 370, 371, 407</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     C# ARRAY / COLLECTION PROBLEMS
+══════════════════════════════════ -->
+<div class="sec-title"><h2>🟢 C# Array / Collection Problems</h2></div>
+
+<!-- P9 DUPLICATES -->
+<div class="problem" id="p9">
+  <div class="problem-header csharp-hdr">
+    <div class="p-num">9</div>
+    <div class="p-title">Find Duplicates in Array — [1,2,3,2,4,3] → [2,3]</div>
+    <span class="p-tag tag-med">Medium</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">✅ Method 1: HashSet O(n) — Best!</div>
+      <pre><span class="kw">public static</span> <span class="typ">List</span>&lt;<span class="kw">int</span>&gt; <span class="fn">FindDuplicates</span>(<span class="kw">int</span>[] <span class="prop">arr</span>)
+{
+    <span class="kw">var</span> <span class="prop">seen</span>       = <span class="kw">new</span> <span class="typ">HashSet</span>&lt;<span class="kw">int</span>&gt;();
+    <span class="kw">var</span> <span class="prop">duplicates</span> = <span class="kw">new</span> <span class="typ">HashSet</span>&lt;<span class="kw">int</span>&gt;(); <span class="cm">// avoid duplicate dups</span>
+
+    <span class="kw">foreach</span> (<span class="kw">var</span> <span class="prop">num</span> <span class="kw">in</span> <span class="prop">arr</span>)
+        <span class="kw">if</span> (!<span class="prop">seen</span>.<span class="fn">Add</span>(<span class="prop">num</span>))   <span class="cm">// Add returns false = already exists</span>
+            <span class="prop">duplicates</span>.<span class="fn">Add</span>(<span class="prop">num</span>);
+
+    <span class="kw">return</span> <span class="prop">duplicates</span>.<span class="fn">ToList</span>();
+}
+<span class="cm">// [1,2,3,2,4,3] → [2,3]</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(n)</div><div class="c-box"><span class="cl">Space:</span> O(n)</div>
+      </div>
+    </div>
+    <div class="method-box m2">
+      <div class="method-title">Method 2: LINQ GroupBy</div>
+      <pre><span class="kw">public static</span> <span class="typ">IEnumerable</span>&lt;<span class="kw">int</span>&gt; <span class="fn">FindDuplicatesLinq</span>(<span class="kw">int</span>[] <span class="prop">arr</span>)
+    =&gt; <span class="prop">arr</span>.<span class="fn">GroupBy</span>(<span class="prop">x</span> =&gt; <span class="prop">x</span>)
+           .<span class="fn">Where</span>(<span class="prop">g</span> =&gt; <span class="prop">g</span>.<span class="fn">Count</span>() &gt; <span class="num">1</span>)
+           .<span class="fn">Select</span>(<span class="prop">g</span> =&gt; <span class="prop">g</span>.<span class="prop">Key</span>);</pre>
+    </div>
+    <div class="exp-ans">
+      <div class="lbl">🎤 ZenCampus context:</div>
+      "Same logic applies for finding duplicate roll numbers in a class — HashSet.Add() returns false if already present. For DB-scale duplicates, SQL GROUP BY HAVING COUNT > 1 is more appropriate."
+    </div>
+  </div>
+</div>
+
+<!-- P10 MISSING NUMBER -->
+<div class="problem" id="p10">
+  <div class="problem-header csharp-hdr">
+    <div class="p-num">10</div>
+    <div class="p-title">Find Missing Number in 1 to N — [1,2,4,5] → 3</div>
+    <span class="p-tag tag-easy">Easy</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">✅ Method 1: Sum Formula — O(n), O(1) space!</div>
+      <pre><span class="kw">public static int</span> <span class="fn">FindMissing</span>(<span class="kw">int</span>[] <span class="prop">arr</span>, <span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="cm">// Sum of 1..n = n*(n+1)/2</span>
+    <span class="kw">int</span> <span class="prop">expected</span> = <span class="prop">n</span> * (<span class="prop">n</span> + <span class="num">1</span>) / <span class="num">2</span>;
+    <span class="kw">int</span> <span class="prop">actual</span>   = <span class="prop">arr</span>.<span class="fn">Sum</span>();
+    <span class="kw">return</span> <span class="prop">expected</span> - <span class="prop">actual</span>;
+}
+<span class="cm">// n=5, arr=[1,2,4,5]
+// expected = 5*6/2 = 15
+// actual   = 1+2+4+5 = 12
+// missing  = 15-12 = 3 ✅</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(n)</div><div class="c-box"><span class="cl">Space:</span> O(1) — no extra structure!</div>
+      </div>
+    </div>
+    <div class="method-box m2">
+      <div class="method-title">Method 2: XOR (Bit manipulation — Very impressive!)</div>
+      <pre><span class="kw">public static int</span> <span class="fn">FindMissingXOR</span>(<span class="kw">int</span>[] <span class="prop">arr</span>, <span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">int</span> <span class="prop">xorFull</span>  = <span class="num">0</span>;
+    <span class="kw">int</span> <span class="prop">xorArray</span> = <span class="num">0</span>;
+
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">1</span>; <span class="prop">i</span> &lt;= <span class="prop">n</span>; <span class="prop">i</span>++) <span class="prop">xorFull</span>  ^= <span class="prop">i</span>;
+    <span class="kw">foreach</span> (<span class="kw">var</span> <span class="prop">x</span> <span class="kw">in</span> <span class="prop">arr</span>)           <span class="prop">xorArray</span> ^= <span class="prop">x</span>;
+
+    <span class="kw">return</span> <span class="prop">xorFull</span> ^ <span class="prop">xorArray</span>;
+    <span class="cm">// a ^ a = 0, so matching numbers cancel out
+    // Only the missing number remains!</span>
+}</pre>
+    </div>
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Answer:</div>
+      "Two approaches: Sum formula is O(n) O(1) — mathematical, elegant. Expected sum - actual sum = missing value. XOR approach is even more elegant — XOR of 1..n with all array elements cancels matched pairs, leaving only the missing number. Both are O(n) time O(1) space. I'd use sum formula in production for clarity, XOR for showing CS fundamentals in interviews."
+    </div>
+  </div>
+</div>
+
+<!-- P11 TWO SUM -->
+<div class="problem" id="p11">
+  <div class="problem-header csharp-hdr">
+    <div class="p-num">11</div>
+    <div class="p-title">Two Sum — Find pair that adds up to target</div>
+    <span class="p-tag tag-med">Medium</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">Method 1: Brute Force O(n²) — Mention but don't code</div>
+      <pre><span class="cm">// O(n²) — nested loop checking all pairs
+// arr=[2,7,11,15], target=9 → [0,1] (2+7=9)
+// DON'T do this in interview — mention and improve!</span></pre>
+    </div>
+    <div class="method-box m2">
+      <div class="method-title">✅ Method 2: HashMap O(n) — This is what they want!</div>
+      <pre><span class="kw">public static</span> (<span class="kw">int</span>, <span class="kw">int</span>) <span class="fn">TwoSum</span>(<span class="kw">int</span>[] <span class="prop">nums</span>, <span class="kw">int</span> <span class="prop">target</span>)
+{
+    <span class="kw">var</span> <span class="prop">seen</span> = <span class="kw">new</span> <span class="typ">Dictionary</span>&lt;<span class="kw">int</span>, <span class="kw">int</span>&gt;();
+    <span class="cm">// key=value, value=index</span>
+
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">0</span>; <span class="prop">i</span> &lt; <span class="prop">nums</span>.<span class="prop">Length</span>; <span class="prop">i</span>++)
+    {
+        <span class="kw">int</span> <span class="prop">complement</span> = <span class="prop">target</span> - <span class="prop">nums</span>[<span class="prop">i</span>];
+
+        <span class="kw">if</span> (<span class="prop">seen</span>.<span class="fn">TryGetValue</span>(<span class="prop">complement</span>, <span class="kw">out int</span> <span class="prop">j</span>))
+            <span class="kw">return</span> (<span class="prop">j</span>, <span class="prop">i</span>);             <span class="cm">// found!</span>
+
+        <span class="prop">seen</span>[<span class="prop">nums</span>[<span class="prop">i</span>]] = <span class="prop">i</span>;
+    }
+    <span class="kw">return</span> (-<span class="num">1</span>, -<span class="num">1</span>);                <span class="cm">// not found</span>
+}
+
+<span class="cm">// nums=[2,7,11,15], target=9
+// i=0: complement=7, not in seen. Add 2→0
+// i=1: complement=2, found at index 0! → (0,1) ✅</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Time:</span> O(n) — single pass</div><div class="c-box"><span class="cl">Space:</span> O(n) — dict</div>
+      </div>
+    </div>
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Answer:</div>
+      "Classic problem. Brute force is O(n²) — two nested loops. Optimal is HashMap — for each number, calculate complement (target - current), check if complement already seen. One pass, O(n) time. The key insight: instead of looking forward for a pair, look backward using a hash map — 'have I seen the number that would complete this pair?' This is the core pattern for many problems."
+    </div>
+  </div>
+</div>
+
+<!-- P12 FIZZBUZZ -->
+<div class="problem" id="p12">
+  <div class="problem-header csharp-hdr">
+    <div class="p-num">12</div>
+    <div class="p-title">FizzBuzz — divisible by 3=Fizz, 5=Buzz, both=FizzBuzz</div>
+    <span class="p-tag tag-easy">Easy</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">✅ Clean, Extendable Solution</div>
+      <pre><span class="kw">public static</span> <span class="typ">IEnumerable</span>&lt;<span class="kw">string</span>&gt; <span class="fn">FizzBuzz</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">1</span>; <span class="prop">i</span> &lt;= <span class="prop">n</span>; <span class="prop">i</span>++)
+    {
+        <span class="kw">var</span> <span class="prop">result</span> = <span class="kw">string</span>.<span class="prop">Empty</span>;
+        <span class="kw">if</span> (<span class="prop">i</span> % <span class="num">3</span> == <span class="num">0</span>) <span class="prop">result</span> += <span class="str">"Fizz"</span>;
+        <span class="kw">if</span> (<span class="prop">i</span> % <span class="num">5</span> == <span class="num">0</span>) <span class="prop">result</span> += <span class="str">"Buzz"</span>;
+        <span class="kw">yield return string</span>.<span class="fn">IsNullOrEmpty</span>(<span class="prop">result</span>)
+            ? <span class="prop">i</span>.<span class="fn">ToString</span>()
+            : <span class="prop">result</span>;
+    }
+}
+<span class="cm">// 1,2,Fizz,4,Buzz,Fizz,7,8,Fizz,Buzz,
+// 11,Fizz,13,14,FizzBuzz...</span></pre>
+    </div>
+    <div class="exp-ans">
+      <div class="lbl">🎤 Why this approach is senior-level:</div>
+      "I check 3 and 5 SEPARATELY and concatenate — handles FizzBuzz automatically without a special 'divisible by 15' case. It's extendable: add 7='Bazz' by just adding one more if-block. I also use yield return for lazy evaluation — works for large n without building the full list in memory. A junior would write if/else if/else if — mine is O(1) to add new rules."
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SQL PROBLEMS
+══════════════════════════════════ -->
+<div class="sec-title"><h2>🟠 SQL Problem Solving — Classic + Advanced</h2></div>
+
+<!-- SQL1 SECOND HIGHEST -->
+<div class="problem" id="sql1">
+  <div class="problem-header sql-hdr">
+    <div class="p-num">13</div>
+    <div class="p-title">Second Highest Salary — 6 Different Methods!</div>
+    <span class="p-tag tag-med">Medium</span>
+  </div>
+  <div class="prob-body">
+
+    <div class="explain-box">
+      <div class="lbl">📋 Table: Employees (Id, Name, Salary, DeptId)</div>
+      Data: 90000, 80000, 70000, 80000 → Second Highest = 80000
+    </div>
+
+    <div class="app-label">Method 1 — OFFSET FETCH (SQL Server — Cleanest!)</div>
+    <div class="method-box">
+      <div class="method-title">✅ Method 1: OFFSET FETCH — Modern SQL Server way</div>
+      <pre><span class="sqk">SELECT DISTINCT</span> <span class="prop">Salary</span>
+<span class="sqk">FROM</span>   <span class="prop">Employees</span>
+<span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">DESC</span>
+<span class="sqk">OFFSET</span> <span class="num">1</span> <span class="sqk">ROWS FETCH NEXT</span> <span class="num">1</span> <span class="sqk">ROWS ONLY</span>;
+
+<span class="cm">-- Skip 1 row (highest), take 1 (second highest)
+-- DISTINCT handles duplicate salaries
+-- Change OFFSET 1 → OFFSET 2 for 3rd highest!</span></pre>
+    </div>
+
+    <div class="app-label">Method 2 — MAX with NOT IN (Most commonly asked!)</div>
+    <div class="method-box m2">
+      <div class="method-title">✅ Method 2: MAX excluding the highest</div>
+      <pre><span class="sqk">SELECT MAX</span>(<span class="prop">Salary</span>) <span class="sqk">AS</span> <span class="prop">SecondHighest</span>
+<span class="sqk">FROM</span>   <span class="prop">Employees</span>
+<span class="sqk">WHERE</span>  <span class="prop">Salary</span> &lt; (<span class="sqk">SELECT MAX</span>(<span class="prop">Salary</span>) <span class="sqk">FROM</span> <span class="prop">Employees</span>);
+
+<span class="cm">-- MAX of all salaries that are LESS than the overall MAX
+-- Inner query: finds 90000
+-- Outer query: MAX of {80000,70000,80000} = 80000 ✅</span></pre>
+    </div>
+
+    <div class="app-label">Method 3 — DENSE_RANK Window Function (Best for Nth highest!)</div>
+    <div class="method-box m3">
+      <div class="method-title">✅ Method 3: DENSE_RANK — Works for ANY Nth!</div>
+      <pre><span class="sqk">WITH</span> <span class="prop">RankedSalaries</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span> <span class="prop">Salary</span>,
+           <span class="sqf">DENSE_RANK</span>() <span class="sqk">OVER</span> (<span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">DESC</span>)
+               <span class="sqk">AS</span> <span class="prop">Rnk</span>
+    <span class="sqk">FROM</span>   <span class="prop">Employees</span>
+)
+<span class="sqk">SELECT DISTINCT</span> <span class="prop">Salary</span>
+<span class="sqk">FROM</span>   <span class="prop">RankedSalaries</span>
+<span class="sqk">WHERE</span>  <span class="prop">Rnk</span> = <span class="num">2</span>;   <span class="cm">-- change to 3 for 3rd highest!</span>
+
+<span class="cm">-- DENSE_RANK: 90000→1, 80000→2, 70000→3
+-- (two 80000s both get rank 2 — DENSE_RANK!)
+-- WHERE Rnk=2 → 80000 ✅</span></pre>
+      <div class="complexity">
+        <div class="c-box"><span class="cl">Best for:</span> Any Nth highest — just change the number</div>
+        <div class="c-box"><span class="cl">Handles:</span> Duplicate salaries correctly</div>
+      </div>
+    </div>
+
+    <div class="app-label">Method 4 — NOT IN Subquery</div>
+    <div class="method-box m4">
+      <div class="method-title">Method 4: NOT IN — Easy to understand</div>
+      <pre><span class="sqk">SELECT MAX</span>(<span class="prop">Salary</span>) <span class="sqk">AS</span> <span class="prop">SecondHighest</span>
+<span class="sqk">FROM</span>   <span class="prop">Employees</span>
+<span class="sqk">WHERE</span>  <span class="prop">Salary</span> <span class="sqk">NOT IN</span> (
+    <span class="sqk">SELECT MAX</span>(<span class="prop">Salary</span>) <span class="sqk">FROM</span> <span class="prop">Employees</span>
+);</pre>
+    </div>
+
+    <div class="app-label">Method 5 — TOP with TOP (SQL Server specific)</div>
+    <div class="method-box">
+      <div class="method-title">Method 5: TOP 1 from TOP 2 (Classic SQL Server)</div>
+      <pre><span class="sqk">SELECT TOP</span> <span class="num">1</span> <span class="prop">Salary</span>
+<span class="sqk">FROM</span> (
+    <span class="sqk">SELECT DISTINCT TOP</span> <span class="num">2</span> <span class="prop">Salary</span>
+    <span class="sqk">FROM</span>   <span class="prop">Employees</span>
+    <span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">DESC</span>
+) <span class="sqk">AS</span> <span class="prop">Top2</span>
+<span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">ASC</span>;
+
+<span class="cm">-- Inner: TOP 2 DESC → {90000, 80000}
+-- Outer: TOP 1 ASC  → 80000 (smallest of top 2)</span></pre>
+    </div>
+
+    <div class="app-label">Method 6 — NULL safe (returns NULL if no 2nd highest)</div>
+    <div class="method-box m2">
+      <div class="method-title">✅ Method 6: NULL-safe — Production ready!</div>
+      <pre><span class="sqk">SELECT</span> <span class="sqf">ISNULL</span>(
+    (<span class="sqk">SELECT DISTINCT TOP</span> <span class="num">1</span> <span class="prop">Salary</span>
+     <span class="sqk">FROM</span> (
+         <span class="sqk">SELECT DISTINCT TOP</span> <span class="num">2</span> <span class="prop">Salary</span>
+         <span class="sqk">FROM</span>   <span class="prop">Employees</span>
+         <span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">DESC</span>
+     ) <span class="sqk">AS</span> <span class="prop">T</span>
+     <span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">ASC</span>),
+    <span class="num">NULL</span>
+) <span class="sqk">AS</span> <span class="prop">SecondHighest</span>;
+
+<span class="cm">-- If only one unique salary exists → returns NULL
+-- Interview trick: always handle edge cases!</span></pre>
+    </div>
+
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Interview Answer (FULL answer):</div>
+      "I know 5+ approaches. Let me list them with trade-offs:
+      <br>1. <strong>OFFSET FETCH</strong> — cleanest, SQL Server 2012+, O(n log n)
+      <br>2. <strong>MAX subquery</strong> — simplest, widely understood
+      <br>3. <strong>DENSE_RANK</strong> — most flexible, works for ANY nth salary, handles duplicates correctly. ROW_NUMBER would fail with duplicate salaries — two 80000s would get different ranks!
+      <br>4. <strong>TOP 1 of TOP 2</strong> — classic SQL Server pattern
+      <br>In production, I'd use DENSE_RANK because it's one parameter change from 2nd to Nth, handles duplicate salaries, and is readable. I'd also add NULL safety in case there's only one unique salary."
+    </div>
+  </div>
+</div>
+
+<!-- SQL2 NTH HIGHEST -->
+<div class="problem" id="sql2">
+  <div class="problem-header sql-hdr">
+    <div class="p-num">14</div>
+    <div class="p-title">Nth Highest Salary — Generic Stored Procedure</div>
+    <span class="p-tag tag-med">Medium</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">✅ Stored Procedure for Nth Highest (Very Impressive!)</div>
+      <pre><span class="sqk">CREATE PROCEDURE</span> <span class="prop">usp_GetNthHighestSalary</span>
+    @<span class="prop">N</span> <span class="sqk">INT</span>
+<span class="sqk">AS</span>
+<span class="sqk">BEGIN</span>
+    <span class="sqk">WITH</span> <span class="prop">RankedSalaries</span> <span class="sqk">AS</span> (
+        <span class="sqk">SELECT</span> <span class="prop">Salary</span>,
+               <span class="sqf">DENSE_RANK</span>() <span class="sqk">OVER</span> (
+                   <span class="sqk">ORDER BY</span> <span class="prop">Salary</span> <span class="sqk">DESC</span>
+               ) <span class="sqk">AS</span> <span class="prop">Rnk</span>
+        <span class="sqk">FROM</span>   <span class="prop">Employees</span>
+    )
+    <span class="sqk">SELECT DISTINCT</span>
+           <span class="sqf">ISNULL</span>(
+               (<span class="sqk">SELECT DISTINCT</span> <span class="prop">Salary</span>
+                <span class="sqk">FROM</span>  <span class="prop">RankedSalaries</span>
+                <span class="sqk">WHERE</span> <span class="prop">Rnk</span> = @<span class="prop">N</span>),
+               <span class="num">NULL</span>
+           ) <span class="sqk">AS</span> <span class="prop">NthHighestSalary</span>;
+<span class="sqk">END</span>;
+
+<span class="cm">-- Usage:
+-- EXEC usp_GetNthHighestSalary @N = 1  → 90000
+-- EXEC usp_GetNthHighestSalary @N = 2  → 80000
+-- EXEC usp_GetNthHighestSalary @N = 99 → NULL</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- SQL3 DUPLICATES -->
+<div class="problem" id="sql3">
+  <div class="problem-header sql-hdr">
+    <div class="p-num">15</div>
+    <div class="p-title">Find Duplicate Records — Students with same RollNo</div>
+    <span class="p-tag tag-easy">Easy</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">✅ Method 1: GROUP BY HAVING COUNT > 1</div>
+      <pre><span class="cm">-- Find duplicate email IDs</span>
+<span class="sqk">SELECT</span> <span class="prop">Email</span>, <span class="sqf">COUNT</span>(*) <span class="sqk">AS</span> <span class="prop">Cnt</span>
+<span class="sqk">FROM</span>   <span class="prop">Students</span>
+<span class="sqk">GROUP BY</span> <span class="prop">Email</span>
+<span class="sqk">HAVING</span>   <span class="sqf">COUNT</span>(*) &gt; <span class="num">1</span>
+<span class="sqk">ORDER BY</span> <span class="prop">Cnt</span> <span class="sqk">DESC</span>;</pre>
+    </div>
+    <div class="method-box m2">
+      <div class="method-title">✅ Method 2: Show FULL duplicate rows (with ROW_NUMBER)</div>
+      <pre><span class="sqk">WITH</span> <span class="prop">Dupes</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span> *,
+           <span class="sqf">ROW_NUMBER</span>() <span class="sqk">OVER</span> (
+               <span class="sqk">PARTITION BY</span> <span class="prop">RollNo</span>, <span class="prop">SchoolId</span>
+               <span class="sqk">ORDER BY</span>     <span class="prop">Id</span>
+           ) <span class="sqk">AS</span> <span class="prop">Rn</span>
+    <span class="sqk">FROM</span>   <span class="prop">Students</span>
+)
+<span class="sqk">SELECT</span> * <span class="sqk">FROM</span> <span class="prop">Dupes</span> <span class="sqk">WHERE</span> <span class="prop">Rn</span> &gt; <span class="num">1</span>;
+
+<span class="cm">-- Rn=1 = first occurrence (keep)
+-- Rn>1 = duplicates (can then DELETE these!)</span>
+
+<span class="cm">-- DELETE duplicates keeping first occurrence:</span>
+<span class="sqk">WITH</span> <span class="prop">Dupes</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span> *,
+           <span class="sqf">ROW_NUMBER</span>() <span class="sqk">OVER</span> (
+               <span class="sqk">PARTITION BY</span> <span class="prop">RollNo</span>, <span class="prop">SchoolId</span>
+               <span class="sqk">ORDER BY</span>     <span class="prop">Id</span>
+           ) <span class="sqk">AS</span> <span class="prop">Rn</span>
+    <span class="sqk">FROM</span>   <span class="prop">Students</span>
+)
+<span class="sqk">DELETE FROM</span> <span class="prop">Dupes</span> <span class="sqk">WHERE</span> <span class="prop">Rn</span> &gt; <span class="num">1</span>;</pre>
+    </div>
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Answer:</div>
+      "GROUP BY HAVING COUNT > 1 finds which values are duplicated. But to see full rows or DELETE duplicates, ROW_NUMBER OVER PARTITION BY is the correct approach. Partition by the duplicate-key columns, order by Id (to keep the oldest/first). Rn=1 = keep, Rn>1 = duplicate to delete. ZenCampus: same roll number admitted twice in the same school — this query finds and cleans it."
+    </div>
+  </div>
+</div>
+
+<!-- SQL4 DEPT MAX -->
+<div class="problem" id="sql4">
+  <div class="problem-header sql-hdr">
+    <div class="p-num">16</div>
+    <div class="p-title">Employees with Maximum Salary in Each Department</div>
+    <span class="p-tag tag-med">Medium</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">✅ Method 1: CTE with DENSE_RANK per Dept</div>
+      <pre><span class="sqk">WITH</span> <span class="prop">DeptRanked</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span> <span class="prop">e</span>.<span class="prop">Name</span>, <span class="prop">e</span>.<span class="prop">Salary</span>,
+           <span class="prop">d</span>.<span class="prop">DeptName</span>,
+           <span class="sqf">DENSE_RANK</span>() <span class="sqk">OVER</span> (
+               <span class="sqk">PARTITION BY</span> <span class="prop">e</span>.<span class="prop">DeptId</span>
+               <span class="sqk">ORDER BY</span>     <span class="prop">e</span>.<span class="prop">Salary</span> <span class="sqk">DESC</span>
+           ) <span class="sqk">AS</span> <span class="prop">Rnk</span>
+    <span class="sqk">FROM</span>   <span class="prop">Employees</span>  <span class="prop">e</span>
+    <span class="sqk">JOIN</span>   <span class="prop">Departments</span> <span class="prop">d</span>
+        <span class="sqk">ON</span> <span class="prop">d</span>.<span class="prop">Id</span> = <span class="prop">e</span>.<span class="prop">DeptId</span>
+)
+<span class="sqk">SELECT</span> <span class="prop">DeptName</span>, <span class="prop">Name</span>, <span class="prop">Salary</span>
+<span class="sqk">FROM</span>   <span class="prop">DeptRanked</span>
+<span class="sqk">WHERE</span>  <span class="prop">Rnk</span> = <span class="num">1</span>;   <span class="cm">-- top earner per dept (ties included!)</span>
+
+<span class="cm">-- ZenCampus: highest-paid staff per department
+-- Rnk=2 → second highest per dept
+-- Handles salary ties (both get Rnk=1)</span></pre>
+    </div>
+    <div class="method-box m2">
+      <div class="method-title">Method 2: Subquery with MAX per group</div>
+      <pre><span class="sqk">SELECT</span> <span class="prop">e</span>.<span class="prop">Name</span>, <span class="prop">e</span>.<span class="prop">Salary</span>, <span class="prop">e</span>.<span class="prop">DeptId</span>
+<span class="sqk">FROM</span>   <span class="prop">Employees</span> <span class="prop">e</span>
+<span class="sqk">WHERE</span>  <span class="prop">e</span>.<span class="prop">Salary</span> = (
+    <span class="sqk">SELECT MAX</span>(<span class="prop">Salary</span>)
+    <span class="sqk">FROM</span>   <span class="prop">Employees</span>
+    <span class="sqk">WHERE</span>  <span class="prop">DeptId</span> = <span class="prop">e</span>.<span class="prop">DeptId</span>  <span class="cm">-- correlated!</span>
+);
+<span class="cm">-- Correlated subquery — runs once per outer row</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- SQL5 RUNNING TOTAL -->
+<div class="problem" id="sql5">
+  <div class="problem-header sql-hdr">
+    <div class="p-num">17</div>
+    <div class="p-title">Running Total (Cumulative Sum) — Fee Collection Month-wise</div>
+    <span class="p-tag tag-med">Medium</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">✅ SUM OVER (ORDER BY) — Running total with window function</div>
+      <pre><span class="cm">-- Monthly fee collection with running total</span>
+<span class="sqk">SELECT</span>
+    <span class="sqf">FORMAT</span>(<span class="prop">PaidDate</span>, <span class="str">'yyyy-MM'</span>)  <span class="sqk">AS</span> <span class="prop">Month</span>,
+    <span class="sqf">SUM</span>(<span class="prop">Amount</span>)                   <span class="sqk">AS</span> <span class="prop">MonthlyTotal</span>,
+    <span class="sqf">SUM</span>(<span class="sqf">SUM</span>(<span class="prop">Amount</span>)) <span class="sqk">OVER</span> (
+        <span class="sqk">ORDER BY</span> <span class="sqf">FORMAT</span>(<span class="prop">PaidDate</span>, <span class="str">'yyyy-MM'</span>)
+    )                              <span class="sqk">AS</span> <span class="prop">RunningTotal</span>
+<span class="sqk">FROM</span>   <span class="prop">Fees</span>
+<span class="sqk">WHERE</span>  <span class="prop">IsPaid</span> = <span class="num">1</span>
+<span class="sqk">GROUP BY</span> <span class="sqf">FORMAT</span>(<span class="prop">PaidDate</span>, <span class="str">'yyyy-MM'</span>)
+<span class="sqk">ORDER BY</span> <span class="prop">Month</span>;
+
+<span class="cm">-- Output:
+-- Month     MonthlyTotal  RunningTotal
+-- 2026-01   50000         50000
+-- 2026-02   75000         125000
+-- 2026-03   60000         185000</span></pre>
+    </div>
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Answer:</div>
+      "SUM() OVER (ORDER BY) is a window aggregate — it calculates a cumulative sum sorted by the ORDER BY column. The inner SUM(Amount) is the GROUP BY aggregate per month. The outer SUM(SUM(Amount)) OVER ORDER BY adds each month's total cumulatively. ZenCampus uses this for financial dashboards — showing total fee collection growth across the academic year."
+    </div>
+  </div>
+</div>
+
+<!-- SQL6 LEFT JOIN -->
+<div class="problem" id="sql6">
+  <div class="problem-header sql-hdr">
+    <div class="p-num">18</div>
+    <div class="p-title">Students WITHOUT Fee Records — LEFT JOIN Anti-pattern</div>
+    <span class="p-tag tag-easy">Easy</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">✅ Method 1: LEFT JOIN + WHERE NULL (Anti-Join) — Fastest!</div>
+      <pre><span class="sqk">SELECT</span> <span class="prop">s</span>.<span class="prop">Id</span>, <span class="prop">s</span>.<span class="prop">Name</span>, <span class="prop">s</span>.<span class="prop">Class</span>
+<span class="sqk">FROM</span>   <span class="prop">Students</span>  <span class="prop">s</span>
+<span class="sqk">LEFT JOIN</span> <span class="prop">Fees</span>  <span class="prop">f</span>
+    <span class="sqk">ON</span> <span class="prop">f</span>.<span class="prop">StudentId</span> = <span class="prop">s</span>.<span class="prop">Id</span>
+<span class="sqk">WHERE</span>  <span class="prop">f</span>.<span class="prop">Id</span> <span class="sqk">IS NULL</span>  <span class="cm">-- no matching fee record!</span>
+<span class="sqk">ORDER BY</span> <span class="prop">s</span>.<span class="prop">Name</span>;
+
+<span class="cm">-- LEFT JOIN returns all students
+-- WHERE f.Id IS NULL → only students with NO fees</span></pre>
+    </div>
+    <div class="method-box m2">
+      <div class="method-title">Method 2: NOT EXISTS (Also good — short-circuits)</div>
+      <pre><span class="sqk">SELECT</span> <span class="prop">Id</span>, <span class="prop">Name</span>, <span class="prop">Class</span>
+<span class="sqk">FROM</span>   <span class="prop">Students</span> <span class="prop">s</span>
+<span class="sqk">WHERE NOT EXISTS</span> (
+    <span class="sqk">SELECT</span> <span class="num">1</span>
+    <span class="sqk">FROM</span>   <span class="prop">Fees</span>
+    <span class="sqk">WHERE</span>  <span class="prop">StudentId</span> = <span class="prop">s</span>.<span class="prop">Id</span>
+);
+
+<span class="cm">-- NOT EXISTS stops as soon as it finds one match
+-- SELECT 1 is intentional — we don't need columns</span></pre>
+    </div>
+    <div class="method-box m3">
+      <div class="method-title">Method 3: NOT IN (Careful with NULLs!)</div>
+      <pre><span class="sqk">SELECT</span> <span class="prop">Id</span>, <span class="prop">Name</span>
+<span class="sqk">FROM</span>   <span class="prop">Students</span>
+<span class="sqk">WHERE</span>  <span class="prop">Id</span> <span class="sqk">NOT IN</span> (
+    <span class="sqk">SELECT DISTINCT StudentId</span>
+    <span class="sqk">FROM</span>   <span class="prop">Fees</span>
+    <span class="sqk">WHERE</span>  <span class="prop">StudentId</span> <span class="sqk">IS NOT NULL</span> <span class="cm">-- CRITICAL!</span>
+);
+
+<span class="cm">-- If Fees.StudentId has ANY NULL → NOT IN returns empty!
+-- Always add WHERE StudentId IS NOT NULL in subquery</span></pre>
+    </div>
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Answer:</div>
+      "Three approaches. LEFT JOIN + WHERE NULL = 'anti-join' pattern — most efficient. NOT EXISTS is semantically clearest and short-circuits on first match. NOT IN is dangerous — if the subquery returns even one NULL, the entire result is empty (SQL three-valued logic: TRUE/FALSE/UNKNOWN). Always filter NULLs in NOT IN subqueries. ZenCampus uses anti-join to find students who haven't paid any fees this term."
+    </div>
+  </div>
+</div>
+
+<!-- SQL7 TOP 3 PER CLASS -->
+<div class="problem" id="sql7">
+  <div class="problem-header sql-hdr">
+    <div class="p-num">19</div>
+    <div class="p-title">Top 3 Students by Marks in Each Class</div>
+    <span class="p-tag tag-hard">Hard</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">✅ DENSE_RANK PARTITION BY Class ORDER BY Marks</div>
+      <pre><span class="sqk">WITH</span> <span class="prop">ClassRanked</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span>
+        <span class="prop">s</span>.<span class="prop">Name</span>,
+        <span class="prop">s</span>.<span class="prop">Class</span>,
+        <span class="prop">e</span>.<span class="prop">Marks</span>,
+        <span class="sqf">DENSE_RANK</span>() <span class="sqk">OVER</span> (
+            <span class="sqk">PARTITION BY</span> <span class="prop">s</span>.<span class="prop">Class</span>   <span class="cm">-- rank WITHIN each class</span>
+            <span class="sqk">ORDER BY</span>     <span class="prop">e</span>.<span class="prop">Marks</span> <span class="sqk">DESC</span>
+        ) <span class="sqk">AS</span> <span class="prop">ClassRank</span>
+    <span class="sqk">FROM</span>    <span class="prop">Students</span>    <span class="prop">s</span>
+    <span class="sqk">JOIN</span>    <span class="prop">ExamResults</span> <span class="prop">e</span>
+        <span class="sqk">ON</span>  <span class="prop">e</span>.<span class="prop">StudentId</span> = <span class="prop">s</span>.<span class="prop">Id</span>
+    <span class="sqk">WHERE</span>   <span class="prop">e</span>.<span class="prop">ExamTerm</span> = <span class="str">'Term1'</span>
+)
+<span class="sqk">SELECT</span> <span class="prop">Class</span>, <span class="prop">Name</span>, <span class="prop">Marks</span>, <span class="prop">ClassRank</span>
+<span class="sqk">FROM</span>   <span class="prop">ClassRanked</span>
+<span class="sqk">WHERE</span>  <span class="prop">ClassRank</span> &lt;= <span class="num">3</span>
+<span class="sqk">ORDER BY</span> <span class="prop">Class</span>, <span class="prop">ClassRank</span>;
+
+<span class="cm">-- PARTITION BY Class → resets rank per class
+-- DENSE_RANK → if two students have 95 marks, both get rank 1
+--              next student gets rank 2 (not 3 like ROW_NUMBER)
+-- WHERE ClassRank <= 3 → top 3 per class
+-- Output:
+-- Class  Name    Marks  ClassRank
+-- 10A    Guru    98     1
+-- 10A    Priya   95     2
+-- 10A    Ram     95     2   ← same mark, same rank!
+-- 10A    Meena   90     3
+-- 10B    Kumar   97     1
+-- ...</span></pre>
+    </div>
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Answer:</div>
+      "PARTITION BY is the key — it resets the rank counter for each class, unlike a global rank. DENSE_RANK vs ROW_NUMBER: if two students share 2nd place with same marks, DENSE_RANK gives both rank 2 and the next gets rank 3. ROW_NUMBER arbitrarily gives one student rank 2 and other rank 3 — unfair! For ZenCampus merit list, DENSE_RANK is the right choice. Change &lt;=3 to &lt;=5 for top 5, or PARTITION BY Class, Section for section-wise ranking."
+    </div>
+  </div>
+</div>
+
+<!-- SQL8 YOY GROWTH -->
+<div class="problem" id="sql8">
+  <div class="problem-header sql-hdr">
+    <div class="p-num">20</div>
+    <div class="p-title">Year-over-Year Fee Growth — LAG function</div>
+    <span class="p-tag tag-hard">Hard</span>
+  </div>
+  <div class="prob-body">
+    <div class="method-box">
+      <div class="method-title">✅ LAG() Window Function — Previous year comparison</div>
+      <pre><span class="sqk">WITH</span> <span class="prop">YearlyFees</span> <span class="sqk">AS</span> (
+    <span class="sqk">SELECT</span>
+        <span class="sqf">YEAR</span>(<span class="prop">PaidDate</span>)   <span class="sqk">AS</span> <span class="prop">Yr</span>,
+        <span class="sqf">SUM</span>(<span class="prop">Amount</span>)     <span class="sqk">AS</span> <span class="prop">TotalFees</span>
+    <span class="sqk">FROM</span>   <span class="prop">Fees</span>
+    <span class="sqk">WHERE</span>  <span class="prop">IsPaid</span> = <span class="num">1</span>
+    <span class="sqk">GROUP BY</span> <span class="sqf">YEAR</span>(<span class="prop">PaidDate</span>)
+)
+<span class="sqk">SELECT</span>
+    <span class="prop">Yr</span>,
+    <span class="prop">TotalFees</span>,
+    <span class="sqf">LAG</span>(<span class="prop">TotalFees</span>) <span class="sqk">OVER</span> (<span class="sqk">ORDER BY</span> <span class="prop">Yr</span>)
+        <span class="sqk">AS</span> <span class="prop">PrevYearFees</span>,
+    <span class="prop">TotalFees</span> -
+        <span class="sqf">LAG</span>(<span class="prop">TotalFees</span>) <span class="sqk">OVER</span> (<span class="sqk">ORDER BY</span> <span class="prop">Yr</span>)
+        <span class="sqk">AS</span> <span class="prop">Growth</span>,
+    <span class="sqf">ROUND</span>(
+        (<span class="prop">TotalFees</span> - <span class="sqf">LAG</span>(<span class="prop">TotalFees</span>) <span class="sqk">OVER</span>
+            (<span class="sqk">ORDER BY</span> <span class="prop">Yr</span>)) * <span class="num">100.0</span> /
+        <span class="sqf">NULLIF</span>(<span class="sqf">LAG</span>(<span class="prop">TotalFees</span>) <span class="sqk">OVER</span>
+            (<span class="sqk">ORDER BY</span> <span class="prop">Yr</span>), <span class="num">0</span>),
+    <span class="num">2</span>) <span class="sqk">AS</span> <span class="prop">GrowthPct</span>
+<span class="sqk">FROM</span>   <span class="prop">YearlyFees</span>
+<span class="sqk">ORDER BY</span> <span class="prop">Yr</span>;
+
+<span class="cm">-- NULLIF(...,0) prevents divide-by-zero!
+-- Output:
+-- Yr    TotalFees  PrevYearFees  Growth   GrowthPct
+-- 2024  800000     NULL          NULL     NULL
+-- 2025  950000     800000        150000   18.75
+-- 2026  1100000    950000        150000   15.79</span></pre>
+    </div>
+    <div class="exp-ans">
+      <div class="lbl">🎤 Senior Dev Answer:</div>
+      "LAG(column) OVER (ORDER BY date) gets the previous row's value — perfect for year-over-year comparisons. First year will have NULL (no previous year). For growth percentage, I use NULLIF(prev, 0) to avoid divide-by-zero. LEAD() does the opposite — looks at the next row. ZenCampus management dashboard uses this to show fee collection growth trends across academic years. Same pattern works for month-over-month attendance comparison."
+    </div>
+  </div>
+</div>
+
+<!-- BONUS TABLE -->
+<div style="background:#13132a;border-radius:12px;padding:22px;margin:30px 0;border:1px solid #2a2a4a;">
+  <h2 style="color:#e94560;margin-bottom:14px">⚡ Quick Reference — All Problems</h2>
+  <table>
+    <tr><th>#</th><th>Problem</th><th>Key Technique</th><th>Time</th><th>Space</th></tr>
+    <tr><td>1</td><td>Palindrome</td><td>Two Pointer</td><td>O(n)</td><td>O(1)</td></tr>
+    <tr><td>2</td><td>Reverse String</td><td>Two Pointer swap on char[]</td><td>O(n)</td><td>O(n)</td></tr>
+    <tr><td>3</td><td>Anagram</td><td>Frequency Dictionary</td><td>O(n)</td><td>O(1)</td></tr>
+    <tr><td>4</td><td>Most Frequent Char</td><td>GroupBy + OrderByDescending</td><td>O(n log n)</td><td>O(n)</td></tr>
+    <tr><td>5</td><td>Fibonacci</td><td>Iterative / Memoization</td><td>O(n)</td><td>O(1)/O(n)</td></tr>
+    <tr><td>6</td><td>Factorial</td><td>Iterative + BigInteger for large</td><td>O(n)</td><td>O(1)</td></tr>
+    <tr><td>7</td><td>Prime Check</td><td>Check up to √n only</td><td>O(√n)</td><td>O(1)</td></tr>
+    <tr><td>8</td><td>Armstrong</td><td>Digit-by-digit power sum</td><td>O(d)</td><td>O(1)</td></tr>
+    <tr><td>9</td><td>Find Duplicates</td><td>HashSet.Add() returns false</td><td>O(n)</td><td>O(n)</td></tr>
+    <tr><td>10</td><td>Missing Number</td><td>Expected sum − Actual sum</td><td>O(n)</td><td>O(1)</td></tr>
+    <tr><td>11</td><td>Two Sum</td><td>HashMap: complement lookup</td><td>O(n)</td><td>O(n)</td></tr>
+    <tr><td>12</td><td>FizzBuzz</td><td>Separate if + concatenate</td><td>O(n)</td><td>O(1)</td></tr>
+    <tr><td>13</td><td>2nd Highest Salary</td><td>DENSE_RANK / OFFSET / MAX subquery</td><td>O(n log n)</td><td>—</td></tr>
+    <tr><td>14</td><td>Nth Highest (SP)</td><td>DENSE_RANK with @N parameter</td><td>O(n log n)</td><td>—</td></tr>
+    <tr><td>15</td><td>Duplicate Rows</td><td>ROW_NUMBER PARTITION BY key cols</td><td>O(n)</td><td>—</td></tr>
+    <tr><td>16</td><td>Max per Dept</td><td>DENSE_RANK PARTITION BY DeptId</td><td>O(n log n)</td><td>—</td></tr>
+    <tr><td>17</td><td>Running Total</td><td>SUM() OVER (ORDER BY)</td><td>O(n)</td><td>—</td></tr>
+    <tr><td>18</td><td>Students w/o Fees</td><td>LEFT JOIN + WHERE NULL (anti-join)</td><td>O(n)</td><td>—</td></tr>
+    <tr><td>19</td><td>Top 3 per Class</td><td>DENSE_RANK PARTITION BY Class</td><td>O(n log n)</td><td>—</td></tr>
+    <tr><td>20</td><td>YoY Growth</td><td>LAG() OVER (ORDER BY Year)</td><td>O(n)</td><td>—</td></tr>
+  </table>
+</div>
+
+</div><!-- container -->
+<footer>
+  <p>ZenCampus Interview Problem Solving · C# · .NET · SQL · 20 Problems · 50+ Approaches</p>
+  <p style="margin-top:4px;font-size:.8em">Every answer written the way an experienced senior developer would explain in an interview</p>
+</footer>
+</body>
+</html>

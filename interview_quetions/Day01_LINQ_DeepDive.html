@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 1 – LINQ Deep Dive | ZenCampus Edition</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+  header{background:linear-gradient(135deg,#0f3460,#16213e,#1a1a2e);padding:36px 20px;text-align:center;border-bottom:3px solid #00d2ff}
+  header h1{font-size:2em;color:#00d2ff;text-shadow:0 0 20px #00d2ff55}
+  header p{color:#a0b0c0;margin-top:6px}
+  .badge{display:inline-block;background:#00d2ff22;border:1px solid #00d2ff55;color:#00d2ff;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+  .container{max-width:1100px;margin:0 auto;padding:24px 16px}
+
+  /* Section boxes */
+  .section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+  .section-title{font-size:1.2em;font-weight:bold;color:#00d2ff;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  .section-title .num{background:#00d2ff;color:#000;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+
+  /* Code blocks */
+  pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas','Courier New',monospace;font-size:0.85em;line-height:1.6;margin:10px 0}
+  .c-kw{color:#569cd6}
+  .c-type{color:#4ec9b0}
+  .c-str{color:#ce9178}
+  .c-num{color:#b5cea8}
+  .c-cmt{color:#6a9955;font-style:italic}
+  .c-prop{color:#9cdcfe}
+  .c-method{color:#dcdcaa}
+  .c-op{color:#d4d4d4}
+  code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+
+  /* Movie ref */
+  .movie{background:#1a0f2e;border-left:4px solid #9b59b6;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+  .movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+  .movie p{color:#c39bd3;font-size:0.9em;margin-top:4px}
+
+  /* Keyword pills */
+  .kw-box{margin:10px 0}
+  .kw{display:inline-block;background:#0d3b5e;color:#74b9ff;padding:3px 10px;border-radius:4px;font-size:0.76em;margin:3px;font-family:monospace;border:1px solid #1e5080}
+
+  /* Project eg */
+  .proj{background:#0a1f0f;border-left:4px solid #27ae60;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+  .proj .label{color:#2ecc71;font-weight:bold;font-size:0.8em;margin-bottom:6px}
+
+  /* Tanglish tip */
+  .tip{background:#1a1500;border-left:4px solid #f9ca24;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+  .tip .t-label{color:#f9ca24;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+  .tip p{color:#f0dc82;font-size:0.9em}
+
+  /* Danger / warning */
+  .danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+  .danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+  .danger p{color:#f1948a;font-size:0.9em}
+
+  /* Scenario questions */
+  .scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+  .scenario-card .s-num{background:#e94560;color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+  .scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .scenario-title{font-weight:bold;color:#fff;font-size:1em}
+  .scenario-diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+  .easy{background:#1a4a1a;color:#2ecc71}
+  .medium{background:#4a3a0a;color:#f39c12}
+  .hard{background:#4a0a0a;color:#e74c3c}
+  .scenario-q{color:#c0c8e0;font-size:0.95em;background:#1a1a2e;padding:12px;border-radius:6px;margin:8px 0}
+  .reveal-btn{background:#1e3a5f;border:1px solid #2980b9;color:#74b9ff;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+  .reveal-btn:hover{background:#2980b9;color:white}
+  .answer{display:none;background:#0a1520;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1e3a5f}
+  .answer.shown{display:block}
+  .answer .a-label{color:#2ecc71;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+  .answer .mistake{background:#1f0808;border-radius:4px;padding:8px 12px;margin-top:8px;color:#f1948a;font-size:0.85em}
+  .answer .mistake-label{color:#e74c3c;font-weight:bold;font-size:0.75em}
+
+  /* Comparison table */
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.88em}
+  th{background:#1e3a5f;color:#74b9ff;padding:10px 12px;text-align:left}
+  td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+  tr:hover td{background:#1a1a35}
+  .green{color:#2ecc71}
+  .red{color:#e74c3c}
+  .yellow{color:#f39c12}
+
+  /* Mini quiz */
+  .quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+  .quiz-opt:hover{border-color:#00d2ff;color:#00d2ff}
+  .quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+  .quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+  .quiz-feedback{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+  .quiz-feedback.shown{display:block}
+  .quiz-feedback.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+  .quiz-feedback.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+
+  /* Flow diagram */
+  .flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:12px 0}
+  .flow-box{background:#1e3a5f;border-radius:6px;padding:6px 14px;font-size:0.82em;color:#74b9ff;border:1px solid #2a5a8a;white-space:nowrap}
+  .flow-arrow{color:#555;font-size:1.1em}
+
+  /* Progress bar */
+  .progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+  .progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#00d2ff,#7b2ff7)}
+
+  /* Checklist */
+  .check-list{list-style:none;margin:10px 0}
+  .check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+  .check-list li::before{content:"☐ ";color:#00d2ff}
+
+  /* Two column */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:700px){.two-col{grid-template-columns:1fr}}
+
+  h3{color:#74b9ff;margin:16px 0 8px;font-size:1em}
+  p{margin:6px 0}
+  footer{text-align:center;padding:30px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+  .sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:14px;flex-wrap:wrap}
+  .sticky-nav a{color:#74b9ff;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1e3a5f}
+  .sticky-nav a:hover{background:#1e3a5f}
+  .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.75em;font-weight:bold;margin-left:6px}
+  .tag-interview{background:#e94560;color:white}
+  .tag-trap{background:#f39c12;color:#000}
+  .tag-perf{background:#8e44ad;color:white}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#f39c12;font-size:0.85em;margin-bottom:6px">📅 Day 1 of 60 | Phase 1: Advanced C#</div>
+  <h1>⚡ LINQ Deep Dive</h1>
+  <p>ZenCampus Scenarios + Tanglish Explanations + Scenario-Based Questions</p>
+  <div style="margin-top:12px">
+    <span class="badge">Deferred Execution</span>
+    <span class="badge">IQueryable vs IEnumerable</span>
+    <span class="badge">Performance Traps</span>
+    <span class="badge">30 Scenarios</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#concept">📘 Concept</a>
+  <a href="#methods">🔧 Methods</a>
+  <a href="#iqvsie">⚔️ IQ vs IE</a>
+  <a href="#traps">⚠️ Traps</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+  <a href="#checklist">✅ Checklist</a>
+</nav>
+
+<div class="container">
+
+  <!-- WHAT IS LINQ -->
+  <div class="section" id="concept">
+    <div class="section-title"><span class="num">1</span> LINQ என்னன்னு ஒரே line-ல சொல்லு</div>
+
+    <div class="movie">
+      <span class="film">🎬 Vikram (2022) — "Karnan" Scene</span>
+      <p>Karnan oru database — suspects ellam irukkaanga. Vikram <strong>filter</strong> panruvan, <strong>sort</strong> panruvan, <strong>group</strong> panruvan — oru method chain-la! LINQ exactly same — C# collections-la SQL maari query ezhudalaam!</p>
+    </div>
+
+    <div class="tip">
+      <div class="t-label">💬 Tanglish Definition</div>
+      <p><strong>LINQ = Language Integrated Query.</strong> C# code-la collections (List, Array, DB) ku SQL maari query ezhudalaam — syntax change vendam, language change vendam!</p>
+    </div>
+
+    <h3>Two ways to write LINQ:</h3>
+    <div class="two-col">
+      <div>
+        <p style="color:#f39c12;font-size:0.85em;margin-bottom:6px">Method Syntax (Industry standard — ithai use pannu)</p>
+        <pre><span class="c-cmt">// ZenCampus — active students filter</span>
+<span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-prop">students</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>)
+    .<span class="c-method">OrderBy</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Name</span>)
+    .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span> { <span class="c-prop">s</span>.<span class="c-prop">Name</span>, <span class="c-prop">s</span>.<span class="c-prop">Class</span> });</pre>
+      </div>
+      <div>
+        <p style="color:#74b9ff;font-size:0.85em;margin-bottom:6px">Query Syntax (SQL maari — interview-la show panna okay)</p>
+        <pre><span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-kw">from</span> <span class="c-prop">s</span> <span class="c-kw">in</span> <span class="c-prop">students</span>
+            <span class="c-kw">where</span> <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>
+            <span class="c-kw">orderby</span> <span class="c-prop">s</span>.<span class="c-prop">Name</span>
+            <span class="c-kw">select</span> <span class="c-kw">new</span> { <span class="c-prop">s</span>.<span class="c-prop">Name</span>, <span class="c-prop">s</span>.<span class="c-prop">Class</span> };</pre>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div class="t-label">💡 Interview Tip</div>
+      <p>Both same IL compile aagum. Method syntax more popular in real projects. Query syntax only "from..where..select" support — GroupJoin, SelectMany methoda syntax-la easy, query syntax-la hard.</p>
+    </div>
+  </div>
+
+  <!-- DEFERRED EXECUTION -->
+  <div class="section">
+    <div class="section-title"><span class="num">2</span> Deferred Execution — Most Asked Interview Topic!</div>
+
+    <div class="movie">
+      <span class="film">🎬 96 (2018) — Ram waits for Janu</span>
+      <p>Ram phone ventuvan — but ring aagumbodu than pick up pannuvan. LINQ query — define panna execute <strong>aagaadu</strong>. <code>.ToList()</code> or <code>foreach</code> call panna than execute aagum. That's <strong>Deferred Execution</strong>!</p>
+    </div>
+
+    <pre><span class="c-cmt">// QUERY DEFINE — EXECUTE AAGALA!</span>
+<span class="c-kw">var</span> <span class="c-prop">query</span> = <span class="c-prop">students</span>.<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>);  <span class="c-cmt">// ← DB call illai!</span>
+
+<span class="c-cmt">// ITHU THAN EXECUTE AAGUM (Materialisation)</span>
+<span class="c-kw">var</span> <span class="c-prop">list</span> = <span class="c-prop">query</span>.<span class="c-method">ToList</span>();   <span class="c-cmt">// ← DB hit here!</span>
+<span class="c-kw">var</span> <span class="c-prop">count</span> = <span class="c-prop">query</span>.<span class="c-method">Count</span>();  <span class="c-cmt">// ← Another DB hit!</span>
+<span class="c-kw">foreach</span>(<span class="c-kw">var</span> <span class="c-prop">s</span> <span class="c-kw">in</span> <span class="c-prop">query</span>)    <span class="c-cmt">// ← Yet another DB hit!</span>
+{
+    <span class="c-cmt">// process</span>
+}</pre>
+
+    <div class="danger">
+      <div class="d-label">⚠️ TRAP — Double Execution!</div>
+      <p>Mela paaru — <code>query</code> oru ta use pannaa 3 DB calls! Solution: <strong>first-a .ToList() call panni variable-la store pannu</strong>, aprom use pannu.</p>
+    </div>
+
+    <h3>Immediate Execution — Immediately execute aagurathey:</h3>
+    <div class="kw-box">
+      <span class="kw">.ToList()</span>
+      <span class="kw">.ToArray()</span>
+      <span class="kw">.ToDictionary()</span>
+      <span class="kw">.Count()</span>
+      <span class="kw">.First()</span>
+      <span class="kw">.Sum()</span>
+      <span class="kw">.Max()</span>
+      <span class="kw">.Any()</span>
+      <span class="kw">.ToLookup()</span>
+    </div>
+  </div>
+
+  <!-- COMMON METHODS -->
+  <div class="section" id="methods">
+    <div class="section-title"><span class="num">3</span> Most Used LINQ Methods — ZenCampus Examples</div>
+
+    <table>
+      <tr>
+        <th>Method</th>
+        <th>என்ன பண்ணும்</th>
+        <th>ZenCampus Example</th>
+        <th>Interview Tag</th>
+      </tr>
+      <tr>
+        <td><code>Where()</code></td>
+        <td>Filter</td>
+        <td>Active students only</td>
+        <td><span class="tag tag-interview">Must Know</span></td>
+      </tr>
+      <tr>
+        <td><code>Select()</code></td>
+        <td>Transform / Project</td>
+        <td>Student → DTO (only Name, Class)</td>
+        <td><span class="tag tag-interview">Must Know</span></td>
+      </tr>
+      <tr>
+        <td><code>SelectMany()</code></td>
+        <td>Flatten nested list</td>
+        <td>All students from all schools</td>
+        <td><span class="tag tag-interview">Asked!</span></td>
+      </tr>
+      <tr>
+        <td><code>OrderBy/Desc()</code></td>
+        <td>Sort</td>
+        <td>Students by marks descending</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>GroupBy()</code></td>
+        <td>Group</td>
+        <td>Students grouped by class</td>
+        <td><span class="tag tag-interview">Must Know</span></td>
+      </tr>
+      <tr>
+        <td><code>Join()</code></td>
+        <td>Inner join two collections</td>
+        <td>Students + Attendance</td>
+        <td><span class="tag tag-interview">Asked!</span></td>
+      </tr>
+      <tr>
+        <td><code>Any()</code></td>
+        <td>Exists? → bool</td>
+        <td>Any fee pending?</td>
+        <td><span class="tag tag-perf">Perf!</span></td>
+      </tr>
+      <tr>
+        <td><code>All()</code></td>
+        <td>All match? → bool</td>
+        <td>All students attended?</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>First/OrDefault()</code></td>
+        <td>First element</td>
+        <td>Get student by ID</td>
+        <td><span class="tag tag-trap">Trap!</span></td>
+      </tr>
+      <tr>
+        <td><code>Single/OrDefault()</code></td>
+        <td>Exactly one element</td>
+        <td>Get unique roll number student</td>
+        <td><span class="tag tag-trap">Trap!</span></td>
+      </tr>
+      <tr>
+        <td><code>Take(n)</code></td>
+        <td>First n elements</td>
+        <td>Top 10 students</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>Skip(n)</code></td>
+        <td>Skip first n</td>
+        <td>Pagination (page 2)</td>
+        <td><span class="tag tag-interview">Must Know</span></td>
+      </tr>
+      <tr>
+        <td><code>Distinct()</code></td>
+        <td>Remove duplicates</td>
+        <td>Unique classes list</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>Count()</code></td>
+        <td>Count</td>
+        <td>Total active students</td>
+        <td><span class="tag tag-perf">Perf vs Any!</span></td>
+      </tr>
+      <tr>
+        <td><code>Sum/Avg/Min/Max()</code></td>
+        <td>Aggregate</td>
+        <td>Total fees collected</td>
+        <td></td>
+      </tr>
+    </table>
+
+    <h3>Code Examples — ZenCampus Scenarios:</h3>
+    <pre><span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-prop">_context</span>.<span class="c-prop">Students</span>; <span class="c-cmt">// IQueryable — DB query</span>
+
+<span class="c-cmt">// 1. Filter + Project (Select → DTO)</span>
+<span class="c-kw">var</span> <span class="c-prop">activeStudents</span> = <span class="c-prop">students</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">IsActive</span> &amp;&amp; <span class="c-prop">s</span>.<span class="c-prop">ClassId</span> == <span class="c-num">5</span>)
+    .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span> <span class="c-type">StudentDto</span>
+    {
+        <span class="c-prop">Name</span> = <span class="c-prop">s</span>.<span class="c-prop">Name</span>,
+        <span class="c-prop">RollNo</span> = <span class="c-prop">s</span>.<span class="c-prop">RollNumber</span>
+    })
+    .<span class="c-method">ToList</span>();
+
+<span class="c-cmt">// 2. GroupBy — Class-wise student count</span>
+<span class="c-kw">var</span> <span class="c-prop">classWise</span> = <span class="c-prop">students</span>
+    .<span class="c-method">GroupBy</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">ClassName</span>)
+    .<span class="c-method">Select</span>(<span class="c-prop">g</span> => <span class="c-kw">new</span> { <span class="c-prop">Class</span> = <span class="c-prop">g</span>.<span class="c-prop">Key</span>, <span class="c-prop">Count</span> = <span class="c-prop">g</span>.<span class="c-method">Count</span>() })
+    .<span class="c-method">ToList</span>();
+
+<span class="c-cmt">// 3. Pagination — Page 2, 10 per page</span>
+<span class="c-kw">int</span> <span class="c-prop">page</span> = <span class="c-num">2</span>, <span class="c-prop">pageSize</span> = <span class="c-num">10</span>;
+<span class="c-kw">var</span> <span class="c-prop">pagedStudents</span> = <span class="c-prop">students</span>
+    .<span class="c-method">OrderBy</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Name</span>)
+    .<span class="c-method">Skip</span>((<span class="c-prop">page</span> - <span class="c-num">1</span>) * <span class="c-prop">pageSize</span>)
+    .<span class="c-method">Take</span>(<span class="c-prop">pageSize</span>)
+    .<span class="c-method">ToList</span>();
+
+<span class="c-cmt">// 4. SelectMany — Multiple schools → flat student list</span>
+<span class="c-kw">var</span> <span class="c-prop">allStudents</span> = <span class="c-prop">schools</span>
+    .<span class="c-method">SelectMany</span>(<span class="c-prop">sc</span> => <span class="c-prop">sc</span>.<span class="c-prop">Students</span>)
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>)
+    .<span class="c-method">ToList</span>();
+
+<span class="c-cmt">// 5. Any() — Fee pending check (FAST!)</span>
+<span class="c-kw">bool</span> <span class="c-prop">hasPending</span> = <span class="c-prop">fees</span>.<span class="c-method">Any</span>(<span class="c-prop">f</span> => <span class="c-prop">f</span>.<span class="c-prop">StudentId</span> == <span class="c-prop">id</span> &amp;&amp; !<span class="c-prop">f</span>.<span class="c-prop">IsPaid</span>);
+<span class="c-cmt">// NOT: fees.Count(f => ...) > 0  ← Slow! Counts all rows</span></pre>
+  </div>
+
+  <!-- IQueryable vs IEnumerable -->
+  <div class="section" id="iqvsie">
+    <div class="section-title"><span class="num">4</span> IQueryable vs IEnumerable — <span class="tag tag-interview">Most Asked!</span></div>
+
+    <div class="movie">
+      <span class="film">🎬 Kaithi (2019) — Communication Scene</span>
+      <p><strong>IQueryable</strong> = Dilli-ku directly police station-la message panuvaanga (DB-la execute). <strong>IEnumerable</strong> = Peria list-a memory-la vachu approm filter panuvaanga (Memory-la execute). Yaarukkum scene puriyum — DILLI MAARI DIRECT AA POO!</p>
+    </div>
+
+    <table>
+      <tr>
+        <th>Feature</th>
+        <th>IQueryable&lt;T&gt;</th>
+        <th>IEnumerable&lt;T&gt;</th>
+      </tr>
+      <tr>
+        <td>Execution Place</td>
+        <td class="green">Database (SQL)</td>
+        <td class="red">Memory (C#)</td>
+      </tr>
+      <tr>
+        <td>Performance</td>
+        <td class="green">✅ Fast — only needed rows fetch</td>
+        <td class="red">❌ Slow — ALL rows load then filter</td>
+      </tr>
+      <tr>
+        <td>Where to use</td>
+        <td>EF Core DbSet, DB queries</td>
+        <td>In-memory List, Array</td>
+      </tr>
+      <tr>
+        <td>Supports</td>
+        <td>Expression Trees → SQL generate</td>
+        <td>Only C# functions</td>
+      </tr>
+      <tr>
+        <td>AsQueryable()</td>
+        <td>Converts IEnumerable → IQueryable</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>AsEnumerable()</td>
+        <td>Force rest in memory</td>
+        <td>—</td>
+      </tr>
+    </table>
+
+    <pre><span class="c-cmt">// ❌ WRONG — IQueryable to IEnumerable early convert</span>
+<span class="c-kw">var</span> <span class="c-prop">wrong</span> = <span class="c-prop">_context</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">AsEnumerable</span>()         <span class="c-cmt">// ← ALL 50,000 students memory-la load!</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">ClassId</span> == <span class="c-num">5</span>); <span class="c-cmt">// ← memory-la filter</span>
+
+<span class="c-cmt">// ✅ CORRECT — DB-la filter</span>
+<span class="c-kw">var</span> <span class="c-prop">correct</span> = <span class="c-prop">_context</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">ClassId</span> == <span class="c-num">5</span>) <span class="c-cmt">// ← SQL: WHERE ClassId = 5</span>
+    .<span class="c-method">ToList</span>();               <span class="c-cmt">// ← Only class 5 students fetch</span>
+
+<span class="c-cmt">// AsEnumerable() VALID use — C# function use panna (DB translate aagaadu)</span>
+<span class="c-kw">var</span> <span class="c-prop">formatted</span> = <span class="c-prop">_context</span>.<span class="c-prop">Students</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>)   <span class="c-cmt">// DB-la filter</span>
+    .<span class="c-method">AsEnumerable</span>()           <span class="c-cmt">// aprom memory-la</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">CustomLogic</span>(<span class="c-prop">s</span>)); <span class="c-cmt">// C# function — DB translate cannot</span></pre>
+
+    <div class="proj">
+      <div class="label">🏫 ZenCampus Real Bug (Fix Panninen):</div>
+      <p>StudentAdmission report — <code>.AsEnumerable()</code> early call pannirkanga. 50,000 students memory-la load — timeout! Fix: DB-la filter first, aprom memory-la complex logic. Interview-la ithane real example sollu!</p>
+    </div>
+  </div>
+
+  <!-- TRAPS -->
+  <div class="section" id="traps">
+    <div class="section-title"><span class="num">5</span> LINQ Performance Traps <span class="tag tag-trap">Don't Fall!</span></div>
+
+    <div class="movie">
+      <span class="film">🎬 Ratsasan (2018) — Serial Killer Traps</span>
+      <p>Arun Kumar carefully trap-a detect pannuvan. LINQ-la-um hidden traps irukku — kavanam illana production-la blast aagum!</p>
+    </div>
+
+    <div class="two-col">
+      <div class="danger">
+        <div class="d-label">❌ TRAP 1: Count() > 0 instead of Any()</div>
+        <p><code>if (students.Count() > 0)</code><br>All rows count → slow!<br><br>✅ Fix: <code>if (students.Any())</code><br>First match find panni stop — fast!</p>
+      </div>
+      <div class="danger">
+        <div class="d-label">❌ TRAP 2: First() without OrDefault()</div>
+        <p><code>students.First(s => s.Id == 99)</code><br>Id 99 illana — <strong>InvalidOperationException crash!</strong><br><br>✅ Fix: <code>students.FirstOrDefault(s => s.Id == 99)</code><br>Illana <code>null</code> return — safe!</p>
+      </div>
+      <div class="danger">
+        <div class="d-label">❌ TRAP 3: ToList() then Where()</div>
+        <p><code>_context.Students.ToList().Where(s => s.IsActive)</code><br>ALL students memory load aprom filter!<br><br>✅ Fix: <code>_context.Students.Where(s => s.IsActive).ToList()</code></p>
+      </div>
+      <div class="danger">
+        <div class="d-label">❌ TRAP 4: Multiple enumeration</div>
+        <p><code>var q = students.Where(...);</code><br><code>var c = q.Count(); // DB hit 1</code><br><code>var l = q.ToList(); // DB hit 2</code><br><br>✅ Fix: <code>var l = q.ToList();</code> first<br><code>var c = l.Count;</code> (property, not method!)</p>
+      </div>
+      <div class="danger">
+        <div class="d-label">❌ TRAP 5: Single() when multiple possible</div>
+        <p><code>students.Single(s => s.Name == "Kumar")</code><br>2 Kumars iruntaa — <strong>Exception!</strong><br><br>✅ Fix: <code>FirstOrDefault()</code> or ensure unique constraint</p>
+      </div>
+      <div class="danger">
+        <div class="d-label">❌ TRAP 6: String methods in IQueryable</div>
+        <p><code>students.Where(s => s.Name.ToLower() == "ram")</code><br>DB translate aagum — but index use aagaadu!<br><br>✅ Fix: <code>EF.Functions.Like(s.Name, "Ram")</code> or DB collation set pannu</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO QUESTIONS -->
+  <div class="section" id="scenarios">
+    <div class="section-title"><span class="num">6</span> 🎯 Scenario-Based Questions — ZenCampus Context</div>
+    <p style="color:#a0a0c0;margin-bottom:16px">"Answer Reveal" button press pannu — answer paaru. Try panni paarunga first!</p>
+
+    <!-- S1 -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div class="s-num">1</div>
+        <div>
+          <div class="scenario-title">Student Fee Pending Check <span class="scenario-diff easy">Easy</span></div>
+          <div style="color:#888;font-size:0.8em">Topic: Any() vs Count() performance</div>
+        </div>
+      </div>
+      <div class="scenario-q">
+        📋 <strong>Scenario:</strong> ZenCampus-la parent portal-la "Fee Pending?" badge kaatanum. 50,000 fee records DB-la irukku. Oru student-ku fee pending irukka nu check panna code ezhudanum. Code A vs Code B — which one use pannuvu and why?<br><br>
+        <strong>Code A:</strong> <code>fees.Count(f => f.StudentId == id && !f.IsPaid) > 0</code><br>
+        <strong>Code B:</strong> <code>fees.Any(f => f.StudentId == id && !f.IsPaid)</code>
+      </div>
+      <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+      <div class="answer">
+        <div class="a-label">✅ ANSWER</div>
+        <p><strong>Code B</strong> — <code>Any()</code> use pannu.</p>
+        <p style="margin-top:8px"><strong>Why?</strong></p>
+        <ul style="margin:8px 0 0 16px;color:#c0c0d0;font-size:0.9em">
+          <li><code>Count()</code> — DB-la <code>SELECT COUNT(*)</code> run aagum → ALL matching rows count pannuvu → slow</li>
+          <li><code>Any()</code> — DB-la <code>SELECT TOP 1</code> run aagum → first match kanda stop → fast!</li>
+        </ul>
+        <p style="margin-top:8px"><strong>SQL Generated:</strong></p>
+        <pre style="font-size:0.8em"><span class="c-cmt">-- Count() generates:</span>
+SELECT COUNT(*) FROM Fees WHERE StudentId = @id AND IsPaid = 0
+
+<span class="c-cmt">-- Any() generates:</span>
+SELECT TOP(1) 1 FROM Fees WHERE StudentId = @id AND IsPaid = 0</pre>
+        <div class="mistake"><div class="mistake-label">⚠️ Common Mistake</div>Interview-la "both same" nu sollaadha — performance difference huge, especially large tables-la!</div>
+      </div>
+    </div>
+
+    <!-- S2 -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div class="s-num">2</div>
+        <div>
+          <div class="scenario-title">Class-wise Attendance Report <span class="scenario-diff easy">Easy</span></div>
+          <div style="color:#888;font-size:0.8em">Topic: GroupBy + Select projection</div>
+        </div>
+      </div>
+      <div class="scenario-q">
+        📋 <strong>Scenario:</strong> Principal dashboard-la each class-ku total present students count kaatanum. Students list irukku — ClassName, IsPresent properties irukku. GroupBy use panni result ezhudanum.
+      </div>
+      <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+      <div class="answer">
+        <div class="a-label">✅ ANSWER</div>
+        <pre><span class="c-kw">var</span> <span class="c-prop">classAttendance</span> = <span class="c-prop">attendance</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">a</span> => <span class="c-prop">a</span>.<span class="c-prop">Date</span> == <span class="c-prop">today</span>)
+    .<span class="c-method">GroupBy</span>(<span class="c-prop">a</span> => <span class="c-prop">a</span>.<span class="c-prop">ClassName</span>)
+    .<span class="c-method">Select</span>(<span class="c-prop">g</span> => <span class="c-kw">new</span>
+    {
+        <span class="c-prop">Class</span> = <span class="c-prop">g</span>.<span class="c-prop">Key</span>,
+        <span class="c-prop">TotalPresent</span> = <span class="c-prop">g</span>.<span class="c-method">Count</span>(<span class="c-prop">a</span> => <span class="c-prop">a</span>.<span class="c-prop">IsPresent</span>),
+        <span class="c-prop">TotalAbsent</span> = <span class="c-prop">g</span>.<span class="c-method">Count</span>(<span class="c-prop">a</span> => !<span class="c-prop">a</span>.<span class="c-prop">IsPresent</span>),
+        <span class="c-prop">Percentage</span> = <span class="c-prop">g</span>.<span class="c-method">Average</span>(<span class="c-prop">a</span> => <span class="c-prop">a</span>.<span class="c-prop">IsPresent</span> ? <span class="c-num">1.0</span> : <span class="c-num">0.0</span>) * <span class="c-num">100</span>
+    })
+    .<span class="c-method">OrderBy</span>(<span class="c-prop">x</span> => <span class="c-prop">x</span>.<span class="c-prop">Class</span>)
+    .<span class="c-method">ToList</span>();</pre>
+        <p style="margin-top:8px;color:#a0c0a0;font-size:0.9em">Key Point: <code>g.Key</code> = group key (ClassName). <code>g.Count(predicate)</code> = filtered count within group.</p>
+      </div>
+    </div>
+
+    <!-- S3 -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div class="s-num">3</div>
+        <div>
+          <div class="scenario-title">Bug Fix — Deferred Execution Trap <span class="scenario-diff medium">Medium</span></div>
+          <div style="color:#888;font-size:0.8em">Topic: Deferred execution — double DB call</div>
+        </div>
+      </div>
+      <div class="scenario-q">
+        📋 <strong>Scenario:</strong> ZenCampus developer oru code ezhuthaan — slow nu complaint. Bug identify panni fix pannu:
+        <pre style="margin-top:8px;font-size:0.85em"><span class="c-kw">public</span> <span class="c-type">StudentSummary</span> <span class="c-method">GetSummary</span>(<span class="c-kw">int</span> <span class="c-prop">classId</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-prop">_context</span>.<span class="c-prop">Students</span>.<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">ClassId</span> == <span class="c-prop">classId</span>);
+
+    <span class="c-kw">var</span> <span class="c-prop">total</span> = <span class="c-prop">students</span>.<span class="c-method">Count</span>();      <span class="c-cmt">// DB Hit 1</span>
+    <span class="c-kw">var</span> <span class="c-prop">active</span> = <span class="c-prop">students</span>.<span class="c-method">Count</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>); <span class="c-cmt">// DB Hit 2</span>
+    <span class="c-kw">var</span> <span class="c-prop">names</span> = <span class="c-prop">students</span>.<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Name</span>).<span class="c-method">ToList</span>(); <span class="c-cmt">// DB Hit 3!</span>
+
+    <span class="c-kw">return</span> <span class="c-kw">new</span> <span class="c-type">StudentSummary</span> { <span class="c-prop">Total</span>=<span class="c-prop">total</span>, <span class="c-prop">Active</span>=<span class="c-prop">active</span>, <span class="c-prop">Names</span>=<span class="c-prop">names</span> };
+}</pre>
+      </div>
+      <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+      <div class="answer">
+        <div class="a-label">✅ FIXED CODE</div>
+        <p><strong>Bug:</strong> <code>students</code> is IQueryable — 3 times use → 3 DB calls!</p>
+        <pre><span class="c-kw">public</span> <span class="c-type">StudentSummary</span> <span class="c-method">GetSummary</span>(<span class="c-kw">int</span> <span class="c-prop">classId</span>)
+{
+    <span class="c-cmt">// ONE DB call — materialize first!</span>
+    <span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-prop">_context</span>.<span class="c-prop">Students</span>
+        .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">ClassId</span> == <span class="c-prop">classId</span>)
+        .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span> { <span class="c-prop">s</span>.<span class="c-prop">Name</span>, <span class="c-prop">s</span>.<span class="c-prop">IsActive</span> })
+        .<span class="c-method">ToList</span>(); <span class="c-cmt">// ← Single DB Hit!</span>
+
+    <span class="c-kw">var</span> <span class="c-prop">total</span> = <span class="c-prop">students</span>.<span class="c-prop">Count</span>;         <span class="c-cmt">// .Count property — no DB</span>
+    <span class="c-kw">var</span> <span class="c-prop">active</span> = <span class="c-prop">students</span>.<span class="c-method">Count</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>); <span class="c-cmt">// memory — fast</span>
+    <span class="c-kw">var</span> <span class="c-prop">names</span> = <span class="c-prop">students</span>.<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Name</span>).<span class="c-method">ToList</span>(); <span class="c-cmt">// memory — fast</span>
+
+    <span class="c-kw">return</span> <span class="c-kw">new</span> <span class="c-type">StudentSummary</span> { <span class="c-prop">Total</span>=<span class="c-prop">total</span>, <span class="c-prop">Active</span>=<span class="c-prop">active</span>, <span class="c-prop">Names</span>=<span class="c-prop">names</span> };
+}</pre>
+        <div class="mistake"><div class="mistake-label">⭐ Interview Gold</div>Intha type bug — "What's the problem with this code?" — common interview question. Answer: Deferred execution + multiple enumeration = N DB calls!</div>
+      </div>
+    </div>
+
+    <!-- S4 -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div class="s-num">4</div>
+        <div>
+          <div class="scenario-title">Top 3 Students Per Class <span class="scenario-diff medium">Medium</span></div>
+          <div style="color:#888;font-size:0.8em">Topic: GroupBy + OrderBy + Take</div>
+        </div>
+      </div>
+      <div class="scenario-q">
+        📋 <strong>Scenario:</strong> Exam result report-la each class-ku top 3 rankers list kaatanum. Students table-la Name, ClassName, TotalMarks irukku. LINQ code ezhudanum.
+      </div>
+      <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+      <div class="answer">
+        <div class="a-label">✅ ANSWER</div>
+        <pre><span class="c-kw">var</span> <span class="c-prop">top3PerClass</span> = <span class="c-prop">students</span>
+    .<span class="c-method">GroupBy</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">ClassName</span>)
+    .<span class="c-method">SelectMany</span>(<span class="c-prop">g</span> => <span class="c-prop">g</span>
+        .<span class="c-method">OrderByDescending</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">TotalMarks</span>)
+        .<span class="c-method">Take</span>(<span class="c-num">3</span>)
+        .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span>
+        {
+            <span class="c-prop">s</span>.<span class="c-prop">Name</span>,
+            <span class="c-prop">s</span>.<span class="c-prop">ClassName</span>,
+            <span class="c-prop">s</span>.<span class="c-prop">TotalMarks</span>,
+            <span class="c-prop">Rank</span> = <span class="c-prop">g</span>.<span class="c-method">OrderByDescending</span>(<span class="c-prop">x</span> => <span class="c-prop">x</span>.<span class="c-prop">TotalMarks</span>)
+                    .<span class="c-method">ToList</span>().<span class="c-method">IndexOf</span>(<span class="c-prop">s</span>) + <span class="c-num">1</span>
+        }))
+    .<span class="c-method">ToList</span>();
+
+<span class="c-cmt">// Simpler version (Interview accept pannuvaanga):</span>
+<span class="c-kw">var</span> <span class="c-prop">simple</span> = <span class="c-prop">students</span>
+    .<span class="c-method">GroupBy</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">ClassName</span>)
+    .<span class="c-method">ToDictionary</span>(
+        <span class="c-prop">g</span> => <span class="c-prop">g</span>.<span class="c-prop">Key</span>,
+        <span class="c-prop">g</span> => <span class="c-prop">g</span>.<span class="c-method">OrderByDescending</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">TotalMarks</span>).<span class="c-method">Take</span>(<span class="c-num">3</span>).<span class="c-method">ToList</span>()
+    );</pre>
+        <p style="color:#a0c0a0;font-size:0.85em;margin-top:8px">💡 DB-la this better via SQL Window Function (ROW_NUMBER OVER PARTITION BY) — LINQ translates but less efficient. Tell interviewer: "For large data, I'd use SP with ROW_NUMBER()."</p>
+      </div>
+    </div>
+
+    <!-- S5 -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div class="s-num">5</div>
+        <div>
+          <div class="scenario-title">Student Search with Pagination <span class="scenario-diff easy">Easy</span></div>
+          <div style="color:#888;font-size:0.8em">Topic: Skip/Take + Where dynamic filter</div>
+        </div>
+      </div>
+      <div class="scenario-q">
+        📋 <strong>Scenario:</strong> Student list page-la search box + pagination irukku. User "Kumar" search panuvan, page 2, 10 per page. API request: <code>GET /api/students?search=Kumar&page=2&pageSize=10</code>. LINQ code ezhudanum.
+      </div>
+      <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+      <div class="answer">
+        <div class="a-label">✅ ANSWER — Efficient IQueryable chain</div>
+        <pre><span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">PagedResult</span>&lt;<span class="c-type">StudentDto</span>&gt;&gt; <span class="c-method">GetStudentsAsync</span>(
+    <span class="c-kw">string</span>? <span class="c-prop">search</span>, <span class="c-kw">int</span> <span class="c-prop">page</span>, <span class="c-kw">int</span> <span class="c-prop">pageSize</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">query</span> = <span class="c-prop">_context</span>.<span class="c-prop">Students</span>.<span class="c-method">AsQueryable</span>();
+
+    <span class="c-cmt">// Dynamic filter — search iruntaa than apply</span>
+    <span class="c-kw">if</span> (!<span class="c-kw">string</span>.<span class="c-method">IsNullOrEmpty</span>(<span class="c-prop">search</span>))
+        <span class="c-prop">query</span> = <span class="c-prop">query</span>.<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Name</span>.<span class="c-method">Contains</span>(<span class="c-prop">search</span>));
+
+    <span class="c-cmt">// Total count — pagination needs this</span>
+    <span class="c-kw">var</span> <span class="c-prop">totalCount</span> = <span class="c-kw">await</span> <span class="c-prop">query</span>.<span class="c-method">CountAsync</span>();
+
+    <span class="c-cmt">// Paginated data</span>
+    <span class="c-kw">var</span> <span class="c-prop">items</span> = <span class="c-kw">await</span> <span class="c-prop">query</span>
+        .<span class="c-method">OrderBy</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Name</span>)
+        .<span class="c-method">Skip</span>((<span class="c-prop">page</span> - <span class="c-num">1</span>) * <span class="c-prop">pageSize</span>)
+        .<span class="c-method">Take</span>(<span class="c-prop">pageSize</span>)
+        .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span> <span class="c-type">StudentDto</span> { <span class="c-prop">Id</span>=<span class="c-prop">s</span>.<span class="c-prop">Id</span>, <span class="c-prop">Name</span>=<span class="c-prop">s</span>.<span class="c-prop">Name</span> })
+        .<span class="c-method">ToListAsync</span>();
+
+    <span class="c-kw">return</span> <span class="c-kw">new</span> <span class="c-type">PagedResult</span>&lt;<span class="c-type">StudentDto</span>&gt;
+    {
+        <span class="c-prop">Items</span> = <span class="c-prop">items</span>,
+        <span class="c-prop">TotalCount</span> = <span class="c-prop">totalCount</span>,
+        <span class="c-prop">Page</span> = <span class="c-prop">page</span>,
+        <span class="c-prop">TotalPages</span> = (<span class="c-kw">int</span>)<span class="c-type">Math</span>.<span class="c-method">Ceiling</span>(<span class="c-prop">totalCount</span> / (<span class="c-kw">double</span>)<span class="c-prop">pageSize</span>)
+    };
+}</pre>
+        <div class="mistake"><div class="mistake-label">⭐ Senior Level Pattern</div>Dynamic filter pattern — <code>AsQueryable()</code> aprom conditionally <code>Where()</code> add panrom. All DB-la execute — oru query than run aagum!</div>
+      </div>
+    </div>
+
+    <!-- S6 -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div class="s-num">6</div>
+        <div>
+          <div class="scenario-title">Join — Students with Fee Status <span class="scenario-diff medium">Medium</span></div>
+          <div style="color:#888;font-size:0.8em">Topic: LINQ Join two collections</div>
+        </div>
+      </div>
+      <div class="scenario-q">
+        📋 <strong>Scenario:</strong> Students list + Fees list irukku (two separate lists — not EF navigation property). Student Name + Fee status combined result kaatanum. LINQ Join use panna code ezhudanum.
+      </div>
+      <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+      <div class="answer">
+        <div class="a-label">✅ ANSWER</div>
+        <pre><span class="c-cmt">// Method Syntax Join</span>
+<span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-prop">students</span>
+    .<span class="c-method">Join</span>(
+        <span class="c-prop">fees</span>,                          <span class="c-cmt">// inner collection</span>
+        <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Id</span>,                    <span class="c-cmt">// outer key</span>
+        <span class="c-prop">f</span> => <span class="c-prop">f</span>.<span class="c-prop">StudentId</span>,            <span class="c-cmt">// inner key</span>
+        (<span class="c-prop">s</span>, <span class="c-prop">f</span>) => <span class="c-kw">new</span>               <span class="c-cmt">// result selector</span>
+        {
+            <span class="c-prop">StudentName</span> = <span class="c-prop">s</span>.<span class="c-prop">Name</span>,
+            <span class="c-prop">Amount</span> = <span class="c-prop">f</span>.<span class="c-prop">Amount</span>,
+            <span class="c-prop">IsPaid</span> = <span class="c-prop">f</span>.<span class="c-prop">IsPaid</span>
+        })
+    .<span class="c-method">ToList</span>();
+
+<span class="c-cmt">// LEFT JOIN (GroupJoin) — fee illaa students-um kaatanum</span>
+<span class="c-kw">var</span> <span class="c-prop">leftJoin</span> = <span class="c-prop">students</span>
+    .<span class="c-method">GroupJoin</span>(<span class="c-prop">fees</span>, <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Id</span>, <span class="c-prop">f</span> => <span class="c-prop">f</span>.<span class="c-prop">StudentId</span>,
+        (<span class="c-prop">s</span>, <span class="c-prop">fGroup</span>) => <span class="c-kw">new</span> { <span class="c-prop">s</span>, <span class="c-prop">fGroup</span> })
+    .<span class="c-method">SelectMany</span>(
+        <span class="c-prop">x</span> => <span class="c-prop">x</span>.<span class="c-prop">fGroup</span>.<span class="c-method">DefaultIfEmpty</span>(),
+        (<span class="c-prop">x</span>, <span class="c-prop">f</span>) => <span class="c-kw">new</span>
+        {
+            <span class="c-prop">Name</span> = <span class="c-prop">x</span>.<span class="c-prop">s</span>.<span class="c-prop">Name</span>,
+            <span class="c-prop">Amount</span> = <span class="c-prop">f</span>?.<span class="c-prop">Amount</span> ?? <span class="c-num">0</span>
+        })
+    .<span class="c-method">ToList</span>();</pre>
+        <p style="color:#a0c0a0;font-size:0.85em;margin-top:8px">💡 EF Core-la navigation properties iruntaa explicit Join vendam — <code>.Include(s => s.Fees)</code> use pannuvu. Manual Join — two separate API responses combine panna useful.</p>
+      </div>
+    </div>
+
+    <!-- S7 -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div class="s-num">7</div>
+        <div>
+          <div class="scenario-title">SelectMany — Multi-School Student Merge <span class="scenario-diff medium">Medium</span></div>
+          <div style="color:#888;font-size:0.8em">Topic: SelectMany to flatten nested collections</div>
+        </div>
+      </div>
+      <div class="scenario-q">
+        📋 <strong>Scenario:</strong> ZenCampus multi-school — <code>List&lt;School&gt;</code> irukku, each School-la <code>List&lt;Student&gt;</code> irukku. All active students flat list venom — school relationship vendam. Code ezhudanum.
+      </div>
+      <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+      <div class="answer">
+        <div class="a-label">✅ ANSWER</div>
+        <pre><span class="c-cmt">// Model structure:</span>
+<span class="c-kw">class</span> <span class="c-type">School</span> { <span class="c-kw">public</span> <span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-prop">Students</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } }
+
+<span class="c-cmt">// Select → nested lists (NOT what we want)</span>
+<span class="c-kw">var</span> <span class="c-prop">nested</span> = <span class="c-prop">schools</span>.<span class="c-method">Select</span>(<span class="c-prop">sc</span> => <span class="c-prop">sc</span>.<span class="c-prop">Students</span>);
+<span class="c-cmt">// Returns: IEnumerable&lt;List&lt;Student&gt;&gt; ← List of Lists!</span>
+
+<span class="c-cmt">// SelectMany → flat list (THIS is what we want)</span>
+<span class="c-kw">var</span> <span class="c-prop">allStudents</span> = <span class="c-prop">schools</span>
+    .<span class="c-method">SelectMany</span>(<span class="c-prop">sc</span> => <span class="c-prop">sc</span>.<span class="c-prop">Students</span>)
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>)
+    .<span class="c-method">ToList</span>();
+<span class="c-cmt">// Returns: IEnumerable&lt;Student&gt; ← Single flat list!</span>
+
+<span class="c-cmt">// With school info preserved:</span>
+<span class="c-kw">var</span> <span class="c-prop">withSchool</span> = <span class="c-prop">schools</span>
+    .<span class="c-method">SelectMany</span>(<span class="c-prop">sc</span> => <span class="c-prop">sc</span>.<span class="c-prop">Students</span>, (<span class="c-prop">sc</span>, <span class="c-prop">s</span>) => <span class="c-kw">new</span>
+    {
+        <span class="c-prop">SchoolName</span> = <span class="c-prop">sc</span>.<span class="c-prop">Name</span>,
+        <span class="c-prop">StudentName</span> = <span class="c-prop">s</span>.<span class="c-prop">Name</span>
+    })
+    .<span class="c-method">ToList</span>();</pre>
+        <div class="mistake"><div class="mistake-label">💡 Remember</div>Select = project (1-to-1). SelectMany = flatten (1-to-many → flat). Movie reference: Vikram multiple chapters flatten into one story!</div>
+      </div>
+    </div>
+
+    <!-- S8 -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div class="s-num">8</div>
+        <div>
+          <div class="scenario-title">IQueryable vs IEnumerable — Production Bug <span class="scenario-diff hard">Hard</span></div>
+          <div style="color:#888;font-size:0.8em">Topic: Where to place AsEnumerable, performance impact</div>
+        </div>
+      </div>
+      <div class="scenario-q">
+        📋 <strong>Scenario:</strong> Code review-la intha code kaandingom. Production-la 10 seconds loading. Bug explain panni fix pannu:
+        <pre style="margin-top:8px;font-size:0.85em"><span class="c-kw">public</span> <span class="c-type">List</span>&lt;<span class="c-type">StudentReportDto</span>&gt; <span class="c-method">GetReport</span>(<span class="c-kw">int</span> <span class="c-prop">schoolId</span>)
+{
+    <span class="c-kw">return</span> <span class="c-prop">_context</span>.<span class="c-prop">Students</span>
+        .<span class="c-method">AsEnumerable</span>()
+        .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span> == <span class="c-prop">schoolId</span>)
+        .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>)
+        .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span> <span class="c-type">StudentReportDto</span>
+        {
+            <span class="c-prop">Name</span> = <span class="c-prop">s</span>.<span class="c-prop">Name</span>.<span class="c-method">ToUpper</span>(),
+            <span class="c-prop">Age</span> = <span class="c-type">DateTime</span>.<span class="c-prop">Now</span>.<span class="c-prop">Year</span> - <span class="c-prop">s</span>.<span class="c-prop">DOB</span>.<span class="c-prop">Year</span>
+        })
+        .<span class="c-method">ToList</span>();
+}</pre>
+      </div>
+      <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+      <div class="answer">
+        <div class="a-label">✅ BUG ANALYSIS + FIX</div>
+        <p><strong>Bug:</strong> <code>.AsEnumerable()</code> first line-la — all schools' ALL students memory-la load! Multi-school DB = lakhs of rows!</p>
+        <pre><span class="c-cmt">// ✅ FIXED VERSION</span>
+<span class="c-kw">public</span> <span class="c-type">List</span>&lt;<span class="c-type">StudentReportDto</span>&gt; <span class="c-method">GetReport</span>(<span class="c-kw">int</span> <span class="c-prop">schoolId</span>)
+{
+    <span class="c-kw">return</span> <span class="c-prop">_context</span>.<span class="c-prop">Students</span>
+        .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">SchoolId</span> == <span class="c-prop">schoolId</span>)  <span class="c-cmt">// DB filter!</span>
+        .<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">IsActive</span>)              <span class="c-cmt">// DB filter!</span>
+        .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span> { <span class="c-prop">s</span>.<span class="c-prop">Name</span>, <span class="c-prop">s</span>.<span class="c-prop">DOB</span> })    <span class="c-cmt">// DB projection!</span>
+        .<span class="c-method">AsEnumerable</span>()                        <span class="c-cmt">// NOW memory — C# functions</span>
+        .<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-kw">new</span> <span class="c-type">StudentReportDto</span>
+        {
+            <span class="c-prop">Name</span> = <span class="c-prop">s</span>.<span class="c-prop">Name</span>.<span class="c-method">ToUpper</span>(),         <span class="c-cmt">// C# — only now!</span>
+            <span class="c-prop">Age</span> = <span class="c-type">DateTime</span>.<span class="c-prop">Now</span>.<span class="c-prop">Year</span> - <span class="c-prop">s</span>.<span class="c-prop">DOB</span>.<span class="c-prop">Year</span>
+        })
+        .<span class="c-method">ToList</span>();
+}</pre>
+        <p style="color:#f39c12;font-size:0.85em;margin-top:8px">Rule: <strong>DB-la filter panna maximum → AsEnumerable() → C# only operations</strong>. AsEnumerable() = "from here, memory-la panni".</p>
+      </div>
+    </div>
+
+    <!-- S9 -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div class="s-num">9</div>
+        <div>
+          <div class="scenario-title">Fee Summary Dashboard — Aggregate <span class="scenario-diff easy">Easy</span></div>
+          <div style="color:#888;font-size:0.8em">Topic: Sum, Count, GroupBy aggregations</div>
+        </div>
+      </div>
+      <div class="scenario-q">
+        📋 <strong>Scenario:</strong> Admin dashboard-la fee summary kaatanum: Total Collected, Total Pending, Student Count. Fees table-la Amount, IsPaid, StudentId irukku. Single LINQ query-la ellam get pannuvu.
+      </div>
+      <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+      <div class="answer">
+        <div class="a-label">✅ ANSWER</div>
+        <pre><span class="c-cmt">// Efficient — one DB round trip</span>
+<span class="c-kw">var</span> <span class="c-prop">summary</span> = <span class="c-kw">await</span> <span class="c-prop">_context</span>.<span class="c-prop">Fees</span>
+    .<span class="c-method">GroupBy</span>(<span class="c-prop">f</span> => <span class="c-num">1</span>)  <span class="c-cmt">// constant key = all in one group</span>
+    .<span class="c-method">Select</span>(<span class="c-prop">g</span> => <span class="c-kw">new</span>
+    {
+        <span class="c-prop">TotalCollected</span> = <span class="c-prop">g</span>.<span class="c-method">Where</span>(<span class="c-prop">f</span> => <span class="c-prop">f</span>.<span class="c-prop">IsPaid</span>).<span class="c-method">Sum</span>(<span class="c-prop">f</span> => <span class="c-prop">f</span>.<span class="c-prop">Amount</span>),
+        <span class="c-prop">TotalPending</span> = <span class="c-prop">g</span>.<span class="c-method">Where</span>(<span class="c-prop">f</span> => !<span class="c-prop">f</span>.<span class="c-prop">IsPaid</span>).<span class="c-method">Sum</span>(<span class="c-prop">f</span> => <span class="c-prop">f</span>.<span class="c-prop">Amount</span>),
+        <span class="c-prop">StudentCount</span> = <span class="c-prop">g</span>.<span class="c-method">Select</span>(<span class="c-prop">f</span> => <span class="c-prop">f</span>.<span class="c-prop">StudentId</span>).<span class="c-method">Distinct</span>().<span class="c-method">Count</span>()
+    })
+    .<span class="c-method">FirstOrDefaultAsync</span>();</pre>
+      </div>
+    </div>
+
+    <!-- S10 -->
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div class="s-num">10</div>
+        <div>
+          <div class="scenario-title">Attendance Alert — 75% Rule <span class="scenario-diff hard">Hard</span></div>
+          <div style="color:#888;font-size:0.8em">Topic: Complex LINQ with calculations</div>
+        </div>
+      </div>
+      <div class="scenario-q">
+        📋 <strong>Scenario:</strong> 75% attendance illaa students-ku alert pathaikanum. Attendance table-la StudentId, Date, IsPresent irukku. Current month students who have less than 75% attendance — student name + percentage result kaatanum.
+      </div>
+      <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+      <div class="answer">
+        <div class="a-label">✅ ANSWER</div>
+        <pre><span class="c-kw">var</span> <span class="c-prop">month</span> = <span class="c-type">DateTime</span>.<span class="c-prop">Now</span>.<span class="c-prop">Month</span>;
+<span class="c-kw">var</span> <span class="c-prop">year</span> = <span class="c-type">DateTime</span>.<span class="c-prop">Now</span>.<span class="c-prop">Year</span>;
+
+<span class="c-kw">var</span> <span class="c-prop">lowAttendance</span> = <span class="c-prop">_context</span>.<span class="c-prop">Attendance</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">a</span> => <span class="c-prop">a</span>.<span class="c-prop">Date</span>.<span class="c-prop">Month</span> == <span class="c-prop">month</span> &amp;&amp; <span class="c-prop">a</span>.<span class="c-prop">Date</span>.<span class="c-prop">Year</span> == <span class="c-prop">year</span>)
+    .<span class="c-method">GroupBy</span>(<span class="c-prop">a</span> => <span class="c-prop">a</span>.<span class="c-prop">StudentId</span>)
+    .<span class="c-method">Select</span>(<span class="c-prop">g</span> => <span class="c-kw">new</span>
+    {
+        <span class="c-prop">StudentId</span> = <span class="c-prop">g</span>.<span class="c-prop">Key</span>,
+        <span class="c-prop">TotalDays</span> = <span class="c-prop">g</span>.<span class="c-method">Count</span>(),
+        <span class="c-prop">PresentDays</span> = <span class="c-prop">g</span>.<span class="c-method">Count</span>(<span class="c-prop">a</span> => <span class="c-prop">a</span>.<span class="c-prop">IsPresent</span>),
+        <span class="c-prop">Percentage</span> = (<span class="c-kw">double</span>)<span class="c-prop">g</span>.<span class="c-method">Count</span>(<span class="c-prop">a</span> => <span class="c-prop">a</span>.<span class="c-prop">IsPresent</span>) / <span class="c-prop">g</span>.<span class="c-method">Count</span>() * <span class="c-num">100</span>
+    })
+    .<span class="c-method">Where</span>(<span class="c-prop">x</span> => <span class="c-prop">x</span>.<span class="c-prop">Percentage</span> &lt; <span class="c-num">75</span>)  <span class="c-cmt">// filter after calculation</span>
+    .<span class="c-method">Join</span>(<span class="c-prop">_context</span>.<span class="c-prop">Students</span>,
+        <span class="c-prop">a</span> => <span class="c-prop">a</span>.<span class="c-prop">StudentId</span>,
+        <span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Id</span>,
+        (<span class="c-prop">a</span>, <span class="c-prop">s</span>) => <span class="c-kw">new</span>
+        {
+            <span class="c-prop">s</span>.<span class="c-prop">Name</span>,
+            <span class="c-prop">a</span>.<span class="c-prop">Percentage</span>,
+            <span class="c-prop">a</span>.<span class="c-prop">PresentDays</span>,
+            <span class="c-prop">a</span>.<span class="c-prop">TotalDays</span>
+        })
+    .<span class="c-method">OrderBy</span>(<span class="c-prop">x</span> => <span class="c-prop">x</span>.<span class="c-prop">Percentage</span>)
+    .<span class="c-method">ToList</span>();</pre>
+      </div>
+    </div>
+
+  </div><!-- end scenarios -->
+
+  <!-- QUICK QUIZ -->
+  <div class="section" id="quiz">
+    <div class="section-title"><span class="num">7</span> ⚡ Quick Quiz — Answer Select Panna Mark Aagum</div>
+
+    <!-- Q1 -->
+    <div style="margin:20px 0">
+      <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: IQueryable&lt;T&gt; extends which interface?</p>
+      <div class="quiz-opt" onclick="answer(this,'wrong')">A) IList&lt;T&gt;</div>
+      <div class="quiz-opt" onclick="answer(this,'correct')">B) IEnumerable&lt;T&gt;</div>
+      <div class="quiz-opt" onclick="answer(this,'wrong')">C) ICollection&lt;T&gt;</div>
+      <div class="quiz-opt" onclick="answer(this,'wrong')">D) IObservable&lt;T&gt;</div>
+      <div class="quiz-feedback ok">✅ Correct! IQueryable extends IEnumerable. So any IQueryable can be used where IEnumerable is expected — but not reverse!</div>
+      <div class="quiz-feedback nope">❌ Wrong! IQueryable extends IEnumerable. Remember: IQueryable = IEnumerable + Expression tree support for DB translation.</div>
+    </div>
+
+    <!-- Q2 -->
+    <div style="margin:20px 0">
+      <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: Which executes IMMEDIATELY (not deferred)?</p>
+      <div class="quiz-opt" onclick="answer(this,'wrong')">A) .Where()</div>
+      <div class="quiz-opt" onclick="answer(this,'wrong')">B) .Select()</div>
+      <div class="quiz-opt" onclick="answer(this,'correct')">C) .ToList()</div>
+      <div class="quiz-opt" onclick="answer(this,'wrong')">D) .OrderBy()</div>
+      <div class="quiz-feedback ok">✅ Correct! .ToList(), .Count(), .First(), .Any() — immediate execution. .Where(), .Select(), .OrderBy() — deferred!</div>
+      <div class="quiz-feedback nope">❌ Wrong! .ToList() is immediate. .Where(), .Select(), .OrderBy() are deferred — they define the query, not execute it.</div>
+    </div>
+
+    <!-- Q3 -->
+    <div style="margin:20px 0">
+      <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: students.Any(s => s.IsPaid) is BETTER than students.Count(s => s.IsPaid) > 0 because:</p>
+      <div class="quiz-opt" onclick="answer(this,'correct')">A) Any() stops at first match; Count() scans all rows</div>
+      <div class="quiz-opt" onclick="answer(this,'wrong')">B) Any() is newer API</div>
+      <div class="quiz-opt" onclick="answer(this,'wrong')">C) Count() throws exception</div>
+      <div class="quiz-opt" onclick="answer(this,'wrong')">D) No difference</div>
+      <div class="quiz-feedback ok">✅ Correct! Any() = SQL TOP(1) → stops immediately. Count() = SQL COUNT(*) → scans everything. Performance difference huge on large tables!</div>
+      <div class="quiz-feedback nope">❌ Wrong! Any() stops at first match (SQL TOP 1). Count() scans ALL matching rows. Big performance difference on ZenCampus with 50k+ records!</div>
+    </div>
+
+    <!-- Q4 -->
+    <div style="margin:20px 0">
+      <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: What does SelectMany() do?</p>
+      <div class="quiz-opt" onclick="answer(this,'wrong')">A) Selects multiple properties from one object</div>
+      <div class="quiz-opt" onclick="answer(this,'correct')">B) Flattens a collection of collections into a single collection</div>
+      <div class="quiz-opt" onclick="answer(this,'wrong')">C) Selects first and last element</div>
+      <div class="quiz-opt" onclick="answer(this,'wrong')">D) Joins two collections</div>
+      <div class="quiz-feedback ok">✅ Correct! SelectMany flattens. List&lt;School&gt; → each has List&lt;Student&gt; → SelectMany → single List&lt;Student&gt;. Like unboxing all boxes into one pile!</div>
+      <div class="quiz-feedback nope">❌ Wrong! SelectMany flattens nested collections. schools.SelectMany(sc => sc.Students) = all students from all schools in one flat list.</div>
+    </div>
+
+  </div>
+
+  <!-- TODAY CHECKLIST -->
+  <div class="section" id="checklist">
+    <div class="section-title"><span class="num">8</span> ✅ Day 1 Complete Checklist</div>
+    <div class="two-col">
+      <div>
+        <h3>📚 Theory (Morning — 45 min)</h3>
+        <ul class="check-list">
+          <li>LINQ definition + two syntaxes</li>
+          <li>Deferred vs Immediate execution</li>
+          <li>IQueryable vs IEnumerable difference</li>
+          <li>Top 15 LINQ methods memorize</li>
+          <li>6 performance traps read</li>
+        </ul>
+      </div>
+      <div>
+        <h3>💻 Hands-On (Afternoon — 60 min)</h3>
+        <ul class="check-list">
+          <li>ZenCampus StudentService open panni Where/Select identify</li>
+          <li>GroupBy — Class-wise count ezhudu</li>
+          <li>Pagination — Skip/Take implement</li>
+          <li>Any() → Count() replace pannu (if applicable)</li>
+          <li>One deferred execution bug find + fix</li>
+        </ul>
+      </div>
+      <div>
+        <h3>🎯 Practice (Evening — 45 min)</h3>
+        <ul class="check-list">
+          <li>All 10 scenarios attempt panni answer reveal</li>
+          <li>4 quiz questions attempt</li>
+          <li>5 keyword Tanglish explanations write</li>
+          <li>One Tamil movie memory link create</li>
+          <li>Tomorrow topic (Async/Await) preview</li>
+        </ul>
+      </div>
+      <div>
+        <h3>⭐ Interview Ready Lines</h3>
+        <ul class="check-list">
+          <li>"IQueryable executes in DB, IEnumerable in memory"</li>
+          <li>"Deferred execution — ToList() than trigger"</li>
+          <li>"Any() vs Count() — performance difference explain"</li>
+          <li>"SelectMany — nested collections flatten"</li>
+          <li>"ZenCampus-la attendance report-la GroupBy use panninen"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#0f3460,#1a1a2e);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+      <div style="font-size:1.4em;margin-bottom:8px">🎬 Day 1 Motivation</div>
+      <p style="color:#f39c12;font-style:italic">"Vikram-la Karnan oru clue miss panna whole case collapse aagum. LINQ-la oru ToList() wrong place-la pottaa — 50,000 rows memory-la load aagum. Enna thaan oru line — aaana effect huge!"</p>
+      <div style="margin-top:12px;color:#a0a0c0">Day 1/60 complete ✅ | Tomorrow: Async/Await + Task Parallel Library</div>
+      <div class="progress-wrap" style="max-width:400px;margin:12px auto">
+        <div class="progress-fill" style="width:1.7%"></div>
+      </div>
+      <div style="color:#555;font-size:0.8em">1 of 60 days (1.7%)</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>Day 1 – LINQ Deep Dive | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🎬 "oru LINQ query — DB-la run aana? Memory-la run aana? Ithuvum oru interview question!" </p>
+</footer>
+
+<script>
+function toggle(btn) {
+  var ans = btn.nextElementSibling;
+  if (ans.classList.contains('shown')) {
+    ans.classList.remove('shown');
+    btn.textContent = '💡 Answer Reveal';
+  } else {
+    ans.classList.add('shown');
+    btn.textContent = '🔼 Hide Answer';
+  }
+}
+
+function answer(el, type) {
+  var parent = el.parentElement;
+  // Clear previous selections
+  parent.querySelectorAll('.quiz-opt').forEach(o => {
+    o.classList.remove('correct','wrong');
+    o.onclick = null;
+  });
+  parent.querySelectorAll('.quiz-feedback').forEach(f => f.classList.remove('shown'));
+
+  el.classList.add(type);
+  var feedback = parent.querySelector('.quiz-feedback.' + (type === 'correct' ? 'ok' : 'nope'));
+  if (feedback) feedback.classList.add('shown');
+}
+</script>
+</body>
+</html>

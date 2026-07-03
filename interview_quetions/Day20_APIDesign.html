@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 20 - API Design | .NET Interview Prep</title>
+    <style>
+        :root {
+            --accent: #0e7490;
+            --accent-light: #22d3ee;
+            --accent-dark: #083344;
+            --accent-glow: rgba(14, 116, 144, 0.4);
+            --bg: #0d0d1a;
+            --bg2: #0a1628;
+            --bg3: #0f2132;
+            --card: #111827;
+            --card2: #1a2535;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --text-bright: #f0f9ff;
+            --border: #164e63;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; }
+        .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-light)); width: 0%; z-index: 200; transition: width 0.1s; }
+        nav { position: sticky; top: 0; z-index: 100; background: rgba(13,13,26,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 0.75rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+        .nav-brand { font-size: 0.9rem; font-weight: 700; color: var(--accent-light); }
+        .nav-links { display: flex; gap: 1rem; list-style: none; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--accent-light); }
+        .hero { padding: 4rem 2rem 2rem; text-align: center; background: radial-gradient(ellipse at top, rgba(14,116,144,0.15) 0%, transparent 70%); }
+        .day-badge { display: inline-block; background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: white; padding: 0.3rem 1rem; border-radius: 2rem; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 1rem; }
+        .hero h1 { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, var(--accent-light), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem; }
+        .hero-sub { color: var(--text-dim); font-size: 1rem; max-width: 600px; margin: 0 auto 1.5rem; }
+        .hero-tags { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+        .tag { background: var(--bg3); border: 1px solid var(--border); color: var(--accent-light); padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+        .section-title { font-size: 1.5rem; font-weight: 700; color: var(--accent-light); margin: 2.5rem 0 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .section-title::before { content: ''; display: inline-block; width: 4px; height: 1.5rem; background: linear-gradient(180deg, var(--accent), var(--accent-light)); border-radius: 2px; }
+        .concept-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; position: relative; overflow: hidden; }
+        .concept-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-light)); }
+        .concept-title { font-size: 1.1rem; font-weight: 700; color: var(--text-bright); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+        pre { background: #050a14; border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; overflow-x: auto; font-family: 'Cascadia Code','Fira Code',monospace; font-size: 0.82rem; line-height: 1.7; margin: 0.75rem 0; }
+        .kw { color: #60a5fa; } .kw2 { color: #c084fc; } .str { color: #86efac; } .num { color: #fcd34d; }
+        .cmt { color: #6b7280; } .attr { color: #f9a8d4; } .mth { color: #22d3ee; } .cls { color: #fde68a; }
+        .info-box { background: rgba(14,116,144,0.1); border: 1px solid rgba(14,116,144,0.4); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 0.75rem 1rem; margin: 0.75rem 0; font-size: 0.9rem; }
+        .warn-box { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.4); border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0; padding: 0.75rem 1rem; margin: 0.75rem 0; font-size: 0.9rem; }
+        .danger-box { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.4); border-left: 4px solid #ef4444; border-radius: 0 8px 8px 0; padding: 0.75rem 1rem; margin: 0.75rem 0; font-size: 0.9rem; }
+        .good-box { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.3); border-left: 4px solid #22c55e; border-radius: 0 8px 8px 0; padding: 0.75rem 1rem; margin: 0.75rem 0; font-size: 0.9rem; }
+        table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.85rem; }
+        th { background: var(--bg3); color: var(--accent-light); padding: 0.6rem 0.8rem; text-align: left; border: 1px solid var(--border); font-weight: 600; }
+        td { padding: 0.6rem 0.8rem; border: 1px solid var(--border); vertical-align: top; }
+        tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+        .movie-box { background: linear-gradient(135deg,rgba(14,116,144,0.12),rgba(6,182,212,0.05)); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; display: flex; gap: 1rem; align-items: flex-start; }
+        .movie-icon { font-size: 2rem; flex-shrink: 0; }
+        .movie-content h4 { color: var(--accent-light); font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+        .movie-content p { color: var(--text-dim); font-size: 0.85rem; }
+        .scenario-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+        .scenario-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+        .scenario-q { font-size: 0.95rem; font-weight: 600; color: var(--text-bright); flex: 1; }
+        .scenario-type { font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 1rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+        .type-prod { background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+        .type-design { background: rgba(14,116,144,0.2); color: #67e8f9; border: 1px solid rgba(14,116,144,0.3); }
+        .type-perf { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+        .type-concept { background: rgba(168,85,247,0.2); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.3); }
+        .type-exp { background: rgba(34,197,94,0.2); color: #86efac; border: 1px solid rgba(34,197,94,0.3); }
+        .reveal-btn { background: none; border: 1px solid var(--border); color: var(--accent-light); padding: 0.4rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; margin-top: 0.75rem; transition: all 0.2s; display: block; }
+        .reveal-btn:hover { background: var(--accent); border-color: var(--accent); color: white; }
+        .answer { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.88rem; line-height: 1.7; color: var(--text); }
+        .answer.visible { display: block; }
+        .answer pre { font-size: 0.78rem; }
+        .quiz-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+        .quiz-q { font-size: 0.95rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.75rem; }
+        .quiz-options { display: grid; gap: 0.5rem; }
+        .quiz-opt { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.9rem; cursor: pointer; font-size: 0.85rem; color: var(--text); text-align: left; transition: all 0.2s; }
+        .quiz-opt:hover:not(:disabled) { border-color: var(--accent); }
+        .quiz-opt.correct { background: rgba(34,197,94,0.15); border-color: #22c55e; color: #86efac; }
+        .quiz-opt.wrong { background: rgba(239,68,68,0.15); border-color: #ef4444; color: #fca5a5; }
+        .quiz-feedback { display: none; margin-top: 0.5rem; font-size: 0.82rem; padding: 0.5rem 0.75rem; border-radius: 6px; }
+        .quiz-feedback.show { display: block; }
+        .checklist { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.5rem; margin: 1rem 0; }
+        .checklist li { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.85rem; }
+        .checklist input[type="checkbox"] { accent-color: var(--accent-light); width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+        .checklist label { cursor: pointer; color: var(--text-dim); }
+        .checklist input:checked + label { color: var(--text); text-decoration: line-through; }
+        .status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem; margin: 0.75rem 0; }
+        .status-pill { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem; font-size: 0.82rem; }
+        .status-code { font-weight: 700; font-family: monospace; }
+        .s2xx { color: #86efac; } .s4xx { color: #fcd34d; } .s5xx { color: #fca5a5; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        code { background: rgba(14,116,144,0.15); border: 1px solid rgba(14,116,144,0.3); border-radius: 4px; padding: 0.1rem 0.4rem; font-family: 'Cascadia Code',monospace; font-size: 0.85em; color: var(--accent-light); }
+        .tanglish { color: var(--accent-light); font-style: italic; }
+        footer { text-align: center; padding: 2rem; color: var(--text-dim); font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 3rem; }
+        @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } .hero h1 { font-size: 1.8rem; } nav { padding: 0.75rem 1rem; } .nav-links { display: none; } }
+    </style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<nav>
+    <div class="nav-brand">🎓 Day 20 / 60 — API Design</div>
+    <ul class="nav-links">
+        <li><a href="#rest">REST</a></li>
+        <li><a href="#versioning">Versioning</a></li>
+        <li><a href="#swagger">OpenAPI</a></li>
+        <li><a href="#problems">Problem Details</a></li>
+        <li><a href="#pagination">Pagination</a></li>
+        <li><a href="#movies">Movies</a></li>
+        <li><a href="#scenarios">Scenarios</a></li>
+        <li><a href="#quiz">Quiz</a></li>
+    </ul>
+</nav>
+
+<div class="hero">
+    <div class="day-badge">DAY 20 OF 60</div>
+    <h1>API Design</h1>
+    <p class="hero-sub">REST Principles, Versioning, OpenAPI/Swagger, Problem Details RFC 7807, Cursor Pagination — ZenCampus real production examples</p>
+    <div class="hero-tags">
+        <span class="tag">REST + HTTP Verbs</span>
+        <span class="tag">URL Versioning</span>
+        <span class="tag">Swashbuckle</span>
+        <span class="tag">RFC 7807</span>
+        <span class="tag">Cursor Pagination</span>
+        <span class="tag">IExceptionHandler</span>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- ===== REST PRINCIPLES ===== -->
+<h2 class="section-title" id="rest">REST Principles + HTTP Verbs + Status Codes</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🌐</span> REST = Resource (noun) + HTTP Verb + Representation</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">URL-la action போடாதே</span> — URL is the resource identity, HTTP method is the verb. This is the most common anti-pattern in junior code.</p>
+    <div class="two-col">
+        <div>
+            <div class="danger-box">❌ <strong>Anti-pattern (RPC-style)</strong><br>
+            <code>POST /api/getStudents</code><br>
+            <code>GET /api/deleteStudent?id=5</code><br>
+            <code>POST /api/createFeePayment</code><br>
+            <code>GET /api/getAllSchoolsList</code></div>
+        </div>
+        <div>
+            <div class="good-box">✅ <strong>RESTful Design</strong><br>
+            <code>GET /api/v1/students</code><br>
+            <code>DELETE /api/v1/students/5</code><br>
+            <code>POST /api/v1/fee-payments</code><br>
+            <code>GET /api/v1/schools</code></div>
+        </div>
+    </div>
+
+    <p style="margin:0.75rem 0;font-weight:600;color:var(--accent-light)">ZenCampus URL Design — Resource Hierarchy:</p>
+    <pre><span class="cmt">// School → Student → Fee (nested resources)</span>
+GET    /api/v1/schools/{schoolId}/students            <span class="cmt">// List (paginated)</span>
+GET    /api/v1/schools/{schoolId}/students/{id}       <span class="cmt">// Single student</span>
+POST   /api/v1/schools/{schoolId}/students            <span class="cmt">// Admit new student</span>
+PUT    /api/v1/schools/{schoolId}/students/{id}       <span class="cmt">// Full replace</span>
+PATCH  /api/v1/schools/{schoolId}/students/{id}       <span class="cmt">// Partial update</span>
+DELETE /api/v1/schools/{schoolId}/students/{id}       <span class="cmt">// Remove</span>
+
+GET    /api/v1/students/{id}/fee-payments             <span class="cmt">// Student fee history</span>
+POST   /api/v1/students/{id}/fee-payments             <span class="cmt">// Collect fee</span>
+
+<span class="cmt">// Actions that don't fit CRUD → verb as sub-resource noun</span>
+POST   /api/v1/students/{id}/promotions               <span class="cmt">// Promote to next class</span>
+POST   /api/v1/students/{id}/transfers                <span class="cmt">// Transfer school</span>
+POST   /api/v1/users/{id}/password-resets             <span class="cmt">// Reset password</span></pre>
+
+    <p style="margin:0.75rem 0;font-weight:600;color:var(--accent-light)">HTTP Status Codes — Must Know:</p>
+    <div class="status-grid">
+        <div class="status-pill"><span class="status-code s2xx">200 OK</span><br>GET success / PUT/PATCH success</div>
+        <div class="status-pill"><span class="status-code s2xx">201 Created</span><br>POST success — + Location header</div>
+        <div class="status-pill"><span class="status-code s2xx">204 No Content</span><br>DELETE success — no body</div>
+        <div class="status-pill"><span class="status-code s4xx">400 Bad Request</span><br>Input validation failed</div>
+        <div class="status-pill"><span class="status-code s4xx">401 Unauthorized</span><br>No/invalid JWT token</div>
+        <div class="status-pill"><span class="status-code s4xx">403 Forbidden</span><br>Auth ok, no permission</div>
+        <div class="status-pill"><span class="status-code s4xx">404 Not Found</span><br>Resource doesn't exist</div>
+        <div class="status-pill"><span class="status-code s4xx">409 Conflict</span><br>Duplicate admission number</div>
+        <div class="status-pill"><span class="status-code s4xx">422 Unprocessable</span><br>Business rule violation</div>
+        <div class="status-pill"><span class="status-code s4xx">429 Too Many Requests</span><br>Rate limit hit (Day 18)</div>
+        <div class="status-pill"><span class="status-code s5xx">500 Internal Server Error</span><br>Unexpected crash</div>
+        <div class="status-pill"><span class="status-code s5xx">503 Service Unavailable</span><br>Downstream service down</div>
+    </div>
+
+    <pre><span class="cmt">// Controller — proper status codes with CreatedAtAction</span>
+[<span class="attr">HttpPost</span>]
+[<span class="attr">ProducesResponseType</span>(<span class="kw2">typeof</span>(<span class="cls">StudentDto</span>), StatusCodes.Status201Created)]
+[<span class="attr">ProducesResponseType</span>(<span class="kw2">typeof</span>(<span class="cls">ValidationProblemDetails</span>), StatusCodes.Status400BadRequest)]
+[<span class="attr">ProducesResponseType</span>(<span class="kw2">typeof</span>(<span class="cls">ProblemDetails</span>), StatusCodes.Status409Conflict)]
+<span class="kw">public async</span> Task&lt;IActionResult&gt; <span class="mth">AdmitStudent</span>(<span class="kw">int</span> schoolId, [<span class="attr">FromBody</span>] <span class="cls">AdmitStudentDto</span> dto)
+{
+    <span class="kw">var</span> student = <span class="kw">await</span> _mediator.<span class="mth">Send</span>(<span class="kw">new</span> <span class="cls">AdmitStudentCommand</span>(schoolId, dto));
+    <span class="kw">return</span> <span class="mth">CreatedAtAction</span>(
+        <span class="kw">nameof</span>(GetStudent),
+        <span class="kw">new</span> { schoolId, id = student.Id },
+        student);
+    <span class="cmt">// Response: 201 Created</span>
+    <span class="cmt">// Location: https://api.zencampus.in/api/v1/schools/1/students/42</span>
+}</pre>
+</div>
+
+<!-- ===== API VERSIONING ===== -->
+<h2 class="section-title" id="versioning">API Versioning</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🔢</span> Three Strategies — URL Path is ZenCampus Standard</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Versioning illama</span> v2 breaking change push pannina, 200 schools-la old mobile apps break aagum. That's 50,000 students unable to pay fees. Version panrom!</p>
+
+    <table>
+        <tr><th>Strategy</th><th>Example</th><th>Pros</th><th>Cons</th><th>ZenCampus?</th></tr>
+        <tr><td><strong>URL Path</strong></td><td><code>/api/v1/students</code></td><td>Simple, browser-friendly, CDN-cacheable</td><td>URL changes on version bump</td><td>✅ Standard choice</td></tr>
+        <tr><td><strong>Header</strong></td><td><code>api-version: 2.0</code></td><td>Clean URLs, REST-pure</td><td>Hard to test in browser, CDN can't cache</td><td>Internal APIs only</td></tr>
+        <tr><td><strong>Query String</strong></td><td><code>/students?api-version=2.0</code></td><td>Easy to test</td><td>Cache pollution, messy</td><td>Dev/testing only</td></tr>
+    </table>
+
+    <pre><span class="cmt">// NuGet: Asp.Versioning.Mvc</span>
+<span class="cmt">// Program.cs</span>
+builder.Services.<span class="mth">AddApiVersioning</span>(options =>
+{
+    options.DefaultApiVersion              = <span class="kw">new</span> <span class="cls">ApiVersion</span>(<span class="num">1</span>, <span class="num">0</span>);
+    options.AssumeDefaultVersionWhenUnspecified = <span class="kw">true</span>;
+    options.ReportApiVersions              = <span class="kw">true</span>; <span class="cmt">// → api-supported-versions response header</span>
+}).<span class="mth">AddApiExplorer</span>(options =>
+{
+    options.GroupNameFormat           = <span class="str">"'v'VVV"</span>;   <span class="cmt">// "v1", "v2"</span>
+    options.SubstituteApiVersionInUrl = <span class="kw">true</span>;
+});</pre>
+
+    <pre><span class="cmt">// V1 Controller — original</span>
+[<span class="attr">ApiController</span>]
+[<span class="attr">ApiVersion</span>(<span class="str">"1.0"</span>)]
+[<span class="attr">Route</span>(<span class="str">"api/v{version:apiVersion}/schools/{schoolId}/students"</span>)]
+<span class="kw">public class</span> <span class="cls">StudentsV1Controller</span> : <span class="cls">ControllerBase</span>
+{
+    [<span class="attr">HttpGet</span>(<span class="str">"{id}"</span>)]
+    <span class="kw">public async</span> Task&lt;IActionResult&gt; <span class="mth">Get</span>(<span class="kw">int</span> schoolId, <span class="kw">int</span> id)
+        => <span class="mth">Ok</span>(<span class="kw">new</span> <span class="cls">StudentV1Dto</span>(<span class="kw">await</span> _repo.<span class="mth">GetAsync</span>(id))); <span class="cmt">// name, class, rollno</span>
+}
+
+<span class="cmt">// V2 Controller — richer response, new endpoints</span>
+[<span class="attr">ApiController</span>]
+[<span class="attr">ApiVersion</span>(<span class="str">"2.0"</span>)]
+[<span class="attr">Route</span>(<span class="str">"api/v{version:apiVersion}/schools/{schoolId}/students"</span>)]
+<span class="kw">public class</span> <span class="cls">StudentsV2Controller</span> : <span class="cls">ControllerBase</span>
+{
+    [<span class="attr">HttpGet</span>(<span class="str">"{id}"</span>)]
+    <span class="kw">public async</span> Task&lt;IActionResult&gt; <span class="mth">Get</span>(<span class="kw">int</span> schoolId, <span class="kw">int</span> id)
+        => <span class="mth">Ok</span>(<span class="kw">new</span> <span class="cls">StudentV2Dto</span>(<span class="kw">await</span> _repo.<span class="mth">GetWithParentAsync</span>(id))); <span class="cmt">// + parent, photo</span>
+
+    [<span class="attr">HttpGet</span>(<span class="str">"{id}/health-records"</span>)]  <span class="cmt">// V2-only endpoint</span>
+    <span class="kw">public async</span> Task&lt;IActionResult&gt; <span class="mth">GetHealthRecords</span>(<span class="kw">int</span> id) { ... }
+}
+
+<span class="cmt">// Deprecate old version gracefully (6-month sunset policy)</span>
+[<span class="attr">ApiVersion</span>(<span class="str">"1.0"</span>, Deprecated = <span class="kw">true</span>)]
+<span class="cmt">// Response header auto-added: api-deprecated-versions: 1.0, api-supported-versions: 1.0, 2.0</span></pre>
+
+    <div class="info-box"><strong>Interview answer:</strong> "ZenCampus-la URL-path versioning use pannrom — <code>/api/v1/</code> routes old school apps-ku still work, <code>/api/v2/</code> new features. Breaking change-ku new controller create pannrom. Deprecated v1-ku 6-month sunset notice kudukkom via <code>api-deprecated-versions</code> header."</div>
+</div>
+
+<!-- ===== OPENAPI ===== -->
+<h2 class="section-title" id="swagger">OpenAPI / Swagger Documentation</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>📋</span> Swashbuckle + XML Comments + JWT Auth in Swagger UI</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Swagger illana</span> frontend team-ku "what does this return on error?" every time ask pannuvanga. 200 schools serve panra system-la that wastes time.</p>
+
+    <pre><span class="cmt">// NuGet: Swashbuckle.AspNetCore</span>
+builder.Services.<span class="mth">AddSwaggerGen</span>(opts =>
+{
+    opts.<span class="mth">SwaggerDoc</span>(<span class="str">"v1"</span>, <span class="kw">new</span> <span class="cls">OpenApiInfo</span>
+    {
+        Title       = <span class="str">"ZenCampus API"</span>,
+        Version     = <span class="str">"v1"</span>,
+        Description = <span class="str">"School ERP — 200 schools, 50,000 students"</span>,
+        Contact     = <span class="kw">new</span> <span class="cls">OpenApiContact</span> { Name = <span class="str">"ZenCampus Team"</span>, Email = <span class="str">"api@zencampus.in"</span> }
+    });
+
+    <span class="cmt">// XML comments from /// summaries</span>
+    <span class="kw">var</span> xmlPath = Path.<span class="mth">Combine</span>(AppContext.BaseDirectory,
+        $<span class="str">"{Assembly.GetExecutingAssembly().GetName().Name}.xml"</span>);
+    opts.<span class="mth">IncludeXmlComments</span>(xmlPath);
+
+    <span class="cmt">// JWT Bearer auth button in Swagger UI</span>
+    opts.<span class="mth">AddSecurityDefinition</span>(<span class="str">"Bearer"</span>, <span class="kw">new</span> <span class="cls">OpenApiSecurityScheme</span>
+    {
+        Type         = SecuritySchemeType.Http,
+        Scheme       = <span class="str">"bearer"</span>,
+        BearerFormat = <span class="str">"JWT"</span>,
+        Description  = <span class="str">"Enter JWT token (without 'Bearer' prefix)"</span>
+    });
+    opts.<span class="mth">AddSecurityRequirement</span>(<span class="kw">new</span> <span class="cls">OpenApiSecurityRequirement</span>
+    {
+        {
+            <span class="kw">new</span> <span class="cls">OpenApiSecurityScheme</span>
+            {
+                Reference = <span class="kw">new</span> <span class="cls">OpenApiReference</span> { Type = ReferenceType.SecurityScheme, Id = <span class="str">"Bearer"</span> }
+            },
+            Array.Empty&lt;<span class="kw">string</span>&gt;()
+        }
+    });
+});
+
+<span class="cmt">// ⚠️  Production-safe: Swagger only in Development (Day 18 Security!)</span>
+<span class="kw">if</span> (app.Environment.<span class="mth">IsDevelopment</span>())
+{
+    app.<span class="mth">UseSwagger</span>();
+    app.<span class="mth">UseSwaggerUI</span>();
+}</pre>
+
+    <pre><span class="cmt">// Fully documented controller action</span>
+<span class="cmt">/// &lt;summary&gt;Admit a new student to the school&lt;/summary&gt;</span>
+<span class="cmt">/// &lt;param name="schoolId"&gt;School ID — must match JWT schoolId claim&lt;/param&gt;</span>
+<span class="cmt">/// &lt;param name="dto"&gt;Student admission details&lt;/param&gt;</span>
+<span class="cmt">/// &lt;returns&gt;Created student with auto-generated admission number&lt;/returns&gt;</span>
+<span class="cmt">/// &lt;remarks&gt;</span>
+<span class="cmt">/// Side effects: creates fee structure, sends welcome SMS to parent, generates roll number.</span>
+<span class="cmt">/// Admission number format: {SchoolCode}_{Year}_{Sequence} e.g. ZC001_2024_0042</span>
+<span class="cmt">/// &lt;/remarks&gt;</span>
+[<span class="attr">HttpPost</span>]
+[<span class="attr">SwaggerOperation</span>(Summary = <span class="str">"Admit student"</span>, OperationId = <span class="str">"Students_Admit"</span>, Tags = <span class="kw">new</span>[] { <span class="str">"Students"</span> })]
+[<span class="attr">ProducesResponseType</span>(<span class="kw2">typeof</span>(<span class="cls">StudentDto</span>),             StatusCodes.Status201Created)]
+[<span class="attr">ProducesResponseType</span>(<span class="kw2">typeof</span>(<span class="cls">ValidationProblemDetails</span>), StatusCodes.Status400BadRequest)]
+[<span class="attr">ProducesResponseType</span>(<span class="kw2">typeof</span>(<span class="cls">ProblemDetails</span>),           StatusCodes.Status409Conflict)]
+[<span class="attr">ProducesResponseType</span>(<span class="kw2">typeof</span>(<span class="cls">ProblemDetails</span>),           StatusCodes.Status403Forbidden)]
+<span class="kw">public async</span> Task&lt;IActionResult&gt; <span class="mth">AdmitStudent</span>(<span class="kw">int</span> schoolId, [<span class="attr">FromBody</span>] <span class="cls">AdmitStudentDto</span> dto) { ... }</pre>
+
+    <div class="info-box"><strong>.csproj setup for XML comments:</strong><br>
+    <code>&lt;GenerateDocumentationFile&gt;true&lt;/GenerateDocumentationFile&gt;</code><br>
+    <code>&lt;NoWarn&gt;$(NoWarn);1591&lt;/NoWarn&gt;</code> ← suppresses warning for undocumented internal members</div>
+</div>
+
+<!-- ===== PROBLEM DETAILS ===== -->
+<h2 class="section-title" id="problems">Problem Details — RFC 7807</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>⚠️</span> Structured Error Responses — Industry Standard</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Random error format return panna</span> frontend team-ku one error handler write panna mudiyathu. RFC 7807 = standardized error contract — every API speaks the same language.</p>
+
+    <div class="two-col">
+        <div>
+            <div class="danger-box">❌ <strong>Random format (before)</strong>
+<pre style="margin-top:0.5rem;font-size:0.75rem">{
+  "error": "Student not found",
+  "code": 404,
+  "ok": false
+}</pre>
+            </div>
+        </div>
+        <div>
+            <div class="good-box">✅ <strong>RFC 7807 ProblemDetails</strong>
+<pre style="margin-top:0.5rem;font-size:0.75rem">{
+  "type":     "https://zencampus.in/errors/404",
+  "title":    "Student Not Found",
+  "status":   404,
+  "detail":   "Student 42 not in school 7",
+  "instance": "/api/v1/schools/7/students/42",
+  "traceId":  "00-abc123-def456-00"
+}</pre>
+            </div>
+        </div>
+    </div>
+
+    <pre><span class="cmt">// Program.cs</span>
+builder.Services.<span class="mth">AddProblemDetails</span>();
+builder.Services.<span class="mth">AddExceptionHandler</span>&lt;<span class="cls">ZenCampusExceptionHandler</span>&gt;();
+app.<span class="mth">UseExceptionHandler</span>();</pre>
+
+    <pre><span class="cmt">// Single IExceptionHandler — maps ALL domain exceptions to Problem Details</span>
+<span class="kw">public class</span> <span class="cls">ZenCampusExceptionHandler</span> : <span class="cls">IExceptionHandler</span>
+{
+    <span class="kw">public async</span> ValueTask&lt;<span class="kw">bool</span>&gt; <span class="mth">TryHandleAsync</span>(
+        <span class="cls">HttpContext</span> ctx, <span class="cls">Exception</span> ex, <span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">var</span> (status, title, detail) = ex <span class="kw">switch</span>
+        {
+            <span class="cls">StudentNotFoundException</span>      e => (<span class="num">404</span>, <span class="str">"Student Not Found"</span>,      e.Message),
+            <span class="cls">DuplicateAdmissionException</span>   e => (<span class="num">409</span>, <span class="str">"Admission Conflict"</span>,     e.Message),
+            <span class="cls">SchoolQuotaExceededException</span>  e => (<span class="num">422</span>, <span class="str">"Quota Exceeded"</span>,         e.Message),
+            <span class="cls">UnauthorizedSchoolException</span>   e => (<span class="num">403</span>, <span class="str">"Access Denied"</span>,          e.Message),
+            <span class="cls">FluentValidation.ValidationException</span> e => (<span class="num">400</span>, <span class="str">"Validation Failed"</span>, e.Message),
+            _                                  => (<span class="num">500</span>, <span class="str">"Internal Error"</span>,        <span class="str">"An unexpected error occurred"</span>)
+        };
+
+        ctx.Response.StatusCode = status;
+
+        <span class="kw">await</span> ctx.Response.<span class="mth">WriteAsJsonAsync</span>(<span class="kw">new</span> <span class="cls">ProblemDetails</span>
+        {
+            Type     = $<span class="str">"https://zencampus.in/errors/{status}"</span>,
+            Title    = title,
+            Status   = status,
+            Detail   = detail,
+            Instance = ctx.Request.Path,
+            Extensions = { [<span class="str">"traceId"</span>] = Activity.Current?.Id ?? ctx.TraceIdentifier }
+        }, ct);
+
+        <span class="kw">return true</span>; <span class="cmt">// true = handled, stop pipeline</span>
+    }
+}</pre>
+
+    <pre><span class="cmt">// ValidationProblemDetails — for FluentValidation field errors (400)</span>
+{
+  <span class="str">"type"</span>:   <span class="str">"https://tools.ietf.org/html/rfc7231#section-6.5.1"</span>,
+  <span class="str">"title"</span>:  <span class="str">"One or more validation errors occurred."</span>,
+  <span class="str">"status"</span>: <span class="num">400</span>,
+  <span class="str">"errors"</span>: {
+    <span class="str">"Name"</span>:    [<span class="str">"Name must contain only letters and spaces"</span>],
+    <span class="str">"Phone"</span>:   [<span class="str">"Phone must be 10 digits starting with 6-9"</span>],
+    <span class="str">"ClassId"</span>: [<span class="str">"ClassId must be between 1 and 12"</span>]
+  },
+  <span class="str">"traceId"</span>: <span class="str">"00-abc123-00"</span>
+}</pre>
+
+    <div class="info-box"><strong>Production win:</strong> Parent calls support — "fee payment failed". Support asks for traceId shown in the error popup. We query Azure App Insights with that traceId → see the exact DB exception, which query failed, timing. Without traceId in RFC 7807, debugging was guesswork across 200 schools.</div>
+</div>
+
+<!-- ===== PAGINATION ===== -->
+<h2 class="section-title" id="pagination">Pagination — Cursor vs Offset</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>📄</span> 50,000 Students — Cursor Pagination is the Answer</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Oru shot-la 50,000 students return panna</span> try panna — server crash, network timeout, mobile app freeze. Pagination mandatory.</p>
+
+    <table>
+        <tr><th>Feature</th><th>Offset (SKIP/TAKE)</th><th>Cursor (WHERE Id &gt; x)</th></tr>
+        <tr><td>URL</td><td><code>?page=3&amp;pageSize=20</code></td><td><code>?cursor=BASE64&amp;take=20</code></td></tr>
+        <tr><td>DB Query</td><td>Scans and discards N rows</td><td>Index seek — reads only needed rows</td></tr>
+        <tr><td>Page 500 perf</td><td>Reads 10,000 rows to skip them</td><td>Same speed as page 1 — O(log n)</td></tr>
+        <tr><td>Jump to page</td><td>✅ <code>?page=50</code></td><td>❌ Sequential only</td></tr>
+        <tr><td>Real-time stable</td><td>❌ New admission shifts all pages</td><td>✅ Cursor anchors to last seen ID</td></tr>
+        <tr><td>ZenCampus use</td><td>Admin paged reports (small, needs jump)</td><td>✅ Attendance/fee lists (scroll-heavy)</td></tr>
+    </table>
+
+    <pre><span class="cmt">// Generic wrapper</span>
+<span class="kw">public record</span> <span class="cls">PagedResult</span>&lt;T&gt;(
+    IReadOnlyList&lt;T&gt; Items,
+    <span class="kw">string</span>?          NextCursor,   <span class="cmt">// null = last page</span>
+    <span class="kw">bool</span>             HasNextPage,
+    <span class="kw">int</span>              TotalCount);  <span class="cmt">// 0 = not counted (expensive COUNT(*), only if UI needs it)</span></pre>
+
+    <pre><span class="cmt">// CQRS Query Handler — cursor pagination</span>
+<span class="kw">public async</span> Task&lt;<span class="cls">PagedResult</span>&lt;<span class="cls">StudentDto</span>&gt;&gt; <span class="mth">Handle</span>(
+    <span class="cls">GetStudentsQuery</span> q, <span class="cls">CancellationToken</span> ct)
+{
+    <span class="kw">var</span> take = Math.<span class="mth">Min</span>(q.Take, <span class="num">100</span>); <span class="cmt">// Never allow unbounded — max 100</span>
+
+    <span class="kw">var</span> query = _db.Students
+        .<span class="mth">Where</span>(s => s.SchoolId == q.SchoolId && !s.IsDeleted)
+        .<span class="mth">OrderBy</span>(s => s.Id);
+
+    <span class="cmt">// Decode cursor → get last seen Id</span>
+    <span class="kw">if</span> (q.Cursor <span class="kw">is not null</span>)
+    {
+        <span class="kw">var</span> cursor = <span class="cls">JsonSerializer</span>.<span class="mth">Deserialize</span>&lt;<span class="cls">CursorData</span>&gt;(
+            <span class="cls">Convert</span>.<span class="mth">FromBase64String</span>(q.Cursor));
+        query = query.<span class="mth">Where</span>(s => s.Id > cursor.Id); <span class="cmt">// Index seek!</span>
+    }
+
+    <span class="cmt">// Fetch one extra to detect if next page exists</span>
+    <span class="kw">var</span> items = <span class="kw">await</span> query
+        .<span class="mth">Take</span>(take + <span class="num">1</span>)
+        .<span class="mth">Select</span>(s => <span class="kw">new</span> <span class="cls">StudentDto</span>(s.Id, s.Name, s.Class, s.RollNo))
+        .<span class="mth">ToListAsync</span>(ct);
+
+    <span class="kw">var</span> hasNext = items.Count > take;
+    <span class="kw">if</span> (hasNext) items.<span class="mth">RemoveAt</span>(items.Count - <span class="num">1</span>); <span class="cmt">// Remove the extra item</span>
+
+    <span class="kw">string</span>? nextCursor = <span class="kw">null</span>;
+    <span class="kw">if</span> (hasNext)
+    {
+        <span class="kw">var</span> json = <span class="cls">JsonSerializer</span>.<span class="mth">Serialize</span>(<span class="kw">new</span> { id = items[^<span class="num">1</span>].Id });
+        nextCursor = <span class="cls">Convert</span>.<span class="mth">ToBase64String</span>(<span class="cls">Encoding</span>.UTF8.<span class="mth">GetBytes</span>(json));
+    }
+
+    <span class="kw">return new</span> <span class="cls">PagedResult</span>&lt;<span class="cls">StudentDto</span>&gt;(items, nextCursor, hasNext, <span class="num">0</span>);
+}
+
+<span class="cmt">// Response:</span>
+{
+  <span class="str">"items"</span>:       [<span class="cmt">/* 20 students */</span>],
+  <span class="str">"nextCursor"</span>:  <span class="str">"eyJpZCI6MTIwfQ"</span>,
+  <span class="str">"hasNextPage"</span>: <span class="kw">true</span>,
+  <span class="str">"totalCount"</span>:  <span class="num">0</span>
+}
+
+<span class="cmt">// Next page request:</span>
+GET /api/v1/schools/1/students?cursor=eyJpZCI6MTIwfQ&amp;take=20</pre>
+
+    <div class="warn-box"><strong>Production trap:</strong> Never <code>GetAllStudentsAsync().Skip(n).Take(m)</code> in memory — loads all 50,000 students into RAM first! Always paginate at DB level. EF Core's <code>.Skip(n).Take(m)</code> does translate to SQL <code>OFFSET/FETCH</code> — but cursor approach is still faster at large offsets.</div>
+</div>
+
+<!-- ===== MOVIES ===== -->
+<h2 class="section-title" id="movies">🎬 Tamil Movie Memory Anchors</h2>
+
+<div class="movie-box">
+    <div class="movie-icon">🌐</div>
+    <div class="movie-content">
+        <h4>REST — "Vikram" (2022)</h4>
+        <p>Vikram-la each character-ku clear identity + specific role. HTTP verbs same: GET (observe), POST (create/admit), DELETE (eliminate). URL is who they are — not what they'll do. Aathi URL-la "POST /killEnemy" sonnaan-nu vaikalai — just "DELETE /enemies/{id}" is REST!</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">🔢</div>
+    <div class="movie-content">
+        <h4>API Versioning — "Kaithi" (2019)</h4>
+        <p>Kaithi-la hero-ku phone illai — but old vs new world both coexist. V1 API = old school without smartphones. V2 = new world with features. Breaking v1 = telling 200 schools "upgrade or fail" overnight. Just like Kaithi: maintain both, no sudden break, gradual transition with <code>api-deprecated-versions</code> header as warning!</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">📖</div>
+    <div class="movie-content">
+        <h4>OpenAPI/Swagger — "Dasavathaaram" (2008)</h4>
+        <p>Kamal 10 characters play pannaru — each with different role, look, behavior. Swagger documentation same: every endpoint documented — what it expects, what it returns, what can go wrong. Swagger UI = all 10 avatars introduced clearly. Frontend team opens it and knows exactly how to call every endpoint without asking.</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">⚠️</div>
+    <div class="movie-content">
+        <h4>Problem Details — "Vinnaithaandi Varuvaayaa" (2010)</h4>
+        <p>VTV-la Jessie exactly sollara — structured, detailed: "type: rejection, title: family pressure, detail: parents won't agree, instance: our relationship." RFC 7807 same structured contract. Random <code>{"error": "failed"}</code> = Karthik hearing "something happened" with zero context. ProblemDetails gives frontend team exact traceId to debug with!</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">📄</div>
+    <div class="movie-content">
+        <h4>Pagination — "Baahubali" (2015 + 2017)</h4>
+        <p>Entire Baahubali story oru shot-la solla mudiyathu — 2 parts! 50,000 students oru API call-la return panna mudiyathu — cursor pagination. Part 1 ends at a cursor ("Why did Kattappa kill Baahubali?") — that question IS the <code>nextCursor</code> token. Part 2 starts exactly from where Part 1 left off!</p>
+    </div>
+</div>
+
+<!-- ===== SCENARIOS ===== -->
+<h2 class="section-title" id="scenarios">🎯 10 Interview Scenarios</h2>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q1. What is REST? Is every HTTP API a REST API? What makes an API truly RESTful?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>REST</strong> (Representational State Transfer) is an architectural style, not a protocol. Many APIs claim to be REST but are actually HTTP-RPC (verbs in URLs, always POST).</p>
+        <p style="margin-top:0.5rem"><strong>6 REST Constraints:</strong></p>
+        <ol style="margin-left:1.5rem;margin-top:0.25rem">
+            <li><strong>Client-Server</strong> — UI and API separated, evolve independently</li>
+            <li><strong>Stateless</strong> — server holds no session; JWT carries state per request</li>
+            <li><strong>Cacheable</strong> — GET responses declare cacheability (Cache-Control headers)</li>
+            <li><strong>Uniform Interface</strong> — resources identified by URI, manipulated via representations</li>
+            <li><strong>Layered System</strong> — client doesn't know if it hits load balancer, cache, or app server</li>
+            <li><strong>Code on Demand</strong> (optional) — server can send executable code to client</li>
+        </ol>
+        <p style="margin-top:0.5rem"><strong>ZenCampus answer:</strong> "Our API follows REST conventions — resource-based URLs, HTTP verbs, stateless JWT. We're at Richardson Maturity Level 2. We skip HATEOAS (Level 3) — it adds complexity without practical benefit for our team-owned mobile clients."</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q2. Production Bug: Fee payment API returns 200 OK even when payment fails. Mobile app never retries. What's wrong, how to fix?</div>
+        <span class="scenario-type type-prod">Production Bug</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Root cause:</strong> Controller swallows exceptions, returns <code>200 {"success": false, "error": "DB failed"}</code> — the "200 with error body" anti-pattern.</p>
+        <p style="margin-top:0.5rem"><strong>Why dangerous:</strong></p>
+        <ul style="margin-left:1.5rem">
+            <li>HTTP retry clients check status code only — 200 = "all good", no retry</li>
+            <li>Azure App Insights doesn't count 200 as failure → no alert fires</li>
+            <li>Frontend error interceptors skip 200 responses</li>
+            <li>Parents think payment succeeded when it didn't → double payment attempts</li>
+        </ul>
+        <pre><span class="cmt">// ❌ WRONG</span>
+<span class="kw">try</span> { <span class="kw">await</span> _feeService.<span class="mth">ProcessAsync</span>(dto); <span class="kw">return</span> <span class="mth">Ok</span>(<span class="kw">new</span> { success = <span class="kw">true</span> }); }
+<span class="kw">catch</span> { <span class="kw">return</span> <span class="mth">Ok</span>(<span class="kw">new</span> { success = <span class="kw">false</span> }); }  <span class="cmt">// ← NEVER do this</span>
+
+<span class="cmt">// ✅ CORRECT — let domain exceptions bubble to IExceptionHandler</span>
+<span class="kw">var</span> receipt = <span class="kw">await</span> _mediator.<span class="mth">Send</span>(<span class="kw">new</span> <span class="cls">CollectFeeCommand</span>(dto));
+<span class="kw">return</span> <span class="mth">CreatedAtAction</span>(<span class="kw">nameof</span>(GetReceipt), <span class="kw">new</span> { id = receipt.Id }, receipt);
+<span class="cmt">// Domain exceptions → ZenCampusExceptionHandler → 422/500 ProblemDetails</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q3. V2 breaking change: mandatory parentPhone field in student admission. 180 schools still on old mobile app. How do you ship this?</div>
+        <span class="scenario-type type-design">API Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <ol style="margin-left:1.5rem">
+            <li>Create <code>StudentsV2Controller</code> with <code>[ApiVersion("2.0")]</code> — new DTO requires <code>ParentPhone</code></li>
+            <li>Keep <code>StudentsV1Controller</code> unchanged — <code>[ApiVersion("1.0", Deprecated = true)]</code></li>
+            <li>Response header auto-added: <code>api-deprecated-versions: 1.0, api-supported-versions: 1.0, 2.0</code></li>
+            <li>Communicate 6-month sunset: <code>Sunset: Sat, 01 Jan 2027 00:00:00 GMT</code> response header</li>
+            <li>After sunset: v1 returns <code>410 Gone</code> with upgrade instructions in ProblemDetails</li>
+        </ol>
+        <pre><span class="cmt">// V2 DTO — breaking change isolated here only</span>
+<span class="kw">public record</span> <span class="cls">AdmitStudentV2Dto</span>(
+    <span class="kw">string</span> Name, <span class="kw">int</span> ClassId,
+    [<span class="attr">Required</span>, <span class="attr">Phone</span>] <span class="kw">string</span> ParentPhone);  <span class="cmt">// ← mandatory in V2</span>
+
+<span class="cmt">// V1 DTO — unchanged, still works</span>
+<span class="kw">public record</span> <span class="cls">AdmitStudentV1Dto</span>(
+    <span class="kw">string</span> Name, <span class="kw">int</span> ClassId, <span class="kw">string</span>? ParentPhone);  <span class="cmt">// optional</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q4. Attendance report API times out loading 50,000 students. Fix it without breaking existing clients.</div>
+        <span class="scenario-type type-perf">Performance</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <ol style="margin-left:1.5rem">
+            <li><strong>Add optional <code>?cursor</code> and <code>?take=20</code> params</strong> — old clients omit them, get first 20 (default). Response envelope grows new <code>nextCursor</code> field — old clients ignore unknown fields (non-breaking).</li>
+            <li><strong>Never in-memory:</strong> <code>GetAll().Skip(n)</code> = loads 50,000 into RAM. Always paginate at DB level.</li>
+            <li><strong>For full-dataset exports</strong> (Excel reports): POST to <code>/api/v1/reports/attendance</code> → returns <code>202 Accepted + Location: /reports/job-123</code> → client polls → eventually GET returns download URL.</li>
+        </ol>
+        <pre><span class="cmt">// Backward-compatible: add optional params</span>
+[<span class="attr">HttpGet</span>]
+<span class="kw">public async</span> Task&lt;IActionResult&gt; <span class="mth">GetStudents</span>(
+    <span class="kw">int</span>     schoolId,
+    [<span class="attr">FromQuery</span>] <span class="kw">string</span>? cursor = <span class="kw">null</span>,  <span class="cmt">// old clients omit → first page</span>
+    [<span class="attr">FromQuery</span>] <span class="kw">int</span>     take   = <span class="num">20</span>)    <span class="cmt">// old clients omit → default 20</span>
+{
+    <span class="kw">var</span> result = <span class="kw">await</span> _mediator.<span class="mth">Send</span>(<span class="kw">new</span> <span class="cls">GetStudentsQuery</span>(schoolId, cursor, take));
+    <span class="kw">return</span> <span class="mth">Ok</span>(result); <span class="cmt">// old clients: items[] still present, nextCursor ignored</span>
+}</pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q5. Explain RFC 7807 Problem Details. What's better about it versus custom error formats?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>RFC 7807</strong> is an IETF standard for HTTP error responses. Fields:</p>
+        <ul style="margin-left:1.5rem">
+            <li><code>type</code> — URI identifying error class (links to documentation)</li>
+            <li><code>title</code> — human-readable error name (stable, same for all instances of type)</li>
+            <li><code>status</code> — HTTP status code (redundant but useful for logging)</li>
+            <li><code>detail</code> — specific message for this error instance</li>
+            <li><code>instance</code> — URI of the request that triggered it</li>
+            <li>Custom: <code>traceId</code>, <code>errors</code> dict for validation</li>
+        </ul>
+        <p style="margin-top:0.5rem"><strong>Over custom formats:</strong></p>
+        <ul style="margin-left:1.5rem">
+            <li>Frontend writes <strong>one generic error handler</strong> for all APIs</li>
+            <li>OpenAPI documents error shape standardly — no guesswork</li>
+            <li>Azure App Insights + monitoring tools understand the shape</li>
+            <li><code>traceId</code> = direct correlation between parent's phone call and server logs</li>
+        </ul>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q6. Why is SKIP/TAKE pagination bad for large datasets? Explain cursor pagination with SQL.</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <pre><span class="cmt">-- OFFSET pagination — Page 500, size 20:</span>
+SELECT * FROM Students ORDER BY Id
+OFFSET <span class="num">9980</span> ROWS FETCH NEXT <span class="num">20</span> ROWS ONLY;
+<span class="cmt">-- SQL Server reads rows 1-10000 first, discards 9980, returns 20</span>
+<span class="cmt">-- Performance: O(n) — page 500 is 500x slower than page 1</span>
+
+<span class="cmt">-- Cursor pagination — same "page":</span>
+SELECT TOP <span class="num">20</span> * FROM Students
+WHERE Id > <span class="num">9980</span>  <span class="cmt">-- Index seek on clustered PK!</span>
+ORDER BY Id;
+<span class="cmt">-- SQL Server: 1 B-tree lookup → read 20 rows → done</span>
+<span class="cmt">-- Performance: O(log n) — same speed as page 1</span></pre>
+        <p><strong>Bonus trap:</strong> With offset, if a new student is admitted between page 1 and page 2 loads, every student shifts forward by 1 — app shows duplicate student on page 2 that already appeared at end of page 1. Cursor is immune — anchors to last seen Id.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q7. Security audit: Swagger UI is accessible at production URL. What's the risk and what's your fix?</div>
+        <span class="scenario-type type-prod">Security</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Risks:</strong></p>
+        <ul style="margin-left:1.5rem">
+            <li>Attacker sees all endpoints, parameters, expected input shapes</li>
+            <li>Reduces reconnaissance effort — no need to reverse-engineer the API</li>
+            <li>Reveals internal patterns (schoolId formats, auth endpoints, admin routes)</li>
+            <li>Swagger UI lets attackers invoke APIs directly in browser with a JWT</li>
+        </ul>
+        <pre><span class="cmt">// Fix 1 — Dev only (simplest, correct for most cases)</span>
+<span class="kw">if</span> (app.Environment.<span class="mth">IsDevelopment</span>())
+{
+    app.<span class="mth">UseSwagger</span>();
+    app.<span class="mth">UseSwaggerUI</span>();
+}
+
+<span class="cmt">// Fix 2 — Internal network only (for internal team tools in prod)</span>
+app.<span class="mth">UseWhen</span>(
+    ctx => ctx.Request.Path.<span class="mth">StartsWithSegments</span>(<span class="str">"/swagger"</span>),
+    branch => branch.<span class="mth">Use</span>(<span class="kw">async</span> (ctx, next) =>
+    {
+        <span class="kw">var</span> ip = ctx.Connection.RemoteIpAddress;
+        <span class="kw">if</span> (ip <span class="kw">is null</span> || !ip.<span class="mth">IsPrivate</span>())
+        {
+            ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
+            <span class="kw">return</span>;
+        }
+        <span class="kw">await</span> <span class="mth">next</span>(ctx);
+    }));</pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q8. Parent wants to update only their phone number. PUT or PATCH? What's the difference?</div>
+        <span class="scenario-type type-design">API Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>PUT</strong> = full replacement. Client must send ALL fields. Missing fields → set to null/default.<br>
+        <strong>PATCH</strong> = partial update. Client sends only changed fields.</p>
+        <p style="margin-top:0.5rem">Phone-only update → <strong>PATCH</strong>:</p>
+        <pre><span class="cmt">// PATCH /api/v1/parents/{id}</span>
+<span class="cmt">// Body: {"phone": "9876543210"}  ← only phone, nothing else</span>
+<span class="kw">public record</span> <span class="cls">PatchParentDto</span>
+{
+    <span class="kw">public string</span>? Phone   { <span class="kw">get</span>; <span class="kw">init</span>; }  <span class="cmt">// null = "don't touch"</span>
+    <span class="kw">public string</span>? Address { <span class="kw">get</span>; <span class="kw">init</span>; }
+    <span class="kw">public string</span>? Email   { <span class="kw">get</span>; <span class="kw">init</span>; }
+}
+
+[<span class="attr">HttpPatch</span>(<span class="str">"{id}"</span>)]
+<span class="kw">public async</span> Task&lt;IActionResult&gt; <span class="mth">PatchParent</span>(<span class="kw">int</span> id, [<span class="attr">FromBody</span>] <span class="cls">PatchParentDto</span> dto)
+{
+    <span class="kw">var</span> parent = <span class="kw">await</span> _repo.<span class="mth">GetAsync</span>(id) ?? <span class="kw">throw new</span> <span class="cls">NotFoundException</span>();
+    <span class="kw">if</span> (dto.Phone   <span class="kw">is not null</span>) parent.Phone   = dto.Phone;
+    <span class="kw">if</span> (dto.Address <span class="kw">is not null</span>) parent.Address = dto.Address;
+    <span class="kw">if</span> (dto.Email   <span class="kw">is not null</span>) parent.Email   = dto.Email;
+    <span class="kw">await</span> _repo.<span class="mth">UpdateAsync</span>(parent);
+    <span class="kw">return</span> <span class="mth">Ok</span>(parent);
+}
+<span class="cmt">// PUT would require sending name, address, email, district, pin — all fields — wasteful</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q9. What is HATEOAS? Should ZenCampus implement it?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>HATEOAS</strong> (Hypermedia As Engine Of Application State) = API responses include <code>_links</code> to available actions. Client discovers what it can do next from the response — doesn't need hardcoded URLs.</p>
+        <pre>{
+  <span class="str">"id"</span>: <span class="num">42</span>, <span class="str">"name"</span>: <span class="str">"Ravi Kumar"</span>, <span class="str">"feeBalance"</span>: <span class="num">5000</span>,
+  <span class="str">"_links"</span>: {
+    <span class="str">"self"</span>:       { <span class="str">"href"</span>: <span class="str">"/api/v1/students/42"</span>,              <span class="str">"method"</span>: <span class="str">"GET"</span>    },
+    <span class="str">"pay-fee"</span>:    { <span class="str">"href"</span>: <span class="str">"/api/v1/students/42/fee-payments"</span>,  <span class="str">"method"</span>: <span class="str">"POST"</span>   },
+    <span class="str">"attendance"</span>: { <span class="str">"href"</span>: <span class="str">"/api/v1/students/42/attendance"</span>,    <span class="str">"method"</span>: <span class="str">"GET"</span>    },
+    <span class="str">"promote"</span>:    { <span class="str">"href"</span>: <span class="str">"/api/v1/students/42/promotions"</span>,    <span class="str">"method"</span>: <span class="str">"POST"</span>   }
+  }
+}</pre>
+        <p><strong>ZenCampus honest answer (senior level):</strong> "We evaluated HATEOAS but skipped it. Our React web and React Native clients are our own team — they use TypeScript SDK with strongly-typed routes. The benefit (server can change URLs, client discovers actions) doesn't apply when client and server are the same team. If we ever open a public API for third-party school app developers, we'd add it. Most production REST APIs are Richardson Maturity Level 2, not Level 3."</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q10. "Tell me about your API design experience." — Full ZenCampus structured answer</div>
+        <span class="scenario-type type-exp">Experience</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p>"In ZenCampus — our school ERP serving 50,000 students across 200 schools — I designed and evolved the REST API with several production-critical decisions:</p>
+        <p style="margin-top:0.5rem"><strong>Versioning:</strong> URL-path versioning — <code>/api/v1/</code> and <code>/api/v2/</code>. When we added mandatory parentPhone in v2, 180 schools still ran old mobile apps. We kept v1 with <code>[ApiVersion("1.0", Deprecated = true)]</code> and a 6-month sunset window, so schools could upgrade without breaking existing operations.</p>
+        <p style="margin-top:0.5rem"><strong>Error handling bug:</strong> Fee payment returned 200 OK on failure. Mobile retry logic never triggered — parents thought payments succeeded. We migrated to RFC 7807 IExceptionHandler — single class maps all domain exceptions to proper 4xx/5xx ProblemDetails with traceId. Support team now resolves issues in minutes instead of hours.</p>
+        <p style="margin-top:0.5rem"><strong>Pagination performance:</strong> Attendance report was timing out. Replaced <code>SKIP/TAKE</code> offset with cursor pagination — <code>WHERE Id > cursor LIMIT 20</code>. Page 500 went from 2s timeout to consistent 8ms.</p>
+        <p style="margin-top:0.5rem"><strong>Documentation:</strong> Swashbuckle with XML comments and <code>[ProducesResponseType]</code> — frontend never asks 'what error shape does this return?' Swagger is blocked in production.</p>
+        <p style="margin-top:0.5rem">Core principle: <em>API is a contract — once clients depend on it, you can only add, never break.</em>"</p>
+    </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<h2 class="section-title" id="quiz">🧠 Quick Quiz</h2>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q1. New student admitted successfully via POST. What HTTP status code should the controller return?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) 200 OK</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">B) 201 Created</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) 204 No Content</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) 202 Accepted</button>
+    </div>
+    <div class="quiz-feedback">201 Created — POST success should return 201 + Location header pointing to the new resource URL. 200 is for GET/PUT. 204 is for DELETE (no body). 202 is for async operations where result isn't ready yet.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q2. 50,000 students, mobile app loads list by infinite scroll. Which pagination?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Offset — <code>?page=2&amp;size=20</code></button>
+        <button class="quiz-opt" onclick="quiz(this,true)">B) Cursor — <code>?cursor=BASE64&amp;take=20</code></button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) No pagination — use IAsyncEnumerable streaming</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) GraphQL — client asks exactly what it needs</button>
+    </div>
+    <div class="quiz-feedback">Cursor pagination — infinite scroll is its exact use case. Offset at page 500+ scans 10,000 rows to discard them. Streaming doesn't solve payload size. GraphQL would be a major rewrite for this one problem.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q3. Client sends name with special characters, FluentValidation rejects it. What RFC 7807 status?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) 500 Internal Server Error</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">B) 400 Bad Request</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) 422 Unprocessable Entity</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) 404 Not Found</button>
+    </div>
+    <div class="quiz-feedback">400 Bad Request — input format is invalid (validation failed at boundary). 422 is for business rule violations when format is valid but business logic rejects it (e.g., student already admitted in same school). Know this distinction — it's a common interview trap.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q4. V2 needs mandatory GPS field in student. 180 schools still on V1 app. Best approach?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Make GPS optional — force migration later</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">B) Feature flag to toggle GPS requirement</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">C) New V2 controller with GPS required; V1 kept with 6-month deprecation</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) New endpoint <code>/api/students-gps</code> without version framework</button>
+    </div>
+    <div class="quiz-feedback">API versioning — create V2 with mandatory GPS, keep V1 running. Option A delays the problem. Option B creates hidden conditional behavior — hard to test and maintain. Option D is manual versioning — no deprecated-version headers, no Swagger version groups, no framework support.</div>
+</div>
+
+<!-- ===== CHECKLIST ===== -->
+<h2 class="section-title">✅ Day 20 Mastery Checklist</h2>
+<ul class="checklist">
+    <li><input type="checkbox" id="c1"><label for="c1">REST: URL = noun (resource), HTTP method = verb — actions not in URL</label></li>
+    <li><input type="checkbox" id="c2"><label for="c2">201 POST success, 204 DELETE, 400 validation, 409 conflict, 422 business rule, 429 rate limit</label></li>
+    <li><input type="checkbox" id="c3"><label for="c3"><code>CreatedAtAction</code> returns 201 + Location header automatically</label></li>
+    <li><input type="checkbox" id="c4"><label for="c4"><code>Asp.Versioning.Mvc</code> — <code>[ApiVersion("2.0")]</code>, <code>AssumeDefaultVersionWhenUnspecified</code></label></li>
+    <li><input type="checkbox" id="c5"><label for="c5">Deprecated versions get <code>api-deprecated-versions</code> header as warning to clients</label></li>
+    <li><input type="checkbox" id="c6"><label for="c6">Swashbuckle: XML comments + <code>[ProducesResponseType]</code> + JWT Bearer definition</label></li>
+    <li><input type="checkbox" id="c7"><label for="c7">Swagger ONLY in Development — production exposure is a security risk</label></li>
+    <li><input type="checkbox" id="c8"><label for="c8">RFC 7807: type, title, status, detail, instance, traceId — standard contract</label></li>
+    <li><input type="checkbox" id="c9"><label for="c9"><code>IExceptionHandler</code> — single class, switch expression, domain → status codes</label></li>
+    <li><input type="checkbox" id="c10"><label for="c10">Cursor: <code>WHERE Id > cursor LIMIT n</code> vs SKIP/TAKE (scans n rows to discard)</label></li>
+    <li><input type="checkbox" id="c11"><label for="c11">Fetch n+1 trick: remove last if count > n → hasNextPage without COUNT(*)</label></li>
+    <li><input type="checkbox" id="c12"><label for="c12">HATEOAS: know it, explain tradeoff — skipping it for team-owned clients is a valid senior decision</label></li>
+</ul>
+
+<div style="text-align:center;margin:2rem 0;padding:1.5rem;background:var(--card);border-radius:12px;border:1px solid var(--border);">
+    <div style="font-size:1.5rem;font-weight:800;color:var(--accent-light)">Day 20 Complete! 🎯</div>
+    <div style="color:var(--text-dim);margin-top:0.5rem">33% of the 60-day journey done</div>
+    <div style="color:var(--text-dim);font-size:0.85rem;margin-top:0.25rem">Tomorrow: Day 21 — Background Jobs &amp; Queues (Hangfire, Azure Service Bus, IHostedService, Outbox Pattern)</div>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+    <div>Day 20 / 60 — API Design | ZenCampus .NET Interview Prep</div>
+    <div style="margin-top:0.25rem;color:var(--accent)">Accent: Deep Cyan #0e7490 | Days 1–20 colors all unique ✓</div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const p = (doc.scrollTop || document.body.scrollTop) / (doc.scrollHeight - doc.clientHeight) * 100;
+    document.getElementById('progressBar').style.width = p + '%';
+});
+
+function toggle(btn) {
+    const a = btn.nextElementSibling;
+    a.classList.toggle('visible');
+    btn.textContent = a.classList.contains('visible') ? 'Hide Answer' : 'Reveal Answer';
+}
+
+function quiz(btn, correct) {
+    const card = btn.closest('.quiz-card');
+    card.querySelectorAll('.quiz-opt').forEach(o => o.disabled = true);
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    if (!correct) {
+        card.querySelectorAll('.quiz-opt').forEach(o => {
+            if (o.getAttribute('onclick').includes('true')) o.classList.add('correct');
+        });
+    }
+    const fb = card.querySelector('.quiz-feedback');
+    fb.classList.add('show');
+    fb.style.cssText = `background:${correct ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)'};color:${correct ? '#86efac' : '#fca5a5'};border:1px solid ${correct ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'};`;
+}
+</script>
+</body>
+</html>

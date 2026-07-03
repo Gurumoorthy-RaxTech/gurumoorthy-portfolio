@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 4 – Collections Deep Dive | ZenCampus Edition</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#1a0a00,#2d1500,#1a0a00);padding:36px 20px;text-align:center;border-bottom:3px solid #ff6b35}
+header h1{font-size:2em;color:#ff6b35;text-shadow:0 0 20px #ff6b3555}
+header p{color:#c0a090;margin-top:6px}
+.badge{display:inline-block;background:#ff6b3522;border:1px solid #ff6b3555;color:#ff6b35;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#ff6b35;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#ff6b35;color:#000;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.c-kw{color:#569cd6}.c-type{color:#4ec9b0}.c-str{color:#ce9178}.c-num{color:#b5cea8}.c-cmt{color:#6a9955;font-style:italic}.c-prop{color:#9cdcfe}.c-method{color:#dcdcaa}
+code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#1a0f2e;border-left:4px solid #9b59b6;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#c39bd3;font-size:0.9em;margin-top:4px}
+.kw-box{margin:10px 0}
+.kw{display:inline-block;background:#2d1500;color:#ff6b35;padding:3px 10px;border-radius:4px;font-size:0.76em;margin:3px;font-family:monospace;border:1px solid #5d3010}
+.proj{background:#0a1f0f;border-left:4px solid #27ae60;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.proj .label{color:#2ecc71;font-weight:bold;font-size:0.8em;margin-bottom:6px}
+.tip{background:#1a1500;border-left:4px solid #f9ca24;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#f9ca24;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#f0dc82;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.info{background:#0a1020;border-left:4px solid #3498db;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.info p{color:#85c1e9;font-size:0.9em}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.s-num{background:#ff6b35;color:#000;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#2a0a4a;color:#a855f7}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#2d1500;border:1px solid #ff6b35;color:#ff6b35;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#ff6b35;color:#000}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #2d1500}
+.answer.shown{display:block}
+.answer .a-label{color:#ff6b35;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.gold{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#2d1500;color:#ff6b35;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a1a35}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.blue{color:#74b9ff}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#ff6b35;color:#ff6b35}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:700px){.two-col,.three-col{grid-template-columns:1fr}}
+.perf-card{background:#0a0a1f;border:1px solid #2d1500;border-radius:8px;padding:14px}
+.perf-card h4{color:#ff6b35;font-size:0.88em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.o1{color:#2ecc71;font-weight:bold}.on{color:#e74c3c;font-weight:bold}.ologn{color:#f39c12;font-weight:bold}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#ff6b35}
+h3{color:#ffaa80;margin:16px 0 8px;font-size:1em}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.72em;font-weight:bold;margin-left:6px}
+.tag-i{background:#e94560;color:white}.tag-t{background:#f39c12;color:#000}.tag-p{background:#8e44ad;color:white}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#ffaa80;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #2d1500}
+.sticky-nav a:hover{background:#2d1500}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#ff6b35,#f39c12)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+.complexity-badge{font-size:0.72em;padding:1px 7px;border-radius:10px;font-weight:bold;font-family:monospace}
+.c-o1{background:#0a2a0a;color:#2ecc71;border:1px solid #2ecc71}
+.c-on{background:#2a0a0a;color:#e74c3c;border:1px solid #e74c3c}
+.c-ologn{background:#2a1a0a;color:#f39c12;border:1px solid #f39c12}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#f39c12;font-size:0.85em;margin-bottom:6px">📅 Day 4 of 60 | Phase 1: Advanced C#</div>
+  <h1>📦 Collections Deep Dive</h1>
+  <p>List · Dictionary · HashSet · Queue · Stack · Concurrent Collections · ZenCampus Scenarios</p>
+  <div style="margin-top:12px">
+    <span class="badge">List&lt;T&gt;</span>
+    <span class="badge">Dictionary</span>
+    <span class="badge">HashSet</span>
+    <span class="badge">Queue/Stack</span>
+    <span class="badge">ConcurrentDictionary</span>
+    <span class="badge">Big O</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#hierarchy">🏗️ Hierarchy</a>
+  <a href="#list">📋 List</a>
+  <a href="#dict">🔑 Dictionary</a>
+  <a href="#hashset">🎯 HashSet</a>
+  <a href="#qs">📬 Queue/Stack</a>
+  <a href="#concurrent">⚡ Concurrent</a>
+  <a href="#bigO">📊 Big O</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- HIERARCHY -->
+<div class="section" id="hierarchy">
+  <div class="section-title"><span class="num">1</span> Collection Hierarchy — எது எதை extend பண்ணுது</div>
+
+  <div class="movie">
+    <span class="film">🎬 Thalapathy (1991) — Family Hierarchy</span>
+    <p>Surya family → Deva family → இரண்டும் ஒரே roots. Collection hierarchy-um same — IEnumerable root, கீழே ICollection, IList, IDictionary — எல்லாரும் related!</p>
+  </div>
+
+  <pre><span class="c-cmt">// Collection Interface Hierarchy</span>
+<span class="c-type">IEnumerable</span>&lt;<span class="c-type">T</span>&gt;           <span class="c-cmt">// foreach only — minimum</span>
+    └── <span class="c-type">ICollection</span>&lt;<span class="c-type">T</span>&gt;   <span class="c-cmt">// + Count, Add, Remove, Contains</span>
+            ├── <span class="c-type">IList</span>&lt;<span class="c-type">T</span>&gt;   <span class="c-cmt">// + indexer [i], Insert, IndexOf</span>
+            │       └── <span class="c-type">List</span>&lt;<span class="c-type">T</span>&gt;, <span class="c-type">Array</span>
+            └── <span class="c-type">ISet</span>&lt;<span class="c-type">T</span>&gt;    <span class="c-cmt">// + Union, Intersect, ExceptWith</span>
+                    └── <span class="c-type">HashSet</span>&lt;<span class="c-type">T</span>&gt;, <span class="c-type">SortedSet</span>&lt;<span class="c-type">T</span>&gt;
+
+<span class="c-type">IDictionary</span>&lt;<span class="c-type">TK</span>,<span class="c-type">TV</span>&gt;         <span class="c-cmt">// key-value pair access</span>
+    └── <span class="c-type">Dictionary</span>&lt;<span class="c-type">TK</span>,<span class="c-type">TV</span>&gt;
+    └── <span class="c-type">SortedDictionary</span>&lt;<span class="c-type">TK</span>,<span class="c-type">TV</span>&gt;
+    └── <span class="c-type">ConcurrentDictionary</span>&lt;<span class="c-type">TK</span>,<span class="c-type">TV</span>&gt;</pre>
+
+  <div class="tip">
+    <div class="t-label">💡 Interview Tip — Method parameters-la use interface!</div>
+    <p>Parameter type-a interface-a declare pannu, concrete type-a illa. <code>IEnumerable&lt;Student&gt;</code> accept panna — List, Array, HashSet ellam pass panalaam. Flexible + testable!</p>
+    <pre style="font-size:0.82em"><span class="c-cmt">// ❌ Too restrictive</span>
+<span class="c-kw">void</span> <span class="c-method">Process</span>(<span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-prop">students</span>) { }
+
+<span class="c-cmt">// ✅ Accept anything enumerable</span>
+<span class="c-kw">void</span> <span class="c-method">Process</span>(<span class="c-type">IEnumerable</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-prop">students</span>) { }
+
+<span class="c-cmt">// ✅ Need Count + Add → ICollection</span>
+<span class="c-kw">void</span> <span class="c-method">Process</span>(<span class="c-type">ICollection</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-prop">students</span>) { }</pre>
+  </div>
+</div>
+
+<!-- LIST -->
+<div class="section" id="list">
+  <div class="section-title"><span class="num">2</span> List&lt;T&gt; — Internal Working + Traps</div>
+
+  <div class="movie">
+    <span class="film">🎬 Ghilli (2004) — Crowd grows dynamically</span>
+    <p>Velu-ku support kudukka oru oru peru varuvaanga — crowd grows! List&lt;T&gt; internally array — full aana double capacity (4→8→16→32). <strong>Dynamic array</strong> — auto resize, but resize = new array copy = expensive!</p>
+  </div>
+
+  <pre><span class="c-cmt">// List internals — capacity doubling</span>
+<span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">new</span> <span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt;();  <span class="c-cmt">// Capacity = 0</span>
+<span class="c-prop">students</span>.<span class="c-method">Add</span>(<span class="c-prop">s1</span>);  <span class="c-cmt">// Capacity = 4  (first add)</span>
+<span class="c-cmt">// Add 3 more... Capacity still 4</span>
+<span class="c-prop">students</span>.<span class="c-method">Add</span>(<span class="c-prop">s5</span>);  <span class="c-cmt">// Capacity = 8  (5th add → resize!)</span>
+<span class="c-cmt">// 9th add → Capacity = 16, etc.</span>
+
+<span class="c-cmt">// ✅ KNOW size upfront? Set initial capacity!</span>
+<span class="c-kw">var</span> <span class="c-prop">students</span> = <span class="c-kw">new</span> <span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt;(<span class="c-prop">count</span>); <span class="c-cmt">// no resize!</span>
+
+<span class="c-cmt">// Key operations with complexity:</span>
+<span class="c-prop">students</span>.<span class="c-method">Add</span>(<span class="c-prop">s</span>);          <span class="c-cmt">// O(1) amortized</span>
+<span class="c-prop">students</span>[<span class="c-num">5</span>];             <span class="c-cmt">// O(1) — index access</span>
+<span class="c-prop">students</span>.<span class="c-method">Remove</span>(<span class="c-prop">s</span>);      <span class="c-cmt">// O(n) — find + shift!</span>
+<span class="c-prop">students</span>.<span class="c-method">RemoveAt</span>(<span class="c-num">0</span>);   <span class="c-cmt">// O(n) — shift all elements!</span>
+<span class="c-prop">students</span>.<span class="c-method">Insert</span>(<span class="c-num">0</span>, <span class="c-prop">s</span>);  <span class="c-cmt">// O(n) — shift all right!</span>
+<span class="c-prop">students</span>.<span class="c-method">Contains</span>(<span class="c-prop">s</span>);   <span class="c-cmt">// O(n) — linear scan</span>
+<span class="c-prop">students</span>.<span class="c-method">Sort</span>();         <span class="c-cmt">// O(n log n)</span></pre>
+
+  <h3>Common Traps:</h3>
+  <div class="two-col">
+    <div class="danger">
+      <div class="d-label">❌ TRAP: Modify list while iterating</div>
+      <pre style="font-size:0.8em"><span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">s</span> <span class="c-kw">in</span> <span class="c-prop">students</span>)
+{
+    <span class="c-kw">if</span> (!<span class="c-prop">s</span>.<span class="c-prop">IsActive</span>)
+        <span class="c-prop">students</span>.<span class="c-method">Remove</span>(<span class="c-prop">s</span>);
+    <span class="c-cmt">// InvalidOperationException!</span>
+}
+
+<span class="c-cmt">// ✅ Fix: RemoveAll or iterate copy</span>
+<span class="c-prop">students</span>.<span class="c-method">RemoveAll</span>(<span class="c-prop">s</span> => !<span class="c-prop">s</span>.<span class="c-prop">IsActive</span>);</pre>
+    </div>
+    <div class="danger">
+      <div class="d-label">❌ TRAP: Contains on List — O(n)</div>
+      <pre style="font-size:0.8em"><span class="c-cmt">// 10,000 students-la Contains — slow!</span>
+<span class="c-kw">if</span> (<span class="c-prop">admittedList</span>.<span class="c-method">Contains</span>(<span class="c-prop">studentId</span>))
+    <span class="c-cmt">// O(n) — scans all!</span>
+
+<span class="c-cmt">// ✅ Fix: HashSet for O(1) lookup</span>
+<span class="c-kw">var</span> <span class="c-prop">admittedSet</span> = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">int</span>&gt;(<span class="c-prop">admittedIds</span>);
+<span class="c-kw">if</span> (<span class="c-prop">admittedSet</span>.<span class="c-method">Contains</span>(<span class="c-prop">studentId</span>))
+    <span class="c-cmt">// O(1)!</span></pre>
+    </div>
+  </div>
+
+  <h3>List vs Array vs LinkedList — when to use:</h3>
+  <table>
+    <tr><th>Feature</th><th>Array</th><th>List&lt;T&gt;</th><th>LinkedList&lt;T&gt;</th></tr>
+    <tr><td>Size</td><td>Fixed</td><td class="green">Dynamic</td><td class="green">Dynamic</td></tr>
+    <tr><td>Index access</td><td class="green">O(1)</td><td class="green">O(1)</td><td class="red">O(n)</td></tr>
+    <tr><td>Add to end</td><td class="red">Fixed</td><td class="green">O(1)*</td><td class="green">O(1)</td></tr>
+    <tr><td>Insert middle</td><td class="red">O(n)</td><td class="red">O(n)</td><td class="green">O(1)*</td></tr>
+    <tr><td>Remove middle</td><td class="red">O(n)</td><td class="red">O(n)</td><td class="green">O(1)*</td></tr>
+    <tr><td>Memory</td><td class="green">Compact</td><td class="green">Compact</td><td class="red">Extra per node</td></tr>
+    <tr><td>ZenCampus use</td><td>Fixed-size results</td><td>Student lists, results</td><td>Undo/redo chain</td></tr>
+  </table>
+  <p style="color:#888;font-size:0.8em">* LinkedList insert/remove O(1) only if you have the node reference already — finding node is O(n)</p>
+</div>
+
+<!-- DICTIONARY -->
+<div class="section" id="dict">
+  <div class="section-title"><span class="num">3</span> Dictionary&lt;TKey, TValue&gt; — Hash Table Internals <span class="tag tag-i">Most Asked!</span></div>
+
+  <div class="movie">
+    <span class="film">🎬 Ratsasan (2018) — Evidence locker system</span>
+    <p>Case number kudukkuvan — exact evidence box kittum instantly. Linear search pannala! Dictionary exactly same — key kudukkuva → hash → exact bucket → value. O(1) lookup!</p>
+  </div>
+
+  <div class="info">
+    <p><strong>Internal Working:</strong> Key → GetHashCode() → bucket index → store/retrieve. Good hash function = well distributed = O(1). Bad hash = all same bucket = collision = O(n) worst case!</p>
+  </div>
+
+  <pre><span class="c-cmt">// ZenCampus — Roll Number → Student lookup</span>
+<span class="c-kw">var</span> <span class="c-prop">studentMap</span> = <span class="c-kw">new</span> <span class="c-type">Dictionary</span>&lt;<span class="c-kw">string</span>, <span class="c-type">Student</span>&gt;();
+
+<span class="c-cmt">// Add</span>
+<span class="c-prop">studentMap</span>.<span class="c-method">Add</span>(<span class="c-str">"10A01"</span>, <span class="c-prop">student</span>);            <span class="c-cmt">// throws if exists!</span>
+<span class="c-prop">studentMap</span>[<span class="c-str">"10A01"</span>] = <span class="c-prop">student</span>;              <span class="c-cmt">// upsert (add or update)</span>
+<span class="c-prop">studentMap</span>.<span class="c-method">TryAdd</span>(<span class="c-str">"10A01"</span>, <span class="c-prop">student</span>);       <span class="c-cmt">// safe add, returns bool</span>
+
+<span class="c-cmt">// Read — ALWAYS use TryGetValue!</span>
+<span class="c-kw">if</span> (<span class="c-prop">studentMap</span>.<span class="c-method">TryGetValue</span>(<span class="c-str">"10A01"</span>, <span class="c-kw">out var</span> <span class="c-prop">s</span>))
+    <span class="c-type">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-prop">s</span>.<span class="c-prop">Name</span>); <span class="c-cmt">// safe!</span>
+
+<span class="c-cmt">// ❌ KeyNotFoundException crash!</span>
+<span class="c-kw">var</span> <span class="c-prop">s</span> = <span class="c-prop">studentMap</span>[<span class="c-str">"INVALID"</span>]; <span class="c-cmt">// throws KeyNotFoundException</span>
+
+<span class="c-cmt">// Iterate</span>
+<span class="c-kw">foreach</span> (<span class="c-kw">var</span> (<span class="c-prop">key</span>, <span class="c-prop">value</span>) <span class="c-kw">in</span> <span class="c-prop">studentMap</span>)
+    <span class="c-type">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-str">$"{key}: {value.Name}"</span>);
+
+<span class="c-cmt">// Useful properties</span>
+<span class="c-prop">studentMap</span>.<span class="c-prop">Keys</span>;         <span class="c-cmt">// all roll numbers</span>
+<span class="c-prop">studentMap</span>.<span class="c-prop">Values</span>;       <span class="c-cmt">// all students</span>
+<span class="c-prop">studentMap</span>.<span class="c-prop">Count</span>;        <span class="c-cmt">// total entries</span>
+<span class="c-prop">studentMap</span>.<span class="c-method">ContainsKey</span>(<span class="c-str">"10A01"</span>); <span class="c-cmt">// O(1)!</span>
+<span class="c-prop">studentMap</span>.<span class="c-method">Remove</span>(<span class="c-str">"10A01"</span>);     <span class="c-cmt">// O(1)!</span></pre>
+
+  <h3>GetOrAdd Pattern — Cache use case:</h3>
+  <pre><span class="c-cmt">// Pattern: fetch from cache, miss → load → store</span>
+<span class="c-kw">private readonly</span> <span class="c-type">Dictionary</span>&lt;<span class="c-kw">int</span>, <span class="c-type">Student</span>&gt; <span class="c-prop">_cache</span> = <span class="c-kw">new</span>();
+
+<span class="c-kw">public</span> <span class="c-type">Student</span> <span class="c-method">GetStudent</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+{
+    <span class="c-kw">if</span> (<span class="c-prop">_cache</span>.<span class="c-method">TryGetValue</span>(<span class="c-prop">id</span>, <span class="c-kw">out var</span> <span class="c-prop">cached</span>))
+        <span class="c-kw">return</span> <span class="c-prop">cached</span>; <span class="c-cmt">// cache hit!</span>
+
+    <span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-prop">_repo</span>.<span class="c-method">GetById</span>(<span class="c-prop">id</span>);
+    <span class="c-prop">_cache</span>[<span class="c-prop">id</span>] = <span class="c-prop">student</span>; <span class="c-cmt">// store</span>
+    <span class="c-kw">return</span> <span class="c-prop">student</span>;
+}
+
+<span class="c-cmt">// Cleaner with GetValueOrDefault</span>
+<span class="c-kw">var</span> <span class="c-prop">s</span> = <span class="c-prop">_cache</span>.<span class="c-method">GetValueOrDefault</span>(<span class="c-prop">id</span>); <span class="c-cmt">// null if not found (no exception)</span></pre>
+
+  <h3>Custom Key Types — GetHashCode + Equals:</h3>
+  <pre><span class="c-cmt">// Custom key: must override GetHashCode AND Equals!</span>
+<span class="c-kw">public record</span> <span class="c-type">StudentKey</span>(<span class="c-kw">int</span> <span class="c-prop">SchoolId</span>, <span class="c-kw">string</span> <span class="c-prop">RollNo</span>);
+<span class="c-cmt">// record = auto GetHashCode + Equals based on properties ✅
+
+// Manual class — must override both:</span>
+<span class="c-kw">public class</span> <span class="c-type">StudentKey</span>
+{
+    <span class="c-kw">public override int</span> <span class="c-method">GetHashCode</span>() =>
+        <span class="c-type">HashCode</span>.<span class="c-method">Combine</span>(<span class="c-prop">SchoolId</span>, <span class="c-prop">RollNo</span>); <span class="c-cmt">// BOTH fields!</span>
+    <span class="c-kw">public override bool</span> <span class="c-method">Equals</span>(<span class="c-kw">object</span>? <span class="c-prop">obj</span>) =>
+        <span class="c-prop">obj</span> <span class="c-kw">is</span> <span class="c-type">StudentKey</span> <span class="c-prop">k</span>
+        &amp;&amp; <span class="c-prop">k</span>.<span class="c-prop">SchoolId</span> == <span class="c-prop">SchoolId</span>
+        &amp;&amp; <span class="c-prop">k</span>.<span class="c-prop">RollNo</span> == <span class="c-prop">RollNo</span>;
+}</pre>
+</div>
+
+<!-- HASHSET -->
+<div class="section" id="hashset">
+  <div class="section-title"><span class="num">4</span> HashSet&lt;T&gt; — Uniqueness + Set Operations</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram (2022) — No duplicate agents in the team</span>
+    <p>Vikram team-la same agent twice varaadu — unique only. HashSet = <strong>no duplicates, O(1) lookup</strong>. Dictionary maari but key only, no value. Membership check-ku perfect!</p>
+  </div>
+
+  <pre><span class="c-cmt">// ZenCampus — Unique class names, duplicate detection</span>
+<span class="c-kw">var</span> <span class="c-prop">admittedRollNos</span> = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">string</span>&gt;();
+
+<span class="c-prop">admittedRollNos</span>.<span class="c-method">Add</span>(<span class="c-str">"10A01"</span>);   <span class="c-cmt">// returns true (added)</span>
+<span class="c-prop">admittedRollNos</span>.<span class="c-method">Add</span>(<span class="c-str">"10A01"</span>);   <span class="c-cmt">// returns FALSE (dup ignored!)</span>
+<span class="c-prop">admittedRollNos</span>.<span class="c-method">Contains</span>(<span class="c-str">"10A01"</span>); <span class="c-cmt">// O(1)!</span>
+
+<span class="c-cmt">// Convert List → HashSet to remove duplicates</span>
+<span class="c-kw">var</span> <span class="c-prop">uniqueClasses</span> = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">string</span>&gt;(<span class="c-prop">students</span>.<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">ClassName</span>));
+
+<span class="c-cmt">// Set Operations — ZenCampus use cases</span>
+<span class="c-kw">var</span> <span class="c-prop">paidStudents</span>    = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">int</span>&gt; { <span class="c-num">1</span>, <span class="c-num">2</span>, <span class="c-num">3</span>, <span class="c-num">4</span>, <span class="c-num">5</span> };
+<span class="c-kw">var</span> <span class="c-prop">attendedToday</span>  = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">int</span>&gt; { <span class="c-num">2</span>, <span class="c-num">3</span>, <span class="c-num">5</span>, <span class="c-num">6</span>, <span class="c-num">7</span> };
+
+<span class="c-prop">paidStudents</span>.<span class="c-method">IntersectWith</span>(<span class="c-prop">attendedToday</span>);  <span class="c-cmt">// paid AND attended: {2,3,5}</span>
+<span class="c-prop">paidStudents</span>.<span class="c-method">UnionWith</span>(<span class="c-prop">attendedToday</span>);     <span class="c-cmt">// paid OR attended: {1..7}</span>
+<span class="c-prop">paidStudents</span>.<span class="c-method">ExceptWith</span>(<span class="c-prop">attendedToday</span>);    <span class="c-cmt">// paid NOT attended: {1,4}</span>
+<span class="c-prop">paidStudents</span>.<span class="c-method">IsSubsetOf</span>(<span class="c-prop">attendedToday</span>);   <span class="c-cmt">// all paid attended? false</span>
+<span class="c-prop">paidStudents</span>.<span class="c-method">Overlaps</span>(<span class="c-prop">attendedToday</span>);     <span class="c-cmt">// any overlap? true</span></pre>
+
+  <div class="proj">
+    <div class="label">🏫 ZenCampus Real Use — Fee + Attendance Report:</div>
+    <p>"Students who attended today but haven't paid fees" = attendedToday.ExceptWith(paidStudents). One line — no LINQ loops!</p>
+  </div>
+</div>
+
+<!-- QUEUE AND STACK -->
+<div class="section" id="qs">
+  <div class="section-title"><span class="num">5</span> Queue&lt;T&gt; + Stack&lt;T&gt; — FIFO vs LIFO</div>
+
+  <div class="two-col">
+    <div>
+      <div class="movie">
+        <span class="film">🎬 Sarpatta Parambarai — Token queue</span>
+        <p>Hospital token — first come first serve. Queue = FIFO (First In, First Out). SMS queue, print queue — exactly this!</p>
+      </div>
+      <pre><span class="c-cmt">// Queue — FIFO — SMS reminder queue</span>
+<span class="c-kw">var</span> <span class="c-prop">smsQueue</span> = <span class="c-kw">new</span> <span class="c-type">Queue</span>&lt;<span class="c-kw">string</span>&gt;();
+
+<span class="c-prop">smsQueue</span>.<span class="c-method">Enqueue</span>(<span class="c-str">"9876543210"</span>); <span class="c-cmt">// add rear</span>
+<span class="c-prop">smsQueue</span>.<span class="c-method">Enqueue</span>(<span class="c-str">"9123456789"</span>);
+<span class="c-prop">smsQueue</span>.<span class="c-method">Enqueue</span>(<span class="c-str">"9000000001"</span>);
+
+<span class="c-kw">var</span> <span class="c-prop">next</span> = <span class="c-prop">smsQueue</span>.<span class="c-method">Dequeue</span>(); <span class="c-cmt">// remove front</span>
+<span class="c-kw">var</span> <span class="c-prop">peek</span> = <span class="c-prop">smsQueue</span>.<span class="c-method">Peek</span>();    <span class="c-cmt">// look front (no remove)</span>
+<span class="c-prop">smsQueue</span>.<span class="c-method">TryDequeue</span>(<span class="c-kw">out var</span> <span class="c-prop">mobile</span>); <span class="c-cmt">// safe dequeue</span>
+
+<span class="c-cmt">// Process all</span>
+<span class="c-kw">while</span> (<span class="c-prop">smsQueue</span>.<span class="c-prop">Count</span> > <span class="c-num">0</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">number</span> = <span class="c-prop">smsQueue</span>.<span class="c-method">Dequeue</span>();
+    <span class="c-prop">_sms</span>.<span class="c-method">Send</span>(<span class="c-prop">number</span>, <span class="c-str">"Fee reminder"</span>);
+}</pre>
+    </div>
+    <div>
+      <div class="movie">
+        <span class="film">🎬 Anniyan — Undo personality switch</span>
+        <p>Last added personality first removed — Stack = LIFO (Last In, First Out). Undo/Redo, browser back, call stack — all Stack!</p>
+      </div>
+      <pre><span class="c-cmt">// Stack — LIFO — Admission form undo</span>
+<span class="c-kw">var</span> <span class="c-prop">undoStack</span> = <span class="c-kw">new</span> <span class="c-type">Stack</span>&lt;<span class="c-type">StudentState</span>&gt;();
+
+<span class="c-cmt">// User fills form — save each state</span>
+<span class="c-prop">undoStack</span>.<span class="c-method">Push</span>(<span class="c-kw">new</span> <span class="c-type">StudentState</span>(<span class="c-prop">student</span>));
+
+<span class="c-cmt">// User presses Ctrl+Z</span>
+<span class="c-kw">if</span> (<span class="c-prop">undoStack</span>.<span class="c-prop">Count</span> > <span class="c-num">0</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">prev</span> = <span class="c-prop">undoStack</span>.<span class="c-method">Pop</span>();   <span class="c-cmt">// restore last</span>
+    <span class="c-prop">_form</span>.<span class="c-method">Restore</span>(<span class="c-prop">prev</span>);
+}
+
+<span class="c-kw">var</span> <span class="c-prop">top</span> = <span class="c-prop">undoStack</span>.<span class="c-method">Peek</span>();    <span class="c-cmt">// look (no remove)</span>
+<span class="c-prop">undoStack</span>.<span class="c-method">TryPop</span>(<span class="c-kw">out var</span> <span class="c-prop">state</span>); <span class="c-cmt">// safe pop</span></pre>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>Collection</th><th>Order</th><th>Add</th><th>Remove</th><th>Look</th><th>ZenCampus Use</th></tr>
+    <tr><td><code>Queue&lt;T&gt;</code></td><td>FIFO</td><td>Enqueue (rear)</td><td>Dequeue (front)</td><td>Peek</td><td>SMS/Print queue</td></tr>
+    <tr><td><code>Stack&lt;T&gt;</code></td><td>LIFO</td><td>Push (top)</td><td>Pop (top)</td><td>Peek</td><td>Undo, navigation</td></tr>
+    <tr><td><code>PriorityQueue&lt;T,P&gt;</code></td><td>Priority</td><td>Enqueue(item, priority)</td><td>Dequeue (lowest P)</td><td>Peek</td><td>Urgent fee alert first</td></tr>
+  </table>
+
+  <h3>PriorityQueue — .NET 6+ (Interview Gold!):</h3>
+  <pre><span class="c-cmt">// PriorityQueue — process by priority, not insertion order</span>
+<span class="c-kw">var</span> <span class="c-prop">alertQueue</span> = <span class="c-kw">new</span> <span class="c-type">PriorityQueue</span>&lt;<span class="c-kw">string</span>, <span class="c-kw">int</span>&gt;();
+
+<span class="c-prop">alertQueue</span>.<span class="c-method">Enqueue</span>(<span class="c-str">"Low attendance alert"</span>, <span class="c-num">3</span>);    <span class="c-cmt">// priority 3 (lower = first)</span>
+<span class="c-prop">alertQueue</span>.<span class="c-method">Enqueue</span>(<span class="c-str">"Fee overdue alert"</span>, <span class="c-num">1</span>);       <span class="c-cmt">// priority 1 — URGENT</span>
+<span class="c-prop">alertQueue</span>.<span class="c-method">Enqueue</span>(<span class="c-str">"Report card ready"</span>, <span class="c-num">5</span>);      <span class="c-cmt">// priority 5 — low</span>
+
+<span class="c-kw">while</span> (<span class="c-prop">alertQueue</span>.<span class="c-prop">Count</span> > <span class="c-num">0</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">alert</span> = <span class="c-prop">alertQueue</span>.<span class="c-method">Dequeue</span>();
+    <span class="c-cmt">// Order: "Fee overdue" → "Low attendance" → "Report card"</span>
+}</pre>
+</div>
+
+<!-- CONCURRENT -->
+<div class="section" id="concurrent">
+  <div class="section-title"><span class="num">6</span> Concurrent Collections — Thread-Safe <span class="tag tag-i">Senior Level!</span></div>
+
+  <div class="movie">
+    <span class="film">🎬 Enthiran — Multiple Chittis, same resource</span>
+    <p>1000 Chittis same file access panna — race condition! Regular Dictionary multi-thread access = corruption. ConcurrentDictionary = built-in thread safety — no manual lock needed!</p>
+  </div>
+
+  <div class="danger">
+    <div class="d-label">⚠️ Regular Dictionary — NOT thread safe!</div>
+    <p>Multiple threads simultaneously read/write → data corruption, exceptions. Never use regular Dictionary in concurrent scenarios without locking!</p>
+  </div>
+
+  <pre><span class="c-cmt">// ZenCampus — Concurrent student session cache</span>
+<span class="c-kw">private readonly</span> <span class="c-type">ConcurrentDictionary</span>&lt;<span class="c-kw">string</span>, <span class="c-type">SessionInfo</span>&gt; <span class="c-prop">_sessions</span> = <span class="c-kw">new</span>();
+
+<span class="c-cmt">// Thread-safe add or update</span>
+<span class="c-prop">_sessions</span>.<span class="c-method">TryAdd</span>(<span class="c-prop">sessionId</span>, <span class="c-kw">new</span> <span class="c-type">SessionInfo</span>(<span class="c-prop">userId</span>));
+
+<span class="c-cmt">// GetOrAdd — atomic! No race condition</span>
+<span class="c-kw">var</span> <span class="c-prop">session</span> = <span class="c-prop">_sessions</span>.<span class="c-method">GetOrAdd</span>(<span class="c-prop">sessionId</span>,
+    <span class="c-prop">key</span> => <span class="c-kw">new</span> <span class="c-type">SessionInfo</span>(<span class="c-prop">userId</span>)); <span class="c-cmt">// factory only called if missing</span>
+
+<span class="c-cmt">// AddOrUpdate — atomic update</span>
+<span class="c-prop">_sessions</span>.<span class="c-method">AddOrUpdate</span>(
+    <span class="c-prop">sessionId</span>,
+    <span class="c-kw">new</span> <span class="c-type">SessionInfo</span>(<span class="c-prop">userId</span>),                    <span class="c-cmt">// add value</span>
+    (<span class="c-prop">key</span>, <span class="c-prop">existing</span>) => { <span class="c-prop">existing</span>.<span class="c-method">Refresh</span>(); <span class="c-kw">return</span> <span class="c-prop">existing</span>; } <span class="c-cmt">// update fn</span>
+);
+
+<span class="c-cmt">// TryRemove</span>
+<span class="c-prop">_sessions</span>.<span class="c-method">TryRemove</span>(<span class="c-prop">sessionId</span>, <span class="c-kw">out var</span> <span class="c-prop">removed</span>);</pre>
+
+  <table>
+    <tr><th>Concurrent Collection</th><th>Thread-safe version of</th><th>ZenCampus Use</th></tr>
+    <tr><td><code>ConcurrentDictionary&lt;K,V&gt;</code></td><td>Dictionary</td><td>Session cache, rate limiting</td></tr>
+    <tr><td><code>ConcurrentQueue&lt;T&gt;</code></td><td>Queue</td><td>SMS/notification queue</td></tr>
+    <tr><td><code>ConcurrentStack&lt;T&gt;</code></td><td>Stack</td><td>Concurrent undo log</td></tr>
+    <tr><td><code>ConcurrentBag&lt;T&gt;</code></td><td>unordered List</td><td>Thread-local temp results</td></tr>
+    <tr><td><code>BlockingCollection&lt;T&gt;</code></td><td>Queue + blocking</td><td>Producer-consumer pipeline</td></tr>
+  </table>
+</div>
+
+<!-- BIG O -->
+<div class="section" id="bigO">
+  <div class="section-title"><span class="num">7</span> 📊 Big O Quick Reference — Interview Must Know</div>
+
+  <table>
+    <tr>
+      <th>Operation</th>
+      <th>List&lt;T&gt;</th>
+      <th>Dictionary</th>
+      <th>HashSet</th>
+      <th>SortedDict</th>
+      <th>LinkedList</th>
+    </tr>
+    <tr>
+      <td>Add</td>
+      <td><span class="complexity-badge c-o1">O(1)*</span></td>
+      <td><span class="complexity-badge c-o1">O(1)*</span></td>
+      <td><span class="complexity-badge c-o1">O(1)*</span></td>
+      <td><span class="complexity-badge c-ologn">O(log n)</span></td>
+      <td><span class="complexity-badge c-o1">O(1)</span></td>
+    </tr>
+    <tr>
+      <td>Get by index</td>
+      <td><span class="complexity-badge c-o1">O(1)</span></td>
+      <td><span class="complexity-badge c-on">N/A</span></td>
+      <td><span class="complexity-badge c-on">N/A</span></td>
+      <td><span class="complexity-badge c-on">N/A</span></td>
+      <td><span class="complexity-badge c-on">O(n)</span></td>
+    </tr>
+    <tr>
+      <td>Search/Contains</td>
+      <td><span class="complexity-badge c-on">O(n)</span></td>
+      <td><span class="complexity-badge c-o1">O(1)*</span></td>
+      <td><span class="complexity-badge c-o1">O(1)*</span></td>
+      <td><span class="complexity-badge c-ologn">O(log n)</span></td>
+      <td><span class="complexity-badge c-on">O(n)</span></td>
+    </tr>
+    <tr>
+      <td>Remove by key</td>
+      <td><span class="complexity-badge c-on">O(n)</span></td>
+      <td><span class="complexity-badge c-o1">O(1)*</span></td>
+      <td><span class="complexity-badge c-o1">O(1)*</span></td>
+      <td><span class="complexity-badge c-ologn">O(log n)</span></td>
+      <td><span class="complexity-badge c-on">O(n)**</span></td>
+    </tr>
+    <tr>
+      <td>Insert middle</td>
+      <td><span class="complexity-badge c-on">O(n)</span></td>
+      <td><span class="complexity-badge c-on">N/A</span></td>
+      <td><span class="complexity-badge c-on">N/A</span></td>
+      <td><span class="complexity-badge c-on">N/A</span></td>
+      <td><span class="complexity-badge c-o1">O(1)***</span></td>
+    </tr>
+    <tr>
+      <td>Ordered iteration</td>
+      <td class="green">Yes (insertion)</td>
+      <td class="red">No guarantee</td>
+      <td class="red">No</td>
+      <td class="green">Yes (sorted)</td>
+      <td class="green">Yes (insertion)</td>
+    </tr>
+  </table>
+  <p style="color:#888;font-size:0.8em;margin-top:4px">* Amortized — occasional resize. ** O(n) find + O(1) remove. *** O(1) if you have node reference</p>
+
+  <div class="tip">
+    <div class="t-label">💡 Interview Decision Tree</div>
+    <p><strong>Key-value lookup needed?</strong> → Dictionary O(1)<br>
+    <strong>Uniqueness + fast membership check?</strong> → HashSet O(1)<br>
+    <strong>Ordered by key?</strong> → SortedDictionary O(log n)<br>
+    <strong>FIFO processing?</strong> → Queue<br>
+    <strong>LIFO/Undo?</strong> → Stack<br>
+    <strong>Frequent middle insert/delete?</strong> → LinkedList<br>
+    <strong>Multi-thread access?</strong> → Concurrent* variants<br>
+    <strong>Default?</strong> → List&lt;T&gt;</p>
+  </div>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">8</span> 🎯 Scenario-Based Interview Questions</div>
+
+  <!-- S1 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">1</div>
+      <div>
+        <div class="scenario-title">Roll Number Lookup — Which Collection? <span class="diff easy">Easy</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Right collection for the job</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus-la 50,000 students irukkaanga. Parent portal-la roll number type panna — student details instant show pannanum. Current code <code>List&lt;Student&gt;</code> use pannuthu — page load 3 seconds! Which collection fix panuvu, yen?
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <p><strong>Fix: Dictionary&lt;string, Student&gt;</strong></p>
+      <pre><span class="c-cmt">// ❌ Current — O(n) linear scan!</span>
+<span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-prop">_students</span>
+    .<span class="c-method">FirstOrDefault</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">RollNumber</span> == <span class="c-prop">rollNo</span>);
+<span class="c-cmt">// 50,000 students-la scan → slow!</span>
+
+<span class="c-cmt">// ✅ Fix — Dictionary O(1) lookup</span>
+<span class="c-kw">private readonly</span> <span class="c-type">Dictionary</span>&lt;<span class="c-kw">string</span>, <span class="c-type">Student</span>&gt; <span class="c-prop">_studentByRoll</span>;
+
+<span class="c-cmt">// Build once at startup / cache load</span>
+<span class="c-prop">_studentByRoll</span> = <span class="c-prop">_students</span>
+    .<span class="c-method">ToDictionary</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">RollNumber</span>);
+
+<span class="c-cmt">// Lookup — O(1) regardless of 50k or 5M students</span>
+<span class="c-kw">if</span> (<span class="c-prop">_studentByRoll</span>.<span class="c-method">TryGetValue</span>(<span class="c-prop">rollNo</span>, <span class="c-kw">out var</span> <span class="c-prop">student</span>))
+    <span class="c-kw">return</span> <span class="c-prop">student</span>;</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Interview Answer</div>
+        <p>"List.FirstOrDefault = O(n). 50,000 students → 50,000 comparisons. Dictionary = hash-based O(1). Build dictionary once, lookup any number of times instantly. ZenCampus-la this exact issue fix panninen — 3s → &lt;1ms!"</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div>
+        <div class="scenario-title">Duplicate Student Upload — HashSet Solution <span class="diff easy">Easy</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: HashSet for deduplication</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Admin Excel-la 1000 students upload panruvan — duplicate roll numbers irukku. DB-la save panna munnadi duplicates remove pannanum + "how many duplicates" count kaatanum. Efficient-a epdi panriya?
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-kw">public</span> (<span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-prop">Unique</span>, <span class="c-kw">int</span> <span class="c-prop">DuplicateCount</span>)
+    <span class="c-method">DeduplicateUpload</span>(<span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-prop">uploaded</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">seen</span>   = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">string</span>&gt;(); <span class="c-cmt">// tracks roll nos</span>
+    <span class="c-kw">var</span> <span class="c-prop">unique</span> = <span class="c-kw">new</span> <span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt;();
+    <span class="c-kw">int</span> <span class="c-prop">dupCount</span> = <span class="c-num">0</span>;
+
+    <span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">student</span> <span class="c-kw">in</span> <span class="c-prop">uploaded</span>)
+    {
+        <span class="c-kw">if</span> (<span class="c-prop">seen</span>.<span class="c-method">Add</span>(<span class="c-prop">student</span>.<span class="c-prop">RollNumber</span>)) <span class="c-cmt">// Add returns false if dup</span>
+            <span class="c-prop">unique</span>.<span class="c-method">Add</span>(<span class="c-prop">student</span>);
+        <span class="c-kw">else</span>
+            <span class="c-prop">dupCount</span>++;
+    }
+    <span class="c-kw">return</span> (<span class="c-prop">unique</span>, <span class="c-prop">dupCount</span>);
+}
+
+<span class="c-cmt">// Also check against EXISTING DB students:</span>
+<span class="c-kw">var</span> <span class="c-prop">existingRolls</span> = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">string</span>&gt;(
+    <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetAllRollNumbersAsync</span>());
+
+<span class="c-kw">var</span> <span class="c-prop">newStudents</span> = <span class="c-prop">uploaded</span>
+    .<span class="c-method">Where</span>(<span class="c-prop">s</span> => !<span class="c-prop">existingRolls</span>.<span class="c-method">Contains</span>(<span class="c-prop">s</span>.<span class="c-prop">RollNumber</span>))
+    .<span class="c-method">ToList</span>();</pre>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div>
+        <div class="scenario-title">Multi-thread Cache Corruption <span class="diff hard">Hard</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Dictionary vs ConcurrentDictionary race condition</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus-la school settings in-memory cache — multiple API requests parallel access pannuthu. Occasionally "Index out of range" exception, "KeyNotFoundException" varuthu — reproducible illai! Root cause enna, fix pannu?
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">private static</span> <span class="c-type">Dictionary</span>&lt;<span class="c-kw">int</span>, <span class="c-type">SchoolSettings</span>&gt; <span class="c-prop">_cache</span> = <span class="c-kw">new</span>();
+
+<span class="c-kw">public</span> <span class="c-type">SchoolSettings</span> <span class="c-method">GetSettings</span>(<span class="c-kw">int</span> <span class="c-prop">schoolId</span>)
+{
+    <span class="c-kw">if</span> (!<span class="c-prop">_cache</span>.<span class="c-method">ContainsKey</span>(<span class="c-prop">schoolId</span>))
+        <span class="c-prop">_cache</span>[<span class="c-prop">schoolId</span>] = <span class="c-prop">_repo</span>.<span class="c-method">GetSettings</span>(<span class="c-prop">schoolId</span>);
+    <span class="c-kw">return</span> <span class="c-prop">_cache</span>[<span class="c-prop">schoolId</span>];
+}</pre>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ROOT CAUSE + FIX</div>
+      <p><strong>Race Condition:</strong> Two threads simultaneously check <code>ContainsKey</code> → both see "not found" → both try to add → Dictionary internal state corrupt → random exceptions!</p>
+      <pre><span class="c-cmt">// ✅ Fix 1 — ConcurrentDictionary.GetOrAdd (atomic!)</span>
+<span class="c-kw">private static readonly</span> <span class="c-type">ConcurrentDictionary</span>&lt;<span class="c-kw">int</span>, <span class="c-type">SchoolSettings</span>&gt;
+    <span class="c-prop">_cache</span> = <span class="c-kw">new</span>();
+
+<span class="c-kw">public</span> <span class="c-type">SchoolSettings</span> <span class="c-method">GetSettings</span>(<span class="c-kw">int</span> <span class="c-prop">schoolId</span>)
+    => <span class="c-prop">_cache</span>.<span class="c-method">GetOrAdd</span>(<span class="c-prop">schoolId</span>,
+        <span class="c-prop">id</span> => <span class="c-prop">_repo</span>.<span class="c-method">GetSettings</span>(<span class="c-prop">id</span>)); <span class="c-cmt">// thread-safe!</span>
+
+<span class="c-cmt">// ✅ Fix 2 — lock (when factory should run ONCE only)</span>
+<span class="c-kw">private readonly</span> <span class="c-kw">object</span> <span class="c-prop">_lock</span> = <span class="c-kw">new</span>();
+
+<span class="c-kw">public</span> <span class="c-type">SchoolSettings</span> <span class="c-method">GetSettings</span>(<span class="c-kw">int</span> <span class="c-prop">schoolId</span>)
+{
+    <span class="c-kw">if</span> (<span class="c-prop">_cache</span>.<span class="c-method">TryGetValue</span>(<span class="c-prop">schoolId</span>, <span class="c-kw">out var</span> <span class="c-prop">cached</span>)) <span class="c-kw">return</span> <span class="c-prop">cached</span>;
+    <span class="c-kw">lock</span> (<span class="c-prop">_lock</span>)
+    {
+        <span class="c-kw">if</span> (<span class="c-prop">_cache</span>.<span class="c-method">TryGetValue</span>(<span class="c-prop">schoolId</span>, <span class="c-kw">out</span> <span class="c-prop">cached</span>)) <span class="c-kw">return</span> <span class="c-prop">cached</span>;
+        <span class="c-kw">var</span> <span class="c-prop">settings</span> = <span class="c-prop">_repo</span>.<span class="c-method">GetSettings</span>(<span class="c-prop">schoolId</span>);
+        <span class="c-prop">_cache</span>[<span class="c-prop">schoolId</span>] = <span class="c-prop">settings</span>; <span class="c-cmt">// double-check pattern</span>
+        <span class="c-kw">return</span> <span class="c-prop">settings</span>;
+    }
+}</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Note: GetOrAdd factory may run multiple times!</div>
+        <p>ConcurrentDictionary.GetOrAdd — factory not guaranteed to run once under concurrent load. If factory = expensive DB call, use <code>Lazy&lt;T&gt;</code> pattern or lock. For cheap factories, GetOrAdd is fine.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div>
+        <div class="scenario-title">SMS Queue — Process 5000 Fee Reminders <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Queue + producer-consumer pattern</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Fee reminder day — 5000 parents-ku SMS pathaikanom. SMS API rate limit: 100/minute. Queue use panni design pannu — producer thread adds, consumer thread processes 100/minute.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — BlockingCollection Producer-Consumer</div>
+      <pre><span class="c-kw">public class</span> <span class="c-type">SmsReminderService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">BlockingCollection</span>&lt;<span class="c-kw">string</span>&gt; <span class="c-prop">_queue</span>
+        = <span class="c-kw">new</span>(<span class="c-kw">new</span> <span class="c-type">ConcurrentQueue</span>&lt;<span class="c-kw">string</span>&gt;(), <span class="c-num">500</span>); <span class="c-cmt">// max 500 buffered</span>
+
+    <span class="c-cmt">// Producer — add all mobile numbers</span>
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">ProduceAsync</span>(<span class="c-type">List</span>&lt;<span class="c-kw">string</span>&gt; <span class="c-prop">mobiles</span>)
+    {
+        <span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">mobile</span> <span class="c-kw">in</span> <span class="c-prop">mobiles</span>)
+            <span class="c-prop">_queue</span>.<span class="c-method">Add</span>(<span class="c-prop">mobile</span>); <span class="c-cmt">// blocks if queue full (backpressure!)</span>
+        <span class="c-prop">_queue</span>.<span class="c-method">CompleteAdding</span>(); <span class="c-cmt">// signal done</span>
+    }
+
+    <span class="c-cmt">// Consumer — process 100/minute</span>
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">ConsumeAsync</span>()
+    {
+        <span class="c-kw">int</span> <span class="c-prop">count</span> = <span class="c-num">0</span>;
+        <span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">mobile</span> <span class="c-kw">in</span> <span class="c-prop">_queue</span>.<span class="c-method">GetConsumingEnumerable</span>())
+        {
+            <span class="c-kw">await</span> <span class="c-prop">_sms</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">mobile</span>, <span class="c-str">"Fee reminder"</span>);
+            <span class="c-kw">if</span> (++<span class="c-prop">count</span> % <span class="c-num">100</span> == <span class="c-num">0</span>)
+                <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">Delay</span>(<span class="c-type">TimeSpan</span>.<span class="c-method">FromMinutes</span>(<span class="c-num">1</span>)); <span class="c-cmt">// rate limit</span>
+        }
+    }
+}
+
+<span class="c-cmt">// Run both</span>
+<span class="c-kw">var</span> <span class="c-prop">svc</span> = <span class="c-kw">new</span> <span class="c-type">SmsReminderService</span>();
+<span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(
+    <span class="c-prop">svc</span>.<span class="c-method">ProduceAsync</span>(<span class="c-prop">mobileNumbers</span>),
+    <span class="c-prop">svc</span>.<span class="c-method">ConsumeAsync</span>());</pre>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div>
+        <div class="scenario-title">Undo Feature — Admission Form <span class="diff easy">Easy</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Stack for undo/redo</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus admission form-la Ctrl+Z (undo) + Ctrl+Y (redo) implement pannanum. Stack use panni design pannu.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-kw">public class</span> <span class="c-type">FormUndoManager</span>&lt;<span class="c-type">T</span>&gt;
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">Stack</span>&lt;<span class="c-type">T</span>&gt; <span class="c-prop">_undoStack</span> = <span class="c-kw">new</span>();
+    <span class="c-kw">private readonly</span> <span class="c-type">Stack</span>&lt;<span class="c-type">T</span>&gt; <span class="c-prop">_redoStack</span> = <span class="c-kw">new</span>();
+
+    <span class="c-kw">public void</span> <span class="c-method">SaveState</span>(<span class="c-type">T</span> <span class="c-prop">state</span>)
+    {
+        <span class="c-prop">_undoStack</span>.<span class="c-method">Push</span>(<span class="c-prop">state</span>);
+        <span class="c-prop">_redoStack</span>.<span class="c-method">Clear</span>(); <span class="c-cmt">// new action clears redo</span>
+    }
+
+    <span class="c-kw">public</span> <span class="c-type">T</span>? <span class="c-method">Undo</span>(<span class="c-type">T</span> <span class="c-prop">current</span>)
+    {
+        <span class="c-kw">if</span> (!<span class="c-prop">_undoStack</span>.<span class="c-method">TryPop</span>(<span class="c-kw">out var</span> <span class="c-prop">prev</span>)) <span class="c-kw">return default</span>;
+        <span class="c-prop">_redoStack</span>.<span class="c-method">Push</span>(<span class="c-prop">current</span>); <span class="c-cmt">// save for redo</span>
+        <span class="c-kw">return</span> <span class="c-prop">prev</span>;
+    }
+
+    <span class="c-kw">public</span> <span class="c-type">T</span>? <span class="c-method">Redo</span>(<span class="c-type">T</span> <span class="c-prop">current</span>)
+    {
+        <span class="c-kw">if</span> (!<span class="c-prop">_redoStack</span>.<span class="c-method">TryPop</span>(<span class="c-kw">out var</span> <span class="c-prop">next</span>)) <span class="c-kw">return default</span>;
+        <span class="c-prop">_undoStack</span>.<span class="c-method">Push</span>(<span class="c-prop">current</span>);
+        <span class="c-kw">return</span> <span class="c-prop">next</span>;
+    }
+
+    <span class="c-kw">public bool</span> <span class="c-prop">CanUndo</span> => <span class="c-prop">_undoStack</span>.<span class="c-prop">Count</span> > <span class="c-num">0</span>;
+    <span class="c-kw">public bool</span> <span class="c-prop">CanRedo</span> => <span class="c-prop">_redoStack</span>.<span class="c-prop">Count</span> > <span class="c-num">0</span>;
+}
+
+<span class="c-cmt">// Usage</span>
+<span class="c-kw">var</span> <span class="c-prop">undo</span> = <span class="c-kw">new</span> <span class="c-type">FormUndoManager</span>&lt;<span class="c-type">StudentFormState</span>&gt;();
+<span class="c-prop">undo</span>.<span class="c-method">SaveState</span>(<span class="c-prop">currentState</span>);  <span class="c-cmt">// before each change</span>
+<span class="c-kw">if</span> (<span class="c-prop">undo</span>.<span class="c-prop">CanUndo</span>) <span class="c-prop">form</span>.<span class="c-method">Restore</span>(<span class="c-prop">undo</span>.<span class="c-method">Undo</span>(<span class="c-prop">current</span>));</pre>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div>
+        <div class="scenario-title">Set Operations — Attendance vs Fee Report <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: HashSet set operations in reports</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Principal 3 reports need:
+      <br>A) Today attended but fee pending students
+      <br>B) Today absent AND fee pending students (double trouble!)
+      <br>C) Either attended or paid (anything active today)
+      <br><br>Three different DB queries panna venama, HashSet set operations use panni one shot pannu.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-kw">var</span> <span class="c-prop">attendedIds</span>    = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">int</span>&gt;(<span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetAttendedTodayAsync</span>());
+<span class="c-kw">var</span> <span class="c-prop">feePendingIds</span>  = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">int</span>&gt;(<span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetFeePendingAsync</span>());
+<span class="c-kw">var</span> <span class="c-prop">allStudentIds</span> = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">int</span>&gt;(<span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetAllStudentIdsAsync</span>());
+
+<span class="c-cmt">// A: Attended AND fee pending (Intersect)</span>
+<span class="c-kw">var</span> <span class="c-prop">reportA</span> = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">int</span>&gt;(<span class="c-prop">attendedIds</span>);
+<span class="c-prop">reportA</span>.<span class="c-method">IntersectWith</span>(<span class="c-prop">feePendingIds</span>); <span class="c-cmt">// attended ∩ pending</span>
+
+<span class="c-cmt">// B: Absent (not attended) AND fee pending</span>
+<span class="c-kw">var</span> <span class="c-prop">absentIds</span> = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">int</span>&gt;(<span class="c-prop">allStudentIds</span>);
+<span class="c-prop">absentIds</span>.<span class="c-method">ExceptWith</span>(<span class="c-prop">attendedIds</span>); <span class="c-cmt">// all - attended = absent</span>
+<span class="c-kw">var</span> <span class="c-prop">reportB</span> = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">int</span>&gt;(<span class="c-prop">absentIds</span>);
+<span class="c-prop">reportB</span>.<span class="c-method">IntersectWith</span>(<span class="c-prop">feePendingIds</span>); <span class="c-cmt">// absent ∩ pending</span>
+
+<span class="c-cmt">// C: Attended OR paid (not pending) — Union</span>
+<span class="c-kw">var</span> <span class="c-prop">paidIds</span> = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">int</span>&gt;(<span class="c-prop">allStudentIds</span>);
+<span class="c-prop">paidIds</span>.<span class="c-method">ExceptWith</span>(<span class="c-prop">feePendingIds</span>); <span class="c-cmt">// paid = all - pending</span>
+<span class="c-kw">var</span> <span class="c-prop">reportC</span> = <span class="c-kw">new</span> <span class="c-type">HashSet</span>&lt;<span class="c-kw">int</span>&gt;(<span class="c-prop">attendedIds</span>);
+<span class="c-prop">reportC</span>.<span class="c-method">UnionWith</span>(<span class="c-prop">paidIds</span>); <span class="c-cmt">// attended ∪ paid</span>
+
+<span class="c-cmt">// 2 DB calls → 3 reports in memory. Fast!</span></pre>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div>
+        <div class="scenario-title">Dictionary KeyNotFound — Production Crash Fix <span class="diff easy">Easy</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Safe dictionary access patterns</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Production-la <code>KeyNotFoundException</code> crash. Log: "The given key 'SCH_999' was not present in the dictionary". Code review panna intha code pathinga:
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">var</span> <span class="c-prop">settings</span> = <span class="c-prop">_schoolSettings</span>[<span class="c-prop">schoolCode</span>];
+<span class="c-prop">_logger</span>.<span class="c-method">Log</span>(<span class="c-prop">settings</span>.<span class="c-prop">Name</span>);</pre>
+      Fix panni safe pattern implement pannu.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ALL SAFE PATTERNS</div>
+      <pre><span class="c-cmt">// ✅ Pattern 1 — TryGetValue (BEST for most cases)</span>
+<span class="c-kw">if</span> (<span class="c-prop">_schoolSettings</span>.<span class="c-method">TryGetValue</span>(<span class="c-prop">schoolCode</span>, <span class="c-kw">out var</span> <span class="c-prop">settings</span>))
+{
+    <span class="c-prop">_logger</span>.<span class="c-method">Log</span>(<span class="c-prop">settings</span>.<span class="c-prop">Name</span>);
+}
+<span class="c-kw">else</span>
+{
+    <span class="c-prop">_logger</span>.<span class="c-method">LogWarning</span>(<span class="c-str">"School not found: {code}"</span>, <span class="c-prop">schoolCode</span>);
+}
+
+<span class="c-cmt">// ✅ Pattern 2 — GetValueOrDefault (null if missing)</span>
+<span class="c-kw">var</span> <span class="c-prop">settings</span> = <span class="c-prop">_schoolSettings</span>.<span class="c-method">GetValueOrDefault</span>(<span class="c-prop">schoolCode</span>);
+<span class="c-kw">if</span> (<span class="c-prop">settings</span> == <span class="c-kw">null</span>) <span class="c-kw">throw new</span> <span class="c-type">NotFoundException</span>(<span class="c-str">$"School: {schoolCode}"</span>);
+
+<span class="c-cmt">// ✅ Pattern 3 — ContainsKey check (less efficient — 2 lookups)</span>
+<span class="c-kw">if</span> (<span class="c-prop">_schoolSettings</span>.<span class="c-method">ContainsKey</span>(<span class="c-prop">schoolCode</span>))
+    <span class="c-kw">var</span> <span class="c-prop">s</span> = <span class="c-prop">_schoolSettings</span>[<span class="c-prop">schoolCode</span>]; <span class="c-cmt">// still 2 hash lookups</span>
+<span class="c-cmt">// TryGetValue = 1 lookup! Prefer it.</span></pre>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div>
+        <div class="scenario-title">Collection Choose — Group Discussion Question <span class="diff senior">Senior</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Right collection for each requirement</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Interview-la whiteboard question — ZenCampus different features-ku which collection? Reason poda:
+      <br><br>A) 50,000 students by roll number fast lookup
+      <br>B) Print fee receipts in order they were requested
+      <br>C) Track which students already sent reminder today
+      <br>D) Multi-server session token store with concurrent access
+      <br>E) Recent 5 actions user did (for undo)
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWERS WITH REASON</div>
+      <table style="font-size:0.85em">
+        <tr><th>Requirement</th><th>Collection</th><th>Why</th></tr>
+        <tr><td>A) Roll number lookup</td><td class="green">Dictionary&lt;string, Student&gt;</td><td>O(1) key-based lookup</td></tr>
+        <tr><td>B) Print in order</td><td class="green">Queue&lt;PrintJob&gt;</td><td>FIFO — first come first served</td></tr>
+        <tr><td>C) Reminder sent check</td><td class="green">HashSet&lt;int&gt;</td><td>O(1) Contains, no duplicates</td></tr>
+        <tr><td>D) Concurrent session</td><td class="green">ConcurrentDictionary&lt;string, Session&gt;</td><td>Thread-safe, multi-server</td></tr>
+        <tr><td>E) Recent 5 for undo</td><td class="green">Stack&lt;StudentState&gt; + limit to 5</td><td>LIFO — last action first undo</td></tr>
+      </table>
+      <div class="gold">
+        <div class="gold-label">⭐ Add-on for D — distributed session</div>
+        <p>"Multi-server-la in-memory ConcurrentDictionary only works for single server. For true multi-server — Redis IDistributedCache use pannom. ZenCampus-la school settings Redis-la cache pannirukkom."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div>
+        <div class="scenario-title">Modify During Iteration Bug <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: InvalidOperationException during foreach</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Fee collection day — paid students-a list-la remove pannuvom. Code crash aaguthu — "Collection was modified; enumeration operation may not execute." Fix pannu, 3 different ways.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ 3 WAYS TO FIX</div>
+      <pre><span class="c-cmt">// ❌ Crash!</span>
+<span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">s</span> <span class="c-kw">in</span> <span class="c-prop">_students</span>)
+    <span class="c-kw">if</span> (<span class="c-prop">s</span>.<span class="c-prop">FeesPaid</span>) <span class="c-prop">_students</span>.<span class="c-method">Remove</span>(<span class="c-prop">s</span>); <span class="c-cmt">// ← BOOM!</span>
+
+<span class="c-cmt">// ✅ Fix 1 — RemoveAll (cleanest!)</span>
+<span class="c-prop">_students</span>.<span class="c-method">RemoveAll</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">FeesPaid</span>);
+
+<span class="c-cmt">// ✅ Fix 2 — Iterate copy</span>
+<span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">s</span> <span class="c-kw">in</span> <span class="c-prop">_students</span>.<span class="c-method">ToList</span>()) <span class="c-cmt">// .ToList() = copy!</span>
+    <span class="c-kw">if</span> (<span class="c-prop">s</span>.<span class="c-prop">FeesPaid</span>) <span class="c-prop">_students</span>.<span class="c-method">Remove</span>(<span class="c-prop">s</span>);
+
+<span class="c-cmt">// ✅ Fix 3 — Collect then remove</span>
+<span class="c-kw">var</span> <span class="c-prop">toRemove</span> = <span class="c-prop">_students</span>.<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">FeesPaid</span>).<span class="c-method">ToList</span>();
+<span class="c-prop">toRemove</span>.<span class="c-method">ForEach</span>(<span class="c-prop">s</span> => <span class="c-prop">_students</span>.<span class="c-method">Remove</span>(<span class="c-prop">s</span>));
+
+<span class="c-cmt">// ✅ Fix 4 — for loop backward (index-based)</span>
+<span class="c-kw">for</span> (<span class="c-kw">int</span> <span class="c-prop">i</span> = <span class="c-prop">_students</span>.<span class="c-prop">Count</span> - <span class="c-num">1</span>; <span class="c-prop">i</span> >= <span class="c-num">0</span>; <span class="c-prop">i</span>--)
+    <span class="c-kw">if</span> (<span class="c-prop">_students</span>[<span class="c-prop">i</span>].<span class="c-prop">FeesPaid</span>) <span class="c-prop">_students</span>.<span class="c-method">RemoveAt</span>(<span class="c-prop">i</span>);</pre>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div>
+        <div class="scenario-title">Word Frequency Counter — Dictionary trick <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Dictionary grouping — common coding interview</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus parent feedback form — free text varuthu. Top 5 most mentioned words find pannanum. (Common coding round question!) Efficient-a solve pannu.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-kw">public</span> <span class="c-type">List</span>&lt;(<span class="c-kw">string</span> <span class="c-prop">Word</span>, <span class="c-kw">int</span> <span class="c-prop">Count</span>)&gt;
+    <span class="c-method">GetTopWords</span>(<span class="c-type">IEnumerable</span>&lt;<span class="c-kw">string</span>&gt; <span class="c-prop">feedbacks</span>, <span class="c-kw">int</span> <span class="c-prop">top</span> = <span class="c-num">5</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">freq</span> = <span class="c-kw">new</span> <span class="c-type">Dictionary</span>&lt;<span class="c-kw">string</span>, <span class="c-kw">int</span>&gt;(<span class="c-type">StringComparer</span>.<span class="c-prop">OrdinalIgnoreCase</span>);
+
+    <span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">feedback</span> <span class="c-kw">in</span> <span class="c-prop">feedbacks</span>)
+    {
+        <span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">word</span> <span class="c-kw">in</span> <span class="c-prop">feedback</span>.<span class="c-method">Split</span>(<span class="c-str">' '</span>, <span class="c-type">StringSplitOptions</span>.<span class="c-prop">RemoveEmptyEntries</span>))
+        {
+            <span class="c-cmt">// Elegant increment — GetValueOrDefault returns 0 if not found</span>
+            <span class="c-prop">freq</span>[<span class="c-prop">word</span>] = <span class="c-prop">freq</span>.<span class="c-method">GetValueOrDefault</span>(<span class="c-prop">word</span>) + <span class="c-num">1</span>;
+        }
+    }
+
+    <span class="c-kw">return</span> <span class="c-prop">freq</span>
+        .<span class="c-method">OrderByDescending</span>(<span class="c-prop">kv</span> => <span class="c-prop">kv</span>.<span class="c-prop">Value</span>)
+        .<span class="c-method">Take</span>(<span class="c-prop">top</span>)
+        .<span class="c-method">Select</span>(<span class="c-prop">kv</span> => (<span class="c-prop">kv</span>.<span class="c-prop">Key</span>, <span class="c-prop">kv</span>.<span class="c-prop">Value</span>))
+        .<span class="c-method">ToList</span>();
+}
+
+<span class="c-cmt">// StringComparer.OrdinalIgnoreCase — "Good" and "good" = same word!</span></pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Elegant Pattern — Dictionary increment</div>
+        <p><code>freq[word] = freq.GetValueOrDefault(word) + 1</code> — one liner! No TryGetValue needed. If key missing → 0 + 1 = 1. Existing → old + 1. ZenCampus-la subject feedback analysis-la use panninen!</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end scenarios -->
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">9</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: Dictionary-la key illaa IndexOf access pannan — what happens?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Returns null</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Returns default value</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) Throws KeyNotFoundException</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Returns empty object</div>
+    <div class="quiz-fb ok">✅ dict["missing"] → KeyNotFoundException! Always use TryGetValue or GetValueOrDefault for safe access. Never use indexer unless you're 100% key exists!</div>
+    <div class="quiz-fb nope">❌ KeyNotFoundException thrown! Use TryGetValue(key, out var val) or GetValueOrDefault(key) for safe access without exceptions.</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: HashSet.Add() returns false — enna achu?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Exception thrown</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Item already exists — not added, no error</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Item added at different position</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Collection full</div>
+    <div class="quiz-fb ok">✅ HashSet.Add returns false when duplicate — item silently ignored, no exception. Great for "add if not exists" pattern! Dictionary.Add() throws on dup — different behavior!</div>
+    <div class="quiz-fb nope">❌ HashSet.Add returns false = already exists, not added. No exception — silent ignore. Dictionary.Add() would throw. HashSet = safe, Dictionary.Add() = not safe on dup!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: List&lt;T&gt; middle-la Insert — time complexity?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) O(1) — linked list maari</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) O(n) — all elements after shift pannanum</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) O(log n)</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) O(1) amortized</div>
+    <div class="quiz-fb ok">✅ List = internal array. Middle insert → shift all elements right → O(n). End insert = O(1) amortized. LinkedList middle insert = O(1) if you have the node!</div>
+    <div class="quiz-fb nope">❌ O(n)! List internally array — insert position-ku right-la uluaa elements shift aaganum. n elements = n shifts. Add to end = O(1) amortized only!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: ConcurrentDictionary.GetOrAdd() — factory eppoluthe run aagum?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Always exactly once</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Never more than once</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) May run multiple times under concurrent load — not guaranteed once</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Throws if called twice</div>
+    <div class="quiz-fb ok">✅ GetOrAdd factory = NOT atomic! Under high concurrency, multiple threads may invoke factory simultaneously — only one result stored, others discarded. For expensive factory (DB call) use Lazy&lt;T&gt; or lock!</div>
+    <div class="quiz-fb nope">❌ GetOrAdd factory NOT guaranteed once! Multiple threads may call it — race on factory. One winner stored, others discarded. Cheap factory = fine. Expensive factory (DB) = use lock or Lazy&lt;T&gt;!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">10</span> ✅ Day 4 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory (45 min)</h3>
+      <ul class="check-list">
+        <li>IEnumerable → ICollection → IList hierarchy</li>
+        <li>List capacity doubling internals</li>
+        <li>Dictionary hash + TryGetValue pattern</li>
+        <li>HashSet set operations (Intersect/Union/Except)</li>
+        <li>Queue FIFO vs Stack LIFO</li>
+        <li>ConcurrentDictionary — when and why</li>
+        <li>Big O table memorize</li>
+      </ul>
+    </div>
+    <div>
+      <h3>💻 Hands-On (60 min)</h3>
+      <ul class="check-list">
+        <li>ZenCampus StudentService — List → Dictionary refactor</li>
+        <li>Duplicate upload detection — HashSet</li>
+        <li>SMS Queue — Queue&lt;T&gt; implement</li>
+        <li>Admission form undo — Stack&lt;T&gt;</li>
+        <li>Reproduce concurrent Dictionary crash + fix</li>
+        <li>Word frequency counter code</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Scenarios (45 min)</h3>
+      <ul class="check-list">
+        <li>S1: Roll number lookup fix</li>
+        <li>S2: Duplicate detection</li>
+        <li>S3: Race condition debug + fix</li>
+        <li>S6: Set operations report</li>
+        <li>S8: Collection choose whiteboard</li>
+        <li>S10: Word frequency counter</li>
+      </ul>
+    </div>
+    <div>
+      <h3>⭐ Interview One-liners</h3>
+      <ul class="check-list">
+        <li>"Dictionary = O(1) key lookup via hash"</li>
+        <li>"HashSet = Dictionary without values"</li>
+        <li>"List Contains = O(n), HashSet = O(1)"</li>
+        <li>"ConcurrentDict = thread-safe, GetOrAdd atomic"</li>
+        <li>"Queue FIFO, Stack LIFO"</li>
+        <li>"Always TryGetValue, never indexer directly"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#1a0800,#0d1020);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🎬 Day 4 Motivation</div>
+    <p style="color:#f39c12;font-style:italic">"Ratsasan evidence locker maari — case number kudukkuva, instant kittum. Dictionary same! List-la 50,000 students scan panna 3 seconds. Dictionary-la 1 millisecond. <strong>Right collection = 3000x speedup. This IS the interview answer!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 4/60 ✅ | Tomorrow: Exception Handling + File I/O + Generics</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:6.7%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">4 of 60 days (6.7%)</div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p>Day 4 – Collections Deep Dive | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🎬 "Ratsasan evidence locker = Dictionary. Crowd unique faces = HashSet. Token queue = Queue. Undo stack = Stack. Collections = Real world problems!"</p>
+</footer>
+
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent='💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

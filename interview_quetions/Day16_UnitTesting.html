@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 16 – Unit Testing | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#1a0a2e,#0d0d1a,#1a0a2e);padding:36px 20px;text-align:center;border-bottom:3px solid #f97316}
+header h1{font-size:2em;color:#fb923c;text-shadow:0 0 20px #f9731655}
+header p{color:#fdba74;margin-top:6px}
+.badge{display:inline-block;background:#f9731622;border:1px solid #f9731655;color:#fb923c;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#fb923c;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#f97316;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.kw{color:#569cd6}.tp{color:#4ec9b0}.st{color:#ce9178}.nm{color:#b5cea8}.cm{color:#6a9955}.pr{color:#9cdcfe}.mt{color:#dcdcaa}.at{color:#c586c0}.te{color:#fb923c}
+code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#1a0800;border-left:4px solid #f97316;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#fdba74;font-size:0.9em;margin-top:4px}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#1a0800;color:#fb923c;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#0a0a2a}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.orange{color:#fb923c}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-card.hot{border-color:#f9731655;background:#1a0800}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.s-num{background:#f97316;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.s-num.warn{background:#e74c3c}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#1a0800;color:#fb923c}
+.real{background:#1a0800;color:#fb923c;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #f9731655}
+.hot-badge{background:#1a0800;color:#f97316;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #f9731655}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#1a0800;border:1px solid #f97316;color:#fb923c;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#f97316;color:#fff}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1e1e3a}
+.answer.shown{display:block}
+.answer .a-label{color:#fb923c;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.gold-box{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#f97316;color:#fb923c}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#f97316}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#fb923c;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1e1e3a}
+.sticky-nav a:hover{background:#1a0800}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#f97316,#fb923c)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+h3{color:#fdba74;margin:16px 0 8px;font-size:1em}
+.pyramid{background:#0a0a1a;border:1px solid #1a2a3a;border-radius:10px;padding:16px;margin:14px 0;font-family:'Consolas',monospace;font-size:0.82em;text-align:center;line-height:2.5}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#fb923c;font-size:0.85em;margin-bottom:6px">📅 Day 16 of 60 | Phase 1: Core .NET Mastery</div>
+  <h1>🧪 Unit Testing + Integration Testing</h1>
+  <p>xUnit · Moq · FluentAssertions · TestContainers · WebApplicationFactory</p>
+  <div style="margin-top:12px">
+    <span class="badge">xUnit Fact/Theory</span><span class="badge">Moq Setup/Verify</span><span class="badge">FluentAssertions</span>
+    <span class="badge">TestContainers</span><span class="badge">WebApplicationFactory</span><span class="badge">AAA Pattern</span>
+    <span class="badge">Test Data Builder</span><span class="badge">Code Coverage</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#pyramid">🏔️ Pyramid</a>
+  <a href="#xunit">✅ xUnit</a>
+  <a href="#moq">🎭 Moq</a>
+  <a href="#fluent">💬 FluentAssertions</a>
+  <a href="#integration">🐳 TestContainers</a>
+  <a href="#webapi">🌐 API Tests</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SECTION 1: PYRAMID -->
+<div class="section" id="pyramid">
+  <div class="section-title"><span class="num">1</span> Testing Pyramid — ZenCampus Test Strategy</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram — Vikram has multiple personalities (Amar, Karnan, Rolex). Unit tests = test each personality separately. Integration = all personalities working together. End-to-end = entire Vikram in action!</span>
+    <p>ZenCampus has 50,000 students. Fee calculation bug = 50,000 wrong receipts. Testing isn't optional. Unit tests catch logic bugs in seconds. Integration tests catch DB/service interaction bugs before deploy. E2E tests catch UI flows. 70% unit + 20% integration + 10% E2E = fast, reliable test suite.</p>
+  </div>
+
+  <div class="pyramid">
+    <div style="color:#e74c3c">🔺 E2E Tests (10%) — Playwright / Selenium — Fee payment full flow</div>
+    <div style="color:#f39c12">🔶 Integration Tests (20%) — TestContainers + WebApplicationFactory — Controller → DB</div>
+    <div style="color:#2ecc71">🟩 Unit Tests (70%) — xUnit + Moq — FeeCalculationService.Calculate()</div>
+    <div style="color:#888;font-size:0.85em;margin-top:6px">More unit tests = fast feedback. Integration tests catch real DB issues. E2E catches user flow bugs.</div>
+  </div>
+
+  <table>
+    <tr><th>Type</th><th>Speed</th><th>Isolates</th><th>ZenCampus Example</th></tr>
+    <tr><td class="orange">Unit</td><td class="green">~1ms</td><td>Single class/method</td><td>FeeCalculationService.CalculateLateCharge()</td></tr>
+    <tr><td class="yellow">Integration</td><td class="yellow">~500ms</td><td>Service + real DB</td><td>FeeRepository.GetDueFees() against SQL Server</td></tr>
+    <tr><td class="red">E2E</td><td class="red">~30s</td><td>Full stack</td><td>Parent logs in → pays fee → gets SMS receipt</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 2: XUNIT -->
+<div class="section" id="xunit">
+  <div class="section-title"><span class="num">2</span> xUnit — Fact, Theory, InlineData, ClassData</div>
+
+  <pre><span class="cm">// NuGet: xunit, xunit.runner.visualstudio, coverlet.collector</span>
+
+<span class="cm">// [Fact] = single test case (no parameters)</span>
+<span class="kw">public class</span> <span class="tp">FeeCalculationServiceTests</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">FeeCalculationService</span> <span class="pr">_sut</span>; <span class="cm">// SUT = System Under Test</span>
+
+    <span class="kw">public</span> <span class="mt">FeeCalculationServiceTests</span>()
+    {
+        <span class="pr">_sut</span> = <span class="kw">new</span> <span class="tp">FeeCalculationService</span>();  <span class="cm">// no DI needed for pure logic</span>
+    }
+
+    [<span class="at">Fact</span>]
+    <span class="kw">public void</span> <span class="mt">CalculateLateCharge_WhenOverdueBy10Days_Returns2PercentPenalty</span>()
+    {
+        <span class="cm">// Arrange</span>
+        <span class="kw">var</span> <span class="pr">feeAmount</span> = <span class="nm">5000m</span>;
+        <span class="kw">var</span> <span class="pr">dueDays</span>   = <span class="nm">10</span>;
+
+        <span class="cm">// Act</span>
+        <span class="kw">var</span> <span class="pr">penalty</span> = <span class="pr">_sut</span>.<span class="mt">CalculateLateCharge</span>(<span class="pr">feeAmount</span>, <span class="pr">dueDays</span>);
+
+        <span class="cm">// Assert</span>
+        Assert.<span class="mt">Equal</span>(<span class="nm">100m</span>, <span class="pr">penalty</span>); <span class="cm">// 5000 × 2% = 100</span>
+    }
+
+    [<span class="at">Fact</span>]
+    <span class="kw">public void</span> <span class="mt">CalculateLateCharge_WhenNotOverdue_ReturnsZero</span>()
+    {
+        <span class="kw">var</span> <span class="pr">penalty</span> = <span class="pr">_sut</span>.<span class="mt">CalculateLateCharge</span>(<span class="nm">5000m</span>, dueDays: <span class="nm">0</span>);
+        Assert.<span class="mt">Equal</span>(<span class="nm">0m</span>, <span class="pr">penalty</span>);
+    }
+}</pre>
+
+  <pre><span class="cm">// [Theory] + [InlineData] — data-driven tests (Vikram: multiple test cases!)</span>
+[<span class="at">Theory</span>]
+[<span class="at">InlineData</span>(<span class="nm">5000</span>, <span class="nm">1</span>,  <span class="nm">50</span>)]   <span class="cm">// 1 day late  → 1%  penalty</span>
+[<span class="at">InlineData</span>(<span class="nm">5000</span>, <span class="nm">10</span>, <span class="nm">100</span>)]  <span class="cm">// 10 days late → 2%  penalty</span>
+[<span class="at">InlineData</span>(<span class="nm">5000</span>, <span class="nm">30</span>, <span class="nm">250</span>)]  <span class="cm">// 30 days late → 5%  penalty (max)</span>
+[<span class="at">InlineData</span>(<span class="nm">5000</span>, <span class="nm">0</span>,  <span class="nm">0</span>)]    <span class="cm">// 0 days       → 0   (no penalty)</span>
+<span class="kw">public void</span> <span class="mt">CalculateLateCharge_Theory</span>(<span class="kw">decimal</span> <span class="pr">amount</span>, <span class="kw">int</span> <span class="pr">days</span>, <span class="kw">decimal</span> <span class="pr">expected</span>)
+{
+    <span class="kw">var</span> <span class="pr">result</span> = <span class="pr">_sut</span>.<span class="mt">CalculateLateCharge</span>(<span class="pr">amount</span>, <span class="pr">days</span>);
+    Assert.<span class="mt">Equal</span>(<span class="pr">expected</span>, <span class="pr">result</span>);
+}
+<span class="cm">// Runs as 4 separate tests. One failure = clear which InlineData failed.</span>
+
+<span class="cm">// [MemberData] — complex objects as test data</span>
+<span class="kw">public static</span> <span class="tp">IEnumerable</span>&lt;<span class="kw">object</span>[]&gt; <span class="pr">FeeDiscountCases</span> =>
+[
+    [<span class="kw">new</span> <span class="tp">Student</span> { <span class="pr">SiblingCount</span> = <span class="nm">2</span>, <span class="pr">IsStaffChild</span> = <span class="kw">false</span> }, <span class="nm">5000m</span>, <span class="nm">250m</span>],   <span class="cm">// sibling discount 5%</span>
+    [<span class="kw">new</span> <span class="tp">Student</span> { <span class="pr">SiblingCount</span> = <span class="nm">0</span>, <span class="pr">IsStaffChild</span> = <span class="kw">true</span>  }, <span class="nm">5000m</span>, <span class="nm">1000m</span>],  <span class="cm">// staff discount 20%</span>
+    [<span class="kw">new</span> <span class="tp">Student</span> { <span class="pr">SiblingCount</span> = <span class="nm">2</span>, <span class="pr">IsStaffChild</span> = <span class="kw">true</span>  }, <span class="nm">5000m</span>, <span class="nm">1000m</span>],  <span class="cm">// max one discount</span>
+];
+
+[<span class="at">Theory</span>]
+[<span class="at">MemberData</span>(<span class="kw">nameof</span>(<span class="pr">FeeDiscountCases</span>))]
+<span class="kw">public void</span> <span class="mt">CalculateDiscount_Theory</span>(<span class="tp">Student</span> <span class="pr">student</span>, <span class="kw">decimal</span> <span class="pr">fee</span>, <span class="kw">decimal</span> <span class="pr">expected</span>)
+{
+    <span class="kw">var</span> <span class="pr">discount</span> = <span class="pr">_sut</span>.<span class="mt">CalculateDiscount</span>(<span class="pr">student</span>, <span class="pr">fee</span>);
+    Assert.<span class="mt">Equal</span>(<span class="pr">expected</span>, <span class="pr">discount</span>);
+}</pre>
+
+  <pre><span class="cm">// xUnit class lifecycle — IMPORTANT!
+// Constructor = runs before EACH test (no [SetUp] like NUnit)
+// IDisposable.Dispose() = runs after EACH test (no [TearDown])
+// IClassFixture<T> = shared expensive state across ALL tests in class</span>
+
+<span class="kw">public class</span> <span class="tp">DatabaseTests</span> : <span class="tp">IClassFixture</span>&lt;<span class="tp">DatabaseFixture</span>&gt;
+{
+    <span class="kw">private readonly</span> <span class="tp">DatabaseFixture</span> <span class="pr">_fixture</span>;
+    <span class="kw">public</span> <span class="mt">DatabaseTests</span>(<span class="tp">DatabaseFixture</span> <span class="pr">fixture</span>) => <span class="pr">_fixture</span> = <span class="pr">fixture</span>;
+    <span class="cm">// _fixture.DbContext shared — created ONCE for all tests in this class</span>
+}
+
+<span class="cm">// ICollectionFixture — share across multiple test classes
+// Useful for TestContainers (one SQL Server container for all integration tests)</span>
+[<span class="at">CollectionDefinition</span>(<span class="st">"Database"</span>)]
+<span class="kw">public class</span> <span class="tp">DatabaseCollection</span> : <span class="tp">ICollectionFixture</span>&lt;<span class="tp">SqlServerFixture</span>&gt; { }
+
+[<span class="at">Collection</span>(<span class="st">"Database"</span>)]
+<span class="kw">public class</span> <span class="tp">FeeRepositoryTests</span>
+{
+    <span class="kw">public</span> <span class="mt">FeeRepositoryTests</span>(<span class="tp">SqlServerFixture</span> <span class="pr">fixture</span>) { <span class="cm">/* same container! */</span> }
+}</pre>
+</div>
+
+<!-- SECTION 3: MOQ -->
+<div class="section" id="moq">
+  <div class="section-title"><span class="num">3</span> Moq — Mock Dependencies, Isolate Logic</div>
+
+  <div class="movie">
+    <span class="film">🎬 7aum Arivu — Subbu learns to impersonate Bodhidharma (fake everything). Moq = same. Mock IFeeRepository, fake its behavior, test FeeService logic in isolation. Real repository never called!</span>
+    <p>FeeService depends on IFeeRepository (DB), IEmailService, ISmsService. Unit test pannanam → Mock all dependencies → fake what they return → test only FeeService logic. If test fails → FeeService logic bug, not DB bug. Isolation = clear failure reason!</p>
+  </div>
+
+  <pre><span class="cm">// NuGet: Moq</span>
+
+<span class="kw">public class</span> <span class="tp">FeeServiceTests</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">Mock</span>&lt;<span class="tp">IFeeRepository</span>&gt;      <span class="pr">_feeRepo</span>    = <span class="kw">new</span>();
+    <span class="kw">private readonly</span> <span class="tp">Mock</span>&lt;<span class="tp">ISmsService</span>&gt;         <span class="pr">_sms</span>        = <span class="kw">new</span>();
+    <span class="kw">private readonly</span> <span class="tp">Mock</span>&lt;<span class="tp">ILogger</span>&lt;<span class="tp">FeeService</span>&gt;&gt;  <span class="pr">_log</span>        = <span class="kw">new</span>();
+    <span class="kw">private readonly</span> <span class="tp">FeeService</span>               <span class="pr">_sut</span>;
+
+    <span class="kw">public</span> <span class="mt">FeeServiceTests</span>()
+    {
+        <span class="pr">_sut</span> = <span class="kw">new</span> <span class="tp">FeeService</span>(<span class="pr">_feeRepo</span>.<span class="pr">Object</span>, <span class="pr">_sms</span>.<span class="pr">Object</span>, <span class="pr">_log</span>.<span class="pr">Object</span>);
+        <span class="cm">// .Object = actual IFeeRepository instance (the fake)</span>
+    }
+
+    [<span class="at">Fact</span>]
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">CollectFeeAsync_WhenValid_SavesReceiptAndSendsSms</span>()
+    {
+        <span class="cm">// Arrange — fake what dependencies return</span>
+        <span class="kw">var</span> <span class="pr">dto</span> = <span class="kw">new</span> <span class="tp">FeeCollectDto</span>(<span class="pr">StudentId</span>: <span class="nm">101</span>, <span class="pr">Amount</span>: <span class="nm">5000m</span>, <span class="pr">ParentPhone</span>: <span class="st">"9876543210"</span>);
+        <span class="kw">var</span> <span class="pr">student</span> = <span class="kw">new</span> <span class="tp">Student</span> { <span class="pr">Id</span> = <span class="nm">101</span>, <span class="pr">Name</span> = <span class="st">"Ravi"</span>, <span class="pr">SchoolId</span> = <span class="nm">42</span> };
+
+        <span class="pr">_feeRepo</span>
+            .<span class="mt">Setup</span>(<span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">GetStudentAsync</span>(<span class="nm">101</span>))
+            .<span class="mt">ReturnsAsync</span>(<span class="pr">student</span>);  <span class="cm">// fake: when asked for student 101, return this</span>
+
+        <span class="pr">_feeRepo</span>
+            .<span class="mt">Setup</span>(<span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">SaveReceiptAsync</span>(<span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="tp">FeeReceipt</span>&gt;()))
+            .<span class="mt">ReturnsAsync</span>(<span class="nm">1</span>);         <span class="cm">// fake: save returns rowsAffected=1</span>
+
+        <span class="pr">_sms</span>
+            .<span class="mt">Setup</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="mt">SendReceiptAsync</span>(<span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">string</span>&gt;(), <span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">string</span>&gt;(), <span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">decimal</span>&gt;()))
+            .<span class="mt">Returns</span>(<span class="tp">Task</span>.<span class="pr">CompletedTask</span>);
+
+        <span class="cm">// Act</span>
+        <span class="kw">var</span> <span class="pr">result</span> = <span class="kw">await</span> <span class="pr">_sut</span>.<span class="mt">CollectFeeAsync</span>(<span class="pr">dto</span>);
+
+        <span class="cm">// Assert — did service do what it should?</span>
+        Assert.<span class="mt">True</span>(<span class="pr">result</span>.<span class="pr">IsSuccess</span>);
+        Assert.<span class="mt">NotNull</span>(<span class="pr">result</span>.<span class="pr">ReceiptNo</span>);
+
+        <span class="cm">// Verify SMS was sent exactly ONCE with correct phone</span>
+        <span class="pr">_sms</span>.<span class="mt">Verify</span>(
+            <span class="pr">s</span> => <span class="pr">s</span>.<span class="mt">SendReceiptAsync</span>(<span class="st">"9876543210"</span>, <span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">string</span>&gt;(), <span class="nm">5000m</span>),
+            <span class="tp">Times</span>.<span class="pr">Once</span>);
+
+        <span class="cm">// Verify receipt was saved</span>
+        <span class="pr">_feeRepo</span>.<span class="mt">Verify</span>(
+            <span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">SaveReceiptAsync</span>(<span class="tp">It</span>.<span class="mt">Is</span>&lt;<span class="tp">FeeReceipt</span>&gt;(<span class="pr">rec</span> => <span class="pr">rec</span>.<span class="pr">Amount</span> == <span class="nm">5000m</span> && <span class="pr">rec</span>.<span class="pr">StudentId</span> == <span class="nm">101</span>)),
+            <span class="tp">Times</span>.<span class="pr">Once</span>);
+    }
+
+    [<span class="at">Fact</span>]
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">CollectFeeAsync_WhenStudentNotFound_ThrowsNotFoundException</span>()
+    {
+        <span class="pr">_feeRepo</span>
+            .<span class="mt">Setup</span>(<span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">GetStudentAsync</span>(<span class="nm">999</span>))
+            .<span class="mt">ReturnsAsync</span>((<span class="tp">Student</span>?)<span class="kw">null</span>); <span class="cm">// student not found!</span>
+
+        <span class="cm">// Act + Assert — exception expected</span>
+        <span class="kw">await</span> Assert.<span class="mt">ThrowsAsync</span>&lt;<span class="tp">NotFoundException</span>&gt;(
+            () => <span class="pr">_sut</span>.<span class="mt">CollectFeeAsync</span>(<span class="kw">new</span> <span class="tp">FeeCollectDto</span>(<span class="pr">StudentId</span>: <span class="nm">999</span>, <span class="nm">5000m</span>, <span class="st">"9876543210"</span>)));
+
+        <span class="cm">// Verify SMS was NOT sent (student didn't exist)</span>
+        <span class="pr">_sms</span>.<span class="mt">Verify</span>(
+            <span class="pr">s</span> => <span class="pr">s</span>.<span class="mt">SendReceiptAsync</span>(<span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">string</span>&gt;(), <span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">string</span>&gt;(), <span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">decimal</span>&gt;()),
+            <span class="tp">Times</span>.<span class="pr">Never</span>); <span class="cm">// never called!</span>
+    }
+}</pre>
+
+  <pre><span class="cm">// Moq — Setup patterns reference</span>
+
+<span class="cm">// Match any argument</span>
+.<span class="mt">Setup</span>(<span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">GetAsync</span>(<span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">int</span>&gt;())).<span class="mt">ReturnsAsync</span>(<span class="pr">student</span>);
+
+<span class="cm">// Match specific predicate</span>
+.<span class="mt">Setup</span>(<span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">GetAsync</span>(<span class="tp">It</span>.<span class="mt">Is</span>&lt;<span class="kw">int</span>&gt;(<span class="pr">id</span> => <span class="pr">id</span> > <span class="nm">0</span>))).<span class="mt">ReturnsAsync</span>(<span class="pr">student</span>);
+
+<span class="cm">// Throw exception from mock</span>
+.<span class="mt">Setup</span>(<span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">SaveAsync</span>(<span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="tp">FeeReceipt</span>&gt;()))
+.<span class="mt">ThrowsAsync</span>(<span class="kw">new</span> <span class="tp">DbException</span>(<span class="st">"connection failed"</span>));
+
+<span class="cm">// Capture what was passed (useful for asserting saved values)</span>
+<span class="tp">FeeReceipt</span>? <span class="pr">capturedReceipt</span> = <span class="kw">null</span>;
+<span class="pr">_feeRepo</span>.<span class="mt">Setup</span>(<span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">SaveReceiptAsync</span>(<span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="tp">FeeReceipt</span>&gt;()))
+    .<span class="mt">Callback</span>&lt;<span class="tp">FeeReceipt</span>&gt;(<span class="pr">r</span> => <span class="pr">capturedReceipt</span> = <span class="pr">r</span>)  <span class="cm">// captures what was passed!</span>
+    .<span class="mt">ReturnsAsync</span>(<span class="nm">1</span>);
+<span class="cm">// After Act: Assert.Equal("ZEN-2024-001", capturedReceipt?.ReceiptNo);</span>
+
+<span class="cm">// Times.Exactly, Times.AtLeast, Times.AtMost, Times.Between</span>
+<span class="pr">_sms</span>.<span class="mt">Verify</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="mt">SendAsync</span>(<span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">string</span>&gt;()), <span class="tp">Times</span>.<span class="mt">Exactly</span>(<span class="nm">3</span>)); <span class="cm">// 3 SMS sent</span>
+<span class="pr">_feeRepo</span>.<span class="mt">VerifyNoOtherCalls</span>();  <span class="cm">// strict: assert nothing else was called!</span></pre>
+</div>
+
+<!-- SECTION 4: FLUENT ASSERTIONS -->
+<div class="section" id="fluent">
+  <div class="section-title"><span class="num">4</span> FluentAssertions — Readable, Expressive Assertions</div>
+
+  <div class="movie">
+    <span class="film">🎬 Anniyan — Ambi punishes lawbreakers with precise, descriptive sentences. FluentAssertions = same. Not just "Assert.Equal failed" — "Expected amount to be 5000 but found 4900 because late charge not applied."</span>
+  </div>
+
+  <pre><span class="cm">// NuGet: FluentAssertions</span>
+<span class="kw">using</span> FluentAssertions;
+
+<span class="cm">// Value assertions</span>
+<span class="pr">result</span>.<span class="pr">Amount</span>.<span class="mt">Should</span>().<span class="mt">Be</span>(<span class="nm">5000m</span>);
+<span class="pr">result</span>.<span class="pr">Amount</span>.<span class="mt">Should</span>().<span class="mt">BeGreaterThan</span>(<span class="nm">0</span>);
+<span class="pr">result</span>.<span class="pr">ReceiptNo</span>.<span class="mt">Should</span>().<span class="mt">StartWith</span>(<span class="st">"ZEN-"</span>);
+<span class="pr">result</span>.<span class="pr">ReceiptNo</span>.<span class="mt">Should</span>().<span class="mt">NotBeNullOrEmpty</span>();
+<span class="pr">result</span>.<span class="pr">IsSuccess</span>.<span class="mt">Should</span>().<span class="mt">BeTrue</span>(
+    <span class="st">"because fee was paid with valid student and amount"</span>); <span class="cm">// failure message!</span>
+
+<span class="cm">// Collection assertions</span>
+<span class="pr">students</span>.<span class="mt">Should</span>().<span class="mt">HaveCount</span>(<span class="nm">3</span>);
+<span class="pr">students</span>.<span class="mt">Should</span>().<span class="mt">Contain</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Name</span> == <span class="st">"Ravi"</span>);
+<span class="pr">students</span>.<span class="mt">Should</span>().<span class="mt">AllSatisfy</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">SchoolId</span>.<span class="mt">Should</span>().<span class="mt">Be</span>(<span class="nm">42</span>));
+<span class="pr">students</span>.<span class="mt">Should</span>().<span class="mt">BeInAscendingOrder</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="pr">Name</span>);
+<span class="pr">students</span>.<span class="mt">Should</span>().<span class="mt">NotContainNulls</span>();
+
+<span class="cm">// Object deep equality — compares ALL properties!</span>
+<span class="pr">result</span>.<span class="mt">Should</span>().<span class="mt">BeEquivalentTo</span>(<span class="kw">new</span> <span class="tp">FeeReceiptDto</span>
+{
+    <span class="pr">StudentId</span> = <span class="nm">101</span>, <span class="pr">Amount</span> = <span class="nm">5000m</span>, <span class="pr">SchoolId</span> = <span class="nm">42</span>
+}, <span class="pr">opts</span> => <span class="pr">opts</span>
+    .<span class="mt">Excluding</span>(<span class="pr">r</span> => <span class="pr">r</span>.<span class="pr">ReceiptNo</span>)   <span class="cm">// exclude auto-generated fields</span>
+    .<span class="mt">Excluding</span>(<span class="pr">r</span> => <span class="pr">r</span>.<span class="pr">CreatedAt</span>));  <span class="cm">// exclude timestamps</span>
+
+<span class="cm">// Exception assertions</span>
+<span class="kw">var</span> <span class="pr">act</span> = () => <span class="pr">_sut</span>.<span class="mt">CollectFeeAsync</span>(<span class="kw">new</span> <span class="tp">FeeCollectDto</span>(<span class="pr">StudentId</span>: <span class="nm">0</span>, <span class="nm">-1m</span>, <span class="st">""</span>));
+<span class="kw">await</span> <span class="pr">act</span>.<span class="mt">Should</span>().<span class="mt">ThrowAsync</span>&lt;<span class="tp">ValidationException</span>&gt;()
+    .<span class="mt">WithMessage</span>(<span class="st">"*Amount must be positive*"</span>); <span class="cm">// wildcard match!</span>
+
+<span class="cm">// Date assertions</span>
+<span class="pr">receipt</span>.<span class="pr">CreatedAt</span>.<span class="mt">Should</span>().<span class="mt">BeCloseTo</span>(<span class="tp">DateTime</span>.<span class="pr">UtcNow</span>, <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">5</span>));
+<span class="pr">receipt</span>.<span class="pr">DueDate</span>.<span class="mt">Should</span>().<span class="mt">BeAfter</span>(<span class="tp">DateTime</span>.<span class="pr">UtcNow</span>);
+
+<span class="cm">// Why BeEquivalentTo > Assert.Equal for objects?
+// Assert.Equal: "Expected: ZenCampus.Models.FeeReceipt, Actual: ZenCampus.Models.FeeReceipt"  ← useless!
+// BeEquivalentTo: "Expected Amount to be 5000m but found 4900m at receipt.Amount" ← actionable!</span></pre>
+</div>
+
+<!-- SECTION 5: TESTCONTAINERS -->
+<div class="section" id="integration">
+  <div class="section-title"><span class="num">5</span> TestContainers — Real SQL Server in Docker for Integration Tests</div>
+
+  <div class="movie">
+    <span class="film">🎬 Enthiran — Vasi built real Chitti robot, not a plastic model. TestContainers = same. Real SQL Server in Docker, not EF Core InMemory fake. Real queries, real indexes, real constraints — catches bugs InMemory misses!</span>
+    <p>EF Core InMemory DB: fast but dangerous. LINQ that works in-memory fails in SQL (no LOWER(), no DATEDIFF). TestContainers: spin up real SQL Server Docker container before tests, run against it, tear down after. 500ms startup. Worth every millisecond — real DB catches real bugs!</p>
+  </div>
+
+  <div class="danger">
+    <div class="d-label">⛔ EF Core InMemory — why it's dangerous</div>
+    <p>InMemory ignores: FK constraints, unique indexes, computed columns, SQL functions (DATEDIFF, DATEADD), raw SQL queries, transactions. Tests pass → production fails. Real incident: InMemory test passed for duplicate receipt — SQL unique constraint caught it in UAT. TestContainers instead!</p>
+  </div>
+
+  <pre><span class="cm">// NuGet: Testcontainers.MsSql</span>
+
+<span class="kw">public class</span> <span class="tp">SqlServerFixture</span> : <span class="tp">IAsyncLifetime</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">MsSqlContainer</span> <span class="pr">_container</span> = <span class="kw">new</span> <span class="tp">MsSqlBuilder</span>()
+        .<span class="mt">WithImage</span>(<span class="st">"mcr.microsoft.com/mssql/server:2022-latest"</span>)
+        .<span class="mt">WithPassword</span>(<span class="st">"ZenCampus_Test123!"</span>)
+        .<span class="mt">Build</span>();
+
+    <span class="kw">public string</span> <span class="pr">ConnectionString</span> => <span class="pr">_container</span>.<span class="pr">GetConnectionString</span>();
+    <span class="kw">public</span> <span class="tp">ZenCampusDbContext</span>? <span class="pr">DbContext</span> { <span class="kw">get</span>; <span class="kw">private set</span>; }
+
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">InitializeAsync</span>()
+    {
+        <span class="kw">await</span> <span class="pr">_container</span>.<span class="mt">StartAsync</span>(); <span class="cm">// pulls SQL Server image, starts container (~5s first run)</span>
+
+        <span class="kw">var</span> <span class="pr">options</span> = <span class="kw">new</span> <span class="tp">DbContextOptionsBuilder</span>&lt;<span class="tp">ZenCampusDbContext</span>&gt;()
+            .<span class="mt">UseSqlServer</span>(<span class="pr">ConnectionString</span>, <span class="pr">sql</span> =>
+                <span class="pr">sql</span>.<span class="mt">EnableRetryOnFailure</span>(<span class="nm">3</span>))
+            .<span class="pr">Options</span>;
+
+        <span class="pr">DbContext</span> = <span class="kw">new</span> <span class="tp">ZenCampusDbContext</span>(<span class="pr">options</span>);
+        <span class="kw">await</span> <span class="pr">DbContext</span>.<span class="pr">Database</span>.<span class="mt">MigrateAsync</span>(); <span class="cm">// apply all EF migrations!</span>
+        <span class="kw">await</span> <span class="mt">SeedTestDataAsync</span>();                <span class="cm">// insert schools, students</span>
+    }
+
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">DisposeAsync</span>()
+    {
+        <span class="kw">await</span> <span class="pr">DbContext</span>!.<span class="mt">DisposeAsync</span>();
+        <span class="kw">await</span> <span class="pr">_container</span>.<span class="mt">StopAsync</span>();  <span class="cm">// container removed automatically</span>
+    }
+
+    <span class="kw">private async</span> <span class="tp">Task</span> <span class="mt">SeedTestDataAsync</span>()
+    {
+        <span class="pr">DbContext</span>!.<span class="pr">Schools</span>.<span class="mt">Add</span>(<span class="kw">new</span> <span class="tp">School</span> { <span class="pr">Id</span> = <span class="nm">42</span>, <span class="pr">Name</span> = <span class="st">"Test School"</span> });
+        <span class="pr">DbContext</span>.<span class="pr">Students</span>.<span class="mt">Add</span>(<span class="kw">new</span> <span class="tp">Student</span> { <span class="pr">Id</span> = <span class="nm">101</span>, <span class="pr">Name</span> = <span class="st">"Ravi"</span>, <span class="pr">SchoolId</span> = <span class="nm">42</span> });
+        <span class="kw">await</span> <span class="pr">DbContext</span>.<span class="mt">SaveChangesAsync</span>();
+    }
+}
+
+<span class="cm">// Integration test using the real DB</span>
+[<span class="at">Collection</span>(<span class="st">"Database"</span>)]
+<span class="kw">public class</span> <span class="tp">FeeRepositoryIntegrationTests</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">FeeRepository</span> <span class="pr">_repo</span>;
+
+    <span class="kw">public</span> <span class="mt">FeeRepositoryIntegrationTests</span>(<span class="tp">SqlServerFixture</span> <span class="pr">fixture</span>)
+    {
+        <span class="pr">_repo</span> = <span class="kw">new</span> <span class="tp">FeeRepository</span>(<span class="pr">fixture</span>.<span class="pr">DbContext</span>!);
+    }
+
+    [<span class="at">Fact</span>]
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">SaveReceipt_WhenDuplicate_ThrowsUniqueConstraintException</span>()
+    {
+        <span class="kw">var</span> <span class="pr">receipt</span> = <span class="kw">new</span> <span class="tp">FeeReceipt</span> { <span class="pr">ReceiptNo</span> = <span class="st">"ZEN-001"</span>, <span class="pr">StudentId</span> = <span class="nm">101</span>, <span class="pr">Amount</span> = <span class="nm">5000m</span> };
+        <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">SaveReceiptAsync</span>(<span class="pr">receipt</span>); <span class="cm">// first save — OK</span>
+
+        <span class="cm">// Second save with same ReceiptNo → SQL unique constraint → exception</span>
+        <span class="kw">var</span> <span class="pr">act</span> = () => <span class="pr">_repo</span>.<span class="mt">SaveReceiptAsync</span>(<span class="pr">receipt</span>);
+        <span class="kw">await</span> <span class="pr">act</span>.<span class="mt">Should</span>().<span class="mt">ThrowAsync</span>&lt;<span class="tp">DbUpdateException</span>&gt;();
+        <span class="cm">// InMemory would PASS this test (no constraint enforcement)!
+        // Real SQL Server catches it — TestContainers wins!</span>
+    }
+
+    [<span class="at">Fact</span>]
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">GetDueFees_WithIndex_CompletesUnder50ms</span>()
+    {
+        <span class="cm">// Performance test with real DB (can't do this with mocks!)</span>
+        <span class="kw">var</span> <span class="pr">sw</span>     = <span class="tp">Stopwatch</span>.<span class="mt">StartNew</span>();
+        <span class="kw">var</span> <span class="pr">result</span> = <span class="kw">await</span> <span class="pr">_repo</span>.<span class="mt">GetDueFeesAsync</span>(<span class="pr">schoolId</span>: <span class="nm">42</span>);
+        <span class="pr">sw</span>.<span class="mt">Stop</span>();
+
+        <span class="pr">sw</span>.<span class="pr">ElapsedMilliseconds</span>.<span class="mt">Should</span>().<span class="mt">BeLessThan</span>(<span class="nm">50</span>,
+            <span class="st">"because IX_FeeRecords_SchoolId index should make this fast"</span>);
+    }
+}</pre>
+</div>
+
+<!-- SECTION 6: WEB API TESTING -->
+<div class="section" id="webapi">
+  <div class="section-title"><span class="num">6</span> WebApplicationFactory — Test ASP.NET Core API End-to-End</div>
+
+  <pre><span class="cm">// NuGet: Microsoft.AspNetCore.Mvc.Testing</span>
+<span class="cm">// Starts the real ASP.NET Core pipeline in-process — no network needed!</span>
+
+<span class="kw">public class</span> <span class="tp">ZenCampusWebFactory</span> : <span class="tp">WebApplicationFactory</span>&lt;<span class="tp">Program</span>&gt;
+{
+    <span class="kw">private</span> <span class="tp">SqlServerFixture</span>? <span class="pr">_dbFixture</span>;
+
+    <span class="kw">protected override void</span> <span class="mt">ConfigureWebHost</span>(<span class="tp">IWebHostBuilder</span> <span class="pr">builder</span>)
+    {
+        <span class="pr">builder</span>.<span class="mt">ConfigureTestServices</span>(<span class="pr">services</span> =>
+        {
+            <span class="cm">// Replace real DB with TestContainers SQL Server</span>
+            <span class="pr">services</span>.<span class="mt">RemoveAll</span>&lt;<span class="tp">DbContextOptions</span>&lt;<span class="tp">ZenCampusDbContext</span>&gt;&gt;();
+            <span class="pr">services</span>.<span class="mt">AddDbContext</span>&lt;<span class="tp">ZenCampusDbContext</span>&gt;(<span class="pr">opts</span> =>
+                <span class="pr">opts</span>.<span class="mt">UseSqlServer</span>(<span class="pr">_dbFixture</span>!.<span class="pr">ConnectionString</span>));
+
+            <span class="cm">// Replace real SMS service with mock (don't actually send SMS in tests!)</span>
+            <span class="pr">services</span>.<span class="mt">RemoveAll</span>&lt;<span class="tp">ISmsService</span>&gt;();
+            <span class="pr">services</span>.<span class="mt">AddSingleton</span>&lt;<span class="tp">ISmsService</span>&gt;(<span class="kw">new</span> <span class="tp">FakeSmsService</span>());
+        });
+    }
+}
+
+<span class="kw">public class</span> <span class="tp">FeeControllerIntegrationTests</span> : <span class="tp">IClassFixture</span>&lt;<span class="tp">ZenCampusWebFactory</span>&gt;
+{
+    <span class="kw">private readonly</span> <span class="tp">HttpClient</span> <span class="pr">_client</span>;
+
+    <span class="kw">public</span> <span class="mt">FeeControllerIntegrationTests</span>(<span class="tp">ZenCampusWebFactory</span> <span class="pr">factory</span>)
+    {
+        <span class="pr">_client</span> = <span class="pr">factory</span>.<span class="mt">CreateClient</span>();
+    }
+
+    [<span class="at">Fact</span>]
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">POST_CollectFee_Returns200WithReceipt</span>()
+    {
+        <span class="cm">// Arrange</span>
+        <span class="kw">var</span> <span class="pr">dto</span>     = <span class="kw">new</span> { <span class="pr">StudentId</span> = <span class="nm">101</span>, <span class="pr">Amount</span> = <span class="nm">5000m</span>, <span class="pr">ParentPhone</span> = <span class="st">"9876543210"</span> };
+        <span class="kw">var</span> <span class="pr">content</span> = <span class="kw">new</span> <span class="tp">StringContent</span>(
+            <span class="tp">JsonSerializer</span>.<span class="mt">Serialize</span>(<span class="pr">dto</span>), <span class="tp">Encoding</span>.<span class="pr">UTF8</span>, <span class="st">"application/json"</span>);
+
+        <span class="cm">// Add JWT token for authorized endpoint</span>
+        <span class="pr">_client</span>.<span class="pr">DefaultRequestHeaders</span>.<span class="pr">Authorization</span> =
+            <span class="kw">new</span> <span class="tp">AuthenticationHeaderValue</span>(<span class="st">"Bearer"</span>, GenerateTestJwt(<span class="pr">schoolId</span>: <span class="nm">42</span>));
+
+        <span class="cm">// Act</span>
+        <span class="kw">var</span> <span class="pr">response</span> = <span class="kw">await</span> <span class="pr">_client</span>.<span class="mt">PostAsync</span>(<span class="st">"/api/fees/collect"</span>, <span class="pr">content</span>);
+
+        <span class="cm">// Assert</span>
+        <span class="pr">response</span>.<span class="pr">StatusCode</span>.<span class="mt">Should</span>().<span class="mt">Be</span>(<span class="tp">HttpStatusCode</span>.<span class="pr">OK</span>);
+
+        <span class="kw">var</span> <span class="pr">body</span>    = <span class="kw">await</span> <span class="pr">response</span>.<span class="pr">Content</span>.<span class="mt">ReadAsStringAsync</span>();
+        <span class="kw">var</span> <span class="pr">receipt</span> = <span class="tp">JsonSerializer</span>.<span class="mt">Deserialize</span>&lt;<span class="tp">FeeReceiptDto</span>&gt;(<span class="pr">body</span>);
+
+        <span class="pr">receipt</span>.<span class="mt">Should</span>().<span class="mt">NotBeNull</span>();
+        <span class="pr">receipt</span>!.<span class="pr">ReceiptNo</span>.<span class="mt">Should</span>().<span class="mt">StartWith</span>(<span class="st">"ZEN-"</span>);
+        <span class="pr">receipt</span>.<span class="pr">Amount</span>.<span class="mt">Should</span>().<span class="mt">Be</span>(<span class="nm">5000m</span>);
+    }
+
+    [<span class="at">Fact</span>]
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">POST_CollectFee_WhenUnauthenticated_Returns401</span>()
+    {
+        <span class="kw">var</span> <span class="pr">response</span> = <span class="kw">await</span> <span class="pr">_client</span>.<span class="mt">PostAsync</span>(<span class="st">"/api/fees/collect"</span>,
+            <span class="kw">new</span> <span class="tp">StringContent</span>(<span class="st">"{}"</span>, <span class="tp">Encoding</span>.<span class="pr">UTF8</span>, <span class="st">"application/json"</span>));
+
+        <span class="pr">response</span>.<span class="pr">StatusCode</span>.<span class="mt">Should</span>().<span class="mt">Be</span>(<span class="tp">HttpStatusCode</span>.<span class="pr">Unauthorized</span>);
+    }
+}</pre>
+
+  <h3>🏗️ Test Data Builder Pattern — avoid test data clutter</h3>
+  <pre><span class="cm">// Without builder: messy, copy-paste test data everywhere</span>
+<span class="kw">var</span> <span class="pr">student</span> = <span class="kw">new</span> <span class="tp">Student</span> { <span class="pr">Id</span>=<span class="nm">101</span>, <span class="pr">Name</span>=<span class="st">"Ravi"</span>, <span class="pr">SchoolId</span>=<span class="nm">42</span>, <span class="pr">Status</span>=<span class="st">"Active"</span>,
+    <span class="pr">DateOfBirth</span>=<span class="kw">new</span> <span class="tp">DateTime</span>(<span class="nm">2010</span>,<span class="nm">1</span>,<span class="nm">1</span>), <span class="pr">Class</span>=<span class="st">"10A"</span>, <span class="pr">IsStaffChild</span>=<span class="kw">false</span> }; <span class="cm">// repeat 20 times!</span>
+
+<span class="cm">// With builder: clean, readable, DRY</span>
+<span class="kw">public class</span> <span class="tp">StudentBuilder</span>
+{
+    <span class="kw">private int</span>    <span class="pr">_id</span>       = <span class="nm">101</span>;
+    <span class="kw">private string</span> <span class="pr">_name</span>     = <span class="st">"Test Student"</span>;
+    <span class="kw">private int</span>    <span class="pr">_schoolId</span> = <span class="nm">42</span>;
+    <span class="kw">private string</span> <span class="pr">_status</span>   = <span class="st">"Active"</span>;
+    <span class="kw">private bool</span>   <span class="pr">_isStaff</span>  = <span class="kw">false</span>;
+
+    <span class="kw">public</span> <span class="tp">StudentBuilder</span> <span class="mt">WithId</span>(<span class="kw">int</span> <span class="pr">id</span>)             { <span class="pr">_id</span>       = <span class="pr">id</span>;       <span class="kw">return this</span>; }
+    <span class="kw">public</span> <span class="tp">StudentBuilder</span> <span class="mt">WithName</span>(<span class="kw">string</span> <span class="pr">name</span>)       { <span class="pr">_name</span>     = <span class="pr">name</span>;     <span class="kw">return this</span>; }
+    <span class="kw">public</span> <span class="tp">StudentBuilder</span> <span class="mt">WithSchool</span>(<span class="kw">int</span> <span class="pr">schoolId</span>)    { <span class="pr">_schoolId</span> = <span class="pr">schoolId</span>; <span class="kw">return this</span>; }
+    <span class="kw">public</span> <span class="tp">StudentBuilder</span> <span class="mt">AsStaffChild</span>()               { <span class="pr">_isStaff</span>  = <span class="kw">true</span>;     <span class="kw">return this</span>; }
+    <span class="kw">public</span> <span class="tp">StudentBuilder</span> <span class="mt">Inactive</span>()                  { <span class="pr">_status</span>   = <span class="st">"Left"</span>;   <span class="kw">return this</span>; }
+
+    <span class="kw">public</span> <span class="tp">Student</span> <span class="mt">Build</span>() => <span class="kw">new</span>() { <span class="pr">Id</span>=<span class="pr">_id</span>, <span class="pr">Name</span>=<span class="pr">_name</span>,
+        <span class="pr">SchoolId</span>=<span class="pr">_schoolId</span>, <span class="pr">Status</span>=<span class="pr">_status</span>, <span class="pr">IsStaffChild</span>=<span class="pr">_isStaff</span> };
+}
+
+<span class="cm">// Usage — clean, focused on what matters for THIS test</span>
+<span class="kw">var</span> <span class="pr">staffChild</span>      = <span class="kw">new</span> <span class="tp">StudentBuilder</span>().<span class="mt">AsStaffChild</span>().<span class="mt">Build</span>();           <span class="cm">// 20% discount</span>
+<span class="kw">var</span> <span class="pr">inactiveStudent</span> = <span class="kw">new</span> <span class="tp">StudentBuilder</span>().<span class="mt">Inactive</span>().<span class="mt">Build</span>();              <span class="cm">// can't pay fee</span>
+<span class="kw">var</span> <span class="pr">school42Student</span> = <span class="kw">new</span> <span class="tp">StudentBuilder</span>().<span class="mt">WithSchool</span>(<span class="nm">99</span>).<span class="mt">Build</span>();           <span class="cm">// different school</span></pre>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">7</span> 🎯 Scenarios — Interview + Production</div>
+
+  <!-- S1 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">1</div>
+      <div><div class="scenario-title">Fee calculation bug — why didn't unit tests catch it? <span class="hot-badge">🔥 Real Production Bug</span> <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'ZenCampus late charge calculation was wrong for students in specific schools. But unit tests for CalculateLateCharge() were passing. How can tests pass but prod fail?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ TEST COVERAGE GAP — THE REAL ROOT CAUSE</div>
+      <pre><span class="cm">// Tests were passing because: tested happy path only!</span>
+
+<span class="cm">// What was tested:</span>
+[<span class="at">Theory</span>]
+[<span class="at">InlineData</span>(<span class="nm">5000</span>, <span class="nm">10</span>, <span class="nm">100</span>)]  <span class="cm">// generic student — PASS</span>
+<span class="kw">public void</span> <span class="mt">CalculateLateCharge_Theory</span>(<span class="kw">decimal</span> <span class="pr">a</span>, <span class="kw">int</span> <span class="pr">d</span>, <span class="kw">decimal</span> <span class="pr">e</span>) { }
+
+<span class="cm">// What production code actually did (bug!):</span>
+<span class="kw">public decimal</span> <span class="mt">CalculateLateCharge</span>(<span class="kw">decimal</span> <span class="pr">amount</span>, <span class="kw">int</span> <span class="pr">days</span>, <span class="kw">int</span> <span class="pr">schoolId</span>)
+{
+    <span class="cm">// School 42 has a special fee waiver policy — zero late charge!</span>
+    <span class="kw">if</span> (<span class="pr">_schoolSettings</span>[<span class="pr">schoolId</span>].<span class="pr">WaiveLateCharge</span>)
+        <span class="kw">return</span> <span class="nm">0m</span>;  <span class="cm">// but bug: returning 0 for ALL schools when school 42 config loaded!</span>
+
+    <span class="kw">return</span> <span class="pr">days</span> * <span class="pr">amount</span> * <span class="nm">0.01m</span>;
+}
+<span class="cm">// Tests didn't pass schoolId → didn't exercise school-specific logic!
+
+// Fix: add missing test cases</span>
+[<span class="at">Theory</span>]
+[<span class="at">InlineData</span>(<span class="nm">5000</span>, <span class="nm">10</span>, <span class="nm">42</span>, <span class="nm">0</span>)]    <span class="cm">// school 42 = waiver, 0 penalty</span>
+[<span class="at">InlineData</span>(<span class="nm">5000</span>, <span class="nm">10</span>, <span class="nm">99</span>, <span class="nm">100</span>)]   <span class="cm">// school 99 = normal, 2% penalty</span>
+[<span class="at">InlineData</span>(<span class="nm">5000</span>, <span class="nm">0</span>,  <span class="nm">42</span>, <span class="nm">0</span>)]    <span class="cm">// school 42, 0 days = 0</span>
+<span class="kw">public void</span> <span class="mt">CalculateLateCharge_WithSchoolPolicy</span>(<span class="kw">decimal</span> <span class="pr">amount</span>, <span class="kw">int</span> <span class="pr">days</span>,
+    <span class="kw">int</span> <span class="pr">schoolId</span>, <span class="kw">decimal</span> <span class="pr">expected</span>) { }
+
+<span class="cm">// Lesson: test coverage % is misleading. 100% line coverage ≠ 100% behavior coverage.
+// Test edge cases, boundary values, school-specific policies!</span></pre>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div><div class="scenario-title">Moq.Verify — how do you test a service that sends SMS? <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'FeeService.CollectFeeAsync() should send SMS to parent after collecting fee. How do you unit test that SMS was sent, with the correct phone and amount, without actually calling the SMS gateway?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ MOQ VERIFY — INTERACTION TESTING</div>
+      <pre><span class="cm">// Mock ISmsService — don't call real gateway in tests!</span>
+<span class="kw">var</span> <span class="pr">smsMock</span> = <span class="kw">new</span> <span class="tp">Mock</span>&lt;<span class="tp">ISmsService</span>&gt;();
+<span class="pr">smsMock</span>
+    .<span class="mt">Setup</span>(<span class="pr">s</span> => <span class="pr">s</span>.<span class="mt">SendReceiptAsync</span>(<span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">string</span>&gt;(), <span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">string</span>&gt;(), <span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">decimal</span>&gt;()))
+    .<span class="mt">Returns</span>(<span class="tp">Task</span>.<span class="pr">CompletedTask</span>); <span class="cm">// fake success</span>
+
+<span class="kw">var</span> <span class="pr">sut</span> = <span class="kw">new</span> <span class="tp">FeeService</span>(<span class="pr">_repoMock</span>.<span class="pr">Object</span>, <span class="pr">smsMock</span>.<span class="pr">Object</span>);
+<span class="kw">await</span> <span class="pr">sut</span>.<span class="mt">CollectFeeAsync</span>(<span class="kw">new</span> <span class="tp">FeeCollectDto</span>(<span class="nm">101</span>, <span class="nm">5000m</span>, <span class="st">"9876543210"</span>));
+
+<span class="cm">// Verify: SMS called EXACTLY ONCE with these EXACT arguments</span>
+<span class="pr">smsMock</span>.<span class="mt">Verify</span>(
+    <span class="pr">s</span> => <span class="pr">s</span>.<span class="mt">SendReceiptAsync</span>(
+        <span class="st">"9876543210"</span>,                   <span class="cm">// exact phone</span>
+        <span class="tp">It</span>.<span class="mt">Is</span>&lt;<span class="kw">string</span>&gt;(<span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">StartsWith</span>(<span class="st">"ZEN-"</span>)), <span class="cm">// receipt no pattern</span>
+        <span class="nm">5000m</span>),                          <span class="cm">// exact amount</span>
+    <span class="tp">Times</span>.<span class="pr">Once</span>);
+
+<span class="cm">// Verify: SMS NOT called for inactive student</span>
+<span class="pr">smsMock</span>.<span class="mt">Verify</span>(
+    <span class="pr">s</span> => <span class="pr">s</span>.<span class="mt">SendReceiptAsync</span>(<span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">string</span>&gt;(), <span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">string</span>&gt;(), <span class="tp">It</span>.<span class="mt">IsAny</span>&lt;<span class="kw">decimal</span>&gt;()),
+    <span class="tp">Times</span>.<span class="pr">Never</span>);</pre>
+      <div class="gold-box"><div class="gold-label">⭐ Interview Answer</div><p>"Mock the ISmsService with Moq, setup returns Task.CompletedTask. After calling the service, Verify() with Times.Once and exact phone/amount. This tests that the service CHOSE to send SMS and passed the right data — without sending a single real SMS. Test runs in 1ms."</p></div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num warn">3</div>
+      <div><div class="scenario-title">TestContainers vs EF InMemory — which to use and why? <span class="hot-badge">🔥 Most Asked</span> <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Should I use EF Core InMemory database or TestContainers with real SQL Server for integration tests in ZenCampus?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ALWAYS TESTCONTAINERS — AND HERE'S WHY FROM PRODUCTION</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;font-size:0.9em;color:#c0d0c0;line-height:1.9">
+        <p><strong>EF Core InMemory limitations (real bugs we hit):</strong></p>
+        <p>1. FK constraints not enforced → test passes, prod throws FK violation<br>
+        2. Unique index not enforced → duplicate receipt saved in test, fails in prod<br>
+        3. Raw SQL (FromSqlRaw) not supported → 0 rows returned in test, real query in prod<br>
+        4. No transactions → test passes, prod deadlock on concurrent fee saves<br>
+        5. Case-sensitive in-memory vs case-insensitive SQL Server → queries behave differently</p>
+        <p><strong>TestContainers:</strong> Real SQL Server. Same constraints, same collation, same query plan. Migrations applied. If integration test passes, prod behavior is guaranteed.</p>
+        <p><strong>When InMemory is OK:</strong> Testing non-DB code that happens to use DbContext. Read-only LINQ projections with no raw SQL. Speed is critical and no constraints involved.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div><div class="scenario-title">Test naming convention — write readable test names <span class="diff easy">Easy</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'How do you name test methods? What's wrong with TestFeeCalculation(), Test2(), FeeTest_Valid()?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ NAMING CONVENTION — MethodName_Scenario_ExpectedResult</div>
+      <pre><span class="cm">// BAD — unclear what is being tested, what should happen</span>
+<span class="kw">public void</span> <span class="mt">TestFeeCalculation</span>() { }   <span class="cm">// what scenario?</span>
+<span class="kw">public void</span> <span class="mt">Test2</span>() { }               <span class="cm">// completely meaningless</span>
+<span class="kw">public void</span> <span class="mt">FeeTest_Valid</span>() { }        <span class="cm">// valid how?</span>
+
+<span class="cm">// GOOD — MethodName_WhenCondition_ShouldResult</span>
+<span class="kw">public void</span> <span class="mt">CalculateLateCharge_WhenOverdueBy10Days_Returns100RupeePenalty</span>() { }
+<span class="kw">public void</span> <span class="mt">CollectFee_WhenStudentInactive_ThrowsInvalidOperationException</span>() { }
+<span class="kw">public void</span> <span class="mt">CollectFee_WhenAmountNegative_ThrowsValidationException</span>() { }
+<span class="kw">public void</span> <span class="mt">GetDueFees_WhenSchool42HasNoFees_ReturnsEmptyList</span>() { }
+<span class="kw">public void</span> <span class="mt">CollectFee_WhenSmsServiceThrows_StillSavesReceiptAndReturnsSuccess</span>() { }
+
+<span class="cm">// Why? Failed test output: "CalculateLateCharge_WhenOverdueBy10Days_Returns100RupeePenalty FAILED"
+// → immediately know WHAT failed, in WHAT scenario. No need to open the test file!</span>
+
+<span class="cm">// Also OK: Given_When_Then (BDD style)</span>
+<span class="kw">public void</span> <span class="mt">GivenStudentInactive_WhenCollectFee_ThenThrowsException</span>() { }
+
+<span class="cm">// For async tests: suffix Async</span>
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">CollectFeeAsync_WhenValid_SavesReceiptAndSendsSms</span>() { }
+
+<span class="cm">// [Fact(DisplayName = "...")] for test runner display</span>
+[<span class="at">Fact</span>(<span class="pr">DisplayName</span> = <span class="st">"Fee calculation: 10 days late = 2% penalty = ₹100 for ₹5000"</span>)]
+<span class="kw">public void</span> <span class="mt">CalculateLateCharge_TenDays</span>() { }</pre>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div><div class="scenario-title">Testing with DateTime.Now — flaky tests! <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Your test for monthly fee reminder passes at 10 AM but fails at 11 PM. The code checks if Today is first day of month. How to fix?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ABSTRACT DATETIME — INJECT TIME AS DEPENDENCY</div>
+      <pre><span class="cm">// Problem: DateTime.Now in production code = untestable!</span>
+<span class="kw">public bool</span> <span class="mt">IsMonthlyReminderDay</span>()
+    => <span class="tp">DateTime</span>.<span class="pr">Now</span>.<span class="pr">Day</span> == <span class="nm">1</span>; <span class="cm">// UNTESTABLE — depends on real clock!</span>
+
+<span class="cm">// Fix: IDateTimeProvider abstraction</span>
+<span class="kw">public interface</span> <span class="tp">IDateTimeProvider</span>
+{
+    <span class="tp">DateTime</span> <span class="pr">UtcNow</span> { <span class="kw">get</span>; }
+    <span class="tp">DateTime</span> <span class="pr">Today</span>  { <span class="kw">get</span>; }
+}
+
+<span class="kw">public class</span> <span class="tp">DateTimeProvider</span> : <span class="tp">IDateTimeProvider</span>
+{
+    <span class="kw">public</span> <span class="tp">DateTime</span> <span class="pr">UtcNow</span> => <span class="tp">DateTime</span>.<span class="pr">UtcNow</span>;
+    <span class="kw">public</span> <span class="tp">DateTime</span> <span class="pr">Today</span>  => <span class="tp">DateTime</span>.<span class="pr">Today</span>;
+}
+
+<span class="cm">// In service — inject IDateTimeProvider</span>
+<span class="kw">public bool</span> <span class="mt">IsMonthlyReminderDay</span>()
+    => <span class="pr">_dateTime</span>.<span class="pr">Today</span>.<span class="pr">Day</span> == <span class="nm">1</span>;  <span class="cm">// testable!</span>
+
+<span class="cm">// In tests — Moq mock or simple fake</span>
+<span class="kw">var</span> <span class="pr">dt</span> = <span class="kw">new</span> <span class="tp">Mock</span>&lt;<span class="tp">IDateTimeProvider</span>&gt;();
+<span class="pr">dt</span>.<span class="mt">Setup</span>(<span class="pr">d</span> => <span class="pr">d</span>.<span class="pr">Today</span>).<span class="mt">Returns</span>(<span class="kw">new</span> <span class="tp">DateTime</span>(<span class="nm">2026</span>, <span class="nm">6</span>, <span class="nm">1</span>)); <span class="cm">// always June 1st!</span>
+<span class="kw">var</span> <span class="pr">sut</span> = <span class="kw">new</span> <span class="tp">FeeReminderService</span>(<span class="pr">dt</span>.<span class="pr">Object</span>);
+<span class="pr">sut</span>.<span class="mt">IsMonthlyReminderDay</span>().<span class="mt">Should</span>().<span class="mt">BeTrue</span>();  <span class="cm">// passes any time of day/month!</span>
+
+<span class="cm">// Other flaky test sources:
+// Random numbers → inject IRandom
+// File system → inject IFileSystem (but prefer not writing to FS in unit tests!)
+// External API → mock IHttpClientFactory</span></pre>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div><div class="scenario-title">WebApplicationFactory — test [Authorize] endpoints <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'API endpoint has [Authorize(Roles = "Admin")]. How do you integration-test it in WebApplicationFactory without going through real JWT authentication?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ FAKE AUTH HANDLER OR TEST JWT</div>
+      <pre><span class="cm">// Option 1: Fake Auth Handler (bypass JWT completely in tests)</span>
+<span class="kw">public class</span> <span class="tp">TestAuthHandler</span> : <span class="tp">AuthenticationHandler</span>&lt;<span class="tp">AuthenticationSchemeOptions</span>&gt;
+{
+    <span class="kw">protected override</span> <span class="tp">Task</span>&lt;<span class="tp">AuthenticateResult</span>&gt; <span class="mt">HandleAuthenticateAsync</span>()
+    {
+        <span class="kw">var</span> <span class="pr">claims</span> = <span class="kw">new</span>[]
+        {
+            <span class="kw">new</span> <span class="tp">Claim</span>(<span class="tp">ClaimTypes</span>.<span class="pr">NameIdentifier</span>, <span class="st">"1"</span>),
+            <span class="kw">new</span> <span class="tp">Claim</span>(<span class="tp">ClaimTypes</span>.<span class="pr">Role</span>, <span class="st">"Admin"</span>),
+            <span class="kw">new</span> <span class="tp">Claim</span>(<span class="st">"schoolId"</span>, <span class="st">"42"</span>),
+        };
+        <span class="kw">var</span> <span class="pr">identity</span>   = <span class="kw">new</span> <span class="tp">ClaimsIdentity</span>(<span class="pr">claims</span>, <span class="st">"Test"</span>);
+        <span class="kw">var</span> <span class="pr">principal</span>  = <span class="kw">new</span> <span class="tp">ClaimsPrincipal</span>(<span class="pr">identity</span>);
+        <span class="kw">var</span> <span class="pr">ticket</span>     = <span class="kw">new</span> <span class="tp">AuthenticationTicket</span>(<span class="pr">principal</span>, <span class="st">"Test"</span>);
+        <span class="kw">return</span> <span class="tp">Task</span>.<span class="mt">FromResult</span>(<span class="tp">AuthenticateResult</span>.<span class="mt">Success</span>(<span class="pr">ticket</span>));
+    }
+}
+
+<span class="cm">// Register in WebApplicationFactory</span>
+<span class="kw">protected override void</span> <span class="mt">ConfigureWebHost</span>(<span class="tp">IWebHostBuilder</span> <span class="pr">builder</span>)
+{
+    <span class="pr">builder</span>.<span class="mt">ConfigureTestServices</span>(<span class="pr">services</span> =>
+    {
+        <span class="pr">services</span>.<span class="mt">AddAuthentication</span>(<span class="st">"Test"</span>)
+            .<span class="mt">AddScheme</span>&lt;<span class="tp">AuthenticationSchemeOptions</span>, <span class="tp">TestAuthHandler</span>&gt;(<span class="st">"Test"</span>, _ => { });
+    });
+}
+<span class="cm">// Now ALL requests are authenticated as Admin, SchoolId=42 in tests!</span>
+
+<span class="cm">// Option 2: Different auth per test — use custom header</span>
+<span class="kw">public class</span> <span class="tp">TestAuthHandler</span> : <span class="tp">AuthenticationHandler</span>&lt;<span class="tp">AuthenticationSchemeOptions</span>&gt;
+{
+    <span class="kw">protected override</span> <span class="tp">Task</span>&lt;<span class="tp">AuthenticateResult</span>&gt; <span class="mt">HandleAuthenticateAsync</span>()
+    {
+        <span class="kw">if</span> (!<span class="pr">Request</span>.<span class="pr">Headers</span>.<span class="mt">TryGetValue</span>(<span class="st">"X-Test-Auth"</span>, <span class="kw">out var</span> <span class="pr">role</span>))
+            <span class="kw">return</span> <span class="tp">Task</span>.<span class="mt">FromResult</span>(<span class="tp">AuthenticateResult</span>.<span class="mt">Fail</span>(<span class="st">"No header"</span>));
+        <span class="kw">var</span> <span class="pr">claims</span> = <span class="kw">new</span>[] { <span class="kw">new</span> <span class="tp">Claim</span>(<span class="tp">ClaimTypes</span>.<span class="pr">Role</span>, <span class="pr">role</span>!) };
+        <span class="cm">// ... create ticket with role from header</span>
+    }
+}
+<span class="cm">// In tests:
+_client.DefaultRequestHeaders.Add("X-Test-Auth", "Parent");  // parent role
+_client.DefaultRequestHeaders.Add("X-Test-Auth", "Admin");   // admin role</span></pre>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div><div class="scenario-title">Code coverage — 80% coverage requirement <span class="diff easy">Easy</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'How do you measure code coverage in ZenCampus CI/CD pipeline? Our requirement is 80% minimum.'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COVERLET + GITHUB ACTIONS GATE</div>
+      <pre><span class="cm"># dotnet test with coverage collection</span>
+dotnet test --collect:"XPlat Code Coverage" \
+    --results-directory ./TestResults \
+    -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+
+<span class="cm"># Generate readable HTML report</span>
+dotnet tool install -g dotnet-reportgenerator-globaltool
+reportgenerator -reports:TestResults/**/coverage.cobertura.xml \
+    -targetdir:CoverageReport -reporttypes:Html
+
+<span class="cm"># GitHub Actions — fail if coverage below 80%</span>
+- <span class="pr">uses</span>: codecov/codecov-action@v3
+  <span class="pr">with</span>:
+    <span class="pr">fail_ci_if_error</span>: true
+    <span class="pr">threshold</span>: 80   <span class="cm"># fail PR if coverage drops below 80%</span>
+
+<span class="cm"># coverlet.runsettings — exclude generated code from coverage</span>
+&lt;Include&gt;[ZenCampusWeb]*&lt;/Include&gt;
+&lt;Exclude&gt;[ZenCampusWeb]ZenCampusWeb.Migrations.*&lt;/Exclude&gt;  <span class="cm"># EF migrations</span>
+&lt;Exclude&gt;[ZenCampusWeb]ZenCampusWeb.Program&lt;/Exclude&gt;       <span class="cm"># startup code</span>
+&lt;Exclude&gt;[ZenCampusWeb]*.*Controller+*&lt;/Exclude&gt;            <span class="cm"># anonymous types</span></pre>
+      <div class="gold-box"><div class="gold-label">⭐ Important Caveat</div><p>"80% line coverage doesn't mean 80% behavior coverage. A test that calls a method but asserts nothing gives line coverage. Focus on meaningful assertions. 60% coverage with good assertions beats 95% with Assert.True(true). Coverage is a minimum bar, not a quality metric."</p></div>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div><div class="scenario-title">Testing Hangfire background jobs <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'How do you unit test a Hangfire job that runs year-end student promotion? The job directly calls database and doesn't return anything.'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ EXTRACT LOGIC, TEST LOGIC — NOT THE HANGFIRE INFRASTRUCTURE</div>
+      <pre><span class="cm">// BAD: logic inside Hangfire job (hard to test)</span>
+<span class="kw">public class</span> <span class="tp">YearEndPromotionJob</span>
+{
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">RunAsync</span>()
+    {
+        <span class="cm">// Directly calls DB — can't unit test without DB!</span>
+        <span class="kw">var</span> <span class="pr">students</span> = <span class="kw">await</span> <span class="pr">_ctx</span>.<span class="pr">Students</span>.<span class="mt">Where</span>(...).ToListAsync();
+        <span class="cm">// 50 lines of logic here</span>
+    }
+}
+
+<span class="cm">// GOOD: extract into testable service</span>
+<span class="kw">public interface</span> <span class="tp">IStudentPromotionService</span>
+{
+    <span class="tp">Task</span>&lt;<span class="tp">PromotionResult</span>&gt; <span class="mt">PromoteStudentsAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>, <span class="kw">string</span> <span class="pr">academicYear</span>);
+}
+
+<span class="kw">public class</span> <span class="tp">YearEndPromotionJob</span>(<span class="tp">IStudentPromotionService</span> <span class="pr">svc</span>)
+{
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">RunAsync</span>(<span class="kw">int</span> <span class="pr">schoolId</span>)
+    {
+        <span class="kw">await</span> <span class="pr">svc</span>.<span class="mt">PromoteStudentsAsync</span>(<span class="pr">schoolId</span>, <span class="st">"2026-27"</span>); <span class="cm">// thin wrapper</span>
+    }
+}
+
+<span class="cm">// Unit test: test IStudentPromotionService, not the Hangfire job</span>
+[<span class="at">Fact</span>]
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">PromoteStudents_WhenAlreadyPromoted_SkipsIdempotently</span>()
+{
+    <span class="kw">var</span> <span class="pr">students</span> = <span class="kw">new</span> <span class="tp">List</span>&lt;<span class="tp">Student</span>&gt;
+    {
+        <span class="kw">new</span>() { <span class="pr">Id</span>=<span class="nm">1</span>, <span class="pr">PromotionDate</span>=<span class="tp">DateTime</span>.<span class="pr">UtcNow</span> },  <span class="cm">// already promoted!</span>
+        <span class="kw">new</span>() { <span class="pr">Id</span>=<span class="nm">2</span>, <span class="pr">PromotionDate</span>=<span class="kw">null</span> },              <span class="cm">// not yet promoted</span>
+    };
+    <span class="pr">_repoMock</span>.<span class="mt">Setup</span>(<span class="pr">r</span> => <span class="pr">r</span>.<span class="mt">GetEligibleStudentsAsync</span>(<span class="nm">42</span>)).<span class="mt">ReturnsAsync</span>(<span class="pr">students</span>);
+
+    <span class="kw">var</span> <span class="pr">result</span> = <span class="kw">await</span> <span class="pr">_sut</span>.<span class="mt">PromoteStudentsAsync</span>(<span class="nm">42</span>, <span class="st">"2026-27"</span>);
+
+    <span class="pr">result</span>.<span class="pr">PromotedCount</span>.<span class="mt">Should</span>().<span class="mt">Be</span>(<span class="nm">1</span>);   <span class="cm">// only student 2 promoted</span>
+    <span class="pr">result</span>.<span class="pr">SkippedCount</span>.<span class="mt">Should</span>().<span class="mt">Be</span>(<span class="nm">1</span>);   <span class="cm">// student 1 skipped (idempotent!)</span>
+}</pre>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div><div class="scenario-title">FluentAssertions vs Assert — why switch? <span class="diff easy">Easy</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Team is debating FluentAssertions vs built-in xUnit Assert. What's the real value and how do you convince them to switch?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ READABLE FAILURES — CONCRETE EXAMPLE</div>
+      <pre><span class="cm">// Scenario: FeeReceipt returned wrong amount (4900 instead of 5000)</span>
+
+<span class="cm">// xUnit Assert failure message:</span>
+<span class="cm">// Assert.Equal() Failure
+// Expected: 5000
+// Actual:   4900
+// → "which of the 15 properties is wrong?"</span>
+
+<span class="cm">// FluentAssertions failure message:</span>
+<span class="cm">// Expected result.Amount to be 5000m, but found 4900m.
+// → immediately know: Amount property, expected 5000, got 4900!
+
+// Even better for collection failures:
+students.Should().HaveCount(3);
+// Failure: Expected students to have 3 item(s), but found 2.
+//          Unexpected items:
+//          - (none)
+//          Missing items:
+//          - {Id: 101, Name: "Ravi"}
+
+// Assert.Equal(3, students.Count):
+// Failure: Assert.Equal() Failure
+// Expected: 3, Actual: 2  → which student is missing? No idea!</span>
+
+<span class="cm">// Multi-assert in one test (normally bad practice, but sometimes needed)</span>
+<span class="kw">using</span> (<span class="kw">new</span> <span class="tp">AssertionScope</span>())  <span class="cm">// collect ALL failures, not just first!</span>
+{
+    <span class="pr">result</span>.<span class="pr">ReceiptNo</span>.<span class="mt">Should</span>().<span class="mt">StartWith</span>(<span class="st">"ZEN-"</span>);
+    <span class="pr">result</span>.<span class="pr">Amount</span>.<span class="mt">Should</span>().<span class="mt">Be</span>(<span class="nm">5000m</span>);
+    <span class="pr">result</span>.<span class="pr">StudentId</span>.<span class="mt">Should</span>().<span class="mt">Be</span>(<span class="nm">101</span>);
+}
+<span class="cm">// Reports ALL failures at once, not just first one!</span></pre>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div><div class="scenario-title">"Testing strategy sollu" — complete interview answer <span class="diff senior">Senior</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Describe your testing strategy for ZenCampus. How many tests, what types, how do you keep them fast, and how do you prevent regressions?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE TESTING STRATEGY ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong>Pyramid breakdown (400 tests total):</strong><br>
+        280 unit tests (70%) — xUnit + Moq + FluentAssertions. Pure logic: fee calculations, discount rules, validation. Run in &lt;3 seconds. No DB, no network, no file system. DateTime and randomness injected via interfaces. Test names: MethodName_WhenScenario_ShouldResult.</p>
+        <p><strong>80 integration tests (20%):</strong><br>
+        TestContainers — real SQL Server 2022 in Docker. FeeRepository, StudentRepository, all EF queries. One SqlServerFixture shared across all integration test classes (ICollectionFixture). Tests catch: FK violations, unique constraints, raw SQL correctness, index performance. Run in ~45 seconds.</p>
+        <p><strong>40 API tests (10%):</strong><br>
+        WebApplicationFactory — real HTTP pipeline. TestAuthHandler for JWT bypass. Replace SMS/Email with fakes. Test: 200 success, 401 unauthorized, 403 wrong school, 400 validation. Run in ~20 seconds.</p>
+        <p><strong>CI gate:</strong> PR check requires all tests green + 80% coverage (Coverlet + Codecov). Failed unit test = PR blocked immediately. Integration tests run in parallel (-maxParallelThreads 4). Build time: 3+45+20 = ~70 seconds total.</p>
+        <p><strong>Regression prevention:</strong> TDD for new features — write test first, then implement. Bug fix → add test that reproduces the bug, then fix. Test Builder pattern for test data — change Student model → update builder once, not 50 test files.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">8</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: Moq-la Times.Once vs Times.Never — when to use each?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Times.Once = only one mock created. Times.Never = mock not used anywhere</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Times.Once = method should be called exactly once. Times.Never = method should NOT be called (e.g., SMS not sent for failed fee)</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Both are same — just different syntax</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Times.Never throws exception if method is called</div>
+    <div class="quiz-fb ok">✅ Times.Once = Verify method was called exactly once. Times.Never = Verify method was NOT called. Critical: "student not found → SMS not sent" test needs Times.Never on ISmsService.SendAsync. If SMS is called when it shouldn't be = production bug sending receipts to random parents!</div>
+    <div class="quiz-fb nope">❌ Times is used in Verify() call. Times.Once = assert method was called exactly 1 time. Times.Never = assert method was NEVER called (useful for: inactive student → fee not collected → SMS not sent). Times.Exactly(3) = called exactly 3 times.</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: xUnit-la [Theory] + [InlineData] — what's the benefit over multiple [Fact] methods?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Theory tests run faster than Fact tests</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) One test method + multiple InlineData = multiple test cases with less code duplication, each shown as separate test in the runner</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) InlineData tests can't fail — they always pass</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Theory tests share the same result across all InlineData</div>
+    <div class="quiz-fb ok">✅ [Theory] + [InlineData] = data-driven tests! One method, many input/output combinations. Each InlineData runs as a SEPARATE test case in the test runner — clear failure message: "CalculateLateCharge_Theory(5000, 30, 250) FAILED". Test late charge for 1, 10, 30 days — 4 lines of InlineData vs 4 separate [Fact] methods!</div>
+    <div class="quiz-fb nope">❌ [Theory] with [InlineData] creates one test method that runs once per InlineData. Each InlineData appears as a separate test in VS Test Explorer. When one fails, you see exactly WHICH data combination failed. 10 InlineData = 10 test cases from 1 method. Much less duplication than 10 separate [Fact] methods!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: TestContainers-la IAsyncLifetime implement பண்ணணும் — why?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Required interface for all xUnit test classes</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) InitializeAsync() starts Docker container before tests; DisposeAsync() stops and removes it after — async setup/teardown for fixture</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Makes tests run in parallel</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Provides access to appsettings.json in tests</div>
+    <div class="quiz-fb ok">✅ IAsyncLifetime gives async InitializeAsync() (called before any test in the fixture) and DisposeAsync() (called after all tests). Starting Docker container = async operation. Constructor is synchronous — can't await in constructor! IAsyncLifetime = the xUnit async setup/teardown hook.</div>
+    <div class="quiz-fb nope">❌ IAsyncLifetime is xUnit's async lifecycle interface. InitializeAsync() = async version of constructor (await container.StartAsync() here). DisposeAsync() = async cleanup (await container.StopAsync()). Without it, you can't start Docker containers asynchronously before tests run.</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: BeEquivalentTo vs Assert.Equal for comparing objects — difference?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) No difference — both compare objects the same way</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) BeEquivalentTo only works with strings, Assert.Equal works with objects</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) BeEquivalentTo does deep property-by-property comparison with readable failure messages showing which property failed; Assert.Equal uses Equals() and shows generic "Expected: Type, Actual: Type"</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) BeEquivalentTo requires IEquatable implementation</div>
+    <div class="quiz-fb ok">✅ BeEquivalentTo compares all properties recursively, and when it fails, tells you exactly WHICH property is different: "Expected Amount to be 5000, but found 4900 at receipt.Amount." Assert.Equal uses reference equality or Equals() — for objects, usually shows "FeeReceipt vs FeeReceipt" with no useful detail. BeEquivalentTo also supports .Excluding(x => x.GeneratedField) to skip auto-generated properties!</div>
+    <div class="quiz-fb nope">❌ BeEquivalentTo (FluentAssertions) does deep structural comparison + gives property-level failure messages. Assert.Equal uses object.Equals() — if Equals not overridden, compares references. For DTO comparison: BeEquivalentTo wins every time. "Expected Amount to be 5000 but found 4900" >> "Expected: FeeReceipt, Actual: FeeReceipt"!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">9</span> ✅ Day 16 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Concepts</h3>
+      <ul class="check-list">
+        <li>Testing pyramid — 70/20/10 split</li>
+        <li>xUnit: Fact, Theory, InlineData, MemberData</li>
+        <li>xUnit: ClassFixture vs CollectionFixture</li>
+        <li>Moq: Setup, ReturnsAsync, Callback</li>
+        <li>Moq: Verify — Times.Once, Times.Never, Times.Exactly</li>
+        <li>FluentAssertions: BeEquivalentTo with Excluding</li>
+        <li>FluentAssertions: ThrowAsync + WithMessage</li>
+        <li>TestContainers: IAsyncLifetime, MigrateAsync()</li>
+        <li>WebApplicationFactory: ConfigureTestServices</li>
+        <li>TestAuthHandler: bypass real JWT in tests</li>
+        <li>Test Data Builder pattern</li>
+        <li>IDateTimeProvider: testable time</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"Arrange-Act-Assert — clear 3-section structure"</li>
+        <li>"SUT = System Under Test — one class per test file"</li>
+        <li>"TestContainers — real SQL Server, not EF InMemory"</li>
+        <li>"EF InMemory doesn't enforce FK/unique constraints"</li>
+        <li>"Moq.Verify Times.Never — SMS not sent for failed fee"</li>
+        <li>"Moq.Callback — capture what was passed to mock"</li>
+        <li>"BeEquivalentTo with Excluding for DTOs"</li>
+        <li>"IDateTimeProvider — inject time, no flaky DateTime.Now"</li>
+        <li>"TestAuthHandler — bypass JWT in WebApplicationFactory"</li>
+        <li>"80% coverage gate in GitHub Actions via Coverlet"</li>
+        <li>"Test Data Builder — change once, not 50 test files"</li>
+        <li>"AssertionScope — collect ALL failures, not just first"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#1a0800,#0d0d1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🧪 Day 16 Motivation</div>
+    <p style="color:#fb923c;font-style:italic">"7aum Arivu-la Subbu impersonates Bodhidharma perfectly — Moq does same. Enthiran-la Vasi built REAL Chitti robot, not simulation — TestContainers = same (real SQL Server, not InMemory). Anniyan precisely describes the punishment — FluentAssertions precisely describes the failure. <strong>Interview-la 'TestContainers use பண்ணேன் — real SQL Server, EF InMemory constraints enforce பண்ணாது, unique constraint bug caught பண்ணேன்' சொன்னா — Professional .NET developer confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 16/60 ✅ | Tomorrow: Day 17 — Performance Optimization (EF Core N+1, Dapper, Caching Strategies, Async Best Practices)</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:26.7%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">16 of 60 days (26.7%) — Testing mastered! Every bug is just a missing test case.</div>
+  </div>
+</div>
+
+</div>
+<footer>
+  <p>Day 16 – Unit Testing + Integration Testing | ZenCampus | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🧪 "xUnit + Moq + FluentAssertions + TestContainers = unstoppable test suite. Tests are the safety net that lets you refactor fearlessly!"</p>
+</footer>
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent='💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

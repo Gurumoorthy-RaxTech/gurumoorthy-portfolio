@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 14 – Docker + Kubernetes | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#1a1400,#0d0d1a,#1a1400);padding:36px 20px;text-align:center;border-bottom:3px solid #eab308}
+header h1{font-size:2em;color:#fde047;text-shadow:0 0 20px #eab30855}
+header p{color:#fbbf24;margin-top:6px}
+.badge{display:inline-block;background:#eab30822;border:1px solid #eab30855;color:#fde047;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#fde047;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#eab308;color:#000;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.kw{color:#569cd6}.tp{color:#4ec9b0}.st{color:#ce9178}.nm{color:#b5cea8}.cm{color:#6a9955}.pr{color:#9cdcfe}.mt{color:#dcdcaa}.at{color:#c586c0}.y{color:#fde047}
+code{background:#1a1a2e;color:#eab308;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#100f00;border-left:4px solid #eab308;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#fde047;font-size:0.9em;margin-top:4px}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:700px){.comparison,.two-col{grid-template-columns:1fr}}
+.bad-box{background:#1f0a0a;border:1px solid #e74c3c44;border-radius:8px;padding:14px}
+.good-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:8px;padding:14px}
+.box-label{font-size:0.78em;font-weight:bold;margin-bottom:8px}
+.bad-box .box-label{color:#e74c3c}.good-box .box-label{color:#2ecc71}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#100f00;color:#fde047;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a1a00}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#fde047}.gold{color:#fbbf24}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-card.hot{border-color:#eab30855;background:#100f00}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.s-num{background:#eab308;color:#000;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.s-num.warn{background:#f97316;color:#fff}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#100f00;color:#eab308}
+.real{background:#100f00;color:#eab308;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.hot-badge{background:#1a0800;color:#f97316;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #f9731655}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#100f00;border:1px solid #eab308;color:#fde047;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#eab308;color:#000}
+.reveal-btn.warn-btn{border-color:#f97316;color:#fb923c}
+.reveal-btn.warn-btn:hover{background:#f97316;color:#fff}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1e1e3a}
+.answer.shown{display:block}
+.answer .a-label{color:#fde047;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.answer .a-label.warn{color:#f97316}
+.gold-box{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#eab308;color:#fde047}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#eab308}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#fde047;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1e1e3a}
+.sticky-nav a:hover{background:#100f00}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#eab308,#fde047)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+h3{color:#fbbf24;margin:16px 0 8px;font-size:1em}
+.arch-box{background:#0a0a1a;border:1px solid #3a3a1a;border-radius:10px;padding:16px;margin:14px 0;font-family:'Consolas',monospace;font-size:0.82em;color:#fde047;line-height:1.9}
+.cmd{background:#0a0a0a;border:1px solid #2a2a2a;border-radius:6px;padding:10px 14px;margin:6px 0;font-family:'Consolas',monospace;font-size:0.83em;color:#22c55e}
+.cmd .prompt{color:#555}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#fde047;font-size:0.85em;margin-bottom:6px">📅 Day 14 of 60 | Phase 1: DevOps Fundamentals</div>
+  <h1>🐳 Docker + ☸️ Kubernetes</h1>
+  <p>Containers · Dockerfile · Compose · Pods · Deployments · Services · HPA · ConfigMaps · Secrets</p>
+  <div style="margin-top:12px">
+    <span class="badge">Dockerfile</span><span class="badge">Multi-stage Build</span><span class="badge">Docker Compose</span>
+    <span class="badge">Pod</span><span class="badge">Deployment</span><span class="badge">Service</span>
+    <span class="badge">HPA</span><span class="badge">ConfigMap</span><span class="badge">Secret</span><span class="badge">Ingress</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#why">🤔 Why Docker</a>
+  <a href="#dockerfile">📦 Dockerfile</a>
+  <a href="#compose">🔧 Compose</a>
+  <a href="#k8s">☸️ K8s Concepts</a>
+  <a href="#yaml">📄 YAMLs</a>
+  <a href="#config">🔐 Config+Secret</a>
+  <a href="#hpa">📈 HPA</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SECTION 1: WHY DOCKER -->
+<div class="section" id="why">
+  <div class="section-title"><span class="num">1</span> Why Docker? — "Works on My Machine" Problem Solved</div>
+
+  <div class="movie">
+    <span class="film">🎬 Kaaka Muttai — Same vadai, same recipe, same box. Different city-la delivery. Taste same! Docker = same container, any server, same behavior.</span>
+    <p>Dev machine-la ZenCampus run ஆகுது. Production-la crash. "Works on my machine!" = classic problem. Docker = package app + all dependencies + runtime into one image. Run anywhere — dev laptop, staging, production, k8s. Behaviour identical!</p>
+  </div>
+
+  <div class="comparison">
+    <div class="bad-box">
+      <div class="box-label">❌ Without Docker</div>
+      <pre style="font-size:0.78em"><span class="cm"># Dev machine: .NET 8.0.5</span>
+<span class="cm"># Prod server: .NET 6.0.2  ← different!</span>
+<span class="cm"># Dev: SQL Server 2022</span>
+<span class="cm"># Prod: SQL Server 2019 ← different!</span>
+<span class="cm"># Dev: Redis 7.2</span>
+<span class="cm"># Prod: Redis 6.0 ← different!</span>
+<span class="cm"># Result: "Works on my machine!" 😭</span></pre>
+    </div>
+    <div class="good-box">
+      <div class="box-label">✅ With Docker</div>
+      <pre style="font-size:0.78em"><span class="cm"># Dockerfile pins exact versions</span>
+FROM mcr.microsoft.com/dotnet/aspnet:<span class="nm">8.0</span>
+<span class="cm"># Same image on all environments!</span>
+<span class="cm"># Dev, staging, prod = identical runtime</span>
+<span class="cm"># docker run zencampus:latest</span>
+<span class="cm"># → same behavior everywhere ✅</span></pre>
+    </div>
+  </div>
+
+  <div class="arch-box">
+Docker vs VM:
+  VM: Hardware → Hypervisor → Guest OS (2GB) → App
+  Container: Hardware → OS → Docker Engine → App (share host OS kernel!)
+
+  Container = lightweight (MB not GB), starts in seconds not minutes
+  Same isolation as VM for app dependencies, NOT for OS kernel
+  </div>
+</div>
+
+<!-- SECTION 2: DOCKERFILE -->
+<div class="section" id="dockerfile">
+  <div class="section-title"><span class="num">2</span> Dockerfile — Multi-Stage Build for .NET</div>
+
+  <pre><span class="cm"># Single-stage (BAD) — image includes SDK (1.8GB!)</span>
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+WORKDIR /app
+COPY . .
+RUN dotnet publish -c Release -o out
+ENTRYPOINT [<span class="st">"dotnet"</span>, <span class="st">"out/ZenCampusWeb.dll"</span>]
+<span class="cm"># Image size: ~1.8GB  ← huge! SDK not needed at runtime!</span></pre>
+
+  <pre><span class="cm"># Multi-stage (GOOD) — SDK for build, ASP.NET runtime for run</span>
+<span class="cm">####  Stage 1: Build  ####</span>
+FROM mcr.microsoft.com/dotnet/sdk:<span class="nm">8.0</span> AS build
+WORKDIR /src
+
+<span class="cm"># Copy csproj first — layer cache! (packages only re-download if .csproj changes)</span>
+COPY [<span class="st">"ZenCampusWeb/ZenCampusWeb.csproj"</span>, <span class="st">"ZenCampusWeb/"</span>]
+COPY [<span class="st">"ZenCampus.Core/ZenCampus.Core.csproj"</span>, <span class="st">"ZenCampus.Core/"</span>]
+RUN dotnet restore <span class="st">"ZenCampusWeb/ZenCampusWeb.csproj"</span>
+
+<span class="cm"># Copy everything else and build</span>
+COPY . .
+WORKDIR /src/ZenCampusWeb
+RUN dotnet publish -c Release -o /app/publish --no-restore
+
+<span class="cm">####  Stage 2: Runtime  ####</span>
+FROM mcr.microsoft.com/dotnet/aspnet:<span class="nm">8.0</span> AS runtime
+WORKDIR /app
+
+<span class="cm"># Security: run as non-root user!</span>
+RUN adduser --disabled-password --gecos <span class="st">""</span> appuser
+USER appuser
+
+<span class="cm"># Copy only published output from build stage</span>
+COPY --from=build --chown=appuser /app/publish .
+
+<span class="cm"># Health check — Docker knows if container is healthy</span>
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+EXPOSE 8080
+ENTRYPOINT [<span class="st">"dotnet"</span>, <span class="st">"ZenCampusWeb.dll"</span>]
+<span class="cm"># Image size: ~250MB  ← 7x smaller! Only runtime, no SDK</span></pre>
+
+  <pre><span class="cm"># .dockerignore — don't copy these into build context</span>
+**/bin
+**/obj
+**/.vs
+**/node_modules
+**/*.user
+.git
+.gitignore
+README.md
+<span class="cm"># Without .dockerignore: COPY . . copies 500MB of build artifacts!
+# With .dockerignore: only source files, fast build</span></pre>
+
+  <div class="tip">
+    <div class="t-label">💡 Layer Caching — The Key to Fast Builds</div>
+    <p>Docker caches each layer. If a layer hasn't changed, it uses cache. Copy <code>.csproj</code> first + restore → this layer cached unless NuGet packages change. Copy source code after → only invalidates from that layer down. Result: code change = only compile layer rebuilds (seconds, not minutes)!</p>
+  </div>
+
+  <div class="cmd"><span class="prompt">$ </span>docker build -t zencampus-web:latest .</div>
+  <div class="cmd"><span class="prompt">$ </span>docker run -p 8080:8080 -e "ConnectionStrings__ZenCampus=Server=db..." zencampus-web:latest</div>
+  <div class="cmd"><span class="prompt">$ </span>docker images zencampus-web     # check image size</div>
+  <div class="cmd"><span class="prompt">$ </span>docker history zencampus-web:latest   # see layers</div>
+</div>
+
+<!-- SECTION 3: DOCKER COMPOSE -->
+<div class="section" id="compose">
+  <div class="section-title"><span class="num">3</span> Docker Compose — Local Dev Environment</div>
+
+  <pre><span class="cm"># docker-compose.yml — ZenCampus full local stack</span>
+version: <span class="st">'3.9'</span>
+
+services:
+  <span class="cm"># ZenCampus Web App</span>
+  zencampus-web:
+    build:
+      context: .
+      dockerfile: ZenCampusWeb/Dockerfile
+    ports:
+      - <span class="st">"8080:8080"</span>
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ZenCampus=Server=sqlserver;Database=ZenCampusDB;User=sa;Password=${SQL_PASSWORD};TrustServerCertificate=true
+      - Redis__Connection=redis:6379
+      - RabbitMQ__Host=rabbitmq
+    depends_on:
+      sqlserver:
+        condition: service_healthy   <span class="cm"># wait for SQL to be ready!</span>
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs            <span class="cm"># mount log folder</span>
+    restart: unless-stopped
+
+  <span class="cm"># SQL Server</span>
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - SA_PASSWORD=${SQL_PASSWORD}
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+    ports:
+      - <span class="st">"1433:1433"</span>
+    volumes:
+      - sqlserver-data:/var/opt/mssql  <span class="cm"># persist data!</span>
+    healthcheck:
+      test: [<span class="st">"CMD"</span>, <span class="st">"/opt/mssql-tools/bin/sqlcmd"</span>, <span class="st">"-S"</span>, <span class="st">"localhost"</span>, <span class="st">"-U"</span>, <span class="st">"sa"</span>, <span class="st">"-P"</span>, <span class="st">"${SQL_PASSWORD}"</span>, <span class="st">"-Q"</span>, <span class="st">"SELECT 1"</span>]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  <span class="cm"># Redis</span>
+  redis:
+    image: redis:7-alpine
+    ports:
+      - <span class="st">"6379:6379"</span>
+    healthcheck:
+      test: [<span class="st">"CMD"</span>, <span class="st">"redis-cli"</span>, <span class="st">"ping"</span>]
+      interval: 10s
+
+  <span class="cm"># RabbitMQ</span>
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - <span class="st">"5672:5672"</span>    <span class="cm"># AMQP</span>
+      - <span class="st">"15672:15672"</span>  <span class="cm"># Management UI</span>
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+
+  <span class="cm"># Hangfire Worker (separate service)</span>
+  hangfire-worker:
+    build:
+      context: .
+      dockerfile: ZenCampus.HangfireWorker/Dockerfile
+    environment:
+      - ConnectionStrings__ZenCampus=Server=sqlserver;...
+    depends_on:
+      - sqlserver
+      - rabbitmq
+
+volumes:
+  sqlserver-data:    <span class="cm"># named volume — persists across container restarts</span></pre>
+
+  <div class="cmd"><span class="prompt">$ </span>docker compose up -d          # start all services detached</div>
+  <div class="cmd"><span class="prompt">$ </span>docker compose logs -f zencampus-web   # follow logs</div>
+  <div class="cmd"><span class="prompt">$ </span>docker compose down -v        # stop + remove volumes</div>
+  <div class="cmd"><span class="prompt">$ </span>docker compose ps             # status of all services</div>
+</div>
+
+<!-- SECTION 4: K8S CONCEPTS -->
+<div class="section" id="k8s">
+  <div class="section-title"><span class="num">4</span> Kubernetes Concepts — The Vocabulary</div>
+
+  <div class="movie">
+    <span class="film">🎬 Baahubali — Amarendra commands the army. Kubernetes = Amarendra. Pods = soldiers. Node = battalion. Deployment = battle strategy. Service = communication channel. HPA = call reinforcements!</span>
+    <p>K8s orchestrates containers. Amarendra doesn't fight — he commands. K8s doesn't run code — it manages which containers run where, restarts failed ones, scales up when load increases. Master plan (Desired State) → K8s makes it happen.</p>
+  </div>
+
+  <div class="arch-box">
+Kubernetes Architecture — ZenCampus:
+
+Control Plane (Master):
+  ├── API Server    — kubectl talks here
+  ├── Scheduler     — decides which Node runs a Pod
+  ├── Controller    — ensures desired state (restart dead pods)
+  └── etcd          — cluster state storage (like DB for k8s)
+
+Worker Nodes (where containers run):
+  Node 1 (4 CPU, 16GB)          Node 2 (4 CPU, 16GB)
+  ├── Pod: student-service-abc   ├── Pod: student-service-xyz
+  ├── Pod: fee-service-def       ├── Pod: fee-service-ghi
+  └── Pod: redis-aaa             └── Pod: hangfire-worker-bbb
+
+Pod    = 1 or more containers running together (usually 1)
+Node   = VM or physical machine where pods run
+Deployment = manages pod replicas, rolling updates
+Service    = stable DNS name + load balancing for pods
+Namespace  = virtual cluster — isolate school-a from school-b
+ConfigMap  = non-secret config (URLs, feature flags)
+Secret     = sensitive data (DB passwords, API keys)
+Ingress    = HTTP routing rules → routes /api → services
+HPA        = auto-scale pods based on CPU/memory
+  </div>
+
+  <table>
+    <tr><th>Resource</th><th>Purpose</th><th>ZenCampus Use</th></tr>
+    <tr><td class="yellow">Pod</td><td>Smallest deployable unit — 1+ containers</td><td>One StudentService container instance</td></tr>
+    <tr><td class="yellow">Deployment</td><td>Manages N replicas of a pod, rolling updates</td><td>3 replicas of StudentService</td></tr>
+    <tr><td class="yellow">Service</td><td>Stable IP/DNS for pod group (pods restart, IP changes)</td><td>student-service:5001 always routes to healthy pods</td></tr>
+    <tr><td class="yellow">ConfigMap</td><td>Non-secret config as key-value or files</td><td>AppSettings.json, environment URLs</td></tr>
+    <tr><td class="yellow">Secret</td><td>Base64-encoded sensitive data</td><td>DB connection string, JWT secret, API keys</td></tr>
+    <tr><td class="yellow">Ingress</td><td>HTTP/HTTPS routing rules → services</td><td>/api/students/* → StudentService</td></tr>
+    <tr><td class="yellow">HPA</td><td>Auto-scale deployment based on metrics</td><td>3→10 pods during month-end fee rush</td></tr>
+    <tr><td class="yellow">PersistentVolume</td><td>Storage that outlives pods</td><td>SQL Server data, Redis AOF files</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 5: YAMLS -->
+<div class="section" id="yaml">
+  <div class="section-title"><span class="num">5</span> Kubernetes YAML — Deploy ZenCampus StudentService</div>
+
+  <pre><span class="cm"># deployment.yaml — manages pod replicas</span>
+<span class="y">apiVersion</span>: apps/v1
+<span class="y">kind</span>: Deployment
+<span class="y">metadata</span>:
+  <span class="y">name</span>: student-service
+  <span class="y">namespace</span>: zencampus
+  <span class="y">labels</span>:
+    <span class="y">app</span>: student-service
+<span class="y">spec</span>:
+  <span class="y">replicas</span>: <span class="nm">3</span>                    <span class="cm"># 3 pods always running</span>
+  <span class="y">selector</span>:
+    <span class="y">matchLabels</span>:
+      <span class="y">app</span>: student-service
+  <span class="y">strategy</span>:
+    <span class="y">type</span>: RollingUpdate
+    <span class="y">rollingUpdate</span>:
+      <span class="y">maxUnavailable</span>: <span class="nm">1</span>           <span class="cm"># at most 1 pod down during deploy</span>
+      <span class="y">maxSurge</span>: <span class="nm">1</span>                 <span class="cm"># 1 extra pod during deploy = 4 total</span>
+  <span class="y">template</span>:
+    <span class="y">metadata</span>:
+      <span class="y">labels</span>:
+        <span class="y">app</span>: student-service
+    <span class="y">spec</span>:
+      <span class="y">containers</span>:
+      - <span class="y">name</span>: student-service
+        <span class="y">image</span>: zencampus/student-service:1.2.0    <span class="cm"># pin version, not "latest"!</span>
+        <span class="y">ports</span>:
+        - <span class="y">containerPort</span>: <span class="nm">5001</span>
+        <span class="y">resources</span>:
+          <span class="y">requests</span>:                               <span class="cm"># guaranteed minimum</span>
+            <span class="y">cpu</span>: <span class="st">"250m"</span>                            <span class="cm"># 0.25 CPU cores</span>
+            <span class="y">memory</span>: <span class="st">"256Mi"</span>
+          <span class="y">limits</span>:                                 <span class="cm"># hard maximum</span>
+            <span class="y">cpu</span>: <span class="st">"500m"</span>
+            <span class="y">memory</span>: <span class="st">"512Mi"</span>                       <span class="cm"># exceed → OOMKilled!</span>
+        <span class="y">env</span>:
+        - <span class="y">name</span>: ASPNETCORE_ENVIRONMENT
+          <span class="y">value</span>: Production
+        - <span class="y">name</span>: ConnectionStrings__ZenCampus      <span class="cm"># from Secret!</span>
+          <span class="y">valueFrom</span>:
+            <span class="y">secretKeyRef</span>:
+              <span class="y">name</span>: zencampus-secrets
+              <span class="y">key</span>: db-connection-string
+        - <span class="y">name</span>: Redis__Connection                 <span class="cm"># from ConfigMap</span>
+          <span class="y">valueFrom</span>:
+            <span class="y">configMapKeyRef</span>:
+              <span class="y">name</span>: zencampus-config
+              <span class="y">key</span>: redis-connection
+        <span class="y">livenessProbe</span>:
+          <span class="y">httpGet</span>:
+            <span class="y">path</span>: /health/live
+            <span class="y">port</span>: <span class="nm">5001</span>
+          <span class="y">initialDelaySeconds</span>: <span class="nm">15</span>
+          <span class="y">periodSeconds</span>: <span class="nm">20</span>
+        <span class="y">readinessProbe</span>:
+          <span class="y">httpGet</span>:
+            <span class="y">path</span>: /health/ready
+            <span class="y">port</span>: <span class="nm">5001</span>
+          <span class="y">initialDelaySeconds</span>: <span class="nm">10</span>
+          <span class="y">periodSeconds</span>: <span class="nm">10</span></pre>
+
+  <pre><span class="cm"># service.yaml — stable DNS name for StudentService pods</span>
+<span class="y">apiVersion</span>: v1
+<span class="y">kind</span>: Service
+<span class="y">metadata</span>:
+  <span class="y">name</span>: student-service         <span class="cm"># DNS: student-service.zencampus.svc.cluster.local</span>
+  <span class="y">namespace</span>: zencampus
+<span class="y">spec</span>:
+  <span class="y">selector</span>:
+    <span class="y">app</span>: student-service        <span class="cm"># routes to pods with this label</span>
+  <span class="y">ports</span>:
+  - <span class="y">port</span>: <span class="nm">5001</span>
+    <span class="y">targetPort</span>: <span class="nm">5001</span>
+  <span class="y">type</span>: ClusterIP               <span class="cm"># only internal cluster access</span>
+
+<span class="cm">---  three types of Service  ---
+ClusterIP   — internal only (service-to-service)   ← use this for microservices
+NodePort    — exposes on each node IP:port (dev/testing)
+LoadBalancer— creates cloud LB (AWS/Azure) with public IP  ← use for API Gateway</span></pre>
+
+  <pre><span class="cm"># ingress.yaml — HTTP routing to services</span>
+<span class="y">apiVersion</span>: networking.k8s.io/v1
+<span class="y">kind</span>: Ingress
+<span class="y">metadata</span>:
+  <span class="y">name</span>: zencampus-ingress
+  <span class="y">namespace</span>: zencampus
+  <span class="y">annotations</span>:
+    <span class="y">nginx.ingress.kubernetes.io/rewrite-target</span>: /
+    <span class="y">nginx.ingress.kubernetes.io/rate-limit</span>: <span class="st">"100"</span>
+<span class="y">spec</span>:
+  <span class="y">tls</span>:                                    <span class="cm"># HTTPS!</span>
+  - <span class="y">hosts</span>: [api.zencampus.com]
+    <span class="y">secretName</span>: zencampus-tls-secret
+  <span class="y">rules</span>:
+  - <span class="y">host</span>: api.zencampus.com
+    <span class="y">http</span>:
+      <span class="y">paths</span>:
+      - <span class="y">path</span>: /api/students
+        <span class="y">pathType</span>: Prefix
+        <span class="y">backend</span>:
+          <span class="y">service</span>:
+            <span class="y">name</span>: student-service
+            <span class="y">port</span>:
+              <span class="y">number</span>: <span class="nm">5001</span>
+      - <span class="y">path</span>: /api/fees
+        <span class="y">pathType</span>: Prefix
+        <span class="y">backend</span>:
+          <span class="y">service</span>:
+            <span class="y">name</span>: fee-service
+            <span class="y">port</span>:
+              <span class="y">number</span>: <span class="nm">5002</span></pre>
+</div>
+
+<!-- SECTION 6: CONFIGMAP + SECRET -->
+<div class="section" id="config">
+  <div class="section-title"><span class="num">6</span> ConfigMap + Secret — Never Hardcode Config!</div>
+
+  <div class="danger">
+    <div class="d-label">⛔ NEVER do this — hardcoded secrets in Dockerfile or appsettings.json committed to Git!</div>
+    <p>Connection strings, JWT secrets, API keys in appsettings.json → committed to Git → exposed to all developers, CI logs, Docker image history. Real incident: AWS keys in GitHub repo = $50,000 bill in 2 hours (crypto miners).</p>
+  </div>
+
+  <pre><span class="cm"># configmap.yaml — non-sensitive configuration</span>
+<span class="y">apiVersion</span>: v1
+<span class="y">kind</span>: ConfigMap
+<span class="y">metadata</span>:
+  <span class="y">name</span>: zencampus-config
+  <span class="y">namespace</span>: zencampus
+<span class="y">data</span>:
+  <span class="y">redis-connection</span>: <span class="st">"redis-service:6379"</span>
+  <span class="y">rabbitmq-host</span>:    <span class="st">"rabbitmq-service"</span>
+  <span class="y">sms-gateway-url</span>:  <span class="st">"https://sms.gateway.com/api"</span>
+  <span class="y">max-students-per-school</span>: <span class="st">"5000"</span>
+  <span class="y">feature-flag-new-ui</span>: <span class="st">"true"</span>
+
+<span class="cm">---</span>
+<span class="cm"># secret.yaml — sensitive data (base64 encoded, not encrypted by default!)</span>
+<span class="y">apiVersion</span>: v1
+<span class="y">kind</span>: Secret
+<span class="y">metadata</span>:
+  <span class="y">name</span>: zencampus-secrets
+  <span class="y">namespace</span>: zencampus
+<span class="y">type</span>: Opaque
+<span class="y">stringData</span>:                              <span class="cm"># k8s base64-encodes automatically</span>
+  <span class="y">db-connection-string</span>: <span class="st">"Server=sqlserver;Database=ZenCampusDB;User=sa;Password=Str0ngP@ss!"</span>
+  <span class="y">jwt-secret</span>:           <span class="st">"zencampus-super-secret-jwt-key-min-32-chars"</span>
+  <span class="y">sms-api-key</span>:          <span class="st">"sk_live_abc123"</span>
+  <span class="y">redis-password</span>:       <span class="st">"redisSecretPass"</span></pre>
+
+  <pre><span class="cm">// In .NET — environment variables override appsettings.json automatically
+// k8s injects Secret/ConfigMap as env vars → app reads via IConfiguration</span>
+
+<span class="cm">// appsettings.json — NO secrets, only structure + dev defaults</span>
+{
+  <span class="st">"ConnectionStrings"</span>: {
+    <span class="st">"ZenCampus"</span>: <span class="st">"Server=localhost;..."</span>  <span class="cm">// dev default only</span>
+  }
+}
+
+<span class="cm">// Production: k8s env var ConnectionStrings__ZenCampus overrides this!
+// Double underscore __ = colon : in .NET config hierarchy</span>
+
+<span class="cm">// Program.cs — reads config from env vars automatically</span>
+<span class="kw">var</span> <span class="pr">connStr</span> = <span class="pr">builder</span>.<span class="pr">Configuration</span>.<span class="mt">GetConnectionString</span>(<span class="st">"ZenCampus"</span>);
+<span class="cm">// In k8s: reads env var ConnectionStrings__ZenCampus (from Secret)
+// Locally: reads appsettings.Development.json</span></pre>
+
+  <div class="tip">
+    <div class="t-label">💡 Production Secret Management</div>
+    <p>K8s Secrets = base64, NOT encrypted. Store real secrets in: Azure Key Vault + CSI driver (mounts as files), AWS Secrets Manager, HashiCorp Vault. Never commit Secret YAML with real values — use <code>kubectl create secret</code> from CLI or CI/CD pipeline env vars. In interview: "Secrets in Azure Key Vault, mounted via CSI driver — never in YAML files."</p>
+  </div>
+</div>
+
+<!-- SECTION 7: HPA -->
+<div class="section" id="hpa">
+  <div class="section-title"><span class="num">7</span> HPA — Auto-Scale for Month-End Fee Rush</div>
+
+  <div class="movie">
+    <span class="film">🎬 Bigil — Normal match 11 players போதும். Final match = extra reserves call! HPA = same. Normal day 3 pods. Month-end fee rush → 10 pods auto-scale!</span>
+    <p>ZenCampus: 1st of month, 50,000 parents paying fees simultaneously. CPU spikes to 90%. HPA notices → scales FeeService from 3 → 10 pods in 60 seconds. Rush passes → scales back to 3. Pay only for what you use!</p>
+  </div>
+
+  <pre><span class="cm"># hpa.yaml — HorizontalPodAutoscaler</span>
+<span class="y">apiVersion</span>: autoscaling/v2
+<span class="y">kind</span>: HorizontalPodAutoscaler
+<span class="y">metadata</span>:
+  <span class="y">name</span>: fee-service-hpa
+  <span class="y">namespace</span>: zencampus
+<span class="y">spec</span>:
+  <span class="y">scaleTargetRef</span>:
+    <span class="y">apiVersion</span>: apps/v1
+    <span class="y">kind</span>: Deployment
+    <span class="y">name</span>: fee-service
+  <span class="y">minReplicas</span>: <span class="nm">3</span>                <span class="cm"># always at least 3</span>
+  <span class="y">maxReplicas</span>: <span class="nm">15</span>               <span class="cm"># month-end scale limit</span>
+  <span class="y">metrics</span>:
+  - <span class="y">type</span>: Resource
+    <span class="y">resource</span>:
+      <span class="y">name</span>: cpu
+      <span class="y">target</span>:
+        <span class="y">type</span>: Utilization
+        <span class="y">averageUtilization</span>: <span class="nm">60</span>   <span class="cm"># scale when CPU > 60%</span>
+  - <span class="y">type</span>: Resource
+    <span class="y">resource</span>:
+      <span class="y">name</span>: memory
+      <span class="y">target</span>:
+        <span class="y">type</span>: Utilization
+        <span class="y">averageUtilization</span>: <span class="nm">70</span>
+  <span class="y">behavior</span>:
+    <span class="y">scaleUp</span>:
+      <span class="y">stabilizationWindowSeconds</span>: <span class="nm">30</span>    <span class="cm"># wait 30s before scaling up again</span>
+      <span class="y">policies</span>:
+      - <span class="y">type</span>: Pods
+        <span class="y">value</span>: <span class="nm">3</span>                          <span class="cm"># add max 3 pods at once</span>
+        <span class="y">periodSeconds</span>: <span class="nm">60</span>
+    <span class="y">scaleDown</span>:
+      <span class="y">stabilizationWindowSeconds</span>: <span class="nm">300</span>   <span class="cm"># wait 5 min before scaling down</span></pre>
+
+  <pre><span class="cm"># kubectl commands — daily operations</span>
+
+<span class="cm"># Deploy / update</span>
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+kubectl apply -f hpa.yaml
+
+<span class="cm"># Check status</span>
+kubectl get pods -n zencampus
+kubectl get deployments -n zencampus
+kubectl get hpa -n zencampus          <span class="cm"># see current replicas vs target</span>
+kubectl describe pod student-service-abc -n zencampus  <span class="cm"># events, status</span>
+
+<span class="cm"># Debug crashing pod</span>
+kubectl logs student-service-abc -n zencampus          <span class="cm"># last logs</span>
+kubectl logs student-service-abc -n zencampus --previous   <span class="cm"># CRASHED pod logs!</span>
+kubectl exec -it student-service-abc -n zencampus -- /bin/sh  <span class="cm"># shell into pod</span>
+
+<span class="cm"># Rolling update — zero downtime!</span>
+kubectl set image deployment/student-service \
+    student-service=zencampus/student-service:1.3.0 -n zencampus
+
+kubectl rollout status deployment/student-service -n zencampus   <span class="cm"># watch progress</span>
+kubectl rollout undo deployment/student-service -n zencampus     <span class="cm"># ROLLBACK!</span>
+kubectl rollout history deployment/student-service -n zencampus  <span class="cm"># change log</span>
+
+<span class="cm"># Scale manually</span>
+kubectl scale deployment fee-service --replicas=10 -n zencampus</pre>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">8</span> 🎯 Scenarios — Interview + Production + Critical</div>
+
+  <!-- S1 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num warn">1</div>
+      <div><div class="scenario-title">Docker image 1.8GB — CI/CD push takes 20 minutes! <span class="hot-badge">🔥 Production</span> <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "ZenCampus Docker image — 1.8GB. CI/CD pipeline: push to registry = 20 min. Pull on k8s node = 15 min. Total deploy time = 40+ minutes. Production hotfix takes too long. Fix?"</div>
+    <button class="reveal-btn warn-btn" onclick="toggle(this)">🔥 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label warn">✅ MULTI-STAGE + LAYER CACHING + .DOCKERIGNORE</div>
+      <pre><span class="cm"># Problem: using SDK image (1.8GB) as final image
+# Fix 1: Multi-stage — use aspnet runtime (250MB)</span>
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+<span class="cm"># ... build ...</span>
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime  <span class="cm">← 250MB not 1.8GB!</span>
+COPY --from=build /app/publish .
+
+<span class="cm"># Fix 2: Layer caching — copy .csproj before source</span>
+COPY ["ZenCampusWeb.csproj", "./"]
+RUN dotnet restore                     <span class="cm">← cached unless NuGet changes</span>
+COPY . .                               <span class="cm">← only invalidated on source change</span>
+RUN dotnet publish ...
+
+<span class="cm"># Fix 3: .dockerignore — exclude bin/obj/node_modules
+# Result: 1.8GB → 250MB (7x smaller)
+#         Build: 20 min → 2 min (cache hits)
+#         Push: 20 min → 3 min
+#         Pull: 15 min → 2 min (smaller, delta pushes)</span></pre>
+      <div class="gold-box"><div class="gold-label">⭐ CI/CD Additional Fix</div><p>"In GitHub Actions / Azure DevOps — cache Docker layers between builds with <code>cache-from: type=gha</code>. If NuGet packages unchanged → restore layer hits cache → build goes from 8 min → 45 seconds!"</p></div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num warn">2</div>
+      <div><div class="scenario-title">Pod CrashLoopBackOff — StudentService keeps restarting! <span class="hot-badge">🔥 Production</span> <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "kubectl get pods shows: student-service-abc   0/1   CrashLoopBackOff   7   12m. How do you debug this? Walk through your exact investigation steps."</div>
+    <button class="reveal-btn warn-btn" onclick="toggle(this)">🔥 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label warn">✅ SYSTEMATIC DEBUG STEPS</div>
+      <pre><span class="cm"># Step 1: Previous pod logs — crash reason is in the CRASHED container</span>
+kubectl logs student-service-abc -n zencampus --previous
+<span class="cm"># → "Unable to connect to SQL Server" OR
+# → "System.OutOfMemoryException" OR
+# → Application startup error (missing config)</span>
+
+<span class="cm"># Step 2: Describe pod — see Events section</span>
+kubectl describe pod student-service-abc -n zencampus
+<span class="cm"># Events section shows:
+#   OOMKilled: container exceeded memory limit → increase limits.memory
+#   Failed to pull image: wrong tag → fix image name
+#   Liveness probe failed: app not starting in time → increase initialDelaySeconds
+#   Back-off restarting: k8s waiting longer and longer between restarts</span>
+
+<span class="cm"># Step 3: Check resource limits</span>
+kubectl top pod student-service-abc -n zencampus
+<span class="cm"># → 510Mi memory, limit is 512Mi → OOMKilled! Increase to 1Gi</span>
+
+<span class="cm"># Step 4: Check events in namespace</span>
+kubectl get events -n zencampus --sort-by='.lastTimestamp'
+<span class="cm"># → "secret zencampus-secrets not found" → missing secret!</span>
+
+<span class="cm"># Common causes + fixes:
+# OOMKilled     → increase limits.memory in deployment.yaml
+# DB conn fail  → check Secret exists, correct key names
+# Config missing→ check ConfigMap + env var mapping
+# Image error   → kubectl describe pod shows ImagePullBackOff, fix tag
+# Slow start    → increase initialDelaySeconds on liveness probe</span></pre>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div><div class="scenario-title">Rolling update — zero downtime deploy in ZenCampus <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'How do you deploy a new version of ZenCampus StudentService with zero downtime on Kubernetes?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ROLLING UPDATE STRATEGY</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong>Setup:</strong> Deployment with <code>strategy.type: RollingUpdate</code>, <code>maxUnavailable: 1</code>, <code>maxSurge: 1</code>. Readiness probe on <code>/health/ready</code>.</p>
+        <p><strong>What happens:</strong> 3 pods running v1.2. Deploy v1.3: k8s starts 1 new v1.3 pod (now 4 total). Waits for readiness probe to pass (DB connected, Redis connected). Only then terminates 1 old v1.2 pod. Repeats. During entire process: always ≥2 healthy pods serving traffic. Zero downtime.</p>
+        <p><strong>Critical:</strong> Readiness probe MUST check real dependencies (DB, Redis). Without it, k8s sends traffic to v1.3 pod before it's ready → 502 errors for users.</p>
+        <p><strong>Rollback:</strong> <code>kubectl rollout undo deployment/student-service</code> → instantly rolls back to previous revision. Takes 30 seconds — previous image already cached on nodes.</p>
+      </div>
+      <pre style="font-size:0.82em"><span class="cm"># Watch rolling update in real-time</span>
+kubectl rollout status deployment/student-service -n zencampus
+<span class="cm"># Waiting for deployment to finish: 1 out of 3 new replicas have been updated...
+# Waiting for deployment to finish: 2 out of 3 new replicas have been updated...
+# Waiting for deployment to finish: 3 out of 3 new replicas have been updated...
+# deployment "student-service" successfully rolled out</span></pre>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div><div class="scenario-title">OOMKilled — pod killed due to memory limit <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "FeeService pod killed every night at 2 AM during batch report generation. kubectl logs shows process killed. No exception in logs. kubectl describe pod shows 'OOMKilled'. How to fix?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ OOM — DIAGNOSE + FIX LIMITS</div>
+      <pre><span class="cm"># OOMKilled = Linux kernel killed process for exceeding memory limit
+# Container says limits.memory: 512Mi, report generation uses 600Mi → killed!</span>
+
+<span class="cm"># Step 1: Measure actual memory during batch</span>
+kubectl top pods -n zencampus --sort-by=memory
+<span class="cm"># fee-service-abc: CPU: 450m, MEMORY: 598Mi  ← exceeds 512Mi limit!</span>
+
+<span class="cm"># Step 2: Fix in deployment.yaml — increase limits</span>
+resources:
+  requests:
+    memory: "256Mi"    <span class="cm"># guaranteed minimum</span>
+    cpu: "250m"
+  limits:
+    memory: "1Gi"      <span class="cm"># increased from 512Mi</span>
+    cpu: "500m"
+
+<span class="cm"># Step 3: Optimize code — report loads all 50k rows at once!</span>
+<span class="cm"># Fix: stream/paginate report generation</span>
+<span class="kw">await foreach</span> (<span class="kw">var</span> <span class="pr">batch</span> <span class="kw">in</span> <span class="pr">_repo</span>.<span class="mt">GetStudentsBatchedAsync</span>(<span class="nm">1000</span>))
+{
+    <span class="kw">await</span> <span class="mt">WriteReportBatchAsync</span>(<span class="pr">batch</span>);
+    <span class="cm">// GC can collect each batch after processing — constant memory!</span>
+}
+<span class="cm"># Result: Memory usage: 598Mi → 80Mi (constant regardless of student count)</span></pre>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div><div class="scenario-title">ConfigMap vs Secret — when to use which? <span class="diff easy">Easy</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'ConfigMap vs Secret — difference? Real ZenCampus examples for each.'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ CLEAR DISTINCTION + EXAMPLES</div>
+      <table style="font-size:0.83em">
+        <tr><th></th><th>ConfigMap</th><th>Secret</th></tr>
+        <tr><td>Storage</td><td>Plain text in etcd</td><td>Base64 in etcd (encrypt-at-rest separately)</td></tr>
+        <tr><td>Visibility</td><td>kubectl get configmap → readable</td><td>kubectl get secret → base64 (not plaintext)</td></tr>
+        <tr><td>ZenCampus Examples</td><td>Redis URL, RabbitMQ host, SMS gateway URL, max students, feature flags, log level</td><td>DB connection string, JWT secret, SMS API key, Redis password, TLS certs</td></tr>
+        <tr><td>Rule</td><td>Safe to read in cluster audit logs</td><td>Would cause damage if exposed</td></tr>
+      </table>
+      <div class="gold-box"><div class="gold-label">⭐ Production Best Practice</div><p>"K8s Secrets = base64, NOT encrypted by default. Enable etcd encryption at rest. Better: use Azure Key Vault CSI driver — mounts secret as file in pod, value never stored in k8s etcd. That's our ZenCampus approach for DB strings and API keys."</p></div>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num warn">6</div>
+      <div><div class="scenario-title">HPA not scaling — month-end fee rush, pods stuck at 3! <span class="hot-badge">🔥 Production</span> <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "1st of month, 10,000 parents hitting fee payment simultaneously. FeeService CPU at 90%+. HPA configured minReplicas:3 maxReplicas:15. But kubectl get hpa shows TARGETS: unknown/60%. Pods stuck at 3. Why?"</div>
+    <button class="reveal-btn warn-btn" onclick="toggle(this)">🔥 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label warn">✅ HPA TROUBLESHOOTING — MISSING METRICS SERVER</div>
+      <pre><span class="cm"># TARGETS: unknown = HPA can't read CPU metrics!
+# Root cause: metrics-server not installed in cluster</span>
+
+kubectl get hpa -n zencampus
+<span class="cm"># NAME           REFERENCE         TARGETS         MINPODS  MAXPODS  REPLICAS
+# fee-svc-hpa   Deployment/fee    &lt;unknown&gt;/60%    3        15       3   ← stuck!</span>
+
+<span class="cm"># Fix 1: Install metrics-server</span>
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+<span class="cm"># Fix 2: HPA needs resource REQUESTS set — can't measure utilization % without it!</span>
+resources:
+  requests:
+    cpu: "250m"    <span class="cm">← REQUIRED! HPA uses "currentCPU / requests.cpu * 100"</span>
+  limits:
+    cpu: "500m"
+
+<span class="cm"># Fix 3: Verify metrics-server working</span>
+kubectl top pods -n zencampus     <span class="cm"># should show actual usage</span>
+kubectl describe hpa fee-service-hpa -n zencampus
+<span class="cm"># Events: SuccessfulRescale: New size: 8, reason: cpu resource utilization above target
+# → HPA now scaling! 3 → 8 pods in 60 seconds</span>
+
+<span class="cm"># Prevention: Pre-scale before month-end (manual or scheduled)</span>
+kubectl scale deployment fee-service --replicas=8 -n zencampus
+<span class="cm"># Schedule at midnight 1st of month via Hangfire or CronJob!</span></pre>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div><div class="scenario-title">Namespace isolation — multi-school tenant separation <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'ZenCampus serves 200 schools. How do you isolate one school's data/traffic from others in Kubernetes? School A's load spike should not affect School B.'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ NAMESPACE + RESOURCE QUOTA ISOLATION</div>
+      <pre><span class="cm"># Option 1: Shared cluster, Namespace per tier (not per school — 200 namespaces = too many)</span>
+kubectl create namespace zencampus-prod
+kubectl create namespace zencampus-staging
+kubectl create namespace zencampus-dev
+
+<span class="cm"># Option 2: Resource quotas per namespace — prevent one service starving others</span>
+<span class="y">apiVersion</span>: v1
+<span class="y">kind</span>: ResourceQuota
+<span class="y">metadata</span>:
+  <span class="y">name</span>: zencampus-quota
+  <span class="y">namespace</span>: zencampus-prod
+<span class="y">spec</span>:
+  <span class="y">hard</span>:
+    <span class="y">requests.cpu</span>:    <span class="st">"20"</span>       <span class="cm"># total CPU across all pods</span>
+    <span class="y">requests.memory</span>: <span class="st">"40Gi"</span>
+    <span class="y">pods</span>: <span class="st">"50"</span>                 <span class="cm"># max 50 pods total</span>
+
+<span class="cm"># Multi-tenancy at app level (not k8s level):
+# Each service uses schoolId from JWT claim (tenant isolation at DB/code level)
+# Global EF Core query filter: WHERE SchoolId = @currentSchoolId
+# Redis key prefix: school:{schoolId}:*
+# Hangfire job queues: school-{schoolId}-queue (separate worker per school?)
+#
+# K8s handles infra isolation. App code handles data isolation.
+# Interview: "School isolation at application layer via JWT claims + EF global filters.
+# K8s resource quotas prevent noisy neighbor for compute resources."</span></pre>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div><div class="scenario-title">Docker Compose for local dev — team onboarding in 5 minutes <span class="diff easy">Easy</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'New developer joining ZenCampus team. Currently takes 2 days to set up local environment (SQL Server, Redis, RabbitMQ, 3 microservices). How to fix?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ DOCKER COMPOSE — ONE COMMAND SETUP</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong>Solution:</strong> <code>docker-compose.yml</code> in repo root with all services. New dev onboarding:</p>
+      </div>
+      <pre style="font-size:0.83em"><span class="cm"># New developer setup — 5 minutes!</span>
+git clone https://github.com/zencampus/backend.git
+cd backend
+cp .env.example .env                    <span class="cm"># local passwords</span>
+docker compose up -d                    <span class="cm"># ALL services start!</span>
+
+<span class="cm"># What starts:
+# ✅ SQL Server 2022 (auto-runs migrations via startup script)
+# ✅ Redis 7
+# ✅ RabbitMQ 3 + Management UI at localhost:15672
+# ✅ StudentService at localhost:5001
+# ✅ FeeService at localhost:5002
+# ✅ API Gateway at localhost:8080
+# ✅ Hangfire Dashboard at localhost:8080/hangfire
+# ✅ Seq log viewer at localhost:5341 (structured logs)
+
+<span class="cm"># Seed data automatically (docker-compose entrypoint)</span>
+<span class="cm"># depends_on with service_healthy ensures DB ready before app starts</span>
+
+<span class="cm"># Team benefit: "works on my machine" → works for everyone identically
+# OS: Windows/Mac/Linux — Docker runs same everywhere</span></pre>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div><div class="scenario-title">Image tag "latest" — prod deployment went wrong! <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Deployment YAML uses image: zencampus/student-service:latest. CI/CD pipeline pushed new broken build. k8s pulled 'latest' image during pod restart (due to unrelated node restart) and deployed broken code. Zero CI/CD deploy happened! Why and how to prevent?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ NEVER USE :latest IN PRODUCTION</div>
+      <pre><span class="cm"># Problem: imagePullPolicy defaults to Always for :latest tag
+# Pod restart → k8s pulls new :latest → broken build deployed without anyone knowing!
+
+# Fix 1: Always use specific versioned tags</span>
+image: zencampus/student-service:1.3.0        <span class="cm">← pin version!</span>
+image: zencampus/student-service:sha-a1b2c3d  <span class="cm">← git SHA is best!</span>
+
+<span class="cm"># Fix 2: imagePullPolicy = IfNotPresent for versioned tags (default)</span>
+imagePullPolicy: IfNotPresent  <span class="cm"># only pull if not already on node</span>
+<span class="cm"># :latest + IfNotPresent → still stale → worse! Always use versioned tag</span>
+
+<span class="cm"># Fix 3: CI/CD pipeline tags with git SHA</span>
+<span class="cm"># GitHub Actions:</span>
+IMAGE_TAG=sha-${{ github.sha }}
+docker build -t zencampus/student-service:$IMAGE_TAG .
+docker push zencampus/student-service:$IMAGE_TAG
+kubectl set image deployment/student-service \
+    student-service=zencampus/student-service:$IMAGE_TAG
+
+<span class="cm"># Result: Every deploy is traceable to exact git commit.
+# Node restart pulls same image (immutable tag). No surprise deployments!</span></pre>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div><div class="scenario-title">"Docker + k8s experience sollu" — Full interview answer <span class="diff senior">Senior</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Tell me about your Docker and Kubernetes experience. How did you use it in ZenCampus?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE STRUCTURED ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p>"ZenCampus runs on Azure Kubernetes Service (AKS) serving 50,000 students. Here's what we did:"</p>
+        <p><strong>Docker:</strong> Multi-stage Dockerfile — SDK stage for build, ASP.NET 8 runtime for final image. Image went from 1.8GB to 250MB. Layer caching: copy .csproj first, restore, then copy source — NuGet restore cached. .dockerignore excludes bin/obj. Non-root user in container for security."</p>
+        <p><strong>Local Dev:</strong> Docker Compose with SQL Server, Redis, RabbitMQ, all 4 microservices. New developer onboarding: <code>docker compose up -d</code> — 5 minutes, not 2 days. depends_on with service_healthy prevents app starting before DB ready."</p>
+        <p><strong>Kubernetes:</strong> AKS cluster. Deployment with 3 replicas, RollingUpdate (maxUnavailable:1, maxSurge:1) — zero downtime deploys. Liveness probe on /health/live (restarts hung pods), Readiness on /health/ready (waits for DB connection before traffic). Resource limits prevent OOMKilled — discovered FeeService batch report needed 600Mi, increased from 512Mi and paginated query."</p>
+        <p><strong>HPA:</strong> FeeService scales 3→15 pods based on CPU (60% threshold) during month-end fee rush. metrics-server installed. Scale-down stabilization 5 minutes to avoid flapping."</p>
+        <p><strong>Config:</strong> ConfigMap for non-secrets (Redis URL, feature flags). Secrets injected via Azure Key Vault CSI driver — never stored in etcd plaintext. Image tags: git SHA — no :latest in production. kubectl rollout undo for instant rollback."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">9</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: Multi-stage Docker build — main benefit?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Faster container startup time</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Final image contains only runtime (no SDK) — 7x smaller, no build tools in production</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Allows building multiple apps in one Dockerfile</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Enables parallel layer caching</div>
+    <div class="quiz-fb ok">✅ Multi-stage = SDK image (1.8GB) for building, aspnet runtime image (250MB) for running. Final image has ONLY the published DLLs + runtime — no source code, no compiler, no build tools. Smaller = faster pull, smaller attack surface. Also: source code not in production image (security benefit)!</div>
+    <div class="quiz-fb nope">❌ Main benefit = image size! SDK = 1.8GB (includes compiler, build tools). ASP.NET runtime = 250MB (just runtime). Multi-stage: Stage 1 builds using SDK. Stage 2 starts fresh from runtime, copies only /app/publish output. 7x smaller. Also: source code not in final image!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: Pod TARGETS: &lt;unknown&gt;/60% in HPA — what's the most likely cause?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) HPA YAML is misconfigured</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) CPU limit not set in deployment</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) metrics-server not installed, OR resource requests not set in deployment</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) HPA needs restart after deployment change</div>
+    <div class="quiz-fb ok">✅ HPA reads CPU metrics from metrics-server. Without metrics-server → can't get metrics → TARGETS: unknown. Also: HPA calculates utilization% as (currentCPU / requests.cpu × 100) — if requests.cpu not set → can't calculate % → unknown. Fix: install metrics-server + always set resource requests!</div>
+    <div class="quiz-fb nope">❌ TARGETS unknown = HPA can't get metrics! Two causes: (1) metrics-server not installed in cluster — HPA can't read CPU data. (2) resource requests not set — HPA can't calculate utilization percentage (needs requests.cpu as the baseline). Fix both!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: image:latest production-la use பண்ணக்கூடாது — why?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) :latest pulls the wrong OS version</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Pod restarts silently pull new :latest image — broken builds deploy without explicit deployment!</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) k8s doesn't support :latest tag</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) :latest makes rollback impossible</div>
+    <div class="quiz-fb ok">✅ :latest = non-deterministic! CI pushes broken build tagged :latest. Next pod restart (node failure, OOMKilled, etc.) → k8s pulls new :latest → broken code in production without anyone doing a deploy! Use git SHA tags: image: zencampus/student-service:sha-a1b2c3d. Every image = traceable to exact commit.</div>
+    <div class="quiz-fb nope">❌ :latest danger = silent unexpected deploys! imagePullPolicy: Always (default for :latest) → every pod restart pulls new image from registry. If CI pushed broken :latest, pod restarts after node failure = broken code. Solution: versioned tags (git SHA). Explicit, deterministic, rollback-able.</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: Kubernetes Secret-la data என்ன format-la store ஆகும்?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) AES-256 encrypted</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Base64 encoded (NOT encrypted by default!)</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Plain text with RBAC access control</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) SHA-256 hashed</div>
+    <div class="quiz-fb ok">✅ K8s Secrets = Base64 in etcd — NOT encrypted! echo "mypassword" | base64 → bXlwYXNzd29yZA== (easily decoded!). Must enable etcd encryption at rest separately (EncryptionConfiguration). Better: use Azure Key Vault / AWS Secrets Manager + CSI driver. Never commit Secret YAML with real values!</div>
+    <div class="quiz-fb nope">❌ K8s Secrets are Base64 encoded, NOT encrypted! kubectl get secret zencampus-secrets -o jsonpath='{.data.db-connection-string}' | base64 -d → plain text password! Anyone with kubectl access can decode. Production: enable etcd encryption at rest + use Azure Key Vault CSI driver for real security.</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">10</span> ✅ Day 14 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory</h3>
+      <ul class="check-list">
+        <li>Container vs VM — share host OS kernel</li>
+        <li>Multi-stage Dockerfile — SDK vs runtime image</li>
+        <li>Layer caching — .csproj before source copy</li>
+        <li>Docker Compose — depends_on + healthcheck</li>
+        <li>K8s objects: Pod, Deployment, Service, Ingress</li>
+        <li>ConfigMap (non-secret) vs Secret (sensitive)</li>
+        <li>HPA — minReplicas, maxReplicas, target utilization</li>
+        <li>Rolling update — maxUnavailable, maxSurge</li>
+        <li>Liveness vs Readiness probe — restart vs LB</li>
+        <li>Resource limits — OOMKilled diagnosis</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"Multi-stage: 1.8GB → 250MB (7x smaller)"</li>
+        <li>"Layer caching: .csproj first → NuGet cached"</li>
+        <li>"CrashLoopBackOff → kubectl logs --previous"</li>
+        <li>"OOMKilled → kubectl top + paginate queries"</li>
+        <li>"HPA: unknown → missing metrics-server or requests"</li>
+        <li>"Never :latest → use git SHA tags"</li>
+        <li>"Secrets = base64, not encrypted → Key Vault"</li>
+        <li>"Rolling update: readiness probe prevents bad traffic"</li>
+        <li>"kubectl rollout undo — 30s rollback"</li>
+        <li>"Docker Compose: 2-day setup → 5 minutes"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#1a1400,#0a0a1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🐳 Day 14 Motivation</div>
+    <p style="color:#fde047;font-style:italic">"Kaaka Muttai-la same vadai, same box — different city-la same taste. Docker = same. Baahubali-la Amarendra orchestrates army — Kubernetes = same. FeeService month-end rush: 3 pods → 15 pods auto-scale (HPA). CrashLoopBackOff? kubectl logs --previous reveals the truth. <strong>Interview-la '1.8GB image-a 250MB-ku bring பண்ணேன், HPA month-end-la 15 pods scale, CrashLoopBackOff debug steps' சொன்னா — DevOps-aware developer confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 14/60 ✅ | Tomorrow: Day 15 — Azure Cloud (App Service, AKS, Key Vault, Service Bus, Blob Storage, CI/CD)</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:23.3%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">14 of 60 days (23.3%) — Docker + Kubernetes mastered!</div>
+  </div>
+</div>
+
+</div>
+<footer>
+  <p>Day 14 – Docker + Kubernetes | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🐳 "Dockerfile: multi-stage = 7x smaller. Compose: 5-min onboarding. K8s: HPA auto-scale, rolling deploy, readiness gates traffic. Never :latest. Secrets = Key Vault. CrashLoop → kubectl logs --previous!"</p>
+</footer>
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent=btn.classList.contains('warn-btn')?'🔥 Answer Reveal':'💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

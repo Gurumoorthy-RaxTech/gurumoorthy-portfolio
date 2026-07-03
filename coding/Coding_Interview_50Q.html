@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>50 Real Coding Interview Questions – C# & SQL</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Calibri,sans-serif;background:#0d1117;color:#e0e0e0;font-size:14px}
+.topbar{position:sticky;top:0;z-index:100;background:#161b22;border-bottom:2px solid #238636;padding:10px 24px;display:flex;justify-content:space-between;align-items:center}
+.topbar h1{font-size:15px;color:#3fb950}
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding:10px 20px;background:#0d1117;border-bottom:1px solid #21262d;position:sticky;top:45px;z-index:99}
+.nav a{padding:5px 13px;border-radius:20px;font-size:12px;text-decoration:none;font-weight:600;border:1px solid #30363d;color:#8b949e;transition:all .2s}
+.nav a:hover,.nav a.active{background:#238636;color:#fff;border-color:#238636}
+.container{max-width:960px;margin:0 auto;padding:20px}
+.section-title{background:linear-gradient(90deg,#0d2818,#0d1117);border-left:4px solid #238636;padding:10px 16px;font-size:14px;font-weight:700;color:#3fb950;margin:24px 0 12px;border-radius:0 6px 6px 0}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:8px}
+.badge.sql{background:#1f6feb;color:#fff}
+.badge.cs{background:#238636;color:#fff}
+.badge.linq{background:#8957e5;color:#fff}
+.badge.logic{background:#d97706;color:#fff}
+.qa{background:#161b22;border:1px solid #21262d;border-radius:8px;margin-bottom:10px;overflow:hidden}
+.q{padding:12px 16px;cursor:pointer;display:flex;gap:10px;align-items:flex-start}
+.q:hover{background:#1c2128}
+.qnum{color:#238636;font-weight:800;min-width:30px;font-size:13px;padding-top:1px}
+.qtext{font-weight:600;color:#f0f6fc;font-size:13.5px;line-height:1.45;flex:1}
+.qtag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;white-space:nowrap;align-self:center}
+.tag-sql{background:#1f6feb22;color:#58a6ff;border:1px solid #1f6feb}
+.tag-cs{background:#23863622;color:#3fb950;border:1px solid #238636}
+.tag-linq{background:#8957e522;color:#bc8cff;border:1px solid #8957e5}
+.tag-logic{background:#d9770622;color:#ffa657;border:1px solid #d97706}
+.arrow{color:#484f58;font-size:11px;padding-top:3px}
+.ans{display:none;padding:16px;background:#010409;border-top:1px solid #21262d}
+.ans.open{display:block}
+.ans p{line-height:1.7;color:#c9d1d9;margin-bottom:8px;font-size:13px}
+.ans ul{margin-left:18px;margin-bottom:8px}
+.ans ul li{line-height:1.7;color:#c9d1d9;font-size:13px;margin-bottom:3px}
+pre{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:14px;overflow-x:auto;font-size:12.5px;line-height:1.65;margin:8px 0;color:#e6edf3;font-family:'Cascadia Code','Consolas',monospace}
+.kw{color:#ff7b72}      /* keywords */
+.ty{color:#79c0ff}      /* types */
+.str{color:#a5d6ff}     /* strings */
+.cm{color:#8b949e;font-style:italic}  /* comments */
+.num{color:#79c0ff}     /* numbers */
+.fn{color:#d2a8ff}      /* functions */
+.tip{background:#0d2818;border-left:3px solid #238636;padding:8px 12px;border-radius:0 4px 4px 0;margin-top:8px;font-size:12.5px;color:#56d364}
+.out{background:#161b22;border:1px solid #30363d;border-radius:4px;padding:8px 12px;margin:6px 0;font-family:monospace;font-size:12px;color:#79c0ff}
+.out::before{content:"Output: ";color:#8b949e}
+h4{color:#58a6ff;font-size:12.5px;margin:10px 0 4px}
+.progress-bar{height:3px;background:#21262d}
+.progress-fill{height:3px;background:linear-gradient(90deg,#238636,#3fb950);transition:width .3s}
+.stats{padding:5px 20px;background:#0d1117;font-size:12px;color:#484f58;display:flex;gap:12px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>💻 50 Real Coding Interview Questions – C# & SQL &nbsp;|&nbsp; Gurumoorthy M</h1>
+  <span style="font-size:12px;color:#484f58" id="prog-text">0 / 50 done</span>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+<div class="stats"><span id="done-count">0 opened</span><span>|</span><span style="color:#3fb950">🟢 C# &nbsp;</span><span style="color:#58a6ff">🔵 SQL &nbsp;</span><span style="color:#bc8cff">🟣 LINQ &nbsp;</span><span style="color:#ffa657">🟠 Logic</span></div>
+
+<div class="nav">
+  <a href="#strings">Strings</a>
+  <a href="#arrays">Arrays & Numbers</a>
+  <a href="#loops">Loops & Patterns</a>
+  <a href="#collections">Collections & LINQ</a>
+  <a href="#sql">SQL</a>
+  <a href="#oop">OOP Coding</a>
+  <a href="#logic">Logic & Tricky</a>
+</div>
+
+<div class="container">
+
+<!-- ══════════════════════════════════════════ STRING ══════ -->
+<div id="strings">
+<div class="section-title">🔤 String Problems</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">1</span><span class="qtext">Reverse a given string</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="cm">// Method 1 – Array.Reverse</span>
+<span class="kw">string</span> Reverse(<span class="kw">string</span> s)
+{
+    <span class="kw">char</span>[] arr = s.ToCharArray();
+    Array.Reverse(arr);
+    <span class="kw">return new</span> <span class="ty">string</span>(arr);
+}
+
+<span class="cm">// Method 2 – Loop (interviewer favourite)</span>
+<span class="kw">string</span> ReverseLoop(<span class="kw">string</span> s)
+{
+    <span class="kw">string</span> result = <span class="str">""</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = s.Length - <span class="num">1</span>; i >= <span class="num">0</span>; i--)
+        result += s[i];
+    <span class="kw">return</span> result;
+}
+
+Console.WriteLine(Reverse(<span class="str">"Gurumoorthy"</span>));
+</pre>
+<div class="out">yhtromomuruG</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">2</span><span class="qtext">Check if a string is a Palindrome</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">bool</span> IsPalindrome(<span class="kw">string</span> s)
+{
+    s = s.ToLower();
+    <span class="kw">int</span> left = <span class="num">0</span>, right = s.Length - <span class="num">1</span>;
+    <span class="kw">while</span> (left &lt; right)
+    {
+        <span class="kw">if</span> (s[left] != s[right]) <span class="kw">return false</span>;
+        left++; right--;
+    }
+    <span class="kw">return true</span>;
+}
+
+Console.WriteLine(IsPalindrome(<span class="str">"madam"</span>));   <span class="cm">// True</span>
+Console.WriteLine(IsPalindrome(<span class="str">"racecar"</span>)); <span class="cm">// True</span>
+Console.WriteLine(IsPalindrome(<span class="str">"hello"</span>));   <span class="cm">// False</span>
+</pre>
+<div class="out">True / True / False</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">3</span><span class="qtext">Count vowels and consonants in a string</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">void</span> CountVowelConsonant(<span class="kw">string</span> s)
+{
+    <span class="kw">int</span> vowels = <span class="num">0</span>, consonants = <span class="num">0</span>;
+    <span class="kw">string</span> vowelSet = <span class="str">"aeiou"</span>;
+    <span class="kw">foreach</span> (<span class="kw">char</span> c <span class="kw">in</span> s.ToLower())
+    {
+        <span class="kw">if</span> (char.IsLetter(c))
+        {
+            <span class="kw">if</span> (vowelSet.Contains(c)) vowels++;
+            <span class="kw">else</span> consonants++;
+        }
+    }
+    Console.WriteLine(<span class="str">$"Vowels: {vowels}, Consonants: {consonants}"</span>);
+}
+
+CountVowelConsonant(<span class="str">"Gurumoorthy"</span>);
+</pre>
+<div class="out">Vowels: 4, Consonants: 7</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">4</span><span class="qtext">Find duplicate characters in a string</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">void</span> FindDuplicates(<span class="kw">string</span> s)
+{
+    <span class="kw">var</span> freq = <span class="kw">new</span> <span class="ty">Dictionary</span>&lt;<span class="kw">char</span>, <span class="kw">int</span>&gt;();
+    <span class="kw">foreach</span> (<span class="kw">char</span> c <span class="kw">in</span> s)
+        freq[c] = freq.ContainsKey(c) ? freq[c] + <span class="num">1</span> : <span class="num">1</span>;
+
+    Console.WriteLine(<span class="str">"Duplicates:"</span>);
+    <span class="kw">foreach</span> (<span class="kw">var</span> kv <span class="kw">in</span> freq)
+        <span class="kw">if</span> (kv.Value > <span class="num">1</span>)
+            Console.WriteLine(<span class="str">$"  '{kv.Key}' appears {kv.Value} times"</span>);
+}
+
+FindDuplicates(<span class="str">"programming"</span>);
+</pre>
+<div class="out">'r': 2, 'g': 2, 'm': 2</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">5</span><span class="qtext">Check if two strings are Anagrams</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">bool</span> IsAnagram(<span class="kw">string</span> a, <span class="kw">string</span> b)
+{
+    <span class="kw">if</span> (a.Length != b.Length) <span class="kw">return false</span>;
+    <span class="kw">var</span> sorted_a = <span class="kw">string</span>.Concat(a.ToLower().OrderBy(c => c));
+    <span class="kw">var</span> sorted_b = <span class="kw">string</span>.Concat(b.ToLower().OrderBy(c => c));
+    <span class="kw">return</span> sorted_a == sorted_b;
+}
+
+Console.WriteLine(IsAnagram(<span class="str">"listen"</span>, <span class="str">"silent"</span>)); <span class="cm">// True</span>
+Console.WriteLine(IsAnagram(<span class="str">"hello"</span>,  <span class="str">"world"</span>));  <span class="cm">// False</span>
+</pre>
+<div class="out">True / False</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">6</span><span class="qtext">Count occurrences of each word in a sentence</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">void</span> WordCount(<span class="kw">string</span> sentence)
+{
+    <span class="kw">var</span> words = sentence.ToLower().Split(<span class="str">' '</span>);
+    <span class="kw">var</span> freq = <span class="kw">new</span> <span class="ty">Dictionary</span>&lt;<span class="kw">string</span>, <span class="kw">int</span>&gt;();
+    <span class="kw">foreach</span> (<span class="kw">var</span> w <span class="kw">in</span> words)
+        freq[w] = freq.ContainsKey(w) ? freq[w] + <span class="num">1</span> : <span class="num">1</span>;
+
+    <span class="kw">foreach</span> (<span class="kw">var</span> kv <span class="kw">in</span> freq)
+        Console.WriteLine(<span class="str">$"{kv.Key}: {kv.Value}"</span>);
+}
+
+WordCount(<span class="str">"the cat sat on the mat the cat"</span>);
+</pre>
+<div class="out">the:3  cat:2  sat:1  on:1  mat:1</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">7</span><span class="qtext">Reverse each word in a sentence (keep word order)</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">string</span> ReverseWords(<span class="kw">string</span> sentence)
+{
+    <span class="kw">var</span> words = sentence.Split(<span class="str">' '</span>);
+    <span class="kw">var</span> result = words.Select(w => <span class="kw">new</span> <span class="ty">string</span>(w.Reverse().ToArray()));
+    <span class="kw">return</span> <span class="kw">string</span>.Join(<span class="str">" "</span>, result);
+}
+
+Console.WriteLine(ReverseWords(<span class="str">"Hello World"</span>));
+</pre>
+<div class="out">olleH dlroW</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">8</span><span class="qtext">Remove all spaces from a string</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">string</span> RemoveSpaces(<span class="kw">string</span> s)
+    => s.Replace(<span class="str">" "</span>, <span class="str">""</span>);
+
+<span class="cm">// Or with loop:</span>
+<span class="kw">string</span> RemoveSpacesLoop(<span class="kw">string</span> s)
+{
+    <span class="kw">string</span> result = <span class="str">""</span>;
+    <span class="kw">foreach</span> (<span class="kw">char</span> c <span class="kw">in</span> s)
+        <span class="kw">if</span> (c != <span class="str">' '</span>) result += c;
+    <span class="kw">return</span> result;
+}
+
+Console.WriteLine(RemoveSpaces(<span class="str">"Hello World Today"</span>));
+</pre>
+<div class="out">HelloWorldToday</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">9</span><span class="qtext">Find the first non-repeating character in a string</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">char</span> FirstNonRepeat(<span class="kw">string</span> s)
+{
+    <span class="kw">var</span> freq = <span class="kw">new</span> <span class="ty">Dictionary</span>&lt;<span class="kw">char</span>, <span class="kw">int</span>&gt;();
+    <span class="kw">foreach</span> (<span class="kw">char</span> c <span class="kw">in</span> s)
+        freq[c] = freq.ContainsKey(c) ? freq[c] + <span class="num">1</span> : <span class="num">1</span>;
+
+    <span class="kw">foreach</span> (<span class="kw">char</span> c <span class="kw">in</span> s)
+        <span class="kw">if</span> (freq[c] == <span class="num">1</span>) <span class="kw">return</span> c;
+
+    <span class="kw">return</span> <span class="str">'_'</span>; <span class="cm">// none found</span>
+}
+
+Console.WriteLine(FirstNonRepeat(<span class="str">"aabbcde"</span>)); <span class="cm">// c</span>
+Console.WriteLine(FirstNonRepeat(<span class="str">"swiss"</span>));   <span class="cm">// w</span>
+</pre>
+<div class="out">c / w</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">10</span><span class="qtext">Check if a string contains only digits</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">bool</span> IsAllDigits(<span class="kw">string</span> s)
+    => s.All(char.IsDigit);
+
+<span class="cm">// Or with loop</span>
+<span class="kw">bool</span> IsAllDigitsLoop(<span class="kw">string</span> s)
+{
+    <span class="kw">foreach</span> (<span class="kw">char</span> c <span class="kw">in</span> s)
+        <span class="kw">if</span> (!char.IsDigit(c)) <span class="kw">return false</span>;
+    <span class="kw">return true</span>;
+}
+
+Console.WriteLine(IsAllDigits(<span class="str">"12345"</span>));  <span class="cm">// True</span>
+Console.WriteLine(IsAllDigits(<span class="str">"123a5"</span>));  <span class="cm">// False</span>
+</pre>
+<div class="out">True / False</div>
+</div>
+</div>
+
+</div><!-- end strings -->
+
+<!-- ══════════════════════════════════════════ ARRAYS ══════ -->
+<div id="arrays">
+<div class="section-title">🔢 Arrays & Number Problems</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">11</span><span class="qtext">Find the 2nd highest number in an array</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">int</span> SecondHighest(<span class="kw">int</span>[] arr)
+{
+    <span class="kw">int</span> first = <span class="kw">int</span>.MinValue, second = <span class="kw">int</span>.MinValue;
+    <span class="kw">foreach</span> (<span class="kw">int</span> n <span class="kw">in</span> arr)
+    {
+        <span class="kw">if</span> (n > first) { second = first; first = n; }
+        <span class="kw">else if</span> (n > second &amp;&amp; n != first) second = n;
+    }
+    <span class="kw">return</span> second;
+}
+
+<span class="kw">int</span>[] nums = { <span class="num">10</span>, <span class="num">50</span>, <span class="num">20</span>, <span class="num">40</span>, <span class="num">30</span> };
+Console.WriteLine(SecondHighest(nums));
+</pre>
+<div class="out">40</div>
+<div class="tip">💡 LINQ shortcut: arr.Distinct().OrderByDescending(x=>x).Skip(1).First()</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">12</span><span class="qtext">Find duplicate numbers in an array</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">void</span> FindDuplicateNumbers(<span class="kw">int</span>[] arr)
+{
+    <span class="kw">var</span> seen = <span class="kw">new</span> <span class="ty">HashSet</span>&lt;<span class="kw">int</span>&gt;();
+    <span class="kw">var</span> dups = <span class="kw">new</span> <span class="ty">HashSet</span>&lt;<span class="kw">int</span>&gt;();
+    <span class="kw">foreach</span> (<span class="kw">int</span> n <span class="kw">in</span> arr)
+    {
+        <span class="kw">if</span> (!seen.Add(n)) dups.Add(n);
+    }
+    Console.WriteLine(<span class="str">"Duplicates: "</span> + <span class="kw">string</span>.Join(<span class="str">", "</span>, dups));
+}
+
+FindDuplicateNumbers(<span class="kw">new</span> <span class="kw">int</span>[] { <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">2</span>,<span class="num">4</span>,<span class="num">3</span>,<span class="num">5</span> });
+</pre>
+<div class="out">Duplicates: 2, 3</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">13</span><span class="qtext">Fibonacci series up to N numbers</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">void</span> Fibonacci(<span class="kw">int</span> n)
+{
+    <span class="kw">int</span> a = <span class="num">0</span>, b = <span class="num">1</span>;
+    Console.Write(a + <span class="str">" "</span> + b + <span class="str">" "</span>);
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">2</span>; i &lt; n; i++)
+    {
+        <span class="kw">int</span> next = a + b;
+        Console.Write(next + <span class="str">" "</span>);
+        a = b; b = next;
+    }
+}
+
+Fibonacci(<span class="num">10</span>);
+</pre>
+<div class="out">0 1 1 2 3 5 8 13 21 34</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">14</span><span class="qtext">Check if a number is Prime</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">bool</span> IsPrime(<span class="kw">int</span> n)
+{
+    <span class="kw">if</span> (n &lt;= <span class="num">1</span>) <span class="kw">return false</span>;
+    <span class="kw">if</span> (n == <span class="num">2</span>) <span class="kw">return true</span>;
+    <span class="kw">if</span> (n % <span class="num">2</span> == <span class="num">0</span>) <span class="kw">return false</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">3</span>; i * i &lt;= n; i += <span class="num">2</span>)
+        <span class="kw">if</span> (n % i == <span class="num">0</span>) <span class="kw">return false</span>;
+    <span class="kw">return true</span>;
+}
+
+Console.WriteLine(IsPrime(<span class="num">17</span>)); <span class="cm">// True</span>
+Console.WriteLine(IsPrime(<span class="num">15</span>)); <span class="cm">// False</span>
+</pre>
+<div class="out">True / False</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">15</span><span class="qtext">Factorial of a number (loop + recursion)</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="cm">// Loop</span>
+<span class="kw">long</span> Factorial(<span class="kw">int</span> n)
+{
+    <span class="kw">long</span> result = <span class="num">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">2</span>; i &lt;= n; i++)
+        result *= i;
+    <span class="kw">return</span> result;
+}
+
+<span class="cm">// Recursion</span>
+<span class="kw">long</span> FactorialRec(<span class="kw">int</span> n)
+    => n &lt;= <span class="num">1</span> ? <span class="num">1</span> : n * FactorialRec(n - <span class="num">1</span>);
+
+Console.WriteLine(Factorial(<span class="num">5</span>));    <span class="cm">// 120</span>
+Console.WriteLine(FactorialRec(<span class="num">6</span>)); <span class="cm">// 720</span>
+</pre>
+<div class="out">120 / 720</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">16</span><span class="qtext">Reverse an integer without converting to string</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">int</span> ReverseInt(<span class="kw">int</span> n)
+{
+    <span class="kw">int</span> reversed = <span class="num">0</span>;
+    <span class="kw">while</span> (n != <span class="num">0</span>)
+    {
+        <span class="kw">int</span> digit = n % <span class="num">10</span>;      <span class="cm">// get last digit</span>
+        reversed = reversed * <span class="num">10</span> + digit;
+        n /= <span class="num">10</span>;               <span class="cm">// remove last digit</span>
+    }
+    <span class="kw">return</span> reversed;
+}
+
+Console.WriteLine(ReverseInt(<span class="num">12345</span>)); <span class="cm">// 54321</span>
+</pre>
+<div class="out">54321</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">17</span><span class="qtext">Find sum of digits of a number</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">int</span> SumOfDigits(<span class="kw">int</span> n)
+{
+    <span class="kw">int</span> sum = <span class="num">0</span>;
+    n = Math.Abs(n);
+    <span class="kw">while</span> (n > <span class="num">0</span>)
+    {
+        sum += n % <span class="num">10</span>;
+        n /= <span class="num">10</span>;
+    }
+    <span class="kw">return</span> sum;
+}
+
+Console.WriteLine(SumOfDigits(<span class="num">12345</span>)); <span class="cm">// 15</span>
+</pre>
+<div class="out">15</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">18</span><span class="qtext">Sort an array without using built-in Sort (Bubble Sort)</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">void</span> BubbleSort(<span class="kw">int</span>[] arr)
+{
+    <span class="kw">int</span> n = arr.Length;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n - <span class="num">1</span>; i++)
+    {
+        <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">0</span>; j &lt; n - i - <span class="num">1</span>; j++)
+        {
+            <span class="kw">if</span> (arr[j] > arr[j + <span class="num">1</span>])
+            {
+                <span class="cm">// swap</span>
+                <span class="kw">int</span> temp = arr[j];
+                arr[j] = arr[j + <span class="num">1</span>];
+                arr[j + <span class="num">1</span>] = temp;
+            }
+        }
+    }
+}
+
+<span class="kw">int</span>[] arr = { <span class="num">5</span>,<span class="num">2</span>,<span class="num">8</span>,<span class="num">1</span>,<span class="num">9</span> };
+BubbleSort(arr);
+Console.WriteLine(<span class="kw">string</span>.Join(<span class="str">", "</span>, arr));
+</pre>
+<div class="out">1, 2, 5, 8, 9</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">19</span><span class="qtext">Find missing number in array 1 to N</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">int</span> FindMissing(<span class="kw">int</span>[] arr, <span class="kw">int</span> n)
+{
+    <span class="cm">// Sum formula: n*(n+1)/2 - actual sum = missing</span>
+    <span class="kw">int</span> expected = n * (n + <span class="num">1</span>) / <span class="num">2</span>;
+    <span class="kw">int</span> actual = arr.Sum();
+    <span class="kw">return</span> expected - actual;
+}
+
+<span class="kw">int</span>[] arr = { <span class="num">1</span>,<span class="num">2</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span> }; <span class="cm">// missing 3, n=6</span>
+Console.WriteLine(FindMissing(arr, <span class="num">6</span>));
+</pre>
+<div class="out">3</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">20</span><span class="qtext">Check if a number is Armstrong number (e.g. 153 = 1³+5³+3³)</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">bool</span> IsArmstrong(<span class="kw">int</span> n)
+{
+    <span class="kw">string</span> s = n.ToString();
+    <span class="kw">int</span> power = s.Length;
+    <span class="kw">int</span> sum = s.Sum(c => (<span class="kw">int</span>)Math.Pow(c - <span class="str">'0'</span>, power));
+    <span class="kw">return</span> sum == n;
+}
+
+Console.WriteLine(IsArmstrong(<span class="num">153</span>)); <span class="cm">// True  (1+125+27=153)</span>
+Console.WriteLine(IsArmstrong(<span class="num">9474</span>)); <span class="cm">// True</span>
+Console.WriteLine(IsArmstrong(<span class="num">100</span>));  <span class="cm">// False</span>
+</pre>
+<div class="out">True / True / False</div>
+</div>
+</div>
+
+</div><!-- end arrays -->
+
+<!-- ══════════════════════════════════════════ LOOPS ══════ -->
+<div id="loops">
+<div class="section-title">🔁 Loop & Pattern Problems</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">21</span><span class="qtext">Print this star pattern (right triangle)</span><span class="qtag tag-logic">Logic</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="cm">/*  Output:
+    *
+    * *
+    * * *
+    * * * *
+    * * * * *
+*/</span>
+<span class="kw">void</span> StarTriangle(<span class="kw">int</span> rows)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= rows; i++)
+    {
+        <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">1</span>; j &lt;= i; j++)
+            Console.Write(<span class="str">"* "</span>);
+        Console.WriteLine();
+    }
+}
+StarTriangle(<span class="num">5</span>);
+</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">22</span><span class="qtext">Print number pyramid pattern</span><span class="qtag tag-logic">Logic</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="cm">/*  Output:
+    1
+    1 2
+    1 2 3
+    1 2 3 4
+*/</span>
+<span class="kw">void</span> NumberPyramid(<span class="kw">int</span> rows)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= rows; i++)
+    {
+        <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">1</span>; j &lt;= i; j++)
+            Console.Write(j + <span class="str">" "</span>);
+        Console.WriteLine();
+    }
+}
+NumberPyramid(<span class="num">4</span>);
+</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">23</span><span class="qtext">Multiplication table for a given number</span><span class="qtag tag-logic">Logic</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">void</span> MultiTable(<span class="kw">int</span> n)
+{
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">10</span>; i++)
+        Console.WriteLine(<span class="str">$"{n} x {i} = {n * i}"</span>);
+}
+
+MultiTable(<span class="num">5</span>);
+</pre>
+<div class="out">5×1=5  5×2=10  ...  5×10=50</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">24</span><span class="qtext">FizzBuzz – print 1 to 100, Fizz for multiples of 3, Buzz for 5</span><span class="qtag tag-logic">Logic</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">100</span>; i++)
+{
+    <span class="kw">if</span>      (i % <span class="num">15</span> == <span class="num">0</span>) Console.WriteLine(<span class="str">"FizzBuzz"</span>);
+    <span class="kw">else if</span> (i % <span class="num">3</span>  == <span class="num">0</span>) Console.WriteLine(<span class="str">"Fizz"</span>);
+    <span class="kw">else if</span> (i % <span class="num">5</span>  == <span class="num">0</span>) Console.WriteLine(<span class="str">"Buzz"</span>);
+    <span class="kw">else</span>                  Console.WriteLine(i);
+}
+</pre>
+<div class="tip">💡 Check 15 first (divisible by both 3 AND 5). Classic interview trap!</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">25</span><span class="qtext">Sum of all even numbers from 1 to N</span><span class="qtag tag-logic">Logic</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">int</span> SumEven(<span class="kw">int</span> n)
+{
+    <span class="kw">int</span> sum = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">2</span>; i &lt;= n; i += <span class="num">2</span>)
+        sum += i;
+    <span class="kw">return</span> sum;
+}
+
+<span class="cm">// LINQ one-liner</span>
+<span class="kw">int</span> SumEvenLinq(<span class="kw">int</span> n)
+    => Enumerable.Range(<span class="num">1</span>, n).Where(x => x % <span class="num">2</span> == <span class="num">0</span>).Sum();
+
+Console.WriteLine(SumEven(<span class="num">10</span>)); <span class="cm">// 30</span>
+</pre>
+<div class="out">30</div>
+</div>
+</div>
+
+</div><!-- end loops -->
+
+<!-- ══════════════════════════════════════════ COLLECTIONS ══ -->
+<div id="collections">
+<div class="section-title">📦 Collections & LINQ Problems</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">26</span><span class="qtext">Remove duplicates from a List</span><span class="qtag tag-linq">LINQ</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">var</span> list = <span class="kw">new</span> <span class="ty">List</span>&lt;<span class="kw">int</span>&gt; { <span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">3</span>,<span class="num">5</span> };
+
+<span class="cm">// Method 1: Distinct</span>
+<span class="kw">var</span> unique = list.Distinct().ToList();
+
+<span class="cm">// Method 2: HashSet</span>
+<span class="kw">var</span> unique2 = <span class="kw">new</span> <span class="ty">HashSet</span>&lt;<span class="kw">int</span>&gt;(list).ToList();
+
+Console.WriteLine(<span class="kw">string</span>.Join(<span class="str">", "</span>, unique));
+</pre>
+<div class="out">1, 2, 3, 4, 5</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">27</span><span class="qtext">Group students by class using LINQ GroupBy</span><span class="qtag tag-linq">LINQ</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">var</span> students = <span class="kw">new</span>[]
+{
+    <span class="kw">new</span> { Name=<span class="str">"Ravi"</span>,   Class=<span class="str">"10A"</span> },
+    <span class="kw">new</span> { Name=<span class="str">"Kumar"</span>,  Class=<span class="str">"10B"</span> },
+    <span class="kw">new</span> { Name=<span class="str">"Priya"</span>,  Class=<span class="str">"10A"</span> },
+    <span class="kw">new</span> { Name=<span class="str">"Anita"</span>,  Class=<span class="str">"10B"</span> },
+    <span class="kw">new</span> { Name=<span class="str">"Vikram"</span>, Class=<span class="str">"10A"</span> },
+};
+
+<span class="kw">var</span> grouped = students.GroupBy(s => s.Class);
+
+<span class="kw">foreach</span> (<span class="kw">var</span> grp <span class="kw">in</span> grouped)
+{
+    Console.WriteLine(<span class="str">$"Class {grp.Key}:"</span>);
+    <span class="kw">foreach</span> (<span class="kw">var</span> s <span class="kw">in</span> grp)
+        Console.WriteLine(<span class="str">$"  - {s.Name}"</span>);
+}
+</pre>
+<div class="out">Class 10A: Ravi, Priya, Vikram | Class 10B: Kumar, Anita</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">28</span><span class="qtext">Find top 3 highest paid employees using LINQ</span><span class="qtag tag-linq">LINQ</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">var</span> employees = <span class="kw">new</span>[]
+{
+    <span class="kw">new</span> { Name=<span class="str">"Guru"</span>,  Salary=<span class="num">85000</span> },
+    <span class="kw">new</span> { Name=<span class="str">"Basha"</span>, Salary=<span class="num">72000</span> },
+    <span class="kw">new</span> { Name=<span class="str">"Ravi"</span>,  Salary=<span class="num">95000</span> },
+    <span class="kw">new</span> { Name=<span class="str">"Kumar"</span>, Salary=<span class="num">68000</span> },
+    <span class="kw">new</span> { Name=<span class="str">"Priya"</span>, Salary=<span class="num">110000</span> },
+};
+
+<span class="kw">var</span> top3 = employees
+    .OrderByDescending(e => e.Salary)
+    .Take(<span class="num">3</span>)
+    .ToList();
+
+top3.ForEach(e => Console.WriteLine(<span class="str">$"{e.Name}: {e.Salary}"</span>));
+</pre>
+<div class="out">Priya:110000  Ravi:95000  Guru:85000</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">29</span><span class="qtext">Flatten a nested list using LINQ SelectMany</span><span class="qtag tag-linq">LINQ</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">var</span> nested = <span class="kw">new</span> <span class="ty">List</span>&lt;<span class="ty">List</span>&lt;<span class="kw">int</span>&gt;&gt;
+{
+    <span class="kw">new</span> <span class="ty">List</span>&lt;<span class="kw">int</span>&gt; { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span> },
+    <span class="kw">new</span> <span class="ty">List</span>&lt;<span class="kw">int</span>&gt; { <span class="num">4</span>, <span class="num">5</span> },
+    <span class="kw">new</span> <span class="ty">List</span>&lt;<span class="kw">int</span>&gt; { <span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span> }
+};
+
+<span class="kw">var</span> flat = nested.SelectMany(x => x).ToList();
+Console.WriteLine(<span class="kw">string</span>.Join(<span class="str">", "</span>, flat));
+</pre>
+<div class="out">1, 2, 3, 4, 5, 6, 7, 8</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">30</span><span class="qtext">Dictionary – count frequency of each number in array</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">int</span>[] arr = { <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">2</span>,<span class="num">1</span>,<span class="num">3</span>,<span class="num">3</span>,<span class="num">4</span> };
+
+<span class="kw">var</span> freq = arr
+    .GroupBy(x => x)
+    .ToDictionary(g => g.Key, g => g.Count());
+
+<span class="kw">foreach</span> (<span class="kw">var</span> kv <span class="kw">in</span> freq)
+    Console.WriteLine(<span class="str">$"{kv.Key} appears {kv.Value} times"</span>);
+</pre>
+<div class="out">1:2  2:2  3:3  4:1</div>
+</div>
+</div>
+
+</div><!-- end collections -->
+
+<!-- ══════════════════════════════════════════ SQL ══════ -->
+<div id="sql">
+<div class="section-title">🗄️ SQL Real Interview Questions</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">31</span><span class="qtext">Find the 2nd highest salary from Employee table</span><span class="qtag tag-sql">SQL</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="cm">-- Method 1: Subquery (most asked)</span>
+<span class="kw">SELECT</span> MAX(Salary) <span class="kw">AS</span> SecondHighest
+<span class="kw">FROM</span> Employees
+<span class="kw">WHERE</span> Salary &lt; (<span class="kw">SELECT</span> MAX(Salary) <span class="kw">FROM</span> Employees);
+
+<span class="cm">-- Method 2: DENSE_RANK (handles ties)</span>
+<span class="kw">SELECT</span> Salary <span class="kw">FROM</span> (
+    <span class="kw">SELECT</span> Salary,
+           DENSE_RANK() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> Rnk
+    <span class="kw">FROM</span> Employees
+) t
+<span class="kw">WHERE</span> Rnk = <span class="num">2</span>;
+
+<span class="cm">-- Method 3: OFFSET (simple)</span>
+<span class="kw">SELECT</span> <span class="kw">DISTINCT</span> Salary
+<span class="kw">FROM</span> Employees
+<span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>
+OFFSET <span class="num">1</span> ROWS FETCH NEXT <span class="num">1</span> ROWS ONLY;
+</pre>
+<div class="tip">💡 Always ask: "Should ties be counted separately?" — Use DENSE_RANK for correct tie handling.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">32</span><span class="qtext">Find employees who earn more than the average salary</span><span class="qtag tag-sql">SQL</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">SELECT</span> Name, Salary
+<span class="kw">FROM</span> Employees
+<span class="kw">WHERE</span> Salary > (<span class="kw">SELECT</span> AVG(Salary) <span class="kw">FROM</span> Employees)
+<span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>;
+</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">33</span><span class="qtext">Find duplicate rows in a table</span><span class="qtag tag-sql">SQL</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="cm">-- Find duplicate emails</span>
+<span class="kw">SELECT</span> Email, COUNT(*) <span class="kw">AS</span> Count
+<span class="kw">FROM</span> Students
+<span class="kw">GROUP BY</span> Email
+<span class="kw">HAVING</span> COUNT(*) > <span class="num">1</span>;
+
+<span class="cm">-- Delete duplicates, keep latest</span>
+<span class="kw">DELETE FROM</span> Students
+<span class="kw">WHERE</span> Id <span class="kw">NOT IN</span> (
+    <span class="kw">SELECT</span> MAX(Id)
+    <span class="kw">FROM</span> Students
+    <span class="kw">GROUP BY</span> Email
+);
+</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">34</span><span class="qtext">Get department-wise highest salary</span><span class="qtag tag-sql">SQL</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="cm">-- Simple GROUP BY</span>
+<span class="kw">SELECT</span> Department, MAX(Salary) <span class="kw">AS</span> MaxSalary
+<span class="kw">FROM</span> Employees
+<span class="kw">GROUP BY</span> Department;
+
+<span class="cm">-- With employee name (requires JOIN or subquery)</span>
+<span class="kw">SELECT</span> e.Name, e.Department, e.Salary
+<span class="kw">FROM</span> Employees e
+<span class="kw">INNER JOIN</span> (
+    <span class="kw">SELECT</span> Department, MAX(Salary) <span class="kw">AS</span> MaxSal
+    <span class="kw">FROM</span> Employees
+    <span class="kw">GROUP BY</span> Department
+) m <span class="kw">ON</span> e.Department = m.Department <span class="kw">AND</span> e.Salary = m.MaxSal;
+</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">35</span><span class="qtext">Difference between DELETE, TRUNCATE, DROP</span><span class="qtag tag-sql">SQL</span><span class="arrow">▼</span></div>
+<div class="ans">
+<table style="width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:8px">
+<tr style="background:#161b22"><th style="padding:6px;color:#58a6ff;text-align:left">Feature</th><th style="padding:6px;color:#58a6ff">DELETE</th><th style="padding:6px;color:#58a6ff">TRUNCATE</th><th style="padding:6px;color:#58a6ff">DROP</th></tr>
+<tr style="border-bottom:1px solid #21262d"><td style="padding:6px">Removes</td><td style="padding:6px">Specific rows</td><td style="padding:6px">All rows</td><td style="padding:6px">Entire table</td></tr>
+<tr style="border-bottom:1px solid #21262d"><td style="padding:6px">WHERE clause</td><td style="padding:6px">Yes</td><td style="padding:6px">No</td><td style="padding:6px">No</td></tr>
+<tr style="border-bottom:1px solid #21262d"><td style="padding:6px">Rollback</td><td style="padding:6px">Yes</td><td style="padding:6px">Yes (SQL Server)</td><td style="padding:6px">No</td></tr>
+<tr><td style="padding:6px">Speed</td><td style="padding:6px">Slow (logged)</td><td style="padding:6px">Fast (minimal log)</td><td style="padding:6px">Instant</td></tr>
+</table>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">36</span><span class="qtext">Find students who have NOT paid fees (using LEFT JOIN / NOT IN)</span><span class="qtag tag-sql">SQL</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="cm">-- Method 1: LEFT JOIN</span>
+<span class="kw">SELECT</span> s.Name, s.Phone
+<span class="kw">FROM</span> Students s
+<span class="kw">LEFT JOIN</span> Payments p <span class="kw">ON</span> s.StudentId = p.StudentId
+<span class="kw">WHERE</span> p.StudentId <span class="kw">IS NULL</span>;
+
+<span class="cm">-- Method 2: NOT EXISTS</span>
+<span class="kw">SELECT</span> Name, Phone
+<span class="kw">FROM</span> Students s
+<span class="kw">WHERE NOT EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> Payments p
+    <span class="kw">WHERE</span> p.StudentId = s.StudentId
+);
+</pre>
+<div class="tip">💡 NOT EXISTS is faster than NOT IN when the subquery can return NULLs.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">37</span><span class="qtext">ROW_NUMBER vs RANK vs DENSE_RANK</span><span class="qtag tag-sql">SQL</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">SELECT</span> Name, Salary,
+    ROW_NUMBER()  <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> RowNum,
+    RANK()        <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> Rank,
+    DENSE_RANK()  <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> DenseRank
+<span class="kw">FROM</span> Employees;
+
+<span class="cm">/*  Salary  RowNum  RANK  DENSE_RANK
+    100000    1       1      1
+    90000     2       2      2
+    90000     3       2      2    &lt;-- RANK skips 3, DENSE_RANK doesn't
+    80000     4       4      3    &lt;-- RANK=4, DENSE_RANK=3
+*/</span>
+</pre>
+<div class="tip">💡 Use DENSE_RANK for "find Nth highest salary" — no gaps in ranking.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">38</span><span class="qtext">Write a query to get attendance percentage per student</span><span class="qtag tag-sql">SQL</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">SELECT</span>
+    s.Name,
+    COUNT(a.AttendanceId)                          <span class="kw">AS</span> TotalDays,
+    SUM(<span class="kw">CASE WHEN</span> a.Status = <span class="str">'Present'</span>
+             <span class="kw">THEN</span> <span class="num">1</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>)                   <span class="kw">AS</span> PresentDays,
+    CAST(
+        SUM(<span class="kw">CASE WHEN</span> a.Status = <span class="str">'Present'</span>
+                 <span class="kw">THEN</span> <span class="num">1.0</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>) * <span class="num">100</span>
+        / COUNT(a.AttendanceId)
+    <span class="kw">AS</span> DECIMAL(<span class="num">5</span>,<span class="num">2</span>))                              <span class="kw">AS</span> AttendancePct
+<span class="kw">FROM</span> Students s
+<span class="kw">INNER JOIN</span> Attendance a <span class="kw">ON</span> s.StudentId = a.StudentId
+<span class="kw">GROUP BY</span> s.StudentId, s.Name
+<span class="kw">ORDER BY</span> AttendancePct <span class="kw">DESC</span>;
+</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">39</span><span class="qtext">What is a CTE (Common Table Expression)? Write an example.</span><span class="qtag tag-sql">SQL</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="cm">-- CTE = named temporary result set, used in same query</span>
+<span class="kw">WITH</span> TopStudents <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> StudentId, Name,
+           DENSE_RANK() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> TotalMarks <span class="kw">DESC</span>) <span class="kw">AS</span> Rank
+    <span class="kw">FROM</span> Exam_Results
+    <span class="kw">WHERE</span> AcademicYear = <span class="str">'2025-26'</span>
+)
+<span class="kw">SELECT</span> Name, Rank
+<span class="kw">FROM</span> TopStudents
+<span class="kw">WHERE</span> Rank &lt;= <span class="num">10</span>;
+
+<span class="cm">-- Recursive CTE: find all sub-departments</span>
+<span class="kw">WITH</span> DeptTree <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> DeptId, DeptName, ParentId
+    <span class="kw">FROM</span> Departments <span class="kw">WHERE</span> ParentId <span class="kw">IS NULL</span>    <span class="cm">-- anchor</span>
+    <span class="kw">UNION ALL</span>
+    <span class="kw">SELECT</span> d.DeptId, d.DeptName, d.ParentId
+    <span class="kw">FROM</span> Departments d
+    <span class="kw">INNER JOIN</span> DeptTree t <span class="kw">ON</span> d.ParentId = t.DeptId  <span class="cm">-- recursive</span>
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> DeptTree;
+</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">40</span><span class="qtext">Pivot – show monthly fee collection per month as columns</span><span class="qtag tag-sql">SQL</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="cm">-- PIVOT – turns row values into column headers</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> (
+    <span class="kw">SELECT</span>
+        YEAR(PaymentDate)  <span class="kw">AS</span> Year,
+        DATENAME(MONTH, PaymentDate) <span class="kw">AS</span> Month,
+        Amount
+    <span class="kw">FROM</span> Payments
+) src
+PIVOT (
+    SUM(Amount)
+    <span class="kw">FOR</span> Month <span class="kw">IN</span> ([January],[February],[March],[April],
+                   [May],[June],[July],[August],
+                   [September],[October],[November],[December])
+) pvt;
+
+<span class="cm">-- Output: Year | January | February | ... | December</span>
+</pre>
+</div>
+</div>
+
+</div><!-- end sql -->
+
+<!-- ══════════════════════════════════════════ OOP ══════ -->
+<div id="oop">
+<div class="section-title">🏗️ OOP Coding Problems</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">41</span><span class="qtext">Implement a Stack using an array (Push, Pop, Peek)</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">public class</span> <span class="ty">MyStack</span>
+{
+    <span class="kw">private</span> <span class="kw">int</span>[] _data;
+    <span class="kw">private</span> <span class="kw">int</span> _top = -<span class="num">1</span>;
+
+    <span class="kw">public</span> MyStack(<span class="kw">int</span> size) => _data = <span class="kw">new</span> <span class="kw">int</span>[size];
+
+    <span class="kw">public void</span> Push(<span class="kw">int</span> val)
+    {
+        <span class="kw">if</span> (_top == _data.Length - <span class="num">1</span>) <span class="kw">throw new</span> <span class="ty">Exception</span>(<span class="str">"Stack full"</span>);
+        _data[++_top] = val;
+    }
+
+    <span class="kw">public int</span> Pop()
+    {
+        <span class="kw">if</span> (_top == -<span class="num">1</span>) <span class="kw">throw new</span> <span class="ty">Exception</span>(<span class="str">"Stack empty"</span>);
+        <span class="kw">return</span> _data[_top--];
+    }
+
+    <span class="kw">public int</span> Peek() => _top == -<span class="num">1</span>
+        ? <span class="kw">throw new</span> <span class="ty">Exception</span>(<span class="str">"Empty"</span>) : _data[_top];
+
+    <span class="kw">public bool</span> IsEmpty => _top == -<span class="num">1</span>;
+}
+
+<span class="kw">var</span> s = <span class="kw">new</span> <span class="ty">MyStack</span>(<span class="num">5</span>);
+s.Push(<span class="num">10</span>); s.Push(<span class="num">20</span>); s.Push(<span class="num">30</span>);
+Console.WriteLine(s.Pop());  <span class="cm">// 30</span>
+Console.WriteLine(s.Peek()); <span class="cm">// 20</span>
+</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">42</span><span class="qtext">Singleton Design Pattern – only one DB connection instance</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">public sealed class</span> <span class="ty">DatabaseConnection</span>
+{
+    <span class="kw">private static</span> <span class="ty">DatabaseConnection</span> _instance;
+    <span class="kw">private static readonly</span> <span class="kw">object</span> _lock = <span class="kw">new object</span>();
+
+    <span class="kw">private</span> DatabaseConnection()
+    {
+        Console.WriteLine(<span class="str">"DB Connection created"</span>);
+    }
+
+    <span class="kw">public static</span> <span class="ty">DatabaseConnection</span> Instance
+    {
+        <span class="kw">get</span>
+        {
+            <span class="kw">if</span> (_instance == <span class="kw">null</span>)
+            {
+                <span class="kw">lock</span> (_lock)  <span class="cm">// thread-safe</span>
+                {
+                    <span class="kw">if</span> (_instance == <span class="kw">null</span>)
+                        _instance = <span class="kw">new</span> <span class="ty">DatabaseConnection</span>();
+                }
+            }
+            <span class="kw">return</span> _instance;
+        }
+    }
+
+    <span class="kw">public void</span> Query(<span class="kw">string</span> sql)
+        => Console.WriteLine(<span class="str">$"Executing: {sql}"</span>);
+}
+
+<span class="cm">// Usage</span>
+<span class="ty">DatabaseConnection</span>.Instance.Query(<span class="str">"SELECT * FROM Students"</span>);
+<span class="ty">DatabaseConnection</span>.Instance.Query(<span class="str">"SELECT * FROM Bills"</span>);
+<span class="cm">// "DB Connection created" prints only ONCE</span>
+</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">43</span><span class="qtext">Factory Pattern – create different report types</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">public interface</span> <span class="ty">IReport</span>
+{
+    <span class="kw">void</span> Generate();
+}
+
+<span class="kw">public class</span> <span class="ty">PdfReport</span> : IReport
+{
+    <span class="kw">public void</span> Generate() => Console.WriteLine(<span class="str">"Generating PDF report"</span>);
+}
+
+<span class="kw">public class</span> <span class="ty">ExcelReport</span> : IReport
+{
+    <span class="kw">public void</span> Generate() => Console.WriteLine(<span class="str">"Generating Excel report"</span>);
+}
+
+<span class="kw">public static class</span> <span class="ty">ReportFactory</span>
+{
+    <span class="kw">public static</span> <span class="ty">IReport</span> Create(<span class="kw">string</span> type) => type <span class="kw">switch</span>
+    {
+        <span class="str">"PDF"</span>   => <span class="kw">new</span> <span class="ty">PdfReport</span>(),
+        <span class="str">"Excel"</span> => <span class="kw">new</span> <span class="ty">ExcelReport</span>(),
+        _ => <span class="kw">throw new</span> <span class="ty">ArgumentException</span>(<span class="str">$"Unknown type: {type}"</span>)
+    };
+}
+
+<span class="cm">// Usage</span>
+<span class="kw">var</span> report = <span class="ty">ReportFactory</span>.Create(<span class="str">"PDF"</span>);
+report.Generate(); <span class="cm">// Generating PDF report</span>
+</pre>
+<div class="tip">💡 You used this in your project for PDF/Excel report generation!</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">44</span><span class="qtext">Generic method – find max in any type of list</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">T</span> FindMax&lt;<span class="kw">T</span>&gt;(<span class="ty">List</span>&lt;<span class="kw">T</span>&gt; list) <span class="kw">where</span> T : <span class="ty">IComparable</span>&lt;<span class="kw">T</span>&gt;
+{
+    <span class="kw">T</span> max = list[<span class="num">0</span>];
+    <span class="kw">foreach</span> (<span class="kw">var</span> item <span class="kw">in</span> list)
+        <span class="kw">if</span> (item.CompareTo(max) > <span class="num">0</span>) max = item;
+    <span class="kw">return</span> max;
+}
+
+Console.WriteLine(FindMax(<span class="kw">new</span> <span class="ty">List</span>&lt;<span class="kw">int</span>&gt;    { <span class="num">3</span>,<span class="num">1</span>,<span class="num">9</span>,<span class="num">5</span> }));     <span class="cm">// 9</span>
+Console.WriteLine(FindMax(<span class="kw">new</span> <span class="ty">List</span>&lt;<span class="kw">string</span>&gt; { <span class="str">"c"</span>,<span class="str">"a"</span>,<span class="str">"z"</span> })); <span class="cm">// z</span>
+</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">45</span><span class="qtext">Implement IDisposable – proper resource cleanup</span><span class="qtag tag-cs">C#</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">public class</span> <span class="ty">ReportGenerator</span> : IDisposable
+{
+    <span class="kw">private</span> SqlConnection _conn;
+    <span class="kw">private bool</span> _disposed = <span class="kw">false</span>;
+
+    <span class="kw">public</span> ReportGenerator(<span class="kw">string</span> connStr)
+    {
+        _conn = <span class="kw">new</span> <span class="ty">SqlConnection</span>(connStr);
+        _conn.Open();
+    }
+
+    <span class="kw">public void</span> Generate() { <span class="cm">/* use _conn */</span> }
+
+    <span class="kw">public void</span> Dispose()
+    {
+        <span class="kw">if</span> (!_disposed)
+        {
+            _conn?.Close();
+            _conn?.Dispose();
+            _disposed = <span class="kw">true</span>;
+        }
+        GC.SuppressFinalize(<span class="kw">this</span>);
+    }
+}
+
+<span class="cm">// Usage – connection auto-closed even if exception occurs</span>
+<span class="kw">using</span> (<span class="kw">var</span> gen = <span class="kw">new</span> <span class="ty">ReportGenerator</span>(connStr))
+{
+    gen.Generate();
+} <span class="cm">// Dispose() called here automatically</span>
+</pre>
+</div>
+</div>
+
+</div><!-- end oop -->
+
+<!-- ══════════════════════════════════════════ LOGIC ══════ -->
+<div id="logic">
+<div class="section-title">🧠 Logic & Tricky Problems</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">46</span><span class="qtext">Swap two numbers without a temp variable</span><span class="qtag tag-logic">Logic</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">int</span> a = <span class="num">10</span>, b = <span class="num">20</span>;
+
+<span class="cm">// Method 1: Arithmetic</span>
+a = a + b;  <span class="cm">// a=30</span>
+b = a - b;  <span class="cm">// b=10</span>
+a = a - b;  <span class="cm">// a=20</span>
+
+<span class="cm">// Method 2: XOR (bit manipulation)</span>
+a = a ^ b;
+b = a ^ b;
+a = a ^ b;
+
+<span class="cm">// Method 3: C# tuple (cleanest)</span>
+(a, b) = (b, a);
+
+Console.WriteLine(<span class="str">$"a={a}, b={b}"</span>); <span class="cm">// a=20, b=10</span>
+</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">47</span><span class="qtext">Two Sum – find two numbers in array that add up to target</span><span class="qtag tag-logic">Logic</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="cm">// O(n) solution using HashSet</span>
+(<span class="kw">int</span>, <span class="kw">int</span>) TwoSum(<span class="kw">int</span>[] arr, <span class="kw">int</span> target)
+{
+    <span class="kw">var</span> seen = <span class="kw">new</span> <span class="ty">HashSet</span>&lt;<span class="kw">int</span>&gt;();
+    <span class="kw">foreach</span> (<span class="kw">int</span> n <span class="kw">in</span> arr)
+    {
+        <span class="kw">int</span> complement = target - n;
+        <span class="kw">if</span> (seen.Contains(complement))
+            <span class="kw">return</span> (complement, n);
+        seen.Add(n);
+    }
+    <span class="kw">return</span> (-<span class="num">1</span>, -<span class="num">1</span>);
+}
+
+<span class="kw">var</span> result = TwoSum(<span class="kw">new</span> <span class="kw">int</span>[] { <span class="num">2</span>,<span class="num">7</span>,<span class="num">11</span>,<span class="num">15</span> }, <span class="num">9</span>);
+Console.WriteLine(<span class="str">$"{result.Item1} + {result.Item2} = 9"</span>);
+</pre>
+<div class="out">2 + 7 = 9</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">48</span><span class="qtext">What is the output? (Tricky C# questions)</span><span class="qtag tag-logic">Logic</span><span class="arrow">▼</span></div>
+<div class="ans">
+<h4>Tricky 1: String comparison</h4>
+<pre>
+<span class="kw">string</span> a = <span class="str">"hello"</span>;
+<span class="kw">string</span> b = <span class="str">"hello"</span>;
+Console.WriteLine(a == b);        <span class="cm">// True  (value comparison)</span>
+Console.WriteLine(object.ReferenceEquals(a, b)); <span class="cm">// True (string interning!)</span>
+</pre>
+<h4>Tricky 2: Nullable value type</h4>
+<pre>
+<span class="kw">int</span>? x = <span class="kw">null</span>;
+<span class="kw">int</span> y = x ?? <span class="num">10</span>;   <span class="cm">// null-coalescing</span>
+Console.WriteLine(y); <span class="cm">// 10</span>
+</pre>
+<h4>Tricky 3: Integer overflow in loop</h4>
+<pre>
+<span class="cm">// What happens?</span>
+<span class="kw">for</span> (<span class="kw">byte</span> i = <span class="num">0</span>; i &lt;= <span class="num">255</span>; i++)
+    Console.Write(i + <span class="str">" "</span>);
+<span class="cm">// Infinite loop! byte max=255, then wraps to 0 again</span>
+</pre>
+<div class="tip">💡 These tricky outputs questions are very common in 2nd round / senior interviews.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">49</span><span class="qtext">Find all pairs in array with given sum</span><span class="qtag tag-logic">Logic</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="kw">void</span> FindPairs(<span class="kw">int</span>[] arr, <span class="kw">int</span> target)
+{
+    <span class="kw">var</span> seen = <span class="kw">new</span> <span class="ty">HashSet</span>&lt;<span class="kw">int</span>&gt;();
+    Console.WriteLine(<span class="str">$"Pairs that sum to {target}:"</span>);
+    <span class="kw">foreach</span> (<span class="kw">int</span> n <span class="kw">in</span> arr)
+    {
+        <span class="kw">int</span> complement = target - n;
+        <span class="kw">if</span> (seen.Contains(complement))
+            Console.WriteLine(<span class="str">$"  ({n}, {complement})"</span>);
+        seen.Add(n);
+    }
+}
+
+FindPairs(<span class="kw">new</span> <span class="kw">int</span>[] { <span class="num">1</span>,<span class="num">5</span>,<span class="num">3</span>,<span class="num">7</span>,<span class="num">9</span>,<span class="num">2</span>,<span class="num">6</span>,<span class="num">4</span> }, <span class="num">10</span>);
+</pre>
+<div class="out">(5,5)? No — (1,9)  (3,7)  (4,6)</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="tog(this)"><span class="qnum">50</span><span class="qtext">Given a salary table, write a C# + SQL solution to get employees with salary in top 10%</span><span class="qtag tag-sql">SQL</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>
+<span class="cm">-- SQL: PERCENTILE approach</span>
+<span class="kw">SELECT</span> Name, Salary
+<span class="kw">FROM</span> Employees
+<span class="kw">WHERE</span> Salary >= (
+    <span class="kw">SELECT</span> PERCENTILE_CONT(<span class="num">0.9</span>)
+           WITHIN GROUP (<span class="kw">ORDER BY</span> Salary)
+           OVER()
+    <span class="kw">FROM</span> Employees
+    <span class="kw">FETCH FIRST</span> <span class="num">1</span> ROWS ONLY
+)
+<span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>;
+
+<span class="cm">-- OR simple approach using NTILE</span>
+<span class="kw">SELECT</span> Name, Salary
+<span class="kw">FROM</span> (
+    <span class="kw">SELECT</span> Name, Salary,
+           NTILE(<span class="num">10</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> Bucket
+    <span class="kw">FROM</span> Employees
+) t
+<span class="kw">WHERE</span> Bucket = <span class="num">1</span>; <span class="cm">-- top 10%</span>
+</pre>
+<pre>
+<span class="cm">// C# LINQ equivalent</span>
+<span class="kw">var</span> employees = <span class="cm">/* from DB */</span>;
+<span class="kw">int</span> topCount = (<span class="kw">int</span>)Math.Ceiling(employees.Count * <span class="num">0.1</span>);
+<span class="kw">var</span> top10Pct = employees
+    .OrderByDescending(e => e.Salary)
+    .Take(topCount)
+    .ToList();
+</pre>
+</div>
+</div>
+
+</div><!-- end logic -->
+
+<!-- QUICK REF -->
+<div style="background:#161b22;border:1px solid #238636;border-radius:8px;padding:16px;margin-top:20px">
+  <div style="color:#3fb950;font-weight:700;font-size:14px;margin-bottom:10px">⚡ Most Asked in 2nd Round Higher Salary Interviews</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px">
+    <div style="color:#f0f6fc">🔤 <strong>Strings:</strong> Q1,Q2,Q4,Q9</div>
+    <div style="color:#f0f6fc">🔢 <strong>Arrays:</strong> Q11,Q12,Q19</div>
+    <div style="color:#f0f6fc">🔁 <strong>Loops:</strong> Q13,Q14,Q24</div>
+    <div style="color:#f0f6fc">📦 <strong>LINQ:</strong> Q27,Q28,Q30</div>
+    <div style="color:#f0f6fc">🗄️ <strong>SQL:</strong> Q31,Q33,Q34,Q37</div>
+    <div style="color:#f0f6fc">🧠 <strong>Logic:</strong> Q46,Q47,Q50</div>
+  </div>
+  <div style="margin-top:10px;font-size:12px;color:#8b949e">
+    💡 Tip: Interviewer will say "write the code on paper/whiteboard" — practice Q1, Q2, Q11, Q13, Q24, Q31, Q47 by hand without IDE!
+  </div>
+</div>
+
+</div><!-- container -->
+
+<script>
+function tog(el){
+  const ans = el.nextElementSibling;
+  const arrow = el.querySelector('.arrow');
+  const open = ans.classList.toggle('open');
+  arrow.textContent = open ? '▲' : '▼';
+  el.parentElement.dataset.seen = '1';
+  const done = document.querySelectorAll('.qa[data-seen="1"]').length;
+  document.getElementById('done-count').textContent = done + ' opened';
+  document.getElementById('prog-text').textContent = done + ' / 50 done';
+  document.getElementById('prog').style.width = (done/50*100) + '%';
+}
+window.addEventListener('scroll', () => {
+  document.querySelectorAll('.container > div[id]').forEach(sec => {
+    const r = sec.getBoundingClientRect();
+    if(r.top <= 120 && r.bottom >= 120){
+      document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+      const lnk = document.querySelector(`.nav a[href="#${sec.id}"]`);
+      if(lnk) lnk.classList.add('active');
+    }
+  });
+});
+</script>
+</body>
+</html>

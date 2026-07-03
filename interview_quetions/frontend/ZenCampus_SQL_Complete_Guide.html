@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenCampus SQL Complete Guide - 20 Concepts + 50 Interview Q&A</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --accent:#2dd4bf; --text:#e2e8f0; --muted:#94a3b8; --code:#0b1220; --green:#22c55e;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI',Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  header{ background:linear-gradient(135deg,#0f766e,#0f172a); padding:36px 20px; text-align:center; border-bottom:3px solid var(--accent); }
+  header h1{ margin:0 0 8px; font-size:1.9rem; color:#fff; }
+  header p{ margin:0; color:var(--muted); }
+  .tabs{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; background:#0b1220; padding:14px; position:sticky; top:0; z-index:20; border-bottom:1px solid #334155; }
+  .tab-btn{ padding:10px 20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--muted); cursor:pointer; font-weight:600; font-size:0.9rem; }
+  .tab-btn.active{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+  .container{ max-width:920px; margin:0 auto; padding:30px 20px 80px; }
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
+
+  .search-box{ width:100%; padding:12px 16px; margin-bottom:20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--text); font-size:1rem; }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .filter-btn{ padding:6px 14px; border-radius:20px; border:1px solid #334155; background:transparent; color:var(--muted); cursor:pointer; font-size:0.85rem; }
+  .filter-btn.active, .filter-btn:hover{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+
+  .day-block{ margin-bottom:36px; }
+  .day-title{ color:var(--accent); font-size:1.3rem; margin-bottom:14px; border-left:4px solid var(--accent); padding-left:10px; }
+
+  .qa{ background:var(--card); border-radius:10px; margin-bottom:14px; overflow:hidden; border:1px solid #334155; scroll-margin-top:140px; }
+  .q{ padding:16px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; gap:12px; }
+  .q:hover{ background:#153a36; }
+  .q .num{ color:var(--accent); margin-right:8px; }
+  .q .tag{ font-size:0.7rem; font-weight:400; padding:2px 8px; border-radius:10px; background:#0b1220; color:var(--accent); white-space:nowrap; }
+  .a{ max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 18px; color:var(--muted); border-top:1px solid transparent; }
+  .qa.open .a{ max-height:1400px; padding:0 18px 18px; border-top:1px solid #334155; }
+  .a code, .a pre{ background:var(--code); color:#5eead4; padding:2px 6px; border-radius:4px; font-family:Consolas,Monaco,monospace; font-size:0.86rem; }
+  .a pre{ display:block; padding:12px; overflow-x:auto; white-space:pre-wrap; margin:10px 0; }
+  .movie-ref{ background:#3b1e5e; color:#e9d5ff; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .zen-ref{ background:#0e3b2e; color:#bbf7d0; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .toggle-icon{ transition:transform .25s; color:var(--accent); font-size:1.1rem; }
+  .qa.open .toggle-icon{ transform:rotate(45deg); }
+  .count{ color:var(--accent); font-weight:600; }
+
+  .checklist{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media(max-width:600px){ .checklist{ grid-template-columns:1fr; } }
+  .check-item{ background:var(--card); border:1px solid #334155; border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .check-item:hover{ border-color:var(--accent); }
+  .check-item .badge{ color:var(--green); font-size:1.1rem; }
+  .check-item .num{ color:var(--muted); font-size:0.8rem; min-width:20px; }
+
+  footer{ text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🟢 ZenCampus SQL Complete Guide</h1>
+  <p>20 Core Concepts (5-Day Plan) + 50 Interview Q&A — All-in-One</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="guide">📘 5-Day Guide</button>
+  <button class="tab-btn" data-tab="interview">🎯 Interview Q&A</button>
+  <button class="tab-btn" data-tab="coverage">✅ Topic Coverage</button>
+</div>
+
+<div class="container">
+
+  <div class="tab-content active" id="tab-guide">
+    <div id="guideList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-interview">
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search a question (e.g. join, index, normalization, window function)...">
+    <div class="filters" id="filters"></div>
+    <p style="color:var(--muted); font-size:0.85rem;">Showing <span class="count" id="visibleCount">50</span> / 50 questions</p>
+    <div id="qaList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-coverage">
+    <p style="color:var(--muted);">All 20 core SQL concepts every ZenCampus backend dev should know. Click any item to jump to it.</p>
+    <div class="checklist" id="checklist"></div>
+  </div>
+
+</div>
+
+<footer>Built for ZenCampus SQL learning • 2026-07-02</footer>
+
+<script>
+// ============ 20 CONCEPTS ACROSS 5 DAYS (4 topics/day) ============
+const guideDays = [
+{
+  day:1, title:"Day 1 — SQL Basics (SELECT, Filtering, Aggregates, GROUP BY)",
+  topics:[
+    { name:"1. SELECT, WHERE &amp; ORDER BY",
+      movie:"🎬 Jai Bhim — Chandru requests EXACTLY the specific case files he needs (SELECT columns), only for cases matching certain criteria (WHERE), sorted by priority (ORDER BY) — never the entire records room dumped on his desk.",
+      explain:"<code>SELECT column1, column2 FROM table WHERE condition ORDER BY column [ASC|DESC]</code> is the foundation of every query. Always select only the columns you need (never <code>SELECT *</code> in production code) and filter as early as possible for performance.",
+      zen:"ZenCampus's fee-dues report runs `SELECT StudentName, DueAmount FROM Student WHERE FeesPaid = 0 ORDER BY DueAmount DESC` — exactly this pattern, pulling only what the report page needs.",
+      code:"SELECT StudentName, DueAmount\nFROM Student\nWHERE FeesPaid = 0\nORDER BY DueAmount DESC;" },
+    { name:"2. Filtering: LIKE, IN, BETWEEN, NULL Handling",
+      movie:"🎬 96 — Ram searches for classmates whose names PARTIALLY match a memory (LIKE), or who fall within a specific batch year RANGE (BETWEEN), or belong to one of several possible sections (IN).",
+      explain:"<code>LIKE '%pattern%'</code> matches partial text (<code>%</code> = any characters, <code>_</code> = one character). <code>IN (val1, val2)</code> checks membership in a list, cleaner than multiple ORs. <code>BETWEEN low AND high</code> is an inclusive range check. <code>IS NULL</code>/<code>IS NOT NULL</code> — NEVER use <code>= NULL</code>, since NULL isn't 'equal' to anything, including itself.",
+      zen:"Searching students by partial name in the ZenCampus admission search uses `WHERE StudentName LIKE '%arjun%'`; filtering students admitted in a date range uses `WHERE AdmissionDate BETWEEN '2025-06-01' AND '2025-06-30'`.",
+      code:"SELECT * FROM Student WHERE StudentName LIKE '%arjun%';\nSELECT * FROM Student WHERE ClassName IN ('10-A', '10-B', '10-C');\nSELECT * FROM Student WHERE AdmissionDate BETWEEN '2025-06-01' AND '2025-06-30';\nSELECT * FROM Student WHERE ParentEmail IS NULL; -- never use = NULL" },
+    { name:"3. Aggregate Functions (COUNT, SUM, AVG, MIN, MAX)",
+      movie:"🎬 Baahubali — the kingdom's chroniclers tally the TOTAL soldiers (SUM), COUNT the number of battles won, find the STRONGEST (MAX) and WEAKEST (MIN) warriors, and calculate the AVERAGE training score across the army.",
+      explain:"Aggregate functions compute a single summary value across a group of rows: <code>COUNT(*)</code> (row count), <code>SUM()</code>, <code>AVG()</code>, <code>MIN()</code>, <code>MAX()</code>. They IGNORE NULL values by default (except <code>COUNT(*)</code>, which counts rows regardless of nulls).",
+      zen:"ZenCampus's dashboard shows `SELECT COUNT(*) AS TotalStudents, SUM(DueAmount) AS TotalPending, AVG(AttendancePercent) AS AvgAttendance FROM Student` in one query to power the summary cards.",
+      code:"SELECT\n  COUNT(*) AS TotalStudents,\n  SUM(DueAmount) AS TotalPending,\n  AVG(AttendancePercent) AS AvgAttendance,\n  MAX(DueAmount) AS HighestDue\nFROM Student;" },
+    { name:"4. GROUP BY &amp; HAVING",
+      movie:"🎬 Vaaranam Aayiram — Krishna's memories are naturally CLUSTERED by chapter of his life (college, army, business) — GROUP BY does that same clustering on rows, and HAVING filters those clusters afterward, the way you'd only revisit chapters that meet a certain emotional threshold.",
+      explain:"<code>GROUP BY column</code> collapses rows sharing the same value into one summary row per group, meant to be used WITH aggregate functions. <code>HAVING condition</code> filters AFTER grouping/aggregation (unlike <code>WHERE</code>, which filters BEFORE grouping, and cannot reference aggregate results directly).",
+      zen:"`SELECT ClassName, COUNT(*) AS StudentCount FROM Student GROUP BY ClassName HAVING COUNT(*) &gt; 40` finds overcrowded classes in ZenCampus — filtering on the aggregated COUNT, which only `HAVING` can do.",
+      code:"SELECT ClassName, COUNT(*) AS StudentCount, SUM(DueAmount) AS TotalDue\nFROM Student\nGROUP BY ClassName\nHAVING COUNT(*) &gt; 40; -- filters GROUPS, not individual rows" }
+  ]
+},
+{
+  day:2, title:"Day 2 — Joins &amp; Relationships (INNER, OUTER, Self Join, Subqueries)",
+  topics:[
+    { name:"5. INNER JOIN",
+      movie:"🎬 Vikram Vedha — the full story only makes sense when Vikram's and Vedha's overlapping timelines are combined, showing ONLY the events where BOTH perspectives intersect. INNER JOIN returns ONLY rows where a match exists in BOTH tables.",
+      explain:"<code>INNER JOIN</code> combines rows from two tables based on a related column, returning ONLY rows that have a matching value in BOTH tables — non-matching rows from either side are excluded entirely.",
+      zen:"`SELECT s.StudentName, b.DueAmount FROM Student s INNER JOIN Bill b ON s.StudentId = b.StudentId` returns only students who actually HAVE a bill record — students with no bill row at all are silently excluded.",
+      code:"SELECT s.StudentName, b.DueAmount\nFROM Student s\nINNER JOIN Bill b ON s.StudentId = b.StudentId;\n-- only students that have a matching Bill row appear" },
+    { name:"6. LEFT / RIGHT / FULL OUTER JOIN",
+      movie:"🎬 Anniyan — even when only ONE of Ambi's personalities is 'active' in a given scene, the base body (the LEFT table) is still fully present and accounted for regardless of whether the other personality (RIGHT table) shows up or not. LEFT JOIN keeps every row from the left table no matter what.",
+      explain:"<code>LEFT JOIN</code> returns ALL rows from the left table, with matching right-table columns filled in where available, and <code>NULL</code> where no match exists. <code>RIGHT JOIN</code> is the mirror image. <code>FULL OUTER JOIN</code> returns all rows from BOTH sides, with NULLs on whichever side has no match — used to find one-sided/orphaned data on either table.",
+      zen:"To list EVERY student including those with NO fee record yet (new admissions), ZenCampus uses `LEFT JOIN Bill` — a student with no bill row still appears, just with `NULL` for `DueAmount`, which the UI then displays as 'Not Generated'.",
+      code:"SELECT s.StudentName, b.DueAmount\nFROM Student s\nLEFT JOIN Bill b ON s.StudentId = b.StudentId;\n-- ALL students appear, DueAmount is NULL if no bill exists yet" },
+    { name:"7. Self Join",
+      movie:"🎬 Indian (1996) — Senapathy and his son Chandru are BOTH stored in the same 'family tree' table, but the query needs to compare a person against another row of that SAME table — a parent-child relationship within one dataset.",
+      explain:"A self join joins a table to itself (using table aliases to distinguish the two 'copies'), used for hierarchical or self-referencing relationships — like an employee/manager structure, or in a school context, comparing students within the same class/section against each other.",
+      zen:"Finding pairs of students in the SAME hostel room (both referencing the same `HostelStudent` table via `RoomId`) or a staff hierarchy (`Staff.ManagerId` referencing `Staff.StaffId`) both require a self join in ZenCampus's schema.",
+      code:"SELECT a.StaffName AS Employee, b.StaffName AS Manager\nFROM Staff a\nINNER JOIN Staff b ON a.ManagerId = b.StaffId;\n-- joining the Staff table to itself via the ManagerId self-reference" },
+    { name:"8. Subqueries (Nested Queries)",
+      movie:"🎬 Thani Oruvan — Mithran solves a smaller INNER mystery first, and the answer to that becomes the KEY EVIDENCE feeding into the bigger, outer investigation. A subquery is a query nested inside another, whose result feeds the outer query.",
+      explain:"A subquery can appear in <code>WHERE</code> (filtering based on another query's result), <code>SELECT</code> (a scalar per-row value), or <code>FROM</code> (a derived temporary table). Correlated subqueries reference the outer query's columns and re-run once per outer row (can be slow); non-correlated subqueries run once independently.",
+      zen:"`SELECT StudentName FROM Student WHERE StudentId IN (SELECT StudentId FROM Bill WHERE DueAmount &gt; 5000)` finds students with high dues — the inner query runs first, producing the list of matching IDs for the outer query to filter against.",
+      code:"SELECT StudentName\nFROM Student\nWHERE StudentId IN (\n  SELECT StudentId FROM Bill WHERE DueAmount &gt; 5000\n); -- inner query resolves first, feeds the outer WHERE" }
+  ]
+},
+{
+  day:3, title:"Day 3 — Data Modification &amp; Schema Design (DML, Keys, Constraints, Indexes)",
+  topics:[
+    { name:"9. INSERT, UPDATE, DELETE (DML)",
+      movie:"🎬 Jai Bhim — Chandru adds NEW verified evidence to the case file (INSERT), corrects an earlier misrecorded detail (UPDATE), and strikes out an invalid piece of testimony entirely (DELETE) — always precisely, never carelessly.",
+      explain:"<code>INSERT INTO table (cols) VALUES (...)</code> adds new rows. <code>UPDATE table SET col = value WHERE condition</code> modifies existing rows — the <code>WHERE</code> clause is CRITICAL; omitting it updates EVERY row in the table. <code>DELETE FROM table WHERE condition</code> removes rows — same danger without a WHERE clause.",
+      zen:"Recording a new fee payment in ZenCampus runs `UPDATE Bill SET FeesPaid = 1, PaidDate = GETDATE() WHERE BillId = @id` — always scoped to one specific bill via its ID, never a table-wide update.",
+      code:"INSERT INTO Student (StudentName, ClassName) VALUES ('Arjun', '10-A');\n\nUPDATE Bill SET FeesPaid = 1, PaidDate = GETDATE()\nWHERE BillId = 501; -- WHERE clause is mandatory here!\n\nDELETE FROM Student WHERE StudentId = 999 AND IsWithdrawn = 1;" },
+    { name:"10. Primary Keys &amp; Foreign Keys",
+      movie:"🎬 Vaaranam Aayiram — every person has one unique identity (Primary Key — never duplicated, never null), and relationships between people (like 'married to') reference someone else's unique identity (Foreign Key), keeping the whole family tree consistent.",
+      explain:"A <code>PRIMARY KEY</code> uniquely identifies each row (implicitly <code>NOT NULL</code> and unique, usually an auto-incrementing <code>IDENTITY</code> column). A <code>FOREIGN KEY</code> references a primary key in another table, enforcing REFERENTIAL INTEGRITY — the database physically prevents inserting a bill for a StudentId that doesn't exist, or deleting a student who still has bill records (unless cascading is configured).",
+      zen:"ZenCampus's `Bill` table has `StudentId` as a FOREIGN KEY referencing `Student.StudentId` — this is what makes the earlier `INNER JOIN` examples valid, and it's why the database itself blocks orphaned bill records at the schema level.",
+      code:"CREATE TABLE Student (\n  StudentId INT IDENTITY(1,1) PRIMARY KEY,\n  StudentName NVARCHAR(100) NOT NULL\n);\n\nCREATE TABLE Bill (\n  BillId INT IDENTITY(1,1) PRIMARY KEY,\n  StudentId INT NOT NULL,\n  DueAmount DECIMAL(10,2),\n  FOREIGN KEY (StudentId) REFERENCES Student(StudentId)\n);" },
+    { name:"11. Constraints (UNIQUE, CHECK, DEFAULT, NOT NULL)",
+      movie:"🎬 Master — JD enforces strict hostel rules: no two students share the same admission number (UNIQUE), attendance percentage must stay within 0-100 (CHECK), a new student's fee status defaults to 'unpaid' unless stated otherwise (DEFAULT), and a name field can never be left blank (NOT NULL).",
+      explain:"Constraints enforce data validity directly at the DATABASE level, as a last line of defense even if application code has a bug. <code>UNIQUE</code> prevents duplicate values in a column. <code>CHECK (condition)</code> validates a business rule per row. <code>DEFAULT value</code> auto-fills a column when not explicitly provided. <code>NOT NULL</code> requires a value.",
+      zen:"ZenCampus's `Student` table enforces `AdmissionNumber` as `UNIQUE`, `AttendancePercent` with `CHECK (AttendancePercent BETWEEN 0 AND 100)`, and `FeesPaid` with `DEFAULT 0` — so even a buggy frontend form can never insert an impossible attendance value of 150%.",
+      code:"CREATE TABLE Student (\n  StudentId INT IDENTITY(1,1) PRIMARY KEY,\n  AdmissionNumber NVARCHAR(20) UNIQUE NOT NULL,\n  AttendancePercent DECIMAL(5,2) CHECK (AttendancePercent BETWEEN 0 AND 100),\n  FeesPaid BIT DEFAULT 0\n);" },
+    { name:"12. Indexes",
+      movie:"🎬 Kaithi — Dilli needs to find one specific room in the hospital INSTANTLY during a crisis, not by checking every door one by one. An index is that same instant-lookup shortcut for a database column, avoiding a full table scan.",
+      explain:"An index is a separate, sorted data structure (usually a B-tree) built on one or more columns, dramatically speeding up <code>WHERE</code>/<code>JOIN</code>/<code>ORDER BY</code> lookups on those columns from O(n) table scans down to roughly O(log n). Trade-off: indexes speed up READS but slow down WRITES (INSERT/UPDATE/DELETE), since the index must also be updated — don't over-index every column blindly.",
+      zen:"ZenCampus adds an index on `Bill.StudentId` (the foreign key used in nearly every join) and on `Student.AdmissionNumber` (frequently searched), while avoiding unnecessary indexes on rarely-queried columns like `Remarks`.",
+      code:"CREATE INDEX IX_Bill_StudentId ON Bill(StudentId);\nCREATE UNIQUE INDEX IX_Student_AdmissionNumber ON Student(AdmissionNumber);\n\n-- This WHERE clause now uses the index instead of scanning every row:\nSELECT * FROM Bill WHERE StudentId = 101;" }
+  ]
+},
+{
+  day:4, title:"Day 4 — Advanced Querying (CTEs, Window Functions, Views, Stored Procedures)",
+  topics:[
+    { name:"13. Common Table Expressions (CTE / WITH)",
+      movie:"🎬 96 — Ram writes down a clear, named summary of a complex memory FIRST, then refers back to that summary by name throughout the rest of the conversation, instead of re-explaining the whole memory every time.",
+      explain:"<code>WITH cteName AS (SELECT ...) SELECT ... FROM cteName</code> defines a temporary, named result set usable within the same query — improving readability over deeply nested subqueries, and enabling RECURSIVE CTEs for hierarchical data (like an org chart or category tree).",
+      zen:"A ZenCampus report calculating 'students who are both attendance-eligible AND fee-cleared' reads far more clearly as a CTE named `EligibleStudents` referenced twice, instead of repeating the same subquery logic twice inline.",
+      code:"WITH EligibleStudents AS (\n  SELECT StudentId, StudentName\n  FROM Student\n  WHERE AttendancePercent &gt;= 75 AND FeesPaid = 1\n)\nSELECT * FROM EligibleStudents ORDER BY StudentName;" },
+    { name:"14. Window Functions (ROW_NUMBER, RANK, PARTITION BY)",
+      movie:"🎬 Vikram Vedha — the story ranks and numbers events WITHIN each character's own storyline separately (PARTITION BY that character), rather than one single global ranking across both — RANK() gives each partition its own independent numbering.",
+      explain:"Window functions compute a value ACROSS a set of related rows ('window') WITHOUT collapsing them into one row like <code>GROUP BY</code> does. <code>ROW_NUMBER() OVER (PARTITION BY col ORDER BY col2)</code> assigns a unique sequential number within each partition. <code>RANK()</code>/<code>DENSE_RANK()</code> handle ties differently (RANK leaves gaps after ties, DENSE_RANK doesn't).",
+      zen:"Ranking students by marks WITHIN each class separately (not across the whole school) uses `RANK() OVER (PARTITION BY ClassName ORDER BY Marks DESC)` — a single query replaces what would otherwise need a loop-per-class in application code.",
+      code:"SELECT StudentName, ClassName, Marks,\n  RANK() OVER (PARTITION BY ClassName ORDER BY Marks DESC) AS ClassRank\nFROM ExamResults;\n-- ranking restarts at 1 for EACH class independently" },
+    { name:"15. Views",
+      movie:"🎬 Enthiran (Robot) — Chitti presents a simplified, pre-packaged interface to the user, hiding the enormously complex internal wiring underneath. A VIEW is that same simplified, saved 'lens' onto complex underlying joins/logic.",
+      explain:"A <code>VIEW</code> is a saved, named query that behaves like a virtual table — simplifying repeated complex joins, and optionally restricting which columns/rows certain users can see (a security/abstraction layer) without duplicating the underlying query everywhere it's needed.",
+      zen:"ZenCampus could define `CREATE VIEW vw_StudentFeeSummary AS SELECT s.StudentName, b.DueAmount, b.FeesPaid FROM Student s LEFT JOIN Bill b ...` once, then every report simply does `SELECT * FROM vw_StudentFeeSummary` instead of repeating the join logic in every stored procedure.",
+      code:"CREATE VIEW vw_StudentFeeSummary AS\nSELECT s.StudentId, s.StudentName, b.DueAmount, b.FeesPaid\nFROM Student s\nLEFT JOIN Bill b ON s.StudentId = b.StudentId;\n\n-- Used anywhere like a normal table:\nSELECT * FROM vw_StudentFeeSummary WHERE FeesPaid = 0;" },
+    { name:"16. Stored Procedures",
+      movie:"🎬 Baahubali — a proven, standardized battle formation is drilled and saved once, then EXECUTED on command whenever needed, instead of re-explaining the entire strategy from scratch every single battle.",
+      explain:"A <code>STORED PROCEDURE</code> is precompiled, reusable SQL logic saved in the database, callable by name with parameters — improving performance (compiled execution plan reused), security (grant EXECUTE without exposing raw table access), and centralizing business logic that multiple applications might share.",
+      zen:"ZenCampus's `Controllers` likely call stored procedures like `usp_GetStudentFeeDetails @StudentId` from the C# backend instead of building raw SQL strings inline — safer against SQL injection and easier to tune/optimize independently of the application code.",
+      code:"CREATE PROCEDURE usp_GetStudentFeeDetails\n  @StudentId INT\nAS\nBEGIN\n  SELECT s.StudentName, b.DueAmount, b.FeesPaid\n  FROM Student s\n  LEFT JOIN Bill b ON s.StudentId = b.StudentId\n  WHERE s.StudentId = @StudentId;\nEND;\n\n-- Called from C#:\n-- EXEC usp_GetStudentFeeDetails @StudentId = 101;" }
+  ]
+},
+{
+  day:5, title:"Day 5 — Advanced Concepts (Transactions, Triggers, Normalization, Performance)",
+  topics:[
+    { name:"17. Transactions &amp; ACID",
+      movie:"🎬 Soorarai Pottru — Maara's flight either takes off completely and safely, or it doesn't take off at all — there's no 'half-departed' plane left stuck on the runway. A transaction guarantees an ALL-OR-NOTHING outcome for a group of database operations.",
+      explain:"A transaction (<code>BEGIN TRANSACTION ... COMMIT / ROLLBACK</code>) groups multiple statements so they succeed or fail TOGETHER. ACID: <strong>A</strong>tomicity (all-or-nothing), <strong>C</strong>onsistency (valid state before/after), <strong>I</strong>solation (concurrent transactions don't interfere), <strong>D</strong>urability (committed changes survive a crash).",
+      zen:"Processing a ZenCampus fee payment must ATOMICALLY update `Bill.FeesPaid = 1` AND insert a row into `PaymentHistory` — wrapped in one transaction, so a crash between the two statements can never leave the bill marked paid without a matching payment record (or vice versa).",
+      code:"BEGIN TRANSACTION;\n\nUPDATE Bill SET FeesPaid = 1 WHERE BillId = 501;\nINSERT INTO PaymentHistory (BillId, Amount, PaidDate) VALUES (501, 5000, GETDATE());\n\nIF @@ERROR = 0\n  COMMIT TRANSACTION;\nELSE\n  ROLLBACK TRANSACTION; -- undo BOTH statements if anything failed" },
+    { name:"18. Triggers",
+      movie:"🎬 Ratsasan — the moment a specific event occurs (a body is found), an automatic chain of follow-up actions kicks in immediately, without anyone needing to manually initiate it. A trigger fires AUTOMATICALLY in response to an INSERT/UPDATE/DELETE.",
+      explain:"A <code>TRIGGER</code> is special stored logic bound to a table that runs automatically on a data change event (<code>AFTER INSERT</code>, <code>AFTER UPDATE</code>, <code>INSTEAD OF DELETE</code>, etc.), often used for auditing, enforcing complex cross-table rules, or maintaining derived/denormalized data — but should be used SPARINGLY since hidden automatic behavior can make debugging harder.",
+      zen:"ZenCampus could use an `AFTER UPDATE` trigger on the `Bill` table to automatically log every fee change into an `AuditLog` table, capturing who changed what and when — without every single stored procedure needing to remember to log it manually.",
+      code:"CREATE TRIGGER trg_Bill_AuditLog\nON Bill\nAFTER UPDATE\nAS\nBEGIN\n  INSERT INTO AuditLog (TableName, Action, ChangedAt)\n  SELECT 'Bill', 'UPDATE', GETDATE()\n  FROM inserted; -- 'inserted' is the special table of updated rows\nEND;" },
+    { name:"19. Normalization (1NF, 2NF, 3NF)",
+      movie:"🎬 Indian (1996) — Senapathy insists every piece of information should have exactly ONE authoritative source of truth, with no redundant, conflicting copies scattered around — that discipline IS normalization applied to a database schema.",
+      explain:"Normalization organizes tables to reduce data redundancy and prevent update anomalies. <strong>1NF</strong>: atomic columns, no repeating groups (one value per cell). <strong>2NF</strong>: 1NF + every non-key column depends on the ENTIRE primary key (relevant for composite keys). <strong>3NF</strong>: 2NF + no non-key column depends on ANOTHER non-key column (eliminate transitive dependencies). Real-world systems sometimes deliberately DEnormalize for read performance, but you must understand normalization first to make that trade-off consciously.",
+      zen:"Storing a student's `ClassTeacherName` directly on the `Student` table (instead of a `ClassId` referencing a separate `Class` table with the teacher) violates 3NF — if the teacher changes, you'd need to update EVERY student row in that class instead of one row in the `Class` table.",
+      code:"-- BEFORE (violates 3NF - ClassTeacherName depends on ClassName, not StudentId):\n-- Student(StudentId, StudentName, ClassName, ClassTeacherName)\n\n-- AFTER (normalized):\n-- Student(StudentId, StudentName, ClassId)\n-- Class(ClassId, ClassName, ClassTeacherName)\n-- Changing a teacher now updates ONE row in Class, not every student row" },
+    { name:"20. Query Performance &amp; Execution Plans",
+      movie:"🎬 Thani Oruvan — before committing to a plan of action, Mithran always reviews the FULL STRATEGY MAP of how an operation will actually unfold, step by step, to spot inefficiencies before they cost him. An execution plan is that exact map for how the database will actually run your query.",
+      explain:"An execution plan shows HOW the database engine will actually execute a query — whether it uses an index seek (fast) or a full table scan (slow), the join algorithm chosen, and the estimated cost of each step. Common performance killers to watch for: missing indexes on JOIN/WHERE columns, wrapping an indexed column in a function (<code>WHERE YEAR(AdmissionDate) = 2025</code> disables the index — rewrite as a range comparison instead), and <code>SELECT *</code> pulling unnecessary columns/data.",
+      zen:"If a ZenCampus attendance report suddenly becomes slow as data grows, checking the execution plan (`SET SHOWPLAN_ALL ON` or the graphical plan in SQL Server Management Studio) reveals whether it's doing a full table scan on `AttendanceLog` — the fix is usually adding the right index rather than rewriting application code.",
+      code:"-- BAD: disables any index on AdmissionDate\nSELECT * FROM Student WHERE YEAR(AdmissionDate) = 2025;\n\n-- GOOD: index-friendly range comparison\nSELECT StudentId, StudentName FROM Student\nWHERE AdmissionDate &gt;= '2025-01-01' AND AdmissionDate &lt; '2026-01-01';" }
+  ]
+}
+];
+
+// ============ 50 INTERVIEW QUESTIONS ============
+const questions = [
+  {level:"Basic", q:"What is the difference between SQL and a Relational Database Management System (RDBMS)?", a:"SQL (Structured Query Language) is the language used to define, query, and manipulate data. An RDBMS (SQL Server, MySQL, PostgreSQL) is the actual software system that stores data in tables and implements SQL to interact with it."},
+  {level:"Basic", q:"What is the difference between WHERE and HAVING?", a:"WHERE filters individual rows BEFORE any grouping/aggregation happens and cannot reference aggregate functions. HAVING filters GROUPS AFTER GROUP BY has been applied and can reference aggregate results like COUNT() or SUM()."},
+  {level:"Basic", q:"What is a primary key?", a:"A column (or combination of columns) that uniquely identifies each row in a table. It's implicitly NOT NULL and unique, and every table should have exactly one."},
+  {level:"Basic", q:"What is a foreign key and what problem does it solve?", a:"A column referencing the primary key of another table, enforcing referential integrity — the database prevents inserting a value that doesn't exist in the referenced table, and by default blocks deleting a referenced row that still has dependents."},
+  {level:"Basic", q:"What is the difference between DELETE, TRUNCATE, and DROP?", a:"DELETE removes specific rows (can use WHERE, can be rolled back, fires triggers, slower). TRUNCATE removes ALL rows at once (faster, minimal logging, resets identity counters, cannot use WHERE). DROP removes the entire table structure itself, including its data and schema definition."},
+  {level:"Basic", q:"What is the difference between CHAR and VARCHAR?", a:"CHAR(n) is fixed-length, always storing exactly n characters (padded with spaces if shorter). VARCHAR(n) is variable-length, storing only the actual characters used plus a small length overhead — generally preferred unless the data truly has a fixed, predictable length."},
+  {level:"Basic", q:"What does the DISTINCT keyword do?", a:"Removes duplicate rows from the result set, comparing across ALL selected columns together (not per-column) to determine uniqueness."},
+  {level:"Basic", q:"What is a NULL value and how is it different from zero or an empty string?", a:"NULL represents the ABSENCE of a value / unknown — it is not equal to 0, an empty string, or even another NULL. Any comparison with NULL using = or != returns unknown (effectively false), which is why IS NULL / IS NOT NULL must be used instead."},
+  {level:"Basic", q:"What is the difference between UNION and UNION ALL?", a:"UNION combines results from two queries and removes duplicate rows (requires an extra sort/distinct step, slower). UNION ALL combines results and KEEPS duplicates, which is faster since no deduplication work is needed — use UNION ALL whenever duplicates are acceptable or impossible."},
+  {level:"Basic", q:"What is an alias in SQL?", a:"A temporary name given to a column or table using AS (often optional for columns), improving readability especially with joins or computed columns, e.g. SELECT s.StudentName AS Name FROM Student s."},
+  {level:"Basic", q:"What is the correct logical order of SQL clauses in a SELECT statement?", a:"FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY. Note this differs from the WRITTEN order (SELECT is written first but evaluated after WHERE/GROUP BY/HAVING) — this is why you can't reference a SELECT column alias inside WHERE."},
+  {level:"Intermediate", q:"What is the difference between INNER JOIN and LEFT JOIN?", a:"INNER JOIN returns only rows with a match in BOTH tables. LEFT JOIN returns ALL rows from the left table regardless of a match, filling unmatched right-table columns with NULL."},
+  {level:"Intermediate", q:"What is a correlated subquery and why can it be slow?", a:"A subquery that references a column from the OUTER query, meaning it must logically re-execute once for EACH row processed by the outer query — potentially O(n×m) instead of O(n+m), unlike an independent (non-correlated) subquery that runs once."},
+  {level:"Intermediate", q:"What is the difference between a clustered index and a non-clustered index?", a:"A clustered index determines the PHYSICAL storage order of the table's rows on disk — a table can have only ONE. A non-clustered index is a separate structure with pointers back to the actual rows — a table can have MANY."},
+  {level:"Intermediate", q:"What is normalization and why is it used?", a:"The process of organizing tables to eliminate redundant data and prevent update/insert/delete anomalies, by ensuring each piece of information is stored in exactly one place (1NF, 2NF, 3NF being the common levels applied in practice)."},
+  {level:"Intermediate", q:"What is denormalization and when would you use it?", a:"Deliberately introducing some redundancy (duplicating data across tables) to improve READ performance by avoiding expensive joins, at the cost of extra complexity keeping the duplicated data in sync — used in reporting/analytics-heavy systems where read speed matters more than write simplicity."},
+  {level:"Intermediate", q:"What is a Common Table Expression (CTE) and how does it differ from a subquery?", a:"A CTE (WITH clause) defines a named, temporary result set that can be referenced (even multiple times) within the same query — improving readability over deeply nested nested subqueries, and uniquely enabling RECURSIVE queries for hierarchical data, which plain subqueries cannot do."},
+  {level:"Intermediate", q:"What are window functions and how do they differ from GROUP BY aggregates?", a:"Window functions (ROW_NUMBER, RANK, SUM() OVER(...)) compute a value across a set of related rows WITHOUT collapsing them into a single summary row — each original row is preserved in the output, unlike GROUP BY which reduces multiple rows into one row per group."},
+  {level:"Intermediate", q:"What is the difference between RANK(), DENSE_RANK(), and ROW_NUMBER()?", a:"ROW_NUMBER() assigns a unique sequential number to every row regardless of ties. RANK() gives tied rows the same rank but LEAVES A GAP in the numbering afterward (1,1,3). DENSE_RANK() gives tied rows the same rank with NO gap (1,1,2)."},
+  {level:"Intermediate", q:"What is a view and what are its main benefits?", a:"A saved, named query that behaves like a virtual table. Benefits: simplifies repeated complex joins, provides a security/abstraction layer (restricting visible columns/rows), and centralizes query logic so it's defined once and reused everywhere."},
+  {level:"Intermediate", q:"What is the difference between a stored procedure and a function in SQL Server?", a:"A stored procedure can perform actions (INSERT/UPDATE/DELETE), return multiple result sets, and cannot be directly used inside a SELECT statement. A function must return a single value or table, generally cannot modify data (in most implementations), and CAN be used inline within a query, e.g. in a SELECT or WHERE clause."},
+  {level:"Intermediate", q:"What is SQL injection and how do parameterized queries prevent it?", a:"SQL injection is when untrusted user input is concatenated directly into a SQL string, letting an attacker inject their own malicious SQL logic. Parameterized queries (or stored procedures with typed parameters) send the user input separately from the SQL command structure, so it's always treated as pure DATA, never as executable SQL code."},
+  {level:"Advanced", q:"What is the difference between OLTP and OLAP systems?", a:"OLTP (Online Transaction Processing) systems handle many small, fast read/write transactions (like ZenCampus's day-to-day fee/attendance updates) with a normalized schema. OLAP (Online Analytical Processing) systems handle large, complex analytical queries over historical data, often using a denormalized star/snowflake schema optimized for aggregation and reporting."},
+  {level:"Advanced", q:"What is a deadlock in a database and how can it be avoided?", a:"A deadlock occurs when two transactions each hold a lock the other needs, and both wait indefinitely for the other to release it. Avoided by always acquiring locks/accessing tables in a CONSISTENT order across all transactions, keeping transactions short, and using appropriate isolation levels."},
+  {level:"Advanced", q:"What are the different transaction isolation levels and what problem does each solve?", a:"READ UNCOMMITTED (allows dirty reads), READ COMMITTED (default in most DBs, prevents dirty reads), REPEATABLE READ (prevents non-repeatable reads — a row read twice in the same transaction stays consistent), SERIALIZABLE (strictest, prevents phantom reads too, at the cost of concurrency/performance)."},
+  {level:"Advanced", q:"What is the difference between a table scan and an index seek in an execution plan?", a:"A table scan reads EVERY row in the table to find matches — O(n), slow for large tables. An index seek uses an index's sorted structure to jump DIRECTLY to matching rows — roughly O(log n), which is the goal for any frequently-run query on a large table."},
+  {level:"Advanced", q:"Why can wrapping an indexed column in a function in the WHERE clause hurt performance?", a:"Applying a function to an indexed column (e.g. WHERE YEAR(AdmissionDate) = 2025) forces the database to compute that function for EVERY row before it can compare, making the index on that column unusable — it falls back to a full table scan. Rewriting as a sargable range comparison (AdmissionDate &gt;= '2025-01-01' AND AdmissionDate &lt; '2026-01-01') lets the index be used again."},
+  {level:"Advanced", q:"What is a covering index?", a:"An index that includes ALL the columns needed to satisfy a query (either as key columns or INCLUDE columns), letting the database answer the query entirely from the index itself without needing to look up the actual table rows — significantly faster for read-heavy queries."},
+  {level:"Advanced", q:"What is the N+1 query problem and how do you avoid it?", a:"A performance anti-pattern where code runs 1 query to fetch a list, then N additional queries (one per item) to fetch related data for each — instead of one efficient JOIN or a single batched query. Avoided by using a JOIN, an IN clause, or an ORM's explicit eager-loading feature to fetch everything needed in one or two round trips instead of N+1."},
+  {level:"Advanced", q:"What is the difference between optimistic and pessimistic concurrency control?", a:"Pessimistic locking acquires a lock on data as soon as it's read, blocking other transactions from modifying it until released — safe but can hurt concurrency. Optimistic concurrency allows concurrent reads/writes and only checks for conflicts (e.g. via a version/timestamp column) at COMMIT time, rejecting the update if the data changed since it was read — better throughput when conflicts are rare."},
+  {level:"Advanced", q:"How would you design the schema for a ZenCampus-style Bill and Payment history feature to ensure data integrity?", a:"A Bill table (one row per fee due, with a status column) and a separate PaymentHistory table (one row per actual payment transaction, foreign-keyed to Bill), rather than overwriting a single 'amount paid' field — this preserves a full audit trail, supports partial payments naturally, and lets you reconstruct the exact payment timeline for any bill later."},
+  {level:"Advanced", q:"What is a recursive CTE and what problem does it solve?", a:"A CTE that references itself, used to traverse hierarchical or graph-like data (an org chart, a category tree, a bill-of-materials) in a single query — it has an 'anchor' member (the base case) UNION ALL'd with a 'recursive' member that repeatedly joins back to the CTE itself until no more rows are produced."},
+  {level:"Advanced", q:"What is the difference between a hash join, a merge join, and a nested loop join, and when does the query optimizer pick each?", a:"Nested loop join: for each row in the outer table, scan the inner table (efficient for small tables or when one side has a matching index). Hash join: builds an in-memory hash table from the smaller input, then probes it with the larger input (efficient for large, unsorted, unindexed datasets). Merge join: requires both inputs pre-sorted on the join key, then merges them in one linear pass (very efficient when data is already sorted, e.g. via an index). The query optimizer picks based on estimated table sizes, available indexes, and existing sort order."}
+];
+
+// ============ COVERAGE CHECKLIST ============
+const coverageTopics = guideDays.flatMap(day => day.topics.map(t => ({ name: t.name, day: day.day })));
+
+// ============ RENDER: TABS ============
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ============ RENDER: GUIDE ============
+const guideListEl = document.getElementById('guideList');
+guideListEl.innerHTML = guideDays.map(day => `
+  <div class="day-block" id="day-${day.day}">
+    <h2 class="day-title">${day.title}</h2>
+    ${day.topics.map((t) => `
+      <div class="qa" id="topic-${t.name.split('.')[0].trim()}">
+        <div class="q">
+          <span>${t.name}</span>
+          <span class="toggle-icon">+</span>
+        </div>
+        <div class="a">
+          <div class="movie-ref">${t.movie}</div>
+          <p>${t.explain}</p>
+          <pre>${t.code}</pre>
+          <div class="zen-ref"><strong>ZenCampus use case:</strong> ${t.zen}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+`).join('');
+guideListEl.querySelectorAll('.q').forEach(qEl=>{
+  qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+});
+
+// ============ RENDER: INTERVIEW Q&A ============
+const listEl = document.getElementById('qaList');
+const filtersEl = document.getElementById('filters');
+const searchBox = document.getElementById('searchBox');
+const visibleCountEl = document.getElementById('visibleCount');
+const levels = ["All", "Basic", "Intermediate", "Advanced"];
+let activeLevel = "All";
+
+function renderFilters(){
+  filtersEl.innerHTML = levels.map(lvl =>
+    `<button class="filter-btn ${lvl===activeLevel?'active':''}" data-level="${lvl}">${lvl}</button>`
+  ).join('');
+  filtersEl.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeLevel = btn.dataset.level;
+      renderFilters();
+      renderQAList();
+    });
+  });
+}
+
+function renderQAList(){
+  const searchTerm = searchBox.value.trim().toLowerCase();
+  const filtered = questions
+    .map((item, idx)=>({...item, idx}))
+    .filter(item => activeLevel==="All" || item.level===activeLevel)
+    .filter(item => !searchTerm || item.q.toLowerCase().includes(searchTerm) || item.a.toLowerCase().includes(searchTerm));
+
+  visibleCountEl.textContent = filtered.length;
+
+  listEl.innerHTML = filtered.map(item => `
+    <div class="qa" data-idx="${item.idx}">
+      <div class="q">
+        <span><span class="num">Q${item.idx+1}.</span>${item.q}</span>
+        <span style="display:flex; align-items:center; gap:10px;">
+          <span class="tag">${item.level}</span>
+          <span class="toggle-icon">+</span>
+        </span>
+      </div>
+      <div class="a">${item.a}</div>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.q').forEach(qEl=>{
+    qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+  });
+}
+searchBox.addEventListener('input', renderQAList);
+renderFilters();
+renderQAList();
+
+// ============ RENDER: COVERAGE CHECKLIST ============
+const checklistEl = document.getElementById('checklist');
+checklistEl.innerHTML = coverageTopics.map((t) => `
+  <div class="check-item" data-target="topic-${t.name.split('.')[0].trim()}" data-day="${t.day}">
+    <span class="badge">✅</span>
+    <span class="num">${t.name.split('.')[0]}</span>
+    <span>${t.name.split('. ')[1].replace(/&amp;/g,'&')} <em style="color:var(--muted); font-size:0.8rem;">(Day ${t.day})</em></span>
+  </div>
+`).join('');
+checklistEl.querySelectorAll('.check-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelector('.tab-btn[data-tab="guide"]').click();
+    setTimeout(()=>{
+      const target = document.getElementById(item.dataset.target);
+      if(target){
+        target.classList.add('open');
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }, 50);
+  });
+});
+</script>
+
+</body>
+</html>

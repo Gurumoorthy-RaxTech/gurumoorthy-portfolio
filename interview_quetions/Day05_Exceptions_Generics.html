@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 5 – Exceptions · Generics · IDisposable | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#0a001a,#1a0030,#0a001a);padding:36px 20px;text-align:center;border-bottom:3px solid #a855f7}
+header h1{font-size:2em;color:#a855f7;text-shadow:0 0 20px #a855f755}
+header p{color:#b0a0c0;margin-top:6px}
+.badge{display:inline-block;background:#a855f722;border:1px solid #a855f755;color:#a855f7;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a855f7;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#a855f7;color:#000;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.c-kw{color:#569cd6}.c-type{color:#4ec9b0}.c-str{color:#ce9178}.c-num{color:#b5cea8}.c-cmt{color:#6a9955;font-style:italic}.c-prop{color:#9cdcfe}.c-method{color:#dcdcaa}
+code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#1a0f2e;border-left:4px solid #9b59b6;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#c39bd3;font-size:0.9em;margin-top:4px}
+.tip{background:#1a1500;border-left:4px solid #f9ca24;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#f9ca24;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#f0dc82;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.info{background:#0a1020;border-left:4px solid #3498db;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.info p{color:#85c1e9;font-size:0.9em}
+.proj{background:#0a1f0f;border-left:4px solid #27ae60;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.proj .label{color:#2ecc71;font-weight:bold;font-size:0.8em;margin-bottom:6px}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.s-num{background:#a855f7;color:#000;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#2a0a4a;color:#a855f7}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#1a0030;border:1px solid #a855f7;color:#a855f7;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#a855f7;color:#000}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1a0030}
+.answer.shown{display:block}
+.answer .a-label{color:#a855f7;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.gold{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#1a0030;color:#a855f7;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a1a35}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#a855f7;color:#a855f7}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:700px){.two-col,.three-col{grid-template-columns:1fr}}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#a855f7}
+h3{color:#c084fc;margin:16px 0 8px;font-size:1em}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.72em;font-weight:bold;margin-left:6px}
+.tag-i{background:#e94560;color:white}.tag-t{background:#f39c12;color:#000}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#c084fc;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1a0030}
+.sticky-nav a:hover{background:#1a0030}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#a855f7,#f39c12)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+.exc-tree{font-family:monospace;background:#0a0a1a;border:1px solid #1a0030;border-radius:8px;padding:16px;line-height:2;font-size:0.85em}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#f39c12;font-size:0.85em;margin-bottom:6px">📅 Day 5 of 60 | Phase 1: Advanced C#</div>
+  <h1>🛡️ Exceptions · Generics · IDisposable</h1>
+  <p>Custom Exceptions · Rethrow Patterns · Generic Constraints · Dispose Pattern · ZenCampus</p>
+  <div style="margin-top:12px">
+    <span class="badge">try/catch/finally</span>
+    <span class="badge">Custom Exception</span>
+    <span class="badge">Generics &lt;T&gt;</span>
+    <span class="badge">IDisposable</span>
+    <span class="badge">using</span>
+    <span class="badge">Finalizer</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#exc-hierarchy">🌳 Hierarchy</a>
+  <a href="#patterns">🔄 Patterns</a>
+  <a href="#custom">⚡ Custom Exc</a>
+  <a href="#generics">🧬 Generics</a>
+  <a href="#dispose">♻️ IDisposable</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+  <a href="#checklist">✅ Checklist</a>
+</nav>
+
+<div class="container">
+
+<!-- EXCEPTION HIERARCHY -->
+<div class="section" id="exc-hierarchy">
+  <div class="section-title"><span class="num">1</span> Exception Hierarchy — எது எதை inherit பண்ணுது</div>
+
+  <div class="movie">
+    <span class="film">🎬 Baasha (1995) — Different enemies, different level</span>
+    <p>Street level enemy, don level enemy, top boss — different hierarchy. Exceptions-um same — specific catch pannunum, not general. <code>catch(Exception)</code> = top boss மட்டும் பிடிக்கணும், not every street fight!</p>
+  </div>
+
+  <div class="exc-tree">
+    <span style="color:#a855f7">System.Object</span><br>
+    └── <span style="color:#4ec9b0">System.Exception</span> <span style="color:#6a9955">← catch(Exception e) — catches ALL</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:#4ec9b0">SystemException</span> <span style="color:#6a9955">← runtime errors</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span style="color:#9cdcfe">NullReferenceException</span> <span style="color:#6a9955">← null dereference</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span style="color:#9cdcfe">IndexOutOfRangeException</span> <span style="color:#6a9955">← array bounds</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span style="color:#9cdcfe">InvalidOperationException</span> <span style="color:#6a9955">← wrong state</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span style="color:#9cdcfe">ArgumentException</span> <span style="color:#6a9955">← bad argument</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span style="color:#dcdcaa">ArgumentNullException</span> <span style="color:#6a9955">← null argument</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span style="color:#dcdcaa">ArgumentOutOfRangeException</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span style="color:#9cdcfe">OperationCanceledException</span> <span style="color:#6a9955">← CancellationToken</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span style="color:#9cdcfe">NotSupportedException</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:#4ec9b0">ApplicationException</span> <span style="color:#6a9955">← your custom exceptions go here</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:#dcdcaa">ZenCampusException</span> <span style="color:#6a9955">← ZenCampus base</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:#ce9178">StudentNotFoundException</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span style="color:#ce9178">FeeValidationException</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:#ce9178">DuplicateAdmissionException</span>
+  </div>
+
+  <div class="tip">
+    <div class="t-label">💡 Interview Rule — Catch specific, not general</div>
+    <p>Specific exceptions first, general last. <code>catch(SqlException)</code> before <code>catch(Exception)</code>. Compiler enforces order — base class catch before derived = compile error!</p>
+  </div>
+</div>
+
+<!-- PATTERNS -->
+<div class="section" id="patterns">
+  <div class="section-title"><span class="num">2</span> try/catch/finally Patterns — 5 Rules</div>
+
+  <div class="two-col">
+    <div>
+      <h3>✅ Correct Rethrow — preserve stack trace</h3>
+      <pre><span class="c-cmt">// ❌ WRONG — stack trace LOST!</span>
+<span class="c-kw">catch</span> (<span class="c-type">Exception</span> <span class="c-prop">ex</span>)
+{
+    <span class="c-prop">_logger</span>.<span class="c-method">LogError</span>(<span class="c-prop">ex</span>, <span class="c-str">"Error"</span>);
+    <span class="c-kw">throw</span> <span class="c-prop">ex</span>; <span class="c-cmt">// resets stack trace!</span>
+}
+
+<span class="c-cmt">// ✅ CORRECT — stack trace preserved</span>
+<span class="c-kw">catch</span> (<span class="c-type">Exception</span> <span class="c-prop">ex</span>)
+{
+    <span class="c-prop">_logger</span>.<span class="c-method">LogError</span>(<span class="c-prop">ex</span>, <span class="c-str">"Error"</span>);
+    <span class="c-kw">throw</span>; <span class="c-cmt">// bare throw — preserves!</span>
+}
+
+<span class="c-cmt">// ✅ Wrap with context (InnerException)</span>
+<span class="c-kw">catch</span> (<span class="c-type">SqlException</span> <span class="c-prop">ex</span>)
+{
+    <span class="c-kw">throw new</span> <span class="c-type">DataAccessException</span>(
+        <span class="c-str">$"Failed loading student {id}"</span>, <span class="c-prop">ex</span>);
+    <span class="c-cmt">// original SqlException = InnerException</span>
+}</pre>
+    </div>
+    <div>
+      <h3>✅ finally — always runs</h3>
+      <pre><span class="c-type">SqlConnection</span> <span class="c-prop">conn</span> = <span class="c-kw">null</span>;
+<span class="c-kw">try</span>
+{
+    <span class="c-prop">conn</span> = <span class="c-kw">new</span> <span class="c-type">SqlConnection</span>(<span class="c-prop">cs</span>);
+    <span class="c-prop">conn</span>.<span class="c-method">Open</span>();
+    <span class="c-cmt">// ... work ...</span>
+}
+<span class="c-kw">catch</span> (<span class="c-type">SqlException</span> <span class="c-prop">ex</span>)
+{
+    <span class="c-prop">_logger</span>.<span class="c-method">LogError</span>(<span class="c-prop">ex</span>, <span class="c-str">"DB error"</span>);
+    <span class="c-kw">throw</span>;
+}
+<span class="c-kw">finally</span>
+{
+    <span class="c-prop">conn</span>?.<span class="c-method">Dispose</span>(); <span class="c-cmt">// ALWAYS runs!</span>
+    <span class="c-cmt">// even if exception thrown</span>
+    <span class="c-cmt">// even if return in try</span>
+}
+
+<span class="c-cmt">// Modern: using replaces try/finally</span>
+<span class="c-kw">using var</span> <span class="c-prop">conn</span> = <span class="c-kw">new</span> <span class="c-type">SqlConnection</span>(<span class="c-prop">cs</span>);</pre>
+    </div>
+  </div>
+
+  <h3>When to catch, when NOT to:</h3>
+  <table>
+    <tr><th>Situation</th><th>Action</th><th>Why</th></tr>
+    <tr><td>You can HANDLE it</td><td class="green">catch + handle</td><td>Retry, fallback, user message</td></tr>
+    <tr><td>Need to LOG + rethrow</td><td class="yellow">catch + log + throw</td><td>Add context, preserve trace</td></tr>
+    <tr><td>Need to add context</td><td class="yellow">catch + wrap new ex(inner)</td><td>Business message + original cause</td></tr>
+    <tr><td>Cannot handle</td><td class="red">DON'T catch</td><td>Let it bubble up — don't swallow!</td></tr>
+    <tr><td>Resource cleanup only</td><td class="green">finally (or using)</td><td>No catch needed for cleanup</td></tr>
+  </table>
+
+  <div class="danger">
+    <div class="d-label">⚠️ Exception Anti-patterns — Never Do These!</div>
+    <pre><span class="c-cmt">// ❌ 1. Swallow exception — worst!</span>
+<span class="c-kw">catch</span> (<span class="c-type">Exception</span>) { } <span class="c-cmt">// silent failure — impossible to debug</span>
+
+<span class="c-cmt">// ❌ 2. Catch Exception for control flow</span>
+<span class="c-kw">try</span> { <span class="c-kw">int</span> <span class="c-prop">n</span> = <span class="c-kw">int</span>.<span class="c-method">Parse</span>(<span class="c-prop">input</span>); }
+<span class="c-kw">catch</span> { <span class="c-prop">n</span> = <span class="c-num">0</span>; } <span class="c-cmt">// use int.TryParse instead!</span>
+
+<span class="c-cmt">// ❌ 3. throw ex — loses stack trace</span>
+<span class="c-kw">catch</span> (<span class="c-type">Exception</span> <span class="c-prop">ex</span>) { <span class="c-kw">throw</span> <span class="c-prop">ex</span>; } <span class="c-cmt">// use bare throw!</span>
+
+<span class="c-cmt">// ❌ 4. return in finally</span>
+<span class="c-kw">finally</span> { <span class="c-kw">return</span> <span class="c-kw">null</span>; } <span class="c-cmt">// swallows exception silently!</span>
+
+<span class="c-cmt">// ❌ 5. Catch Exception catch-all in library</span>
+<span class="c-kw">catch</span> (<span class="c-type">Exception</span>) { <span class="c-kw">return</span> <span class="c-kw">null</span>; } <span class="c-cmt">// hides bugs from callers</span></pre>
+  </div>
+
+  <h3>Exception Filters — when keyword (C# 6+):</h3>
+  <pre><span class="c-cmt">// when = catch only if condition true</span>
+<span class="c-kw">catch</span> (<span class="c-type">SqlException</span> <span class="c-prop">ex</span>) <span class="c-kw">when</span> (<span class="c-prop">ex</span>.<span class="c-prop">Number</span> == <span class="c-num">-2</span>)
+{
+    <span class="c-cmt">// Only catch SQL timeout (error -2)</span>
+    <span class="c-kw">await</span> <span class="c-prop">_retryPolicy</span>.<span class="c-method">ExecuteAsync</span>(() => <span class="c-prop">_repo</span>.<span class="c-method">QueryAsync</span>());
+}
+
+<span class="c-cmt">// ZenCampus — catch only transient errors</span>
+<span class="c-kw">catch</span> (<span class="c-type">HttpRequestException</span> <span class="c-prop">ex</span>)
+    <span class="c-kw">when</span> (<span class="c-prop">ex</span>.<span class="c-prop">StatusCode</span> <span class="c-kw">is</span> <span class="c-type">HttpStatusCode</span>.<span class="c-prop">ServiceUnavailable</span>
+       <span class="c-kw">or</span> <span class="c-type">HttpStatusCode</span>.<span class="c-prop">TooManyRequests</span>)
+{
+    <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">Delay</span>(<span class="c-num">1000</span>);
+    <span class="c-kw">throw</span>; <span class="c-cmt">// retry upstream</span>
+}</pre>
+</div>
+
+<!-- CUSTOM EXCEPTIONS -->
+<div class="section" id="custom">
+  <div class="section-title"><span class="num">3</span> Custom Exceptions — ZenCampus Pattern</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram (2022) — Specific villain, specific response</span>
+    <p>Villain type பொறுத்து Vikram different tactics use பண்ணுவான். Custom exceptions same — caller specific exception type catch பண்ணி specific response குடுக்கலாம். Generic Exception = all villains same response — useless!</p>
+  </div>
+
+  <pre><span class="c-cmt">// ✅ ZenCampus Custom Exception Hierarchy</span>
+<span class="c-kw">public class</span> <span class="c-type">ZenCampusException</span> : <span class="c-type">Exception</span>
+{
+    <span class="c-kw">public string</span> <span class="c-prop">ErrorCode</span> { <span class="c-kw">get</span>; }
+
+    <span class="c-kw">public</span> <span class="c-method">ZenCampusException</span>(<span class="c-kw">string</span> <span class="c-prop">message</span>, <span class="c-kw">string</span> <span class="c-prop">errorCode</span>)
+        : <span class="c-kw">base</span>(<span class="c-prop">message</span>) => <span class="c-prop">ErrorCode</span> = <span class="c-prop">errorCode</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">ZenCampusException</span>(<span class="c-kw">string</span> <span class="c-prop">message</span>, <span class="c-kw">string</span> <span class="c-prop">errorCode</span>, <span class="c-type">Exception</span> <span class="c-prop">inner</span>)
+        : <span class="c-kw">base</span>(<span class="c-prop">message</span>, <span class="c-prop">inner</span>) => <span class="c-prop">ErrorCode</span> = <span class="c-prop">errorCode</span>;
+}
+
+<span class="c-kw">public class</span> <span class="c-type">StudentNotFoundException</span> : <span class="c-type">ZenCampusException</span>
+{
+    <span class="c-kw">public int</span> <span class="c-prop">StudentId</span> { <span class="c-kw">get</span>; }
+    <span class="c-kw">public</span> <span class="c-method">StudentNotFoundException</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+        : <span class="c-kw">base</span>(<span class="c-str">$"Student {id} not found"</span>, <span class="c-str">"STU_404"</span>)
+        => <span class="c-prop">StudentId</span> = <span class="c-prop">id</span>;
+}
+
+<span class="c-kw">public class</span> <span class="c-type">FeeValidationException</span> : <span class="c-type">ZenCampusException</span>
+{
+    <span class="c-kw">public decimal</span> <span class="c-prop">AttemptedAmount</span> { <span class="c-kw">get</span>; }
+    <span class="c-kw">public</span> <span class="c-method">FeeValidationException</span>(<span class="c-kw">decimal</span> <span class="c-prop">amount</span>, <span class="c-kw">string</span> <span class="c-prop">reason</span>)
+        : <span class="c-kw">base</span>(<span class="c-str">$"Fee validation failed: {reason}"</span>, <span class="c-str">"FEE_INVALID"</span>)
+        => <span class="c-prop">AttemptedAmount</span> = <span class="c-prop">amount</span>;
+}
+
+<span class="c-kw">public class</span> <span class="c-type">DuplicateAdmissionException</span> : <span class="c-type">ZenCampusException</span>
+{
+    <span class="c-kw">public string</span> <span class="c-prop">RollNumber</span> { <span class="c-kw">get</span>; }
+    <span class="c-kw">public</span> <span class="c-method">DuplicateAdmissionException</span>(<span class="c-kw">string</span> <span class="c-prop">roll</span>)
+        : <span class="c-kw">base</span>(<span class="c-str">$"Student {roll} already admitted"</span>, <span class="c-str">"ADM_DUP"</span>)
+        => <span class="c-prop">RollNumber</span> = <span class="c-prop">roll</span>;
+}
+
+<span class="c-cmt">// Usage in Service</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-method">GetStudentAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetByIdAsync</span>(<span class="c-prop">id</span>);
+    <span class="c-kw">return</span> <span class="c-prop">student</span> ?? <span class="c-kw">throw new</span> <span class="c-type">StudentNotFoundException</span>(<span class="c-prop">id</span>);
+}
+
+<span class="c-cmt">// Controller — specific catches → specific HTTP responses</span>
+<span class="c-kw">try</span> { <span class="c-kw">return</span> <span class="c-method">Ok</span>(<span class="c-kw">await</span> <span class="c-prop">_svc</span>.<span class="c-method">GetStudentAsync</span>(<span class="c-prop">id</span>)); }
+<span class="c-kw">catch</span> (<span class="c-type">StudentNotFoundException</span> <span class="c-prop">ex</span>)  { <span class="c-kw">return</span> <span class="c-method">NotFound</span>(<span class="c-prop">ex</span>.<span class="c-prop">Message</span>); }
+<span class="c-kw">catch</span> (<span class="c-type">FeeValidationException</span> <span class="c-prop">ex</span>)    { <span class="c-kw">return</span> <span class="c-method">BadRequest</span>(<span class="c-prop">ex</span>.<span class="c-prop">Message</span>); }
+<span class="c-kw">catch</span> (<span class="c-type">ZenCampusException</span> <span class="c-prop">ex</span>)        { <span class="c-kw">return</span> <span class="c-method">StatusCode</span>(<span class="c-num">500</span>, <span class="c-prop">ex</span>.<span class="c-prop">ErrorCode</span>); }</pre>
+
+  <div class="tip">
+    <div class="t-label">💡 Exception Middleware — Don't catch everywhere!</div>
+    <p>ASP.NET Core-la <code>UseExceptionHandler</code> middleware — one place exception handle pannuvu. Controller-la catch pannaa vendam! Exception filter or global middleware = cleaner.</p>
+  </div>
+</div>
+
+<!-- GENERICS -->
+<div class="section" id="generics">
+  <div class="section-title"><span class="num">4</span> Generics &lt;T&gt; — Type-safe Reusable Code <span class="tag tag-i">Interview Fav!</span></div>
+
+  <div class="movie">
+    <span class="film">🎬 Dasavathaaram — One Kamal, 10 types</span>
+    <p>Same actor, different roles — generic method same! <code>Repository&lt;T&gt;</code> one class — Student, Teacher, Fee — all serve pannuvu. No duplicate code!</p>
+  </div>
+
+  <pre><span class="c-cmt">// Without generics — duplicate code nightmare!</span>
+<span class="c-kw">public</span> <span class="c-type">Student</span> <span class="c-method">GetById</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>) { ... }
+<span class="c-kw">public</span> <span class="c-type">Teacher</span> <span class="c-method">GetById</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>) { ... } <span class="c-cmt">// duplicate!</span>
+<span class="c-kw">public</span> <span class="c-type">FeeRecord</span> <span class="c-method">GetById</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>) { ... } <span class="c-cmt">// more duplicate!</span>
+
+<span class="c-cmt">// ✅ Generic Repository — one class, all types!</span>
+<span class="c-kw">public class</span> <span class="c-type">Repository</span>&lt;<span class="c-type">T</span>&gt; <span class="c-kw">where</span> <span class="c-type">T</span> : <span class="c-kw">class</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">DbContext</span> <span class="c-prop">_ctx</span>;
+    <span class="c-kw">public</span> <span class="c-method">Repository</span>(<span class="c-type">DbContext</span> <span class="c-prop">ctx</span>) => <span class="c-prop">_ctx</span> = <span class="c-prop">ctx</span>;
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">T</span>?&gt; <span class="c-method">GetByIdAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+        => <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-type">Set</span>&lt;<span class="c-type">T</span>&gt;().<span class="c-method">FindAsync</span>(<span class="c-prop">id</span>);
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">List</span>&lt;<span class="c-type">T</span>&gt;&gt; <span class="c-method">GetAllAsync</span>()
+        => <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-type">Set</span>&lt;<span class="c-type">T</span>&gt;().<span class="c-method">ToListAsync</span>();
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">AddAsync</span>(<span class="c-type">T</span> <span class="c-prop">entity</span>)
+    {
+        <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-type">Set</span>&lt;<span class="c-type">T</span>&gt;().<span class="c-method">AddAsync</span>(<span class="c-prop">entity</span>);
+        <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">SaveChangesAsync</span>();
+    }
+}
+
+<span class="c-cmt">// Usage — same class, different types!</span>
+<span class="c-kw">var</span> <span class="c-prop">studentRepo</span> = <span class="c-kw">new</span> <span class="c-type">Repository</span>&lt;<span class="c-type">Student</span>&gt;(<span class="c-prop">ctx</span>);
+<span class="c-kw">var</span> <span class="c-prop">teacherRepo</span> = <span class="c-kw">new</span> <span class="c-type">Repository</span>&lt;<span class="c-type">Teacher</span>&gt;(<span class="c-prop">ctx</span>);
+<span class="c-kw">var</span> <span class="c-prop">feeRepo</span>     = <span class="c-kw">new</span> <span class="c-type">Repository</span>&lt;<span class="c-type">FeeRecord</span>&gt;(<span class="c-prop">ctx</span>);</pre>
+
+  <h3>Generic Constraints — where T :</h3>
+  <table>
+    <tr><th>Constraint</th><th>Meaning</th><th>ZenCampus Use</th></tr>
+    <tr><td><code>where T : class</code></td><td>T must be reference type</td><td>Repository — entities are classes</td></tr>
+    <tr><td><code>where T : struct</code></td><td>T must be value type</td><td>Math operations on int/decimal</td></tr>
+    <tr><td><code>where T : new()</code></td><td>T must have parameterless constructor</td><td>Factory methods</td></tr>
+    <tr><td><code>where T : IEntity</code></td><td>T must implement interface</td><td>All entities have Id, CreatedAt</td></tr>
+    <tr><td><code>where T : BaseEntity</code></td><td>T must inherit base class</td><td>Audit fields guaranteed</td></tr>
+    <tr><td><code>where T : class, new()</code></td><td>Multiple constraints</td><td>Combine as needed</td></tr>
+  </table>
+
+  <pre><span class="c-cmt">// Multiple constraints — ZenCampus entity pattern</span>
+<span class="c-kw">public interface</span> <span class="c-type">IEntity</span>
+{
+    <span class="c-kw">int</span> <span class="c-prop">Id</span> { <span class="c-kw">get</span>; }
+    <span class="c-type">DateTime</span> <span class="c-prop">CreatedAt</span> { <span class="c-kw">get</span>; }
+}
+
+<span class="c-kw">public class</span> <span class="c-type">AuditRepository</span>&lt;<span class="c-type">T</span>&gt;
+    <span class="c-kw">where</span> <span class="c-type">T</span> : <span class="c-kw">class</span>, <span class="c-type">IEntity</span>, <span class="c-kw">new</span>()
+{
+    <span class="c-kw">public</span> <span class="c-type">T</span> <span class="c-method">CreateWithAudit</span>()
+    {
+        <span class="c-kw">var</span> <span class="c-prop">entity</span> = <span class="c-kw">new</span> <span class="c-type">T</span>(); <span class="c-cmt">// new() constraint allows this</span>
+        <span class="c-cmt">// entity.Id, entity.CreatedAt — IEntity constraint allows this</span>
+        <span class="c-kw">return</span> <span class="c-prop">entity</span>;
+    }
+}
+
+<span class="c-cmt">// Generic method with constraint</span>
+<span class="c-kw">public</span> <span class="c-type">T</span> <span class="c-method">GetOrThrow</span>&lt;<span class="c-type">T</span>&gt;(<span class="c-type">T</span>? <span class="c-prop">value</span>, <span class="c-kw">string</span> <span class="c-prop">name</span>)
+    <span class="c-kw">where</span> <span class="c-type">T</span> : <span class="c-kw">class</span>
+    => <span class="c-prop">value</span> ?? <span class="c-kw">throw new</span> <span class="c-type">ArgumentNullException</span>(<span class="c-prop">name</span>);
+
+<span class="c-cmt">// Generic Result pattern — no exceptions for expected failures</span>
+<span class="c-kw">public class</span> <span class="c-type">Result</span>&lt;<span class="c-type">T</span>&gt;
+{
+    <span class="c-kw">public</span> <span class="c-type">T</span>? <span class="c-prop">Value</span> { <span class="c-kw">get</span>; }
+    <span class="c-kw">public string</span>? <span class="c-prop">Error</span> { <span class="c-kw">get</span>; }
+    <span class="c-kw">public bool</span> <span class="c-prop">IsSuccess</span> => <span class="c-prop">Error</span> == <span class="c-kw">null</span>;
+
+    <span class="c-kw">public static</span> <span class="c-type">Result</span>&lt;<span class="c-type">T</span>&gt; <span class="c-method">Ok</span>(<span class="c-type">T</span> <span class="c-prop">val</span>) => <span class="c-kw">new</span>() { <span class="c-prop">Value</span> = <span class="c-prop">val</span> };
+    <span class="c-kw">public static</span> <span class="c-type">Result</span>&lt;<span class="c-type">T</span>&gt; <span class="c-method">Fail</span>(<span class="c-kw">string</span> <span class="c-prop">err</span>) => <span class="c-kw">new</span>() { <span class="c-prop">Error</span> = <span class="c-prop">err</span> };
+}
+
+<span class="c-cmt">// No exception thrown — caller checks Result</span>
+<span class="c-kw">public</span> <span class="c-type">Result</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-method">AdmitStudent</span>(<span class="c-type">AdmissionDto</span> <span class="c-prop">dto</span>)
+{
+    <span class="c-kw">if</span> (<span class="c-prop">_repo</span>.<span class="c-method">Exists</span>(<span class="c-prop">dto</span>.<span class="c-prop">RollNo</span>))
+        <span class="c-kw">return</span> <span class="c-type">Result</span>&lt;<span class="c-type">Student</span>&gt;.<span class="c-method">Fail</span>(<span class="c-str">"Already admitted"</span>);
+    <span class="c-kw">var</span> <span class="c-prop">s</span> = <span class="c-prop">_mapper</span>.<span class="c-method">Map</span>&lt;<span class="c-type">Student</span>&gt;(<span class="c-prop">dto</span>);
+    <span class="c-kw">return</span> <span class="c-type">Result</span>&lt;<span class="c-type">Student</span>&gt;.<span class="c-method">Ok</span>(<span class="c-prop">s</span>);
+}</pre>
+</div>
+
+<!-- IDISPOSABLE -->
+<div class="section" id="dispose">
+  <div class="section-title"><span class="num">5</span> IDisposable + using — Resource Management ♻️</div>
+
+  <div class="movie">
+    <span class="film">🎬 Kaithi (2019) — Escape before dawn</span>
+    <p>Dilli resources (vehicles, phone) use பண்ணிட்டு mission முடிஞ்சதும் release பண்ணுவான். IDisposable same — DB connection, file handle, HTTP client — use பண்ணிட்டு Dispose() call பண்ணலைன்னா leak!</p>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3>using statement — auto Dispose</h3>
+      <pre><span class="c-cmt">// using block — Dispose at end of block</span>
+<span class="c-kw">using</span> (<span class="c-kw">var</span> <span class="c-prop">conn</span> = <span class="c-kw">new</span> <span class="c-type">SqlConnection</span>(<span class="c-prop">cs</span>))
+{
+    <span class="c-prop">conn</span>.<span class="c-method">Open</span>();
+    <span class="c-cmt">// use conn</span>
+} <span class="c-cmt">// conn.Dispose() called here!</span>
+
+<span class="c-cmt">// Modern C# 8+ — using declaration</span>
+<span class="c-kw">using var</span> <span class="c-prop">conn</span> = <span class="c-kw">new</span> <span class="c-type">SqlConnection</span>(<span class="c-prop">cs</span>);
+<span class="c-prop">conn</span>.<span class="c-method">Open</span>();
+<span class="c-cmt">// Dispose at end of enclosing scope</span>
+<span class="c-cmt">// cleaner — no extra nesting!</span>
+
+<span class="c-cmt">// Multiple using</span>
+<span class="c-kw">using var</span> <span class="c-prop">conn</span>   = <span class="c-kw">new</span> <span class="c-type">SqlConnection</span>(<span class="c-prop">cs</span>);
+<span class="c-kw">using var</span> <span class="c-prop">cmd</span>    = <span class="c-prop">conn</span>.<span class="c-method">CreateCommand</span>();
+<span class="c-kw">using var</span> <span class="c-prop">reader</span> = <span class="c-kw">await</span> <span class="c-prop">cmd</span>.<span class="c-method">ExecuteReaderAsync</span>();</pre>
+    </div>
+    <div>
+      <h3>IDisposable Implementation</h3>
+      <pre><span class="c-kw">public class</span> <span class="c-type">ZenCampusDbContext</span> : <span class="c-type">IDisposable</span>
+{
+    <span class="c-kw">private</span> <span class="c-type">SqlConnection</span> <span class="c-prop">_conn</span>;
+    <span class="c-kw">private bool</span> <span class="c-prop">_disposed</span>;
+
+    <span class="c-kw">public void</span> <span class="c-method">Dispose</span>()
+    {
+        <span class="c-method">Dispose</span>(<span class="c-kw">true</span>);
+        <span class="c-type">GC</span>.<span class="c-method">SuppressFinalize</span>(<span class="c-kw">this</span>);
+    }
+
+    <span class="c-kw">protected virtual void</span> <span class="c-method">Dispose</span>(<span class="c-kw">bool</span> <span class="c-prop">disposing</span>)
+    {
+        <span class="c-kw">if</span> (<span class="c-prop">_disposed</span>) <span class="c-kw">return</span>;
+        <span class="c-kw">if</span> (<span class="c-prop">disposing</span>)
+            <span class="c-prop">_conn</span>?.<span class="c-method">Dispose</span>(); <span class="c-cmt">// managed</span>
+        <span class="c-cmt">// unmanaged resources here</span>
+        <span class="c-prop">_disposed</span> = <span class="c-kw">true</span>;
+    }
+
+    <span class="c-cmt">// Finalizer — last resort (GC calls)</span>
+    ~<span class="c-method">ZenCampusDbContext</span>()
+        => <span class="c-method">Dispose</span>(<span class="c-kw">false</span>);
+}</pre>
+    </div>
+  </div>
+
+  <h3>IAsyncDisposable — .NET 6+ async cleanup:</h3>
+  <pre><span class="c-kw">public class</span> <span class="c-type">SmsService</span> : <span class="c-type">IAsyncDisposable</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">HttpClient</span> <span class="c-prop">_httpClient</span>;
+
+    <span class="c-kw">public async</span> <span class="c-type">ValueTask</span> <span class="c-method">DisposeAsync</span>()
+    {
+        <span class="c-kw">await</span> <span class="c-prop">_httpClient</span>.<span class="c-method">GetAsync</span>(<span class="c-str">"/flush"</span>); <span class="c-cmt">// async cleanup!</span>
+        _httpClient.Dispose();
+    }
+}
+
+<span class="c-cmt">// await using — for IAsyncDisposable</span>
+<span class="c-kw">await using var</span> <span class="c-prop">sms</span> = <span class="c-kw">new</span> <span class="c-type">SmsService</span>();
+<span class="c-kw">await</span> <span class="c-prop">sms</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">mobile</span>, <span class="c-prop">msg</span>);
+<span class="c-cmt">// DisposeAsync() called automatically!</span></pre>
+
+  <table>
+    <tr><th>Pattern</th><th>When</th><th>Example</th></tr>
+    <tr><td><code>using var</code></td><td>IDisposable resource</td><td>SqlConnection, FileStream</td></tr>
+    <tr><td><code>await using var</code></td><td>IAsyncDisposable</td><td>Async streams, HTTP clients</td></tr>
+    <tr><td><code>try/finally</code></td><td>Legacy / conditional dispose</td><td>Null check before dispose</td></tr>
+    <tr><td>Finalizer (~)</td><td>Unmanaged resources fallback</td><td>Native handles, COM objects</td></tr>
+    <tr><td>GC.SuppressFinalize</td><td>After Dispose() called</td><td>Prevent double cleanup</td></tr>
+  </table>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">6</span> 🎯 Scenario-Based Interview Questions</div>
+
+  <!-- S1 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">1</div>
+      <div>
+        <div class="scenario-title">throw ex vs throw — Stack Trace difference <span class="diff easy">Easy</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Most asked basic exception question</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Junior developer இந்த code எழுதினான். Production-la exception varuthu — stack trace line numbers wrong school point பண்ணுது! Root cause enna?
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">try</span>
+{
+    <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">SaveStudentAsync</span>(<span class="c-prop">student</span>); <span class="c-cmt">// line 45</span>
+}
+<span class="c-kw">catch</span> (<span class="c-type">Exception</span> <span class="c-prop">ex</span>)
+{
+    <span class="c-prop">_logger</span>.<span class="c-method">LogError</span>(<span class="c-prop">ex</span>, <span class="c-str">"Save failed"</span>);
+    <span class="c-kw">throw</span> <span class="c-prop">ex</span>; <span class="c-cmt">// ← problem here!</span>
+}</pre>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <p><strong>Problem:</strong> <code>throw ex</code> — stack trace reset பண்ணிடுது! Original exception-a line 45-la throw aachu — aaana <code>throw ex</code> stack trace-a catch block line-ku reset பண்ணுது. Stack trace useless aagiduchu!</p>
+      <pre><span class="c-cmt">// ❌ throw ex — resets stack trace to THIS line</span>
+<span class="c-kw">catch</span> (<span class="c-type">Exception</span> <span class="c-prop">ex</span>) { <span class="c-kw">throw</span> <span class="c-prop">ex</span>; }
+
+<span class="c-cmt">// ✅ throw — preserves original stack trace</span>
+<span class="c-kw">catch</span> (<span class="c-type">Exception</span> <span class="c-prop">ex</span>)
+{
+    <span class="c-prop">_logger</span>.<span class="c-method">LogError</span>(<span class="c-prop">ex</span>, <span class="c-str">"Save failed"</span>);
+    <span class="c-kw">throw</span>; <span class="c-cmt">// bare throw = preserve line 45!</span>
+}
+
+<span class="c-cmt">// ✅ Or wrap with inner (add context)</span>
+<span class="c-kw">catch</span> (<span class="c-type">SqlException</span> <span class="c-prop">ex</span>)
+{
+    <span class="c-kw">throw new</span> <span class="c-type">DataException</span>(<span class="c-str">"Student save failed"</span>, <span class="c-prop">ex</span>);
+    <span class="c-cmt">// ex = InnerException, original trace preserved inside</span>
+}</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Interview One-liner</div>
+        <p>"throw ex = stack trace reset. throw = stack trace preserved. Always use bare throw when rethrowing. Wrap in new Exception when adding context — original becomes InnerException."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div>
+        <div class="scenario-title">Exception Swallowing — Silent Bug <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Worst anti-pattern — catch + ignore</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus-la fee payment page — sometimes payment process aagiduchu aaana student fee still shows unpaid! No error log, no exception visible. Code:
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">ProcessPaymentAsync</span>(<span class="c-type">PaymentDto</span> <span class="c-prop">dto</span>)
+{
+    <span class="c-kw">try</span>
+    {
+        <span class="c-kw">await</span> <span class="c-prop">_paymentGateway</span>.<span class="c-method">ChargeAsync</span>(<span class="c-prop">dto</span>);
+        <span class="c-kw">await</span> <span class="c-prop">_feeRepo</span>.<span class="c-method">MarkPaidAsync</span>(<span class="c-prop">dto</span>.<span class="c-prop">StudentId</span>);
+    }
+    <span class="c-kw">catch</span> (<span class="c-type">Exception</span>) { } <span class="c-cmt">// ← PROBLEM!</span>
+}</pre>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ROOT CAUSE + FIX</div>
+      <p><strong>Root Cause:</strong> Empty catch block = silent exception swallow. Payment gateway charge pannuthu, MarkPaid throw pannuthu → silently ignored → student fee = unpaid. No log, no trace, no alert!</p>
+      <pre><span class="c-cmt">// ✅ Fix — never swallow exceptions</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">PaymentResult</span>&gt; <span class="c-method">ProcessPaymentAsync</span>(<span class="c-type">PaymentDto</span> <span class="c-prop">dto</span>)
+{
+    <span class="c-kw">try</span>
+    {
+        <span class="c-kw">await</span> <span class="c-prop">_paymentGateway</span>.<span class="c-method">ChargeAsync</span>(<span class="c-prop">dto</span>);
+        <span class="c-kw">await</span> <span class="c-prop">_feeRepo</span>.<span class="c-method">MarkPaidAsync</span>(<span class="c-prop">dto</span>.<span class="c-prop">StudentId</span>);
+        <span class="c-kw">return</span> <span class="c-type">PaymentResult</span>.<span class="c-method">Success</span>();
+    }
+    <span class="c-kw">catch</span> (<span class="c-type">PaymentGatewayException</span> <span class="c-prop">ex</span>)
+    {
+        <span class="c-prop">_logger</span>.<span class="c-method">LogError</span>(<span class="c-prop">ex</span>, <span class="c-str">"Gateway failed for {StudentId}"</span>, <span class="c-prop">dto</span>.<span class="c-prop">StudentId</span>);
+        <span class="c-kw">return</span> <span class="c-type">PaymentResult</span>.<span class="c-method">GatewayError</span>(<span class="c-prop">ex</span>.<span class="c-prop">Message</span>);
+    }
+    <span class="c-kw">catch</span> (<span class="c-type">Exception</span> <span class="c-prop">ex</span>)
+    {
+        <span class="c-prop">_logger</span>.<span class="c-method">LogError</span>(<span class="c-prop">ex</span>, <span class="c-str">"Unexpected payment error"</span>);
+        <span class="c-kw">throw</span>; <span class="c-cmt">// re-throw unexpected — don't swallow!</span>
+    }
+}</pre>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div>
+        <div class="scenario-title">Generic Repository — No Duplicate Code <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Generics for DRY principle</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus-la StudentRepository, TeacherRepository, FeeRepository — all same CRUD methods! Code duplicate. Generic base repository design pannu + DI-la register panna epdi?
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-cmt">// Base entity interface</span>
+<span class="c-kw">public interface</span> <span class="c-type">IEntity</span> { <span class="c-kw">int</span> <span class="c-prop">Id</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } }
+
+<span class="c-cmt">// Generic interface</span>
+<span class="c-kw">public interface</span> <span class="c-type">IRepository</span>&lt;<span class="c-type">T</span>&gt; <span class="c-kw">where</span> <span class="c-type">T</span> : <span class="c-type">IEntity</span>
+{
+    <span class="c-type">Task</span>&lt;<span class="c-type">T</span>?&gt; <span class="c-method">GetByIdAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>);
+    <span class="c-type">Task</span>&lt;<span class="c-type">List</span>&lt;<span class="c-type">T</span>&gt;&gt; <span class="c-method">GetAllAsync</span>();
+    <span class="c-type">Task</span> <span class="c-method">AddAsync</span>(<span class="c-type">T</span> <span class="c-prop">entity</span>);
+    <span class="c-type">Task</span> <span class="c-method">UpdateAsync</span>(<span class="c-type">T</span> <span class="c-prop">entity</span>);
+    <span class="c-type">Task</span> <span class="c-method">DeleteAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>);
+}
+
+<span class="c-cmt">// Generic implementation — ONE class for all!</span>
+<span class="c-kw">public class</span> <span class="c-type">EfRepository</span>&lt;<span class="c-type">T</span>&gt; : <span class="c-type">IRepository</span>&lt;<span class="c-type">T</span>&gt;
+    <span class="c-kw">where</span> <span class="c-type">T</span> : <span class="c-kw">class</span>, <span class="c-type">IEntity</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">AppDbContext</span> <span class="c-prop">_ctx</span>;
+    <span class="c-kw">private readonly</span> <span class="c-type">DbSet</span>&lt;<span class="c-type">T</span>&gt; <span class="c-prop">_set</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">EfRepository</span>(<span class="c-type">AppDbContext</span> <span class="c-prop">ctx</span>)
+    {
+        <span class="c-prop">_ctx</span> = <span class="c-prop">ctx</span>;
+        <span class="c-prop">_set</span> = <span class="c-prop">ctx</span>.<span class="c-type">Set</span>&lt;<span class="c-type">T</span>&gt;();
+    }
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">T</span>?&gt; <span class="c-method">GetByIdAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+        => <span class="c-kw">await</span> <span class="c-prop">_set</span>.<span class="c-method">FindAsync</span>(<span class="c-prop">id</span>);
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">List</span>&lt;<span class="c-type">T</span>&gt;&gt; <span class="c-method">GetAllAsync</span>()
+        => <span class="c-kw">await</span> <span class="c-prop">_set</span>.<span class="c-method">ToListAsync</span>();
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">AddAsync</span>(<span class="c-type">T</span> <span class="c-prop">entity</span>)
+    {
+        <span class="c-kw">await</span> <span class="c-prop">_set</span>.<span class="c-method">AddAsync</span>(<span class="c-prop">entity</span>);
+        <span class="c-kw">await</span> <span class="c-prop">_ctx</span>.<span class="c-method">SaveChangesAsync</span>();
+    }
+    <span class="c-cmt">// UpdateAsync, DeleteAsync same pattern...</span>
+}
+
+<span class="c-cmt">// DI Registration — Program.cs</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddScoped</span>(<span class="c-kw">typeof</span>(<span class="c-type">IRepository</span>&lt;&gt;), <span class="c-kw">typeof</span>(<span class="c-type">EfRepository</span>&lt;&gt;));
+<span class="c-cmt">// One line registers for ALL types — Student, Teacher, Fee, etc.!</span>
+
+<span class="c-cmt">// Specific repo with extra methods — inherit!</span>
+<span class="c-kw">public class</span> <span class="c-type">StudentRepository</span> : <span class="c-type">EfRepository</span>&lt;<span class="c-type">Student</span>&gt;
+{
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt;&gt; <span class="c-method">GetByClassAsync</span>(<span class="c-kw">string</span> <span class="c-prop">className</span>)
+        => <span class="c-kw">await</span> <span class="c-prop">_set</span>.<span class="c-method">Where</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Class</span> == <span class="c-prop">className</span>).<span class="c-method">ToListAsync</span>();
+}</pre>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div>
+        <div class="scenario-title">finally Block — Return in try <span class="diff hard">Hard</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: finally runs even after return — tricky!</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Output enna varum? Finally runs-a?
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">public int</span> <span class="c-method">GetStudentCount</span>()
+{
+    <span class="c-kw">try</span>
+    {
+        <span class="c-type">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-str">"try"</span>);
+        <span class="c-kw">return</span> <span class="c-num">42</span>;
+    }
+    <span class="c-kw">finally</span>
+    {
+        <span class="c-type">Console</span>.<span class="c-method">WriteLine</span>(<span class="c-str">"finally"</span>);
+    }
+}</pre>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <p><strong>Output:</strong></p>
+      <pre><span class="c-str">try</span>
+<span class="c-str">finally</span>
+<span class="c-cmt">// Return value: 42</span></pre>
+      <p style="color:#c0c0d0;font-size:0.9em">finally = <strong>ALWAYS</strong> runs — even after return in try! Return value captured, finally executes, then return happens. Exceptions in try → finally → exception propagates.</p>
+      <div class="danger">
+        <div class="d-label">⚠️ Trap: return in finally overrides try's return!</div>
+        <pre style="font-size:0.82em"><span class="c-kw">try</span> { <span class="c-kw">return</span> <span class="c-num">42</span>; }
+<span class="c-kw">finally</span> { <span class="c-kw">return</span> <span class="c-num">99</span>; } <span class="c-cmt">// returns 99! 42 is lost!</span>
+<span class="c-cmt">// Don't return in finally — swallows exceptions too!</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div>
+        <div class="scenario-title">DB Connection Leak — using fix <span class="diff easy">Easy</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: IDisposable + connection leak</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus app — 2 hours run aana connection pool exhausted! "All pooled connections are in use." Log-la "Maximum pool size was reached" varuthu. Code:
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt;&gt; <span class="c-method">GetStudentsAsync</span>()
+{
+    <span class="c-kw">var</span> <span class="c-prop">conn</span> = <span class="c-kw">new</span> <span class="c-type">SqlConnection</span>(<span class="c-prop">_cs</span>); <span class="c-cmt">// not disposed!</span>
+    <span class="c-kw">await</span> <span class="c-prop">conn</span>.<span class="c-method">OpenAsync</span>();
+    <span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-kw">await</span> <span class="c-prop">conn</span>.<span class="c-method">QueryAsync</span>&lt;<span class="c-type">Student</span>&gt;(<span class="c-str">"SELECT..."</span>);
+    <span class="c-kw">return</span> <span class="c-prop">result</span>.<span class="c-method">ToList</span>();
+    <span class="c-cmt">// conn NEVER disposed → pool exhausted!</span>
+}</pre>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ FIX</div>
+      <pre><span class="c-cmt">// ✅ using var — auto Dispose even on exception</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt;&gt; <span class="c-method">GetStudentsAsync</span>()
+{
+    <span class="c-kw">await using var</span> <span class="c-prop">conn</span> = <span class="c-kw">new</span> <span class="c-type">SqlConnection</span>(<span class="c-prop">_cs</span>);
+    <span class="c-kw">await</span> <span class="c-prop">conn</span>.<span class="c-method">OpenAsync</span>();
+    <span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-kw">await</span> <span class="c-prop">conn</span>.<span class="c-method">QueryAsync</span>&lt;<span class="c-type">Student</span>&gt;(<span class="c-str">"SELECT..."</span>);
+    <span class="c-kw">return</span> <span class="c-prop">result</span>.<span class="c-method">ToList</span>();
+} <span class="c-cmt">// conn.DisposeAsync() here — returns to pool!</span></pre>
+      <div class="gold">
+        <div class="gold-label">⭐ SqlConnection — pooling magic</div>
+        <p>SqlConnection.Dispose() doesn't close physically — returns to pool! Pool = reusable connections. Not disposing = pool exhaustion. Always using var SqlConnection!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div>
+        <div class="scenario-title">Custom Exception — Which base class? <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Exception vs ApplicationException inheritance</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Interview question: Custom exception create pannuvom — <code>Exception</code> inherit pannanuma, <code>ApplicationException</code> inherit pannanuma? Yen? Constructors எத்தனை வேணும்?
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <p><strong>Exception direct inherit பண்ணு — ApplicationException avoid பண்ணு</strong></p>
+      <p style="color:#888;font-size:0.88em;margin:6px 0">ApplicationException — MS itself says "don't use as base for custom exceptions" (.NET design guidelines). Just extend Exception or a specific SystemException.</p>
+      <pre><span class="c-cmt">// ✅ Standard custom exception — 4 constructors (MS pattern)</span>
+<span class="c-kw">public class</span> <span class="c-type">StudentNotFoundException</span> : <span class="c-type">Exception</span>
+{
+    <span class="c-kw">public int</span> <span class="c-prop">StudentId</span> { <span class="c-kw">get</span>; }
+
+    <span class="c-kw">public</span> <span class="c-method">StudentNotFoundException</span>()
+        : <span class="c-kw">base</span>(<span class="c-str">"Student not found"</span>) { }
+
+    <span class="c-kw">public</span> <span class="c-method">StudentNotFoundException</span>(<span class="c-kw">string</span> <span class="c-prop">message</span>)
+        : <span class="c-kw">base</span>(<span class="c-prop">message</span>) { }
+
+    <span class="c-kw">public</span> <span class="c-method">StudentNotFoundException</span>(<span class="c-kw">string</span> <span class="c-prop">message</span>, <span class="c-type">Exception</span> <span class="c-prop">inner</span>)
+        : <span class="c-kw">base</span>(<span class="c-prop">message</span>, <span class="c-prop">inner</span>) { }
+
+    <span class="c-cmt">// Convenience constructor with domain context</span>
+    <span class="c-kw">public</span> <span class="c-method">StudentNotFoundException</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+        : <span class="c-kw">base</span>(<span class="c-str">$"Student {id} not found"</span>)
+        => <span class="c-prop">StudentId</span> = <span class="c-prop">id</span>;
+}</pre>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div>
+        <div class="scenario-title">Generic Result Pattern — No Exception for Expected Failures <span class="diff senior">Senior</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Railway-oriented programming concept</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Interview-la: "Exceptions are expensive. Expected failures-ku (validation fail, not found) exception throw பண்றீங்க — better approach enna?" Senior answer expected.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ SENIOR ANSWER — Result&lt;T&gt; Pattern</div>
+      <pre><span class="c-cmt">// Exceptions = for UNEXPECTED failures (DB down, network error)
+// Result&lt;T&gt; = for EXPECTED failures (validation, not found)</span>
+<span class="c-kw">public record</span> <span class="c-type">Result</span>&lt;<span class="c-type">T</span>&gt;
+{
+    <span class="c-kw">public</span> <span class="c-type">T</span>? <span class="c-prop">Value</span> { <span class="c-kw">get</span>; <span class="c-kw">init</span>; }
+    <span class="c-kw">public string</span>? <span class="c-prop">Error</span> { <span class="c-kw">get</span>; <span class="c-kw">init</span>; }
+    <span class="c-kw">public bool</span> <span class="c-prop">IsSuccess</span> => <span class="c-prop">Error</span> == <span class="c-kw">null</span>;
+
+    <span class="c-kw">public static</span> <span class="c-type">Result</span>&lt;<span class="c-type">T</span>&gt; <span class="c-method">Ok</span>(<span class="c-type">T</span> <span class="c-prop">val</span>)       => <span class="c-kw">new</span>() { <span class="c-prop">Value</span> = <span class="c-prop">val</span> };
+    <span class="c-kw">public static</span> <span class="c-type">Result</span>&lt;<span class="c-type">T</span>&gt; <span class="c-method">Fail</span>(<span class="c-kw">string</span> <span class="c-prop">err</span>) => <span class="c-kw">new</span>() { <span class="c-prop">Error</span> = <span class="c-prop">err</span> };
+}
+
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">Result</span>&lt;<span class="c-type">Student</span>&gt;&gt; <span class="c-method">AdmitStudentAsync</span>(<span class="c-type">AdmissionDto</span> <span class="c-prop">dto</span>)
+{
+    <span class="c-kw">if</span> (<span class="c-kw">string</span>.<span class="c-method">IsNullOrEmpty</span>(<span class="c-prop">dto</span>.<span class="c-prop">Name</span>))
+        <span class="c-kw">return</span> <span class="c-type">Result</span>&lt;<span class="c-type">Student</span>&gt;.<span class="c-method">Fail</span>(<span class="c-str">"Name required"</span>); <span class="c-cmt">// no exception!</span>
+
+    <span class="c-kw">if</span> (<span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">ExistsAsync</span>(<span class="c-prop">dto</span>.<span class="c-prop">RollNo</span>))
+        <span class="c-kw">return</span> <span class="c-type">Result</span>&lt;<span class="c-type">Student</span>&gt;.<span class="c-method">Fail</span>(<span class="c-str">"Already admitted"</span>);
+
+    <span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-prop">_mapper</span>.<span class="c-method">Map</span>&lt;<span class="c-type">Student</span>&gt;(<span class="c-prop">dto</span>);
+    <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">AddAsync</span>(<span class="c-prop">student</span>); <span class="c-cmt">// this CAN throw (unexpected DB fail)</span>
+    <span class="c-kw">return</span> <span class="c-type">Result</span>&lt;<span class="c-type">Student</span>&gt;.<span class="c-method">Ok</span>(<span class="c-prop">student</span>);
+}
+
+<span class="c-cmt">// Controller — no try/catch for business failures</span>
+<span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-kw">await</span> <span class="c-prop">_svc</span>.<span class="c-method">AdmitStudentAsync</span>(<span class="c-prop">dto</span>);
+<span class="c-kw">return</span> <span class="c-prop">result</span>.<span class="c-prop">IsSuccess</span>
+    ? <span class="c-method">Ok</span>(<span class="c-prop">result</span>.<span class="c-prop">Value</span>)
+    : <span class="c-method">BadRequest</span>(<span class="c-prop">result</span>.<span class="c-prop">Error</span>);</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Why Result pattern is senior-level</div>
+        <p>"Exceptions are expensive — stack unwind, heap allocation. For expected failures (validation, business rules) → Result&lt;T&gt;. For unexpected failures (DB down, null bug) → exceptions. This distinction = clean error handling design."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div>
+        <div class="scenario-title">Dispose Pattern — HttpClient anti-pattern <span class="diff hard">Hard</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Classic IDisposable misuse — socket exhaustion</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus SMS service — every request-ku new HttpClient create பண்றோம். Production-la "Unable to connect to remote server" + "An attempt was made to access a socket in a way forbidden" error!
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">SendSmsAsync</span>(<span class="c-kw">string</span> <span class="c-prop">mobile</span>, <span class="c-kw">string</span> <span class="c-prop">msg</span>)
+{
+    <span class="c-kw">using var</span> <span class="c-prop">client</span> = <span class="c-kw">new</span> <span class="c-type">HttpClient</span>(); <span class="c-cmt">// ← problem!</span>
+    <span class="c-kw">await</span> <span class="c-prop">client</span>.<span class="c-method">PostAsync</span>(<span class="c-prop">_smsUrl</span>, <span class="c-prop">content</span>);
+}</pre>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ROOT CAUSE + FIX</div>
+      <p><strong>Socket Exhaustion:</strong> HttpClient.Dispose() closes TCP socket immediately. But OS keeps socket in TIME_WAIT state for 240 seconds. 1000 requests/minute → 1000 sockets in TIME_WAIT → exhaustion!</p>
+      <pre><span class="c-cmt">// ✅ Fix 1 — Singleton HttpClient (simple but misses DNS changes)</span>
+<span class="c-kw">private static readonly</span> <span class="c-type">HttpClient</span> <span class="c-prop">_client</span> = <span class="c-kw">new</span>();
+
+<span class="c-cmt">// ✅ Fix 2 — IHttpClientFactory (BEST PRACTICE)</span>
+<span class="c-kw">public class</span> <span class="c-type">SmsService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IHttpClientFactory</span> <span class="c-prop">_factory</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">SmsService</span>(<span class="c-type">IHttpClientFactory</span> <span class="c-prop">factory</span>)
+        => <span class="c-prop">_factory</span> = <span class="c-prop">factory</span>;
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">SendAsync</span>(<span class="c-kw">string</span> <span class="c-prop">mobile</span>, <span class="c-kw">string</span> <span class="c-prop">msg</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">client</span> = <span class="c-prop">_factory</span>.<span class="c-method">CreateClient</span>(<span class="c-str">"SmsGateway"</span>);
+        <span class="c-kw">await</span> <span class="c-prop">client</span>.<span class="c-method">PostAsync</span>(<span class="c-prop">_smsUrl</span>, <span class="c-prop">content</span>);
+    }
+}
+
+<span class="c-cmt">// Program.cs — register named client</span>
+<span class="c-prop">builder</span>.<span class="c-prop">Services</span>.<span class="c-method">AddHttpClient</span>(<span class="c-str">"SmsGateway"</span>, <span class="c-prop">c</span> => {
+    <span class="c-prop">c</span>.<span class="c-prop">BaseAddress</span> = <span class="c-kw">new</span> <span class="c-type">Uri</span>(<span class="c-str">"https://sms-api.com/"</span>);
+    <span class="c-prop">c</span>.<span class="c-prop">Timeout</span> = <span class="c-type">TimeSpan</span>.<span class="c-method">FromSeconds</span>(<span class="c-num">30</span>);
+});</pre>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div>
+        <div class="scenario-title">Exception Filter — Catch only specific SQL errors <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: when keyword — exception filters</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus DB layer — SQL timeout-ku retry பண்ணணும், aaana other SQL errors (constraint violation, connection fail) retry பண்ணக்கூடாது. <code>when</code> filter use பண்ணு.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-kw">private const int</span> <span class="c-prop">SqlTimeoutError</span>  = -<span class="c-num">2</span>;
+<span class="c-kw">private const int</span> <span class="c-prop">SqlDeadlockError</span>  = <span class="c-num">1205</span>;
+
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt;&gt; <span class="c-method">GetStudentsAsync</span>()
+{
+    <span class="c-kw">int</span> <span class="c-prop">retryCount</span> = <span class="c-num">0</span>;
+    <span class="c-kw">while</span> (<span class="c-kw">true</span>)
+    {
+        <span class="c-kw">try</span>
+        {
+            <span class="c-kw">return</span> <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetAllAsync</span>();
+        }
+        <span class="c-cmt">// ONLY catch timeout or deadlock — other SQL errors bubble up!</span>
+        <span class="c-kw">catch</span> (<span class="c-type">SqlException</span> <span class="c-prop">ex</span>)
+            <span class="c-kw">when</span> ((<span class="c-prop">ex</span>.<span class="c-prop">Number</span> == <span class="c-prop">SqlTimeoutError</span>
+               || <span class="c-prop">ex</span>.<span class="c-prop">Number</span> == <span class="c-prop">SqlDeadlockError</span>)
+               &amp;&amp; <span class="c-prop">retryCount</span> &lt; <span class="c-num">3</span>)
+        {
+            <span class="c-prop">retryCount</span>++;
+            <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">Delay</span>(<span class="c-prop">retryCount</span> * <span class="c-num">500</span>); <span class="c-cmt">// 500ms, 1s, 1.5s</span>
+            <span class="c-prop">_logger</span>.<span class="c-method">LogWarning</span>(<span class="c-str">"Retry {n} for SQL {err}"</span>, <span class="c-prop">retryCount</span>, <span class="c-prop">ex</span>.<span class="c-prop">Number</span>);
+        }
+    }
+}</pre>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div>
+        <div class="scenario-title">Interview — "Explain your exception strategy in ZenCampus" <span class="diff senior">Senior</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Complete design-level answer</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "Your project-la exception handling எப்படி design பண்ணீங்க? Global vs local — explain."
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE INTERVIEW ANSWER</div>
+      <div style="background:#0a1a0a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong>"ZenCampus-la 3-layer exception strategy:"</strong></p>
+        <p><strong>Layer 1 — Global Middleware:</strong> UseExceptionHandler middleware — all unhandled exceptions catch பண்ணி log பண்ணி 500 return பண்ணும். Controllers-la no try/catch for unexpected errors!</p>
+        <p><strong>Layer 2 — Domain Exceptions:</strong> StudentNotFoundException, FeeValidationException — specific exceptions throw பண்ணுவோம். Controller-la specific catch → specific HTTP status code (404, 400, 409).</p>
+        <p><strong>Layer 3 — Result&lt;T&gt; for expected:</strong> Validation failures, business rule violations — exceptions போடாம Result&lt;T&gt; return பண்ணுவோம். No exception overhead for expected outcomes.</p>
+        <p style="margin-top:8px"><strong>Golden rules:</strong> throw not throw ex. Never swallow. Always using for IDisposable. Custom exceptions for domain errors. Exception filters for specific retry logic.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">7</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: throw ex vs throw — difference?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) No difference</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) throw ex resets stack trace; bare throw preserves it</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) throw ex is faster</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) throw ex wraps in new exception</div>
+    <div class="quiz-fb ok">✅ throw ex = new stack trace from catch block. throw = original stack trace preserved. ALWAYS use bare throw when rethrowing!</div>
+    <div class="quiz-fb nope">❌ throw ex resets! Stack trace now points to catch line not original throw site. throw (bare) = preserve. Senior difference!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: using var conn — when does Dispose() get called?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) When GC runs</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Manually only</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) End of enclosing scope — always, even on exception</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) After method returns</div>
+    <div class="quiz-fb ok">✅ using var = Dispose() at end of enclosing scope. Exception thrown in the middle? Still Dispose()! Same as try/finally but cleaner syntax.</div>
+    <div class="quiz-fb nope">❌ using var = end of enclosing scope ALWAYS. Exception or return — doesn't matter. Guaranteed cleanup!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: Generic constraint where T : new() — enna pannum?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) T must be new keyword</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) T must have a parameterless constructor — allows new T() in code</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) T cannot be created</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) T is always reference type</div>
+    <div class="quiz-fb ok">✅ new() constraint = T has parameterless constructor. Allows var x = new T() inside generic class/method. Without it = compiler error on new T()!</div>
+    <div class="quiz-fb nope">❌ new() = parameterless constructor required. Allows you to write new T() in generic code. Without this constraint, compiler won't allow new T().</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: finally block — எப்போது run ஆகாது?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Always runs</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Environment.FailFast() or power failure — process killed</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) When exception is caught</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) When return is in try</div>
+    <div class="quiz-fb ok">✅ finally skipped only on: Environment.FailFast() (immediate process kill), StackOverflowException, ExecutionEngineException, or system crash. Normal exceptions + return = finally ALWAYS runs!</div>
+    <div class="quiz-fb nope">❌ finally = almost always runs! Exceptions, returns, break — doesn't matter. Only NOT runs on: FailFast(), fatal CLR errors, or OS kill. Normal code = always runs.</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section" id="checklist">
+  <div class="section-title"><span class="num">8</span> ✅ Day 5 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory (50 min)</h3>
+      <ul class="check-list">
+        <li>Exception hierarchy — SystemException vs ApplicationException</li>
+        <li>throw vs throw ex — stack trace difference</li>
+        <li>5 exception anti-patterns memorize</li>
+        <li>Exception filter — when keyword</li>
+        <li>Generics — T, constraints, generic repository</li>
+        <li>IDisposable — using var + Dispose pattern</li>
+        <li>Result&lt;T&gt; pattern — expected vs unexpected</li>
+      </ul>
+    </div>
+    <div>
+      <h3>💻 Hands-On (60 min)</h3>
+      <ul class="check-list">
+        <li>ZenCampus custom exception hierarchy create</li>
+        <li>Generic EfRepository&lt;T&gt; implement + DI register</li>
+        <li>Result&lt;T&gt; pattern in AdmissionService</li>
+        <li>HttpClient anti-pattern → IHttpClientFactory fix</li>
+        <li>Exception filter with SQL error numbers</li>
+        <li>throw vs throw ex difference prove in console</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Scenarios (30 min)</h3>
+      <ul class="check-list">
+        <li>S1: throw ex stack trace explain</li>
+        <li>S2: Exception swallow debug</li>
+        <li>S5: Connection pool exhaustion</li>
+        <li>S7: Result&lt;T&gt; senior explanation</li>
+        <li>S8: HttpClient socket exhaustion</li>
+        <li>S10: Full exception strategy answer</li>
+      </ul>
+    </div>
+    <div>
+      <h3>⭐ Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"bare throw = preserve stack trace"</li>
+        <li>"never swallow exception"</li>
+        <li>"using = guaranteed Dispose"</li>
+        <li>"Result&lt;T&gt; for expected failures"</li>
+        <li>"IHttpClientFactory not new HttpClient"</li>
+        <li>"Generic constraint where T : class, IEntity"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#0a001a,#0a1020);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🎬 Day 5 Motivation</div>
+    <p style="color:#f39c12;font-style:italic">"Vikram different villains-ku different response. ZenCampus-la StudentNotFoundException → 404, FeeValidationException → 400, unexpected → 500. <strong>Custom exceptions = precise error handling = senior code.</strong> throw ex பண்ணாத — throw பண்ணு!"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 5/60 ✅ | Tomorrow: OOP Deep Dive — SOLID Principles + Design Patterns</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:8.3%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">5 of 60 days (8.3%)</div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p>Day 5 – Exceptions · Generics · IDisposable | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🎬 "Exception hierarchy = Villain hierarchy. throw not throw ex. using var = Kaithi escape clean!"</p>
+</footer>
+
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent='💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

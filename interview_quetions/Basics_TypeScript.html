@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript Basics — Types, Interfaces, Generics | ZenCampus</title>
+<style>
+  :root{--accent:#0891b2;--accent-dim:#0e7490;--accent-subtle:rgba(8,145,178,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(8,145,178,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.05rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}.tp{color:#ffcb6b;}
+  .movie{background:linear-gradient(135deg,rgba(8,145,178,.12),rgba(8,145,178,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.9rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.5rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">TYPESCRIPT</span>
+  <a href="#types">Types</a><a href="#interfaces">Interfaces</a><a href="#generics">Generics</a>
+  <a href="#utility">Utility Types</a><a href="#scenarios">Interview Q</a><a href="#quiz">Quiz</a>
+</nav>
+<div class="hero">
+  <h1>TypeScript Basics</h1>
+  <p>Types · Interfaces · Enums · Generics · Type Guards · Utility Types</p>
+  <div class="tags">
+    <span class="tag">TypeScript</span><span class="tag">Type Safety</span><span class="tag">Interfaces</span>
+    <span class="tag">Generics</span>
+    <span class="tag" style="background:rgba(8,145,178,.2);border-color:#0891b2;color:#0891b2;">Cyan #0891b2</span>
+  </div>
+</div>
+<main>
+
+<section id="types">
+  <h2>🔷 Types — TypeScript = JavaScript + Types</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Enthiran (2010) — Rules prevent chaos</div>
+    <div class="mb">Enthiran-la Chitti-ku strict rules koduthanga — rules illana chaos. TypeScript same: JavaScript-ku type rules add pannidhu. Runtime-la "Cannot read property of undefined" nu crash aagaadha varikku, compile time-laiyae type error sollidhu. ZenCampus-la student.fee = "free" nu string assign pannivita, TypeScript immediately "Type string is not assignable to type number" nu warn pannudhu!</div></div>
+  </div>
+  <pre><code><span class="cm">// Primitive types</span>
+<span class="kw">let</span> studentName: <span class="tp">string</span> = <span class="str">"Basha"</span>;
+<span class="kw">let</span> classId: <span class="tp">number</span> = <span class="num">5</span>;
+<span class="kw">let</span> isActive: <span class="tp">boolean</span> = <span class="kw">true</span>;
+<span class="kw">let</span> nothing: <span class="tp">null</span> = <span class="kw">null</span>;
+<span class="kw">let</span> notAssigned: <span class="tp">undefined</span>;
+
+<span class="cm">// Arrays</span>
+<span class="kw">const</span> names: <span class="tp">string[]</span> = [<span class="str">"Basha"</span>, <span class="str">"Priya"</span>];
+<span class="kw">const</span> ids: <span class="tp">number[]</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+<span class="kw">const</span> mixed: <span class="cl">Array</span>&lt;<span class="tp">string | number</span>&gt; = [<span class="str">"Basha"</span>, <span class="num">1</span>]; <span class="cm">// union type array</span>
+
+<span class="cm">// Union types — can be one of multiple types</span>
+<span class="kw">let</span> id: <span class="tp">string | number</span> = <span class="str">"ADM001"</span>;  <span class="cm">// can be string or number</span>
+id = <span class="num">1</span>;  <span class="cm">// also valid</span>
+
+<span class="cm">// Literal types</span>
+<span class="kw">type</span> <span class="tp">Gender</span> = <span class="str">"Male"</span> | <span class="str">"Female"</span> | <span class="str">"Other"</span>;
+<span class="kw">type</span> <span class="tp">Status</span> = <span class="str">"Active"</span> | <span class="str">"Inactive"</span> | <span class="str">"Graduated"</span>;
+<span class="kw">let</span> gender: <span class="tp">Gender</span> = <span class="str">"Male"</span>;    <span class="cm">// only these 3 values allowed</span>
+
+<span class="cm">// Tuple — fixed-length array with specific types</span>
+<span class="kw">type</span> <span class="tp">StudentTuple</span> = [<span class="tp">string</span>, <span class="tp">number</span>, <span class="tp">boolean</span>];
+<span class="kw">const</span> s: <span class="tp">StudentTuple</span> = [<span class="str">"Basha"</span>, <span class="num">5</span>, <span class="kw">true</span>];
+
+<span class="cm">// any vs unknown (avoid 'any'!)</span>
+<span class="kw">let</span> apiResponse: <span class="tp">unknown</span> = fetchData();  <span class="cm">// safer than any</span>
+<span class="kw">if</span> (<span class="kw">typeof</span> apiResponse === <span class="str">"string"</span>) {   <span class="cm">// must check type before use</span>
+    console.log(apiResponse.toUpperCase());  <span class="cm">// TS now knows it's string</span>
+}
+<span class="cm">// any: skips type checking — unsafe. Use unknown instead.</span>
+
+<span class="cm">// Type alias</span>
+<span class="kw">type</span> <span class="tp">StudentId</span> = <span class="tp">number</span>;   <span class="cm">// alias for readability</span>
+<span class="kw">type</span> <span class="tp">SchoolId</span> = <span class="tp">number</span>;
+<span class="kw">function</span> getStudent(studentId: <span class="tp">StudentId</span>, schoolId: <span class="tp">SchoolId</span>) { <span class="cm">/* ... */</span> }</code></pre>
+</section>
+
+<section id="interfaces">
+  <h2>🏗️ Interfaces and Types</h2>
+  <pre><code><span class="cm">// Interface — defines shape of an object</span>
+<span class="kw">interface</span> <span class="cl">Student</span> {
+    id: <span class="tp">number</span>;
+    name: <span class="tp">string</span>;
+    admNo: <span class="tp">string</span>;
+    classId: <span class="tp">number</span>;
+    email?: <span class="tp">string</span>;          <span class="cm">// optional property</span>
+    readonly createdAt: <span class="tp">Date</span>; <span class="cm">// cannot modify after creation</span>
+    address: {
+        city: <span class="tp">string</span>;
+        state: <span class="tp">string</span>;
+    };
+}
+
+<span class="cm">// Use the interface</span>
+<span class="kw">const</span> student: <span class="cl">Student</span> = {
+    id: <span class="num">1</span>, name: <span class="str">"Basha"</span>, admNo: <span class="str">"ADM001"</span>, classId: <span class="num">5</span>,
+    createdAt: <span class="kw">new</span> Date(), address: { city: <span class="str">"Chennai"</span>, state: <span class="str">"TN"</span> }
+};
+<span class="cm">// student.createdAt = new Date(); ← Error: readonly!</span>
+
+<span class="cm">// Interface with methods</span>
+<span class="kw">interface</span> <span class="cl">StudentRepository</span> {
+    getById(id: <span class="tp">number</span>): <span class="cl">Promise</span>&lt;<span class="cl">Student</span> | <span class="tp">null</span>&gt;;
+    getAll(schoolId: <span class="tp">number</span>): <span class="cl">Promise</span>&lt;<span class="cl">Student</span>[]&gt;;
+    save(student: <span class="cl">Student</span>): <span class="cl">Promise</span>&lt;<span class="tp">void</span>&gt;;
+    delete(id: <span class="tp">number</span>): <span class="cl">Promise</span>&lt;<span class="tp">boolean</span>&gt;;
+}
+
+<span class="cm">// Extending interfaces</span>
+<span class="kw">interface</span> <span class="cl">HostelStudent</span> <span class="kw">extends</span> <span class="cl">Student</span> {
+    roomNumber: <span class="tp">string</span>;
+    hostelFee: <span class="tp">number</span>;
+}
+
+<span class="cm">// interface vs type — key differences</span>
+<span class="cm">// Interface: can be extended with 'extends', can be re-declared (merged)</span>
+<span class="cm">// Type alias: can use unions, intersections (&), mapped types</span>
+
+<span class="cm">// Type intersection — combine types with &amp;</span>
+<span class="kw">type</span> <span class="tp">StudentWithFee</span> = <span class="cl">Student</span> & {
+    pendingAmount: <span class="tp">number</span>;
+    lastPaymentDate: <span class="cl">Date</span>;
+};
+
+<span class="cm">// Enums — named constants</span>
+<span class="kw">enum</span> <span class="cl">AttendanceStatus</span> {
+    Present = <span class="str">"PRESENT"</span>,
+    Absent  = <span class="str">"ABSENT"</span>,
+    Late    = <span class="str">"LATE"</span>,
+    Holiday = <span class="str">"HOLIDAY"</span>
+}
+<span class="kw">const</span> today: <span class="cl">AttendanceStatus</span> = <span class="cl">AttendanceStatus</span>.Present;</code></pre>
+</section>
+
+<section id="generics">
+  <h2>⚙️ Generics — Reusable Typed Functions</h2>
+  <pre><code><span class="cm">// Generic function — works with any type</span>
+<span class="kw">function</span> getFirst&lt;<span class="tp">T</span>&gt;(arr: <span class="tp">T</span>[]): <span class="tp">T | undefined</span> {
+    <span class="kw">return</span> arr[<span class="num">0</span>];
+}
+getFirst&lt;<span class="tp">string</span>&gt;([<span class="str">"Basha"</span>, <span class="str">"Priya"</span>]);  <span class="cm">// returns string</span>
+getFirst&lt;<span class="tp">number</span>&gt;([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]);           <span class="cm">// returns number</span>
+
+<span class="cm">// Generic API response wrapper</span>
+<span class="kw">interface</span> <span class="cl">ApiResponse</span>&lt;<span class="tp">T</span>&gt; {
+    data: <span class="tp">T</span>;
+    success: <span class="tp">boolean</span>;
+    message: <span class="tp">string</span>;
+    totalCount?: <span class="tp">number</span>;
+}
+
+<span class="cm">// Usage</span>
+<span class="kw">async function</span> getStudents(): <span class="cl">Promise</span>&lt;<span class="cl">ApiResponse</span>&lt;<span class="cl">Student</span>[]&gt;&gt; {
+    <span class="kw">const</span> res = <span class="kw">await</span> fetch(<span class="str">"/api/students"</span>);
+    <span class="kw">return</span> res.json() <span class="kw">as</span> <span class="cl">ApiResponse</span>&lt;<span class="cl">Student</span>[]&gt;;
+}
+<span class="kw">const</span> result = <span class="kw">await</span> getStudents();
+result.data.forEach(s =&gt; console.log(s.name));  <span class="cm">// TS knows s is Student!</span>
+
+<span class="cm">// Generic with constraint</span>
+<span class="kw">function</span> getProperty&lt;<span class="tp">T</span>, <span class="tp">K extends keyof T</span>&gt;(obj: <span class="tp">T</span>, key: <span class="tp">K</span>): <span class="tp">T[K]</span> {
+    <span class="kw">return</span> obj[key];
+}
+<span class="kw">const</span> name = getProperty(student, <span class="str">"name"</span>);    <span class="cm">// string</span>
+<span class="kw">const</span> id   = getProperty(student, <span class="str">"id"</span>);      <span class="cm">// number</span>
+<span class="cm">// getProperty(student, "nonExistent"); ← Error! key must exist on Student</span>
+
+<span class="cm">// Type Guards — narrow type at runtime</span>
+<span class="kw">function</span> isStudent(obj: <span class="tp">unknown</span>): obj <span class="kw">is</span> <span class="cl">Student</span> {
+    <span class="kw">return</span> <span class="kw">typeof</span> obj === <span class="str">"object"</span> &amp;&amp; obj !== <span class="kw">null</span>
+        &amp;&amp; <span class="str">"admNo"</span> <span class="kw">in</span> obj &amp;&amp; <span class="str">"name"</span> <span class="kw">in</span> obj;
+}
+
+<span class="kw">const</span> data: <span class="tp">unknown</span> = getFromApi();
+<span class="kw">if</span> (isStudent(data)) {
+    console.log(data.admNo);  <span class="cm">// TS now knows data is Student</span>
+}</code></pre>
+</section>
+
+<section id="utility">
+  <h2>🧰 Utility Types — Built-in Type Transformers</h2>
+  <pre><code><span class="kw">interface</span> <span class="cl">Student</span> {
+    id: <span class="tp">number</span>; name: <span class="tp">string</span>; admNo: <span class="tp">string</span>;
+    classId: <span class="tp">number</span>; isActive: <span class="tp">boolean</span>; fee: <span class="tp">number</span>;
+}
+
+<span class="cm">// Partial&lt;T&gt; — all properties optional (for update payloads)</span>
+<span class="kw">type</span> <span class="tp">UpdateStudentDto</span> = <span class="cl">Partial</span>&lt;<span class="cl">Student</span>&gt;;
+<span class="kw">const</span> update: <span class="tp">UpdateStudentDto</span> = { name: <span class="str">"New Name"</span> };  <span class="cm">// only name, rest optional</span>
+
+<span class="cm">// Required&lt;T&gt; — all properties required</span>
+<span class="kw">type</span> <span class="tp">FullStudent</span> = <span class="cl">Required</span>&lt;<span class="cl">Student</span>&gt;;   <span class="cm">// every field must be present</span>
+
+<span class="cm">// Readonly&lt;T&gt; — all properties read-only</span>
+<span class="kw">type</span> <span class="tp">ImmutableStudent</span> = <span class="cl">Readonly</span>&lt;<span class="cl">Student</span>&gt;;
+<span class="cm">// immutableStudent.name = "x"; ← Error!</span>
+
+<span class="cm">// Pick&lt;T, K&gt; — pick specific properties</span>
+<span class="kw">type</span> <span class="tp">StudentCard</span> = <span class="cl">Pick</span>&lt;<span class="cl">Student</span>, <span class="str">"name"</span> | <span class="str">"admNo"</span> | <span class="str">"classId"</span>&gt;;
+<span class="cm">// Only has name, admNo, classId — for display card</span>
+
+<span class="cm">// Omit&lt;T, K&gt; — exclude specific properties</span>
+<span class="kw">type</span> <span class="tp">CreateStudentDto</span> = <span class="cl">Omit</span>&lt;<span class="cl">Student</span>, <span class="str">"id"</span>&gt;;
+<span class="cm">// Has all Student fields EXCEPT id (DB generates it)</span>
+
+<span class="cm">// Record&lt;K, V&gt; — dictionary type</span>
+<span class="kw">type</span> <span class="tp">StudentByAdmNo</span> = <span class="cl">Record</span>&lt;<span class="tp">string</span>, <span class="cl">Student</span>&gt;;
+<span class="kw">const</span> cache: <span class="tp">StudentByAdmNo</span> = {
+    <span class="str">"ADM001"</span>: bashStudent,
+    <span class="str">"ADM002"</span>: priyaStudent
+};
+
+<span class="cm">// ReturnType&lt;T&gt; — extract function return type</span>
+<span class="kw">async function</span> getStudent(id: <span class="tp">number</span>) { <span class="kw">return</span> { id, name: <span class="str">"Basha"</span> }; }
+<span class="kw">type</span> <span class="tp">StudentResult</span> = <span class="cl">Awaited</span>&lt;<span class="cl">ReturnType</span>&lt;<span class="kw">typeof</span> getStudent&gt;&gt;;
+<span class="cm">// StudentResult = { id: number, name: string }</span></code></pre>
+  <table>
+    <tr><th>Utility Type</th><th>What it does</th><th>ZenCampus use</th></tr>
+    <tr><td>Partial&lt;T&gt;</td><td>All props optional</td><td>PATCH/Update DTOs</td></tr>
+    <tr><td>Required&lt;T&gt;</td><td>All props required</td><td>Creation validation</td></tr>
+    <tr><td>Readonly&lt;T&gt;</td><td>No mutations allowed</td><td>Config, frozen state</td></tr>
+    <tr><td>Pick&lt;T, K&gt;</td><td>Only selected props</td><td>StudentCard, summary views</td></tr>
+    <tr><td>Omit&lt;T, K&gt;</td><td>Exclude selected props</td><td>CreateDto (omit id)</td></tr>
+    <tr><td>Record&lt;K, V&gt;</td><td>Dictionary/map type</td><td>Student cache by admNo</td></tr>
+  </table>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is TypeScript and why use it over JavaScript?</span><span class="st">Basics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>TypeScript = JavaScript + static type system. Compiled to JavaScript. Benefits: 1) Catch errors at compile time (not runtime). 2) IntelliSense autocomplete. 3) Refactoring safety — rename property, compiler finds all usages. 4) Self-documenting code — function signature shows expected types. 5) Easier team collaboration — interfaces define contracts. ZenCampus: student.admNo typo as student.admNO → caught at compile, not in production at 2 AM.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What is the difference between interface and type in TypeScript?</span><span class="st">Types</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>interface: Object shape definition. Can be extended with 'extends'. Can be re-opened (declaration merging — useful for augmenting library types). type: Alias for any type. Can use unions (A | B), intersections (A & B), conditional types, mapped types. Cannot be re-opened. Both can define object shapes — mostly interchangeable. Prefer interface for object shapes (objects, classes). Use type for unions, primitives, computed types. React components: use interface for Props. API types: use type for union states.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is 'any' vs 'unknown' in TypeScript?</span><span class="st">Types</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>any: disables all type checking. You can do ANYTHING with it — no safety. Escape hatch — avoid. unknown: type-safe alternative. You MUST narrow the type before using it (typeof/instanceof check). TypeScript forces you to handle the uncertainty. Rule: never use any. When you receive data from external source (API response, JSON.parse), use unknown and narrow with type guards. ZenCampus: const response: unknown = await fetchApi(); if (isStudentArray(response)) { processStudents(response); }</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What is a type guard and how do you write one?</span><span class="st">Types</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>// Type predicate: "obj is Student" narrows the type
+function isStudent(obj: unknown): obj is Student {
+    return typeof obj === "object" && obj !== null
+        && "admNo" in obj && "name" in obj;
+}
+
+// Built-in narrowing (no custom guard needed)
+function processId(id: string | number) {
+    if (typeof id === "string") {
+        // TypeScript knows: id is string here
+        return id.toUpperCase();
+    }
+    // TypeScript knows: id is number here
+    return id * 2;
+}
+
+// instanceof guard
+if (error instanceof ValidationError) {
+    // TypeScript knows: error is ValidationError
+}</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">Explain Partial and Omit with a ZenCampus example.</span><span class="st">Utility</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Partial: used for PATCH/update endpoints where only some fields change. type UpdateStudentRequest = Partial&lt;Student&gt; → all fields optional. Client sends only changed fields. Omit: used for create DTOs where some fields are server-generated. type CreateStudentRequest = Omit&lt;Student, "id" | "createdAt"&gt; → client doesn't provide id (DB generates) or createdAt (server sets). These prevent type duplication — define Student once, derive all DTOs from it.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">What is a generic type and when is it useful?</span><span class="st">Generics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Generic = type parameter that works with multiple types. Without: function getFirstStudent(): Student, getFirstFee(): Fee — duplicate code. With generics: function getFirst&lt;T&gt;(arr: T[]): T | undefined — one function works for any type. Real ZenCampus use: interface ApiResponse&lt;T&gt; { data: T; success: boolean; } → ApiResponse&lt;Student[]&gt; or ApiResponse&lt;Fee&gt; — same wrapper, different data types. Avoids casting with 'as' everywhere.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">How do you define optional and readonly properties in TypeScript?</span><span class="st">Interfaces</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Optional: append ? to property name. email?: string means email can be undefined. Access safely: student.email?.toLowerCase(). Readonly: prefix with readonly. readonly id: number — cannot assign after creation. Both compile away — JS has no readonly. TypeScript enforces at compile time only. Use readonly for IDs, createdAt, anything set once. Use optional for non-required fields like email, middleName, photo URL.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">What is the difference between enum and literal union types?</span><span class="st">Types</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Enum: compiled to runtime JS object. Can iterate values. AttendanceStatus.Present. Useful when values needed at runtime (logging, switch statements). type Status = "Active" | "Inactive": pure compile-time, zero runtime cost. Simpler, serializes naturally to string. Prefer literal unions for simple sets. Use enum when: need to iterate all values, computed enum values, or the enum is used in runtime code (not just type annotations). ZenCampus: AttendanceStatus as enum — need to display all options in UI dropdown.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">How do you type async functions that return Promises?</span><span class="st">Types</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>// Explicit return type for async function
+async function getStudent(id: number): Promise<Student | null> {
+    const res = await fetch(`/api/students/${id}`);
+    if (!res.ok) return null;
+    return res.json() as Student;
+}
+
+// TypeScript can infer return type — explicit is better for documentation
+async function getAll(): Promise<Student[]> {
+    return (await fetch("/api/students")).json();
+}
+
+// void for async functions with no return value
+async function deleteStudent(id: number): Promise<void> {
+    await fetch(`/api/students/${id}`, { method: "DELETE" });
+}</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">How does TypeScript help with React component props?</span><span class="st">React+TS</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>// Define prop types with interface
+interface StudentCardProps {
+    student: Student;
+    onEdit: (id: number) => void;
+    onDelete: (id: number) => Promise<void>;
+    isLoading?: boolean;  // optional
+    className?: string;
+}
+
+// Use in component
+const StudentCard: React.FC<StudentCardProps> = ({
+    student,
+    onEdit,
+    onDelete,
+    isLoading = false  // default value
+}) => {
+    return (
+        <div onClick={() => onEdit(student.id)}>
+            {student.name}
+        </div>
+    );
+};
+
+// Benefits: autocomplete for props, error if required prop missing,
+// type mismatch caught at compile (not runtime)</code></pre></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. What is the difference between 'any' and 'unknown' types?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','They are NOT the same — unknown requires type narrowing before use.')">They are exactly the same</button>
+    <button class="qb" onclick="ans(this,'wrong','unknown is the safer version of any — not the other way around.')">any is safer because it requires type checks</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! unknown requires type narrowing before use — TypeScript forces you to check the type. any skips all checks. Prefer unknown for external data, JSON responses. Never use any if avoidable.')">unknown requires type narrowing; any bypasses all type checks</button>
+    <button class="qb" onclick="ans(this,'wrong','Both any and unknown compile to the same JS runtime — the difference is compile-time safety only.')">unknown causes runtime errors; any does not</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What does Omit&lt;Student, "id"&gt; produce?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Omit REMOVES the specified keys, not makes them optional.')">Student type with id made optional</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Omit creates a new type with ALL Student properties EXCEPT the listed ones. Perfect for CreateDto where ID is generated by the database.')">New type with all Student properties EXCEPT id</button>
+    <button class="qb" onclick="ans(this,'wrong','Omit produces a new type — it doesn\'t modify the original interface.')">Modifies the Student interface to remove id</button>
+    <button class="qb" onclick="ans(this,'wrong','Omit removes properties, not marks them readonly.')">Student type with id marked readonly</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. What is a type guard function's return type syntax?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','boolean alone doesn\'t help TypeScript narrow the type in the calling code.')">boolean</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! The "paramName is TypeName" syntax is a type predicate. It tells TypeScript that within the if block where the guard returns true, the parameter has been narrowed to TypeName.')">obj is ClassName (type predicate)</button>
+    <button class="qb" onclick="ans(this,'wrong','typeof is used for primitive checks inside the function, not as the return type.')">typeof ClassName</button>
+    <button class="qb" onclick="ans(this,'wrong','ClassName alone as return type doesn\'t signal a type guard to TypeScript.')">ClassName</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. When should you use interface vs type in TypeScript?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','TypeScript supports both — no strict language restriction.')">type cannot define object shapes — use interface only</button>
+    <button class="qb" onclick="ans(this,'wrong','Both work for objects and functions — the difference is in advanced features.')">interface is for classes only; type is for functions</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Prefer interface for object shapes (it can be extended and merged). Use type for unions (A | B), intersections (A & B), primitives, computed types, and when declaration merging is not wanted.')">Prefer interface for object shapes; use type for unions/intersections/complex types</button>
+    <button class="qb" onclick="ans(this,'wrong','No — type aliases and interfaces are nearly interchangeable for basic object shapes.')">They are completely interchangeable — choose by convention only</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can annotate variables, parameters, and return types</li>
+    <li onclick="ck(this)"><input type="checkbox">I use union types for "one of multiple types"</li>
+    <li onclick="ck(this)"><input type="checkbox">I define interfaces with optional and readonly properties</li>
+    <li onclick="ck(this)"><input type="checkbox">I know when to use interface vs type alias</li>
+    <li onclick="ck(this)"><input type="checkbox">I use unknown instead of any for external data</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write type guard functions with type predicates</li>
+    <li onclick="ck(this)"><input type="checkbox">I use Partial/Omit/Pick for DTO types</li>
+    <li onclick="ck(this)"><input type="checkbox">I can create generic functions and interfaces</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">TypeScript Basics Complete ✓ — Types, Interfaces, Generics, Utility Types!</p>
+  <p>Accent: Cyan #0891b2 · Next: ASP.NET MVC Basics</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

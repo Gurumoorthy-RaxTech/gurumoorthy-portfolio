@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Code Syntax Bible — ZenCampus Edition</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; line-height: 1.7; }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    padding: 40px 20px; text-align: center;
+    border-bottom: 3px solid #e94560;
+  }
+  header h1 { font-size: 2.2em; color: #e94560; text-shadow: 0 0 20px #e9456088; }
+  header p  { color: #a0a0c0; margin-top: 8px; font-size: 1.05em; }
+  .badge {
+    display: inline-block; background: #e94560; color: white;
+    padding: 4px 12px; border-radius: 20px; font-size: 0.78em; margin: 4px;
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1150px; margin: 0 auto; padding: 20px; }
+
+  /* ── SECTION BLOCKS ── */
+  .section {
+    margin: 36px 0; border-radius: 12px; overflow: hidden;
+    border: 1px solid #2a2a4a;
+  }
+  .section-header {
+    padding: 16px 24px; font-size: 1.25em; font-weight: bold;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-body { padding: 20px 24px; background: #13132a; }
+
+  /* ── SECTION COLOURS ── */
+  .csharp   .section-header { background: linear-gradient(90deg, #1a3d5c, #1e6091); }
+  .sql      .section-header { background: linear-gradient(90deg, #1a472a, #2d6a4f); }
+  .linq     .section-header { background: linear-gradient(90deg, #4a1a5c, #7b2d8b); }
+  .dapper   .section-header { background: linear-gradient(90deg, #5c2d1a, #a0522d); }
+  .micro    .section-header { background: linear-gradient(90deg, #1c3a5c, #c0392b); }
+  .html-sec .section-header { background: linear-gradient(90deg, #1a3010, #27ae60); }
+  .css-sec  .section-header { background: linear-gradient(90deg, #2c1a4a, #8e44ad); }
+  .js-sec   .section-header { background: linear-gradient(90deg, #3a2a00, #f39c12); }
+  .oops-sec .section-header { background: linear-gradient(90deg, #1a1a50, #2980b9); }
+
+  /* ── CARDS ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 18px; margin-top: 16px;
+  }
+  .card {
+    background: #1a1a35; border-radius: 10px; padding: 18px;
+    border-left: 4px solid #e94560;
+    transition: transform 0.2s;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px #e9456033; }
+  .card-title { font-size: 1.05em; font-weight: bold; color: #fff; margin-bottom: 8px; }
+  .card-sub   { font-size: 0.78em; color: #e94560; font-weight: bold;
+                text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+
+  /* ── CODE BLOCKS ── */
+  pre {
+    background: #0d1117; border-radius: 8px; padding: 14px;
+    overflow-x: auto; font-size: 0.82em; font-family: 'Consolas', monospace;
+    color: #e0e0e0; margin: 10px 0; border: 1px solid #2a2a4a;
+    line-height: 1.6;
+  }
+  .kw  { color: #569cd6; }   /* keywords  */
+  .str { color: #ce9178; }   /* strings   */
+  .cmt { color: #6a9955; }   /* comments  */
+  .num { color: #b5cea8; }   /* numbers   */
+  .typ { color: #4ec9b0; }   /* types     */
+  .fn  { color: #dcdcaa; }   /* functions */
+  .prop{ color: #9cdcfe; }   /* properties*/
+
+  code {
+    background: #0d1117; color: #f97316;
+    padding: 2px 7px; border-radius: 4px;
+    font-family: 'Consolas', monospace; font-size: 0.83em;
+  }
+
+  /* ── SPECIAL BOXES ── */
+  .movie-ref {
+    background: #1a0f2e; border-radius: 6px; padding: 10px 14px;
+    margin: 10px 0; font-size: 0.84em; color: #c39bd3;
+    border-left: 3px solid #8e44ad;
+  }
+  .movie-ref .film { color: #f39c12; font-weight: bold; }
+
+  .zencampus {
+    background: #0a2010; border-radius: 6px; padding: 10px 14px;
+    margin: 10px 0; font-size: 0.84em; color: #a8e6cf;
+    border-left: 3px solid #27ae60;
+  }
+  .zencampus .label { color: #2ecc71; font-weight: bold; font-size: 0.8em; }
+
+  .interview-qa {
+    background: #1a0a0a; border-radius: 6px; padding: 12px 14px;
+    margin: 10px 0; border-left: 3px solid #e74c3c;
+  }
+  .interview-qa .q { color: #e74c3c; font-size: 0.8em; font-weight: bold; }
+  .interview-qa .a { color: #c0c0c0; font-size: 0.85em; margin-top: 4px; }
+
+  .tanglish {
+    background: #1a1500; border-radius: 6px; padding: 10px 14px;
+    margin: 10px 0; font-size: 0.84em; color: #f9ca24;
+    border-left: 3px solid #f9ca24;
+  }
+  .trap {
+    background: #1a0000; border-radius: 6px; padding: 10px 14px;
+    margin: 10px 0; font-size: 0.84em; color: #ff6b6b;
+    border-left: 3px solid #e74c3c;
+  }
+  .trap .label { color: #e74c3c; font-weight: bold; }
+
+  .tip-box {
+    background: #1a1000; border: 1px solid #f39c12;
+    border-radius: 8px; padding: 14px; margin: 14px 0;
+  }
+  .tip-box .tip-title { color: #f39c12; font-weight: bold; margin-bottom: 6px; }
+
+  /* ── KEYWORD TAGS ── */
+  .kw-tags { margin: 8px 0; }
+  .kw-tag {
+    display: inline-block; background: #0d3b5e; color: #74b9ff;
+    padding: 2px 9px; border-radius: 4px; font-size: 0.73em;
+    margin: 2px; font-family: monospace;
+  }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.84em; }
+  th { background: #1e3a5f; color: #74b9ff; padding: 10px; text-align: left; }
+  td { padding: 8px 10px; border-bottom: 1px solid #2a2a4a; color: #c0c0c0; }
+  tr:hover td { background: #1a1a35; }
+
+  h3 { color: #74b9ff; margin: 16px 0 10px; font-size: 1.0em; }
+
+  /* ── NAV / TOC ── */
+  .toc {
+    background: #13132a; border-radius: 12px; padding: 20px 28px;
+    margin: 24px 0; border: 1px solid #2a2a4a;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+  }
+  .toc a {
+    color: #74b9ff; text-decoration: none; font-size: 0.88em;
+    padding: 4px 0; display: block;
+  }
+  .toc a:hover { color: #e94560; }
+  .toc-title { grid-column: 1 / -1; color: #e94560; font-weight: bold;
+               font-size: 1.05em; margin-bottom: 8px; }
+
+  /* ── SUMMARY CARDS ── */
+  .summary-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 12px; margin: 20px 0;
+  }
+  .summary-card {
+    background: #1a1a35; border-radius: 8px; padding: 14px;
+    text-align: center; border: 1px solid #2a2a4a;
+  }
+  .summary-card .num  { font-size: 1.9em; font-weight: bold; color: #e94560; }
+  .summary-card .lbl  { font-size: 0.78em; color: #a0a0c0; margin-top: 4px; }
+
+  footer { text-align: center; padding: 30px; color: #555;
+           border-top: 1px solid #2a2a4a; margin-top: 40px; }
+
+  @media (max-width: 600px) {
+    .card-grid { grid-template-columns: 1fr; }
+    header h1  { font-size: 1.5em; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════════════ -->
+<header>
+  <h1>💻 Interview Code Syntax Bible</h1>
+  <p>ZenCampus Edition · Syntax + Live Examples + Tamil Movie Memory + Interview Answers</p>
+  <div style="margin-top:12px">
+    <span class="badge">C#</span>
+    <span class="badge">OOPs</span>
+    <span class="badge">SQL</span>
+    <span class="badge">LINQ</span>
+    <span class="badge">Dapper</span>
+    <span class="badge">Microservices</span>
+    <span class="badge">HTML</span>
+    <span class="badge">CSS</span>
+    <span class="badge">JavaScript</span>
+    <span class="badge">3.5yr → Senior</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- SUMMARY -->
+  <div class="summary-grid" style="margin-top:24px">
+    <div class="summary-card"><div class="num">9</div><div class="lbl">Languages / Stacks</div></div>
+    <div class="summary-card"><div class="num">60+</div><div class="lbl">Syntax Examples</div></div>
+    <div class="summary-card"><div class="num">30+</div><div class="lbl">Interview Q&amp;As</div></div>
+    <div class="summary-card"><div class="num">🎬</div><div class="lbl">Tamil Movie Memory</div></div>
+    <div class="summary-card"><div class="num">ZC</div><div class="lbl">ZenCampus Live Examples</div></div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">📋 Table of Contents — Click to Jump</div>
+    <a href="#csharp">🔵 C# Basics &amp; Loops</a>
+    <a href="#oops">🔷 OOPs — 4 Pillars</a>
+    <a href="#async">⚡ Async / Await</a>
+    <a href="#linq">🟣 LINQ</a>
+    <a href="#sql">🟢 SQL</a>
+    <a href="#dapper">🟠 Dapper</a>
+    <a href="#microservices">🔴 Microservices + JWT</a>
+    <a href="#html">🌿 HTML</a>
+    <a href="#css">🟡 CSS</a>
+    <a href="#javascript">🟡 JavaScript</a>
+    <a href="#mastersheet">🎯 Interview Master Sheet</a>
+  </div>
+
+  <div class="tip-box">
+    <div class="tip-title">🧠 How to Use This Bible</div>
+    <p>Each card has: <strong>Syntax</strong> → <strong>ZenCampus Example</strong> → <strong>Interview Answer</strong> → <strong>Tamil Movie Hook</strong>.
+    Interview-la code ezhutha solluvaanga — syntax paarunga, ZenCampus example adapt pannu, answer ready!</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 1 — C# BASICS & LOOPS
+  ════════════════════════════════════════════════════════ -->
+  <div class="section csharp" id="csharp">
+    <div class="section-header">🔵 C# — Loops, Arrays, Collections, Exception Handling</div>
+    <div class="section-body">
+
+      <div class="movie-ref">
+        <span class="film">🎬 Baasha (1995):</span>
+        Manikkam — quiet panra, but sollana confirm panruvan. C# — oru discipline-a follow panra language.
+        Every loop, every check — purposeful, no waste!
+      </div>
+
+      <div class="card-grid">
+
+        <!-- FOR LOOP -->
+        <div class="card">
+          <div class="card-sub">Syntax</div>
+          <div class="card-title">for Loop</div>
+          <pre><span class="cmt">// Classic for loop</span>
+<span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">0</span>; <span class="prop">i</span> &lt; <span class="num">10</span>; <span class="prop">i</span>++)
+{
+    <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">i</span>);
+}
+
+<span class="cmt">// Reverse loop</span>
+<span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">9</span>; <span class="prop">i</span> &gt;= <span class="num">0</span>; <span class="prop">i</span>--)
+{
+    <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">i</span>);
+}</pre>
+          <div class="zencampus">
+            <div class="label">🏫 ZenCampus Example:</div>
+            <pre><span class="cmt">// Print roll numbers 1–40</span>
+<span class="kw">for</span> (<span class="kw">int</span> <span class="prop">roll</span> = <span class="num">1</span>; <span class="prop">roll</span> &lt;= <span class="num">40</span>; <span class="prop">roll</span>++)
+{
+    <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="str">$"Roll: {roll}"</span>);
+}</pre>
+          </div>
+          <div class="interview-qa">
+            <div class="q">❓ Interview Q: When do you use for vs foreach?</div>
+            <div class="a">for = index venum podhu (modify/reverse). foreach = just read panna. Performance same — readability matter!</div>
+          </div>
+        </div>
+
+        <!-- FOREACH LOOP -->
+        <div class="card">
+          <div class="card-sub">Syntax</div>
+          <div class="card-title">foreach Loop</div>
+          <pre><span class="kw">var</span> <span class="prop">students</span> = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="kw">string</span>&gt;
+    { <span class="str">"Ram"</span>, <span class="str">"Sita"</span>, <span class="str">"Guna"</span> };
+
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="prop">student</span> <span class="kw">in</span> <span class="prop">students</span>)
+{
+    <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">student</span>);
+}</pre>
+          <div class="zencampus">
+            <div class="label">🏫 ZenCampus Example:</div>
+            <pre><span class="cmt">// Mark attendance for each student</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="prop">s</span> <span class="kw">in</span> <span class="prop">students</span>)
+{
+    <span class="prop">s</span>.<span class="prop">IsPresent</span> = <span class="kw">true</span>;
+    <span class="kw">await</span> <span class="prop">_repo</span>.<span class="fn">SaveAttendanceAsync</span>(<span class="prop">s</span>);
+}</pre>
+          </div>
+          <div class="trap">
+            <div class="label">⚠️ Trap: foreach-la modify pannaadhe!</div>
+            Collection modify panna InvalidOperationException varum. ToList() eduthu loop pannu.
+          </div>
+        </div>
+
+        <!-- WHILE / DO-WHILE -->
+        <div class="card">
+          <div class="card-sub">Syntax</div>
+          <div class="card-title">while &amp; do-while</div>
+          <pre><span class="cmt">// while — condition true-a check first</span>
+<span class="kw">int</span> <span class="prop">count</span> = <span class="num">0</span>;
+<span class="kw">while</span> (<span class="prop">count</span> &lt; <span class="num">5</span>)
+{
+    <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">count</span>);
+    <span class="prop">count</span>++;
+}
+
+<span class="cmt">// do-while — at least once execute</span>
+<span class="kw">int</span> <span class="prop">page</span> = <span class="num">1</span>;
+<span class="kw">do</span>
+{
+    <span class="kw">var</span> <span class="prop">data</span> = <span class="fn">FetchPage</span>(<span class="prop">page</span>++);
+} <span class="kw">while</span> (<span class="prop">data</span>.<span class="prop">HasMore</span>);</pre>
+          <div class="zencampus">
+            <div class="label">🏫 ZenCampus Example:</div>
+            <pre><span class="cmt">// Retry fee payment 3 times</span>
+<span class="kw">int</span> <span class="prop">attempts</span> = <span class="num">0</span>;
+<span class="kw">bool</span> <span class="prop">success</span> = <span class="kw">false</span>;
+<span class="kw">while</span> (<span class="prop">attempts</span> &lt; <span class="num">3</span> &amp;&amp; !<span class="prop">success</span>)
+{
+    <span class="prop">success</span> = <span class="kw">await</span> <span class="prop">_payment</span>.<span class="fn">ProcessAsync</span>();
+    <span class="prop">attempts</span>++;
+}</pre>
+          </div>
+          <div class="interview-qa">
+            <div class="q">❓ Interview Q: while vs do-while?</div>
+            <div class="a">while = condition check first (0 times possible). do-while = at least once execute. Retry logic-ku do-while perfect.</div>
+          </div>
+        </div>
+
+        <!-- ARRAYS -->
+        <div class="card">
+          <div class="card-sub">Syntax</div>
+          <div class="card-title">Arrays &amp; Collections</div>
+          <pre><span class="cmt">// Array — fixed size</span>
+<span class="kw">int</span>[] <span class="prop">marks</span> = { <span class="num">90</span>, <span class="num">85</span>, <span class="num">78</span>, <span class="num">92</span> };
+<span class="kw">int</span>[] <span class="prop">arr</span>   = <span class="kw">new</span> <span class="kw">int</span>[<span class="num">5</span>];
+
+<span class="cmt">// List — dynamic size</span>
+<span class="kw">var</span> <span class="prop">names</span> = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="kw">string</span>&gt;();
+<span class="prop">names</span>.<span class="fn">Add</span>(<span class="str">"Guru"</span>);
+<span class="prop">names</span>.<span class="fn">Remove</span>(<span class="str">"Guru"</span>);
+<span class="prop">names</span>.<span class="fn">Contains</span>(<span class="str">"Guru"</span>);
+
+<span class="cmt">// Dictionary — key/value</span>
+<span class="kw">var</span> <span class="prop">dict</span> = <span class="kw">new</span> <span class="typ">Dictionary</span>&lt;<span class="kw">int</span>, <span class="kw">string</span>&gt;();
+<span class="prop">dict</span>[<span class="num">1</span>]  = <span class="str">"Student A"</span>;
+<span class="prop">dict</span>.<span class="fn">TryGetValue</span>(<span class="num">1</span>, <span class="kw">out var</span> <span class="prop">val</span>);</pre>
+          <div class="zencampus">
+            <div class="label">🏫 ZenCampus Example:</div>
+            <pre><span class="cmt">// Class → Student list mapping</span>
+<span class="kw">var</span> <span class="prop">classStudents</span> =
+  <span class="kw">new</span> <span class="typ">Dictionary</span>&lt;<span class="kw">string</span>, <span class="typ">List</span>&lt;<span class="typ">Student</span>&gt;&gt;();
+<span class="prop">classStudents</span>[<span class="str">"10A"</span>] = <span class="kw">await</span> <span class="prop">_repo</span>
+                       .<span class="fn">GetByClassAsync</span>(<span class="str">"10A"</span>);</pre>
+          </div>
+          <div class="interview-qa">
+            <div class="q">❓ Interview Q: List vs Array?</div>
+            <div class="a">Array = fixed size, faster access. List = dynamic, flexible. 90% of time List use panrom. ZenCampus student list = List&lt;Student&gt;.</div>
+          </div>
+        </div>
+
+        <!-- EXCEPTION HANDLING -->
+        <div class="card">
+          <div class="card-sub">Syntax</div>
+          <div class="card-title">Exception Handling — try / catch / finally</div>
+          <pre><span class="kw">try</span>
+{
+    <span class="kw">var</span> <span class="prop">result</span> = <span class="kw">await</span> <span class="prop">_service</span>.<span class="fn">GetStudentAsync</span>(<span class="prop">id</span>);
+    <span class="kw">return</span> <span class="fn">Ok</span>(<span class="prop">result</span>);
+}
+<span class="kw">catch</span> (<span class="typ">KeyNotFoundException</span> <span class="prop">ex</span>)
+{
+    <span class="cmt">// Specific exception first</span>
+    <span class="kw">return</span> <span class="fn">NotFound</span>(<span class="prop">ex</span>.<span class="prop">Message</span>);
+}
+<span class="kw">catch</span> (<span class="typ">SqlException</span> <span class="prop">ex</span>)
+{
+    <span class="prop">_logger</span>.<span class="fn">LogError</span>(<span class="prop">ex</span>, <span class="str">"DB error"</span>);
+    <span class="kw">return</span> <span class="fn">StatusCode</span>(<span class="num">500</span>);
+}
+<span class="kw">catch</span> (<span class="typ">Exception</span> <span class="prop">ex</span>)
+{
+    <span class="cmt">// Generic catch — last always</span>
+    <span class="kw">throw</span>; <span class="cmt">// re-throw keeps stack trace</span>
+}
+<span class="kw">finally</span>
+{
+    <span class="cmt">// Always runs — cleanup here</span>
+    <span class="prop">_connection</span>.<span class="fn">Close</span>();
+}</pre>
+          <div class="zencampus">
+            <div class="label">🏫 ZenCampus — Global Exception Middleware:</div>
+            <pre><span class="cmt">// Program.cs</span>
+<span class="prop">app</span>.<span class="fn">UseExceptionHandler</span>(<span class="prop">err</span> =&gt;
+{
+    <span class="prop">err</span>.<span class="fn">Run</span>(<span class="kw">async</span> <span class="prop">ctx</span> =&gt;
+    {
+        <span class="prop">ctx</span>.<span class="prop">Response</span>.<span class="prop">StatusCode</span> = <span class="num">500</span>;
+        <span class="kw">await</span> <span class="prop">ctx</span>.<span class="prop">Response</span>.<span class="fn">WriteAsJsonAsync</span>(
+            <span class="kw">new</span> { <span class="prop">error</span> = <span class="str">"Something went wrong"</span> });
+    });
+});</pre>
+          </div>
+          <div class="interview-qa">
+            <div class="q">❓ Interview Q: throw vs throw ex — difference?</div>
+            <div class="a"><code>throw</code> = original stack trace preserve. <code>throw ex</code> = stack trace reset (bad!). Always use bare <code>throw</code> to re-throw.</div>
+          </div>
+          <div class="trap">
+            <div class="label">⚠️ Trap: catch (Exception ex) { } — empty catch</div>
+            Exception swallow aagum — bug hide aagum. Always log or re-throw!
+          </div>
+        </div>
+
+        <!-- NULL HANDLING -->
+        <div class="card">
+          <div class="card-sub">Syntax</div>
+          <div class="card-title">Null Handling — ?. ?? ??=</div>
+          <pre><span class="cmt">// Null conditional — ?.</span>
+<span class="kw">string</span>? <span class="prop">name</span> = <span class="prop">student</span>?.<span class="prop">Name</span>;
+<span class="kw">int</span>?    <span class="prop">age</span>  = <span class="prop">student</span>?.<span class="prop">Profile</span>?.<span class="prop">Age</span>;
+
+<span class="cmt">// Null coalescing — ??</span>
+<span class="kw">string</span> <span class="prop">display</span> = <span class="prop">name</span> ?? <span class="str">"Unknown"</span>;
+
+<span class="cmt">// Null coalescing assignment — ??=</span>
+<span class="prop">student</span>.<span class="prop">Email</span> ??= <span class="str">"no-email@school.com"</span>;
+
+<span class="cmt">// Null check</span>
+<span class="kw">if</span> (<span class="prop">student</span> <span class="kw">is null</span>)
+    <span class="kw">throw new</span> <span class="typ">KeyNotFoundException</span>();
+
+<span class="cmt">// Pattern matching with null</span>
+<span class="kw">if</span> (<span class="prop">student</span> <span class="kw">is not null</span>)
+    <span class="fn">Process</span>(<span class="prop">student</span>);</pre>
+          <div class="zencampus">
+            <div class="label">🏫 ZenCampus Example:</div>
+            <pre><span class="cmt">// Safe chaining — no NullReferenceException</span>
+<span class="kw">var</span> <span class="prop">busRoute</span> = <span class="prop">student</span>?.<span class="prop">Transport</span>?
+                              .<span class="prop">Route</span>?.<span class="prop">Name</span>
+               ?? <span class="str">"No Bus Assigned"</span>;</pre>
+          </div>
+          <div class="interview-qa">
+            <div class="q">❓ Interview Q: ?? vs ??= difference?</div>
+            <div class="a"><code>??</code> = return right side if left is null (read-only). <code>??=</code> = assign right side IF variable is null. Interview-la ithaye sollu with example!</div>
+          </div>
+        </div>
+
+        <!-- STRING OPERATIONS -->
+        <div class="card">
+          <div class="card-sub">Syntax</div>
+          <div class="card-title">String Operations — Interpolation, StringBuilder</div>
+          <pre><span class="cmt">// String interpolation (prefer this)</span>
+<span class="kw">string</span> <span class="prop">msg</span> = <span class="str">$"Student {student.Name} — Roll {student.RollNo}"</span>;
+
+<span class="cmt">// Verbatim string</span>
+<span class="kw">string</span> <span class="prop">path</span> = <span class="str">@"C:\Reports\2026"</span>;
+
+<span class="cmt">// String methods</span>
+<span class="prop">name</span>.<span class="fn">ToUpper</span>();
+<span class="prop">name</span>.<span class="fn">Trim</span>();
+<span class="prop">name</span>.<span class="fn">Contains</span>(<span class="str">"Guru"</span>);
+<span class="prop">name</span>.<span class="fn">StartsWith</span>(<span class="str">"G"</span>);
+<span class="prop">name</span>.<span class="fn">Replace</span>(<span class="str">"old"</span>, <span class="str">"new"</span>);
+<span class="prop">name</span>.<span class="fn">Split</span>(<span class="str">','</span>);
+
+<span class="cmt">// StringBuilder — loop-la concatenation</span>
+<span class="kw">var</span> <span class="prop">sb</span> = <span class="kw">new</span> <span class="typ">StringBuilder</span>();
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="prop">s</span> <span class="kw">in</span> <span class="prop">students</span>)
+    <span class="prop">sb</span>.<span class="fn">AppendLine</span>(<span class="prop">s</span>.<span class="prop">Name</span>);
+<span class="kw">string</span> <span class="prop">result</span> = <span class="prop">sb</span>.<span class="fn">ToString</span>();</pre>
+          <div class="zencampus">
+            <div class="label">🏫 ZenCampus Example:</div>
+            <pre><span class="cmt">// SMS message builder</span>
+<span class="kw">var</span> <span class="prop">sb</span> = <span class="kw">new</span> <span class="typ">StringBuilder</span>();
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="prop">fee</span> <span class="kw">in</span> <span class="prop">pendingFees</span>)
+    <span class="prop">sb</span>.<span class="fn">AppendLine</span>(
+        <span class="str">$"{fee.StudentName}: ₹{fee.Amount} due"</span>);
+<span class="prop">_sms</span>.<span class="fn">Send</span>(<span class="prop">parentPhone</span>, <span class="prop">sb</span>.<span class="fn">ToString</span>());</pre>
+          </div>
+          <div class="interview-qa">
+            <div class="q">❓ Interview Q: string vs StringBuilder?</div>
+            <div class="a">string = immutable (each + creates new object). Loop-la string+ = memory waste. StringBuilder = mutable buffer — loop-la always use pannu.</div>
+          </div>
+        </div>
+
+        <!-- VAR / TYPE INFERENCE -->
+        <div class="card">
+          <div class="card-sub">Syntax</div>
+          <div class="card-title">var, const, readonly, switch</div>
+          <pre><span class="cmt">// var — type inferred at compile time</span>
+<span class="kw">var</span> <span class="prop">students</span> = <span class="kw">new</span> <span class="typ">List</span>&lt;<span class="typ">Student</span>&gt;();
+<span class="kw">var</span> <span class="prop">count</span>    = <span class="num">42</span>;
+
+<span class="cmt">// const — compile-time constant</span>
+<span class="kw">const int</span> <span class="prop">MaxStudents</span> = <span class="num">60</span>;
+
+<span class="cmt">// readonly — runtime constant</span>
+<span class="kw">private readonly</span> <span class="typ">IStudentRepo</span> <span class="prop">_repo</span>;
+
+<span class="cmt">// switch expression (C# 8+)</span>
+<span class="kw">string</span> <span class="prop">grade</span> = <span class="prop">marks</span> <span class="kw">switch</span>
+{
+    &gt;= <span class="num">90</span>            =&gt; <span class="str">"A+"</span>,
+    &gt;= <span class="num">75</span> <span class="kw">and</span> &lt; <span class="num">90</span>  =&gt; <span class="str">"A"</span>,
+    &gt;= <span class="num">60</span> <span class="kw">and</span> &lt; <span class="num">75</span>  =&gt; <span class="str">"B"</span>,
+    _                =&gt; <span class="str">"C"</span>
+};</pre>
+          <div class="zencampus">
+            <div class="label">🏫 ZenCampus Example:</div>
+            <pre><span class="cmt">// Fee category switch</span>
+<span class="kw">decimal</span> <span class="prop">fee</span> = <span class="prop">student</span>.<span class="prop">Category</span> <span class="kw">switch</span>
+{
+    <span class="str">"Day Scholar"</span>  =&gt; <span class="num">15000m</span>,
+    <span class="str">"Hosteller"</span>    =&gt; <span class="num">45000m</span>,
+    <span class="str">"Bus"</span>          =&gt; <span class="num">20000m</span>,
+    _              =&gt; <span class="num">15000m</span>
+};</pre>
+          </div>
+          <div class="interview-qa">
+            <div class="q">❓ Interview Q: const vs readonly?</div>
+            <div class="a">const = compile-time, only primitives/strings, implicitly static. readonly = runtime, any type, can be set in constructor. DI-inject panna readonly use panrom.</div>
+          </div>
+        </div>
+
+      </div><!-- end card-grid -->
+
+      <div class="tip-box" style="margin-top:20px">
+        <div class="tip-title">🎬 Movie Memory — Baasha Strategy</div>
+        <p>Baasha — ellam theriyum, sollamal irukkaan. Interview-la — ellam theriyum, <strong>systematic-a</strong> sollu.
+        Loop kekuvanga → for/foreach difference sollu → ZenCampus example kudu → Trap mention pannu. 3 steps = perfect answer!</p>
+      </div>
+
+    </div><!-- end section-body -->
+  </div><!-- end section.csharp -->
+
+  <!-- PART 1 END MARKER — Parts 2–7 will be appended below -->
+  <div style="background:#13132a; border-radius:12px; padding:20px; margin:30px 0;
+              border:2px dashed #e94560; text-align:center;">
+    <p style="color:#e94560; font-size:1.1em; font-weight:bold;">⏳ Part 1 Complete — C# Basics &amp; Loops</p>
+    <p style="color:#a0a0c0; margin-top:6px">Next: Part 2 — OOPs (4 Pillars: Encapsulation, Inheritance, Polymorphism, Abstraction)</p>
+  </div>
+
+</div><!-- end container -->
+
+<footer>
+  <p>ZenCampus Interview Syntax Bible · Part 1 of 7 · Gurumoorthy M · gurumoorthymurugan@gmail.com</p>
+  <p style="margin-top:4px; font-size:0.8em">🎬 "Kadaisi varai fight — ithane formula!" — Every Tamil movie + Every interview!</p>
+</footer>
+
+</body>
+</html>

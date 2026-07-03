@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 31 — CQRS + MediatR | ZenCampus .NET Interview Prep</title>
+<style>
+  :root{--accent:#2563eb;--accent-dim:#1d4ed8;--accent-subtle:rgba(37,99,235,0.08);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(37,99,235,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.1rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  p{margin-bottom:.6rem;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.3rem;margin-bottom:1rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}.ok{color:var(--good);font-weight:700;}.err{color:var(--danger);font-weight:700;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .movie{background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(37,99,235,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .warn-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">DAY 31-33</span>
+  <a href="#why">Why CQRS</a><a href="#command">Commands</a><a href="#query">Queries</a>
+  <a href="#pipeline">Pipeline</a><a href="#events">Domain Events</a>
+  <a href="#scenarios">Interview Q</a><a href="#quiz">Quiz</a><a href="#checklist">Checklist</a>
+</nav>
+<div class="hero">
+  <h1>CQRS + MediatR Pattern</h1>
+  <p>Command Query Responsibility Segregation · MediatR · Pipeline Behaviors · Domain Events</p>
+  <div class="tags">
+    <span class="tag">CQRS</span><span class="tag">MediatR</span><span class="tag">Senior Pattern</span>
+    <span class="tag">Day 31–33 / 60</span>
+    <span class="tag" style="background:rgba(37,99,235,.2);border-color:#2563eb;color:#2563eb;">Royal Blue #2563eb</span>
+  </div>
+</div>
+<main>
+
+<section id="why">
+  <h2>🤔 Why CQRS? The Problem It Solves</h2>
+  <p>Traditional service: StudentService has GetStudent() + CreateStudent() + UpdateStudent() + GetStudentReport() + GetAttendanceSummary() — 20 methods, single class, one DB model for everything. At scale, read and write have DIFFERENT needs.</p>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Thalapathy (1991) — Surya Writes, Dev Reads</div>
+    <div class="mb">Thalapathy-la Surya (Rajini) = action man, executes commands. Dev (Mammootty) = gathers information, reads. CQRS same: Commands = state changes (create, update, delete). Queries = data reads. Different classes, different handlers, different DB models if needed!</div></div>
+  </div>
+  <table>
+    <tr><th>Traditional Service</th><th>CQRS Approach</th></tr>
+    <tr><td>One model for read + write</td><td>Write model (entities) + Read model (DTOs)</td></tr>
+    <tr><td>All in StudentService — one class</td><td>Each operation = separate Command/Query + Handler</td></tr>
+    <tr><td>Hard to scale reads independently</td><td>Read handlers can use read replicas / projections</td></tr>
+    <tr><td>Business logic mixed with query logic</td><td>Commands have validation + domain logic; Queries are simple</td></tr>
+    <tr><td>Controller knows service methods directly</td><td>Controller only knows mediator.Send() — no coupling</td></tr>
+  </table>
+</section>
+
+<section id="command">
+  <h2>📤 Commands — State-Changing Operations</h2>
+  <pre><code><span class="cm">// NuGet: MediatR</span>
+<span class="cm">// Command — contains all data needed to change state</span>
+<span class="kw">public record</span> <span class="cl">CreateStudentCommand</span>(
+    <span class="kw">string</span> Name,
+    <span class="kw">string</span> AdmissionNumber,
+    <span class="cl">DateOnly</span> DateOfBirth,
+    <span class="kw">int</span>    ClassId,
+    <span class="kw">int</span>    SchoolId,
+    <span class="kw">string</span> ParentPhone
+) : <span class="cl">IRequest</span>&lt;<span class="cl">Result</span>&lt;<span class="kw">int</span>&gt;&gt;;  <span class="cm">// IRequest&lt;TResponse&gt;</span>
+
+<span class="cm">// Handler — single responsibility: handle this one command</span>
+<span class="kw">public class</span> <span class="cl">CreateStudentCommandHandler</span>(
+    <span class="cl">IStudentRepository</span> _repo,
+    <span class="cl">IUnitOfWork</span>        _uow,
+    <span class="cl">ILogger</span>&lt;<span class="cl">CreateStudentCommandHandler</span>&gt; _log)
+    : <span class="cl">IRequestHandler</span>&lt;<span class="cl">CreateStudentCommand</span>, <span class="cl">Result</span>&lt;<span class="kw">int</span>&gt;&gt;
+{
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">Result</span>&lt;<span class="kw">int</span>&gt;&gt; Handle(
+        <span class="cl">CreateStudentCommand</span> cmd, <span class="cl">CancellationToken</span> ct)
+    {
+        <span class="kw">if</span> (<span class="kw">await</span> _repo.ExistsAsync(cmd.SchoolId, cmd.AdmissionNumber, ct))
+            <span class="kw">return</span> <span class="cl">Result</span>&lt;<span class="kw">int</span>&gt;.Failure(<span class="str">"Admission number already exists"</span>);
+
+        <span class="kw">var</span> student = <span class="cl">Student</span>.Create(cmd.Name, cmd.AdmissionNumber, cmd.DateOfBirth,
+                                     cmd.ClassId, cmd.SchoolId);
+        <span class="kw">await</span> _repo.AddAsync(student, ct);
+        <span class="kw">await</span> _uow.CommitAsync(ct);
+
+        _log.LogInformation(<span class="str">"Student {Id} admitted to school {SchoolId}"</span>, student.Id, cmd.SchoolId);
+        <span class="kw">return</span> <span class="cl">Result</span>&lt;<span class="kw">int</span>&gt;.Success(student.Id);
+    }
+}
+
+<span class="cm">// Controller — thin, only mediator.Send</span>
+<span class="dec">[HttpPost]</span>
+<span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">IActionResult</span>&gt; Create(<span class="cl">CreateStudentCommand</span> cmd, <span class="cl">CancellationToken</span> ct)
+{
+    <span class="kw">var</span> result = <span class="kw">await</span> _mediator.Send(cmd, ct);
+    <span class="kw">return</span> result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+}</code></pre>
+</section>
+
+<section id="query">
+  <h2>📥 Queries — Read Operations (No State Change)</h2>
+  <pre><code><span class="cm">// Query — parameters only, returns DTO never domain entity</span>
+<span class="kw">public record</span> <span class="cl">GetStudentQuery</span>(<span class="kw">int</span> StudentId, <span class="kw">int</span> SchoolId) : <span class="cl">IRequest</span>&lt;<span class="cl">StudentDetailDto</span>?&gt;;
+
+<span class="kw">public class</span> <span class="cl">GetStudentQueryHandler</span>(<span class="cl">ZenCampusDbContext</span> _db)
+    : <span class="cl">IRequestHandler</span>&lt;<span class="cl">GetStudentQuery</span>, <span class="cl">StudentDetailDto</span>?&gt;
+{
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">StudentDetailDto</span>?&gt; Handle(
+        <span class="cl">GetStudentQuery</span> qry, <span class="cl">CancellationToken</span> ct)
+        =&gt; <span class="kw">await</span> _db.Students
+            .Where(s =&gt; s.Id == qry.StudentId &amp;&amp; s.SchoolId == qry.SchoolId)
+            .Select(s =&gt; <span class="kw">new</span> <span class="cl">StudentDetailDto</span>
+            {
+                Id              = s.Id,
+                Name            = s.Name,
+                AdmissionNumber = s.AdmissionNumber,
+                ClassName       = s.Class.Name,
+                AttendancePct   = s.AttendanceRecords.Count == <span class="num">0</span> ? <span class="num">0</span> :
+                    s.AttendanceRecords.Count(a =&gt; a.IsPresent) * <span class="num">100.0</span> / s.AttendanceRecords.Count,
+                PendingFees     = s.FeeRecords.Where(f =&gt; !f.IsPaid).Sum(f =&gt; f.Amount)
+            })
+            .AsNoTracking()
+            .FirstOrDefaultAsync(ct);
+}
+
+<span class="cm">// Paged student list query</span>
+<span class="kw">public record</span> <span class="cl">GetStudentsPagedQuery</span>(<span class="kw">int</span> SchoolId, <span class="kw">int</span> Page, <span class="kw">int</span> PageSize, <span class="kw">string</span>? SearchName)
+    : <span class="cl">IRequest</span>&lt;<span class="cl">PagedList</span>&lt;<span class="cl">StudentSummaryDto</span>&gt;&gt;;</code></pre>
+
+  <div class="good-box">
+    <strong>Query Rule:</strong> Queries NEVER modify state. Query handlers can be read-optimised — AsNoTracking, read replicas, cached projections. Commands validate domain rules. This separation lets you scale reads and writes independently.
+  </div>
+</section>
+
+<section id="pipeline">
+  <h2>⚙️ Pipeline Behaviors — Cross-Cutting Concerns</h2>
+  <pre><code><span class="cm">// Logging behavior — wraps EVERY command/query</span>
+<span class="kw">public class</span> <span class="cl">LoggingBehavior</span>&lt;TRequest, TResponse&gt;(
+    <span class="cl">ILogger</span>&lt;<span class="cl">LoggingBehavior</span>&lt;TRequest, TResponse&gt;&gt; _log)
+    : <span class="cl">IPipelineBehavior</span>&lt;TRequest, TResponse&gt; <span class="kw">where</span> TRequest : <span class="kw">notnull</span>
+{
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;TResponse&gt; Handle(TRequest req,
+        <span class="cl">RequestHandlerDelegate</span>&lt;TResponse&gt; next, <span class="cl">CancellationToken</span> ct)
+    {
+        <span class="kw">var</span> name = <span class="kw">typeof</span>(TRequest).Name;
+        _log.LogInformation(<span class="str">"Handling {Request}"</span>, name);
+        <span class="kw">var</span> sw = <span class="cl">Stopwatch</span>.StartNew();
+        <span class="kw">var</span> response = <span class="kw">await</span> next();  <span class="cm">// call the actual handler</span>
+        sw.Stop();
+        _log.LogInformation(<span class="str">"Handled {Request} in {Ms}ms"</span>, name, sw.ElapsedMilliseconds);
+        <span class="kw">return</span> response;
+    }
+}
+
+<span class="cm">// Validation behavior — runs FluentValidation before handler</span>
+<span class="kw">public class</span> <span class="cl">ValidationBehavior</span>&lt;TRequest, TResponse&gt;(
+    <span class="cl">IEnumerable</span>&lt;<span class="cl">IValidator</span>&lt;TRequest&gt;&gt; _validators)
+    : <span class="cl">IPipelineBehavior</span>&lt;TRequest, TResponse&gt; <span class="kw">where</span> TRequest : <span class="kw">notnull</span>
+{
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;TResponse&gt; Handle(TRequest req,
+        <span class="cl">RequestHandlerDelegate</span>&lt;TResponse&gt; next, <span class="cl">CancellationToken</span> ct)
+    {
+        <span class="kw">var</span> context = <span class="kw">new</span> <span class="cl">ValidationContext</span>&lt;TRequest&gt;(req);
+        <span class="kw">var</span> failures = _validators
+            .Select(v =&gt; v.Validate(context))
+            .SelectMany(r =&gt; r.Errors)
+            .Where(e =&gt; e != <span class="kw">null</span>)
+            .ToList();
+        <span class="kw">if</span> (failures.Count &gt; <span class="num">0</span>)
+            <span class="kw">throw new</span> <span class="cl">ValidationException</span>(failures);
+        <span class="kw">return await</span> next();
+    }
+}
+
+<span class="cm">// Register MediatR + Behaviors in Program.cs</span>
+builder.Services.AddMediatR(cfg =&gt;
+{
+    cfg.RegisterServicesFromAssembly(<span class="kw">typeof</span>(<span class="cl">Program</span>).Assembly);
+    cfg.AddBehavior(<span class="kw">typeof</span>(<span class="cl">IPipelineBehavior</span>&lt;,&gt;), <span class="kw">typeof</span>(<span class="cl">LoggingBehavior</span>&lt;,&gt;));
+    cfg.AddBehavior(<span class="kw">typeof</span>(<span class="cl">IPipelineBehavior</span>&lt;,&gt;), <span class="kw">typeof</span>(<span class="cl">ValidationBehavior</span>&lt;,&gt;));
+});</code></pre>
+</section>
+
+<section id="events">
+  <h2>📡 Domain Events — Decoupled Side Effects</h2>
+  <pre><code><span class="cm">// Domain Event — raised when student admitted</span>
+<span class="kw">public record</span> <span class="cl">StudentAdmittedEvent</span>(<span class="kw">int</span> StudentId, <span class="kw">string</span> StudentName,
+    <span class="kw">string</span> ParentPhone, <span class="kw">int</span> SchoolId) : <span class="cl">INotification</span>;
+
+<span class="cm">// Handler 1 — Send welcome SMS</span>
+<span class="kw">public class</span> <span class="cl">SendWelcomeSmsHandler</span>(<span class="cl">IMsg91Client</span> _sms)
+    : <span class="cl">INotificationHandler</span>&lt;<span class="cl">StudentAdmittedEvent</span>&gt;
+{
+    <span class="kw">public async</span> <span class="cl">Task</span> Handle(<span class="cl">StudentAdmittedEvent</span> e, <span class="cl">CancellationToken</span> ct)
+        =&gt; <span class="kw">await</span> _sms.SendAsync(e.ParentPhone,
+            <span class="str">$"Welcome! {e.StudentName} admitted. Student ID: {e.StudentId}"</span>, ct);
+}
+
+<span class="cm">// Handler 2 — Create audit log</span>
+<span class="kw">public class</span> <span class="cl">AuditAdmissionHandler</span>(<span class="cl">IAuditRepository</span> _audit)
+    : <span class="cl">INotificationHandler</span>&lt;<span class="cl">StudentAdmittedEvent</span>&gt;
+{
+    <span class="kw">public async</span> <span class="cl">Task</span> Handle(<span class="cl">StudentAdmittedEvent</span> e, <span class="cl">CancellationToken</span> ct)
+        =&gt; <span class="kw">await</span> _audit.LogAsync(<span class="str">"StudentAdmitted"</span>, e.StudentId, e.SchoolId, ct);
+}
+
+<span class="cm">// In CreateStudentCommandHandler — publish after commit</span>
+<span class="kw">await</span> _uow.CommitAsync(ct);
+<span class="kw">await</span> _mediator.Publish(<span class="kw">new</span> <span class="cl">StudentAdmittedEvent</span>(
+    student.Id, student.Name, cmd.ParentPhone, cmd.SchoolId), ct);
+<span class="cm">// Both handlers called automatically — decoupled!</span></code></pre>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is CQRS and why would you use it in ZenCampus?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>CQRS separates read (Query) and write (Command) operations. ZenCampus: student dashboard reads (attendance %, fees, class rank) have different performance requirements than writes (admit student, record fee). With CQRS: queries use optimised projections with AsNoTracking, can hit read replicas. Commands go through validation and domain logic. Scales independently.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What is MediatR and what problem does it solve?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>MediatR is an in-process mediator — controllers don't call services directly, they send requests to MediatR, which routes to the appropriate handler. Solves: tight coupling (controller knows service), fat services (20 methods). Each command/query has one handler. Adding new operation = new class, zero changes to controller or existing handlers.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is a Pipeline Behavior in MediatR? Give two ZenCampus uses.</span><span class="st">Architecture</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Pipeline Behavior wraps every command/query — like middleware for MediatR. Runs before/after every handler. ZenCampus uses: (1) LoggingBehavior: log request name + elapsed time for every operation — no code change needed in handlers. (2) ValidationBehavior: run FluentValidation on every command before it reaches the handler — centralized validation, handlers assume valid input.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">Should a Query handler return domain entities or DTOs?</span><span class="st">Best Practice</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Always DTOs — never domain entities from query handlers. Domain entities are for command-side (change tracking, business rules). Returning entities from queries: (1) accidentally exposes unnecessary data, (2) tempts callers to modify and expect SaveChanges, (3) loads full entity when only 3 columns needed. Queries should project directly to DTOs via Select() — optimal SQL, minimal memory.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">What is the difference between IRequest and INotification in MediatR?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>IRequest: exactly ONE handler. Send() method. Returns a response. Used for Commands and Queries. INotification: MULTIPLE handlers can subscribe. Publish() method. No response. Used for Domain Events — student admitted triggers SMS + audit + email all as separate handlers, all fire when published.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">How does CQRS help with the Single Responsibility Principle?</span><span class="st">SOLID</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Traditional StudentService has 15+ methods — one class, many responsibilities. With CQRS: CreateStudentCommandHandler has ONE job: handle student creation. GetStudentQueryHandler has ONE job: read student data. Each class has a single, clear reason to change. New feature = new command+handler class. SRP naturally enforced by CQRS structure.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">How do you handle transactions in CQRS? What if SMS fails after student created?</span><span class="st">Production Bug</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Separate DB commit from side effects. Student creation: (1) Create student + commit (DB transaction). (2) Publish StudentAdmittedEvent. (3) SMS handler fires. If SMS fails → student already committed. Solution: Outbox Pattern — store event in same DB transaction as the entity change. Background worker reads outbox and sends SMS with retry. Guarantees at-least-once delivery.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">Is CQRS necessary for small projects like a 5-page admin panel?</span><span class="st">Architecture Decision</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>No. CQRS adds complexity: more classes, more files, more patterns to understand. For simple CRUD with 5-10 operations, traditional service pattern is fine. CQRS benefits appear at scale: many features, team of 5+ developers, need to scale reads/writes differently, complex domain logic. ZenCampus with 50k students and reporting needs = good CQRS candidate.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">Can CQRS use the same database for reads and writes?</span><span class="st">Clarification</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Yes — CQRS is primarily about separating CODE (command handlers vs query handlers), not necessarily separate databases. Same DB, different access patterns. Advanced: read replica for queries (Azure SQL read replica for ZenCampus reports), write to primary. Even more advanced: separate read store (Redis, Elasticsearch). Start with same DB, optimise later.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">How do you test a MediatR command handler?</span><span class="st">Testing</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc">
+  <pre style="font-size:.78rem"><code>[Fact]
+public async Task Handle_DuplicateAdmissionNumber_ReturnsFailure()
+{
+    var mockRepo = new Mock&lt;IStudentRepository&gt;();
+    mockRepo.Setup(r => r.ExistsAsync(1, "ADM001", default)).ReturnsAsync(true);
+    var handler = new CreateStudentCommandHandler(mockRepo.Object, Mock.Of&lt;IUnitOfWork&gt;(), NullLogger&lt;CreateStudentCommandHandler&gt;.Instance);
+    var result = await handler.Handle(new CreateStudentCommand("Test","ADM001",DateOnly.Today,1,1,"9999"), default);
+    result.IsSuccess.Should().BeFalse();
+}</code></pre></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. mediator.Publish() in MediatR calls how many handlers?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Send() routes to exactly one handler. Publish() is for notifications — multiple handlers.')">Exactly one handler</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Publish() fires ALL registered INotificationHandler implementations for that notification type.')">All registered handlers for that notification</button>
+    <button class="qb" onclick="ans(this,'wrong','MediatR does not select random handlers.')">A random registered handler</button>
+    <button class="qb" onclick="ans(this,'wrong','Zero would mean no one subscribed — valid state but not the definition.')">Zero — notifications are fire-and-forget</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. Pipeline Behaviors execute in what order relative to the handler?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','After-only would miss the ability to prevent handler execution (validation behavior).')">After the handler only</button>
+    <button class="qb" onclick="ans(this,'wrong','Before-only would miss post-processing (logging elapsed time).')">Before the handler only</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Behavior wraps handler — code before next() runs before handler, code after next() runs after. Like middleware.')">Before AND after — they wrap the handler</button>
+    <button class="qb" onclick="ans(this,'wrong','Behaviors are NOT parallel — they form a sequential pipeline.')">Parallel to the handler</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. Which principle does CQRS most directly support?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'correct','Correct! CQRS separates read (query) from write (command) — each handler has ONE responsibility. Natural SRP enforcement.')">Single Responsibility Principle</button>
+    <button class="qb" onclick="ans(this,'wrong','OCP is about extension vs modification — not directly what CQRS addresses.')">Open/Closed Principle</button>
+    <button class="qb" onclick="ans(this,'wrong','DIP is about depending on abstractions — CQRS does use interfaces but that is not the primary connection.')">Dependency Inversion Principle</button>
+    <button class="qb" onclick="ans(this,'wrong','ISP is about interface segregation — not the main CQRS benefit.')">Interface Segregation Principle</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. Query handler in CQRS should call SaveChanges()?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Queries must NEVER save changes — that violates the Q in CQRS.')">Yes, if data needs to be cached</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Queries are read-only. NEVER call SaveChanges in a query handler. Use AsNoTracking. Commands handle all writes.')">Never — queries are strictly read-only</button>
+    <button class="qb" onclick="ans(this,'wrong','Audit logging as a side effect of a query is a pattern violation.')">Only for audit logging</button>
+    <button class="qb" onclick="ans(this,'wrong','MediatR does not auto-rollback — the rule is architectural.')">Only if MediatR auto-rolls it back</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section id="checklist">
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can implement IRequest + IRequestHandler for a command</li>
+    <li onclick="ck(this)"><input type="checkbox">I can implement a query handler returning DTO via projection</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write a Pipeline Behavior for logging</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand INotification vs IRequest</li>
+    <li onclick="ck(this)"><input type="checkbox">I can register MediatR + behaviors in Program.cs</li>
+    <li onclick="ck(this)"><input type="checkbox">I know why query handlers should return DTOs not entities</li>
+    <li onclick="ck(this)"><input type="checkbox">I can unit test a command handler with Moq</li>
+    <li onclick="ck(this)"><input type="checkbox">I can explain CQRS benefits for ZenCampus scale</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Day 31–33 Complete ✓ — CQRS + MediatR</p>
+  <p>Accent: Royal Blue #2563eb · Next: Day 34 — Clean Architecture + Onion Architecture</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

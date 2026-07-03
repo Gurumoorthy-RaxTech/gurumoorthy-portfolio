@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 2 – Async/Await & TPL | ZenCampus Edition</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#1a0f2e,#2d1b4e,#0f1a3a);padding:36px 20px;text-align:center;border-bottom:3px solid #a855f7}
+header h1{font-size:2em;color:#a855f7;text-shadow:0 0 20px #a855f755}
+header p{color:#a0b0c0;margin-top:6px}
+.badge{display:inline-block;background:#a855f722;border:1px solid #a855f755;color:#a855f7;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a855f7;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#a855f7;color:#000;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.c-kw{color:#569cd6}.c-type{color:#4ec9b0}.c-str{color:#ce9178}.c-num{color:#b5cea8}.c-cmt{color:#6a9955;font-style:italic}.c-prop{color:#9cdcfe}.c-method{color:#dcdcaa}.c-op{color:#d4d4d4}
+code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#1a0f2e;border-left:4px solid #9b59b6;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#c39bd3;font-size:0.9em;margin-top:4px}
+.kw-box{margin:10px 0}
+.kw{display:inline-block;background:#0d3b5e;color:#74b9ff;padding:3px 10px;border-radius:4px;font-size:0.76em;margin:3px;font-family:monospace;border:1px solid #1e5080}
+.proj{background:#0a1f0f;border-left:4px solid #27ae60;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.proj .label{color:#2ecc71;font-weight:bold;font-size:0.8em;margin-bottom:6px}
+.tip{background:#1a1500;border-left:4px solid #f9ca24;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#f9ca24;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#f0dc82;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.s-num{background:#a855f7;color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#2a0a4a;color:#a855f7}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#2a1a4a;border:1px solid #6b21a8;color:#c084fc;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#6b21a8;color:white}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #2a1a4a}
+.answer.shown{display:block}
+.answer .a-label{color:#a855f7;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.gold{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#2a1a4a;color:#c084fc;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a1a35}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#a855f7;color:#c084fc}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:12px 0}
+.flow-box{background:#1e2a4a;border-radius:6px;padding:6px 14px;font-size:0.82em;color:#74b9ff;border:1px solid #2a4a8a;white-space:nowrap}
+.flow-arrow{color:#a855f7;font-size:1.2em;font-weight:bold}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#a855f7}
+h3{color:#c084fc;margin:16px 0 8px;font-size:1em}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.72em;font-weight:bold;margin-left:6px}
+.tag-i{background:#e94560;color:white}.tag-t{background:#f39c12;color:#000}.tag-p{background:#8e44ad;color:white}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#c084fc;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #2a1a4a}
+.sticky-nav a:hover{background:#2a1a4a}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#a855f7,#f39c12)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#f39c12;font-size:0.85em;margin-bottom:6px">📅 Day 2 of 60 | Phase 1: Advanced C#</div>
+  <h1>⚡ Async / Await + Task Parallel Library</h1>
+  <p>API Slow Fix · Deadlock Debug · Real Interview Scenarios · ZenCampus Examples</p>
+  <div style="margin-top:12px">
+    <span class="badge">async/await</span>
+    <span class="badge">Task.WhenAll</span>
+    <span class="badge">CancellationToken</span>
+    <span class="badge">Deadlock</span>
+    <span class="badge">ConfigureAwait</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#why">🤔 Why Async</a>
+  <a href="#basics">📘 Basics</a>
+  <a href="#tpl">⚡ TPL</a>
+  <a href="#traps">💀 Traps</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+  <a href="#checklist">✅ Checklist</a>
+</nav>
+
+<div class="container">
+
+<!-- WHY ASYNC -->
+<div class="section" id="why">
+  <div class="section-title"><span class="num">1</span> Async yen venuum? — Thread Story புரிஞ்சுக்கோ</div>
+
+  <div class="movie">
+    <span class="film">🎬 Enthiran (2010) — Chitti Multi-tasking</span>
+    <p>Chitti oru secondla 1000 calculations — parallel! Sync code = oru waiter oru table மட்டும் serve panruvan — customer wait panuvaanga. Async = oru waiter 10 tables manage panruvan — order place pannitu kitchen-ku pona, other tables attend pannuvan. <strong>Thread = Waiter. I/O wait = Kitchen time.</strong></p>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <p style="color:#e74c3c;font-weight:bold;margin-bottom:6px">❌ Sync — Thread Block</p>
+      <pre><span class="c-cmt">// Thread 10 seconds BLOCK!</span>
+<span class="c-kw">public</span> <span class="c-type">IActionResult</span> <span class="c-method">GetStudent</span>()
+{
+    <span class="c-kw">var</span> <span class="c-prop">data</span> = <span class="c-prop">_service</span>.<span class="c-method">GetStudent</span>(); <span class="c-cmt">// blocks</span>
+    <span class="c-kw">return</span> <span class="c-method">Ok</span>(<span class="c-prop">data</span>);
+}
+<span class="c-cmt">// 100 users = 100 threads = server out of threads!</span></pre>
+    </div>
+    <div>
+      <p style="color:#2ecc71;font-weight:bold;margin-bottom:6px">✅ Async — Thread Free</p>
+      <pre><span class="c-cmt">// Thread released during DB wait!</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">IActionResult</span>&gt; <span class="c-method">GetStudentAsync</span>()
+{
+    <span class="c-kw">var</span> <span class="c-prop">data</span> = <span class="c-kw">await</span> <span class="c-prop">_service</span>.<span class="c-method">GetStudentAsync</span>();
+    <span class="c-kw">return</span> <span class="c-method">Ok</span>(<span class="c-prop">data</span>);
+}
+<span class="c-cmt">// Thread does OTHER work while DB runs!</span></pre>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="t-label">💬 Tanglish — 1 line interview answer</div>
+    <p>Async/await = I/O operation (DB, API, File) wait panna thread block aagaadu — thread pool-la other requests handle panuvu. Throughput increases, latency same — but scalability huge!</p>
+  </div>
+</div>
+
+<!-- BASICS -->
+<div class="section" id="basics">
+  <div class="section-title"><span class="num">2</span> async / await — Rules & Patterns</div>
+
+  <div class="flow">
+    <div class="flow-box">Method: async</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">Returns: Task / Task&lt;T&gt; / ValueTask&lt;T&gt;</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">Inside: await keyword</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">Caller: also awaits</div>
+  </div>
+
+  <pre><span class="c-cmt">// ✅ CORRECT async method signature</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-method">GetStudentAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetByIdAsync</span>(<span class="c-prop">id</span>);  <span class="c-cmt">// awaitable</span>
+    <span class="c-kw">return</span> <span class="c-prop">student</span>;
+}
+
+<span class="c-cmt">// Return types:</span>
+<span class="c-kw">async</span> <span class="c-type">Task</span>                 <span class="c-cmt">// → void equivalent (fire & forget avoid)</span>
+<span class="c-kw">async</span> <span class="c-type">Task</span>&lt;<span class="c-type">Student</span>&gt;        <span class="c-cmt">// → returns Student</span>
+<span class="c-kw">async</span> <span class="c-type">ValueTask</span>&lt;<span class="c-type">Student</span>&gt;   <span class="c-cmt">// → perf: no heap alloc if sync path common</span>
+<span class="c-kw">async</span> <span class="c-kw">void</span>                 <span class="c-cmt">// → ONLY for event handlers! Never use in API!</span></pre>
+
+  <h3>Naming Convention:</h3>
+  <div class="kw-box">
+    <span class="kw">GetStudentAsync()</span>
+    <span class="kw">SaveFeesAsync()</span>
+    <span class="kw">SendSmsAsync()</span>
+    <span class="kw">Async suffix = convention</span>
+    <span class="kw">CancellationToken last param</span>
+  </div>
+
+  <h3>ConfigureAwait(false) — When & Why:</h3>
+  <pre><span class="c-cmt">// Library / Service layer — NO UI context needed</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-method">GetAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-kw">await</span> <span class="c-prop">_db</span>.<span class="c-method">QueryAsync</span>(<span class="c-prop">sql</span>)
+        .<span class="c-method">ConfigureAwait</span>(<span class="c-kw">false</span>); <span class="c-cmt">// ← don't capture context → faster</span>
+    <span class="c-kw">return</span> <span class="c-prop">result</span>;
+}
+
+<span class="c-cmt">// ASP.NET Core Controller — ConfigureAwait(false) needed illa
+// (no SynchronizationContext in Core) — but still good practice in libs</span></pre>
+
+  <div class="tip">
+    <div class="t-label">💡 Interview Answer: ConfigureAwait(false) yen use panuvu?</div>
+    <p>await complete aana, original thread context-ku return aagum — that's context capture. Library code-la context vendam — <code>ConfigureAwait(false)</code> skip panuvu → small perf gain + deadlock risk reduce. ASP.NET Core-la SynchronizationContext illai — but library code-la always use pannu (portable).</p>
+  </div>
+</div>
+
+<!-- TPL -->
+<div class="section" id="tpl">
+  <div class="section-title"><span class="num">3</span> Task Parallel Library — WhenAll, WhenAny, Parallel</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram (2022) — Three Agents Simultaneously</span>
+    <p>Vikram, Amar, Karnan — same time different places investigate pannaanga. <code>Task.WhenAll()</code> = ellaarum same time work panuvaanga — ellaarum finish aana than next step. <code>Task.WhenAny()</code> = yaaraavathu first finish aana — proceed!</p>
+  </div>
+
+  <pre><span class="c-cmt">// ❌ Sequential — 3 seconds total (1+1+1)</span>
+<span class="c-kw">var</span> <span class="c-prop">student</span>    = <span class="c-kw">await</span> <span class="c-method">GetStudentAsync</span>(<span class="c-prop">id</span>);    <span class="c-cmt">// 1 sec</span>
+<span class="c-kw">var</span> <span class="c-prop">attendance</span> = <span class="c-kw">await</span> <span class="c-method">GetAttendanceAsync</span>(<span class="c-prop">id</span>); <span class="c-cmt">// 1 sec</span>
+<span class="c-kw">var</span> <span class="c-prop">fees</span>       = <span class="c-kw">await</span> <span class="c-method">GetFeesAsync</span>(<span class="c-prop">id</span>);       <span class="c-cmt">// 1 sec</span>
+
+<span class="c-cmt">// ✅ WhenAll — 1 second total (parallel!)</span>
+<span class="c-kw">var</span> (<span class="c-prop">student</span>, <span class="c-prop">attendance</span>, <span class="c-prop">fees</span>) = <span class="c-kw">await</span> (
+    <span class="c-method">GetStudentAsync</span>(<span class="c-prop">id</span>),
+    <span class="c-method">GetAttendanceAsync</span>(<span class="c-prop">id</span>),
+    <span class="c-method">GetFeesAsync</span>(<span class="c-prop">id</span>)
+); <span class="c-cmt">// ValueTuple deconstruct — clean!</span>
+
+<span class="c-cmt">// Or classic WhenAll:</span>
+<span class="c-kw">var</span> <span class="c-prop">t1</span> = <span class="c-method">GetStudentAsync</span>(<span class="c-prop">id</span>);
+<span class="c-kw">var</span> <span class="c-prop">t2</span> = <span class="c-method">GetAttendanceAsync</span>(<span class="c-prop">id</span>);
+<span class="c-kw">var</span> <span class="c-prop">t3</span> = <span class="c-method">GetFeesAsync</span>(<span class="c-prop">id</span>);
+<span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">t1</span>, <span class="c-prop">t2</span>, <span class="c-prop">t3</span>);
+<span class="c-kw">var</span> <span class="c-prop">s</span> = <span class="c-prop">t1</span>.<span class="c-prop">Result</span>; <span class="c-cmt">// already done — safe to use .Result here</span></pre>
+
+  <h3>WhenAny — First to finish wins:</h3>
+  <pre><span class="c-cmt">// Two data sources — use whichever responds first</span>
+<span class="c-kw">var</span> <span class="c-prop">cacheTask</span> = <span class="c-method">GetFromCacheAsync</span>(<span class="c-prop">id</span>);
+<span class="c-kw">var</span> <span class="c-prop">dbTask</span>    = <span class="c-method">GetFromDbAsync</span>(<span class="c-prop">id</span>);
+
+<span class="c-kw">var</span> <span class="c-prop">first</span> = <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAny</span>(<span class="c-prop">cacheTask</span>, <span class="c-prop">dbTask</span>);
+<span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-kw">await</span> <span class="c-prop">first</span>; <span class="c-cmt">// get the winner's result</span></pre>
+
+  <h3>CancellationToken — Timeout & Cancel:</h3>
+  <pre><span class="c-cmt">// ZenCampus API — cancel if user navigates away / timeout</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">IActionResult</span>&gt; <span class="c-method">GetReportAsync</span>(
+    <span class="c-kw">int</span> <span class="c-prop">classId</span>,
+    <span class="c-type">CancellationToken</span> <span class="c-prop">cancellationToken</span>)  <span class="c-cmt">// ASP.NET auto injects this</span>
+{
+    <span class="c-kw">using var</span> <span class="c-prop">cts</span> = <span class="c-type">CancellationTokenSource</span>
+        .<span class="c-method">CreateLinkedTokenSource</span>(<span class="c-prop">cancellationToken</span>);
+    <span class="c-prop">cts</span>.<span class="c-method">CancelAfter</span>(<span class="c-type">TimeSpan</span>.<span class="c-method">FromSeconds</span>(<span class="c-num">5</span>)); <span class="c-cmt">// 5s timeout</span>
+
+    <span class="c-kw">var</span> <span class="c-prop">data</span> = <span class="c-kw">await</span> <span class="c-prop">_service</span>
+        .<span class="c-method">GetReportAsync</span>(<span class="c-prop">classId</span>, <span class="c-prop">cts</span>.<span class="c-prop">Token</span>);
+    <span class="c-kw">return</span> <span class="c-method">Ok</span>(<span class="c-prop">data</span>);
+}
+
+<span class="c-cmt">// Service — honor the token</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">Report</span>&gt; <span class="c-method">GetReportAsync</span>(
+    <span class="c-kw">int</span> <span class="c-prop">id</span>, <span class="c-type">CancellationToken</span> <span class="c-prop">ct</span>)
+{
+    <span class="c-prop">ct</span>.<span class="c-method">ThrowIfCancellationRequested</span>(); <span class="c-cmt">// check before heavy work</span>
+    <span class="c-kw">return</span> <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetAsync</span>(<span class="c-prop">id</span>, <span class="c-prop">ct</span>); <span class="c-cmt">// pass down!</span>
+}</pre>
+
+  <table>
+    <tr><th>Method</th><th>என்ன பண்ணும்</th><th>When to use</th></tr>
+    <tr><td><code>Task.WhenAll()</code></td><td>All complete aana finish</td><td>Independent parallel calls</td></tr>
+    <tr><td><code>Task.WhenAny()</code></td><td>First complete aana finish</td><td>Race condition, fallback</td></tr>
+    <tr><td><code>Task.Run()</code></td><td>CPU work → thread pool</td><td>Heavy calculation, NOT I/O</td></tr>
+    <tr><td><code>Task.Delay()</code></td><td>Async sleep</td><td>Retry delays, polling</td></tr>
+    <tr><td><code>Task.FromResult()</code></td><td>Sync value → Task wrap</td><td>Cached data, testing</td></tr>
+    <tr><td><code>Task.CompletedTask</code></td><td>Already completed Task</td><td>async void return stub</td></tr>
+    <tr><td><code>ValueTask&lt;T&gt;</code></td><td>Heap alloc avoid</td><td>Hot path, cached results common</td></tr>
+  </table>
+</div>
+
+<!-- DEADLOCK & TRAPS -->
+<div class="section" id="traps">
+  <div class="section-title"><span class="num">4</span> 💀 Deadlocks & Traps — Loop-la Maatikichu!</div>
+
+  <div class="movie">
+    <span class="film">🎬 Ratsasan (2018) — Trap Scene</span>
+    <p>Killer carefully trap set panruvan — victim escape-e pannala. <code>.Result</code> and <code>.Wait()</code> use panna — deadlock trap! Thread A waits for Thread B, Thread B waits for Thread A — infinite wait — application hang!</p>
+  </div>
+
+  <h3>Deadlock #1 — .Result or .Wait() in sync context:</h3>
+  <pre><span class="c-cmt">// ❌ DEADLOCK — Classic trap!</span>
+<span class="c-kw">public</span> <span class="c-type">Student</span> <span class="c-method">GetStudent</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+{
+    <span class="c-cmt">// Main thread (.Result) waits for async to complete</span>
+    <span class="c-cmt">// async completion needs main thread (sync context)</span>
+    <span class="c-cmt">// DEADLOCK — both waiting for each other!</span>
+    <span class="c-kw">return</span> <span class="c-prop">_repo</span>.<span class="c-method">GetAsync</span>(<span class="c-prop">id</span>).<span class="c-prop">Result</span>; <span class="c-cmt">// ← BOMB!</span>
+}
+
+<span class="c-cmt">// ✅ Fix Option 1 — Go async all the way</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-method">GetStudentAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+    => <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetAsync</span>(<span class="c-prop">id</span>);
+
+<span class="c-cmt">// ✅ Fix Option 2 — ConfigureAwait false breaks deadlock</span>
+<span class="c-kw">public</span> <span class="c-type">Student</span> <span class="c-method">GetStudent</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+    => <span class="c-prop">_repo</span>.<span class="c-method">GetAsync</span>(<span class="c-prop">id</span>).<span class="c-method">ConfigureAwait</span>(<span class="c-kw">false</span>)
+           .<span class="c-method">GetAwaiter</span>().<span class="c-method">GetResult</span>(); <span class="c-cmt">// last resort only!</span></pre>
+
+  <h3>Deadlock #2 — async void fire and forget:</h3>
+  <pre><span class="c-cmt">// ❌ async void — exception swallowed, can't await!</span>
+<span class="c-kw">public async void</span> <span class="c-method">SendSmsOnAdmission</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>)
+{
+    <span class="c-kw">await</span> <span class="c-prop">_sms</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">s</span>.<span class="c-prop">Mobile</span>); <span class="c-cmt">// exception here → app crash!</span>
+}
+
+<span class="c-cmt">// ✅ Task return — awaitable + exception catch possible</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">SendSmsOnAdmissionAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>)
+{
+    <span class="c-kw">await</span> <span class="c-prop">_sms</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">s</span>.<span class="c-prop">Mobile</span>);
+}</pre>
+
+  <h3>Deadlock #3 — await inside lock:</h3>
+  <pre><span class="c-cmt">// ❌ NEVER await inside lock{} — deadlock risk!</span>
+<span class="c-kw">lock</span>(<span class="c-prop">_lockObj</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">data</span> = <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetAsync</span>(<span class="c-prop">id</span>); <span class="c-cmt">// ← COMPILER ERROR (good!)</span>
+}
+
+<span class="c-cmt">// ✅ Use SemaphoreSlim for async locking</span>
+<span class="c-kw">private readonly</span> <span class="c-type">SemaphoreSlim</span> <span class="c-prop">_semaphore</span> = <span class="c-kw">new</span>(<span class="c-num">1</span>, <span class="c-num">1</span>);
+
+<span class="c-kw">await</span> <span class="c-prop">_semaphore</span>.<span class="c-method">WaitAsync</span>();
+<span class="c-kw">try</span>
+{
+    <span class="c-kw">var</span> <span class="c-prop">data</span> = <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetAsync</span>(<span class="c-prop">id</span>); <span class="c-cmt">// safe!</span>
+}
+<span class="c-kw">finally</span> { <span class="c-prop">_semaphore</span>.<span class="c-method">Release</span>(); }</pre>
+
+  <h3>Trap — parallel loop with async:</h3>
+  <pre><span class="c-cmt">// ❌ WRONG — Parallel.ForEach + async void = fire and forget!</span>
+<span class="c-type">Parallel</span>.<span class="c-method">ForEach</span>(<span class="c-prop">students</span>, <span class="c-kw">async</span> <span class="c-prop">s</span> =>
+{
+    <span class="c-kw">await</span> <span class="c-prop">_sms</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">s</span>.<span class="c-prop">Mobile</span>); <span class="c-cmt">// NOT awaited by Parallel!</span>
+});
+
+<span class="c-cmt">// ✅ CORRECT — Task.WhenAll with Select</span>
+<span class="c-kw">var</span> <span class="c-prop">tasks</span> = <span class="c-prop">students</span>.<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-prop">_sms</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">s</span>.<span class="c-prop">Mobile</span>));
+<span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">tasks</span>); <span class="c-cmt">// all SMS sent, all awaited!</span>
+
+<span class="c-cmt">// ✅ With throttling — max 10 parallel (don't overload SMS API)</span>
+<span class="c-kw">var</span> <span class="c-prop">semaphore</span> = <span class="c-kw">new</span> <span class="c-type">SemaphoreSlim</span>(<span class="c-num">10</span>);
+<span class="c-kw">var</span> <span class="c-prop">tasks</span> = <span class="c-prop">students</span>.<span class="c-method">Select</span>(<span class="c-kw">async</span> <span class="c-prop">s</span> =>
+{
+    <span class="c-kw">await</span> <span class="c-prop">semaphore</span>.<span class="c-method">WaitAsync</span>();
+    <span class="c-kw">try</span> { <span class="c-kw">await</span> <span class="c-prop">_sms</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">s</span>.<span class="c-prop">Mobile</span>); }
+    <span class="c-kw">finally</span> { <span class="c-prop">semaphore</span>.<span class="c-method">Release</span>(); }
+});
+<span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">tasks</span>);</pre>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">5</span> 🎯 Scenario-Based Interview Questions</div>
+  <p style="color:#a0a0c0;margin-bottom:16px">Real interview la kekura mathiri — situation kudukkuvanga, nee solve pannanum. Try panni aprom reveal pannu!</p>
+
+  <!-- S1 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">1</div>
+      <div>
+        <div class="scenario-title">API Slow Problem — Student Dashboard <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Sequential vs Parallel async calls</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus student dashboard API 3 seconds time edukuthu. Code review-la ithana pathingom:<br><br>
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">DashboardDto</span>&gt; <span class="c-method">GetDashboardAsync</span>(<span class="c-kw">int</span> <span class="c-prop">studentId</span>)
+{
+    <span class="c-kw">var</span> <span class="c-prop">profile</span>    = <span class="c-kw">await</span> <span class="c-prop">_studentSvc</span>.<span class="c-method">GetProfileAsync</span>(<span class="c-prop">studentId</span>);   <span class="c-cmt">// 1s</span>
+    <span class="c-kw">var</span> <span class="c-prop">attendance</span> = <span class="c-kw">await</span> <span class="c-prop">_attendSvc</span>.<span class="c-method">GetSummaryAsync</span>(<span class="c-prop">studentId</span>);  <span class="c-cmt">// 1s</span>
+    <span class="c-kw">var</span> <span class="c-prop">fees</span>       = <span class="c-kw">await</span> <span class="c-prop">_feeSvc</span>.<span class="c-method">GetPendingAsync</span>(<span class="c-prop">studentId</span>);     <span class="c-cmt">// 1s</span>
+    <span class="c-kw">return</span> <span class="c-kw">new</span> <span class="c-type">DashboardDto</span> { <span class="c-prop">Profile</span>=<span class="c-prop">profile</span>, <span class="c-prop">Attendance</span>=<span class="c-prop">attendance</span>, <span class="c-prop">Fees</span>=<span class="c-prop">fees</span> };
+}</pre>
+      Problem identify panni fix pannu. Interviewer follow-up: "Exception handle panuva epdi?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <p><strong>Problem:</strong> Sequential await — 3 independent calls one after another = 3 seconds. These calls don't depend on each other — parallel run panalaam!</p>
+      <pre><span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">DashboardDto</span>&gt; <span class="c-method">GetDashboardAsync</span>(<span class="c-kw">int</span> <span class="c-prop">studentId</span>)
+{
+    <span class="c-cmt">// Start all 3 — DON'T await yet!</span>
+    <span class="c-kw">var</span> <span class="c-prop">profileTask</span>    = <span class="c-prop">_studentSvc</span>.<span class="c-method">GetProfileAsync</span>(<span class="c-prop">studentId</span>);
+    <span class="c-kw">var</span> <span class="c-prop">attendanceTask</span> = <span class="c-prop">_attendSvc</span>.<span class="c-method">GetSummaryAsync</span>(<span class="c-prop">studentId</span>);
+    <span class="c-kw">var</span> <span class="c-prop">feesTask</span>       = <span class="c-prop">_feeSvc</span>.<span class="c-method">GetPendingAsync</span>(<span class="c-prop">studentId</span>);
+
+    <span class="c-cmt">// Wait for ALL — slowest one = total time (~1s)</span>
+    <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">profileTask</span>, <span class="c-prop">attendanceTask</span>, <span class="c-prop">feesTask</span>);
+
+    <span class="c-kw">return</span> <span class="c-kw">new</span> <span class="c-type">DashboardDto</span>
+    {
+        <span class="c-prop">Profile</span>    = <span class="c-prop">profileTask</span>.<span class="c-prop">Result</span>,    <span class="c-cmt">// already done — safe!</span>
+        <span class="c-prop">Attendance</span> = <span class="c-prop">attendanceTask</span>.<span class="c-prop">Result</span>,
+        <span class="c-prop">Fees</span>       = <span class="c-prop">feesTask</span>.<span class="c-prop">Result</span>
+    };
+}</pre>
+      <p style="color:#f39c12;font-size:0.88em">Result: 3s → ~1s. 66% improvement!</p>
+      <div class="gold">
+        <div class="gold-label">⭐ Follow-up: Exception handle epdi?</div>
+        <pre style="font-size:0.82em"><span class="c-kw">try</span>
+{
+    <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">profileTask</span>, <span class="c-prop">attendanceTask</span>, <span class="c-prop">feesTask</span>);
+}
+<span class="c-kw">catch</span> (<span class="c-type">Exception</span>)
+{
+    <span class="c-cmt">// WhenAll — ONE exception surfaces. Others may also failed.</span>
+    <span class="c-cmt">// Check each task individually:</span>
+    <span class="c-kw">if</span> (<span class="c-prop">profileTask</span>.<span class="c-prop">IsFaulted</span>)
+        <span class="c-prop">_logger</span>.<span class="c-method">LogError</span>(<span class="c-prop">profileTask</span>.<span class="c-prop">Exception</span>, <span class="c-str">"Profile failed"</span>);
+    <span class="c-kw">throw</span>; <span class="c-cmt">// or return partial data</span>
+}
+
+<span class="c-cmt">// Graceful partial — return whatever succeeded</span>
+<span class="c-kw">var</span> <span class="c-prop">profile</span> = <span class="c-prop">profileTask</span>.<span class="c-prop">IsCompletedSuccessfully</span>
+    ? <span class="c-prop">profileTask</span>.<span class="c-prop">Result</span> : <span class="c-kw">null</span>;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div>
+        <div class="scenario-title">Application Hang — Deadlock Debug <span class="diff hard">Hard</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: .Result deadlock — classic interview bomb</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus login page — production-la suddenly hang aaguthu. Request varuthu, response varaadu — no error, no timeout for 30 seconds. Code:
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-cmt">// In a service called from old sync code</span>
+<span class="c-kw">public class</span> <span class="c-type">AuthService</span>
+{
+    <span class="c-kw">public</span> <span class="c-type">User</span> <span class="c-method">ValidateUser</span>(<span class="c-kw">string</span> <span class="c-prop">username</span>, <span class="c-kw">string</span> <span class="c-prop">password</span>)
+    {
+        <span class="c-kw">return</span> <span class="c-prop">_userRepo</span>.<span class="c-method">GetByUsernameAsync</span>(<span class="c-prop">username</span>).<span class="c-prop">Result</span>;
+    }
+}</span></pre>
+      1) What exactly causes the hang? 2) Fix panna solutions enna?
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ DEADLOCK EXPLAINED</div>
+      <p><strong>What happens step by step:</strong></p>
+      <div style="margin:10px 0;font-size:0.88em;color:#c0c0d0">
+        1. <code>ValidateUser()</code> runs on Thread A (ASP.NET request thread)<br>
+        2. <code>.Result</code> blocks Thread A — "wait for async to complete"<br>
+        3. <code>GetByUsernameAsync()</code> finishes DB query<br>
+        4. Tries to continue on the <strong>original SynchronizationContext</strong> (Thread A)<br>
+        5. Thread A is BLOCKED waiting for step 4<br>
+        6. Step 4 needs Thread A which is blocked by step 2<br>
+        7. <strong>DEADLOCK — both waiting for each other!</strong>
+      </div>
+      <pre><span class="c-cmt">// ✅ Fix 1 — Best: Go async all the way</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">User</span>&gt; <span class="c-method">ValidateUserAsync</span>(<span class="c-kw">string</span> <span class="c-prop">username</span>, <span class="c-kw">string</span> <span class="c-prop">password</span>)
+{
+    <span class="c-kw">return await</span> <span class="c-prop">_userRepo</span>.<span class="c-method">GetByUsernameAsync</span>(<span class="c-prop">username</span>);
+}
+
+<span class="c-cmt">// ✅ Fix 2 — ConfigureAwait breaks context requirement</span>
+<span class="c-kw">public</span> <span class="c-type">User</span> <span class="c-method">ValidateUser</span>(<span class="c-kw">string</span> <span class="c-prop">username</span>, <span class="c-kw">string</span> <span class="c-prop">password</span>)
+{
+    <span class="c-kw">return</span> <span class="c-prop">_userRepo</span>.<span class="c-method">GetByUsernameAsync</span>(<span class="c-prop">username</span>)
+        .<span class="c-method">ConfigureAwait</span>(<span class="c-kw">false</span>)  <span class="c-cmt">// don't need original thread</span>
+        .<span class="c-method">GetAwaiter</span>().<span class="c-method">GetResult</span>();
+}
+
+<span class="c-cmt">// ✅ Fix 3 — GetAwaiter().GetResult() alone (ASP.NET Core no SC)
+// ASP.NET Core-la SynchronizationContext illai — Core-la deadlock less likely
+// But still avoid in production — bad practice!</span></pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Interview Gold Answer</div>
+        <p>"Classic deadlock — sync context captures the awaiting thread. Fix: async all the way. If legacy sync code — ConfigureAwait(false) breaks the context dependency. ZenCampus migration-la intha pattern pathom, async all the way refactor panninom."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div>
+        <div class="scenario-title">Loop-la Maatikichu — Bulk SMS Send <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Parallel.ForEach async trap + throttling</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Fee reminder day — 5000 parents-ku SMS pathaikanom. Code ezuthingom — run aana SMS reach aagala, error-um illai, idhu enna problem?
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">SendReminderAsync</span>(<span class="c-type">List</span>&lt;<span class="c-type">Parent</span>&gt; <span class="c-prop">parents</span>)
+{
+    <span class="c-type">Parallel</span>.<span class="c-method">ForEach</span>(<span class="c-prop">parents</span>, <span class="c-kw">async</span> <span class="c-prop">parent</span> =>
+    {
+        <span class="c-kw">await</span> <span class="c-prop">_smsService</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">parent</span>.<span class="c-prop">Mobile</span>, <span class="c-str">"Fee pending"</span>);
+    });
+}</pre>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <p><strong>Bug:</strong> <code>Parallel.ForEach</code> with <code>async lambda</code> = <strong>async void</strong>! ForEach doesn't await the tasks — method returns immediately, SMS tasks running in background, exceptions swallowed!</p>
+      <pre><span class="c-cmt">// ✅ Fix 1 — Task.WhenAll (all at once — risky if 5000!)</span>
+<span class="c-kw">var</span> <span class="c-prop">tasks</span> = <span class="c-prop">parents</span>
+    .<span class="c-method">Select</span>(<span class="c-prop">p</span> => <span class="c-prop">_smsService</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">p</span>.<span class="c-prop">Mobile</span>, <span class="c-str">"Fee pending"</span>));
+<span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">tasks</span>);
+
+<span class="c-cmt">// ✅ Fix 2 — Throttled parallel (BEST for production)</span>
+<span class="c-kw">var</span> <span class="c-prop">semaphore</span> = <span class="c-kw">new</span> <span class="c-type">SemaphoreSlim</span>(<span class="c-num">20</span>); <span class="c-cmt">// max 20 parallel</span>
+<span class="c-kw">var</span> <span class="c-prop">tasks</span> = <span class="c-prop">parents</span>.<span class="c-method">Select</span>(<span class="c-kw">async</span> <span class="c-prop">parent</span> =>
+{
+    <span class="c-kw">await</span> <span class="c-prop">semaphore</span>.<span class="c-method">WaitAsync</span>();
+    <span class="c-kw">try</span>
+    {
+        <span class="c-kw">await</span> <span class="c-prop">_smsService</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">parent</span>.<span class="c-prop">Mobile</span>, <span class="c-str">"Fee pending"</span>);
+    }
+    <span class="c-kw">catch</span> (<span class="c-type">Exception</span> <span class="c-prop">ex</span>)
+    {
+        <span class="c-prop">_logger</span>.<span class="c-method">LogError</span>(<span class="c-prop">ex</span>, <span class="c-str">"SMS failed: {Mobile}"</span>, <span class="c-prop">parent</span>.<span class="c-prop">Mobile</span>);
+    }
+    <span class="c-kw">finally</span> { <span class="c-prop">semaphore</span>.<span class="c-method">Release</span>(); }
+});
+<span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">tasks</span>);
+
+<span class="c-cmt">// ✅ Fix 3 — Chunk panni send (memory efficient)</span>
+<span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">chunk</span> <span class="c-kw">in</span> <span class="c-prop">parents</span>.<span class="c-method">Chunk</span>(<span class="c-num">100</span>)) <span class="c-cmt">// .NET 6+ Chunk</span>
+{
+    <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">chunk</span>.<span class="c-method">Select</span>(<span class="c-prop">p</span> =>
+        <span class="c-prop">_smsService</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">p</span>.<span class="c-prop">Mobile</span>, <span class="c-str">"Fee pending"</span>)));
+}</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Senior Level Add-on</div>
+        <p>"Production-la 5000 SMS oru time-la blast panna SMS provider rate limit hit aagum. Better approach: Hangfire background job + batches + retry policy + dead letter queue."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div>
+        <div class="scenario-title">CancellationToken — User Navigates Away <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Request cancellation, wasted DB queries</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Student report page load panna 5 seconds aaguthu. User report click pannitu wait panna mudiyaama back press pannuvan — aaana DB-la query still running! Server resources waste. Epdi fix panriya?
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — CancellationToken propagation</div>
+      <pre><span class="c-cmt">// Controller — ASP.NET auto-cancels when client disconnects</span>
+[<span class="c-type">HttpGet</span>(<span class="c-str">"report/{classId}"</span>)]
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">IActionResult</span>&gt; <span class="c-method">GetReportAsync</span>(
+    <span class="c-kw">int</span> <span class="c-prop">classId</span>,
+    <span class="c-type">CancellationToken</span> <span class="c-prop">cancellationToken</span>)  <span class="c-cmt">// ← ASP.NET injects this</span>
+{
+    <span class="c-kw">try</span>
+    {
+        <span class="c-kw">var</span> <span class="c-prop">report</span> = <span class="c-kw">await</span> <span class="c-prop">_reportService</span>
+            .<span class="c-method">GetClassReportAsync</span>(<span class="c-prop">classId</span>, <span class="c-prop">cancellationToken</span>);
+        <span class="c-kw">return</span> <span class="c-method">Ok</span>(<span class="c-prop">report</span>);
+    }
+    <span class="c-kw">catch</span> (<span class="c-type">OperationCanceledException</span>)
+    {
+        <span class="c-prop">_logger</span>.<span class="c-method">LogInformation</span>(<span class="c-str">"Report request cancelled by client"</span>);
+        <span class="c-kw">return</span> <span class="c-method">StatusCode</span>(<span class="c-num">499</span>); <span class="c-cmt">// Client Closed Request</span>
+    }
+}
+
+<span class="c-cmt">// Service — pass it down</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">Report</span>&gt; <span class="c-method">GetClassReportAsync</span>(
+    <span class="c-kw">int</span> <span class="c-prop">classId</span>, <span class="c-type">CancellationToken</span> <span class="c-prop">ct</span>)
+{
+    <span class="c-kw">return</span> <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">GetReportAsync</span>(<span class="c-prop">classId</span>, <span class="c-prop">ct</span>); <span class="c-cmt">// pass down!</span>
+}
+
+<span class="c-cmt">// Repository — Dapper with cancellation</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">Report</span>&gt; <span class="c-method">GetReportAsync</span>(<span class="c-kw">int</span> <span class="c-prop">classId</span>, <span class="c-type">CancellationToken</span> <span class="c-prop">ct</span>)
+{
+    <span class="c-kw">using var</span> <span class="c-prop">conn</span> = <span class="c-prop">_connectionFactory</span>.<span class="c-method">Create</span>();
+    <span class="c-kw">return await</span> <span class="c-prop">conn</span>.<span class="c-method">QueryFirstOrDefaultAsync</span>&lt;<span class="c-type">Report</span>&gt;(
+        <span class="c-kw">new</span> <span class="c-type">CommandDefinition</span>(<span class="c-prop">sql</span>, <span class="c-prop">parameters</span>,
+            cancellationToken: <span class="c-prop">ct</span>)); <span class="c-cmt">// Dapper supports CT!</span>
+}</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Key Insight</div>
+        <p>CancellationToken is a chain — Controller → Service → Repository → DB. If any link misses it, DB query still runs after client leaves. <strong>Always pass CT down the entire chain!</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div>
+        <div class="scenario-title">Timeout — External SMS API Call <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: CancellationTokenSource with timeout</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus-la fee payment aana SMS API call panurom — aaana SMS provider slow aana request forever wait pannuthu! User "Payment Success" page parka wait pannuvaan. 3 second timeout implement pannu.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-cmt">// Option 1 — CancellationTokenSource timeout</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-kw">bool</span>&gt; <span class="c-method">SendPaymentSmsAsync</span>(<span class="c-kw">string</span> <span class="c-prop">mobile</span>, <span class="c-kw">decimal</span> <span class="c-prop">amount</span>)
+{
+    <span class="c-kw">using var</span> <span class="c-prop">cts</span> = <span class="c-kw">new</span> <span class="c-type">CancellationTokenSource</span>(<span class="c-type">TimeSpan</span>.<span class="c-method">FromSeconds</span>(<span class="c-num">3</span>));
+    <span class="c-kw">try</span>
+    {
+        <span class="c-kw">await</span> <span class="c-prop">_httpClient</span>.<span class="c-method">PostAsync</span>(<span class="c-prop">smsUrl</span>, <span class="c-prop">content</span>, <span class="c-prop">cts</span>.<span class="c-prop">Token</span>);
+        <span class="c-kw">return true</span>;
+    }
+    <span class="c-kw">catch</span> (<span class="c-type">OperationCanceledException</span>)
+    {
+        <span class="c-prop">_logger</span>.<span class="c-method">LogWarning</span>(<span class="c-str">"SMS timeout for {Mobile}"</span>, <span class="c-prop">mobile</span>);
+        <span class="c-kw">return false</span>; <span class="c-cmt">// Payment success-u, SMS later retry</span>
+    }
+}
+
+<span class="c-cmt">// Option 2 — HttpClient Timeout (registered at startup — cleaner)</span>
+<span class="c-cmt">// Program.cs:</span>
+<span class="c-prop">services</span>.<span class="c-method">AddHttpClient</span>&lt;<span class="c-type">ISmsService</span>, <span class="c-type">SmsService</span>&gt;(<span class="c-prop">client</span> =>
+{
+    <span class="c-prop">client</span>.<span class="c-prop">Timeout</span> = <span class="c-type">TimeSpan</span>.<span class="c-method">FromSeconds</span>(<span class="c-num">3</span>); <span class="c-cmt">// global timeout</span>
+    <span class="c-prop">client</span>.<span class="c-prop">BaseAddress</span> = <span class="c-kw">new</span> <span class="c-type">Uri</span>(<span class="c-str">"https://smsapi.provider.com"</span>);
+})
+.<span class="c-method">AddPolicyHandler</span>(<span class="c-prop">GetRetryPolicy</span>()); <span class="c-cmt">// Polly retry!</span></pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Production Pattern</div>
+        <p>"Payment success aana DB-la save panrom. SMS fail aana — payment rollback pannala — SMS retry queue-la (Hangfire/RabbitMQ) potruvaom. User-ku payment success show pannuvom. SMS background-la retry." — This is the senior answer!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div>
+        <div class="scenario-title">Task.Run vs async/await — CPU vs I/O <span class="diff hard">Hard</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: When to use Task.Run</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus-la Excel report generate panurom — 10,000 rows, complex calculations, 4-5 seconds CPU time. Junior developer <code>Task.Run()</code> use pannuvan. Senior review-la "Controller-la Task.Run unnecessary" nu solluvan. Yaar correct, yen?
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <p><strong>Senior is correct for Web API context.</strong></p>
+      <pre><span class="c-cmt">// ❌ Controller-la Task.Run — pointless in ASP.NET Web API</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">IActionResult</span>&gt; <span class="c-method">GenerateReport</span>()
+{
+    <span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">Run</span>(() => <span class="c-prop">_reportSvc</span>.<span class="c-method">GenerateExcel</span>());
+    <span class="c-cmt">// Takes a thread pool thread to do CPU work
+    // ASP.NET already uses thread pool!
+    // You're just moving work thread → thread — no benefit!</span>
+    <span class="c-kw">return</span> <span class="c-method">File</span>(<span class="c-prop">result</span>, <span class="c-str">"application/xlsx"</span>);
+}
+
+<span class="c-cmt">// ✅ Task.Run VALID in Desktop/WPF — offload to keep UI responsive</span>
+<span class="c-kw">private async void</span> <span class="c-method">Button_Click</span>(<span class="c-kw">object</span> <span class="c-prop">sender</span>, <span class="c-type">EventArgs</span> <span class="c-prop">e</span>)
+{
+    <span class="c-prop">progressBar</span>.<span class="c-prop">Visible</span> = <span class="c-kw">true</span>;
+    <span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">Run</span>(() => <span class="c-prop">_svc</span>.<span class="c-method">HeavyCalculation</span>());
+    <span class="c-cmt">// UI thread free — progress bar spins!</span>
+    <span class="c-prop">progressBar</span>.<span class="c-prop">Visible</span> = <span class="c-kw">false</span>;
+}</span>
+
+<span class="c-cmt">// ✅ Right solution for Web API — Background service or queue</span>
+<span class="c-cmt">// Long CPU work → Hangfire job → user gets job ID → polls for status</span></pre>
+      <div style="margin-top:10px;background:#0a1a2a;padding:12px;border-radius:6px;font-size:0.88em">
+        <p style="color:#74b9ff"><strong>Rule of Thumb:</strong></p>
+        <p>• <strong>I/O bound</strong> (DB, API, File, Network) → <code>async/await</code> directly ✅</p>
+        <p>• <strong>CPU bound in Desktop/WPF</strong> → <code>Task.Run()</code> ✅</p>
+        <p>• <strong>CPU bound in Web API</strong> → Background job (Hangfire) ✅</p>
+        <p>• <strong>CPU bound in Web API with Task.Run</strong> → Just wastes a thread ❌</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div>
+        <div class="scenario-title">Retry Logic — External API Failure <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Task.Delay retry pattern + Polly</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus-la payment gateway call panurom — intermittently fail aaguthu (network blip). 3 retry + exponential backoff implement pannu. Sleep() use pannalama?
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-cmt">// ❌ Thread.Sleep — blocks thread! Never in async code!</span>
+<span class="c-type">Thread</span>.<span class="c-method">Sleep</span>(<span class="c-num">1000</span>); <span class="c-cmt">// BLOCKS thread for 1 second</span>
+
+<span class="c-cmt">// ✅ Manual retry with Task.Delay (exponential backoff)</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">PaymentResult</span>&gt; <span class="c-method">ProcessPaymentAsync</span>(<span class="c-type">PaymentRequest</span> <span class="c-prop">req</span>)
+{
+    <span class="c-kw">int</span> <span class="c-prop">maxRetries</span> = <span class="c-num">3</span>;
+    <span class="c-kw">int</span> <span class="c-prop">delay</span> = <span class="c-num">500</span>; <span class="c-cmt">// ms</span>
+
+    <span class="c-kw">for</span> (<span class="c-kw">int</span> <span class="c-prop">attempt</span> = <span class="c-num">1</span>; <span class="c-prop">attempt</span> &lt;= <span class="c-prop">maxRetries</span>; <span class="c-prop">attempt</span>++)
+    {
+        <span class="c-kw">try</span>
+        {
+            <span class="c-kw">return await</span> <span class="c-prop">_paymentGateway</span>.<span class="c-method">ChargeAsync</span>(<span class="c-prop">req</span>);
+        }
+        <span class="c-kw">catch</span> (<span class="c-type">HttpRequestException</span> <span class="c-prop">ex</span>) <span class="c-kw">when</span> (<span class="c-prop">attempt</span> &lt; <span class="c-prop">maxRetries</span>)
+        {
+            <span class="c-prop">_logger</span>.<span class="c-method">LogWarning</span>(<span class="c-str">"Attempt {n} failed: {msg}"</span>, <span class="c-prop">attempt</span>, <span class="c-prop">ex</span>.<span class="c-prop">Message</span>);
+            <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">Delay</span>(<span class="c-prop">delay</span> * <span class="c-prop">attempt</span>); <span class="c-cmt">// 500, 1000, 1500ms</span>
+        }
+    }
+    <span class="c-kw">throw new</span> <span class="c-type">Exception</span>(<span class="c-str">"Payment failed after 3 retries"</span>);
+}
+
+<span class="c-cmt">// ✅ Better — Polly library (production standard)</span>
+<span class="c-cmt">// Program.cs:</span>
+<span class="c-prop">services</span>.<span class="c-method">AddHttpClient</span>&lt;<span class="c-type">IPaymentGateway</span>, <span class="c-type">PaymentGateway</span>&gt;()
+    .<span class="c-method">AddTransientHttpErrorPolicy</span>(<span class="c-prop">p</span> =>
+        <span class="c-prop">p</span>.<span class="c-method">WaitAndRetryAsync</span>(
+            <span class="c-num">3</span>,
+            <span class="c-prop">attempt</span> => <span class="c-type">TimeSpan</span>.<span class="c-method">FromMilliseconds</span>(<span class="c-num">500</span> * <span class="c-prop">attempt</span>),
+            (<span class="c-prop">result</span>, <span class="c-prop">time</span>, <span class="c-prop">attempt</span>, <span class="c-prop">ctx</span>) =>
+                <span class="c-prop">_logger</span>.<span class="c-method">LogWarning</span>(<span class="c-str">"Retry {n}"</span>, <span class="c-prop">attempt</span>)));</pre>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div>
+        <div class="scenario-title">async void Event Handler — Safe Pattern <span class="diff hard">Hard</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Only valid async void use case</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Interview-la kekuraan: "async void eppoluthe use pannakoodathu nu solluvanga — aaana oru situation irukku where it's the ONLY option. Enna atha?" Aprom: "Exception epdi handle panuva?"
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <p><strong>Only valid case: Event handlers</strong> — signature fixed by framework, can't return Task.</p>
+      <pre><span class="c-cmt">// Event handler — signature fixed, MUST be void</span>
+<span class="c-kw">private async void</span> <span class="c-method">BtnAdmit_Click</span>(<span class="c-kw">object</span> <span class="c-prop">sender</span>, <span class="c-type">EventArgs</span> <span class="c-prop">e</span>)
+{
+    <span class="c-cmt">// ❌ Exception here → unhandled app crash!</span>
+    <span class="c-kw">await</span> <span class="c-prop">_admissionService</span>.<span class="c-method">AdmitStudentAsync</span>(<span class="c-prop">_student</span>);
+}
+
+<span class="c-cmt">// ✅ Safe async void pattern — wrap in try/catch</span>
+<span class="c-kw">private async void</span> <span class="c-method">BtnAdmit_Click</span>(<span class="c-kw">object</span> <span class="c-prop">sender</span>, <span class="c-type">EventArgs</span> <span class="c-prop">e</span>)
+{
+    <span class="c-kw">try</span>
+    {
+        <span class="c-kw">await</span> <span class="c-prop">_admissionService</span>.<span class="c-method">AdmitStudentAsync</span>(<span class="c-prop">_student</span>);
+        <span class="c-method">ShowSuccess</span>();
+    }
+    <span class="c-kw">catch</span> (<span class="c-type">Exception</span> <span class="c-prop">ex</span>)
+    {
+        <span class="c-method">ShowError</span>(<span class="c-prop">ex</span>.<span class="c-prop">Message</span>); <span class="c-cmt">// handle here — nowhere else will catch!</span>
+    }
+}
+
+<span class="c-cmt">// ✅ Even better — extract to Task method</span>
+<span class="c-kw">private async void</span> <span class="c-method">BtnAdmit_Click</span>(<span class="c-kw">object</span> <span class="c-prop">s</span>, <span class="c-type">EventArgs</span> <span class="c-prop">e</span>)
+    => <span class="c-kw">await</span> <span class="c-method">AdmitStudentSafeAsync</span>(); <span class="c-cmt">// delegate to Task method</span>
+
+<span class="c-kw">private async</span> <span class="c-type">Task</span> <span class="c-method">AdmitStudentSafeAsync</span>()
+{
+    <span class="c-kw">try</span> { <span class="c-kw">await</span> <span class="c-prop">_admissionService</span>.<span class="c-method">AdmitStudentAsync</span>(<span class="c-prop">_student</span>); }
+    <span class="c-kw">catch</span> (<span class="c-type">Exception</span> <span class="c-prop">ex</span>) { <span class="c-method">ShowError</span>(<span class="c-prop">ex</span>.<span class="c-prop">Message</span>); }
+}</pre>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div>
+        <div class="scenario-title">WhenAll Exception — All Errors Capture <span class="diff hard">Hard</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: AggregateException in WhenAll</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> 5 external API calls parallel panurom <code>Task.WhenAll()</code> la. 2 calls fail aana — aaana catch-la only ONE exception varuthu. Why? All errors epdi paaruva?
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-kw">var</span> <span class="c-prop">t1</span> = <span class="c-method">CallApiAAsync</span>();
+<span class="c-kw">var</span> <span class="c-prop">t2</span> = <span class="c-method">CallApiBAsync</span>(); <span class="c-cmt">// fails!</span>
+<span class="c-kw">var</span> <span class="c-prop">t3</span> = <span class="c-method">CallApiCAsync</span>(); <span class="c-cmt">// fails!</span>
+
+<span class="c-kw">try</span>
+{
+    <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">t1</span>, <span class="c-prop">t2</span>, <span class="c-prop">t3</span>);
+}
+<span class="c-kw">catch</span> (<span class="c-type">Exception</span> <span class="c-prop">ex</span>)
+{
+    <span class="c-cmt">// ex = ONLY FIRST exception from WhenAll!</span>
+    <span class="c-cmt">// t3's exception is LOST here!</span>
+}
+
+<span class="c-cmt">// ✅ Get ALL exceptions:</span>
+<span class="c-kw">var</span> <span class="c-prop">allTasks</span> = <span class="c-kw">new</span>[] { <span class="c-prop">t1</span>, <span class="c-prop">t2</span>, <span class="c-prop">t3</span> };
+<span class="c-kw">var</span> <span class="c-prop">whenAll</span> = <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">allTasks</span>);
+<span class="c-kw">try</span>
+{
+    <span class="c-kw">await</span> <span class="c-prop">whenAll</span>;
+}
+<span class="c-kw">catch</span>
+{
+    <span class="c-cmt">// whenAll.Exception is AggregateException with ALL errors</span>
+    <span class="c-kw">if</span> (<span class="c-prop">whenAll</span>.<span class="c-prop">Exception</span> != <span class="c-kw">null</span>)
+    {
+        <span class="c-kw">foreach</span> (<span class="c-kw">var</span> <span class="c-prop">inner</span> <span class="c-kw">in</span> <span class="c-prop">whenAll</span>.<span class="c-prop">Exception</span>.<span class="c-prop">InnerExceptions</span>)
+            <span class="c-prop">_logger</span>.<span class="c-method">LogError</span>(<span class="c-prop">inner</span>, <span class="c-str">"Task failed"</span>);
+    }
+    <span class="c-cmt">// Or check each task:</span>
+    <span class="c-kw">var</span> <span class="c-prop">failed</span> = <span class="c-prop">allTasks</span>.<span class="c-method">Where</span>(<span class="c-prop">t</span> => <span class="c-prop">t</span>.<span class="c-prop">IsFaulted</span>).<span class="c-method">ToList</span>();
+    <span class="c-prop">_logger</span>.<span class="c-method">LogError</span>(<span class="c-str">"{n} tasks failed"</span>, <span class="c-prop">failed</span>.<span class="c-prop">Count</span>);
+}</pre>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div>
+        <div class="scenario-title">ValueTask vs Task — Hot Path Optimization <span class="diff senior">Senior</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: When to use ValueTask for performance</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus-la student permission check — 90% of the time cached result return aaguthu. Senior "ValueTask use pannu" nu solluran. Task vs ValueTask difference enna, intha case-la yen ValueTask better?
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-cmt">// Task — always heap allocation, even if sync path</span>
+<span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-kw">bool</span>&gt; <span class="c-method">HasPermissionAsync</span>(<span class="c-kw">int</span> <span class="c-prop">userId</span>, <span class="c-kw">string</span> <span class="c-prop">permission</span>)
+{
+    <span class="c-kw">if</span> (<span class="c-prop">_cache</span>.<span class="c-method">TryGetValue</span>(<span class="c-prop">userId</span>, <span class="c-kw">out</span> <span class="c-kw">bool</span> <span class="c-prop">cached</span>))
+        <span class="c-kw">return</span> <span class="c-prop">cached</span>; <span class="c-cmt">// sync path — but Task still allocates!</span>
+    <span class="c-kw">return await</span> <span class="c-prop">_repo</span>.<span class="c-method">CheckPermissionAsync</span>(<span class="c-prop">userId</span>, <span class="c-prop">permission</span>);
+}
+
+<span class="c-cmt">// ValueTask — no heap alloc on sync path!</span>
+<span class="c-kw">public</span> <span class="c-type">ValueTask</span>&lt;<span class="c-kw">bool</span>&gt; <span class="c-method">HasPermissionAsync</span>(<span class="c-kw">int</span> <span class="c-prop">userId</span>, <span class="c-kw">string</span> <span class="c-prop">permission</span>)
+{
+    <span class="c-kw">if</span> (<span class="c-prop">_cache</span>.<span class="c-method">TryGetValue</span>(<span class="c-prop">userId</span>, <span class="c-kw">out</span> <span class="c-kw">bool</span> <span class="c-prop">cached</span>))
+        <span class="c-kw">return new</span> <span class="c-type">ValueTask</span>&lt;<span class="c-kw">bool</span>&gt;(<span class="c-prop">cached</span>); <span class="c-cmt">// NO heap alloc!</span>
+    <span class="c-kw">return new</span> <span class="c-type">ValueTask</span>&lt;<span class="c-kw">bool</span>&gt;(
+        <span class="c-prop">_repo</span>.<span class="c-method">CheckPermissionAsync</span>(<span class="c-prop">userId</span>, <span class="c-prop">permission</span>));
+}</pre>
+      <div style="background:#0a1a2a;padding:12px;border-radius:6px;margin-top:8px;font-size:0.88em">
+        <p style="color:#74b9ff"><strong>When ValueTask:</strong></p>
+        <p>• Sync path common (cache hit, early return)</p>
+        <p>• Hot path called millions of times (GC pressure real)</p>
+        <p style="color:#74b9ff;margin-top:8px"><strong>When Task (default):</strong></p>
+        <p>• Always async (DB, API, File)</p>
+        <p>• Task awaited multiple times (ValueTask = await only once!)</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end scenarios -->
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">6</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: Thread.Sleep(1000) vs Task.Delay(1000) — async method-la which one use pannuva?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Thread.Sleep — both same</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Task.Delay — Thread.Sleep blocks the thread</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Thread.Sleep — faster</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Neither — just use while loop</div>
+    <div class="quiz-fb ok">✅ Task.Delay awaitable — thread released during wait. Thread.Sleep blocks thread completely — other requests can't use that thread. Never Thread.Sleep in async code!</div>
+    <div class="quiz-fb nope">❌ Thread.Sleep = thread blocked. Task.Delay = thread released. In Web API, blocking threads = fewer concurrent requests!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: async void eppoluthe safe?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Always safe</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Never use it</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) Only for event handlers, with try/catch inside</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Use when no return value needed</div>
+    <div class="quiz-fb ok">✅ Event handlers only! Signature fixed. But ALWAYS wrap in try/catch — exceptions in async void crash the app (unobserved)!</div>
+    <div class="quiz-fb nope">❌ async void = only for event handlers + must try/catch inside. Exceptions otherwise crash app with no way to catch externally!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: Task.WhenAll varuthu — 3 tasks la 2 fail aana, catch-la how many exceptions?</p>
+    <div class="quiz-opt" onclick="ans(this,'correct')">A) 1 exception surfaces in catch, but task.Exception has all</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) 2 exceptions — one per failed task</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) AggregateException automatically in catch</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) First failure stops others immediately</div>
+    <div class="quiz-fb ok">✅ await WhenAll — first exception only in catch. But WhenAll task itself has .Exception (AggregateException) with ALL inner exceptions. Check each task.IsFaulted for full picture!</div>
+    <div class="quiz-fb nope">❌ catch sees first exception only. Full picture: await the WhenAll task variable, check .Exception.InnerExceptions for all failures.</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: Parallel.ForEach with async lambda — what happens?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) All tasks run in parallel correctly</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Compilation error</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) async void — tasks not awaited, exceptions swallowed, method returns early</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Works fine, Parallel knows about async</div>
+    <div class="quiz-fb ok">✅ Parallel.ForEach doesn't understand async — treats it as async void. Use Task.WhenAll(items.Select(async i => await ...)) instead!</div>
+    <div class="quiz-fb nope">❌ Parallel.ForEach + async lambda = async void trap! Tasks fire and forget, exceptions vanish, method returns before tasks complete!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section" id="checklist">
+  <div class="section-title"><span class="num">7</span> ✅ Day 2 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory (45 min)</h3>
+      <ul class="check-list">
+        <li>async/await flow — thread release understand</li>
+        <li>Task vs ValueTask difference</li>
+        <li>ConfigureAwait(false) when & why</li>
+        <li>Deadlock 3 scenarios memorize</li>
+        <li>Task.WhenAll vs WhenAny difference</li>
+      </ul>
+    </div>
+    <div>
+      <h3>💻 Hands-On (60 min)</h3>
+      <ul class="check-list">
+        <li>ZenCampus StudentController — sync to async convert</li>
+        <li>Dashboard — 3 calls parallel WhenAll</li>
+        <li>SMS send — throttled parallel implement</li>
+        <li>CancellationToken — one endpoint add</li>
+        <li>Try: .Result use panni deadlock reproduce</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Scenarios (45 min)</h3>
+      <ul class="check-list">
+        <li>S1: API slow — WhenAll fix</li>
+        <li>S2: Deadlock — explain step by step</li>
+        <li>S3: Parallel.ForEach trap — fix</li>
+        <li>S4: CancellationToken chain</li>
+        <li>S5-10: attempt all, note keywords</li>
+      </ul>
+    </div>
+    <div>
+      <h3>⭐ Interview Answers Ready</h3>
+      <ul class="check-list">
+        <li>"async/await — thread release during I/O"</li>
+        <li>"Deadlock — .Result + sync context"</li>
+        <li>"WhenAll — parallel, WhenAny — race"</li>
+        <li>"API slow fix — sequential → WhenAll"</li>
+        <li>"CancellationToken — always chain down"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#1a0f2e,#0d1a3a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🎬 Day 2 Motivation</div>
+    <p style="color:#f39c12;font-style:italic">"Vikram-la three agents parallel work pannuvanga — oru-a wait panna case solve aagaadu. API-lum same — three DB calls sequential pottaa 3 seconds. Task.WhenAll pottaa 1 second. <strong>Parallel thinking = Senior thinking!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 2/60 ✅ | Tomorrow: Delegates, Events, Func/Action</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto">
+      <div class="progress-fill" style="width:3.3%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">2 of 60 days (3.3%)</div>
+  </div>
+</div>
+
+</div><!-- container -->
+
+<footer>
+  <p>Day 2 – Async/Await & TPL | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🎬 "API slow? Sequential await → Task.WhenAll → 3x faster. Interview-la live example!"</p>
+</footer>
+
+<script>
+function toggle(btn){
+  var a=btn.nextElementSibling;
+  if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent='💡 Answer Reveal';}
+  else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}
+}
+function ans(el,type){
+  var p=el.parentElement;
+  p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});
+  p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));
+  el.classList.add(type);
+  var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));
+  if(fb)fb.classList.add('shown');
+}
+</script>
+</body>
+</html>

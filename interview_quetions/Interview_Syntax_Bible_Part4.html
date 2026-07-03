@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 4 — SQL · Interview Syntax Bible · ZenCampus</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; line-height: 1.7; }
+  header { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); padding: 32px 20px; text-align: center; border-bottom: 3px solid #e94560; }
+  header h1 { font-size: 2em; color: #e94560; text-shadow: 0 0 20px #e9456088; }
+  header p  { color: #a0a0c0; margin-top: 8px; }
+  .badge { display: inline-block; background: #e94560; color: white; padding: 4px 12px; border-radius: 20px; font-size: .78em; margin: 4px; }
+  .container { max-width: 1150px; margin: 0 auto; padding: 20px; }
+
+  .section { margin: 36px 0; border-radius: 12px; overflow: hidden; border: 1px solid #2a2a4a; }
+  .section-header { padding: 16px 24px; font-size: 1.2em; font-weight: bold; display: flex; align-items: center; gap: 12px; }
+  .section-body { padding: 20px 24px; background: #13132a; }
+  .s1 .section-header { background: linear-gradient(90deg, #1a472a, #2d6a4f); }
+  .s2 .section-header { background: linear-gradient(90deg, #1a3d5c, #1e6091); }
+  .s3 .section-header { background: linear-gradient(90deg, #3d1a5c, #8e44ad); }
+  .s4 .section-header { background: linear-gradient(90deg, #3d2a1a, #e67e22); }
+  .s5 .section-header { background: linear-gradient(90deg, #3d1a1a, #c0392b); }
+  .s6 .section-header { background: linear-gradient(90deg, #1a1a3d, #2980b9); }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; margin-top: 16px; }
+  .card { background: #1a1a35; border-radius: 10px; padding: 18px; border-left: 4px solid #e94560; transition: transform .2s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px #e9456033; }
+  .card-title { font-size: 1.05em; font-weight: bold; color: #fff; margin-bottom: 8px; }
+  .card-sub   { font-size: .78em; color: #e94560; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .card-wide  { background: #1a1a35; border-radius: 10px; padding: 18px; border-left: 4px solid #e94560; margin-top: 18px; }
+
+  pre  { background: #0d1117; border-radius: 8px; padding: 14px; overflow-x: auto; font-size: .82em; font-family: 'Consolas', monospace; color: #e0e0e0; margin: 10px 0; border: 1px solid #2a2a4a; line-height: 1.6; }
+  .kw  { color: #569cd6; }   /* SQL keywords  */
+  .fn  { color: #dcdcaa; }   /* functions     */
+  .str { color: #ce9178; }   /* strings       */
+  .cmt { color: #6a9955; }   /* comments      */
+  .num { color: #b5cea8; }   /* numbers       */
+  .typ { color: #4ec9b0; }   /* types         */
+  .col { color: #9cdcfe; }   /* columns       */
+  code { background: #0d1117; color: #f97316; padding: 2px 7px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: .83em; }
+
+  .movie-ref    { background: #1a0f2e; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #c39bd3; border-left: 3px solid #8e44ad; }
+  .movie-ref .film { color: #f39c12; font-weight: bold; }
+  .zencampus    { background: #0a2010; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #a8e6cf; border-left: 3px solid #27ae60; }
+  .zencampus .label { color: #2ecc71; font-weight: bold; font-size: .8em; }
+  .interview-qa { background: #1a0a0a; border-radius: 6px; padding: 12px 14px; margin: 10px 0; border-left: 3px solid #e74c3c; }
+  .interview-qa .q { color: #e74c3c; font-size: .8em; font-weight: bold; }
+  .interview-qa .a { color: #c0c0c0; font-size: .85em; margin-top: 4px; }
+  .tanglish     { background: #1a1500; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #f9ca24; border-left: 3px solid #f9ca24; }
+  .trap         { background: #1a0000; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #ff6b6b; border-left: 3px solid #e74c3c; }
+  .trap .label  { color: #e74c3c; font-weight: bold; }
+  .tip-box      { background: #1a1000; border: 1px solid #f39c12; border-radius: 8px; padding: 14px; margin: 14px 0; }
+  .tip-box .tip-title { color: #f39c12; font-weight: bold; margin-bottom: 6px; }
+  .output-box   { background: #0a0a0a; border-radius: 6px; padding: 10px 14px; margin: 8px 0; border: 1px solid #333; font-size: .82em; font-family: 'Consolas', monospace; color: #a8e6cf; }
+  .output-box .lbl { color: #f39c12; font-size: .78em; font-weight: bold; }
+
+  .good-bad { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+  .good { background: #0a2010; border-radius: 6px; padding: 10px; border-left: 3px solid #27ae60; font-size: .82em; }
+  .bad  { background: #1a0000; border-radius: 6px; padding: 10px; border-left: 3px solid #e74c3c; font-size: .82em; }
+  .good .lbl { color: #2ecc71; font-weight: bold; font-size: .78em; }
+  .bad  .lbl { color: #e74c3c; font-weight: bold; font-size: .78em; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .84em; }
+  th { background: #1e3a5f; color: #74b9ff; padding: 10px; text-align: left; }
+  td { padding: 8px 10px; border-bottom: 1px solid #2a2a4a; color: #c0c0c0; }
+  tr:hover td { background: #1a1a35; }
+  h3 { color: #74b9ff; margin: 18px 0 10px; font-size: 1em; }
+
+  .join-visual { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin: 12px 0; }
+  .join-card   { background: #0d1117; border-radius: 8px; padding: 12px; text-align: center; border: 1px solid #2a2a4a; }
+  .join-card .jt { color: #f39c12; font-weight: bold; font-size: .9em; margin-bottom: 4px; }
+  .join-card .jd { color: #a0a0c0; font-size: .78em; }
+  .join-card .venn { font-size: 1.8em; margin: 6px 0; }
+
+  footer { text-align: center; padding: 30px; color: #555; border-top: 1px solid #2a2a4a; margin-top: 40px; }
+  @media(max-width:600px){ .card-grid{ grid-template-columns:1fr; } .good-bad{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🟢 Part 4 — SQL: The Complete Interview Guide</h1>
+  <p>JOINs · SELECT · Subqueries · CTE · Window Functions · Stored Procs · Indexes · Execution Plan · N+1</p>
+  <div style="margin-top:10px">
+    <span class="badge">SELECT / WHERE / GROUP BY</span>
+    <span class="badge">All JOINs</span>
+    <span class="badge">CTE</span>
+    <span class="badge">Window Functions</span>
+    <span class="badge">Stored Procedures</span>
+    <span class="badge">Indexes</span>
+    <span class="badge">Execution Plan</span>
+    <span class="badge">ZenCampus Live</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="tip-box" style="margin-top:20px">
+    <div class="tip-title">🎬 Master Memory Hook — Ratsasan (2018)</div>
+    <p>Detective methodically tracks every clue — nothing missed, nothing wasted. SQL mastery = same approach:
+    right JOIN, right INDEX, right PLAN. Slow query = Table Scan. Fast query = Index Seek. Like Ratsasan finding the killer — systematic, precise!</p>
+  </div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — SELECT FUNDAMENTALS
+════════════════════════════════════════════ -->
+<div class="section s1" id="sql-basics">
+  <div class="section-header">🟢 SELECT — Core Syntax &amp; Clauses</div>
+  <div class="section-body">
+
+    <div class="card-grid">
+
+      <!-- FULL SELECT ANATOMY -->
+      <div class="card">
+        <div class="card-sub">Syntax — Full Anatomy</div>
+        <div class="card-title">SELECT Statement — Every Clause</div>
+        <pre><span class="cmt">-- Execution ORDER (not write order!):</span>
+<span class="cmt">-- FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → TOP/LIMIT</span>
+
+<span class="kw">SELECT TOP</span> <span class="num">10</span>
+    <span class="col">s.Id</span>,
+    <span class="col">s.Name</span>,
+    <span class="col">s.Class</span>,
+    <span class="fn">COUNT</span>(<span class="col">a.Id</span>)         <span class="kw">AS</span> <span class="col">TotalDays</span>,
+    <span class="fn">SUM</span>(<span class="col">f.Amount</span>)       <span class="kw">AS</span> <span class="col">TotalFee</span>,
+    <span class="fn">AVG</span>(<span class="col">m.Marks</span>)        <span class="kw">AS</span> <span class="col">AvgMarks</span>,
+    <span class="fn">MAX</span>(<span class="col">m.Marks</span>)        <span class="kw">AS</span> <span class="col">HighestMark</span>
+<span class="kw">FROM</span>        <span class="col">Students</span> <span class="col">s</span>
+<span class="kw">INNER JOIN</span>  <span class="col">Attendance</span> <span class="col">a</span>  <span class="kw">ON</span> <span class="col">a.StudentId</span> = <span class="col">s.Id</span>
+<span class="kw">LEFT  JOIN</span>  <span class="col">Fees</span> <span class="col">f</span>        <span class="kw">ON</span> <span class="col">f.StudentId</span> = <span class="col">s.Id</span>
+<span class="kw">LEFT  JOIN</span>  <span class="col">Marks</span> <span class="col">m</span>       <span class="kw">ON</span> <span class="col">m.StudentId</span> = <span class="col">s.Id</span>
+<span class="kw">WHERE</span>
+    <span class="col">s.IsActive</span>  = <span class="num">1</span>
+    <span class="kw">AND</span> <span class="col">s.SchoolId</span> = <span class="num">@SchoolId</span>
+    <span class="kw">AND</span> <span class="col">s.Class</span>    = <span class="num">@Class</span>
+<span class="kw">GROUP BY</span>
+    <span class="col">s.Id</span>, <span class="col">s.Name</span>, <span class="col">s.Class</span>
+<span class="kw">HAVING</span>
+    <span class="fn">AVG</span>(<span class="col">m.Marks</span>) &gt; <span class="num">60</span>
+<span class="kw">ORDER BY</span>
+    <span class="col">AvgMarks</span> <span class="kw">DESC</span>;</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: SQL execution order?</div>
+          <div class="a">FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → TOP/LIMIT. WHERE-la aggregate use panna mudiyaadu (not yet computed) — HAVING use pannu. Itha therinja interview-la distinguish aagalam!</div>
+        </div>
+        <div class="tanglish">
+          💡 <strong>WHERE vs HAVING:</strong> WHERE = row-level filter (before group). HAVING = group-level filter (after group). <code>WHERE AVG(marks) > 60</code> ← ERROR! <code>HAVING AVG(marks) > 60</code> ← CORRECT!
+        </div>
+      </div>
+
+      <!-- SUBQUERIES -->
+      <div class="card">
+        <div class="card-sub">Syntax</div>
+        <div class="card-title">Subqueries — Scalar · IN · EXISTS</div>
+        <pre><span class="cmt">-- Scalar subquery (returns 1 value)</span>
+<span class="kw">SELECT</span>
+    <span class="col">Name</span>,
+    (<span class="kw">SELECT</span> <span class="fn">SUM</span>(<span class="col">Amount</span>)
+     <span class="kw">FROM</span> <span class="col">Fees</span>
+     <span class="kw">WHERE</span> <span class="col">StudentId</span> = <span class="col">s.Id</span>) <span class="kw">AS</span> <span class="col">TotalFee</span>
+<span class="kw">FROM</span> <span class="col">Students</span> <span class="col">s</span>;
+
+<span class="cmt">-- IN subquery</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">Students</span>
+<span class="kw">WHERE</span> <span class="col">Id</span> <span class="kw">IN</span> (
+    <span class="kw">SELECT</span> <span class="col">StudentId</span>
+    <span class="kw">FROM</span>   <span class="col">Fees</span>
+    <span class="kw">WHERE</span>  <span class="col">IsPaid</span> = <span class="num">0</span>
+);
+
+<span class="cmt">-- EXISTS (faster than IN for large sets)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">Students</span> <span class="col">s</span>
+<span class="kw">WHERE EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> <span class="col">Fees</span> <span class="col">f</span>
+    <span class="kw">WHERE</span> <span class="col">f.StudentId</span> = <span class="col">s.Id</span>
+    <span class="kw">AND</span>   <span class="col">f.IsPaid</span> = <span class="num">0</span>
+);
+
+<span class="cmt">-- NOT EXISTS — students with no fees</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">Students</span> <span class="col">s</span>
+<span class="kw">WHERE NOT EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> <span class="col">Fees</span> <span class="col">f</span>
+    <span class="kw">WHERE</span> <span class="col">f.StudentId</span> = <span class="col">s.Id</span>
+);</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: IN vs EXISTS — which is faster?</div>
+          <div class="a">EXISTS = short-circuit — first match kadaichudane stop. IN = full subquery evaluate. Large tables-la EXISTS always faster. ZenCampus unpaid fees check-la EXISTS use panrom.</div>
+        </div>
+      </div>
+
+      <!-- CASE WHEN -->
+      <div class="card">
+        <div class="card-sub">Syntax</div>
+        <div class="card-title">CASE WHEN · COALESCE · ISNULL · NULLIF</div>
+        <pre><span class="cmt">-- CASE WHEN — conditional column</span>
+<span class="kw">SELECT</span>
+    <span class="col">Name</span>,
+    <span class="col">Marks</span>,
+    <span class="kw">CASE</span>
+        <span class="kw">WHEN</span> <span class="col">Marks</span> &gt;= <span class="num">90</span> <span class="kw">THEN</span> <span class="str">'A+'</span>
+        <span class="kw">WHEN</span> <span class="col">Marks</span> &gt;= <span class="num">75</span> <span class="kw">THEN</span> <span class="str">'A'</span>
+        <span class="kw">WHEN</span> <span class="col">Marks</span> &gt;= <span class="num">60</span> <span class="kw">THEN</span> <span class="str">'B'</span>
+        <span class="kw">ELSE</span>                   <span class="str">'C'</span>
+    <span class="kw">END AS</span> <span class="col">Grade</span>,
+    <span class="kw">CASE</span>
+        <span class="kw">WHEN</span> <span class="col">IsPresent</span> = <span class="num">1</span> <span class="kw">THEN</span> <span class="str">'Present'</span>
+        <span class="kw">ELSE</span>                     <span class="str">'Absent'</span>
+    <span class="kw">END AS</span> <span class="col">Status</span>
+<span class="kw">FROM</span> <span class="col">Students</span>;
+
+<span class="cmt">-- COALESCE — first non-null value</span>
+<span class="kw">SELECT</span>
+    <span class="fn">COALESCE</span>(<span class="col">Email</span>, <span class="col">Phone</span>, <span class="str">'No Contact'</span>)
+    <span class="kw">AS</span> <span class="col">ContactInfo</span>
+<span class="kw">FROM</span> <span class="col">Students</span>;
+
+<span class="cmt">-- ISNULL — SQL Server specific</span>
+<span class="kw">SELECT</span> <span class="fn">ISNULL</span>(<span class="col">MiddleName</span>, <span class="str">''</span>) <span class="kw">FROM</span> <span class="col">Students</span>;
+
+<span class="cmt">-- NULLIF — returns NULL if equal</span>
+<span class="kw">SELECT</span> <span class="fn">NULLIF</span>(<span class="col">Marks</span>, <span class="num">0</span>) <span class="kw">FROM</span> <span class="col">Exams</span>;
+<span class="cmt">-- marks=0 → NULL (avoid divide by zero)</span></pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus — Attendance pivot:</div>
+          <pre><span class="kw">SELECT</span>
+    <span class="col">StudentId</span>,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> <span class="col">IsPresent</span>=<span class="num">1</span>
+             <span class="kw">THEN</span> <span class="num">1</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>) <span class="kw">AS</span> <span class="col">PresentDays</span>,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> <span class="col">IsPresent</span>=<span class="num">0</span>
+             <span class="kw">THEN</span> <span class="num">1</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>) <span class="kw">AS</span> <span class="col">AbsentDays</span>
+<span class="kw">FROM</span> <span class="col">Attendance</span>
+<span class="kw">GROUP BY</span> <span class="col">StudentId</span>;</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — JOINS
+════════════════════════════════════════════ -->
+<div class="section s2" id="sql-joins">
+  <div class="section-header">🔵 JOINs — Every Type with Visual</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Kaaka Muttai (2015):</span>
+      Chinna Kaaka Muttai + Periya Kaaka Muttai — INNER JOIN pannaa only when both exist.
+      LEFT JOIN = Chinna irundha matum paarunga, Periya illalum ok (NULL varum).
+      RIGHT JOIN = Periya matum venum. FULL JOIN = both sides — nobody miss!
+    </div>
+
+    <!-- VISUAL JOIN CARDS -->
+    <div class="join-visual">
+      <div class="join-card">
+        <div class="venn">🔴🔵</div>
+        <div class="jt">INNER JOIN</div>
+        <div class="jd">Only matching rows in BOTH tables</div>
+      </div>
+      <div class="join-card">
+        <div class="venn">🔴⬜</div>
+        <div class="jt">LEFT JOIN</div>
+        <div class="jd">All left rows + matching right (NULL if no match)</div>
+      </div>
+      <div class="join-card">
+        <div class="venn">⬜🔵</div>
+        <div class="jt">RIGHT JOIN</div>
+        <div class="jd">All right rows + matching left (NULL if no match)</div>
+      </div>
+      <div class="join-card">
+        <div class="venn">🔴🔵</div>
+        <div class="jt">FULL OUTER JOIN</div>
+        <div class="jd">All rows from BOTH, NULL where no match</div>
+      </div>
+      <div class="join-card">
+        <div class="venn">✖️</div>
+        <div class="jt">CROSS JOIN</div>
+        <div class="jd">Every row × every row (cartesian product)</div>
+      </div>
+      <div class="join-card">
+        <div class="venn">🔁</div>
+        <div class="jt">SELF JOIN</div>
+        <div class="jd">Table joins itself (hierarchy, parent-child)</div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+
+      <!-- INNER LEFT RIGHT -->
+      <div class="card">
+        <div class="card-sub">Syntax — Core JOINs</div>
+        <div class="card-title">INNER · LEFT · RIGHT · FULL OUTER</div>
+        <pre><span class="cmt">-- INNER JOIN — only matches</span>
+<span class="kw">SELECT</span> <span class="col">s.Name</span>, <span class="col">f.Amount</span>, <span class="col">f.PaidDate</span>
+<span class="kw">FROM</span>        <span class="col">Students</span>  <span class="col">s</span>
+<span class="kw">INNER JOIN</span>  <span class="col">Fees</span>      <span class="col">f</span>
+    <span class="kw">ON</span> <span class="col">f.StudentId</span> = <span class="col">s.Id</span>;
+
+<span class="cmt">-- LEFT JOIN — all students, fee if exists</span>
+<span class="kw">SELECT</span> <span class="col">s.Name</span>,
+       <span class="fn">ISNULL</span>(<span class="col">f.Amount</span>, <span class="num">0</span>) <span class="kw">AS</span> <span class="col">FeeAmount</span>
+<span class="kw">FROM</span>       <span class="col">Students</span> <span class="col">s</span>
+<span class="kw">LEFT JOIN</span>  <span class="col">Fees</span>     <span class="col">f</span>
+    <span class="kw">ON</span> <span class="col">f.StudentId</span> = <span class="col">s.Id</span>;
+
+<span class="cmt">-- Find students with NO fees (anti-join)</span>
+<span class="kw">SELECT</span> <span class="col">s.Name</span>
+<span class="kw">FROM</span>       <span class="col">Students</span> <span class="col">s</span>
+<span class="kw">LEFT JOIN</span>  <span class="col">Fees</span>     <span class="col">f</span>
+    <span class="kw">ON</span> <span class="col">f.StudentId</span> = <span class="col">s.Id</span>
+<span class="kw">WHERE</span> <span class="col">f.Id</span> <span class="kw">IS NULL</span>;  <span class="cmt">-- anti-join trick!</span>
+
+<span class="cmt">-- FULL OUTER JOIN</span>
+<span class="kw">SELECT</span> <span class="col">s.Name</span>, <span class="col">f.Amount</span>
+<span class="kw">FROM</span>              <span class="col">Students</span> <span class="col">s</span>
+<span class="kw">FULL OUTER JOIN</span>   <span class="col">Fees</span>     <span class="col">f</span>
+    <span class="kw">ON</span> <span class="col">f.StudentId</span> = <span class="col">s.Id</span>;</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: LEFT JOIN vs INNER JOIN — when to use which?</div>
+          <div class="a">INNER = only when both sides match (student WITH fees). LEFT = all students even without fees. ZenCampus student list-la — bus fee optional students-ku LEFT JOIN use panrom — INNER use panna bus-less students miss aagiduvaan!</div>
+        </div>
+      </div>
+
+      <!-- SELF JOIN + MULTI-JOIN -->
+      <div class="card">
+        <div class="card-sub">Syntax — Advanced Joins</div>
+        <div class="card-title">SELF JOIN · 3-Table JOIN · CROSS JOIN</div>
+        <pre><span class="cmt">-- SELF JOIN — Employee→Manager hierarchy</span>
+<span class="kw">SELECT</span>
+    <span class="col">e.Name</span>   <span class="kw">AS</span> <span class="col">Employee</span>,
+    <span class="col">m.Name</span>   <span class="kw">AS</span> <span class="col">Manager</span>
+<span class="kw">FROM</span>       <span class="col">Staff</span> <span class="col">e</span>
+<span class="kw">LEFT JOIN</span>  <span class="col">Staff</span> <span class="col">m</span>
+    <span class="kw">ON</span> <span class="col">e.ManagerId</span> = <span class="col">m.Id</span>;
+
+<span class="cmt">-- 3-table JOIN</span>
+<span class="kw">SELECT</span>
+    <span class="col">s.Name</span>,
+    <span class="col">c.ClassName</span>,
+    <span class="col">t.SubjectName</span>,
+    <span class="col">tt.StartTime</span>
+<span class="kw">FROM</span>        <span class="col">Students</span>    <span class="col">s</span>
+<span class="kw">INNER JOIN</span>  <span class="col">Classes</span>     <span class="col">c</span>
+    <span class="kw">ON</span> <span class="col">c.Id</span> = <span class="col">s.ClassId</span>
+<span class="kw">INNER JOIN</span>  <span class="col">TimeTable</span>   <span class="col">tt</span>
+    <span class="kw">ON</span> <span class="col">tt.ClassId</span> = <span class="col">c.Id</span>
+<span class="kw">INNER JOIN</span>  <span class="col">Teachers</span>    <span class="col">t</span>
+    <span class="kw">ON</span> <span class="col">t.Id</span> = <span class="col">tt.TeacherId</span>
+<span class="kw">WHERE</span> <span class="col">s.Id</span> = <span class="num">@StudentId</span>;
+
+<span class="cmt">-- CROSS JOIN — all combos</span>
+<span class="kw">SELECT</span> <span class="col">c.ClassName</span>, <span class="col">sub.SubjectName</span>
+<span class="kw">FROM</span>        <span class="col">Classes</span>   <span class="col">c</span>
+<span class="kw">CROSS JOIN</span>  <span class="col">Subjects</span>  <span class="col">sub</span>;
+<span class="cmt">-- 5 classes × 8 subjects = 40 rows</span></pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus — Staff management hierarchy:</div>
+          <pre><span class="cmt">-- Who reports to whom</span>
+<span class="kw">SELECT</span>
+    <span class="col">e.Name</span>  <span class="kw">AS</span> <span class="col">StaffName</span>,
+    <span class="col">m.Name</span>  <span class="kw">AS</span> <span class="col">ReportsTo</span>,
+    <span class="col">e.Department</span>
+<span class="kw">FROM</span>       <span class="col">Staff</span> <span class="col">e</span>
+<span class="kw">LEFT JOIN</span>  <span class="col">Staff</span> <span class="col">m</span>
+    <span class="kw">ON</span> <span class="col">e.ManagerId</span> = <span class="col">m.Id</span>
+<span class="kw">ORDER BY</span> <span class="col">e.Department</span>;</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — CTE + WINDOW FUNCTIONS
+════════════════════════════════════════════ -->
+<div class="section s3" id="sql-cte">
+  <div class="section-header">🟣 CTE · Window Functions · Ranking</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Vikram Vedha (2017):</span>
+      Story layers — each layer adds new context without losing previous one. CTE = same!
+      Name a subquery, reference it cleanly. Window functions = see each row AND the group simultaneously — like Vedha explaining each story layer!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- CTE -->
+      <div class="card">
+        <div class="card-sub">Syntax — CTE</div>
+        <div class="card-title">Common Table Expression — WITH clause</div>
+        <pre><span class="cmt">-- Basic CTE</span>
+<span class="kw">WITH</span> <span class="col">ActiveStudents</span> <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> <span class="col">Id</span>, <span class="col">Name</span>, <span class="col">Class</span>, <span class="col">Marks</span>
+    <span class="kw">FROM</span>   <span class="col">Students</span>
+    <span class="kw">WHERE</span>  <span class="col">IsActive</span> = <span class="num">1</span>
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">ActiveStudents</span>
+<span class="kw">WHERE</span>  <span class="col">Class</span> = <span class="str">'10A'</span>;
+
+<span class="cmt">-- Multiple CTEs</span>
+<span class="kw">WITH</span>
+<span class="col">ActiveStudents</span> <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> <span class="col">Id</span>, <span class="col">Name</span>, <span class="col">Class</span>
+    <span class="kw">FROM</span>   <span class="col">Students</span>
+    <span class="kw">WHERE</span>  <span class="col">IsActive</span> = <span class="num">1</span>
+),
+<span class="col">FeesPaid</span> <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> <span class="col">StudentId</span>, <span class="fn">SUM</span>(<span class="col">Amount</span>) <span class="kw">AS</span> <span class="col">Total</span>
+    <span class="kw">FROM</span>   <span class="col">Fees</span>
+    <span class="kw">WHERE</span>  <span class="col">IsPaid</span> = <span class="num">1</span>
+    <span class="kw">GROUP BY</span> <span class="col">StudentId</span>
+)
+<span class="kw">SELECT</span> <span class="col">a.Name</span>, <span class="col">a.Class</span>, <span class="col">fp.Total</span>
+<span class="kw">FROM</span>       <span class="col">ActiveStudents</span> <span class="col">a</span>
+<span class="kw">LEFT JOIN</span>  <span class="col">FeesPaid</span>       <span class="col">fp</span>
+    <span class="kw">ON</span> <span class="col">fp.StudentId</span> = <span class="col">a.Id</span>;
+
+<span class="cmt">-- Recursive CTE — org hierarchy</span>
+<span class="kw">WITH RECURSIVE</span> <span class="col">OrgTree</span> <span class="kw">AS</span> (
+    <span class="cmt">-- Anchor: top-level managers</span>
+    <span class="kw">SELECT</span> <span class="col">Id</span>, <span class="col">Name</span>, <span class="col">ManagerId</span>, <span class="num">0</span> <span class="kw">AS</span> <span class="col">Level</span>
+    <span class="kw">FROM</span>   <span class="col">Staff</span>
+    <span class="kw">WHERE</span>  <span class="col">ManagerId</span> <span class="kw">IS NULL</span>
+
+    <span class="kw">UNION ALL</span>
+
+    <span class="cmt">-- Recursive: subordinates</span>
+    <span class="kw">SELECT</span> <span class="col">s.Id</span>, <span class="col">s.Name</span>, <span class="col">s.ManagerId</span>,
+           <span class="col">ot.Level</span> + <span class="num">1</span>
+    <span class="kw">FROM</span>        <span class="col">Staff</span>    <span class="col">s</span>
+    <span class="kw">INNER JOIN</span>  <span class="col">OrgTree</span>  <span class="col">ot</span>
+        <span class="kw">ON</span> <span class="col">s.ManagerId</span> = <span class="col">ot.Id</span>
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">OrgTree</span> <span class="kw">ORDER BY</span> <span class="col">Level</span>;</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: CTE vs Subquery — when to use CTE?</div>
+          <div class="a">CTE = readable, reusable in same query, recursive possible. Subquery = one-time use. Same query-la CTE-a multiple places reference panalaam. ZenCampus report-la ActiveStudents CTE once define — multiple places reuse panrom.</div>
+        </div>
+      </div>
+
+      <!-- WINDOW FUNCTIONS -->
+      <div class="card">
+        <div class="card-sub">Syntax — Window Functions</div>
+        <div class="card-title">ROW_NUMBER · RANK · DENSE_RANK · NTILE</div>
+        <pre><span class="cmt">-- ROW_NUMBER — unique sequential number</span>
+<span class="kw">SELECT</span>
+    <span class="col">Name</span>, <span class="col">Class</span>, <span class="col">Marks</span>,
+    <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (
+        <span class="kw">PARTITION BY</span> <span class="col">Class</span>
+        <span class="kw">ORDER BY</span>     <span class="col">Marks</span> <span class="kw">DESC</span>
+    ) <span class="kw">AS</span> <span class="col">RowNum</span>
+<span class="kw">FROM</span> <span class="col">Students</span>;
+
+<span class="cmt">-- RANK — same rank for ties, skips next</span>
+<span class="kw">SELECT</span>
+    <span class="col">Name</span>, <span class="col">Marks</span>,
+    <span class="fn">RANK</span>() <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> <span class="col">Marks</span> <span class="kw">DESC</span>
+    ) <span class="kw">AS</span> <span class="col">Rank</span>
+<span class="kw">FROM</span> <span class="col">Students</span>;
+<span class="cmt">-- 95,95,90 → Rank 1,1,3</span>
+
+<span class="cmt">-- DENSE_RANK — no skips</span>
+<span class="kw">SELECT</span>
+    <span class="col">Name</span>, <span class="col">Marks</span>,
+    <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> <span class="col">Marks</span> <span class="kw">DESC</span>
+    ) <span class="kw">AS</span> <span class="col">DenseRank</span>
+<span class="kw">FROM</span> <span class="col">Students</span>;
+<span class="cmt">-- 95,95,90 → DenseRank 1,1,2</span>
+
+<span class="cmt">-- NTILE — divide into buckets</span>
+<span class="kw">SELECT</span>
+    <span class="col">Name</span>, <span class="col">Marks</span>,
+    <span class="fn">NTILE</span>(<span class="num">4</span>) <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> <span class="col">Marks</span> <span class="kw">DESC</span>
+    ) <span class="kw">AS</span> <span class="col">Quartile</span>
+<span class="kw">FROM</span> <span class="col">Students</span>;</pre>
+        <div class="output-box">
+          <div class="lbl">Output — RANK vs DENSE_RANK:</div>
+          Name    | Marks | RANK | DENSE_RANK<br>
+          --------|-------|------|----------<br>
+          Guru    |  95   |  1   |     1<br>
+          Priya   |  95   |  1   |     1<br>
+          Siva    |  90   |  3   |     2  ← RANK skips 2, DENSE doesn't<br>
+          Arun    |  85   |  4   |     3
+        </div>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: RANK vs DENSE_RANK?</div>
+          <div class="a">RANK = ties share same rank, next rank skipped (1,1,3). DENSE_RANK = ties share same rank, NO skip (1,1,2). School topper list = DENSE_RANK use panrom — "2nd rank" skip aagathu!</div>
+        </div>
+      </div>
+
+      <!-- AGGREGATE WINDOW + LAG/LEAD -->
+      <div class="card">
+        <div class="card-sub">Syntax — Window Aggregates</div>
+        <div class="card-title">SUM/AVG OVER · LAG · LEAD · FIRST_VALUE</div>
+        <pre><span class="cmt">-- Running total per class</span>
+<span class="kw">SELECT</span>
+    <span class="col">Name</span>, <span class="col">Class</span>, <span class="col">FeeAmount</span>,
+    <span class="fn">SUM</span>(<span class="col">FeeAmount</span>) <span class="kw">OVER</span> (
+        <span class="kw">PARTITION BY</span> <span class="col">Class</span>
+        <span class="kw">ORDER BY</span>     <span class="col">PaidDate</span>
+    ) <span class="kw">AS</span> <span class="col">RunningTotal</span>,
+    <span class="fn">AVG</span>(<span class="col">Marks</span>) <span class="kw">OVER</span> (
+        <span class="kw">PARTITION BY</span> <span class="col">Class</span>
+    ) <span class="kw">AS</span> <span class="col">ClassAvg</span>
+<span class="kw">FROM</span> <span class="col">Students</span>;
+
+<span class="cmt">-- LAG — previous row value</span>
+<span class="kw">SELECT</span>
+    <span class="col">Month</span>, <span class="col">FeeCollected</span>,
+    <span class="fn">LAG</span>(<span class="col">FeeCollected</span>) <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> <span class="col">Month</span>
+    ) <span class="kw">AS</span> <span class="col">PrevMonth</span>,
+    <span class="col">FeeCollected</span> -
+    <span class="fn">LAG</span>(<span class="col">FeeCollected</span>) <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> <span class="col">Month</span>
+    ) <span class="kw">AS</span> <span class="col">MonthlyGrowth</span>
+<span class="kw">FROM</span> <span class="col">MonthlyFees</span>;
+
+<span class="cmt">-- LEAD — next row value</span>
+<span class="kw">SELECT</span>
+    <span class="col">ExamDate</span>, <span class="col">Subject</span>,
+    <span class="fn">LEAD</span>(<span class="col">ExamDate</span>) <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> <span class="col">ExamDate</span>
+    ) <span class="kw">AS</span> <span class="col">NextExamDate</span>
+<span class="kw">FROM</span> <span class="col">ExamSchedule</span>;</pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus — Top 3 per class:</div>
+          <pre><span class="kw">WITH</span> <span class="col">Ranked</span> <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> <span class="col">Name</span>, <span class="col">Class</span>, <span class="col">Marks</span>,
+        <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> <span class="col">Class</span>
+            <span class="kw">ORDER BY</span>     <span class="col">Marks</span> <span class="kw">DESC</span>
+        ) <span class="kw">AS</span> <span class="col">Rnk</span>
+    <span class="kw">FROM</span> <span class="col">Students</span>
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">Ranked</span>
+<span class="kw">WHERE</span> <span class="col">Rnk</span> &lt;= <span class="num">3</span>;</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — STORED PROCEDURES
+════════════════════════════════════════════ -->
+<div class="section s4" id="sql-sp">
+  <div class="section-header">🟠 Stored Procedures · Functions · Triggers</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Baasha (1995) — Manikkam's plan:</span>
+      Manikkam oru plan vechu execute panruvan — once defined, call with parameters, result varum.
+      Stored Procedure = pre-compiled SQL plan, parameters passe, result return!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- STORED PROCEDURE -->
+      <div class="card">
+        <div class="card-sub">Syntax</div>
+        <div class="card-title">Stored Procedure — Create &amp; Execute</div>
+        <pre><span class="cmt">-- Create stored procedure</span>
+<span class="kw">CREATE PROCEDURE</span> <span class="fn">usp_GetStudentsByClass</span>
+    <span class="col">@SchoolId</span>   <span class="kw">INT</span>,
+    <span class="col">@ClassName</span>  <span class="kw">NVARCHAR</span>(<span class="num">50</span>),
+    <span class="col">@PageNo</span>     <span class="kw">INT</span> = <span class="num">1</span>,       <span class="cmt">-- default value</span>
+    <span class="col">@PageSize</span>   <span class="kw">INT</span> = <span class="num">20</span>
+<span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">SET NOCOUNT ON</span>;
+
+    <span class="kw">DECLARE</span> <span class="col">@Offset</span> <span class="kw">INT</span> =
+        (<span class="col">@PageNo</span> - <span class="num">1</span>) * <span class="col">@PageSize</span>;
+
+    <span class="kw">SELECT</span>
+        <span class="col">s.Id</span>, <span class="col">s.Name</span>, <span class="col">s.RollNo</span>,
+        <span class="col">s.Class</span>, <span class="col">s.Phone</span>
+    <span class="kw">FROM</span>  <span class="col">Students</span> <span class="col">s</span>
+    <span class="kw">WHERE</span> <span class="col">s.SchoolId</span>  = <span class="col">@SchoolId</span>
+    <span class="kw">AND</span>   <span class="col">s.Class</span>     = <span class="col">@ClassName</span>
+    <span class="kw">AND</span>   <span class="col">s.IsActive</span>  = <span class="num">1</span>
+    <span class="kw">ORDER BY</span> <span class="col">s.RollNo</span>
+    <span class="kw">OFFSET</span>     <span class="col">@Offset</span>   <span class="kw">ROWS</span>
+    <span class="kw">FETCH NEXT</span> <span class="col">@PageSize</span> <span class="kw">ROWS ONLY</span>;
+<span class="kw">END</span>
+
+<span class="cmt">-- Execute</span>
+<span class="kw">EXEC</span> <span class="fn">usp_GetStudentsByClass</span>
+    <span class="col">@SchoolId</span>  = <span class="num">1</span>,
+    <span class="col">@ClassName</span> = <span class="str">N'10A'</span>,
+    <span class="col">@PageNo</span>    = <span class="num">2</span>;</pre>
+        <div class="zencampus">
+          <div class="label">🏫 Call from Dapper (C#):</div>
+          <pre><span class="kw">var</span> <span class="prop">students</span> = <span class="kw">await</span> <span class="prop">_db</span>
+    .<span class="fn">QueryAsync</span>&lt;<span class="typ">Student</span>&gt;(
+        <span class="str">"usp_GetStudentsByClass"</span>,
+        <span class="kw">new</span> { <span class="prop">SchoolId</span>=<span class="num">1</span>,
+               <span class="prop">ClassName</span>=<span class="str">"10A"</span>,
+               <span class="prop">PageNo</span>=<span class="num">1</span> },
+        <span class="prop">commandType</span>: <span class="typ">CommandType</span>.<span class="prop">StoredProcedure</span>);</pre>
+        </div>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Stored Proc vs inline SQL?</div>
+          <div class="a">SP = pre-compiled execution plan (faster 2nd run), network traffic less, security (grant EXEC only), centralised logic. Inline SQL = flexible, ORM-friendly, testable. ZenCampus complex reports-ku SP, CRUD-ku Dapper inline.</div>
+        </div>
+      </div>
+
+      <!-- SP WITH OUTPUT + TRANSACTIONS -->
+      <div class="card">
+        <div class="card-sub">Syntax — Advanced SP</div>
+        <div class="card-title">OUTPUT Param · TRY-CATCH · Transaction</div>
+        <pre><span class="kw">CREATE PROCEDURE</span> <span class="fn">usp_PayFee</span>
+    <span class="col">@StudentId</span>  <span class="kw">INT</span>,
+    <span class="col">@Amount</span>     <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>),
+    <span class="col">@ReceiptNo</span>  <span class="kw">INT OUTPUT</span>      <span class="cmt">-- OUTPUT param</span>
+<span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">SET NOCOUNT ON</span>;
+
+    <span class="kw">BEGIN TRY</span>
+        <span class="kw">BEGIN TRANSACTION</span>;
+
+        <span class="cmt">-- Insert fee record</span>
+        <span class="kw">INSERT INTO</span> <span class="col">Fees</span>
+            (<span class="col">StudentId</span>, <span class="col">Amount</span>, <span class="col">PaidDate</span>)
+        <span class="kw">VALUES</span>
+            (<span class="col">@StudentId</span>, <span class="col">@Amount</span>, <span class="fn">GETDATE</span>());
+
+        <span class="kw">SET</span> <span class="col">@ReceiptNo</span> = <span class="fn">SCOPE_IDENTITY</span>();
+
+        <span class="cmt">-- Update student balance</span>
+        <span class="kw">UPDATE</span> <span class="col">Students</span>
+        <span class="kw">SET</span>    <span class="col">FeeBalance</span> = <span class="col">FeeBalance</span> - <span class="col">@Amount</span>
+        <span class="kw">WHERE</span>  <span class="col">Id</span> = <span class="col">@StudentId</span>;
+
+        <span class="kw">COMMIT TRANSACTION</span>;
+    <span class="kw">END TRY</span>
+    <span class="kw">BEGIN CATCH</span>
+        <span class="kw">ROLLBACK TRANSACTION</span>;
+        <span class="kw">THROW</span>;  <span class="cmt">-- re-throw to caller</span>
+    <span class="kw">END CATCH</span>
+<span class="kw">END</span></pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: SCOPE_IDENTITY() vs @@IDENTITY?</div>
+          <div class="a">SCOPE_IDENTITY() = current scope-la last inserted ID — safe. @@IDENTITY = trigger use panna trigger-la insert aana ID varum — wrong! Always SCOPE_IDENTITY() use pannu.</div>
+        </div>
+      </div>
+
+      <!-- SCALAR + TABLE FUNCTION -->
+      <div class="card">
+        <div class="card-sub">Syntax</div>
+        <div class="card-title">Scalar Function · Table-Valued Function</div>
+        <pre><span class="cmt">-- Scalar function — returns 1 value</span>
+<span class="kw">CREATE FUNCTION</span> <span class="fn">dbo.GetAttendancePct</span>
+(
+    <span class="col">@StudentId</span> <span class="kw">INT</span>,
+    <span class="col">@Month</span>     <span class="kw">INT</span>,
+    <span class="col">@Year</span>      <span class="kw">INT</span>
+)
+<span class="kw">RETURNS DECIMAL</span>(<span class="num">5</span>,<span class="num">2</span>)
+<span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">DECLARE</span> <span class="col">@Pct</span> <span class="kw">DECIMAL</span>(<span class="num">5</span>,<span class="num">2</span>);
+
+    <span class="kw">SELECT</span> <span class="col">@Pct</span> =
+        <span class="kw">CAST</span>(<span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> <span class="col">IsPresent</span>=<span class="num">1</span>
+                       <span class="kw">THEN</span> <span class="num">1.0</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>)
+             * <span class="num">100</span> / <span class="fn">COUNT</span>(*) <span class="kw">AS</span> <span class="kw">DECIMAL</span>(<span class="num">5</span>,<span class="num">2</span>))
+    <span class="kw">FROM</span>  <span class="col">Attendance</span>
+    <span class="kw">WHERE</span> <span class="col">StudentId</span>  = <span class="col">@StudentId</span>
+    <span class="kw">AND</span>   <span class="fn">MONTH</span>(<span class="col">Date</span>) = <span class="col">@Month</span>
+    <span class="kw">AND</span>   <span class="fn">YEAR</span>(<span class="col">Date</span>)  = <span class="col">@Year</span>;
+
+    <span class="kw">RETURN ISNULL</span>(<span class="col">@Pct</span>, <span class="num">0</span>);
+<span class="kw">END</span>
+
+<span class="cmt">-- Use in SELECT</span>
+<span class="kw">SELECT</span>
+    <span class="col">Name</span>,
+    <span class="fn">dbo.GetAttendancePct</span>(<span class="col">Id</span>, <span class="num">6</span>, <span class="num">2026</span>)
+        <span class="kw">AS</span> <span class="col">AttendancePct</span>
+<span class="kw">FROM</span> <span class="col">Students</span>;</pre>
+        <div class="trap">
+          <div class="label">⚠️ Trap: Scalar functions in WHERE/SELECT are slow!</div>
+          Row-by-row execute aagum — N rows = N function calls. Large tables-la avoid. TVF (Table-Valued Function) or inline subquery prefer pannu.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 5 — INDEXES + EXECUTION PLAN
+════════════════════════════════════════════ -->
+<div class="section s5" id="sql-index">
+  <div class="section-header">🔴 Indexes · Execution Plan · Query Optimization</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Ratsasan (2018):</span>
+      Detective serial killer-a find panna — Table Scan = every house check (slow!).
+      Index Seek = eyewitness clue use panni direct jump (fast!).
+      Execution Plan = detective's investigation board — show panrom WHERE query time waste aaguthu!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- INDEXES -->
+      <div class="card">
+        <div class="card-sub">Syntax — Indexes</div>
+        <div class="card-title">Clustered · Non-Clustered · Covering Index</div>
+        <pre><span class="cmt">-- Clustered Index (Physical sort — 1 per table)</span>
+<span class="cmt">-- Primary Key = auto clustered</span>
+<span class="kw">CREATE CLUSTERED INDEX</span> <span class="col">IX_Students_Id</span>
+    <span class="kw">ON</span> <span class="col">Students</span>(<span class="col">Id</span>);
+
+<span class="cmt">-- Non-Clustered (pointer-based — many per table)</span>
+<span class="kw">CREATE NONCLUSTERED INDEX</span>
+    <span class="col">IX_Students_Class</span>
+    <span class="kw">ON</span> <span class="col">Students</span>(<span class="col">Class</span>, <span class="col">IsActive</span>);
+
+<span class="cmt">-- Covering Index (include extra columns)</span>
+<span class="cmt">-- Avoids extra lookup to base table!</span>
+<span class="kw">CREATE NONCLUSTERED INDEX</span>
+    <span class="col">IX_Students_Class_Cover</span>
+    <span class="kw">ON</span> <span class="col">Students</span>(<span class="col">Class</span>, <span class="col">IsActive</span>)
+    <span class="kw">INCLUDE</span> (<span class="col">Name</span>, <span class="col">RollNo</span>, <span class="col">Phone</span>);
+
+<span class="cmt">-- Unique Index</span>
+<span class="kw">CREATE UNIQUE INDEX</span> <span class="col">UX_Students_RollClass</span>
+    <span class="kw">ON</span> <span class="col">Students</span>(<span class="col">RollNo</span>, <span class="col">ClassId</span>);
+
+<span class="cmt">-- Filtered Index (partial table)</span>
+<span class="kw">CREATE NONCLUSTERED INDEX</span>
+    <span class="col">IX_Students_Active</span>
+    <span class="kw">ON</span> <span class="col">Students</span>(<span class="col">Class</span>)
+    <span class="kw">WHERE</span> <span class="col">IsActive</span> = <span class="num">1</span>;
+<span class="cmt">-- Only active students indexed = smaller!</span>
+
+<span class="cmt">-- Drop index</span>
+<span class="kw">DROP INDEX</span> <span class="col">IX_Students_Class</span>
+    <span class="kw">ON</span> <span class="col">Students</span>;</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Clustered vs Non-Clustered Index?</div>
+          <div class="a">Clustered = data physically sorted on disk by this key — 1 per table. Non-clustered = separate B-tree with row pointer — many per table. ZenCampus Students.Id = clustered (PK). Students.Class = non-clustered (frequent filter). Covering index-la INCLUDE column pottucha — Key Lookup avoid aagum!</div>
+        </div>
+      </div>
+
+      <!-- EXECUTION PLAN -->
+      <div class="card">
+        <div class="card-sub">Concept — Performance</div>
+        <div class="card-title">Execution Plan · Table Scan vs Index Seek</div>
+        <pre><span class="cmt">-- Check execution plan</span>
+<span class="kw">SET STATISTICS TIME ON</span>;
+<span class="kw">SET STATISTICS IO ON</span>;
+
+<span class="cmt">-- Run your query</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">Students</span>
+<span class="kw">WHERE</span> <span class="col">Class</span> = <span class="str">'10A'</span>;
+
+<span class="cmt">-- In SSMS: Ctrl+M → Actual Execution Plan</span>
+<span class="cmt">-- OR Ctrl+L → Estimated Plan</span>
+
+<span class="cmt">-- ❌ BAD — Table Scan (no index)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">Students</span>
+<span class="kw">WHERE</span> <span class="fn">YEAR</span>(<span class="col">DOB</span>) = <span class="num">2008</span>;
+<span class="cmt">-- Function on column = index NOT used!</span>
+
+<span class="cmt">-- ✅ GOOD — Index Seek</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">Students</span>
+<span class="kw">WHERE</span> <span class="col">DOB</span> <span class="kw">BETWEEN</span>
+    <span class="str">'2008-01-01'</span> <span class="kw">AND</span> <span class="str">'2008-12-31'</span>;
+
+<span class="cmt">-- ❌ LIKE with leading % — no index</span>
+<span class="kw">WHERE</span> <span class="col">Name</span> <span class="kw">LIKE</span> <span class="str">'%Kumar'</span>   <span class="cmt">-- Scan!</span>
+
+<span class="cmt">-- ✅ LIKE end % — index used</span>
+<span class="kw">WHERE</span> <span class="col">Name</span> <span class="kw">LIKE</span> <span class="str">'Guru%'</span>    <span class="cmt">-- Seek!</span>
+
+<span class="cmt">-- ❌ Implicit conversion — no index</span>
+<span class="kw">WHERE</span> <span class="col">StudentId</span> = <span class="str">'100'</span>   <span class="cmt">-- string vs int!</span>
+
+<span class="cmt">-- ✅ Correct type</span>
+<span class="kw">WHERE</span> <span class="col">StudentId</span> = <span class="num">100</span></pre>
+        <div class="tanglish">
+          💡 <strong>Index Killers — avoid these on WHERE columns:</strong><br>
+          Function wrap: <code>YEAR(DOB)</code>, <code>UPPER(Name)</code>, <code>LEN(Code)</code><br>
+          Leading wildcard: <code>LIKE '%Kumar'</code><br>
+          Implicit conversion: <code>INT column = '100'</code><br>
+          OR on different columns (use UNION instead)
+        </div>
+      </div>
+
+      <!-- N+1 PROBLEM -->
+      <div class="card">
+        <div class="card-sub">Senior Concept</div>
+        <div class="card-title">N+1 Problem · Pagination · Query Hints</div>
+        <pre><span class="cmt">-- ❌ N+1 Problem</span>
+<span class="cmt">-- 1 query for students + N queries for fees</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">Students</span>;           <span class="cmt">-- 1 query</span>
+<span class="cmt">-- Then for each student in app code:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">Fees</span>
+    <span class="kw">WHERE</span> <span class="col">StudentId</span> = <span class="col">@id</span>;        <span class="cmt">-- N queries!</span>
+
+<span class="cmt">-- ✅ Fix — Single JOIN query</span>
+<span class="kw">SELECT</span>
+    <span class="col">s.Id</span>, <span class="col">s.Name</span>,
+    <span class="col">f.Amount</span>, <span class="col">f.PaidDate</span>
+<span class="kw">FROM</span>       <span class="col">Students</span> <span class="col">s</span>
+<span class="kw">LEFT JOIN</span>  <span class="col">Fees</span>     <span class="col">f</span>
+    <span class="kw">ON</span> <span class="col">f.StudentId</span> = <span class="col">s.Id</span>;         <span class="cmt">-- 1 query!</span>
+
+<span class="cmt">-- Keyset Pagination (faster than OFFSET)</span>
+<span class="cmt">-- ❌ OFFSET gets slow on large pages</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">Students</span>
+<span class="kw">ORDER BY</span> <span class="col">Id</span>
+<span class="kw">OFFSET</span> <span class="num">100000</span> <span class="kw">ROWS FETCH NEXT</span> <span class="num">20</span> <span class="kw">ROWS ONLY</span>;
+
+<span class="cmt">-- ✅ Keyset (seek pagination)</span>
+<span class="kw">SELECT TOP</span> <span class="num">20</span> *
+<span class="kw">FROM</span>  <span class="col">Students</span>
+<span class="kw">WHERE</span> <span class="col">Id</span> &gt; <span class="col">@LastSeenId</span>
+<span class="kw">ORDER BY</span> <span class="col">Id</span>;</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: What is N+1 problem?</div>
+          <div class="a">1 query returns N students → N more queries for each student's data. 100 students = 101 DB calls! Fix: JOIN or multi-query with IN. ZenCampus attendance report-la ithaye fix panninom — 500ms → 20ms achu!</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- INDEX TABLE -->
+    <h3>📋 Index Type Quick Reference</h3>
+    <table>
+      <tr><th>Type</th><th>Count per Table</th><th>Storage</th><th>Best For</th></tr>
+      <tr><td>Clustered</td><td>1 only</td><td>Data IS the index</td><td>Primary Key, range queries</td></tr>
+      <tr><td>Non-Clustered</td><td>Multiple (up to 999)</td><td>Separate B-tree + pointer</td><td>WHERE / JOIN columns</td></tr>
+      <tr><td>Covering</td><td>Non-clustered + INCLUDE</td><td>Extra data in leaf</td><td>Avoid Key Lookup</td></tr>
+      <tr><td>Unique</td><td>Multiple</td><td>Non-clustered usually</td><td>Business keys, RollNo+Class</td></tr>
+      <tr><td>Filtered</td><td>Multiple</td><td>Partial rows only</td><td>IsActive=1, IsDeleted=0</td></tr>
+      <tr><td>Composite</td><td>Multiple</td><td>Multi-column B-tree</td><td>WHERE col1=x AND col2=y</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 6 — TRANSACTIONS + DDL + MISC
+════════════════════════════════════════════ -->
+<div class="section s6" id="sql-tx">
+  <div class="section-header">🔵 Transactions · DDL · String Functions · Dates</div>
+  <div class="section-body">
+
+    <div class="card-grid">
+
+      <!-- TRANSACTIONS -->
+      <div class="card">
+        <div class="card-sub">Syntax</div>
+        <div class="card-title">Transactions — ACID Properties</div>
+        <pre><span class="cmt">-- Transaction = all or nothing</span>
+<span class="kw">BEGIN TRANSACTION</span>;
+
+<span class="kw">BEGIN TRY</span>
+    <span class="kw">INSERT INTO</span> <span class="col">Fees</span>
+        (<span class="col">StudentId</span>, <span class="col">Amount</span>)
+    <span class="kw">VALUES</span> (<span class="num">1</span>, <span class="num">15000</span>);
+
+    <span class="kw">UPDATE</span> <span class="col">Students</span>
+    <span class="kw">SET</span>    <span class="col">FeeBalance</span> = <span class="col">FeeBalance</span> - <span class="num">15000</span>
+    <span class="kw">WHERE</span>  <span class="col">Id</span> = <span class="num">1</span>;
+
+    <span class="kw">COMMIT TRANSACTION</span>;     <span class="cmt">-- both succeed</span>
+<span class="kw">END TRY</span>
+<span class="kw">BEGIN CATCH</span>
+    <span class="kw">ROLLBACK TRANSACTION</span>;   <span class="cmt">-- both fail</span>
+    <span class="kw">SELECT</span> <span class="fn">ERROR_MESSAGE</span>() <span class="kw">AS</span> <span class="col">ErrMsg</span>;
+<span class="kw">END CATCH</span>
+
+<span class="cmt">-- SAVEPOINT — partial rollback</span>
+<span class="kw">BEGIN TRANSACTION</span>;
+    <span class="kw">INSERT INTO</span> <span class="col">AuditLog</span> ...<span class="kw">;</span>
+    <span class="kw">SAVE TRANSACTION</span> <span class="col">AfterAudit</span>;
+
+    <span class="kw">UPDATE</span> <span class="col">Students</span> ...;
+    <span class="cmt">-- If update fails, rollback to savepoint</span>
+    <span class="kw">ROLLBACK TRANSACTION</span> <span class="col">AfterAudit</span>;
+<span class="kw">COMMIT</span>;</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: ACID properties?</div>
+          <div class="a"><strong>A</strong>tomicity = all or nothing. <strong>C</strong>onsistency = valid state before+after. <strong>I</strong>solation = concurrent transactions don't interfere. <strong>D</strong>urability = committed = permanent. ZenCampus fee payment — INSERT + UPDATE must be atomic!</div>
+        </div>
+      </div>
+
+      <!-- DATE FUNCTIONS -->
+      <div class="card">
+        <div class="card-sub">Syntax — Date &amp; String</div>
+        <div class="card-title">Date Functions · String Functions</div>
+        <pre><span class="cmt">-- Date functions</span>
+<span class="fn">GETDATE</span>()                        <span class="cmt">-- current datetime</span>
+<span class="fn">GETUTCDATE</span>()                     <span class="cmt">-- UTC datetime</span>
+<span class="fn">DATEADD</span>(<span class="kw">DAY</span>, <span class="num">30</span>, <span class="fn">GETDATE</span>())     <span class="cmt">-- +30 days</span>
+<span class="fn">DATEDIFF</span>(<span class="kw">DAY</span>, <span class="col">DOB</span>, <span class="fn">GETDATE</span>())  <span class="cmt">-- age in days</span>
+<span class="fn">DATEPART</span>(<span class="kw">MONTH</span>, <span class="fn">GETDATE</span>())      <span class="cmt">-- month number</span>
+<span class="fn">DATENAME</span>(<span class="kw">WEEKDAY</span>, <span class="fn">GETDATE</span>())   <span class="cmt">-- 'Monday'</span>
+<span class="fn">FORMAT</span>(<span class="fn">GETDATE</span>(), <span class="str">'dd-MMM-yyyy'</span>) <span class="cmt">-- '25-Jun-2026'</span>
+<span class="fn">EOMONTH</span>(<span class="fn">GETDATE</span>())              <span class="cmt">-- last day of month</span>
+<span class="fn">CAST</span>(<span class="fn">GETDATE</span>() <span class="kw">AS DATE</span>)         <span class="cmt">-- date only</span>
+
+<span class="cmt">-- String functions</span>
+<span class="fn">LEN</span>(<span class="col">Name</span>)                        <span class="cmt">-- length</span>
+<span class="fn">UPPER</span>(<span class="col">Name</span>)                      <span class="cmt">-- uppercase</span>
+<span class="fn">LOWER</span>(<span class="col">Name</span>)                      <span class="cmt">-- lowercase</span>
+<span class="fn">TRIM</span>(<span class="col">Name</span>)                       <span class="cmt">-- remove spaces</span>
+<span class="fn">LEFT</span>(<span class="col">Name</span>, <span class="num">3</span>)                    <span class="cmt">-- first 3 chars</span>
+<span class="fn">RIGHT</span>(<span class="col">Phone</span>, <span class="num">4</span>)                  <span class="cmt">-- last 4 digits</span>
+<span class="fn">SUBSTRING</span>(<span class="col">Name</span>, <span class="num">1</span>, <span class="num">5</span>)           <span class="cmt">-- extract part</span>
+<span class="fn">REPLACE</span>(<span class="col">Name</span>, <span class="str">' '</span>, <span class="str">'_'</span>)          <span class="cmt">-- replace</span>
+<span class="fn">CHARINDEX</span>(<span class="str">'@'</span>, <span class="col">Email</span>)           <span class="cmt">-- find position</span>
+<span class="fn">CONCAT</span>(<span class="col">FirstName</span>,<span class="str">' '</span>,<span class="col">LastName</span>)  <span class="cmt">-- join strings</span>
+<span class="fn">STRING_AGG</span>(<span class="col">Name</span>, <span class="str">','</span>)            <span class="cmt">-- group concat</span></pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus — Fee due reminder:</div>
+          <pre><span class="kw">SELECT</span>
+    <span class="col">s.Name</span>,
+    <span class="col">s.Phone</span>,
+    <span class="fn">DATEDIFF</span>(<span class="kw">DAY</span>, <span class="fn">GETDATE</span>(), <span class="col">f.DueDate</span>)
+        <span class="kw">AS</span> <span class="col">DaysRemaining</span>,
+    <span class="fn">FORMAT</span>(<span class="col">f.DueDate</span>, <span class="str">'dd-MMM-yyyy'</span>)
+        <span class="kw">AS</span> <span class="col">DueDateDisplay</span>
+<span class="kw">FROM</span>       <span class="col">Students</span> <span class="col">s</span>
+<span class="kw">INNER JOIN</span> <span class="col">Fees</span>     <span class="col">f</span>
+    <span class="kw">ON</span> <span class="col">f.StudentId</span> = <span class="col">s.Id</span>
+<span class="kw">WHERE</span> <span class="col">f.IsPaid</span> = <span class="num">0</span>
+<span class="kw">AND</span>   <span class="col">f.DueDate</span> &lt;= <span class="fn">DATEADD</span>(<span class="kw">DAY</span>,<span class="num">7</span>,<span class="fn">GETDATE</span>());</pre>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- GOOD BAD SQL -->
+    <h3>✅ SQL Query Optimization — Do vs Don't</h3>
+    <div class="good-bad">
+      <div class="good">
+        <div class="lbl">✅ FAST QUERIES</div>
+        <pre style="margin:6px 0; font-size:.78em"><span class="kw">WHERE</span> <span class="col">Class</span> = <span class="str">'10A'</span>           <span class="cmt">-- sargable</span>
+<span class="kw">WHERE</span> <span class="col">Name</span> <span class="kw">LIKE</span> <span class="str">'Guru%'</span>       <span class="cmt">-- prefix</span>
+<span class="kw">WHERE</span> <span class="col">Id</span> <span class="kw">IN</span> (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>)           <span class="cmt">-- small IN</span>
+<span class="kw">SELECT</span> <span class="col">Id</span>,<span class="col">Name</span>,<span class="col">Class</span>         <span class="cmt">-- needed cols</span>
+<span class="kw">EXISTS</span> (<span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> ...)    <span class="cmt">-- fast check</span>
+<span class="kw">JOIN</span> on indexed FK columns</pre>
+      </div>
+      <div class="bad">
+        <div class="lbl">❌ SLOW QUERIES</div>
+        <pre style="margin:6px 0; font-size:.78em"><span class="kw">WHERE</span> <span class="fn">YEAR</span>(<span class="col">DOB</span>) = <span class="num">2008</span>      <span class="cmt">-- fn on col!</span>
+<span class="kw">WHERE</span> <span class="col">Name</span> <span class="kw">LIKE</span> <span class="str">'%Kumar'</span>     <span class="cmt">-- leading %</span>
+<span class="kw">WHERE</span> <span class="col">Id</span> <span class="kw">IN</span> (<span class="kw">SELECT</span> ...)      <span class="cmt">-- large IN</span>
+<span class="kw">SELECT</span> *                       <span class="cmt">-- all cols!</span>
+<span class="kw">COUNT</span>(*) > <span class="num">0</span>                  <span class="cmt">-- use EXISTS!</span>
+<span class="kw">OR</span> on different columns        <span class="cmt">-- index miss</span></pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MASTER INTERVIEW TABLE -->
+<div style="background:#13132a; border-radius:12px; padding:24px; margin:30px 0; border:1px solid #2a2a4a;">
+  <h2 style="color:#e94560; margin-bottom:16px">🎯 Part 4 — Top 15 SQL Interview Questions</h2>
+  <table>
+    <tr><th>#</th><th>Question</th><th>1-Line Answer</th><th>ZenCampus Hook</th></tr>
+    <tr><td>1</td><td>SQL execution order?</td><td>FROM→JOIN→WHERE→GROUP BY→HAVING→SELECT→ORDER BY</td><td>Aggregate in HAVING, not WHERE!</td></tr>
+    <tr><td>2</td><td>WHERE vs HAVING?</td><td>WHERE=row filter before group, HAVING=group filter after</td><td>AVG(Marks)>60 = HAVING</td></tr>
+    <tr><td>3</td><td>INNER vs LEFT JOIN?</td><td>INNER=match both, LEFT=all left + nullable right</td><td>Students with/without bus fee</td></tr>
+    <tr><td>4</td><td>Anti-join pattern?</td><td>LEFT JOIN + WHERE right.Id IS NULL</td><td>Students with no fee records</td></tr>
+    <tr><td>5</td><td>CTE vs Subquery?</td><td>CTE=readable+reusable+recursive, Subquery=one-time</td><td>ActiveStudents CTE reused</td></tr>
+    <tr><td>6</td><td>RANK vs DENSE_RANK?</td><td>RANK skips numbers on tie, DENSE_RANK doesn't</td><td>Top 3 per class report</td></tr>
+    <tr><td>7</td><td>ROW_NUMBER use case?</td><td>Unique row per partition — pagination, dedup</td><td>One record per student per month</td></tr>
+    <tr><td>8</td><td>LAG / LEAD?</td><td>LAG=prev row value, LEAD=next row value</td><td>Month-over-month fee growth</td></tr>
+    <tr><td>9</td><td>Clustered vs Non-clustered?</td><td>Clustered=physical sort(1/table), NC=pointer(many)</td><td>PK=clustered, Class=NC</td></tr>
+    <tr><td>10</td><td>What breaks index usage?</td><td>Function on column, leading LIKE %, implicit conversion</td><td>YEAR(DOB)=2008 → scan!</td></tr>
+    <tr><td>11</td><td>SCOPE_IDENTITY()?</td><td>Last insert ID in current scope — safe vs @@IDENTITY</td><td>Receipt number after fee insert</td></tr>
+    <tr><td>12</td><td>ACID?</td><td>Atomicity, Consistency, Isolation, Durability</td><td>Fee INSERT + Student UPDATE atomic</td></tr>
+    <tr><td>13</td><td>N+1 problem?</td><td>1+N separate queries — fix with JOIN or bulk IN</td><td>Attendance report: 1→101 queries fix</td></tr>
+    <tr><td>14</td><td>EXISTS vs IN?</td><td>EXISTS stops at first match — faster for large sets</td><td>Unpaid fee check</td></tr>
+    <tr><td>15</td><td>Covering index?</td><td>NC index + INCLUDE columns — avoids key lookup</td><td>Class+IsActive+INCLUDE(Name,Roll)</td></tr>
+  </table>
+</div>
+
+<!-- PART 4 END -->
+<div style="background:#13132a; border-radius:12px; padding:20px; margin:30px 0;
+            border:2px dashed #e94560; text-align:center;">
+  <p style="color:#e94560; font-size:1.1em; font-weight:bold;">✅ Part 4 Complete — SQL: Full Interview Guide</p>
+  <p style="color:#a0a0c0; margin-top:6px">
+    Covered: SELECT anatomy · Execution order · Subqueries · CASE WHEN · All JOINs + Anti-join ·
+    CTE (basic + multiple + recursive) · Window Functions (ROW_NUMBER, RANK, DENSE_RANK, LAG, LEAD, Running Total) ·
+    Stored Procedures · Transactions (ACID) · Indexes (Clustered, NC, Covering, Filtered) ·
+    Execution Plan · N+1 fix · Date/String functions · Query optimization rules<br><br>
+    <strong>Next → Part 5: Dapper + Microservices + JWT + API Gateway</strong>
+  </p>
+</div>
+
+</div><!-- container -->
+
+<footer>
+  <p>ZenCampus Interview Syntax Bible · Part 4 of 7 — SQL · Gurumoorthy M · gurumoorthymurugan@gmail.com</p>
+  <p style="margin-top:4px; font-size:.8em">🎬 Ratsasan detective clues = Index Seek · Kaaka Muttai brothers = JOIN · Vikram Vedha layers = CTE · Baasha plan = Stored Procedure!</p>
+</footer>
+
+</body>
+</html>

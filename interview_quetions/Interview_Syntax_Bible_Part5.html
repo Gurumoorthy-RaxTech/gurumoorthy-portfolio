@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 5 — Dapper + Microservices + JWT · ZenCampus</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; line-height: 1.7; }
+  header { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); padding: 32px 20px; text-align: center; border-bottom: 3px solid #e94560; }
+  header h1 { font-size: 2em; color: #e94560; text-shadow: 0 0 20px #e9456088; }
+  header p  { color: #a0a0c0; margin-top: 8px; }
+  .badge { display: inline-block; background: #e94560; color: white; padding: 4px 12px; border-radius: 20px; font-size: .78em; margin: 4px; }
+  .container { max-width: 1150px; margin: 0 auto; padding: 20px; }
+
+  .section { margin: 36px 0; border-radius: 12px; overflow: hidden; border: 1px solid #2a2a4a; }
+  .section-header { padding: 16px 24px; font-size: 1.2em; font-weight: bold; display: flex; align-items: center; gap: 12px; }
+  .section-body { padding: 20px 24px; background: #13132a; }
+  .dapper-sec  .section-header { background: linear-gradient(90deg, #3d2a1a, #e67e22); }
+  .micro-sec   .section-header { background: linear-gradient(90deg, #1a3d5c, #1e6091); }
+  .jwt-sec     .section-header { background: linear-gradient(90deg, #3d1a2a, #c0392b); }
+  .gw-sec      .section-header { background: linear-gradient(90deg, #1a3d2a, #27ae60); }
+  .httpclient-sec .section-header { background: linear-gradient(90deg, #2a1a3d, #8e44ad); }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; margin-top: 16px; }
+  .card { background: #1a1a35; border-radius: 10px; padding: 18px; border-left: 4px solid #e94560; transition: transform .2s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px #e9456033; }
+  .card-title { font-size: 1.05em; font-weight: bold; color: #fff; margin-bottom: 8px; }
+  .card-sub   { font-size: .78em; color: #e94560; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+
+  pre  { background: #0d1117; border-radius: 8px; padding: 14px; overflow-x: auto; font-size: .82em; font-family: 'Consolas', monospace; color: #e0e0e0; margin: 10px 0; border: 1px solid #2a2a4a; line-height: 1.6; }
+  .kw  { color: #569cd6; }
+  .str { color: #ce9178; }
+  .cmt { color: #6a9955; }
+  .num { color: #b5cea8; }
+  .typ { color: #4ec9b0; }
+  .fn  { color: #dcdcaa; }
+  .prop{ color: #9cdcfe; }
+  .sql { color: #f39c12; }
+  code { background: #0d1117; color: #f97316; padding: 2px 7px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: .83em; }
+
+  .movie-ref    { background: #1a0f2e; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #c39bd3; border-left: 3px solid #8e44ad; }
+  .movie-ref .film { color: #f39c12; font-weight: bold; }
+  .zencampus    { background: #0a2010; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #a8e6cf; border-left: 3px solid #27ae60; }
+  .zencampus .label { color: #2ecc71; font-weight: bold; font-size: .8em; }
+  .interview-qa { background: #1a0a0a; border-radius: 6px; padding: 12px 14px; margin: 10px 0; border-left: 3px solid #e74c3c; }
+  .interview-qa .q { color: #e74c3c; font-size: .8em; font-weight: bold; }
+  .interview-qa .a { color: #c0c0c0; font-size: .85em; margin-top: 4px; }
+  .tanglish     { background: #1a1500; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #f9ca24; border-left: 3px solid #f9ca24; }
+  .trap         { background: #1a0000; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #ff6b6b; border-left: 3px solid #e74c3c; }
+  .trap .label  { color: #e74c3c; font-weight: bold; }
+  .tip-box      { background: #1a1000; border: 1px solid #f39c12; border-radius: 8px; padding: 14px; margin: 14px 0; }
+  .tip-box .tip-title { color: #f39c12; font-weight: bold; margin-bottom: 6px; }
+
+  .arch-box     { background: #0d1117; border-radius: 10px; padding: 18px; margin: 16px 0; border: 1px solid #2a2a4a; font-family: 'Consolas', monospace; font-size: .82em; line-height: 2; }
+  .arch-box .title { color: #f39c12; font-weight: bold; margin-bottom: 8px; font-family: 'Segoe UI', sans-serif; }
+  .arrow { color: #e94560; }
+  .box   { color: #74b9ff; }
+  .good-bad { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+  .good { background: #0a2010; border-radius: 6px; padding: 10px; border-left: 3px solid #27ae60; font-size: .82em; }
+  .bad  { background: #1a0000; border-radius: 6px; padding: 10px; border-left: 3px solid #e74c3c; font-size: .82em; }
+  .good .lbl { color: #2ecc71; font-weight: bold; font-size: .78em; }
+  .bad  .lbl { color: #e74c3c; font-weight: bold; font-size: .78em; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .84em; }
+  th { background: #1e3a5f; color: #74b9ff; padding: 10px; text-align: left; }
+  td { padding: 8px 10px; border-bottom: 1px solid #2a2a4a; color: #c0c0c0; }
+  tr:hover td { background: #1a1a35; }
+  h3 { color: #74b9ff; margin: 18px 0 10px; font-size: 1em; }
+
+  footer { text-align: center; padding: 30px; color: #555; border-top: 1px solid #2a2a4a; margin-top: 40px; }
+  @media(max-width:600px){ .card-grid{ grid-template-columns:1fr; } .good-bad{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🟠 Part 5 — Dapper · Microservices · JWT · API Gateway</h1>
+  <p>ZenCampus Edition · Syntax + Live Examples + Tamil Movie Memory + Interview Answers</p>
+  <div style="margin-top:10px">
+    <span class="badge">Dapper CRUD</span>
+    <span class="badge">Multi-Map</span>
+    <span class="badge">Stored Proc</span>
+    <span class="badge">Microservices</span>
+    <span class="badge">JWT Auth</span>
+    <span class="badge">Refresh Token</span>
+    <span class="badge">Ocelot Gateway</span>
+    <span class="badge">HttpClient</span>
+    <span class="badge">Service Discovery</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="tip-box" style="margin-top:20px">
+    <div class="tip-title">🎬 Master Memory — This Part's Movie Map</div>
+    <p>
+      <strong>Dapper</strong> = 🎬 Kaithi (Dilli) — raw, fast, no overhead. No ORM magic — pure SQL power.<br>
+      <strong>Microservices</strong> = 🎬 Bigil (team players, each specialised) — StudentService, FeeService, each independent.<br>
+      <strong>JWT</strong> = 🎬 Thuppakki (Jagadish undercover identity) — token = encrypted identity card.<br>
+      <strong>API Gateway</strong> = 🎬 Baasha (Manikkam at the gate) — single entry, controls who passes.
+    </p>
+  </div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — DAPPER
+════════════════════════════════════════════ -->
+<div class="section dapper-sec" id="dapper">
+  <div class="section-header">🟠 Dapper — Micro ORM · Fast · Raw SQL Power</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Kaithi (2019) — Dilli:</span>
+      Dilli — no fancy gadgets, no backup plan. Raw skill, direct action. Dapper = same —
+      no bloated ORM, no magic. Write SQL, map to C# object, done. 40% faster than EF Core on complex queries!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- DAPPER SETUP + QUERY -->
+      <div class="card">
+        <div class="card-sub">Setup + Query</div>
+        <div class="card-title">Dapper Setup · Query · QueryFirstOrDefault</div>
+        <pre><span class="cmt">// NuGet: Dapper</span>
+<span class="cmt">// NuGet: Microsoft.Data.SqlClient</span>
+
+<span class="cmt">// Program.cs — register connection</span>
+<span class="prop">builder</span>.<span class="prop">Services</span>.<span class="fn">AddScoped</span>&lt;<span class="typ">IDbConnection</span>&gt;(<span class="prop">sp</span> =&gt;
+    <span class="kw">new</span> <span class="typ">SqlConnection</span>(
+        <span class="prop">builder</span>.<span class="prop">Configuration</span>
+               .<span class="fn">GetConnectionString</span>(<span class="str">"ZenCampus"</span>)));
+
+<span class="cmt">// Repository constructor</span>
+<span class="kw">public class</span> <span class="typ">StudentRepository</span>
+{
+    <span class="kw">private readonly</span> <span class="typ">IDbConnection</span> <span class="prop">_db</span>;
+    <span class="kw">public</span> <span class="fn">StudentRepository</span>(<span class="typ">IDbConnection</span> <span class="prop">db</span>)
+        =&gt; <span class="prop">_db</span> = <span class="prop">db</span>;
+
+    <span class="cmt">// Query — returns list</span>
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IEnumerable</span>&lt;<span class="typ">Student</span>&gt;&gt;
+        <span class="fn">GetAllAsync</span>(<span class="kw">int</span> <span class="prop">schoolId</span>)
+    {
+        <span class="kw">const string</span> <span class="prop">sql</span> = <span class="str">@"
+            SELECT Id, Name, Class,
+                   RollNo, Phone, IsActive
+            FROM   Students
+            WHERE  SchoolId = @SchoolId
+            AND    IsActive = 1
+            ORDER BY RollNo"</span>;
+
+        <span class="kw">return await</span> <span class="prop">_db</span>
+            .<span class="fn">QueryAsync</span>&lt;<span class="typ">Student</span>&gt;(
+                <span class="prop">sql</span>,
+                <span class="kw">new</span> { <span class="prop">SchoolId</span> = <span class="prop">schoolId</span> });
+    }
+
+    <span class="cmt">// QueryFirstOrDefault — single or null</span>
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">Student</span>?&gt;
+        <span class="fn">GetByIdAsync</span>(<span class="kw">int</span> <span class="prop">id</span>)
+    {
+        <span class="kw">return await</span> <span class="prop">_db</span>
+            .<span class="fn">QueryFirstOrDefaultAsync</span>&lt;<span class="typ">Student</span>&gt;(
+                <span class="str">"SELECT * FROM Students WHERE Id=@Id"</span>,
+                <span class="kw">new</span> { <span class="prop">Id</span> = <span class="prop">id</span> });
+    }
+}</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Dapper vs Entity Framework Core?</div>
+          <div class="a">Dapper = raw SQL, faster (no change tracking), full SQL control, great for complex queries. EF Core = LINQ, migrations, scaffolding, change tracking — good for CRUD. ZenCampus-la reports-ku Dapper, simple CRUD-ku EF Core. Best of both!</div>
+        </div>
+      </div>
+
+      <!-- INSERT UPDATE DELETE -->
+      <div class="card">
+        <div class="card-sub">Syntax — CUD Operations</div>
+        <div class="card-title">Insert · Update · Delete · Execute</div>
+        <pre><span class="cmt">// INSERT — returns new Id</span>
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="kw">int</span>&gt; <span class="fn">AddAsync</span>(<span class="typ">Student</span> <span class="prop">s</span>)
+{
+    <span class="kw">const string</span> <span class="prop">sql</span> = <span class="str">@"
+        INSERT INTO Students
+            (Name, Class, RollNo, Phone,
+             SchoolId, CreatedOn)
+        VALUES
+            (@Name, @Class, @RollNo, @Phone,
+             @SchoolId, @CreatedOn);
+        SELECT CAST(SCOPE_IDENTITY() AS INT)"</span>;
+
+    <span class="kw">return await</span> <span class="prop">_db</span>
+        .<span class="fn">QuerySingleAsync</span>&lt;<span class="kw">int</span>&gt;(<span class="prop">sql</span>, <span class="kw">new</span>
+        {
+            <span class="prop">s</span>.<span class="prop">Name</span>,   <span class="prop">s</span>.<span class="prop">Class</span>,
+            <span class="prop">s</span>.<span class="prop">RollNo</span>, <span class="prop">s</span>.<span class="prop">Phone</span>,
+            <span class="prop">s</span>.<span class="prop">SchoolId</span>,
+            <span class="prop">CreatedOn</span> = <span class="typ">DateTime</span>.<span class="prop">UtcNow</span>
+        });
+}
+
+<span class="cmt">// UPDATE — returns rows affected</span>
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="kw">int</span>&gt; <span class="fn">UpdateAsync</span>(<span class="typ">Student</span> <span class="prop">s</span>)
+{
+    <span class="kw">const string</span> <span class="prop">sql</span> = <span class="str">@"
+        UPDATE Students
+        SET    Name     = @Name,
+               Class    = @Class,
+               Phone    = @Phone,
+               UpdatedOn= @UpdatedOn
+        WHERE  Id       = @Id"</span>;
+
+    <span class="kw">return await</span> <span class="prop">_db</span>.<span class="fn">ExecuteAsync</span>(<span class="prop">sql</span>, <span class="kw">new</span>
+    {
+        <span class="prop">s</span>.<span class="prop">Name</span>, <span class="prop">s</span>.<span class="prop">Class</span>, <span class="prop">s</span>.<span class="prop">Phone</span>, <span class="prop">s</span>.<span class="prop">Id</span>,
+        <span class="prop">UpdatedOn</span> = <span class="typ">DateTime</span>.<span class="prop">UtcNow</span>
+    });
+}
+
+<span class="cmt">// SOFT DELETE (preferred over hard delete)</span>
+<span class="kw">public async</span> <span class="typ">Task</span> <span class="fn">DeleteAsync</span>(<span class="kw">int</span> <span class="prop">id</span>)
+    =&gt; <span class="kw">await</span> <span class="prop">_db</span>.<span class="fn">ExecuteAsync</span>(
+        <span class="str">"UPDATE Students SET IsActive=0 WHERE Id=@Id"</span>,
+        <span class="kw">new</span> { <span class="prop">Id</span> = <span class="prop">id</span> });</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Hard delete vs Soft delete?</div>
+          <div class="a">Hard delete = DELETE row permanently — no recovery. Soft delete = IsActive=0, data stays. ZenCampus-la student TC (Transfer Certificate) ku soft delete — history venum! Audit trail, reporting-ku soft delete always better.</div>
+        </div>
+      </div>
+
+      <!-- MULTI-MAP -->
+      <div class="card">
+        <div class="card-sub">Syntax — Advanced Dapper</div>
+        <div class="card-title">Multi-Map · QueryMultiple · Bulk Insert</div>
+        <pre><span class="cmt">// Multi-Map — JOIN result → nested objects</span>
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IEnumerable</span>&lt;<span class="typ">Student</span>&gt;&gt;
+    <span class="fn">GetWithFeesAsync</span>(<span class="kw">int</span> <span class="prop">schoolId</span>)
+{
+    <span class="kw">const string</span> <span class="prop">sql</span> = <span class="str">@"
+        SELECT s.*, f.Id, f.Amount,
+               f.PaidDate, f.IsPaid
+        FROM   Students s
+        LEFT JOIN Fees  f
+            ON f.StudentId = s.Id
+        WHERE  s.SchoolId = @SchoolId"</span>;
+
+    <span class="kw">var</span> <span class="prop">students</span> =
+        <span class="kw">await</span> <span class="prop">_db</span>.<span class="fn">QueryAsync</span>&lt;<span class="typ">Student</span>, <span class="typ">Fee</span>, <span class="typ">Student</span>&gt;(
+            <span class="prop">sql</span>,
+            (<span class="prop">student</span>, <span class="prop">fee</span>) =&gt;       <span class="cmt">// map lambda</span>
+            {
+                <span class="prop">student</span>.<span class="prop">Fees</span> ??= <span class="kw">new</span>();
+                <span class="kw">if</span> (<span class="prop">fee</span> != <span class="kw">null</span>)
+                    <span class="prop">student</span>.<span class="prop">Fees</span>.<span class="fn">Add</span>(<span class="prop">fee</span>);
+                <span class="kw">return</span> <span class="prop">student</span>;
+            },
+            <span class="kw">new</span> { <span class="prop">SchoolId</span> = <span class="prop">schoolId</span> },
+            <span class="prop">splitOn</span>: <span class="str">"Id"</span>);        <span class="cmt">// split col</span>
+
+    <span class="kw">return</span> <span class="prop">students</span>
+        .<span class="fn">GroupBy</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">Id</span>)
+        .<span class="fn">Select</span>(<span class="prop">g</span> =&gt;
+        {
+            <span class="kw">var</span> <span class="prop">s</span> = <span class="prop">g</span>.<span class="fn">First</span>();
+            <span class="prop">s</span>.<span class="prop">Fees</span> = <span class="prop">g</span>
+                .<span class="fn">SelectMany</span>(<span class="prop">x</span> =&gt; <span class="prop">x</span>.<span class="prop">Fees</span> ?? <span class="kw">new</span>())
+                .<span class="fn">ToList</span>();
+            <span class="kw">return</span> <span class="prop">s</span>;
+        });
+}
+
+<span class="cmt">// QueryMultiple — multiple result sets</span>
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">DashboardData</span>&gt;
+    <span class="fn">GetDashboardAsync</span>(<span class="kw">int</span> <span class="prop">schoolId</span>)
+{
+    <span class="kw">const string</span> <span class="prop">sql</span> = <span class="str">@"
+        SELECT COUNT(*) FROM Students
+            WHERE SchoolId=@Id;
+        SELECT COUNT(*) FROM Staff
+            WHERE SchoolId=@Id;
+        SELECT SUM(Amount) FROM Fees
+            WHERE SchoolId=@Id AND IsPaid=1"</span>;
+
+    <span class="kw">using var</span> <span class="prop">multi</span> = <span class="kw">await</span> <span class="prop">_db</span>
+        .<span class="fn">QueryMultipleAsync</span>(<span class="prop">sql</span>,
+            <span class="kw">new</span> { <span class="prop">Id</span> = <span class="prop">schoolId</span> });
+
+    <span class="kw">return new</span> <span class="typ">DashboardData</span>
+    {
+        <span class="prop">StudentCount</span> = <span class="kw">await</span> <span class="prop">multi</span>
+                             .<span class="fn">ReadSingleAsync</span>&lt;<span class="kw">int</span>&gt;(),
+        <span class="prop">StaffCount</span>   = <span class="kw">await</span> <span class="prop">multi</span>
+                             .<span class="fn">ReadSingleAsync</span>&lt;<span class="kw">int</span>&gt;(),
+        <span class="prop">TotalFees</span>    = <span class="kw">await</span> <span class="prop">multi</span>
+                             .<span class="fn">ReadSingleAsync</span>&lt;<span class="kw">decimal</span>&gt;()
+    };
+}</pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus — 3 queries in 1 DB round-trip!</div>
+          QueryMultiple = single connection, 3 result sets — StudentCount + StaffCount + TotalFees ekela varum!
+        </div>
+      </div>
+
+      <!-- DAPPER STORED PROC + TRANSACTION -->
+      <div class="card">
+        <div class="card-sub">Syntax — SP + Transactions</div>
+        <div class="card-title">Stored Proc Call · Dapper Transaction</div>
+        <pre><span class="cmt">// Stored Procedure call</span>
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IEnumerable</span>&lt;<span class="typ">Student</span>&gt;&gt;
+    <span class="fn">GetByClassAsync</span>(<span class="kw">string</span> <span class="prop">className</span>)
+{
+    <span class="kw">return await</span> <span class="prop">_db</span>.<span class="fn">QueryAsync</span>&lt;<span class="typ">Student</span>&gt;(
+        <span class="str">"usp_GetStudentsByClass"</span>,
+        <span class="kw">new</span> { <span class="prop">ClassName</span> = <span class="prop">className</span> },
+        <span class="prop">commandType</span>: <span class="typ">CommandType</span>.<span class="prop">StoredProcedure</span>);
+}
+
+<span class="cmt">// Transaction in Dapper</span>
+<span class="kw">public async</span> <span class="typ">Task</span> <span class="fn">TransferStudentAsync</span>(
+    <span class="kw">int</span> <span class="prop">studentId</span>, <span class="kw">string</span> <span class="prop">newClass</span>)
+{
+    <span class="prop">_db</span>.<span class="fn">Open</span>();
+    <span class="kw">using var</span> <span class="prop">tx</span> = <span class="prop">_db</span>.<span class="fn">BeginTransaction</span>();
+    <span class="kw">try</span>
+    {
+        <span class="kw">await</span> <span class="prop">_db</span>.<span class="fn">ExecuteAsync</span>(
+            <span class="str">"UPDATE Students SET Class=@Class WHERE Id=@Id"</span>,
+            <span class="kw">new</span> { <span class="prop">Class</span> = <span class="prop">newClass</span>,
+                   <span class="prop">Id</span>    = <span class="prop">studentId</span> },
+            <span class="prop">transaction</span>: <span class="prop">tx</span>);   <span class="cmt">// ← pass tx!</span>
+
+        <span class="kw">await</span> <span class="prop">_db</span>.<span class="fn">ExecuteAsync</span>(
+            <span class="str">"INSERT INTO ClassHistory ..."</span>,
+            <span class="kw">new</span> { <span class="prop">studentId</span>, <span class="prop">newClass</span> },
+            <span class="prop">transaction</span>: <span class="prop">tx</span>);
+
+        <span class="prop">tx</span>.<span class="fn">Commit</span>();
+    }
+    <span class="kw">catch</span>
+    {
+        <span class="prop">tx</span>.<span class="fn">Rollback</span>();
+        <span class="kw">throw</span>;
+    }
+}</pre>
+        <div class="trap">
+          <div class="label">⚠️ Dapper Trap: Always pass transaction to every command!</div>
+          Transaction use panna — <strong>every</strong> Execute/Query call-la <code>transaction: tx</code> parameter pass pannu.
+          Oru call-la miss panna — that command outside transaction run aagum. Silent bug!
+        </div>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: How do you handle transactions in Dapper?</div>
+          <div class="a">connection.Open() → BeginTransaction() → all Execute calls-la transaction parameter pass → Commit(). Exception vaana Rollback(). IDbConnection.Open() mandatory — otherwise BeginTransaction throws!</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DAPPER COMPARISON TABLE -->
+    <h3>⚡ Dapper vs EF Core — When to Use What</h3>
+    <table>
+      <tr><th>Scenario</th><th>Dapper</th><th>EF Core</th></tr>
+      <tr><td>Complex report query</td><td>✅ Best</td><td>❌ LINQ gets messy</td></tr>
+      <tr><td>Simple CRUD</td><td>✅ OK</td><td>✅ Best (less code)</td></tr>
+      <tr><td>Stored procedure</td><td>✅ Best</td><td>⚠️ Possible but awkward</td></tr>
+      <tr><td>Migrations</td><td>❌ Manual SQL</td><td>✅ Best</td></tr>
+      <tr><td>Performance</td><td>✅ Fastest</td><td>⚠️ Overhead exists</td></tr>
+      <tr><td>Multi-result sets</td><td>✅ QueryMultiple</td><td>❌ Not supported</td></tr>
+      <tr><td>Change tracking</td><td>❌ Not available</td><td>✅ Built-in</td></tr>
+      <tr><td>ZenCampus usage</td><td>Reports, SP calls, dashboards</td><td>Admissions, config CRUD</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — MICROSERVICES
+════════════════════════════════════════════ -->
+<div class="section micro-sec" id="microservices">
+  <div class="section-header">🔵 Microservices Architecture</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Bigil (2019):</span>
+      Girls football team — each player has her OWN role, plays her OWN position. Together they win.
+      Microservices = StudentService, FeeService, AttendanceService — each independent, deployed separately,
+      communicates through API. One service down = others still running!
+    </div>
+
+    <!-- ARCHITECTURE DIAGRAM -->
+    <div class="arch-box">
+      <div class="title">🏗️ ZenCampus Microservices Architecture</div>
+      <span class="box">[ Client / Browser ]</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow">↓</span><br>
+      <span class="box">[ API Gateway (Ocelot) :5000 ]</span>  ← JWT Validate, Rate Limit, Route<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow">↓ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↓ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↓ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↓</span><br>
+      <span class="box">[ StudentSvc ]</span>&nbsp;&nbsp;<span class="box">[ FeeSvc ]</span>&nbsp;&nbsp;&nbsp;<span class="box">[ AttendSvc ]</span>&nbsp;<span class="box">[ ReportSvc ]</span><br>
+      &nbsp;&nbsp;&nbsp;<span class="arrow">:5001 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :5002 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :5003 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :5004</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow">↓ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↓ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↓ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↓</span><br>
+      <span class="box">[ SQL Server ]</span>&nbsp;&nbsp;<span class="box">[ SQL Server ]</span>&nbsp;&nbsp;<span class="box">[ MongoDB ]</span>&nbsp;&nbsp;<span class="box">[ Redis Cache ]</span>
+    </div>
+
+    <div class="card-grid">
+
+      <!-- MICROSERVICE SETUP -->
+      <div class="card">
+        <div class="card-sub">Syntax — Service Setup</div>
+        <div class="card-title">StudentService — Full Microservice Structure</div>
+        <pre><span class="cmt">// StudentService/Program.cs</span>
+<span class="kw">var</span> <span class="prop">builder</span> = <span class="typ">WebApplication</span>.<span class="fn">CreateBuilder</span>(<span class="prop">args</span>);
+
+<span class="cmt">// Services</span>
+<span class="prop">builder</span>.<span class="prop">Services</span>
+    .<span class="fn">AddControllers</span>()
+    .<span class="fn">AddJsonOptions</span>(<span class="prop">o</span> =&gt; <span class="prop">o</span>.<span class="prop">JsonSerializerOptions</span>
+        .<span class="prop">PropertyNamingPolicy</span> =
+            <span class="typ">JsonNamingPolicy</span>.<span class="prop">CamelCase</span>);
+
+<span class="prop">builder</span>.<span class="prop">Services</span>
+    .<span class="fn">AddScoped</span>&lt;<span class="typ">IStudentRepository</span>,
+               <span class="typ">StudentRepository</span>&gt;()
+    .<span class="fn">AddScoped</span>&lt;<span class="typ">IStudentService</span>,
+               <span class="typ">StudentService</span>&gt;()
+    .<span class="fn">AddScoped</span>&lt;<span class="typ">IDbConnection</span>&gt;(<span class="prop">_</span> =&gt;
+        <span class="kw">new</span> <span class="typ">SqlConnection</span>(
+            <span class="prop">builder</span>.<span class="prop">Configuration</span>
+                   .<span class="fn">GetConnectionString</span>(<span class="str">"Students"</span>)));
+
+<span class="cmt">// JWT Validation</span>
+<span class="prop">builder</span>.<span class="prop">Services</span>
+    .<span class="fn">AddAuthentication</span>(<span class="typ">JwtBearerDefaults</span>
+        .<span class="prop">AuthenticationScheme</span>)
+    .<span class="fn">AddJwtBearer</span>(<span class="prop">o</span> =&gt;
+    {
+        <span class="prop">o</span>.<span class="prop">TokenValidationParameters</span> =
+            <span class="kw">new</span> <span class="typ">TokenValidationParameters</span>
+        {
+            <span class="prop">ValidateIssuerSigningKey</span> = <span class="kw">true</span>,
+            <span class="prop">IssuerSigningKey</span> = <span class="kw">new</span> <span class="typ">SymmetricSecurityKey</span>(
+                <span class="typ">Encoding</span>.<span class="prop">UTF8</span>.<span class="fn">GetBytes</span>(
+                    <span class="prop">builder</span>.<span class="prop">Configuration</span>[<span class="str">"Jwt:Key"</span>]!)),
+            <span class="prop">ValidateIssuer</span>   = <span class="kw">true</span>,
+            <span class="prop">ValidIssuer</span>      = <span class="prop">builder</span>.<span class="prop">Configuration</span>[<span class="str">"Jwt:Issuer"</span>],
+            <span class="prop">ValidateAudience</span> = <span class="kw">true</span>,
+            <span class="prop">ValidAudience</span>    = <span class="prop">builder</span>.<span class="prop">Configuration</span>[<span class="str">"Jwt:Audience"</span>],
+            <span class="prop">ClockSkew</span>        = <span class="typ">TimeSpan</span>.<span class="prop">Zero</span>
+        };
+    });
+
+<span class="prop">builder</span>.<span class="prop">Services</span>.<span class="fn">AddAuthorization</span>();
+
+<span class="kw">var</span> <span class="prop">app</span> = <span class="prop">builder</span>.<span class="fn">Build</span>();
+<span class="prop">app</span>.<span class="fn">UseAuthentication</span>();
+<span class="prop">app</span>.<span class="fn">UseAuthorization</span>();
+<span class="prop">app</span>.<span class="fn">MapControllers</span>();
+<span class="prop">app</span>.<span class="fn">Run</span>();</pre>
+      </div>
+
+      <!-- MICROSERVICE CONTROLLER -->
+      <div class="card">
+        <div class="card-sub">Syntax — Controller</div>
+        <div class="card-title">StudentController — REST API Pattern</div>
+        <pre>[<span class="typ">ApiController</span>]
+[<span class="typ">Route</span>(<span class="str">"api/v1/[controller]"</span>)]
+[<span class="typ">Authorize</span>]                  <span class="cmt">// JWT required</span>
+<span class="kw">public class</span> <span class="typ">StudentsController</span>
+    : <span class="typ">ControllerBase</span>
+{
+    <span class="kw">private readonly</span> <span class="typ">IStudentService</span> <span class="prop">_svc</span>;
+    <span class="kw">private readonly</span> <span class="typ">ILogger</span>&lt;<span class="typ">StudentsController</span>&gt; <span class="prop">_log</span>;
+
+    <span class="kw">public</span> <span class="fn">StudentsController</span>(
+        <span class="typ">IStudentService</span> <span class="prop">svc</span>,
+        <span class="typ">ILogger</span>&lt;<span class="typ">StudentsController</span>&gt; <span class="prop">log</span>)
+    { <span class="prop">_svc</span> = <span class="prop">svc</span>; <span class="prop">_log</span> = <span class="prop">log</span>; }
+
+    <span class="cmt">// GET api/v1/students?class=10A&page=1</span>
+    [<span class="typ">HttpGet</span>]
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="fn">GetAll</span>(
+        [<span class="typ">FromQuery</span>] <span class="kw">string</span>? <span class="prop">className</span>,
+        [<span class="typ">FromQuery</span>] <span class="kw">int</span> <span class="prop">page</span> = <span class="num">1</span>,
+        <span class="typ">CancellationToken</span> <span class="prop">ct</span>       = <span class="kw">default</span>)
+    {
+        <span class="kw">var</span> <span class="prop">result</span> = <span class="kw">await</span> <span class="prop">_svc</span>
+            .<span class="fn">GetStudentsAsync</span>(<span class="prop">className</span>, <span class="prop">page</span>, <span class="prop">ct</span>);
+        <span class="kw">return</span> <span class="fn">Ok</span>(<span class="prop">result</span>);
+    }
+
+    <span class="cmt">// GET api/v1/students/42</span>
+    [<span class="typ">HttpGet</span>(<span class="str">"{id:int}"</span>)]
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="fn">GetById</span>(
+        <span class="kw">int</span> <span class="prop">id</span>)
+    {
+        <span class="kw">var</span> <span class="prop">s</span> = <span class="kw">await</span> <span class="prop">_svc</span>.<span class="fn">GetByIdAsync</span>(<span class="prop">id</span>);
+        <span class="kw">return</span> <span class="prop">s</span> <span class="kw">is null</span> ? <span class="fn">NotFound</span>() : <span class="fn">Ok</span>(<span class="prop">s</span>);
+    }
+
+    <span class="cmt">// POST api/v1/students</span>
+    [<span class="typ">HttpPost</span>]
+    [<span class="typ">Authorize</span>(<span class="prop">Roles</span> = <span class="str">"Admin,Principal"</span>)]
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="fn">Create</span>(
+        [<span class="typ">FromBody</span>] <span class="typ">CreateStudentDto</span> <span class="prop">dto</span>)
+    {
+        <span class="kw">if</span> (!<span class="prop">ModelState</span>.<span class="prop">IsValid</span>)
+            <span class="kw">return</span> <span class="fn">BadRequest</span>(<span class="prop">ModelState</span>);
+
+        <span class="kw">var</span> <span class="prop">id</span> = <span class="kw">await</span> <span class="prop">_svc</span>.<span class="fn">CreateAsync</span>(<span class="prop">dto</span>);
+        <span class="kw">return</span> <span class="fn">CreatedAtAction</span>(
+            <span class="kw">nameof</span>(<span class="fn">GetById</span>), <span class="kw">new</span> { <span class="prop">id</span> }, <span class="prop">id</span>);
+    }
+
+    <span class="cmt">// PUT api/v1/students/42</span>
+    [<span class="typ">HttpPut</span>(<span class="str">"{id:int}"</span>)]
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="fn">Update</span>(
+        <span class="kw">int</span> <span class="prop">id</span>, [<span class="typ">FromBody</span>] <span class="typ">UpdateStudentDto</span> <span class="prop">dto</span>)
+    {
+        <span class="kw">await</span> <span class="prop">_svc</span>.<span class="fn">UpdateAsync</span>(<span class="prop">id</span>, <span class="prop">dto</span>);
+        <span class="kw">return</span> <span class="fn">NoContent</span>();   <span class="cmt">// 204</span>
+    }
+
+    <span class="cmt">// DELETE api/v1/students/42</span>
+    [<span class="typ">HttpDelete</span>(<span class="str">"{id:int}"</span>)]
+    [<span class="typ">Authorize</span>(<span class="prop">Roles</span> = <span class="str">"Admin"</span>)]
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="fn">Delete</span>(<span class="kw">int</span> <span class="prop">id</span>)
+    {
+        <span class="kw">await</span> <span class="prop">_svc</span>.<span class="fn">DeleteAsync</span>(<span class="prop">id</span>);
+        <span class="kw">return</span> <span class="fn">NoContent</span>();
+    }
+}</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: What HTTP status codes to return?</div>
+          <div class="a">200 OK=get, 201 Created=post, 204 NoContent=put/delete, 400 BadRequest=validation, 401 Unauthorised=no token, 403 Forbidden=wrong role, 404 NotFound=not exists, 500 ServerError=unhandled. Interview-la table draw panni sollu!</div>
+        </div>
+      </div>
+
+      <!-- MICROSERVICES PATTERNS -->
+      <div class="card">
+        <div class="card-sub">Architecture Patterns</div>
+        <div class="card-title">Microservices Key Patterns</div>
+        <pre><span class="cmt">// 1. Health Check — each service exposes</span>
+<span class="prop">builder</span>.<span class="prop">Services</span>.<span class="fn">AddHealthChecks</span>()
+    .<span class="fn">AddSqlServer</span>(<span class="prop">connStr</span>);
+
+<span class="prop">app</span>.<span class="fn">MapHealthChecks</span>(<span class="str">"/health"</span>);
+
+<span class="cmt">// 2. Serilog — structured logging</span>
+<span class="prop">builder</span>.<span class="prop">Host</span>.<span class="fn">UseSerilog</span>((<span class="prop">ctx</span>, <span class="prop">cfg</span>) =&gt;
+    <span class="prop">cfg</span>
+    .<span class="fn">ReadFrom</span>.<span class="fn">Configuration</span>(<span class="prop">ctx</span>.<span class="prop">Configuration</span>)
+    .<span class="fn">WriteTo</span>.<span class="fn">Console</span>()
+    .<span class="fn">WriteTo</span>.<span class="fn">File</span>(<span class="str">"logs/log-.txt"</span>,
+        <span class="prop">rollingInterval</span>: <span class="typ">RollingInterval</span>.<span class="prop">Day</span>));
+
+<span class="cmt">// 3. Global Exception Handler (NET 8)</span>
+<span class="prop">builder</span>.<span class="prop">Services</span>
+    .<span class="fn">AddExceptionHandler</span>&lt;<span class="typ">GlobalExceptionHandler</span>&gt;()
+    .<span class="fn">AddProblemDetails</span>();
+
+<span class="kw">public class</span> <span class="typ">GlobalExceptionHandler</span>
+    : <span class="typ">IExceptionHandler</span>
+{
+    <span class="kw">public async</span> <span class="typ">ValueTask</span>&lt;<span class="kw">bool</span>&gt;
+        <span class="fn">TryHandleAsync</span>(
+            <span class="typ">HttpContext</span> <span class="prop">ctx</span>,
+            <span class="typ">Exception</span>   <span class="prop">ex</span>,
+            <span class="typ">CancellationToken</span> <span class="prop">ct</span>)
+    {
+        <span class="prop">ctx</span>.<span class="prop">Response</span>.<span class="prop">StatusCode</span> =
+            <span class="prop">ex</span> <span class="kw">is</span> <span class="typ">KeyNotFoundException</span>
+                ? <span class="num">404</span> : <span class="num">500</span>;
+
+        <span class="kw">await</span> <span class="prop">ctx</span>.<span class="prop">Response</span>
+            .<span class="fn">WriteAsJsonAsync</span>(<span class="kw">new</span> {
+                <span class="prop">error</span>  = <span class="prop">ex</span>.<span class="prop">Message</span>,
+                <span class="prop">type</span>   = <span class="prop">ex</span>.<span class="fn">GetType</span>().<span class="prop">Name</span>,
+                <span class="prop">traceId</span>= <span class="prop">ctx</span>.<span class="prop">TraceIdentifier</span>
+            }, <span class="prop">ct</span>);
+        <span class="kw">return true</span>;
+    }
+}</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Monolith vs Microservices?</div>
+          <div class="a">Monolith = single deploy, simple, tight coupling. Microservices = independent deploy, scale individually, complex (need gateway, service discovery). ZenCampus-la school 1-ku monolith ok. 1000 schools → microservices. Each service independent team-a develop + deploy panalaam!</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — JWT AUTHENTICATION
+════════════════════════════════════════════ -->
+<div class="section jwt-sec" id="jwt">
+  <div class="section-header">🔴 JWT Authentication · Refresh Token · Role-Based Auth</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Thuppakki (2012) — Jagadish:</span>
+      Jagadish undercover agent — carries an encrypted identity. Nobody can read it without the right key.
+      JWT = Header.Payload.Signature — encrypted identity token. Server verifies, never stores session!
+    </div>
+
+    <!-- JWT ANATOMY -->
+    <div class="arch-box">
+      <div class="title">🔐 JWT Token Structure</div>
+      <span style="color:#f39c12">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</span>  ← <span style="color:#74b9ff">Header (algo + type) — Base64</span><br>
+      <span style="color:#2ecc71">eyJzdWIiOiIxMjMiLCJuYW1lIjoiR3VydSIsInJvbGUiOiJBZG1pbiJ9</span>  ← <span style="color:#74b9ff">Payload (claims) — Base64</span><br>
+      <span style="color:#e94560">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span>  ← <span style="color:#74b9ff">Signature (HMAC-SHA256) — SECRET</span><br><br>
+      Claims: sub(userId), name, role, schoolId, exp(expiry), iat(issued at)
+    </div>
+
+    <div class="card-grid">
+
+      <!-- JWT GENERATE -->
+      <div class="card">
+        <div class="card-sub">Syntax — Token Generation</div>
+        <div class="card-title">Generate JWT Token — Login Endpoint</div>
+        <pre><span class="kw">public class</span> <span class="typ">AuthService</span>
+{
+    <span class="kw">private readonly</span> <span class="typ">IConfiguration</span> <span class="prop">_cfg</span>;
+
+    <span class="kw">public string</span> <span class="fn">GenerateToken</span>(<span class="typ">User</span> <span class="prop">user</span>)
+    {
+        <span class="kw">var</span> <span class="prop">key</span> = <span class="kw">new</span> <span class="typ">SymmetricSecurityKey</span>(
+            <span class="typ">Encoding</span>.<span class="prop">UTF8</span>.<span class="fn">GetBytes</span>(
+                <span class="prop">_cfg</span>[<span class="str">"Jwt:Key"</span>]!));
+
+        <span class="kw">var</span> <span class="prop">creds</span> = <span class="kw">new</span> <span class="typ">SigningCredentials</span>(
+            <span class="prop">key</span>,
+            <span class="typ">SecurityAlgorithms</span>.<span class="prop">HmacSha256</span>);
+
+        <span class="cmt">// Claims — data inside token</span>
+        <span class="kw">var</span> <span class="prop">claims</span> = <span class="kw">new</span>[]
+        {
+            <span class="kw">new</span> <span class="typ">Claim</span>(<span class="typ">ClaimTypes</span>.<span class="prop">NameIdentifier</span>,
+                        <span class="prop">user</span>.<span class="prop">Id</span>.<span class="fn">ToString</span>()),
+            <span class="kw">new</span> <span class="typ">Claim</span>(<span class="typ">ClaimTypes</span>.<span class="prop">Name</span>,
+                        <span class="prop">user</span>.<span class="prop">Name</span>),
+            <span class="kw">new</span> <span class="typ">Claim</span>(<span class="typ">ClaimTypes</span>.<span class="prop">Role</span>,
+                        <span class="prop">user</span>.<span class="prop">Role</span>),
+            <span class="cmt">// Custom claim — schoolId</span>
+            <span class="kw">new</span> <span class="typ">Claim</span>(<span class="str">"schoolId"</span>,
+                        <span class="prop">user</span>.<span class="prop">SchoolId</span>.<span class="fn">ToString</span>()),
+            <span class="kw">new</span> <span class="typ">Claim</span>(<span class="str">"branchId"</span>,
+                        <span class="prop">user</span>.<span class="prop">BranchId</span>.<span class="fn">ToString</span>())
+        };
+
+        <span class="kw">var</span> <span class="prop">token</span> = <span class="kw">new</span> <span class="typ">JwtSecurityToken</span>(
+            <span class="prop">issuer</span>:             <span class="prop">_cfg</span>[<span class="str">"Jwt:Issuer"</span>],
+            <span class="prop">audience</span>:           <span class="prop">_cfg</span>[<span class="str">"Jwt:Audience"</span>],
+            <span class="prop">claims</span>:             <span class="prop">claims</span>,
+            <span class="prop">expires</span>:            <span class="typ">DateTime</span>.<span class="prop">UtcNow</span>
+                                    .<span class="fn">AddMinutes</span>(<span class="num">15</span>),
+            <span class="prop">signingCredentials</span>: <span class="prop">creds</span>);
+
+        <span class="kw">return new</span> <span class="typ">JwtSecurityTokenHandler</span>()
+            .<span class="fn">WriteToken</span>(<span class="prop">token</span>);
+    }
+}</pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus Multi-School Claims:</div>
+          <pre><span class="cmt">// SchoolId + BranchId in token</span>
+<span class="cmt">// Every API request auto-knows which school</span>
+<span class="cmt">// No need to pass schoolId in every query!</span>
+<span class="kw">var</span> <span class="prop">schoolId</span> = <span class="kw">int</span>.<span class="fn">Parse</span>(
+    <span class="prop">User</span>.<span class="fn">FindFirst</span>(<span class="str">"schoolId"</span>)!.<span class="prop">Value</span>);</pre>
+        </div>
+      </div>
+
+      <!-- LOGIN + REFRESH TOKEN -->
+      <div class="card">
+        <div class="card-sub">Syntax — Login + Refresh</div>
+        <div class="card-title">Login Endpoint · Refresh Token Pattern</div>
+        <pre><span class="cmt">// Login Controller</span>
+[<span class="typ">HttpPost</span>(<span class="str">"login"</span>)]
+[<span class="typ">AllowAnonymous</span>]
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="fn">Login</span>(
+    [<span class="typ">FromBody</span>] <span class="typ">LoginDto</span> <span class="prop">dto</span>)
+{
+    <span class="kw">var</span> <span class="prop">user</span> = <span class="kw">await</span> <span class="prop">_auth</span>
+        .<span class="fn">ValidateUserAsync</span>(<span class="prop">dto</span>.<span class="prop">Username</span>,
+                           <span class="prop">dto</span>.<span class="prop">Password</span>);
+
+    <span class="kw">if</span> (<span class="prop">user</span> <span class="kw">is null</span>)
+        <span class="kw">return</span> <span class="fn">Unauthorized</span>(
+            <span class="str">"Invalid credentials"</span>);
+
+    <span class="cmt">// Generate tokens</span>
+    <span class="kw">var</span> <span class="prop">accessToken</span>  =
+        <span class="prop">_auth</span>.<span class="fn">GenerateToken</span>(<span class="prop">user</span>);     <span class="cmt">// 15 min</span>
+    <span class="kw">var</span> <span class="prop">refreshToken</span> =
+        <span class="prop">_auth</span>.<span class="fn">GenerateRefreshToken</span>();   <span class="cmt">// 7 days</span>
+
+    <span class="cmt">// Save refresh token to DB</span>
+    <span class="kw">await</span> <span class="prop">_auth</span>.<span class="fn">SaveRefreshTokenAsync</span>(
+        <span class="prop">user</span>.<span class="prop">Id</span>, <span class="prop">refreshToken</span>);
+
+    <span class="kw">return</span> <span class="fn">Ok</span>(<span class="kw">new</span>
+    {
+        <span class="prop">accessToken</span>,
+        <span class="prop">refreshToken</span>,
+        <span class="prop">expiresIn</span> = <span class="num">900</span>   <span class="cmt">// 15 min in seconds</span>
+    });
+}
+
+<span class="cmt">// Refresh token endpoint</span>
+[<span class="typ">HttpPost</span>(<span class="str">"refresh"</span>)]
+<span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="fn">Refresh</span>(
+    [<span class="typ">FromBody</span>] <span class="typ">RefreshTokenDto</span> <span class="prop">dto</span>)
+{
+    <span class="kw">var</span> <span class="prop">principal</span> =
+        <span class="prop">_auth</span>.<span class="fn">GetPrincipalFromExpiredToken</span>(
+            <span class="prop">dto</span>.<span class="prop">AccessToken</span>);
+
+    <span class="kw">var</span> <span class="prop">savedToken</span> = <span class="kw">await</span> <span class="prop">_auth</span>
+        .<span class="fn">GetRefreshTokenAsync</span>(<span class="prop">dto</span>.<span class="prop">RefreshToken</span>);
+
+    <span class="kw">if</span> (<span class="prop">savedToken</span> <span class="kw">is null</span> ||
+        <span class="prop">savedToken</span>.<span class="prop">ExpiresAt</span> &lt; <span class="typ">DateTime</span>.<span class="prop">UtcNow</span>)
+        <span class="kw">return</span> <span class="fn">Unauthorized</span>();
+
+    <span class="kw">var</span> <span class="prop">userId</span> = <span class="prop">principal</span>.<span class="fn">FindFirst</span>(
+        <span class="typ">ClaimTypes</span>.<span class="prop">NameIdentifier</span>)!.<span class="prop">Value</span>;
+    <span class="kw">var</span> <span class="prop">user</span>   = <span class="kw">await</span> <span class="prop">_repo</span>
+        .<span class="fn">GetByIdAsync</span>(<span class="kw">int</span>.<span class="fn">Parse</span>(<span class="prop">userId</span>));
+
+    <span class="kw">var</span> <span class="prop">newAccess</span>  = <span class="prop">_auth</span>.<span class="fn">GenerateToken</span>(<span class="prop">user</span>!);
+    <span class="kw">var</span> <span class="prop">newRefresh</span> = <span class="prop">_auth</span>.<span class="fn">GenerateRefreshToken</span>();
+
+    <span class="kw">await</span> <span class="prop">_auth</span>.<span class="fn">RotateRefreshTokenAsync</span>(
+        <span class="prop">dto</span>.<span class="prop">RefreshToken</span>, <span class="prop">newRefresh</span>);
+
+    <span class="kw">return</span> <span class="fn">Ok</span>(<span class="kw">new</span> {
+        <span class="prop">accessToken</span>  = <span class="prop">newAccess</span>,
+        <span class="prop">refreshToken</span> = <span class="prop">newRefresh</span>
+    });
+}</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Why Refresh Token?</div>
+          <div class="a">Access token = short-lived (15 min) — if stolen, damage limited. Refresh token = long-lived (7 days) stored in DB — can be revoked. Access expire aana refresh-ku call → new access token. User re-login not needed. ZenCampus teachers day-long session-ku ithaye use panrom!</div>
+        </div>
+      </div>
+
+      <!-- CLAIMS READING + POLICIES -->
+      <div class="card">
+        <div class="card-sub">Syntax — Authorization</div>
+        <div class="card-title">Read Claims · Role Auth · Policy Auth</div>
+        <pre><span class="cmt">// Read claims in Controller</span>
+<span class="kw">var</span> <span class="prop">userId</span>   = <span class="kw">int</span>.<span class="fn">Parse</span>(
+    <span class="prop">User</span>.<span class="fn">FindFirst</span>(<span class="typ">ClaimTypes</span>.<span class="prop">NameIdentifier</span>)!
+        .<span class="prop">Value</span>);
+<span class="kw">var</span> <span class="prop">role</span>     =
+    <span class="prop">User</span>.<span class="fn">FindFirst</span>(<span class="typ">ClaimTypes</span>.<span class="prop">Role</span>)!.<span class="prop">Value</span>;
+<span class="kw">var</span> <span class="prop">schoolId</span> = <span class="kw">int</span>.<span class="fn">Parse</span>(
+    <span class="prop">User</span>.<span class="fn">FindFirst</span>(<span class="str">"schoolId"</span>)!.<span class="prop">Value</span>);
+
+<span class="cmt">// Role-based authorization</span>
+[<span class="typ">Authorize</span>(<span class="prop">Roles</span> = <span class="str">"Admin"</span>)]
+[<span class="typ">Authorize</span>(<span class="prop">Roles</span> = <span class="str">"Admin,Principal"</span>)] <span class="cmt">// OR</span>
+
+<span class="cmt">// Policy-based — Program.cs</span>
+<span class="prop">builder</span>.<span class="prop">Services</span>.<span class="fn">AddAuthorization</span>(<span class="prop">opt</span> =&gt;
+{
+    <span class="prop">opt</span>.<span class="fn">AddPolicy</span>(<span class="str">"SchoolAdmin"</span>, <span class="prop">p</span> =&gt;
+        <span class="prop">p</span>.<span class="fn">RequireRole</span>(<span class="str">"Admin"</span>, <span class="str">"Principal"</span>)
+         .<span class="fn">RequireClaim</span>(<span class="str">"schoolId"</span>));
+
+    <span class="prop">opt</span>.<span class="fn">AddPolicy</span>(<span class="str">"StaffOnly"</span>, <span class="prop">p</span> =&gt;
+        <span class="prop">p</span>.<span class="fn">RequireRole</span>(<span class="str">"Staff"</span>, <span class="str">"Teacher"</span>));
+
+    <span class="prop">opt</span>.<span class="fn">AddPolicy</span>(<span class="str">"SeniorStaff"</span>, <span class="prop">p</span> =&gt;
+        <span class="prop">p</span>.<span class="fn">RequireAssertion</span>(<span class="prop">ctx</span> =&gt;
+            <span class="prop">ctx</span>.<span class="prop">User</span>.<span class="prop">IsInRole</span>(<span class="str">"Admin"</span>) ||
+            <span class="prop">ctx</span>.<span class="prop">User</span>.<span class="fn">HasClaim</span>(<span class="str">"experience"</span>,<span class="str">"senior"</span>)));
+});
+
+<span class="cmt">// Use policy on endpoint</span>
+[<span class="typ">Authorize</span>(<span class="prop">Policy</span> = <span class="str">"SchoolAdmin"</span>)]
+<span class="kw">public</span> <span class="typ">IActionResult</span> <span class="fn">AdminPanel</span>() { ... }</pre>
+        <div class="tanglish">
+          💡 <strong>JWT Security Rules:</strong><br>
+          🔑 Secret key = 32+ chars, stored in env variable / Key Vault — never in appsettings.json!<br>
+          ⏱ Access token = 15 minutes. Refresh = 7 days.<br>
+          🔄 Refresh token rotation — old token revoke, new token issue.<br>
+          ❌ Never store sensitive data in JWT payload — anyone can decode it (only signature is secret)!
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — OCELOT API GATEWAY
+════════════════════════════════════════════ -->
+<div class="section gw-sec" id="gateway">
+  <div class="section-header">🟢 Ocelot API Gateway — Single Entry Point</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Baasha (1995) — Manikkam at the gate:</span>
+      Everyone must pass Manikkam to enter. API Gateway = same —
+      all requests come here first. Rate limit, authenticate, route to correct microservice.
+      One port for clients, many services behind!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- OCELOT SETUP -->
+      <div class="card">
+        <div class="card-sub">Setup</div>
+        <div class="card-title">Ocelot Gateway — Program.cs + ocelot.json</div>
+        <pre><span class="cmt">// GatewayService/Program.cs</span>
+<span class="kw">var</span> <span class="prop">builder</span> = <span class="typ">WebApplication</span>
+    .<span class="fn">CreateBuilder</span>(<span class="prop">args</span>);
+
+<span class="cmt">// Load ocelot config</span>
+<span class="prop">builder</span>.<span class="prop">Configuration</span>
+    .<span class="fn">AddJsonFile</span>(<span class="str">"ocelot.json"</span>, <span class="kw">false</span>, <span class="kw">true</span>);
+
+<span class="cmt">// NuGet: Ocelot</span>
+<span class="prop">builder</span>.<span class="prop">Services</span>
+    .<span class="fn">AddOcelot</span>(<span class="prop">builder</span>.<span class="prop">Configuration</span>);
+
+<span class="cmt">// JWT validation AT GATEWAY</span>
+<span class="prop">builder</span>.<span class="prop">Services</span>
+    .<span class="fn">AddAuthentication</span>(<span class="typ">JwtBearerDefaults</span>
+        .<span class="prop">AuthenticationScheme</span>)
+    .<span class="fn">AddJwtBearer</span>(<span class="str">"ZenCampusAuth"</span>, <span class="prop">o</span> =&gt;
+    {
+        <span class="cmt">// same JWT config as services</span>
+    });
+
+<span class="kw">var</span> <span class="prop">app</span> = <span class="prop">builder</span>.<span class="fn">Build</span>();
+<span class="prop">app</span>.<span class="fn">UseAuthentication</span>();
+<span class="kw">await</span> <span class="prop">app</span>.<span class="fn">UseOcelot</span>();
+<span class="prop">app</span>.<span class="fn">Run</span>();</pre>
+        <div class="zencampus">
+          <div class="label">🏫 ocelot.json — Route Config:</div>
+          <pre>{
+  <span class="str">"Routes"</span>: [
+    {
+      <span class="str">"UpstreamPathTemplate"</span>:
+          <span class="str">"/api/v1/students/{everything}"</span>,
+      <span class="str">"UpstreamHttpMethod"</span>: [<span class="str">"GET"</span>,<span class="str">"POST"</span>,<span class="str">"PUT"</span>,<span class="str">"DELETE"</span>],
+      <span class="str">"DownstreamPathTemplate"</span>:
+          <span class="str">"/api/v1/students/{everything}"</span>,
+      <span class="str">"DownstreamScheme"</span>: <span class="str">"http"</span>,
+      <span class="str">"DownstreamHostAndPorts"</span>: [{
+          <span class="str">"Host"</span>: <span class="str">"student-service"</span>,
+          <span class="str">"Port"</span>: 5001
+      }],
+      <span class="str">"AuthenticationOptions"</span>: {
+          <span class="str">"AuthenticationProviderKey"</span>:
+              <span class="str">"ZenCampusAuth"</span>
+      },
+      <span class="str">"RateLimitOptions"</span>: {
+          <span class="str">"EnableRateLimiting"</span>: <span class="kw">true</span>,
+          <span class="str">"Period"</span>: <span class="str">"1s"</span>,
+          <span class="str">"Limit"</span>: 10
+      }
+    },
+    {
+      <span class="str">"UpstreamPathTemplate"</span>:
+          <span class="str">"/api/v1/fees/{everything}"</span>,
+      <span class="str">"DownstreamHostAndPorts"</span>: [{
+          <span class="str">"Host"</span>: <span class="str">"fee-service"</span>,
+          <span class="str">"Port"</span>: 5002
+      }]
+    }
+  ],
+  <span class="str">"GlobalConfiguration"</span>: {
+    <span class="str">"BaseUrl"</span>: <span class="str">"http://gateway:5000"</span>
+  }
+}</pre>
+        </div>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: What does an API Gateway do?</div>
+          <div class="a">Single entry point for all clients. Handles: routing (to correct microservice), JWT auth, rate limiting, load balancing, SSL termination, logging. ZenCampus-la client :5000 matum theriyum — behind-la 5 services irundhalum hidden!</div>
+        </div>
+      </div>
+
+      <!-- HTTPCLIENT SERVICE COMMUNICATION -->
+      <div class="card">
+        <div class="card-sub">Service-to-Service</div>
+        <div class="card-title">HttpClient — Service-to-Service Communication</div>
+        <pre><span class="cmt">// Program.cs — named HttpClient</span>
+<span class="prop">builder</span>.<span class="prop">Services</span>
+    .<span class="fn">AddHttpClient</span>(<span class="str">"FeeService"</span>, <span class="prop">c</span> =&gt;
+    {
+        <span class="prop">c</span>.<span class="prop">BaseAddress</span> =
+            <span class="kw">new</span> <span class="typ">Uri</span>(<span class="str">"http://fee-service:5002/"</span>);
+        <span class="prop">c</span>.<span class="prop">DefaultRequestHeaders</span>
+            .<span class="fn">Add</span>(<span class="str">"Accept"</span>, <span class="str">"application/json"</span>);
+        <span class="prop">c</span>.<span class="prop">Timeout</span> = <span class="typ">TimeSpan</span>.<span class="fn">FromSeconds</span>(<span class="num">30</span>);
+    });
+
+<span class="cmt">// Typed client (cleaner)</span>
+<span class="prop">builder</span>.<span class="prop">Services</span>
+    .<span class="fn">AddHttpClient</span>&lt;<span class="typ">IFeeServiceClient</span>,
+                    <span class="typ">FeeServiceClient</span>&gt;(<span class="prop">c</span> =&gt;
+        <span class="prop">c</span>.<span class="prop">BaseAddress</span> =
+            <span class="kw">new</span> <span class="typ">Uri</span>(<span class="str">"http://fee-service:5002/"</span>));
+
+<span class="cmt">// Typed Client implementation</span>
+<span class="kw">public class</span> <span class="typ">FeeServiceClient</span>
+    : <span class="typ">IFeeServiceClient</span>
+{
+    <span class="kw">private readonly</span> <span class="typ">HttpClient</span> <span class="prop">_http</span>;
+
+    <span class="kw">public</span> <span class="fn">FeeServiceClient</span>(<span class="typ">HttpClient</span> <span class="prop">http</span>)
+        =&gt; <span class="prop">_http</span> = <span class="prop">http</span>;
+
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">FeeBalance</span>?&gt;
+        <span class="fn">GetBalanceAsync</span>(<span class="kw">int</span> <span class="prop">studentId</span>)
+    {
+        <span class="kw">var</span> <span class="prop">response</span> = <span class="kw">await</span> <span class="prop">_http</span>
+            .<span class="fn">GetAsync</span>(
+                <span class="str">$"api/v1/fees/balance/{studentId}"</span>);
+
+        <span class="prop">response</span>.<span class="fn">EnsureSuccessStatusCode</span>();
+
+        <span class="kw">return await</span> <span class="prop">response</span>.<span class="prop">Content</span>
+            .<span class="fn">ReadFromJsonAsync</span>&lt;<span class="typ">FeeBalance</span>&gt;();
+    }
+
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">PaymentResult</span>&gt;
+        <span class="fn">PayFeeAsync</span>(<span class="typ">PayFeeDto</span> <span class="prop">dto</span>)
+    {
+        <span class="kw">var</span> <span class="prop">response</span> = <span class="kw">await</span> <span class="prop">_http</span>
+            .<span class="fn">PostAsJsonAsync</span>(
+                <span class="str">"api/v1/fees/pay"</span>, <span class="prop">dto</span>);
+
+        <span class="prop">response</span>.<span class="fn">EnsureSuccessStatusCode</span>();
+
+        <span class="kw">return await</span> <span class="prop">response</span>.<span class="prop">Content</span>
+            .<span class="fn">ReadFromJsonAsync</span>&lt;<span class="typ">PaymentResult</span>&gt;()!;
+    }
+}</pre>
+        <div class="trap">
+          <div class="label">⚠️ Trap: Never new HttpClient() in a loop!</div>
+          Socket exhaustion aagum. Always <code>IHttpClientFactory</code> or typed client use pannu — connection pooling automatic!
+        </div>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: IHttpClientFactory vs new HttpClient()?</div>
+          <div class="a">new HttpClient() = socket held even after dispose — socket exhaustion in heavy load. IHttpClientFactory = connection pool reuse, lifetime managed by DI, header defaults per client. ZenCampus-la every service call = typed client via factory!</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MASTER INTERVIEW TABLE -->
+<div style="background:#13132a; border-radius:12px; padding:24px; margin:30px 0; border:1px solid #2a2a4a;">
+  <h2 style="color:#e94560; margin-bottom:16px">🎯 Part 5 — Top 15 Interview Questions</h2>
+  <table>
+    <tr><th>#</th><th>Question</th><th>1-Line Answer</th><th>ZenCampus Hook</th></tr>
+    <tr><td>1</td><td>Dapper vs EF Core?</td><td>Dapper=raw SQL fast, EF=ORM migrations change tracking</td><td>Reports=Dapper, CRUD=EF Core</td></tr>
+    <tr><td>2</td><td>Dapper transaction?</td><td>Open() → BeginTransaction() → pass tx to every Execute</td><td>Fee payment + balance update atomic</td></tr>
+    <tr><td>3</td><td>QueryMultiple use case?</td><td>Multiple result sets in 1 DB round-trip</td><td>Dashboard: StudentCount+StaffCount+Fees</td></tr>
+    <tr><td>4</td><td>Soft vs hard delete?</td><td>Soft=IsActive=0 (keep history), Hard=DELETE row</td><td>Student TC issued — keep record!</td></tr>
+    <tr><td>5</td><td>Microservices vs Monolith?</td><td>Micro=independent deploy/scale, Mono=simple/tight</td><td>ZenCampus: 1 school=mono, 1000=micro</td></tr>
+    <tr><td>6</td><td>What is API Gateway?</td><td>Single entry: routing, auth, rate limit, logging</td><td>Ocelot :5000 → 5 services hidden</td></tr>
+    <tr><td>7</td><td>JWT structure?</td><td>Header.Payload.Signature — Base64 + HMAC</td><td>schoolId claim in payload</td></tr>
+    <tr><td>8</td><td>JWT claims use case?</td><td>Store userId, role, schoolId — no DB call per request</td><td>Multi-school auto-filter by claim</td></tr>
+    <tr><td>9</td><td>Access vs Refresh Token?</td><td>Access=15min short, Refresh=7days DB stored revocable</td><td>Teachers session all day</td></tr>
+    <tr><td>10</td><td>Role vs Policy auth?</td><td>Role=simple string check, Policy=custom complex rules</td><td>SchoolAdmin policy: role+schoolId claim</td></tr>
+    <tr><td>11</td><td>IHttpClientFactory?</td><td>Pool reuse, no socket exhaustion, DI managed</td><td>FeeServiceClient typed client</td></tr>
+    <tr><td>12</td><td>Health checks?</td><td>/health endpoint — gateway checks before routing</td><td>SQL Server health check per service</td></tr>
+    <tr><td>13</td><td>Structured logging?</td><td>Serilog — JSON logs, searchable, correlated</td><td>TraceId across services</td></tr>
+    <tr><td>14</td><td>Rate limiting in gateway?</td><td>Per-client request cap — prevent abuse</td><td>10 req/sec per school API</td></tr>
+    <tr><td>15</td><td>Multi-map in Dapper?</td><td>JOIN result → nested C# objects in single query</td><td>Student + Fees nested object</td></tr>
+  </table>
+</div>
+
+<!-- PART 5 END -->
+<div style="background:#13132a; border-radius:12px; padding:20px; margin:30px 0;
+            border:2px dashed #e94560; text-align:center;">
+  <p style="color:#e94560; font-size:1.1em; font-weight:bold;">✅ Part 5 Complete — Dapper · Microservices · JWT · Ocelot Gateway</p>
+  <p style="color:#a0a0c0; margin-top:6px">
+    Covered: Dapper (Query/Execute/Multi-Map/QueryMultiple/SP/Transaction) ·
+    Microservices (Architecture diagram, Controller REST pattern, Health checks, Serilog, Global Exception Handler) ·
+    JWT (Generate, Claims, Login, Refresh Token, Role/Policy auth) ·
+    Ocelot Gateway (ocelot.json routing, rate limiting) ·
+    HttpClient (IHttpClientFactory, Typed Client)<br><br>
+    <strong>Next → Part 6: HTML + CSS (Flexbox · Grid · Selectors · Animations · Media Queries)</strong>
+  </p>
+</div>
+
+</div><!-- container -->
+<footer>
+  <p>ZenCampus Interview Syntax Bible · Part 5 of 7 · Gurumoorthy M · gurumoorthymurugan@gmail.com</p>
+  <p style="margin-top:4px; font-size:.8em">🎬 Kaithi=Dapper raw power · Bigil=Microservices teamwork · Thuppakki=JWT identity · Baasha=API Gateway gatekeeper!</p>
+</footer>
+</body>
+</html>

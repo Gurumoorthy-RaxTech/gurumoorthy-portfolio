@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 26 — Entity Framework Core Deep Dive | ZenCampus .NET Interview Prep</title>
+<style>
+  :root {
+    --accent: #65a30d;
+    --accent-dim: #4d7c0a;
+    --accent-glow: rgba(101,163,13,0.18);
+    --accent-subtle: rgba(101,163,13,0.08);
+    --bg: #0d0d1a;
+    --bg2: #111120;
+    --bg3: #181830;
+    --card: #1a1a2e;
+    --card2: #16213e;
+    --border: #2a2a4a;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --danger: #ef4444;
+    --warn: #f59e0b;
+    --good: #22c55e;
+    --info: #38bdf8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.7; }
+
+  /* Progress Bar */
+  #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 9999; transition: width 0.2s; }
+
+  /* Sticky Nav */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,13,26,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0.6rem 1.5rem; display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+  }
+  nav .day-badge { background: var(--accent); color: #000; font-weight: 800; font-size: 0.85rem; padding: 0.25rem 0.75rem; border-radius: 999px; white-space: nowrap; }
+  nav a { color: var(--muted); font-size: 0.8rem; text-decoration: none; transition: color 0.2s; white-space: nowrap; }
+  nav a:hover { color: var(--accent); }
+
+  /* Hero */
+  .hero { padding: 3.5rem 1.5rem 2rem; text-align: center; border-bottom: 1px solid var(--border); background: radial-gradient(ellipse at top, rgba(101,163,13,0.1) 0%, transparent 70%); }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; color: var(--accent); letter-spacing: -1px; }
+  .hero p { color: var(--muted); margin-top: 0.5rem; font-size: 1.1rem; }
+  .hero .tags { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+  .hero .tag { background: var(--accent-subtle); border: 1px solid var(--accent-dim); color: var(--accent); padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+
+  /* Main Layout */
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  /* Section */
+  section { margin-bottom: 3.5rem; }
+  h2 { font-size: 1.6rem; font-weight: 800; color: var(--accent); margin-bottom: 1.2rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--accent-dim); display: flex; align-items: center; gap: 0.5rem; }
+  h3 { font-size: 1.15rem; font-weight: 700; color: var(--info); margin: 1.4rem 0 0.6rem; }
+  p { color: var(--text); margin-bottom: 0.7rem; }
+
+  /* Card */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem; margin-bottom: 1.2rem; }
+  .card-accent { border-left: 4px solid var(--accent); }
+  .card-danger { border-left: 4px solid var(--danger); background: rgba(239,68,68,0.05); }
+  .card-good { border-left: 4px solid var(--good); background: rgba(34,197,94,0.05); }
+  .card-warn { border-left: 4px solid var(--warn); background: rgba(245,158,11,0.05); }
+  .card-info { border-left: 4px solid var(--info); background: rgba(56,189,248,0.05); }
+
+  /* Code Block */
+  pre {
+    background: #0a0a16; border: 1px solid var(--border); border-radius: 10px;
+    padding: 1.2rem; overflow-x: auto; font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    font-size: 0.82rem; line-height: 1.65; margin: 0.8rem 0; color: #e2e8f0;
+  }
+  code { font-family: inherit; }
+  .kw { color: #c792ea; } .cl { color: #82aaff; } .str { color: #c3e88d; }
+  .cm { color: #546e7a; font-style: italic; } .num { color: #f78c6c; }
+  .mth { color: #82aaff; } .dec { color: var(--accent); font-weight: 600; }
+  .err { color: var(--danger); font-weight: 700; }
+  .ok { color: var(--good); font-weight: 700; }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 1rem 0; }
+  th { background: var(--accent-subtle); color: var(--accent); padding: 0.65rem 0.9rem; text-align: left; font-weight: 700; border: 1px solid var(--border); }
+  td { padding: 0.6rem 0.9rem; border: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .badge-danger { background: rgba(239,68,68,0.15); color: var(--danger); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.78rem; font-weight: 700; }
+  .badge-good { background: rgba(34,197,94,0.15); color: var(--good); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.78rem; font-weight: 700; }
+  .badge-warn { background: rgba(245,158,11,0.15); color: var(--warn); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.78rem; font-weight: 700; }
+  .badge-info { background: rgba(56,189,248,0.15); color: var(--info); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.78rem; font-weight: 700; }
+
+  /* Movie Box */
+  .movie-box {
+    background: linear-gradient(135deg, rgba(101,163,13,0.12), rgba(101,163,13,0.04));
+    border: 1px solid var(--accent-dim); border-radius: 12px; padding: 1.1rem 1.3rem;
+    margin: 1.2rem 0; display: flex; gap: 1rem; align-items: flex-start;
+  }
+  .movie-icon { font-size: 1.6rem; flex-shrink: 0; }
+  .movie-title { color: var(--accent); font-weight: 800; font-size: 0.95rem; }
+  .movie-body { color: var(--muted); font-size: 0.88rem; margin-top: 0.2rem; }
+
+  /* Interview Q */
+  .scenario { background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; margin-bottom: 1rem; }
+  .scenario-header { display: flex; align-items: flex-start; gap: 0.8rem; }
+  .scenario-num { background: var(--accent); color: #000; font-weight: 900; font-size: 0.9rem; width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 0.1rem; }
+  .scenario-q { font-weight: 700; color: var(--text); font-size: 0.95rem; }
+  .scenario-type { font-size: 0.72rem; color: var(--accent); background: var(--accent-subtle); border: 1px solid var(--accent-dim); padding: 0.1rem 0.5rem; border-radius: 999px; margin-left: 0.4rem; font-weight: 600; }
+  .reveal-btn {
+    margin-top: 0.8rem; background: transparent; border: 1px solid var(--accent); color: var(--accent);
+    padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.82rem; font-weight: 600;
+    transition: all 0.2s;
+  }
+  .reveal-btn:hover { background: var(--accent); color: #000; }
+  .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+  .reveal-content.open { display: block; }
+
+  /* Quiz */
+  .quiz-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; margin-bottom: 1rem; }
+  .quiz-q { font-weight: 700; margin-bottom: 0.8rem; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 0.45rem; }
+  .quiz-opt {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.55rem 1rem; cursor: pointer; font-size: 0.88rem; transition: all 0.2s; text-align: left;
+  }
+  .quiz-opt:hover { border-color: var(--accent); background: var(--accent-subtle); }
+  .quiz-opt.correct { border-color: var(--good); background: rgba(34,197,94,0.1); color: var(--good); font-weight: 700; }
+  .quiz-opt.wrong { border-color: var(--danger); background: rgba(239,68,68,0.1); color: var(--danger); }
+  .quiz-fb { font-size: 0.82rem; margin-top: 0.6rem; padding: 0.5rem 0.8rem; border-radius: 6px; display: none; }
+  .quiz-fb.show { display: block; }
+  .quiz-fb.good { background: rgba(34,197,94,0.1); color: var(--good); }
+  .quiz-fb.bad { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+  /* Checklist */
+  .checklist { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.4rem; }
+  .checklist li { display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; cursor: pointer; padding: 0.3rem 0.4rem; border-radius: 6px; transition: background 0.15s; }
+  .checklist li:hover { background: var(--accent-subtle); }
+  .checklist li input[type=checkbox] { accent-color: var(--accent); width: 1rem; height: 1rem; flex-shrink: 0; }
+  .checklist li.done { color: var(--muted); text-decoration: line-through; }
+
+  /* Highlight box */
+  .hl-box { background: var(--accent-subtle); border: 1px solid var(--accent-dim); border-radius: 8px; padding: 0.9rem 1.1rem; margin: 0.8rem 0; font-size: 0.9rem; }
+  .danger-box { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 0.9rem 1.1rem; margin: 0.8rem 0; font-size: 0.9rem; }
+  .good-box { background: rgba(34,197,94,0.07); border: 1px solid rgba(34,197,94,0.3); border-radius: 8px; padding: 0.9rem 1.1rem; margin: 0.8rem 0; font-size: 0.9rem; }
+
+  /* Label */
+  .label { display: inline-block; font-size: 0.7rem; font-weight: 800; padding: 0.12rem 0.5rem; border-radius: 4px; margin-right: 0.3rem; }
+  .label-red { background: rgba(239,68,68,0.2); color: var(--danger); }
+  .label-green { background: rgba(34,197,94,0.2); color: var(--good); }
+  .label-blue { background: rgba(56,189,248,0.2); color: var(--info); }
+  .label-yellow { background: rgba(245,158,11,0.2); color: var(--warn); }
+
+  /* Footer */
+  footer { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 3rem; }
+
+  @media(max-width:600px) { nav { gap: 0.6rem; } nav a { font-size: 0.72rem; } }
+</style>
+</head>
+<body>
+<div id="progress-bar" style="width:0%"></div>
+
+<nav>
+  <span class="day-badge">DAY 26</span>
+  <a href="#ef-core">EF Core Basics</a>
+  <a href="#n1">N+1 Problem</a>
+  <a href="#tracking">AsNoTracking</a>
+  <a href="#filters">Global Filters</a>
+  <a href="#rawsql">Raw SQL</a>
+  <a href="#migrations">Migrations</a>
+  <a href="#owned">Owned Types</a>
+  <a href="#concurrency">Concurrency</a>
+  <a href="#compiled">Compiled Queries</a>
+  <a href="#scenarios">Interview Q</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#checklist">Checklist</a>
+</nav>
+
+<div class="hero">
+  <h1>Entity Framework Core Deep Dive</h1>
+  <p>Query Optimisation · N+1 Problem · Migrations · Owned Types · Raw SQL · Concurrency</p>
+  <div class="tags">
+    <span class="tag">EF Core 8</span>
+    <span class="tag">ZenCampus Context</span>
+    <span class="tag">50k Students</span>
+    <span class="tag">Multi-Tenant</span>
+    <span class="tag">Day 26 / 60</span>
+    <span class="tag" style="background:rgba(101,163,13,0.2);border-color:#65a30d;color:#65a30d;">Olive #65a30d</span>
+  </div>
+</div>
+
+<main>
+
+<!-- ===================== SECTION 1: EF CORE BASICS ===================== -->
+<section id="ef-core">
+  <h2>🗄️ EF Core — DbContext, Change Tracker & Configuration</h2>
+
+  <p>EF Core is ZenCampus-la main ORM. 50,000 students, 200 schools — oru wrong query pottal server crash aagum. So internals theriyanum.</p>
+
+  <h3>ZenCampus DbContext Setup</h3>
+  <pre><code><span class="cl">public class ZenCampusDbContext</span> : <span class="cl">DbContext</span>
+{
+    <span class="kw">public</span> <span class="cl">ZenCampusDbContext</span>(<span class="cl">DbContextOptions</span>&lt;<span class="cl">ZenCampusDbContext</span>&gt; options)
+        : <span class="kw">base</span>(options) { }
+
+    <span class="kw">public</span> <span class="cl">DbSet</span>&lt;<span class="cl">Student</span>&gt; Students <span class="kw">=&gt;</span> Set&lt;<span class="cl">Student</span>&gt;();
+    <span class="kw">public</span> <span class="cl">DbSet</span>&lt;<span class="cl">School</span>&gt; Schools <span class="kw">=&gt;</span> Set&lt;<span class="cl">School</span>&gt;();
+    <span class="kw">public</span> <span class="cl">DbSet</span>&lt;<span class="cl">FeeRecord</span>&gt; FeeRecords <span class="kw">=&gt;</span> Set&lt;<span class="cl">FeeRecord</span>&gt;();
+    <span class="kw">public</span> <span class="cl">DbSet</span>&lt;<span class="cl">AttendanceRecord</span>&gt; AttendanceRecords <span class="kw">=&gt;</span> Set&lt;<span class="cl">AttendanceRecord</span>&gt;();
+    <span class="kw">public</span> <span class="cl">DbSet</span>&lt;<span class="cl">HostelRoom</span>&gt; HostelRooms <span class="kw">=&gt;</span> Set&lt;<span class="cl">HostelRoom</span>&gt;();
+
+    <span class="kw">protected override void</span> OnModelCreating(<span class="cl">ModelBuilder</span> mb)
+    {
+        mb.ApplyConfigurationsFromAssembly(<span class="kw">typeof</span>(<span class="cl">ZenCampusDbContext</span>).Assembly);
+        <span class="cm">// Global query filters applied in each IEntityTypeConfiguration</span>
+    }
+}
+
+<span class="cm">// Fluent configuration — separate file per entity</span>
+<span class="kw">public class</span> <span class="cl">StudentConfiguration</span> : <span class="cl">IEntityTypeConfiguration</span>&lt;<span class="cl">Student</span>&gt;
+{
+    <span class="kw">public void</span> Configure(<span class="cl">EntityTypeBuilder</span>&lt;<span class="cl">Student</span>&gt; b)
+    {
+        b.ToTable(<span class="str">"Students"</span>);
+        b.HasKey(s =&gt; s.Id);
+        b.Property(s =&gt; s.Name).HasMaxLength(<span class="num">200</span>).IsRequired();
+        b.Property(s =&gt; s.AadhaarNumber).HasMaxLength(<span class="num">12</span>).IsRequired(false);
+        b.HasIndex(s =&gt; <span class="kw">new</span> { s.SchoolId, s.AdmissionNumber }).IsUnique();
+        b.HasOne(s =&gt; s.School).WithMany(sc =&gt; sc.Students).HasForeignKey(s =&gt; s.SchoolId);
+        b.HasMany(s =&gt; s.FeeRecords).WithOne(f =&gt; f.Student).HasForeignKey(f =&gt; f.StudentId);
+        <span class="cm">// Soft-delete + multi-tenant global filter (see Section 4)</span>
+        b.HasQueryFilter(s =&gt; !s.IsDeleted &amp;&amp; s.SchoolId == _schoolId);
+    }
+}</code></pre>
+
+  <h3>Change Tracker — How EF Knows What Changed</h3>
+  <div class="card card-info">
+    <p>Change Tracker is EF Core's memory. Every entity you load into a DbContext gets <strong>tracked</strong> — Unchanged, Modified, Added, Deleted states. On <code>SaveChangesAsync()</code> EF generates SQL only for changed entities.</p>
+  </div>
+
+  <table>
+    <tr><th>State</th><th>Meaning</th><th>SQL Generated</th></tr>
+    <tr><td>Detached</td><td>Not tracked at all</td><td>None</td></tr>
+    <tr><td>Unchanged</td><td>Loaded, nothing changed</td><td>None</td></tr>
+    <tr><td>Added</td><td>New entity via Add()</td><td>INSERT</td></tr>
+    <tr><td>Modified</td><td>Property changed</td><td>UPDATE (only changed columns)</td></tr>
+    <tr><td>Deleted</td><td>Remove() called</td><td>DELETE</td></tr>
+  </table>
+
+  <pre><code><span class="cm">// Change tracker inspection — useful in debugging</span>
+<span class="kw">var</span> entries = _db.ChangeTracker.Entries&lt;<span class="cl">Student</span>&gt;()
+    .Where(e =&gt; e.State == <span class="cl">EntityState</span>.Modified);
+
+<span class="kw">foreach</span> (<span class="kw">var</span> entry <span class="kw">in</span> entries)
+{
+    <span class="kw">foreach</span> (<span class="kw">var</span> prop <span class="kw">in</span> entry.Properties.Where(p =&gt; p.IsModified))
+    {
+        _log.LogInformation(<span class="str">"Student {Id} {Prop}: {Old} -&gt; {New}"</span>,
+            entry.Entity.Id, prop.Metadata.Name,
+            prop.OriginalValue, prop.CurrentValue);
+    }
+}</code></pre>
+
+  <div class="movie-box">
+    <div class="movie-icon">🎬</div>
+    <div>
+      <div class="movie-title">Anniyan (2005) — Multiple Personalities</div>
+      <div class="movie-body">Anniyan character-ku different personalities irukkum — Ambi, Remo, Anniyan. Change Tracker-um same: oru entity-ku Unchanged, Modified, Deleted nu different states irukkum. Wrong state-la irundha, SaveChanges unexpected SQL generate pannidhu!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 2: N+1 PROBLEM ===================== -->
+<section id="n1">
+  <h2>⚡ N+1 Problem — ZenCampus's #1 Performance Killer</h2>
+
+  <div class="danger-box">
+    <strong>Production Bug Pattern:</strong> "Fee report page 3 minutes load aagudhu" — almost always N+1. 200 schools x 250 students = 50,001 DB queries for ONE page.
+  </div>
+
+  <h3>The Bug — N+1 in ZenCampus</h3>
+  <pre><code><span class="cm">// WRONG — N+1 problem</span>
+<span class="cm">// 1 query for students + N queries (one per student) for fees</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+    .Where(s =&gt; s.SchoolId == schoolId)
+    .ToListAsync();  <span class="cm">// Query 1: SELECT * FROM Students WHERE SchoolId=@p0</span>
+
+<span class="kw">var</span> report = <span class="kw">new</span> <span class="cl">List</span>&lt;<span class="cl">FeeReportRow</span>&gt;();
+<span class="kw">foreach</span> (<span class="kw">var</span> student <span class="kw">in</span> students)
+{
+    <span class="cm">// Query 2, 3, 4... N+1: SELECT * FROM FeeRecords WHERE StudentId=@p0</span>
+    <span class="kw">var</span> fees = <span class="kw">await</span> _db.FeeRecords
+        .Where(f =&gt; f.StudentId == student.Id)
+        .ToListAsync();  <span class="err">// 250 separate queries for 250 students!</span>
+    report.Add(<span class="kw">new</span> { student.Name, TotalFee = fees.Sum(f =&gt; f.Amount) });
+}</code></pre>
+
+  <h3>Fix 1 — Include (Eager Loading)</h3>
+  <pre><code><span class="cm">// FIX: Include — 1 JOIN query instead of N+1</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+    .Include(s =&gt; s.FeeRecords)               <span class="cm">// LEFT JOIN FeeRecords</span>
+    .ThenInclude(f =&gt; f.FeeCategory)          <span class="cm">// JOIN FeeCategories</span>
+    .Include(s =&gt; s.AttendanceRecords)        <span class="cm">// multiple Include chains allowed</span>
+    .Where(s =&gt; s.SchoolId == schoolId &amp;&amp; s.IsActive)
+    .ToListAsync();
+<span class="cm">// Generates: SELECT s.*, f.*, fc.*, a.*
+//            FROM Students s
+//            LEFT JOIN FeeRecords f ON f.StudentId = s.Id
+//            LEFT JOIN FeeCategories fc ON fc.Id = f.FeeCategoryId
+//            LEFT JOIN AttendanceRecords a ON a.StudentId = s.Id
+//            WHERE s.SchoolId = @p0 AND s.IsActive = 1</span></code></pre>
+
+  <h3>Fix 2 — AsSplitQuery (Cartesian Explosion Fix)</h3>
+  <pre><code><span class="cm">// PROBLEM with Include: Cartesian Product!
+// Student has 50 FeeRecords AND 200 AttendanceRecords
+// JOIN produces 50 x 200 = 10,000 rows per student — wasteful!</span>
+
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+    .Include(s =&gt; s.FeeRecords)
+    .Include(s =&gt; s.AttendanceRecords)
+    .Where(s =&gt; s.SchoolId == schoolId)
+    .AsSplitQuery()       <span class="ok">// EF Core 5+ — runs SEPARATE queries per Include</span>
+    .ToListAsync();
+<span class="cm">// Generates 3 separate queries — no cartesian explosion:
+// Query 1: SELECT * FROM Students WHERE SchoolId=@p0
+// Query 2: SELECT * FROM FeeRecords WHERE StudentId IN (1,2,3...)
+// Query 3: SELECT * FROM AttendanceRecords WHERE StudentId IN (1,2,3...)
+// EF stitches results in memory</span>
+
+<span class="cm">// Set globally for all queries in DbContext:</span>
+b.UseSqlServer(cs, opts =&gt; opts.UseQuerySplittingBehavior(
+    <span class="cl">QuerySplittingBehavior</span>.SplitQuery));</code></pre>
+
+  <h3>Fix 3 — Projection (Best Performance)</h3>
+  <pre><code><span class="cm">// BEST: Project to DTO — load only needed columns</span>
+<span class="kw">var</span> report = <span class="kw">await</span> _db.Students
+    .Where(s =&gt; s.SchoolId == schoolId &amp;&amp; s.IsActive)
+    .Select(s =&gt; <span class="kw">new</span> <span class="cl">FeeReportRow</span>
+    {
+        StudentId   = s.Id,
+        StudentName = s.Name,
+        ClassName   = s.Class.Name,
+        TotalFee    = s.FeeRecords.Sum(f =&gt; f.Amount),
+        PaidAmount  = s.FeeRecords.Where(f =&gt; f.IsPaid).Sum(f =&gt; f.Amount),
+        Balance     = s.FeeRecords.Sum(f =&gt; f.Amount)
+                    - s.FeeRecords.Where(f =&gt; f.IsPaid).Sum(f =&gt; f.Amount)
+    })
+    .OrderBy(r =&gt; r.StudentName)
+    .ToListAsync();
+<span class="cm">// EF translates to a SINGLE optimised SELECT with SUM aggregates
+// No navigation properties loaded — minimal memory, max speed</span></code></pre>
+
+  <div class="movie-box">
+    <div class="movie-icon">🎬</div>
+    <div>
+      <div class="movie-title">Vikram (2022) — 100 Enemies, 100 Fights</div>
+      <div class="movie-body">Vikram-la Vikram oru enemy-ya individually fight panna poitirukaan — oru shot-la ellaaraiyum deal pannala. N+1 exact same: 100 students-ku 100 separate DB trips. Include or Projection = oru single powerful query-la ellaaraiyum handle pannu!</div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>Approach</th><th>Queries</th><th>Memory</th><th>Use When</th></tr>
+    <tr><td>N+1 (BAD)</td><td class="badge-danger">N+1</td><td>High</td><td>Never in production</td></tr>
+    <tr><td>Include</td><td class="badge-good">1 JOIN</td><td>Medium</td><td>Small navigation sets</td></tr>
+    <tr><td>AsSplitQuery</td><td class="badge-warn">2-3</td><td>Medium</td><td>Large collections on both sides</td></tr>
+    <tr><td>Projection Select()</td><td class="badge-good">1 Optimal</td><td>Low</td><td>Reports, APIs, read-only</td></tr>
+    <tr><td>Explicit Load</td><td>Controlled N</td><td>Controlled</td><td>Conditional loading needed</td></tr>
+  </table>
+</section>
+
+<!-- ===================== SECTION 3: AsNoTracking ===================== -->
+<section id="tracking">
+  <h2>🚀 AsNoTracking — Read-Only Query Optimisation</h2>
+
+  <p>Tracking is expensive — EF Core creates snapshots for change detection. For GET requests jo data modify panna maataanga, tracking waste of memory and CPU.</p>
+
+  <pre><code><span class="cm">// SLOW — tracked by default (for GET APIs this is waste)</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students.Where(s =&gt; s.SchoolId == schoolId).ToListAsync();
+
+<span class="cm">// FAST — no snapshot, no change tracking overhead</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+    .AsNoTracking()         <span class="ok">// 20-40% faster on large result sets</span>
+    .Where(s =&gt; s.SchoolId == schoolId)
+    .ToListAsync();
+
+<span class="cm">// AsNoTrackingWithIdentityResolution — deduplicates related entities in memory
+// Use when same entity appears in multiple Include paths</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+    .Include(s =&gt; s.School)
+    .AsNoTrackingWithIdentityResolution()
+    .Where(s =&gt; s.SchoolId == schoolId)
+    .ToListAsync();
+
+<span class="cm">// Set globally for QueryTrackingBehavior on read-only repositories</span>
+<span class="kw">public class</span> <span class="cl">ReadOnlyStudentRepository</span>
+{
+    <span class="kw">private readonly</span> <span class="cl">IQueryable</span>&lt;<span class="cl">Student</span>&gt; _students;
+
+    <span class="kw">public</span> <span class="cl">ReadOnlyStudentRepository</span>(<span class="cl">ZenCampusDbContext</span> db)
+    {
+        _students = db.Students.AsNoTracking();  <span class="cm">// all queries are no-tracking</span>
+    }
+}</code></pre>
+
+  <div class="card card-warn">
+    <strong>Rule:</strong> GET endpoints → always <code>AsNoTracking()</code>. POST/PUT/DELETE → use tracked queries (default). Never call <code>Update()</code> on a no-tracking entity without re-attaching.
+  </div>
+
+  <div class="movie-box">
+    <div class="movie-icon">🎬</div>
+    <div>
+      <div class="movie-title">Kaakha Kaakha (2003) — No Footprint, Fast Chase</div>
+      <div class="movie-body">Anbu officer undercover-a work pannum pothu trace-a leave pannuva maataaru — quick action, no tracking. AsNoTracking same concept: EF reads data fast, no snapshot kept, no overhead. Read-only operations-ku always this mode!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 4: GLOBAL QUERY FILTERS ===================== -->
+<section id="filters">
+  <h2>🔒 Global Query Filters — Multi-Tenant + Soft Delete</h2>
+
+  <p>ZenCampus-la 200 schools. School A data, School B-ku show aagakudathu. Manual WHERE clause everywhere = bug risk. Global Query Filter = once configure, every query-la automatically apply.</p>
+
+  <h3>Multi-Tenant + Soft Delete Filter</h3>
+  <pre><code><span class="cm">// ICurrentSchoolContext — resolves schoolId from JWT</span>
+<span class="kw">public interface</span> <span class="cl">ICurrentSchoolContext</span>
+{
+    <span class="kw">int</span> SchoolId { <span class="kw">get</span>; }
+}
+
+<span class="kw">public class</span> <span class="cl">JwtSchoolContext</span>(<span class="cl">IHttpContextAccessor</span> _http) : <span class="cl">ICurrentSchoolContext</span>
+{
+    <span class="kw">public int</span> SchoolId =&gt;
+        <span class="kw">int</span>.Parse(_http.HttpContext!.User.FindFirst(<span class="str">"schoolId"</span>)!.Value);
+}
+
+<span class="cm">// DbContext with injected tenant context</span>
+<span class="kw">public class</span> <span class="cl">ZenCampusDbContext</span>(<span class="cl">DbContextOptions</span>&lt;<span class="cl">ZenCampusDbContext</span>&gt; opts,
+                              <span class="cl">ICurrentSchoolContext</span> _school) : <span class="cl">DbContext</span>(opts)
+{
+    <span class="kw">protected override void</span> OnModelCreating(<span class="cl">ModelBuilder</span> mb)
+    {
+        <span class="cm">// Applies to ALL queries on Students — zero chance of data leak</span>
+        mb.Entity&lt;<span class="cl">Student</span>&gt;().HasQueryFilter(s =&gt;
+            !s.IsDeleted &amp;&amp; s.SchoolId == _school.SchoolId);
+
+        mb.Entity&lt;<span class="cl">FeeRecord</span>&gt;().HasQueryFilter(f =&gt;
+            !f.IsDeleted &amp;&amp; f.Student.SchoolId == _school.SchoolId);
+
+        mb.Entity&lt;<span class="cl">AttendanceRecord</span>&gt;().HasQueryFilter(a =&gt;
+            a.Student.SchoolId == _school.SchoolId);
+    }
+}
+
+<span class="cm">// Usage — filter applied automatically, no manual WHERE needed</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _db.Students.ToListAsync();
+<span class="cm">// SQL: SELECT * FROM Students WHERE IsDeleted=0 AND SchoolId=@currentSchoolId</span>
+
+<span class="cm">// Bypass filter when needed (admin-only endpoints)</span>
+<span class="kw">var</span> allStudents = <span class="kw">await</span> _db.Students
+    .IgnoreQueryFilters()   <span class="cm">// Super admin: see all schools' data</span>
+    .Where(s =&gt; s.Name.Contains(searchTerm))
+    .ToListAsync();</code></pre>
+
+  <div class="danger-box">
+    <strong>Security Risk:</strong> <code>IgnoreQueryFilters()</code> bypasses BOTH soft-delete AND tenant isolation. Only use in admin-only services. Never expose via student/teacher API endpoints.
+  </div>
+
+  <h3>Soft Delete Pattern</h3>
+  <pre><code><span class="kw">public interface</span> <span class="cl">ISoftDeletable</span>
+{
+    <span class="kw">bool</span> IsDeleted { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="cl">DateTime</span>? DeletedAt { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">string</span>? DeletedBy { <span class="kw">get</span>; <span class="kw">set</span>; }
+}
+
+<span class="cm">// Override SaveChanges to intercept Delete and convert to soft-delete</span>
+<span class="kw">public override</span> <span class="cl">Task</span>&lt;<span class="kw">int</span>&gt; SaveChangesAsync(<span class="cl">CancellationToken</span> ct = <span class="kw">default</span>)
+{
+    <span class="kw">foreach</span> (<span class="kw">var</span> entry <span class="kw">in</span> ChangeTracker.Entries&lt;<span class="cl">ISoftDeletable</span>&gt;()
+        .Where(e =&gt; e.State == <span class="cl">EntityState</span>.Deleted))
+    {
+        entry.State          = <span class="cl">EntityState</span>.Modified;
+        entry.Entity.IsDeleted = <span class="kw">true</span>;
+        entry.Entity.DeletedAt = <span class="cl">DateTime</span>.UtcNow;
+        entry.Entity.DeletedBy = _currentUser.UserId;
+    }
+    <span class="kw">return base</span>.SaveChangesAsync(ct);
+}</code></pre>
+</section>
+
+<!-- ===================== SECTION 5: RAW SQL ===================== -->
+<section id="rawsql">
+  <h2>🔧 Raw SQL — When LINQ Is Not Enough</h2>
+
+  <div class="movie-box">
+    <div class="movie-icon">🎬</div>
+    <div>
+      <div class="movie-title">Sarkar (2018) — Bypass the System, Get Things Done</div>
+      <div class="movie-body">Sarkar character-la oru point-la system bypass panni directly action edukkuvaan. Raw SQL same: LINQ express panna mudiyaadha complex queries-ku, direct SQL write pannom. But always parameterized — SQL injection avoid pannanum!</div>
+    </div>
+  </div>
+
+  <h3>FromSqlRaw — Entity Queries</h3>
+  <pre><code><span class="cm">// Complex report query LINQ-la express panna mudiyathu</span>
+<span class="kw">var</span> schoolId = <span class="num">42</span>;
+<span class="kw">var</span> month    = <span class="num">6</span>;
+
+<span class="kw">var</span> summary = <span class="kw">await</span> _db.Students
+    .FromSqlInterpolated(<span class="str">$@"
+        SELECT s.Id, s.Name, s.AdmissionNumber,
+               COUNT(a.Id) as TotalDays,
+               SUM(CASE WHEN a.IsPresent=1 THEN 1 ELSE 0 END) as PresentDays,
+               SUM(f.Amount) as TotalFee,
+               SUM(CASE WHEN f.IsPaid=1 THEN f.Amount ELSE 0 END) as PaidFee
+        FROM Students s
+        LEFT JOIN AttendanceRecords a
+               ON a.StudentId = s.Id AND MONTH(a.Date) = {month}
+        LEFT JOIN FeeRecords f ON f.StudentId = s.Id
+        WHERE s.SchoolId = {schoolId} AND s.IsDeleted = 0
+        GROUP BY s.Id, s.Name, s.AdmissionNumber"</span>)  <span class="ok">// Safe: interpolated = parameterized</span>
+    .AsNoTracking()
+    .ToListAsync();</code></pre>
+
+  <div class="card card-danger">
+    <strong>NEVER use FromSqlRaw with string concatenation:</strong>
+    <pre><code><span class="cm">// DANGER: SQL Injection!</span>
+<span class="kw">var</span> query = <span class="str">$"SELECT * FROM Students WHERE Name = '{name}'"</span>;
+_db.Students.FromSqlRaw(query); <span class="err">// name = "'; DROP TABLE Students; --"</span>
+
+<span class="cm">// SAFE: Always use FromSqlInterpolated OR SqlParameter</span>
+_db.Students.FromSqlRaw(
+    <span class="str">"SELECT * FROM Students WHERE Name = {0}"</span>, name);  <span class="ok">// SqlParameter under the hood</span></code></pre>
+  </div>
+
+  <h3>ExecuteSqlRawAsync — Non-Query Operations</h3>
+  <pre><code><span class="cm">// Bulk update — EF's tracking update is slow for 50k rows</span>
+<span class="kw">var</span> affected = <span class="kw">await</span> _db.Database.ExecuteSqlInterpolatedAsync(<span class="str">$@"
+    UPDATE Students
+    SET IsActive = 0, UpdatedAt = GETUTCDATE()
+    WHERE SchoolId = {schoolId}
+    AND YEAR(DateOfBirth) = {graduationYear - 18}"</span>, ct);
+
+<span class="cm">// Stored procedure call</span>
+<span class="kw">await</span> _db.Database.ExecuteSqlInterpolatedAsync(
+    <span class="str">$"EXEC sp_CalculateTermFees @SchoolId={schoolId}, @TermId={termId}"</span>, ct);</code></pre>
+
+  <h3>Dapper for Complex Queries</h3>
+  <pre><code><span class="cm">// Dapper alongside EF Core — best of both worlds</span>
+<span class="kw">public class</span> <span class="cl">FeeReportRepository</span>(<span class="cl">ZenCampusDbContext</span> _db)
+{
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">IEnumerable</span>&lt;<span class="cl">FeeReportRow</span>&gt;&gt; GetTermReportAsync(<span class="kw">int</span> schoolId, <span class="kw">int</span> termId)
+    {
+        <span class="cm">// Get the raw SqlConnection from EF's DbContext</span>
+        <span class="kw">var</span> conn = _db.Database.GetDbConnection();
+
+        <span class="kw">return await</span> conn.QueryAsync&lt;<span class="cl">FeeReportRow</span>&gt;(
+            <span class="str">@"SELECT s.Name, s.AdmissionNumber, c.Name AS ClassName,
+                     SUM(f.Amount) AS TotalFee,
+                     SUM(CASE WHEN f.IsPaid=1 THEN f.Amount ELSE 0 END) AS Paid
+              FROM Students s
+              JOIN Classes c ON c.Id = s.ClassId
+              JOIN FeeRecords f ON f.StudentId = s.Id AND f.TermId = @TermId
+              WHERE s.SchoolId = @SchoolId AND s.IsDeleted = 0
+              GROUP BY s.Name, s.AdmissionNumber, c.Name
+              ORDER BY c.Name, s.Name"</span>,
+            <span class="kw">new</span> { SchoolId = schoolId, TermId = termId });
+    }
+}</code></pre>
+</section>
+
+<!-- ===================== SECTION 6: MIGRATIONS ===================== -->
+<section id="migrations">
+  <h2>🏗️ Migrations — Schema Versioning for 200 Schools</h2>
+
+  <div class="movie-box">
+    <div class="movie-icon">🎬</div>
+    <div>
+      <div class="movie-title">Baahubali (2015) — Build the Kingdom Step by Step</div>
+      <div class="movie-body">Mahishmati kingdom oru shot-la ready aagala — step by step build aachchu. EF Migrations exact same: database schema oru jump-la change panna mudiyaathu — each migration = one disciplined step. Rollback = return to previous state. 200 school DB-ku consistent schema maintain panrom!</div>
+    </div>
+  </div>
+
+  <h3>Essential Migration Commands</h3>
+  <pre><code><span class="cm"># Create migration after model change</span>
+dotnet ef migrations add AddStudentAadhaarIndex --project ZenCampusWeb
+
+<span class="cm"># Apply to database</span>
+dotnet ef database update
+
+<span class="cm"># Rollback to specific migration</span>
+dotnet ef database update AddSchoolBoardType
+
+<span class="cm"># Script for production (never run dotnet ef update in prod!)</span>
+dotnet ef migrations script 20260101_Initial 20260601_AddIndex --output deploy.sql --idempotent
+
+<span class="cm"># Remove last migration (if not applied yet)</span>
+dotnet ef migrations remove
+
+<span class="cm"># List all migrations and their status</span>
+dotnet ef migrations list</code></pre>
+
+  <h3>Data Migration — Seeding Inside a Migration</h3>
+  <pre><code><span class="kw">public partial class</span> <span class="cl">AddDefaultFeeCategories</span> : <span class="cl">Migration</span>
+{
+    <span class="kw">protected override void</span> Up(<span class="cl">MigrationBuilder</span> migrationBuilder)
+    {
+        migrationBuilder.CreateTable(
+            name: <span class="str">"FeeCategories"</span>,
+            columns: table =&gt; <span class="kw">new</span>
+            {
+                Id          = table.Column&lt;<span class="kw">int</span>&gt;(nullable: <span class="kw">false</span>)
+                                   .Annotation(<span class="str">"SqlServer:Identity"</span>, <span class="str">"1, 1"</span>),
+                Name        = table.Column&lt;<span class="kw">string</span>&gt;(maxLength: <span class="num">100</span>),
+                IsActive    = table.Column&lt;<span class="kw">bool</span>&gt;(defaultValue: <span class="kw">true</span>)
+            },
+            constraints: t =&gt; t.PrimaryKey(<span class="str">"PK_FeeCategories"</span>, x =&gt; x.Id));
+
+        <span class="cm">// Seed default data in the same migration</span>
+        migrationBuilder.InsertData(
+            table: <span class="str">"FeeCategories"</span>,
+            columns: <span class="kw">new</span>[] { <span class="str">"Name"</span>, <span class="str">"IsActive"</span> },
+            values: <span class="kw">new object</span>[,]
+            {
+                { <span class="str">"Tuition Fee"</span>, <span class="kw">true</span> },
+                { <span class="str">"Transport Fee"</span>, <span class="kw">true</span> },
+                { <span class="str">"Hostel Fee"</span>, <span class="kw">true</span> },
+                { <span class="str">"Exam Fee"</span>, <span class="kw">true</span> }
+            });
+    }
+
+    <span class="kw">protected override void</span> Down(<span class="cl">MigrationBuilder</span> migrationBuilder)
+        =&gt; migrationBuilder.DropTable(name: <span class="str">"FeeCategories"</span>);
+}</code></pre>
+
+  <div class="card card-warn">
+    <strong>Migration Best Practices for ZenCampus Production:</strong>
+    <ul style="margin-left:1.2rem;margin-top:0.5rem;color:var(--muted)">
+      <li>Always generate <code>--idempotent</code> scripts for deployment — safe to re-run</li>
+      <li>Never modify an already-applied migration — create a new one</li>
+      <li>Destructive changes (DROP column) — add new column first, migrate data, then drop old in separate migration</li>
+      <li>Backup before every prod migration — 50k student records, no jokes</li>
+      <li>Run migrations at startup via <code>db.Database.MigrateAsync()</code> only in dev/staging — not production</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== SECTION 7: OWNED TYPES ===================== -->
+<section id="owned">
+  <h2>📦 Owned Types — Value Objects in EF Core</h2>
+
+  <p>Owned Types = DDD Value Objects EF Core-la map panrom. Separate table create panna theva illa — parent table-la columns-a store pannum.</p>
+
+  <pre><code><span class="cm">// Value Object — Address is not an entity (no identity of its own)</span>
+<span class="kw">public record</span> <span class="cl">Address</span>(
+    <span class="kw">string</span> Street,
+    <span class="kw">string</span> City,
+    <span class="kw">string</span> State,
+    <span class="kw">string</span> PinCode,
+    <span class="kw">string</span> District);
+
+<span class="kw">public class</span> <span class="cl">Student</span>
+{
+    <span class="kw">public int</span>        Id              { <span class="kw">get; set;</span> }
+    <span class="kw">public string</span>     Name            { <span class="kw">get; set;</span> } = <span class="kw">default</span>!;
+    <span class="kw">public</span> <span class="cl">Address</span>    PermanentAddress { <span class="kw">get; set;</span> } = <span class="kw">default</span>!;
+    <span class="kw">public</span> <span class="cl">Address</span>?   CurrentAddress   { <span class="kw">get; set;</span> }  <span class="cm">// optional</span>
+}
+
+<span class="cm">// EF Configuration — Owned Types</span>
+<span class="kw">public class</span> <span class="cl">StudentConfiguration</span> : <span class="cl">IEntityTypeConfiguration</span>&lt;<span class="cl">Student</span>&gt;
+{
+    <span class="kw">public void</span> Configure(<span class="cl">EntityTypeBuilder</span>&lt;<span class="cl">Student</span>&gt; b)
+    {
+        b.OwnsOne(s =&gt; s.PermanentAddress, addr =&gt;
+        {
+            addr.Property(a =&gt; a.Street).HasColumnName(<span class="str">"PermanentStreet"</span>).HasMaxLength(<span class="num">300</span>);
+            addr.Property(a =&gt; a.City).HasColumnName(<span class="str">"PermanentCity"</span>).HasMaxLength(<span class="num">100</span>);
+            addr.Property(a =&gt; a.PinCode).HasColumnName(<span class="str">"PermanentPinCode"</span>).HasMaxLength(<span class="num">6</span>);
+            addr.Property(a =&gt; a.District).HasColumnName(<span class="str">"PermanentDistrict"</span>).HasMaxLength(<span class="num">100</span>);
+        });
+
+        b.OwnsOne(s =&gt; s.CurrentAddress, addr =&gt;
+        {
+            addr.Property(a =&gt; a.Street).HasColumnName(<span class="str">"CurrentStreet"</span>).IsRequired(false);
+            addr.Property(a =&gt; a.City).HasColumnName(<span class="str">"CurrentCity"</span>).IsRequired(false);
+        });
+    }
+}
+<span class="cm">// Result: Students table has columns:
+// PermanentStreet, PermanentCity, PermanentPinCode, PermanentDistrict,
+// CurrentStreet, CurrentCity (nullable)
+// No separate Address table!</span></code></pre>
+
+  <h3>OwnsMany — Collections as Owned</h3>
+  <pre><code><span class="cm">// ContactNumber value object collection</span>
+<span class="kw">public record</span> <span class="cl">ContactNumber</span>(<span class="kw">string</span> Number, <span class="kw">string</span> Type);  <span class="cm">// Mobile/Landline/WhatsApp</span>
+
+<span class="cm">// EF Configuration for owned collection</span>
+b.OwnsMany(s =&gt; s.ContactNumbers, cn =&gt;
+{
+    cn.ToTable(<span class="str">"StudentContacts"</span>);   <span class="cm">// OwnsMany DOES need a separate table</span>
+    cn.WithOwner().HasForeignKey(<span class="str">"StudentId"</span>);
+    cn.Property(c =&gt; c.Number).HasMaxLength(<span class="num">15</span>);
+    cn.Property(c =&gt; c.Type).HasMaxLength(<span class="num">20</span>);
+});</code></pre>
+</section>
+
+<!-- ===================== SECTION 8: CONCURRENCY TOKENS ===================== -->
+<section id="concurrency">
+  <h2>⚔️ Concurrency Tokens — Optimistic Concurrency</h2>
+
+  <p>ZenCampus-la fee payment: two staff simultaneously update same student record — last write wins = data loss. Concurrency token = detect conflict BEFORE saving.</p>
+
+  <pre><code><span class="kw">public class</span> <span class="cl">FeeRecord</span>
+{
+    <span class="kw">public int</span>      Id        { <span class="kw">get; set;</span> }
+    <span class="kw">public decimal</span> Amount    { <span class="kw">get; set;</span> }
+    <span class="kw">public bool</span>    IsPaid    { <span class="kw">get; set;</span> }
+
+    <span class="cm">// Option 1: RowVersion (SQL Server timestamp — auto-updated on every UPDATE)</span>
+    <span class="dec">[Timestamp]</span>
+    <span class="kw">public byte</span>[] RowVersion { <span class="kw">get; set;</span> } = <span class="kw">default</span>!;
+
+    <span class="cm">// Option 2: Manual concurrency token</span>
+    <span class="dec">[ConcurrencyCheck]</span>
+    <span class="kw">public</span> <span class="cl">DateTime</span> UpdatedAt { <span class="kw">get; set;</span> }
+}</code></pre>
+
+  <pre><code><span class="cm">// Handling concurrency conflict in FeePaymentService</span>
+<span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">Result</span>&gt; MarkFeeAsPaidAsync(<span class="kw">int</span> feeId, <span class="kw">byte</span>[] rowVersion, <span class="cl">CancellationToken</span> ct)
+{
+    <span class="kw">var</span> maxRetries = <span class="num">3</span>;
+    <span class="kw">for</span> (<span class="kw">var</span> attempt = <span class="num">0</span>; attempt &lt; maxRetries; attempt++)
+    {
+        <span class="kw">try</span>
+        {
+            <span class="kw">var</span> fee = <span class="kw">await</span> _db.FeeRecords.FindAsync(<span class="kw">new object</span>[] { feeId }, ct)
+                      ?? <span class="kw">throw new</span> <span class="cl">NotFoundException</span>(<span class="str">$"FeeRecord {feeId} not found"</span>);
+
+            <span class="cm">// Attach the client's rowVersion so EF includes it in WHERE clause</span>
+            _db.Entry(fee).Property(f =&gt; f.RowVersion).OriginalValue = rowVersion;
+
+            fee.IsPaid   = <span class="kw">true</span>;
+            fee.PaidAt   = <span class="cl">DateTime</span>.UtcNow;
+            fee.PaidBy   = _currentUser.UserId;
+
+            <span class="kw">await</span> _db.SaveChangesAsync(ct);
+            <span class="cm">// EF generates: UPDATE FeeRecords SET IsPaid=1, PaidAt=@p0
+            //               WHERE Id=@p1 AND RowVersion=@p2  ← concurrency check!</span>
+            <span class="kw">return</span> <span class="cl">Result</span>.Success();
+        }
+        <span class="kw">catch</span> (<span class="cl">DbUpdateConcurrencyException</span> ex)
+        {
+            <span class="kw">if</span> (attempt == maxRetries - <span class="num">1</span>) <span class="kw">throw</span>;
+
+            <span class="cm">// Reload fresh data and retry</span>
+            <span class="kw">var</span> entry = ex.Entries.Single();
+            <span class="kw">await</span> entry.ReloadAsync(ct);
+            rowVersion = ((<span class="cl">FeeRecord</span>)entry.Entity).RowVersion;
+        }
+    }
+    <span class="kw">return</span> <span class="cl">Result</span>.Failure(<span class="str">"Concurrent modification — please retry"</span>);
+}</code></pre>
+
+  <div class="movie-box">
+    <div class="movie-icon">🎬</div>
+    <div>
+      <div class="movie-title">2.0 (2018) — Two Versions Conflict</div>
+      <div class="movie-body">Rajini vs Akshay Kumar — irandu versions same time conflict panrom. Optimistic concurrency exact same: irandu users same fee record edit pannaa, DbUpdateConcurrencyException throw aagum. Who wins? Fresh data reload panni retry — data integrity maintain!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 9: COMPILED QUERIES ===================== -->
+<section id="compiled">
+  <h2>🚀 Compiled Queries & Performance Tips</h2>
+
+  <h3>EF.CompileAsyncQuery — Hot Path Optimisation</h3>
+  <pre><code><span class="cm">// Normal LINQ: EF translates to SQL EVERY call (parse tree, validate, generate SQL)
+// Compiled: translate ONCE, reuse the plan — perfect for hot paths</span>
+
+<span class="kw">public static class</span> <span class="cl">CompiledStudentQueries</span>
+{
+    <span class="cm">// Compiled once at app startup — stored as static field</span>
+    <span class="kw">public static readonly</span> <span class="cl">Func</span>&lt;<span class="cl">ZenCampusDbContext</span>, <span class="kw">int</span>, <span class="kw">string</span>, <span class="cl">IAsyncEnumerable</span>&lt;<span class="cl">Student</span>&gt;&gt;
+        GetBySchoolAndClass = <span class="cl">EF</span>.CompileAsyncQuery(
+            (<span class="cl">ZenCampusDbContext</span> db, <span class="kw">int</span> schoolId, <span class="kw">string</span> className) =&gt;
+                db.Students
+                  .Include(s =&gt; s.Class)
+                  .Where(s =&gt; s.SchoolId == schoolId &amp;&amp; s.Class.Name == className)
+                  .OrderBy(s =&gt; s.Name)
+                  .AsNoTracking());
+
+    <span class="cm">// Usage (dashboard loads this 1000x per second)</span>
+    <span class="kw">public static async</span> <span class="cl">Task</span>&lt;<span class="cl">List</span>&lt;<span class="cl">Student</span>&gt;&gt; GetStudentsAsync(
+        <span class="cl">ZenCampusDbContext</span> db, <span class="kw">int</span> schoolId, <span class="kw">string</span> className)
+    {
+        <span class="kw">var</span> result = <span class="kw">new</span> <span class="cl">List</span>&lt;<span class="cl">Student</span>&gt;();
+        <span class="kw">await foreach</span> (<span class="kw">var</span> s <span class="kw">in</span> GetBySchoolAndClass(db, schoolId, className))
+            result.Add(s);
+        <span class="kw">return</span> result;
+    }
+}</code></pre>
+
+  <h3>Performance Quick Reference</h3>
+  <table>
+    <tr><th>Technique</th><th>When to Use</th><th>Gain</th></tr>
+    <tr><td><code>AsNoTracking()</code></td><td>All GET/read queries</td><td class="badge-good">20-40%</td></tr>
+    <tr><td><code>Select()</code> projection</td><td>Reports, DTOs, APIs</td><td class="badge-good">50-80%</td></tr>
+    <tr><td><code>AsSplitQuery()</code></td><td>Multi-Include with large collections</td><td class="badge-good">Avoids cartesian explosion</td></tr>
+    <tr><td>Compiled Queries</td><td>Same query called &gt;100x/sec</td><td class="badge-good">30-50% CPU</td></tr>
+    <tr><td>Indexed columns in WHERE</td><td>Always — filter on indexed FK</td><td class="badge-good">10x-100x</td></tr>
+    <tr><td><code>ExecuteUpdateAsync()</code></td><td>Bulk updates (.NET 7+)</td><td class="badge-good">No tracking overhead</td></tr>
+    <tr><td><code>ExecuteDeleteAsync()</code></td><td>Bulk deletes (.NET 7+)</td><td class="badge-good">Single DELETE statement</td></tr>
+  </table>
+
+  <pre><code><span class="cm">// EF Core 7+ Bulk Operations — no entity loading needed</span>
+<span class="cm">// Bulk update — mark all Class 12 graduates inactive</span>
+<span class="kw">await</span> _db.Students
+    .Where(s =&gt; s.SchoolId == schoolId &amp;&amp; s.Class.Name == <span class="str">"Class 12"</span>)
+    .ExecuteUpdateAsync(setter =&gt; setter
+        .SetProperty(s =&gt; s.IsActive, <span class="kw">false</span>)
+        .SetProperty(s =&gt; s.GraduatedAt, <span class="cl">DateTime</span>.UtcNow), ct);
+<span class="cm">// Single SQL: UPDATE Students SET IsActive=0, GraduatedAt=@p0
+//             WHERE SchoolId=@p1 AND ClassId IN (SELECT Id FROM Classes WHERE Name='Class 12')
+// No entity loading, no change tracking overhead</span>
+
+<span class="cm">// Bulk delete — archive old logs</span>
+<span class="kw">await</span> _db.AuditLogs
+    .Where(l =&gt; l.CreatedAt &lt; <span class="cl">DateTime</span>.UtcNow.AddYears(-<span class="num">2</span>))
+    .ExecuteDeleteAsync(ct);
+<span class="cm">// Single SQL: DELETE FROM AuditLogs WHERE CreatedAt &lt; @p0</span></code></pre>
+</section>
+
+<!-- ===================== SECTION 10: INTERVIEW SCENARIOS ===================== -->
+<section id="scenarios">
+  <h2>🎯 10 Scenario-Based Interview Questions</h2>
+
+  <!-- Q1 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">1</div>
+      <div>
+        <span class="scenario-q">ZenCampus fee report page takes 3 minutes to load for a 250-student school. What's the root cause and how do you fix it?</span>
+        <span class="scenario-type">Production Bug</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><strong>Root cause:</strong> Classic N+1 problem. LINQ query loads all students, then loops and queries FeeRecords per student — 251 DB round trips.</p>
+      <p><strong>Fix 1:</strong> <code>.Include(s =&gt; s.FeeRecords)</code> to eager-load — single JOIN query.</p>
+      <p><strong>Fix 2 (better):</strong> Project to DTO via <code>.Select(s =&gt; new FeeReportRow { Total = s.FeeRecords.Sum(...) })</code> — DB does aggregation, network transfer minimal.</p>
+      <p><strong>Fix 3:</strong> If multiple large collections, add <code>.AsSplitQuery()</code> to prevent cartesian explosion.</p>
+      <p><strong>Verify:</strong> Enable EF Core logging in dev — log all SQL + query count. Any query showing "N" identical queries with different IDs = N+1.</p>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">2</div>
+      <div>
+        <span class="scenario-q">What is DbUpdateConcurrencyException and when does it occur in ZenCampus?</span>
+        <span class="scenario-type">Concept</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p>Thrown when EF's UPDATE WHERE clause matches zero rows — meaning the record was modified by another user/process between your load and save (optimistic concurrency conflict).</p>
+      <p><strong>ZenCampus scenario:</strong> Two fee clerks open the same student's fee record. Clerk A marks it paid and saves. Clerk B also marks it paid and saves — EF generates <code>UPDATE FeeRecords SET ... WHERE Id=@id AND RowVersion=@oldVersion</code>. The RowVersion now doesn't match → 0 rows affected → <code>DbUpdateConcurrencyException</code>.</p>
+      <p><strong>Fix:</strong> Catch the exception, call <code>entry.ReloadAsync()</code> to get fresh data, re-apply business logic, retry save. Add <code>[Timestamp]</code> to the entity for auto-managed RowVersion.</p>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">3</div>
+      <div>
+        <span class="scenario-q">Why should you never run dotnet ef database update in production? What should you do instead?</span>
+        <span class="scenario-type">Best Practice</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><code>dotnet ef database update</code> runs migrations dynamically — no review, no rollback safety, no record of what SQL ran. For ZenCampus with 50k student records, a bad migration = production data loss.</p>
+      <p><strong>Correct approach:</strong></p>
+      <ul style="margin-left:1.2rem;margin-top:0.4rem">
+        <li>Generate idempotent SQL script: <code>dotnet ef migrations script --idempotent --output deploy.sql</code></li>
+        <li>DBA reviews the SQL</li>
+        <li>Backup database before execution</li>
+        <li>Execute script in a transaction (so rollback on failure)</li>
+        <li>Verify in staging first with production data copy</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">4</div>
+      <div>
+        <span class="scenario-q">What is Global Query Filter and how does it help with multi-tenancy in ZenCampus?</span>
+        <span class="scenario-type">Architecture</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p>Global Query Filter adds a WHERE clause to every LINQ query on that entity — automatically, without the developer having to remember it.</p>
+      <p><strong>ZenCampus use:</strong> <code>HasQueryFilter(s =&gt; !s.IsDeleted &amp;&amp; s.SchoolId == _currentSchoolContext.SchoolId)</code></p>
+      <p>Benefits: (1) Zero chance of cross-school data leak, (2) Soft-delete works transparently, (3) New developers can't accidentally forget the WHERE clause.</p>
+      <p><strong>Trade-off:</strong> Must use <code>IgnoreQueryFilters()</code> for super-admin operations — this bypasses BOTH filters simultaneously, so guard those endpoints with <code>[Authorize(Roles = "SuperAdmin")]</code>.</p>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">5</div>
+      <div>
+        <span class="scenario-q">When would you choose AsSplitQuery over Include in ZenCampus?</span>
+        <span class="scenario-type">Performance</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><strong>Use AsSplitQuery when:</strong> Loading a student with both FeeRecords (100 rows) AND AttendanceRecords (200 rows). A JOIN produces 100x200 = 20,000 rows per student — Cartesian explosion. Split Query runs 3 separate queries and joins in memory = much less data transferred.</p>
+      <p><strong>Stick with Include when:</strong> Only one navigation property with small count, OR when you need atomic consistency (Split Query reads at different moments — possible slight inconsistency under high write load).</p>
+      <p><strong>Rule of thumb:</strong> If result row count &gt; 1000 due to JOIN multiplication → consider AsSplitQuery.</p>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">6</div>
+      <div>
+        <span class="scenario-q">A developer used FromSqlRaw with string interpolation for a student search. What is the risk and how do you fix it?</span>
+        <span class="scenario-type">Security</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><strong>Risk:</strong> SQL Injection. <code>FromSqlRaw($"SELECT * FROM Students WHERE Name = '{searchTerm}'")</code> — if searchTerm = <code>'; DROP TABLE Students; --</code>, it executes as two SQL statements.</p>
+      <p><strong>Fix:</strong> Use <code>FromSqlInterpolated</code> (not Raw) — it parameterizes all <code>{variable}</code> interpolations:</p>
+      <pre style="margin-top:0.5rem;font-size:0.8rem"><code>_db.Students.FromSqlInterpolated($"SELECT * FROM Students WHERE Name = {searchTerm}")</code></pre>
+      <p>Or use <code>FromSqlRaw</code> with explicit SqlParameter: <code>FromSqlRaw("SELECT * FROM Students WHERE Name = {0}", searchTerm)</code></p>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">7</div>
+      <div>
+        <span class="scenario-q">What is an Owned Type in EF Core? Give a ZenCampus example. How is it different from a normal entity?</span>
+        <span class="scenario-type">Concept</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p>Owned Type = DDD Value Object mapped by EF Core. It has no identity of its own — its identity is the owning entity's identity. Stored as columns in the owner's table (OwnsOne) or a separate table (OwnsMany).</p>
+      <p><strong>ZenCampus example:</strong> <code>Address</code> record owned by <code>Student</code>. Address has no meaning outside a Student. Using <code>OwnsOne</code>, the Student table gets PermanentStreet, PermanentCity, PermanentPinCode columns — no join needed to load address.</p>
+      <p><strong>vs normal entity:</strong> Normal entity has its own primary key, can be referenced independently. Owned type cannot be queried or referenced by other entities — only via its owner.</p>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">8</div>
+      <div>
+        <span class="scenario-q">You need to mark 15,000 Class 12 students as graduated across 200 schools. What is the most efficient EF Core approach?</span>
+        <span class="scenario-type">Performance Design</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><strong>Wrong approach:</strong> Load all 15,000 students, set property, SaveChanges — EF generates 15,000 individual UPDATEs, loads all entities into memory.</p>
+      <p><strong>Correct approach:</strong> EF Core 7+ <code>ExecuteUpdateAsync</code>:</p>
+      <pre style="margin-top:0.5rem;font-size:0.8rem"><code>await _db.Students
+    .Where(s =&gt; s.Class.Name == "Class 12" &amp;&amp; !s.HasGraduated)
+    .ExecuteUpdateAsync(s =&gt; s
+        .SetProperty(x =&gt; x.HasGraduated, true)
+        .SetProperty(x =&gt; x.GraduatedAt, DateTime.UtcNow));</code></pre>
+      <p>Generates single <code>UPDATE ... WHERE ...</code> — no entities loaded, no change tracking, minimal memory. Run in batch if needed (e.g., school by school) with Task.Delay between batches to avoid locking.</p>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">9</div>
+      <div>
+        <span class="scenario-q">When should you use Dapper alongside EF Core in ZenCampus?</span>
+        <span class="scenario-type">Architecture Decision</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p>EF Core is ideal for CRUD and business logic where change tracking helps. Dapper shines for:</p>
+      <ul style="margin-left:1.2rem;margin-top:0.4rem">
+        <li><strong>Complex reports</strong> — multi-join aggregation LINQ can't express cleanly</li>
+        <li><strong>Dynamic column queries</strong> — report builder with user-selected columns</li>
+        <li><strong>Stored procedures with multiple result sets</strong></li>
+        <li><strong>Raw performance-critical reads</strong> — Dapper is 2-5x faster than EF for pure reads</li>
+      </ul>
+      <p>Use EF's <code>_db.Database.GetDbConnection()</code> to share the same connection (and transaction) between EF and Dapper in one request — no second connection overhead.</p>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="scenario">
+    <div class="scenario-header">
+      <div class="scenario-num">10</div>
+      <div>
+        <span class="scenario-q">Tell me about a time you improved a slow EF Core query in a real project.</span>
+        <span class="scenario-type">Experience</span>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="reveal-content">
+      <p><strong>Structure your answer (STAR):</strong></p>
+      <p><strong>Situation:</strong> ZenCampus fee dashboard was timing out for schools with 300+ students. EF Core query taking 45 seconds.</p>
+      <p><strong>Task:</strong> Identify root cause without touching production.</p>
+      <p><strong>Action:</strong> Enabled EF Core SQL logging in staging. Found 301 queries (N+1 — 1 for students + 300 for fee records). Rewrote to use <code>Select()</code> projection with <code>.Sum()</code> aggregates pushed to SQL. Added <code>AsNoTracking()</code> since it's a read. Added missing index on <code>FeeRecords.StudentId</code>.</p>
+      <p><strong>Result:</strong> 45 seconds → 180ms. 301 queries → 1 query. SQL profiler confirmed single optimised execution plan.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QUIZ ===================== -->
+<section id="quiz">
+  <h2>🧠 4 Quick Quiz Questions</h2>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. Loading Student with 100 FeeRecords AND 200 AttendanceRecords using Include produces how many JOIN rows per student?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'wrong','Correct is 20,000 — 100×200 Cartesian Product')">300 rows (100+200)</button>
+      <button class="quiz-opt" onclick="answer(this,'correct','Correct! 100×200 = 20,000 rows Cartesian explosion — use AsSplitQuery!')">20,000 rows (100×200)</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','Correct is 20,000 — 100×200 Cartesian Product')">1 row (JOIN collapses duplicates)</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','Correct is 20,000 — 100×200 Cartesian Product')">2 rows (one per navigation)</button>
+    </div>
+    <div class="quiz-fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. Which method in EF Core 7+ updates 10,000 rows in a SINGLE SQL statement without loading entities?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'wrong','SaveChangesAsync loads all entities first — N UPDATEs generated')">SaveChangesAsync()</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','Update() attaches and tracks — still saves one by one')">Update() + SaveChangesAsync()</button>
+      <button class="quiz-opt" onclick="answer(this,'correct','Correct! ExecuteUpdateAsync generates single UPDATE SQL — no entity loading')">ExecuteUpdateAsync()</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','BulkInsertAsync is from third-party EFCore.BulkExtensions, not built-in EF Core 7')">BulkInsertAsync()</button>
+    </div>
+    <div class="quiz-fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. Global Query Filter is set on Student entity. A Super Admin wants to see ALL schools' data. What must you add to the query?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'wrong','AsNoTracking only affects change tracking, not query filters')">AsNoTracking()</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','AsSplitQuery only affects multi-Include cartesian explosion')">AsSplitQuery()</button>
+      <button class="quiz-opt" onclick="answer(this,'correct','Correct! IgnoreQueryFilters() bypasses all global filters — use only in admin-protected endpoints')">IgnoreQueryFilters()</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','DisableFilter() does not exist in EF Core')">DisableFilter("TenantFilter")</button>
+    </div>
+    <div class="quiz-fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. You have Address (Street, City, PinCode) that belongs to Student and has no identity of its own. EF Core pattern to use?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'wrong','Separate entity would need its own PK and FK join — unnecessary complexity for a value object')">Separate entity with FK</button>
+      <button class="quiz-opt" onclick="answer(this,'correct','Correct! Owned Type (OwnsOne) maps Address as columns in Students table — no join, DDD Value Object pattern')">Owned Type with OwnsOne()</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','JSON column works but loses query ability and type safety')">Store as JSON column</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','Shadow property is for hidden columns, not complex types')">Shadow Property</button>
+    </div>
+    <div class="quiz-fb"></div>
+  </div>
+</section>
+
+<!-- ===================== CHECKLIST ===================== -->
+<section id="checklist">
+  <h2>✅ Day 26 Mastery Checklist</h2>
+  <ul class="checklist" id="cl">
+    <li onclick="check(this)"><input type="checkbox">I can explain Change Tracker states (Unchanged/Modified/Added/Deleted)</li>
+    <li onclick="check(this)"><input type="checkbox">I can identify N+1 problem in a LINQ query</li>
+    <li onclick="check(this)"><input type="checkbox">I know when to use Include vs AsSplitQuery vs Select projection</li>
+    <li onclick="check(this)"><input type="checkbox">I can write AsNoTracking and explain the performance benefit</li>
+    <li onclick="check(this)"><input type="checkbox">I can configure Global Query Filter for multi-tenant + soft-delete</li>
+    <li onclick="check(this)"><input type="checkbox">I know the difference between FromSqlRaw (danger) and FromSqlInterpolated (safe)</li>
+    <li onclick="check(this)"><input type="checkbox">I can generate idempotent migration scripts for production deployment</li>
+    <li onclick="check(this)"><input type="checkbox">I can configure Owned Types (OwnsOne / OwnsMany) for value objects</li>
+    <li onclick="check(this)"><input type="checkbox">I understand [Timestamp] and DbUpdateConcurrencyException handling</li>
+    <li onclick="check(this)"><input type="checkbox">I can use ExecuteUpdateAsync / ExecuteDeleteAsync for bulk operations</li>
+    <li onclick="check(this)"><input type="checkbox">I know when to use Dapper alongside EF Core</li>
+    <li onclick="check(this)"><input type="checkbox">I can explain EF.CompileAsyncQuery and when it helps</li>
+  </ul>
+</section>
+
+<!-- Tamil movie summary -->
+<section>
+  <h2>🎬 Day 26 Tamil Movie Memory Anchors</h2>
+  <div class="grid-2">
+    <div class="movie-box">
+      <div class="movie-icon">🎬</div>
+      <div>
+        <div class="movie-title">Vikram → N+1 Problem</div>
+        <div class="movie-body">100 enemies-ku 100 fights = 100 DB queries. Include pannaa oru shot-la all done!</div>
+      </div>
+    </div>
+    <div class="movie-box">
+      <div class="movie-icon">🎬</div>
+      <div>
+        <div class="movie-title">Kaakha Kaakha → AsNoTracking</div>
+        <div class="movie-body">No trace, no footprint, fast action. Read-only queries-ku always AsNoTracking.</div>
+      </div>
+    </div>
+    <div class="movie-box">
+      <div class="movie-icon">🎬</div>
+      <div>
+        <div class="movie-title">Sarkar → Raw SQL</div>
+        <div class="movie-body">System bypass panni direct action. LINQ express panna mudiyaadha complex queries-ku FromSqlInterpolated.</div>
+      </div>
+    </div>
+    <div class="movie-box">
+      <div class="movie-icon">🎬</div>
+      <div>
+        <div class="movie-title">Baahubali → Migrations</div>
+        <div class="movie-body">Kingdom step by step build aachchu. Schema changes = disciplined migrations, idempotent scripts for prod.</div>
+      </div>
+    </div>
+    <div class="movie-box">
+      <div class="movie-icon">🎬</div>
+      <div>
+        <div class="movie-title">2.0 → Concurrency Tokens</div>
+        <div class="movie-body">Irandu versions conflict. [Timestamp] + DbUpdateConcurrencyException = detect and resolve conflict safely.</div>
+      </div>
+    </div>
+    <div class="movie-box">
+      <div class="movie-icon">🎬</div>
+      <div>
+        <div class="movie-title">Anniyan → Change Tracker</div>
+        <div class="movie-body">Multiple personality states — Unchanged, Modified, Added, Deleted. Wrong state → wrong SQL generated!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p style="color:var(--accent);font-weight:700;font-size:1rem;">Day 26 Complete ✓ — Entity Framework Core Deep Dive</p>
+  <p style="margin-top:0.3rem;">Accent: Olive Green <strong>#65a30d</strong> · Distinct from Day 11 Lime (#84cc16), Day 13 Emerald (#10b981), Day 23 Green (#16a34a)</p>
+  <p style="margin-top:0.5rem;">Days 1–26 done · 34 remaining · <span style="color:var(--accent)">Tomorrow: Day 27 — LINQ Deep Dive (Deferred vs Immediate, Expression Trees, Custom LINQ Extensions)</span></p>
+</footer>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('progress-bar');
+    const h  = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    el.style.width = pct + '%';
+  });
+
+  // Reveal buttons
+  function toggle(btn) {
+    const content = btn.nextElementSibling;
+    const open = content.classList.toggle('open');
+    btn.textContent = open ? 'Hide Answer' : 'Reveal Answer';
+  }
+
+  // Quiz
+  function answer(btn, result, feedback) {
+    const card = btn.closest('.quiz-card');
+    if (card.dataset.answered) return;
+    card.dataset.answered = '1';
+    card.querySelectorAll('.quiz-opt').forEach(o => o.style.pointerEvents = 'none');
+    btn.classList.add(result);
+    const fb = card.querySelector('.quiz-fb');
+    fb.textContent = (result === 'correct' ? '✓ ' : '✗ ') + feedback;
+    fb.className = 'quiz-fb show ' + (result === 'correct' ? 'good' : 'bad');
+  }
+
+  // Checklist
+  function check(li) {
+    const cb = li.querySelector('input');
+    cb.checked = !cb.checked;
+    li.classList.toggle('done', cb.checked);
+  }
+</script>
+</body>
+</html>

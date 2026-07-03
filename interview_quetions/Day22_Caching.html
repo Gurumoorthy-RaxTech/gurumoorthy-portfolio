@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 22 - Caching | .NET Interview Prep</title>
+    <style>
+        :root {
+            --accent: #dc2626;
+            --accent-light: #fca5a5;
+            --accent-mid: #f87171;
+            --accent-dark: #7f1d1d;
+            --accent-glow: rgba(220,38,38,0.3);
+            --bg: #0d0d1a;
+            --bg3: #1a0a0a;
+            --card: #111827;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --text-bright: #fff1f2;
+            --border: #4c1d1d;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; line-height:1.6; }
+        .progress-bar { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-light)); width:0%; z-index:200; transition:width 0.1s; }
+        nav { position:sticky; top:0; z-index:100; background:rgba(13,13,26,0.96); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); padding:0.75rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+        .nav-brand { font-size:0.9rem; font-weight:700; color:var(--accent-light); }
+        .nav-links { display:flex; gap:1rem; list-style:none; }
+        .nav-links a { color:var(--text-dim); text-decoration:none; font-size:0.8rem; transition:color 0.2s; }
+        .nav-links a:hover { color:var(--accent-light); }
+        .hero { padding:4rem 2rem 2rem; text-align:center; background:radial-gradient(ellipse at top,rgba(220,38,38,0.12) 0%,transparent 70%); }
+        .day-badge { display:inline-block; background:linear-gradient(135deg,var(--accent),var(--accent-mid)); color:white; padding:0.3rem 1rem; border-radius:2rem; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; margin-bottom:1rem; }
+        .hero h1 { font-size:2.5rem; font-weight:800; background:linear-gradient(135deg,var(--accent-light),#fff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:0.5rem; }
+        .hero-sub { color:var(--text-dim); font-size:1rem; max-width:600px; margin:0 auto 1.5rem; }
+        .hero-tags { display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap; }
+        .tag { background:rgba(220,38,38,0.12); border:1px solid rgba(220,38,38,0.35); color:var(--accent-light); padding:0.25rem 0.75rem; border-radius:1rem; font-size:0.75rem; }
+        .container { max-width:1100px; margin:0 auto; padding:0 1.5rem; }
+        .section-title { font-size:1.5rem; font-weight:700; color:var(--accent-light); margin:2.5rem 0 1rem; display:flex; align-items:center; gap:0.5rem; }
+        .section-title::before { content:''; display:inline-block; width:4px; height:1.5rem; background:linear-gradient(180deg,var(--accent),var(--accent-light)); border-radius:2px; }
+        .concept-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; position:relative; overflow:hidden; }
+        .concept-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-light)); }
+        .concept-title { font-size:1.1rem; font-weight:700; color:var(--text-bright); margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+        pre { background:#050a14; border:1px solid var(--border); border-radius:8px; padding:1rem 1.25rem; overflow-x:auto; font-family:'Cascadia Code','Fira Code',monospace; font-size:0.82rem; line-height:1.7; margin:0.75rem 0; }
+        .kw { color:#60a5fa; } .kw2 { color:#c084fc; } .str { color:#86efac; } .num { color:#fcd34d; }
+        .cmt { color:#6b7280; } .attr { color:#f9a8d4; } .mth { color:#fca5a5; } .cls { color:#fde68a; }
+        .info-box { background:rgba(220,38,38,0.08); border:1px solid rgba(220,38,38,0.35); border-left:4px solid var(--accent); border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .warn-box { background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.4); border-left:4px solid #f59e0b; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .danger-box { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .good-box { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.3); border-left:4px solid #22c55e; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        table { width:100%; border-collapse:collapse; margin:0.75rem 0; font-size:0.85rem; }
+        th { background:var(--bg3); color:var(--accent-light); padding:0.6rem 0.8rem; text-align:left; border:1px solid var(--border); font-weight:600; }
+        td { padding:0.6rem 0.8rem; border:1px solid var(--border); vertical-align:top; }
+        tr:nth-child(even) td { background:rgba(255,255,255,0.02); }
+        .movie-box { background:linear-gradient(135deg,rgba(220,38,38,0.1),rgba(252,165,165,0.03)); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; display:flex; gap:1rem; align-items:flex-start; }
+        .movie-icon { font-size:2rem; flex-shrink:0; }
+        .movie-content h4 { color:var(--accent-light); font-size:0.9rem; font-weight:700; margin-bottom:0.3rem; }
+        .movie-content p { color:var(--text-dim); font-size:0.85rem; }
+        .scenario-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .scenario-header { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+        .scenario-q { font-size:0.95rem; font-weight:600; color:var(--text-bright); flex:1; }
+        .scenario-type { font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:1rem; font-weight:600; white-space:nowrap; flex-shrink:0; }
+        .type-prod { background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.3); }
+        .type-design { background:rgba(220,38,38,0.2); color:#fca5a5; border:1px solid rgba(220,38,38,0.3); }
+        .type-perf { background:rgba(245,158,11,0.2); color:#fcd34d; border:1px solid rgba(245,158,11,0.3); }
+        .type-concept { background:rgba(168,85,247,0.2); color:#d8b4fe; border:1px solid rgba(168,85,247,0.3); }
+        .type-exp { background:rgba(34,197,94,0.2); color:#86efac; border:1px solid rgba(34,197,94,0.3); }
+        .reveal-btn { background:none; border:1px solid var(--border); color:var(--accent-light); padding:0.4rem 0.9rem; border-radius:6px; cursor:pointer; font-size:0.8rem; margin-top:0.75rem; transition:all 0.2s; display:block; }
+        .reveal-btn:hover { background:var(--accent); border-color:var(--accent); color:white; }
+        .answer { display:none; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); font-size:0.88rem; line-height:1.7; color:var(--text); }
+        .answer.visible { display:block; }
+        .answer pre { font-size:0.78rem; }
+        .quiz-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .quiz-q { font-size:0.95rem; font-weight:600; color:var(--text-bright); margin-bottom:0.75rem; }
+        .quiz-options { display:grid; gap:0.5rem; }
+        .quiz-opt { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.9rem; cursor:pointer; font-size:0.85rem; color:var(--text); text-align:left; transition:all 0.2s; }
+        .quiz-opt:hover:not(:disabled) { border-color:var(--accent); }
+        .quiz-opt.correct { background:rgba(34,197,94,0.15); border-color:#22c55e; color:#86efac; }
+        .quiz-opt.wrong { background:rgba(239,68,68,0.15); border-color:#ef4444; color:#fca5a5; }
+        .quiz-feedback { display:none; margin-top:0.5rem; font-size:0.82rem; padding:0.5rem 0.75rem; border-radius:6px; }
+        .quiz-feedback.show { display:block; }
+        .checklist { list-style:none; display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:0.5rem; margin:1rem 0; }
+        .checklist li { display:flex; align-items:flex-start; gap:0.5rem; font-size:0.85rem; }
+        .checklist input[type="checkbox"] { accent-color:var(--accent-light); width:16px; height:16px; cursor:pointer; flex-shrink:0; margin-top:2px; }
+        .checklist label { cursor:pointer; color:var(--text-dim); }
+        .checklist input:checked + label { color:var(--text); text-decoration:line-through; }
+        .two-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        code { background:rgba(220,38,38,0.12); border:1px solid rgba(220,38,38,0.3); border-radius:4px; padding:0.1rem 0.4rem; font-family:'Cascadia Code',monospace; font-size:0.85em; color:var(--accent-light); }
+        .tanglish { color:var(--accent-light); font-style:italic; }
+        .cache-flow { background:#050a14; border:1px solid var(--border); border-radius:8px; padding:1rem 1.25rem; font-family:'Cascadia Code',monospace; font-size:0.82rem; line-height:2.2; margin:0.75rem 0; }
+        footer { text-align:center; padding:2rem; color:var(--text-dim); font-size:0.8rem; border-top:1px solid var(--border); margin-top:3rem; }
+        .key-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:0.5rem; margin:0.75rem 0; }
+        .key-pill { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; font-size:0.8rem; }
+        .key-name { color:var(--accent-light); font-family:'Cascadia Code',monospace; font-size:0.78rem; }
+        .key-desc { color:var(--text-dim); font-size:0.75rem; margin-top:0.15rem; }
+        @media (max-width:768px) { .two-col { grid-template-columns:1fr; } .hero h1 { font-size:1.8rem; } nav { padding:0.75rem 1rem; } .nav-links { display:none; } }
+    </style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<nav>
+    <div class="nav-brand">🎓 Day 22 / 60 — Caching</div>
+    <ul class="nav-links">
+        <li><a href="#memory">IMemoryCache</a></li>
+        <li><a href="#distributed">IDistributedCache</a></li>
+        <li><a href="#redis">Redis Setup</a></li>
+        <li><a href="#aside">Cache-Aside</a></li>
+        <li><a href="#invalidation">Invalidation</a></li>
+        <li><a href="#stampede">Stampede</a></li>
+        <li><a href="#scenarios">Scenarios</a></li>
+        <li><a href="#quiz">Quiz</a></li>
+    </ul>
+</nav>
+
+<div class="hero">
+    <div class="day-badge">DAY 22 OF 60</div>
+    <h1>Caching</h1>
+    <p class="hero-sub">IMemoryCache, IDistributedCache, Redis, Cache-Aside Pattern, Invalidation, Stampede Prevention — ZenCampus real production examples</p>
+    <div class="hero-tags">
+        <span class="tag">IMemoryCache</span>
+        <span class="tag">IDistributedCache</span>
+        <span class="tag">Redis</span>
+        <span class="tag">Cache-Aside</span>
+        <span class="tag">Cache Invalidation</span>
+        <span class="tag">Thundering Herd</span>
+        <span class="tag">Output Cache</span>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- ===== WHY CACHE ===== -->
+<h2 class="section-title">Why Caching?</h2>
+<div class="concept-card">
+    <div class="concept-title"><span>⚡</span> DB is the bottleneck — cache is the solution</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">200 schools, 50,000 students — every page load DB-a hit panna</span> — DB collapses. Fee structure data? Same for entire year. School list? Changes once a month. Cache panna — memory-la irukku, microseconds-la return aagum.</p>
+    <div class="two-col">
+        <div>
+            <div class="danger-box">❌ <strong>Without cache</strong><br>
+            GET /dashboard → SQL query (45ms)<br>
+            GET /dashboard → SQL query (45ms)<br>
+            GET /dashboard → SQL query (45ms)<br>
+            <em>1000 requests = 1000 DB queries</em><br>
+            <strong>DB CPU: 90%, timeouts</strong></div>
+        </div>
+        <div>
+            <div class="good-box">✅ <strong>With cache</strong><br>
+            GET /dashboard → SQL query (45ms) → cache<br>
+            GET /dashboard → cache hit (0.1ms)<br>
+            GET /dashboard → cache hit (0.1ms)<br>
+            <em>1000 requests = 1 DB query</em><br>
+            <strong>DB CPU: 5%, fast response</strong></div>
+        </div>
+    </div>
+    <table>
+        <tr><th>Layer</th><th>Latency</th><th>ZenCampus Use</th></tr>
+        <tr><td>IMemoryCache (in-process)</td><td>&lt;1ms</td><td>Fee structure, school config, static lookup tables</td></tr>
+        <tr><td>IDistributedCache / Redis</td><td>0.5-2ms</td><td>Student lists, session data, shared across 3 servers</td></tr>
+        <tr><td>SQL Server</td><td>5-100ms</td><td>Source of truth — always authoritative</td></tr>
+        <tr><td>Azure Blob (file)</td><td>50-500ms</td><td>Report PDFs, student photos</td></tr>
+    </table>
+</div>
+
+<!-- ===== IMEMORYCACHE ===== -->
+<h2 class="section-title" id="memory">IMemoryCache — In-Process Cache</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🧠</span> Fastest cache — lives in app memory</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Single server-la irundha</span> — IMemoryCache best. No network hop, RAM-la store, sub-millisecond read. But: 3 server instances irundha — each has its own cache = inconsistency!</p>
+
+    <pre><span class="cmt">// Program.cs</span>
+builder.Services.<span class="mth">AddMemoryCache</span>(opts =>
+{
+    opts.SizeLimit            = <span class="num">1024</span>;     <span class="cmt">// Max 1024 units (arbitrary — you define "size")</span>
+    opts.CompactionPercentage = <span class="num">0.25</span>;    <span class="cmt">// Remove 25% when limit hit</span>
+});</pre>
+
+    <pre><span class="cmt">// GetOrCreate — the standard pattern</span>
+<span class="kw">public async</span> Task&lt;<span class="cls">FeeStructure</span>&gt; <span class="mth">GetFeeStructureAsync</span>(<span class="kw">int</span> schoolId, <span class="cls">CancellationToken</span> ct)
+{
+    <span class="kw">var</span> key = $<span class="str">"fee-structure:school:{schoolId}"</span>;
+
+    <span class="kw">return await</span> _cache.<span class="mth">GetOrCreateAsync</span>(key, async entry =>
+    {
+        entry.AbsoluteExpirationRelativeToNow = TimeSpan.<span class="mth">FromHours</span>(<span class="num">6</span>);  <span class="cmt">// 6h — fee structure rarely changes</span>
+        entry.SlidingExpiration               = TimeSpan.<span class="mth">FromMinutes</span>(<span class="num">30</span>); <span class="cmt">// Reset on each access</span>
+        entry.Priority                        = CacheItemPriority.High;      <span class="cmt">// Don't evict easily</span>
+        entry.Size                            = <span class="num">1</span>;                          <span class="cmt">// 1 unit of SizeLimit</span>
+
+        <span class="kw">var</span> structure = <span class="kw">await</span> _db.FeeStructures
+            .<span class="mth">FirstOrDefaultAsync</span>(f => f.SchoolId == schoolId, ct);
+
+        _log.<span class="mth">LogInformation</span>(<span class="str">"Cache MISS fee-structure for school {Id}"</span>, schoolId);
+        <span class="kw">return</span> structure!;
+    }) ?? <span class="kw">throw new</span> <span class="cls">NotFoundException</span>($<span class="str">"Fee structure not found for school {schoolId}"</span>);
+}
+
+<span class="cmt">// Explicit invalidation — when fee structure is updated</span>
+<span class="kw">public async</span> Task <span class="mth">UpdateFeeStructureAsync</span>(<span class="kw">int</span> schoolId, <span class="cls">UpdateFeeDto</span> dto, <span class="cls">CancellationToken</span> ct)
+{
+    <span class="kw">await</span> _db.FeeStructures.<span class="mth">UpdateAsync</span>(schoolId, dto, ct);
+    <span class="kw">await</span> _db.<span class="mth">SaveChangesAsync</span>(ct);
+
+    _cache.<span class="mth">Remove</span>($<span class="str">"fee-structure:school:{schoolId}"</span>); <span class="cmt">// ← Invalidate immediately</span>
+    _log.<span class="mth">LogInformation</span>(<span class="str">"Cache invalidated: fee-structure school {Id}"</span>, schoolId);
+}</pre>
+
+    <div class="two-col">
+        <div>
+            <p style="font-weight:600;color:var(--accent-light);margin-bottom:0.5rem">Absolute vs Sliding Expiration:</p>
+            <div class="info-box">
+                <strong>Absolute:</strong> Expires after fixed time from creation (e.g., 6h from when cached). Use for data that must refresh periodically regardless of usage.<br><br>
+                <strong>Sliding:</strong> Expires after X time from last access. Popular items stay alive. Use for user session data, active student profiles.<br><br>
+                <strong>Both together:</strong> Sliding resets on each access, BUT absolute is the hard ceiling. Common combo: sliding 30min + absolute 6h.
+            </div>
+        </div>
+        <div>
+            <p style="font-weight:600;color:var(--accent-light);margin-bottom:0.5rem">CacheItemPriority:</p>
+            <div class="info-box">
+                <code>Low</code> — first to evict under memory pressure<br><br>
+                <code>Normal</code> — default<br><br>
+                <code>High</code> — evict only if necessary<br><br>
+                <code>NeverRemove</code> — never evict (use carefully!)<br><br>
+                <strong>ZenCampus:</strong> Fee structure = High, student list = Normal, report preview = Low
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== IDISTRIBUTEDCACHE ===== -->
+<h2 class="section-title" id="distributed">IDistributedCache — Shared Cache (Redis)</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🔴</span> Cross-server cache — all instances share same data</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">ZenCampus-la 3 server instances irukku</span> (load balanced) — IMemoryCache = 3 separate caches = inconsistency. Server 1-la student admitted, Server 2-la cache still shows old count. IDistributedCache (Redis) = one shared cache = consistency!</p>
+
+    <div class="danger-box">❌ <strong>IMemoryCache with 3 server instances:</strong><br>
+    Server 1 cache: studentCount = 1250 (updated)<br>
+    Server 2 cache: studentCount = 1249 (stale — load balancer might route parent here)<br>
+    Server 3 cache: studentCount = 1249 (stale)<br>
+    Parent sees different numbers on refresh!</div>
+
+    <div class="good-box">✅ <strong>Redis (IDistributedCache):</strong><br>
+    Redis: studentCount = 1250 (updated once)<br>
+    All 3 servers read from Redis → always consistent</div>
+
+    <pre><span class="cmt">// NuGet: Microsoft.Extensions.Caching.StackExchangeRedis</span>
+<span class="cmt">// Program.cs</span>
+builder.Services.<span class="mth">AddStackExchangeRedisCache</span>(opts =>
+{
+    opts.Configuration = builder.Configuration[<span class="str">"Redis:ConnectionString"</span>];
+    <span class="cmt">// Example: "zencampus-redis.redis.cache.windows.net:6380,password=xxx,ssl=True"</span>
+    opts.InstanceName  = <span class="str">"zencampus:"</span>;  <span class="cmt">// Key prefix — all keys become "zencampus:students:school:1"</span>
+});</pre>
+
+    <pre><span class="cmt">// IDistributedCache — string/byte[] based (unlike IMemoryCache which accepts any object)</span>
+<span class="kw">public class</span> <span class="cls">StudentCacheService</span>(<span class="cls">IDistributedCache</span> _cache, <span class="cls">ZenCampusDbContext</span> _db)
+{
+    <span class="kw">private static readonly</span> <span class="cls">DistributedCacheEntryOptions</span> _opts5Min = <span class="kw">new</span>()
+    {
+        AbsoluteExpirationRelativeToNow = TimeSpan.<span class="mth">FromMinutes</span>(<span class="num">5</span>)
+    };
+
+    <span class="kw">public async</span> Task&lt;<span class="cls">IReadOnlyList</span>&lt;<span class="cls">StudentDto</span>&gt;&gt; <span class="mth">GetBySchoolAsync</span>(<span class="kw">int</span> schoolId, <span class="cls">CancellationToken</span> ct)
+    {
+        <span class="kw">var</span> key    = $<span class="str">"students:school:{schoolId}"</span>;
+        <span class="kw">var</span> cached = <span class="kw">await</span> _cache.<span class="mth">GetStringAsync</span>(key, ct);
+
+        <span class="kw">if</span> (cached <span class="kw">is not null</span>)
+        {
+            _log.<span class="mth">LogDebug</span>(<span class="str">"Cache HIT: {Key}"</span>, key);
+            <span class="kw">return</span> <span class="cls">JsonSerializer</span>.<span class="mth">Deserialize</span>&lt;<span class="cls">List</span>&lt;<span class="cls">StudentDto</span>&gt;&gt;(cached)!;
+        }
+
+        _log.<span class="mth">LogInformation</span>(<span class="str">"Cache MISS: {Key} — querying DB"</span>, key);
+        <span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+            .<span class="mth">Where</span>(s => s.SchoolId == schoolId && !s.IsDeleted)
+            .<span class="mth">Select</span>(s => <span class="kw">new</span> <span class="cls">StudentDto</span>(s.Id, s.Name, s.Class, s.RollNo))
+            .<span class="mth">ToListAsync</span>(ct);
+
+        <span class="kw">await</span> _cache.<span class="mth">SetStringAsync</span>(key, <span class="cls">JsonSerializer</span>.<span class="mth">Serialize</span>(students), _opts5Min, ct);
+        <span class="kw">return</span> students;
+    }
+
+    <span class="kw">public async</span> Task <span class="mth">InvalidateSchoolAsync</span>(<span class="kw">int</span> schoolId, <span class="cls">CancellationToken</span> ct)
+        => <span class="kw">await</span> _cache.<span class="mth">RemoveAsync</span>($<span class="str">"students:school:{schoolId}"</span>, ct);
+}</pre>
+</div>
+
+<!-- ===== REDIS SETUP ===== -->
+<h2 class="section-title" id="redis">Redis — Direct StackExchange.Redis</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🔑</span> Beyond IDistributedCache — pub/sub, atomic ops, sorted sets</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">IDistributedCache only string/bytes support pannum</span> — complex operations-ku direct Redis client use pannrom. Atomic increment (concurrent fee payment count), pub/sub (cache invalidation signal across servers), sorted sets (leaderboard).</p>
+
+    <pre><span class="cmt">// NuGet: StackExchange.Redis</span>
+builder.Services.<span class="mth">AddSingleton</span>&lt;<span class="cls">IConnectionMultiplexer</span>&gt;(
+    <span class="cls">ConnectionMultiplexer</span>.<span class="mth">Connect</span>(<span class="kw">new</span> <span class="cls">ConfigurationOptions</span>
+    {
+        EndPoints        = { builder.Configuration[<span class="str">"Redis:Host"</span>]! },
+        Password         = builder.Configuration[<span class="str">"Redis:Password"</span>],
+        Ssl              = <span class="kw">true</span>,
+        SslProtocols     = System.Security.Authentication.SslProtocols.Tls12,
+        AbortOnConnectFail = <span class="kw">false</span>,    <span class="cmt">// Don't crash app if Redis down at startup</span>
+        ConnectRetry     = <span class="num">3</span>,
+        ReconnectRetryPolicy = <span class="kw">new</span> <span class="cls">ExponentialRetry</span>(<span class="num">5000</span>)
+    }));</pre>
+
+    <pre><span class="cmt">// Direct Redis operations</span>
+<span class="kw">public class</span> <span class="cls">RedisService</span>(<span class="cls">IConnectionMultiplexer</span> _redis)
+{
+    <span class="kw">private</span> <span class="cls">IDatabase</span> <span class="mth">Db</span>() => _redis.<span class="mth">GetDatabase</span>();
+
+    <span class="cmt">// Atomic increment — concurrent-safe school student counter</span>
+    <span class="kw">public async</span> Task&lt;<span class="kw">long</span>&gt; <span class="mth">IncrementStudentCountAsync</span>(<span class="kw">int</span> schoolId)
+        => <span class="kw">await</span> <span class="mth">Db</span>().<span class="mth">StringIncrementAsync</span>($<span class="str">"school:{schoolId}:student-count"</span>);
+
+    <span class="cmt">// Set with TTL in one atomic op</span>
+    <span class="kw">public async</span> Task <span class="mth">SetWithExpiryAsync</span>(<span class="kw">string</span> key, <span class="kw">string</span> value, TimeSpan ttl)
+        => <span class="kw">await</span> <span class="mth">Db</span>().<span class="mth">StringSetAsync</span>(key, value, ttl);
+
+    <span class="cmt">// Distributed lock — prevent concurrent admission in same school</span>
+    <span class="kw">public async</span> Task&lt;<span class="kw">bool</span>&gt; <span class="mth">AcquireLockAsync</span>(<span class="kw">string</span> resource, TimeSpan expiry)
+    {
+        <span class="kw">var</span> lockKey = $<span class="str">"lock:{resource}"</span>;
+        <span class="kw">return await</span> <span class="mth">Db</span>().<span class="mth">StringSetAsync</span>(lockKey, <span class="str">"1"</span>, expiry, When.NotExists);
+        <span class="cmt">// When.NotExists = SET NX — only set if key doesn't exist (atomic!)</span>
+    }
+
+    <span class="cmt">// Pub/Sub — notify all servers to invalidate cache</span>
+    <span class="kw">public async</span> Task <span class="mth">PublishCacheInvalidationAsync</span>(<span class="kw">string</span> key)
+        => <span class="kw">await</span> _redis.<span class="mth">GetSubscriber</span>()
+            .<span class="mth">PublishAsync</span>(<span class="cls">RedisChannel</span>.<span class="mth">Literal</span>(<span class="str">"cache-invalidate"</span>), key);
+
+    <span class="cmt">// Subscribe to invalidation (in BackgroundService startup)</span>
+    <span class="kw">public void</span> <span class="mth">SubscribeToCacheInvalidation</span>(<span class="cls">IMemoryCache</span> localCache)
+        => _redis.<span class="mth">GetSubscriber</span>().<span class="mth">Subscribe</span>(<span class="cls">RedisChannel</span>.<span class="mth">Literal</span>(<span class="str">"cache-invalidate"</span>),
+            (_, key) => localCache.<span class="mth">Remove</span>((string)key!));
+    <span class="cmt">// Multi-level cache: local IMemoryCache + Redis — invalidate both!</span>
+}</pre>
+
+    <p style="margin:0.75rem 0;font-weight:600;color:var(--accent-light)">ZenCampus Redis Key Convention:</p>
+    <div class="key-grid">
+        <div class="key-pill"><div class="key-name">students:school:{id}</div><div class="key-desc">Student list, TTL 5min</div></div>
+        <div class="key-pill"><div class="key-name">students:id:{id}</div><div class="key-desc">Single student, TTL 10min</div></div>
+        <div class="key-pill"><div class="key-name">fees:structure:school:{id}</div><div class="key-desc">Fee structure, TTL 6h (rarely changes)</div></div>
+        <div class="key-pill"><div class="key-name">fees:balance:student:{id}</div><div class="key-desc">Balance, TTL 1min (changes on payment)</div></div>
+        <div class="key-pill"><div class="key-name">school:{id}:student-count</div><div class="key-desc">Atomic counter, no TTL</div></div>
+        <div class="key-pill"><div class="key-name">attendance:{date}:school:{id}</div><div class="key-desc">Daily attendance, TTL until midnight</div></div>
+        <div class="key-pill"><div class="key-name">schools:all</div><div class="key-desc">School list (admin), TTL 1h</div></div>
+        <div class="key-pill"><div class="key-name">session:{userId}</div><div class="key-desc">User session data, sliding 30min</div></div>
+    </div>
+</div>
+
+<!-- ===== CACHE ASIDE ===== -->
+<h2 class="section-title" id="aside">Cache-Aside Pattern</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🔄</span> The most common pattern — application manages cache</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Cache-Aside = Lazy loading</span>. Application itself cache manage pannum — DB-a read pannum bo cache-la store pannum. Cache miss aana — DB-la poa, return pannum, cache-la save pannum.</p>
+
+    <div class="cache-flow">
+<span style="color:#fca5a5">Client Request</span>
+    <span style="color:#6b7280">│</span>
+    <span style="color:#6b7280">▼</span>
+<span style="color:#fde68a">Application</span>  <span style="color:#6b7280">──1. Check cache──►</span>  <span style="color:#ef4444">Redis/Memory</span>
+    <span style="color:#6b7280">│                              │</span>
+    <span style="color:#6b7280">│ &lt;─── 2a. CACHE HIT ─────────┘</span>  <span style="color:#86efac">↩ return immediately (~1ms)</span>
+    <span style="color:#6b7280">│</span>
+    <span style="color:#6b7280">│ 2b. CACHE MISS</span>
+    <span style="color:#6b7280">│</span>
+    <span style="color:#6b7280">▼</span>
+<span style="color:#fde68a">Application</span>  <span style="color:#6b7280">──3. Query DB──────►</span>  <span style="color:#60a5fa">SQL Server</span>  <span style="color:#6b7280">(~45ms)</span>
+    <span style="color:#6b7280">│</span>
+    <span style="color:#6b7280">▼</span>
+<span style="color:#fde68a">Application</span>  <span style="color:#6b7280">──4. Store in cache─►</span>  <span style="color:#ef4444">Redis/Memory</span>
+    <span style="color:#6b7280">│</span>
+    <span style="color:#6b7280">▼</span>
+<span style="color:#fca5a5">Return to Client</span>
+    </div>
+
+    <pre><span class="cmt">// Cache-Aside as a generic helper extension</span>
+<span class="kw">public static class</span> <span class="cls">DistributedCacheExtensions</span>
+{
+    <span class="kw">public static async</span> Task&lt;T?&gt; <span class="mth">GetOrSetAsync</span>&lt;T&gt;(
+        <span class="kw">this</span> <span class="cls">IDistributedCache</span> cache,
+        <span class="kw">string</span>                   key,
+        Func&lt;Task&lt;T?&gt;&gt;          factory,
+        <span class="cls">DistributedCacheEntryOptions</span> opts,
+        <span class="cls">CancellationToken</span>        ct = <span class="kw">default</span>)
+    {
+        <span class="kw">var</span> cached = <span class="kw">await</span> cache.<span class="mth">GetStringAsync</span>(key, ct);
+        <span class="kw">if</span> (cached <span class="kw">is not null</span>)
+            <span class="kw">return</span> <span class="cls">JsonSerializer</span>.<span class="mth">Deserialize</span>&lt;T&gt;(cached);
+
+        <span class="kw">var</span> value = <span class="kw">await</span> factory();
+        <span class="kw">if</span> (value <span class="kw">is not null</span>)
+            <span class="kw">await</span> cache.<span class="mth">SetStringAsync</span>(key, <span class="cls">JsonSerializer</span>.<span class="mth">Serialize</span>(value), opts, ct);
+
+        <span class="kw">return</span> value;
+    }
+}
+
+<span class="cmt">// Usage — clean one-liner</span>
+<span class="kw">var</span> students = <span class="kw">await</span> _cache.<span class="mth">GetOrSetAsync</span>(
+    key:     $<span class="str">"students:school:{schoolId}"</span>,
+    factory: () => _db.Students.<span class="mth">Where</span>(s => s.SchoolId == schoolId).<span class="mth">ToListAsync</span>(ct),
+    opts:    <span class="kw">new</span>() { AbsoluteExpirationRelativeToNow = TimeSpan.<span class="mth">FromMinutes</span>(<span class="num">5</span>) },
+    ct:      ct);</pre>
+
+    <div class="info-box"><strong>Cache-Aside vs Write-Through vs Read-Through:</strong><br>
+    <strong>Cache-Aside</strong> (Lazy): App reads cache, on miss reads DB + populates cache. App manages writes. Most common. ✅ ZenCampus standard.<br>
+    <strong>Write-Through</strong>: Write to cache AND DB simultaneously. Always consistent but adds write latency. Use for high-read/frequent-write data.<br>
+    <strong>Read-Through</strong>: Cache layer automatically fetches from DB on miss. Framework handles it (NCache, etc.). Less common in .NET world.</div>
+</div>
+
+<!-- ===== CACHE INVALIDATION ===== -->
+<h2 class="section-title" id="invalidation">Cache Invalidation — The Hard Problem</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🗑️</span> "There are only two hard things in CS: cache invalidation and naming things" — Phil Karlton</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Cache stale aana</span> — user wrong data kaanuvanga. ZenCampus-la fee structure update aana, 6 hours until expiry — all 200 schools see old fee! Invalidation = puriyave vendiya concept.</p>
+
+    <p style="margin:0.75rem 0;font-weight:600;color:var(--accent-light)">3 Invalidation Strategies:</p>
+
+    <pre><span class="cmt">// Strategy 1: TTL-based (passive) — simplest, some staleness accepted</span>
+<span class="kw">new</span> <span class="cls">DistributedCacheEntryOptions</span>
+{
+    AbsoluteExpirationRelativeToNow = TimeSpan.<span class="mth">FromMinutes</span>(<span class="num">5</span>) <span class="cmt">// Auto-expire</span>
+}
+<span class="cmt">// ✅ Simple. ❌ Stale for up to 5 min. ZenCampus: fee balance (1min TTL)</span>
+
+<span class="cmt">// Strategy 2: Explicit invalidation on write — immediate consistency</span>
+<span class="kw">public async</span> Task <span class="mth">AdmitStudentAsync</span>(<span class="cls">AdmitStudentCommand</span> cmd, <span class="cls">CancellationToken</span> ct)
+{
+    <span class="kw">var</span> student = <span class="kw">new</span> <span class="cls">Student</span> { Name = cmd.Name, SchoolId = cmd.SchoolId };
+    _db.Students.<span class="mth">Add</span>(student);
+    <span class="kw">await</span> _db.<span class="mth">SaveChangesAsync</span>(ct);
+
+    <span class="cmt">// Invalidate ALL affected keys immediately</span>
+    <span class="kw">await</span> _cache.<span class="mth">RemoveAsync</span>($<span class="str">"students:school:{cmd.SchoolId}"</span>, ct);
+    <span class="kw">await</span> _cache.<span class="mth">RemoveAsync</span>($<span class="str">"school:{cmd.SchoolId}:student-count"</span>, ct);
+    <span class="cmt">// ✅ Immediate consistency. ❌ Must remember all keys to invalidate.</span>
+}
+
+<span class="cmt">// Strategy 3: Tag-based invalidation (Output Cache or custom)</span>
+<span class="cmt">// Group keys by tag → invalidate entire tag at once</span>
+<span class="kw">public async</span> Task <span class="mth">InvalidateSchoolDataAsync</span>(<span class="kw">int</span> schoolId, <span class="cls">CancellationToken</span> ct)
+{
+    <span class="cmt">// Store tag → key mapping in Redis Set</span>
+    <span class="kw">var</span> tagKey  = $<span class="str">"tag:school:{schoolId}"</span>;
+    <span class="kw">var</span> members = <span class="kw">await</span> _db.<span class="mth">SetMembersAsync</span>(tagKey);
+
+    <span class="kw">foreach</span> (<span class="kw">var</span> cacheKey <span class="kw">in</span> members)
+        <span class="kw">await</span> _cache.<span class="mth">RemoveAsync</span>(cacheKey, ct);
+    <span class="kw">await</span> _db.<span class="mth">KeyDeleteAsync</span>(tagKey);
+    <span class="cmt">// ✅ One call invalidates all school-related keys</span>
+}</pre>
+
+    <p style="margin:0.75rem 0;font-weight:600;color:var(--accent-light)">Output Cache — ASP.NET Core 7+ built-in:</p>
+    <pre><span class="cmt">// Program.cs</span>
+builder.Services.<span class="mth">AddOutputCache</span>(opts =>
+{
+    opts.<span class="mth">AddPolicy</span>(<span class="str">"SchoolDashboard"</span>, policy => policy
+        .<span class="mth">Expire</span>(TimeSpan.<span class="mth">FromMinutes</span>(<span class="num">5</span>))
+        .<span class="mth">SetVaryByQuery</span>(<span class="str">"schoolId"</span>)           <span class="cmt">// Different cache per schoolId</span>
+        .<span class="mth">Tag</span>(<span class="str">"school-data"</span>));                  <span class="cmt">// Tag for group invalidation</span>
+
+    opts.<span class="mth">AddPolicy</span>(<span class="str">"StaticLookup"</span>, policy => policy
+        .<span class="mth">Expire</span>(TimeSpan.<span class="mth">FromHours</span>(<span class="num">1</span>))
+        .<span class="mth">SetVaryByHeader</span>(<span class="str">"Accept-Language"</span>)); <span class="cmt">// Different cache per language</span>
+});
+
+app.<span class="mth">UseOutputCache</span>();
+
+<span class="cmt">// Controller — cache entire HTTP response</span>
+[<span class="attr">OutputCache</span>(PolicyName = <span class="str">"SchoolDashboard"</span>)]
+[<span class="attr">HttpGet</span>(<span class="str">"{schoolId}/dashboard"</span>)]
+<span class="kw">public async</span> Task&lt;IActionResult&gt; <span class="mth">GetDashboard</span>(<span class="kw">int</span> schoolId) { ... }
+
+<span class="cmt">// Invalidate by tag — called after any school data change</span>
+[<span class="attr">HttpPost</span>(<span class="str">"{schoolId}/clear-cache"</span>)]
+<span class="kw">public async</span> Task&lt;IActionResult&gt; <span class="mth">ClearCache</span>(<span class="kw">int</span> schoolId, [<span class="attr">FromServices</span>] <span class="cls">IOutputCacheStore</span> store)
+{
+    <span class="kw">await</span> store.<span class="mth">EvictByTagAsync</span>(<span class="str">"school-data"</span>, HttpContext.RequestAborted);
+    <span class="kw">return</span> <span class="mth">NoContent</span>();
+}</pre>
+</div>
+
+<!-- ===== CACHE STAMPEDE ===== -->
+<h2 class="section-title" id="stampede">Cache Stampede — Thundering Herd</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🐘</span> 200 schools hit cache simultaneously at expiry — all miss, all hit DB</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Morning 8AM-la 200 schools simultaneously</span> login pannuvanga — fee structure cache expire aana — 200 simultaneous cache misses — 200 DB queries at same time — DB crash! Cache stampede / thundering herd problem.</p>
+
+    <div class="danger-box">❌ <strong>The Stampede:</strong><br>
+    8:00:00.000 — Cache expires for school list<br>
+    8:00:00.001 — Request 1: cache miss → DB query started<br>
+    8:00:00.002 — Request 2: cache miss → DB query started (not yet cached!)<br>
+    8:00:00.003 — Request 3: cache miss → DB query started<br>
+    ... 200 more queries ... DB CPU 100%, timeout!</div>
+
+    <pre><span class="cmt">// Fix 1: SemaphoreSlim per key — only 1 thread fetches DB, rest wait</span>
+<span class="kw">private static readonly</span> <span class="cls">ConcurrentDictionary</span>&lt;<span class="kw">string</span>, <span class="cls">SemaphoreSlim</span>&gt; _locks = <span class="kw">new</span>();
+
+<span class="kw">public async</span> Task&lt;T?&gt; <span class="mth">GetOrSetWithLockAsync</span>&lt;T&gt;(
+    <span class="kw">string</span> key, Func&lt;Task&lt;T?&gt;&gt; factory,
+    <span class="cls">DistributedCacheEntryOptions</span> opts, <span class="cls">CancellationToken</span> ct)
+{
+    <span class="cmt">// 1. Fast path — check cache without lock</span>
+    <span class="kw">var</span> cached = <span class="kw">await</span> _cache.<span class="mth">GetStringAsync</span>(key, ct);
+    <span class="kw">if</span> (cached <span class="kw">is not null</span>) <span class="kw">return</span> <span class="cls">JsonSerializer</span>.<span class="mth">Deserialize</span>&lt;T&gt;(cached);
+
+    <span class="cmt">// 2. Acquire per-key semaphore</span>
+    <span class="kw">var</span> sem = _locks.<span class="mth">GetOrAdd</span>(key, _ => <span class="kw">new</span> <span class="cls">SemaphoreSlim</span>(<span class="num">1</span>, <span class="num">1</span>));
+    <span class="kw">await</span> sem.<span class="mth">WaitAsync</span>(ct);
+    <span class="kw">try</span>
+    {
+        <span class="cmt">// 3. Double-check after acquiring lock — might be populated now</span>
+        cached = <span class="kw">await</span> _cache.<span class="mth">GetStringAsync</span>(key, ct);
+        <span class="kw">if</span> (cached <span class="kw">is not null</span>) <span class="kw">return</span> <span class="cls">JsonSerializer</span>.<span class="mth">Deserialize</span>&lt;T&gt;(cached);
+
+        <span class="cmt">// 4. Only ONE thread reaches here — fetches from DB</span>
+        <span class="kw">var</span> value = <span class="kw">await</span> factory();
+        <span class="kw">if</span> (value <span class="kw">is not null</span>)
+            <span class="kw">await</span> _cache.<span class="mth">SetStringAsync</span>(key, <span class="cls">JsonSerializer</span>.<span class="mth">Serialize</span>(value), opts, ct);
+        <span class="kw">return</span> value;
+    }
+    <span class="kw">finally</span>
+    {
+        sem.<span class="mth">Release</span>();
+        _locks.<span class="mth">TryRemove</span>(key, <span class="kw">out</span> _);
+    }
+}
+<span class="cmt">// Result: 200 concurrent misses → 1 DB query, 199 wait → serve from cache</span></pre>
+
+    <pre><span class="cmt">// Fix 2: Jitter (randomize TTL) — prevents synchronized expiry</span>
+<span class="kw">private</span> <span class="cls">DistributedCacheEntryOptions</span> <span class="mth">WithJitter</span>(TimeSpan baseTtl)
+{
+    <span class="kw">var</span> jitter = TimeSpan.<span class="mth">FromSeconds</span>(<span class="cls">Random</span>.Shared.<span class="mth">Next</span>(<span class="num">0</span>, <span class="num">60</span>)); <span class="cmt">// 0-60s random</span>
+    <span class="kw">return new</span>() { AbsoluteExpirationRelativeToNow = baseTtl + jitter };
+}
+<span class="cmt">// 200 schools each get different expiry → never all expire simultaneously</span>
+<span class="cmt">// School 1: expires at 8:04:37, School 2: 8:06:12, School 3: 8:03:55...</span></pre>
+</div>
+
+<!-- ===== MOVIE REFS ===== -->
+<h2 class="section-title" id="movies">🎬 Tamil Movie Memory Anchors</h2>
+
+<div class="movie-box">
+    <div class="movie-icon">🧠</div>
+    <div class="movie-content">
+        <h4>IMemoryCache — "Mersal" (2017)</h4>
+        <p>Mersal-la Vijay's character has instant recall — same-hospital-la irukkaravanga immediately identify pannuvom. IMemoryCache same: same server process-la data already RAM-la irukku — sub-millisecond retrieval. Fast, local, personal. But if 3 different hospitals (servers) irundha — each has their own memory, inconsistency!</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">🔴</div>
+    <div class="movie-content">
+        <h4>Redis / IDistributedCache — "Enthiran" (2010)</h4>
+        <p>Chitti robot network — all Chittis share a hive mind. Redis same: all 3 server instances share one Redis. When Server 1 updates student count in Redis, Servers 2 and 3 immediately see the same value. No inconsistency! Like all Chittis knowing the same information simultaneously.</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">🔄</div>
+    <div class="movie-content">
+        <h4>Cache-Aside — "Kaaka Muttai" (2014)</h4>
+        <p>Kaaka Muttai-la boys: nearby vadai first check pannuvanga (cache) — irundha immediately eat. Illana far away pizza shop-ku pova (DB query). Return panna — nearby kadai-ku solla (cache store) — next time quick-a kedaikum. Cache-Aside exact same: check local first, on miss go far, store for next time!</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">🗑️</div>
+    <div class="movie-content">
+        <h4>Cache Invalidation — "Ayan" (2009)</h4>
+        <p>Ayan-la intelligence work-la: stale intel = death. Old information about enemy location — agent goes there — wrong! Cache invalidation same: when fee structure changes, if old data stays in cache — parent pays wrong amount — chaos! Must invalidate immediately on write. "Kill old data before it kills the transaction."</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">🐘</div>
+    <div class="movie-content">
+        <h4>Cache Stampede — "Rajinikanth fan rush"</h4>
+        <p>Rajini new movie release — ticket booking opens 8 AM — 10,000 fans simultaneously rush to one ticket counter. Counter crashes! Cache stampede same: 200 schools simultaneously cache miss — 200 DB queries — DB crashes. Fix: SemaphoreSlim = one window open, others wait in queue. Jitter = stagger opening times!</p>
+    </div>
+</div>
+
+<!-- ===== SCENARIOS ===== -->
+<h2 class="section-title" id="scenarios">🎯 10 Interview Scenarios</h2>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q1. IMemoryCache vs IDistributedCache — when to use which? ZenCampus has 3 load-balanced server instances.</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>IMemoryCache — single server, or data that can be different per server:</strong></p>
+        <ul style="margin-left:1.5rem">
+            <li>Lookup tables (classes, subjects, districts) — same data, ok if replicated</li>
+            <li>User-specific transient state — computation results, temp objects</li>
+            <li>Sub-millisecond requirement — no network hop</li>
+        </ul>
+        <p style="margin-top:0.5rem"><strong>IDistributedCache (Redis) — 3 server instances:</strong></p>
+        <ul style="margin-left:1.5rem">
+            <li>Student lists — parent on Server 1 sees same data as parent on Server 2</li>
+            <li>Fee balance — must be consistent across all servers</li>
+            <li>Session state — user logs in via Server 1, next request might hit Server 2</li>
+            <li>Rate limiting counters — shared across servers</li>
+        </ul>
+        <p style="margin-top:0.5rem"><strong>ZenCampus hybrid:</strong> "We use both. IMemoryCache for school config (20 schools' configs loaded once per server — tiny, ok to duplicate). Redis for student lists and fee balances where a parent must see consistent data regardless of which server handles their request."</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q2. Production Bug: Fee structure was updated by admin, but parents still see old fee amounts for 6 hours. Root cause and fix?</div>
+        <span class="scenario-type type-prod">Production Bug</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Root cause:</strong> Cache-Aside with 6h TTL only — no explicit invalidation on write. When admin updates fee structure in DB, the Redis cache still holds the old value until TTL expires.</p>
+        <pre><span class="cmt">// ❌ Original code — update DB but forget cache</span>
+<span class="kw">public async</span> Task <span class="mth">UpdateFeeStructureAsync</span>(<span class="kw">int</span> schoolId, <span class="cls">UpdateFeeDto</span> dto, <span class="cls">CancellationToken</span> ct)
+{
+    <span class="kw">await</span> _db.<span class="mth">UpdateAsync</span>(schoolId, dto, ct); <span class="cmt">// DB updated</span>
+    <span class="kw">await</span> _db.<span class="mth">SaveChangesAsync</span>(ct);
+    <span class="cmt">// ← Cache NOT invalidated! Parents see stale data for up to 6h</span>
+}
+
+<span class="cmt">// ✅ Fix — explicit invalidation after write</span>
+<span class="kw">public async</span> Task <span class="mth">UpdateFeeStructureAsync</span>(<span class="kw">int</span> schoolId, <span class="cls">UpdateFeeDto</span> dto, <span class="cls">CancellationToken</span> ct)
+{
+    <span class="kw">await</span> _db.<span class="mth">UpdateAsync</span>(schoolId, dto, ct);
+    <span class="kw">await</span> _db.<span class="mth">SaveChangesAsync</span>(ct);
+    <span class="kw">await</span> _cache.<span class="mth">RemoveAsync</span>($<span class="str">"fees:structure:school:{schoolId}"</span>, ct); <span class="cmt">// ← MUST add</span>
+    <span class="cmt">// Next request = cache miss → fresh DB read → cached with new TTL</span>
+}</span></pre>
+        <p><strong>Prevention:</strong> Document all cache keys each service reads/writes. Code review checklist: "Does this write invalidate all relevant cache keys?" Use Decorator pattern (CachedStudentRepository from Day 19) — cache logic co-located with write logic.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q3. What is the Cache Stampede / Thundering Herd problem? How do you prevent it in ZenCampus?</div>
+        <span class="scenario-type type-perf">Performance</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Cache Stampede:</strong> Many requests arrive simultaneously for the same expired cache key. All get cache miss, all hit DB concurrently — DB gets overwhelmed.</p>
+        <p style="margin-top:0.5rem"><strong>Two complementary fixes:</strong></p>
+        <ol style="margin-left:1.5rem">
+            <li><strong>SemaphoreSlim lock per key:</strong> Only 1 request fetches from DB. Others wait, then serve from freshly populated cache. "Double-check" pattern after acquiring lock is critical.</li>
+            <li><strong>Jitter:</strong> Add random 0-60s to TTL so 200 schools don't all expire simultaneously. School 1 expires at 8:04:37, School 2 at 8:06:12 — spread the load.</li>
+        </ol>
+        <p style="margin-top:0.5rem"><strong>Additional option — Stale-while-revalidate:</strong> Return stale cache immediately, update cache in background. Complex but zero latency spikes.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q4. What TTL would you set for these ZenCampus data types and why?</div>
+        <span class="scenario-type type-design">Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <table>
+            <tr><th>Data</th><th>TTL</th><th>Reason</th></tr>
+            <tr><td>Fee structure (annual, rarely changes)</td><td>6h (invalidate on write)</td><td>Long TTL fine, but must invalidate explicitly when admin changes</td></tr>
+            <tr><td>Student list per school</td><td>5 min</td><td>New admissions happen throughout day; 5 min staleness acceptable</td></tr>
+            <tr><td>Student fee balance</td><td>1 min</td><td>Changes on every payment; short TTL to minimize staleness (invalidate on payment)</td></tr>
+            <tr><td>Daily attendance</td><td>Until midnight</td><td>Calculate expiry = seconds until midnight; attendance for that day is stable</td></tr>
+            <tr><td>School config (name, logo, settings)</td><td>1h</td><td>Changes rarely; 1h staleness acceptable</td></tr>
+            <tr><td>District/class lookup tables</td><td>24h or NeverRemove</td><td>Static reference data — almost never changes</td></tr>
+            <tr><td>OTP code</td><td>5 min exactly</td><td>Security requirement — OTP must expire, no sliding</td></tr>
+        </table>
+        <pre><span class="cmt">// Calculate TTL until midnight</span>
+<span class="kw">var</span> now         = DateTime.UtcNow;
+<span class="kw">var</span> midnight    = now.Date.AddDays(<span class="num">1</span>);
+<span class="kw">var</span> ttl         = midnight - now;
+<span class="kw">var</span> opts        = <span class="kw">new</span> <span class="cls">DistributedCacheEntryOptions</span>
+                    { AbsoluteExpirationRelativeToNow = ttl };</pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q5. What data should you NEVER cache? What are the security implications?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Never cache:</strong></p>
+        <ul style="margin-left:1.5rem">
+            <li><strong>Passwords / hashes</strong> — never cache, always fetch fresh (BCrypt verification needs DB)</li>
+            <li><strong>JWT tokens</strong> — cache compromises revocation (need to check blacklist in DB)</li>
+            <li><strong>Per-user sensitive data mixed together</strong> — cache key must always include userId. Never cache "all students" without schoolId — cross-tenant data leak risk</li>
+            <li><strong>Financial transactions</strong> — fee receipt details must be from DB for audit trails</li>
+            <li><strong>OTP codes</strong> — use Redis with exact TTL, but never extend sliding expiry on failed attempt</li>
+            <li><strong>Permission/role data</strong> — if parent's account is suspended, stale cache might allow access</li>
+        </ul>
+        <pre><span class="cmt">// ❌ DANGEROUS — mixing tenants in cache key</span>
+<span class="kw">var</span> key = <span class="str">"students:all"</span>;  <span class="cmt">// School A admin sees School B students!
+
+// ✅ ALWAYS scope by tenant</span>
+<span class="kw">var</span> key = $<span class="str">"students:school:{schoolId}"</span>;  <span class="cmt">// Tenant-isolated</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q6. Explain Redis eviction policies. Which would you choose for ZenCampus and why?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <table>
+            <tr><th>Policy</th><th>What it does</th><th>When to use</th></tr>
+            <tr><td><code>noeviction</code></td><td>Return error when full</td><td>Never for app cache — clients crash</td></tr>
+            <tr><td><code>allkeys-lru</code></td><td>Evict least recently used (any key)</td><td>✅ ZenCampus choice — frequently accessed data stays, old data evicted</td></tr>
+            <tr><td><code>volatile-lru</code></td><td>LRU only for keys with TTL</td><td>When some keys must never be evicted (no TTL)</td></tr>
+            <tr><td><code>allkeys-lfu</code></td><td>Evict least frequently used</td><td>Better than LRU if access pattern is consistent</td></tr>
+            <tr><td><code>volatile-ttl</code></td><td>Evict keys with shortest TTL</td><td>When TTL correlates with importance</td></tr>
+            <tr><td><code>allkeys-random</code></td><td>Random eviction</td><td>Almost never — unpredictable</td></tr>
+        </table>
+        <p style="margin-top:0.5rem"><strong>ZenCampus:</strong> "We use <code>allkeys-lru</code>. Fee structures for 200 schools are accessed frequently → LRU keeps them warm. Report data cached briefly and not re-accessed → evicted naturally. Set max memory: <code>maxmemory 512mb</code> in redis.conf."</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q7. How does Output Caching differ from IDistributedCache? When would you use each?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>IDistributedCache:</strong> You manually cache data objects (DTOs, lists). Application controls when to read/write/invalidate. Fine-grained control. Works in any layer (service, repository).</p>
+        <p style="margin-top:0.5rem"><strong>Output Cache:</strong> ASP.NET Core caches the entire HTTP response (headers + body). Zero code in business logic. Works at middleware level before controller even executes. Declarative with <code>[OutputCache]</code> attribute.</p>
+        <table>
+            <tr><th>Feature</th><th>IDistributedCache</th><th>Output Cache</th></tr>
+            <tr><td>Cache level</td><td>Data layer</td><td>HTTP response layer</td></tr>
+            <tr><td>Control</td><td>Manual, fine-grained</td><td>Declarative attribute</td></tr>
+            <tr><td>Vary by</td><td>Your key design</td><td>Query, header, route, claim</td></tr>
+            <tr><td>Use for</td><td>Shared data across requests</td><td>Identical GET responses</td></tr>
+        </table>
+        <p style="margin-top:0.5rem"><strong>ZenCampus:</strong> Output Cache for school dashboard GET (entire response is same for all users of same school). IDistributedCache for student list (used by multiple endpoints, need to invalidate on admission).</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q8. Redis is down. Should ZenCampus crash? How do you make caching resilient?</div>
+        <span class="scenario-type type-design">Resilience</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Cache should NEVER be a single point of failure</strong> — it's a performance optimization, not the source of truth. If Redis is down, fall back to DB (slower but correct).</p>
+        <pre><span class="cmt">// Resilient cache-aside — Redis failure → DB fallback</span>
+<span class="kw">public async</span> Task&lt;<span class="cls">IReadOnlyList</span>&lt;<span class="cls">StudentDto</span>&gt;&gt; <span class="mth">GetBySchoolAsync</span>(<span class="kw">int</span> schoolId, <span class="cls">CancellationToken</span> ct)
+{
+    <span class="kw">var</span> key = $<span class="str">"students:school:{schoolId}"</span>;
+
+    <span class="kw">try</span>
+    {
+        <span class="kw">var</span> cached = <span class="kw">await</span> _cache.<span class="mth">GetStringAsync</span>(key, ct);
+        <span class="kw">if</span> (cached <span class="kw">is not null</span>)
+            <span class="kw">return</span> <span class="cls">JsonSerializer</span>.<span class="mth">Deserialize</span>&lt;<span class="cls">List</span>&lt;<span class="cls">StudentDto</span>&gt;&gt;(cached)!;
+    }
+    <span class="kw">catch</span> (<span class="cls">Exception</span> ex)
+    {
+        <span class="cmt">// Redis down — log and continue (cache miss, DB fallback)</span>
+        _log.<span class="mth">LogWarning</span>(ex, <span class="str">"Redis unavailable, falling back to DB for {Key}"</span>, key);
+    }
+
+    <span class="kw">var</span> students = <span class="kw">await</span> _db.Students
+        .<span class="mth">Where</span>(s => s.SchoolId == schoolId).<span class="mth">ToListAsync</span>(ct);
+
+    <span class="kw">try</span>
+    {
+        <span class="kw">await</span> _cache.<span class="mth">SetStringAsync</span>(key, <span class="cls">JsonSerializer</span>.<span class="mth">Serialize</span>(students),
+            <span class="kw">new</span>() { AbsoluteExpirationRelativeToNow = TimeSpan.<span class="mth">FromMinutes</span>(<span class="num">5</span>) }, ct);
+    }
+    <span class="kw">catch</span> (<span class="cls">Exception</span> ex)
+    {
+        _log.<span class="mth">LogWarning</span>(ex, <span class="str">"Redis unavailable, could not cache {Key}"</span>, key);
+    }
+
+    <span class="kw">return</span> students; <span class="cmt">// Always returns data — just slower when Redis is down</span>
+}
+<span class="cmt">// Also: AbortOnConnectFail = false in ConnectionMultiplexer config (Day 22 setup)</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q9. How do you test code that uses caching? Can you unit test cache behavior?</div>
+        <span class="scenario-type type-design">Testing</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Three approaches:</strong></p>
+        <ol style="margin-left:1.5rem">
+            <li><strong>In-memory IDistributedCache for unit tests:</strong> <code>new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()))</code> — real cache behavior, no Redis needed</li>
+            <li><strong>Mock IDistributedCache:</strong> Mock returns null (cache miss) → verify DB called. Mock returns value → verify DB not called</li>
+            <li><strong>Integration tests with Testcontainers:</strong> Spin up real Redis Docker container in tests — <code>new RedisBuilder().Build()</code></li>
+        </ol>
+        <pre><span class="cmt">// Unit test — verify cache miss hits DB</span>
+[<span class="attr">Fact</span>]
+<span class="kw">public async</span> Task <span class="mth">GetBySchool_CacheMiss_QueriesDb</span>()
+{
+    <span class="kw">var</span> cache = <span class="kw">new</span> <span class="cls">MemoryDistributedCache</span>(<span class="cls">Options</span>.<span class="mth">Create</span>(<span class="kw">new</span> <span class="cls">MemoryDistributedCacheOptions</span>()));
+    <span class="kw">var</span> db    = <span class="cls">MockDbWithStudents</span>(<span class="num">schoolId</span>: <span class="num">1</span>, count: <span class="num">5</span>);
+    <span class="kw">var</span> svc   = <span class="kw">new</span> <span class="cls">StudentCacheService</span>(cache, db);
+
+    <span class="kw">var</span> result = <span class="kw">await</span> svc.<span class="mth">GetBySchoolAsync</span>(<span class="num">1</span>, <span class="cls">CancellationToken</span>.None);
+
+    Assert.<span class="mth">Equal</span>(<span class="num">5</span>, result.Count);
+    <span class="cmt">// Second call — should hit cache, not DB</span>
+    db.<span class="mth">ResetCallCount</span>();
+    <span class="kw">var</span> result2 = <span class="kw">await</span> svc.<span class="mth">GetBySchoolAsync</span>(<span class="num">1</span>, <span class="cls">CancellationToken</span>.None);
+    Assert.<span class="mth">Equal</span>(<span class="num">0</span>, db.QueryCount); <span class="cmt">// DB not called second time</span>
+}</pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q10. "Tell me about your caching experience in ZenCampus." — Full structured answer</div>
+        <span class="scenario-type type-exp">Experience</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p>"In ZenCampus — 50,000 students, 200 schools — we hit a performance wall when our school dashboard queries ran on every page load for all schools simultaneously at 8 AM. DB CPU hit 90%.</p>
+        <p style="margin-top:0.5rem"><strong>Multi-level caching strategy:</strong> IMemoryCache for static lookup tables (district names, class list — tiny, ok to be duplicated per server). Redis IDistributedCache for student lists and fee balances — we have 3 load-balanced servers, so data must be consistent regardless of which server handles a parent's request.</p>
+        <p style="margin-top:0.5rem"><strong>Cache-Aside pattern:</strong> Check Redis → hit returns immediately (~1ms), miss queries DB (~45ms) → stores result. I built a generic <code>GetOrSetAsync</code> extension method so every repository uses the same pattern.</p>
+        <p style="margin-top:0.5rem"><strong>Invalidation:</strong> We had a bug where fee structure updates didn't invalidate cache — parents saw old fee amounts for up to 6 hours. Fixed by adding explicit <code>cache.RemoveAsync</code> calls in every write command handler. Code review now checks this explicitly.</p>
+        <p style="margin-top:0.5rem"><strong>Stampede prevention:</strong> Added jitter (±60s random) to all TTLs so 200 schools don't expire simultaneously. SemaphoreSlim lock for high-traffic endpoints.</p>
+        <p style="margin-top:0.5rem"><strong>Result:</strong> DB CPU dropped from 90% to 12%. Dashboard response time: 450ms → 8ms average. Redis adds 99th percentile cache hit rate."</p>
+    </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<h2 class="section-title" id="quiz">🧠 Quick Quiz</h2>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q1. ZenCampus has 3 load-balanced servers. Student list is cached with IMemoryCache. Student admitted on Server 1. Server 2 still shows old count. Fix?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Reduce IMemoryCache TTL to 10 seconds</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">B) Restart all servers after each admission</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">C) Switch to IDistributedCache (Redis) — shared across all server instances</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Use sticky sessions — route same parent always to same server</button>
+    </div>
+    <div class="quiz-feedback">IDistributedCache (Redis) — the only correct fix. IMemoryCache is per-process; 3 servers = 3 separate caches = inconsistency. Sticky sessions don't scale and still break. Reducing TTL to 10s is a band-aid. Redis is the single shared cache for all instances.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q2. Admin updates fee structure. Which cache strategy ensures parents see the new fee IMMEDIATELY?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Set TTL to 1 minute — parents wait max 1 min</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">B) Explicit invalidation — call cache.RemoveAsync(key) immediately after DB save</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) Write-through cache — update cache and DB together</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Disable caching for fee structure — too important to cache</button>
+    </div>
+    <div class="quiz-feedback">Explicit invalidation — remove the key immediately after DB write. Next request = cache miss → fresh DB read → cache populated with new value. 1-minute TTL still has up to 1 min staleness. Write-through is correct too but requires different setup. Disabling cache defeats the purpose and DB gets hammered.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q3. Morning 8 AM — fee structure cache for all 200 schools expires simultaneously. 200 requests hit DB at once. What prevents this?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Increase TTL to 24 hours so it doesn't expire during peak hours</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">B) Add circuit breaker — stop requests when DB is overloaded</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">C) TTL jitter — add random 0–60s to each school's TTL so they expire at different times</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Output Cache — caches at HTTP response level</button>
+    </div>
+    <div class="quiz-feedback">TTL jitter — randomize each school's expiry by ±60 seconds so 200 schools expire at different times (spread over 2 minutes instead of all at once). Combine with SemaphoreSlim for the remaining concurrent misses. Output Cache doesn't solve synchronized expiry either. 24h TTL means stale data all day.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q4. Redis goes down at 2 PM. What should happen to ZenCampus fee collection?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Return 503 Service Unavailable — cache is required</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">B) Use stale cache data — it was valid an hour ago</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">C) Fall back to DB — slower (~45ms) but correct; log Redis warning</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Queue all requests until Redis recovers</button>
+    </div>
+    <div class="quiz-feedback">Fall back to DB — cache is a performance optimization, NOT the source of truth. Redis down = slower responses (~45ms instead of ~1ms) but fee collection must continue. Wrap cache reads in try-catch, log warning, fall through to DB. AbortOnConnectFail=false in ConnectionMultiplexer prevents startup crash when Redis is unavailable.</div>
+</div>
+
+<!-- ===== CHECKLIST ===== -->
+<h2 class="section-title">✅ Day 22 Mastery Checklist</h2>
+<ul class="checklist">
+    <li><input type="checkbox" id="c1"><label for="c1">IMemoryCache: per-server, sub-ms, GetOrCreate with AbsoluteExpiration + SlidingExpiration + Priority</label></li>
+    <li><input type="checkbox" id="c2"><label for="c2">IDistributedCache: cross-server shared, AddStackExchangeRedisCache, GetStringAsync/SetStringAsync</label></li>
+    <li><input type="checkbox" id="c3"><label for="c3">InstanceName prefix: "zencampus:" → all keys become "zencampus:students:school:1"</label></li>
+    <li><input type="checkbox" id="c4"><label for="c4">Cache key MUST include tenant scope: "students:school:{schoolId}" — never "students:all"</label></li>
+    <li><input type="checkbox" id="c5"><label for="c5">Cache-Aside: check → miss → DB → store → return. Most common pattern.</label></li>
+    <li><input type="checkbox" id="c6"><label for="c6">Explicit invalidation: cache.RemoveAsync() immediately after every write that affects cached data</label></li>
+    <li><input type="checkbox" id="c7"><label for="c7">TTL by volatility: fee structure 6h, student list 5min, fee balance 1min, OTP 5min exact</label></li>
+    <li><input type="checkbox" id="c8"><label for="c8">Cache Stampede: SemaphoreSlim (1 DB call, rest wait) + Jitter (stagger expiry)</label></li>
+    <li><input type="checkbox" id="c9"><label for="c9">Double-check pattern: read cache again AFTER acquiring SemaphoreSlim lock</label></li>
+    <li><input type="checkbox" id="c10"><label for="c10">Output Cache: [OutputCache] caches entire HTTP response; EvictByTagAsync for invalidation</label></li>
+    <li><input type="checkbox" id="c11"><label for="c11">Redis resilience: try-catch around cache ops, fall back to DB, AbortOnConnectFail=false</label></li>
+    <li><input type="checkbox" id="c12"><label for="c12">Never cache: passwords, JWT tokens, per-user data without userId in key, revokable permissions</label></li>
+</ul>
+
+<div style="text-align:center;margin:2rem 0;padding:1.5rem;background:var(--card);border-radius:12px;border:1px solid var(--border);">
+    <div style="font-size:1.5rem;font-weight:800;color:var(--accent-light)">Day 22 Complete! 🎯</div>
+    <div style="color:var(--text-dim);margin-top:0.5rem">36.7% of the 60-day journey done</div>
+    <div style="color:var(--text-dim);font-size:0.85rem;margin-top:0.25rem">Tomorrow: Day 23 — Logging & Observability (Serilog, Structured Logging, Correlation IDs, Health Checks, Application Insights)</div>
+</div>
+
+</div>
+
+<footer>
+    <div>Day 22 / 60 — Caching | ZenCampus .NET Interview Prep</div>
+    <div style="margin-top:0.25rem;color:var(--accent)">Accent: Redis Red #dc2626 | Days 1–22 colors all unique ✓</div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const p = (doc.scrollTop || document.body.scrollTop) / (doc.scrollHeight - doc.clientHeight) * 100;
+    document.getElementById('progressBar').style.width = p + '%';
+});
+function toggle(btn) {
+    const a = btn.nextElementSibling;
+    a.classList.toggle('visible');
+    btn.textContent = a.classList.contains('visible') ? 'Hide Answer' : 'Reveal Answer';
+}
+function quiz(btn, correct) {
+    const card = btn.closest('.quiz-card');
+    card.querySelectorAll('.quiz-opt').forEach(o => o.disabled = true);
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    if (!correct)
+        card.querySelectorAll('.quiz-opt').forEach(o => {
+            if (o.getAttribute('onclick').includes('true')) o.classList.add('correct');
+        });
+    const fb = card.querySelector('.quiz-feedback');
+    fb.classList.add('show');
+    fb.style.cssText = `background:${correct?'rgba(34,197,94,0.1)':'rgba(239,68,68,0.1)'};color:${correct?'#86efac':'#fca5a5'};border:1px solid ${correct?'rgba(34,197,94,0.3)':'rgba(239,68,68,0.3)'};`;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Basics — SELECT, JOINs, GROUP BY, Indexes | ZenCampus</title>
+<style>
+  :root{--accent:#1e40af;--accent-dim:#1d3a9e;--accent-subtle:rgba(30,64,175,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(30,64,175,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.05rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cm{color:#546e7a;font-style:italic;}.str{color:#c3e88d;}.num{color:#f78c6c;}.fn{color:#82aaff;}
+  .movie{background:linear-gradient(135deg,rgba(30,64,175,.12),rgba(30,64,175,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.9rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.5rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">SQL BASICS</span>
+  <a href="#select">SELECT</a><a href="#joins">JOINs</a><a href="#groupby">GROUP BY</a>
+  <a href="#subquery">Subqueries</a><a href="#indexes">Indexes</a><a href="#scenarios">Interview Q</a>
+</nav>
+<div class="hero">
+  <h1>SQL Basics</h1>
+  <p>SELECT · WHERE · JOINs · GROUP BY · HAVING · Subqueries · Indexes · Stored Procs</p>
+  <div class="tags">
+    <span class="tag">T-SQL</span><span class="tag">JOINs</span><span class="tag">Aggregation</span>
+    <span class="tag">Indexes</span>
+    <span class="tag" style="background:rgba(30,64,175,.2);border-color:#1e40af;color:#93c5fd;">Blue #1e40af</span>
+  </div>
+</div>
+<main>
+
+<section id="select">
+  <h2>📊 SELECT — Retrieve Data</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Magadheera (2009) — Query the past to understand the present</div>
+    <div class="mb">Magadheera-la past records query pannuvaanga — exact data retrieve panna, filter panna, sort panna. SQL same: Students table-la specific record find panna SELECT use pannuvom. ZenCampus-la "schoolId=1 la active class-5 students fee unpaid"  nu filter panna — WHERE clause. "Name alphabetically" sort panna — ORDER BY. Oru school-la 1000 students irukkaanga — SELECT correct-a write pannidhu!</div></div>
+  </div>
+  <pre><code><span class="cm">-- Basic SELECT</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students;                   <span class="cm">-- all columns (avoid in prod)</span>
+<span class="kw">SELECT</span> Id, Name, AdmNo, ClassId <span class="kw">FROM</span> Students;  <span class="cm">-- specific columns</span>
+
+<span class="cm">-- WHERE clause</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">WHERE</span> SchoolId = <span class="num">1</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">WHERE</span> ClassId = <span class="num">5</span> <span class="kw">AND</span> IsActive = <span class="num">1</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">WHERE</span> ClassId <span class="kw">IN</span> (<span class="num">5</span>, <span class="num">6</span>, <span class="num">7</span>);
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">WHERE</span> Name <span class="kw">LIKE</span> <span class="str">'B%'</span>;     <span class="cm">-- starts with B</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">WHERE</span> Name <span class="kw">LIKE</span> <span class="str">'%Kumar%'</span>; <span class="cm">-- contains Kumar</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">WHERE</span> Fee <span class="kw">BETWEEN</span> <span class="num">5000</span> <span class="kw">AND</span> <span class="num">10000</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">WHERE</span> Email <span class="kw">IS NULL</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">WHERE</span> Email <span class="kw">IS NOT NULL</span>;
+
+<span class="cm">-- ORDER BY</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">ORDER BY</span> Name <span class="kw">ASC</span>;     <span class="cm">-- alphabetical</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">ORDER BY</span> Fee <span class="kw">DESC</span>;     <span class="cm">-- highest fee first</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">ORDER BY</span> ClassId, Name;  <span class="cm">-- multiple columns</span>
+
+<span class="cm">-- TOP / LIMIT (SQL Server uses TOP)</span>
+<span class="kw">SELECT TOP</span> <span class="num">10</span> * <span class="kw">FROM</span> Students <span class="kw">ORDER BY</span> Fee <span class="kw">DESC</span>;  <span class="cm">-- top 10 highest fee</span>
+
+<span class="cm">-- Pagination with OFFSET FETCH</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students
+<span class="kw">ORDER BY</span> Name
+<span class="kw">OFFSET</span> <span class="num">20</span> <span class="kw">ROWS</span>           <span class="cm">-- skip first 20 (page 1)</span>
+<span class="kw">FETCH NEXT</span> <span class="num">20</span> <span class="kw">ROWS ONLY</span>;  <span class="cm">-- take next 20 (page 2)</span>
+
+<span class="cm">-- Column aliases</span>
+<span class="kw">SELECT</span>
+    Id            <span class="kw">AS</span> StudentId,
+    Name          <span class="kw">AS</span> StudentName,
+    Fee * <span class="num">12</span>      <span class="kw">AS</span> AnnualFee
+<span class="kw">FROM</span> Students;
+
+<span class="cm">-- DISTINCT</span>
+<span class="kw">SELECT DISTINCT</span> ClassId <span class="kw">FROM</span> Students <span class="kw">WHERE</span> SchoolId = <span class="num">1</span>;</code></pre>
+</section>
+
+<section id="joins">
+  <h2>🔗 JOINs — Combine Multiple Tables</h2>
+  <pre><code><span class="cm">-- INNER JOIN — only matching rows in BOTH tables</span>
+<span class="kw">SELECT</span>
+    s.Name,
+    s.AdmNo,
+    c.ClassName,
+    f.PendingAmount
+<span class="kw">FROM</span> Students s
+<span class="kw">INNER JOIN</span> Classes  c <span class="kw">ON</span> s.ClassId  = c.Id
+<span class="kw">INNER JOIN</span> Fees     f <span class="kw">ON</span> s.Id       = f.StudentId
+<span class="kw">WHERE</span> s.SchoolId = <span class="num">1</span> <span class="kw">AND</span> f.PendingAmount > <span class="num">0</span>
+<span class="kw">ORDER BY</span> f.PendingAmount <span class="kw">DESC</span>;
+
+<span class="cm">-- LEFT JOIN — all rows from LEFT table, NULL if no match on right</span>
+<span class="kw">SELECT</span>
+    s.Name,
+    s.AdmNo,
+    f.PendingAmount  <span class="cm">-- NULL if no fee record</span>
+<span class="kw">FROM</span> Students s
+<span class="kw">LEFT JOIN</span> Fees f <span class="kw">ON</span> s.Id = f.StudentId
+<span class="kw">WHERE</span> s.SchoolId = <span class="num">1</span>;
+<span class="cm">-- Shows ALL students, even those with no fee record</span>
+
+<span class="cm">-- Find students with NO fee record</span>
+<span class="kw">SELECT</span> s.Name
+<span class="kw">FROM</span> Students s
+<span class="kw">LEFT JOIN</span> Fees f <span class="kw">ON</span> s.Id = f.StudentId
+<span class="kw">WHERE</span> f.Id <span class="kw">IS NULL</span>;  <span class="cm">-- right side NULL = no match</span>
+
+<span class="cm">-- RIGHT JOIN — all from RIGHT, NULL if no match on left (uncommon, flip to LEFT JOIN)</span>
+<span class="cm">-- FULL OUTER JOIN — all rows from both, NULL where no match</span>
+
+<span class="cm">-- Self JOIN — join table to itself</span>
+<span class="kw">SELECT</span> s.Name <span class="kw">AS</span> Student, p.Name <span class="kw">AS</span> ParentStudent
+<span class="kw">FROM</span> Students s
+<span class="kw">INNER JOIN</span> Students p <span class="kw">ON</span> s.ParentStudentId = p.Id;  <span class="cm">-- sibling relationship</span></code></pre>
+
+  <table>
+    <tr><th>JOIN Type</th><th>Returns</th><th>ZenCampus Use</th></tr>
+    <tr><td>INNER JOIN</td><td>Only matching rows in both tables</td><td>Students with fees, students with attendance</td></tr>
+    <tr><td>LEFT JOIN</td><td>All left rows + matching right (NULL if no match)</td><td>All students even those without fee records</td></tr>
+    <tr><td>RIGHT JOIN</td><td>All right rows + matching left (NULL if no match)</td><td>Rare — flip to LEFT JOIN instead</td></tr>
+    <tr><td>FULL OUTER JOIN</td><td>All rows from both tables</td><td>Find unmatched records on either side</td></tr>
+  </table>
+</section>
+
+<section id="groupby">
+  <h2>📊 GROUP BY and Aggregations</h2>
+  <pre><code><span class="cm">-- Aggregate functions</span>
+<span class="kw">SELECT</span>
+    <span class="fn">COUNT</span>(*),            <span class="cm">-- total rows</span>
+    <span class="fn">COUNT</span>(Email),        <span class="cm">-- non-NULL emails only</span>
+    <span class="fn">SUM</span>(Fee),            <span class="cm">-- total fee</span>
+    <span class="fn">AVG</span>(Fee),            <span class="cm">-- average fee</span>
+    <span class="fn">MAX</span>(Fee),            <span class="cm">-- highest fee</span>
+    <span class="fn">MIN</span>(Fee)             <span class="cm">-- lowest fee</span>
+<span class="kw">FROM</span> Students <span class="kw">WHERE</span> SchoolId = <span class="num">1</span>;
+
+<span class="cm">-- GROUP BY — aggregate per group</span>
+<span class="kw">SELECT</span>
+    ClassId,
+    <span class="fn">COUNT</span>(*) <span class="kw">AS</span> StudentCount,
+    <span class="fn">SUM</span>(Fee) <span class="kw">AS</span> TotalFee,
+    <span class="fn">AVG</span>(Fee) <span class="kw">AS</span> AvgFee
+<span class="kw">FROM</span> Students
+<span class="kw">WHERE</span> SchoolId = <span class="num">1</span> <span class="kw">AND</span> IsActive = <span class="num">1</span>
+<span class="kw">GROUP BY</span> ClassId
+<span class="kw">ORDER BY</span> ClassId;
+
+<span class="cm">-- HAVING — filter AFTER grouping (WHERE filters before grouping)</span>
+<span class="kw">SELECT</span>
+    ClassId,
+    <span class="fn">COUNT</span>(*) <span class="kw">AS</span> StudentCount
+<span class="kw">FROM</span> Students
+<span class="kw">WHERE</span> SchoolId = <span class="num">1</span>          <span class="cm">-- filter rows BEFORE grouping</span>
+<span class="kw">GROUP BY</span> ClassId
+<span class="kw">HAVING COUNT</span>(*) > <span class="num">30</span>        <span class="cm">-- filter groups AFTER grouping</span>
+<span class="kw">ORDER BY</span> StudentCount <span class="kw">DESC</span>;
+<span class="cm">-- Shows only classes with more than 30 students</span>
+
+<span class="cm">-- GROUP BY with JOIN</span>
+<span class="kw">SELECT</span>
+    c.ClassName,
+    <span class="fn">COUNT</span>(s.Id) <span class="kw">AS</span> StudentCount,
+    <span class="fn">SUM</span>(f.PendingAmount) <span class="kw">AS</span> TotalPending
+<span class="kw">FROM</span> Classes c
+<span class="kw">LEFT JOIN</span> Students  s <span class="kw">ON</span> c.Id = s.ClassId
+<span class="kw">LEFT JOIN</span> Fees      f <span class="kw">ON</span> s.Id = f.StudentId
+<span class="kw">WHERE</span> c.SchoolId = <span class="num">1</span>
+<span class="kw">GROUP BY</span> c.Id, c.ClassName
+<span class="kw">ORDER BY</span> TotalPending <span class="kw">DESC</span>;</code></pre>
+</section>
+
+<section id="subquery">
+  <h2>🔍 Subqueries and CTEs</h2>
+  <pre><code><span class="cm">-- Subquery in WHERE</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students
+<span class="kw">WHERE</span> Id <span class="kw">IN</span> (
+    <span class="kw">SELECT</span> StudentId <span class="kw">FROM</span> Fees
+    <span class="kw">WHERE</span> PendingAmount > <span class="num">0</span>
+);
+
+<span class="cm">-- Correlated subquery — references outer query</span>
+<span class="kw">SELECT</span> s.Name,
+    (<span class="kw">SELECT</span> <span class="fn">SUM</span>(PendingAmount)
+     <span class="kw">FROM</span> Fees f
+     <span class="kw">WHERE</span> f.StudentId = s.Id) <span class="kw">AS</span> TotalPending
+<span class="kw">FROM</span> Students s
+<span class="kw">WHERE</span> s.SchoolId = <span class="num">1</span>;
+
+<span class="cm">-- CTE (Common Table Expression) — cleaner than subquery</span>
+<span class="kw">WITH</span> UnpaidStudents <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> StudentId, <span class="fn">SUM</span>(PendingAmount) <span class="kw">AS</span> TotalPending
+    <span class="kw">FROM</span> Fees
+    <span class="kw">WHERE</span> PendingAmount > <span class="num">0</span>
+    <span class="kw">GROUP BY</span> StudentId
+),
+ActiveStudents <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> * <span class="kw">FROM</span> Students
+    <span class="kw">WHERE</span> IsActive = <span class="num">1</span> <span class="kw">AND</span> SchoolId = <span class="num">1</span>
+)
+<span class="kw">SELECT</span>
+    a.Name,
+    a.AdmNo,
+    u.TotalPending
+<span class="kw">FROM</span> ActiveStudents a
+<span class="kw">INNER JOIN</span> UnpaidStudents u <span class="kw">ON</span> a.Id = u.StudentId
+<span class="kw">ORDER BY</span> u.TotalPending <span class="kw">DESC</span>;
+
+<span class="cm">-- EXISTS — efficient existence check</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students s
+<span class="kw">WHERE EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> Fees f
+    <span class="kw">WHERE</span> f.StudentId = s.Id <span class="kw">AND</span> f.PendingAmount > <span class="num">0</span>
+);  <span class="cm">-- faster than IN for large datasets</span></code></pre>
+</section>
+
+<section id="indexes">
+  <h2>⚡ Indexes — Speed Up Queries</h2>
+  <pre><code><span class="cm">-- Indexes make SELECT faster, INSERT/UPDATE/DELETE slightly slower</span>
+
+<span class="cm">-- Clustered index — physical order of table rows (Primary Key usually)</span>
+<span class="cm">-- Only ONE per table</span>
+
+<span class="cm">-- Non-clustered index — separate structure for fast lookup</span>
+<span class="kw">CREATE INDEX</span> IX_Students_SchoolId
+    <span class="kw">ON</span> Students (SchoolId);
+
+<span class="cm">-- Composite index — multiple columns</span>
+<span class="kw">CREATE INDEX</span> IX_Students_School_Class
+    <span class="kw">ON</span> Students (SchoolId, ClassId);
+<span class="cm">-- Covers: WHERE SchoolId = 1 AND ClassId = 5</span>
+
+<span class="cm">-- Covering index — include extra columns to avoid table lookup</span>
+<span class="kw">CREATE INDEX</span> IX_Students_School_Name
+    <span class="kw">ON</span> Students (SchoolId)
+    <span class="kw">INCLUDE</span> (Name, AdmNo, IsActive);
+<span class="cm">-- Query: SELECT Name, AdmNo WHERE SchoolId = 1 → all from index, no table!</span>
+
+<span class="cm">-- Unique index</span>
+<span class="kw">CREATE UNIQUE INDEX</span> UIX_Students_AdmNo
+    <span class="kw">ON</span> Students (AdmNo, SchoolId);
+<span class="cm">-- Ensures no duplicate admission numbers within same school</span>
+
+<span class="cm">-- Stored Procedure</span>
+<span class="kw">CREATE PROCEDURE</span> GetStudentsByClass
+    @SchoolId <span class="kw">INT</span>,
+    @ClassId  <span class="kw">INT</span>,
+    @Page     <span class="kw">INT</span> = <span class="num">1</span>,
+    @PageSize <span class="kw">INT</span> = <span class="num">20</span>
+<span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">SELECT</span>
+        s.Id, s.Name, s.AdmNo,
+        c.ClassName,
+        f.PendingAmount
+    <span class="kw">FROM</span> Students s
+    <span class="kw">INNER JOIN</span> Classes c <span class="kw">ON</span> s.ClassId = c.Id
+    <span class="kw">LEFT JOIN</span>  Fees    f <span class="kw">ON</span> s.Id      = f.StudentId
+    <span class="kw">WHERE</span> s.SchoolId = @SchoolId
+      <span class="kw">AND</span> s.ClassId  = @ClassId
+      <span class="kw">AND</span> s.IsActive = <span class="num">1</span>
+    <span class="kw">ORDER BY</span> s.Name
+    <span class="kw">OFFSET</span> (@Page - <span class="num">1</span>) * @PageSize <span class="kw">ROWS</span>
+    <span class="kw">FETCH NEXT</span> @PageSize <span class="kw">ROWS ONLY</span>;
+<span class="kw">END</span></code></pre>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is the difference between INNER JOIN and LEFT JOIN?</span><span class="st">JOINs</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>INNER JOIN: returns ONLY rows where a match exists in BOTH tables. If Student has no Fee record → student NOT included. LEFT JOIN: returns ALL rows from left table. If no match on right → right side columns are NULL. Student with no fee record → still appears, fee columns show NULL. ZenCampus: Attendance report — use INNER JOIN (only students who have attendance records). Student list with optional fee info — use LEFT JOIN (show all students, NULL fee if not yet assigned).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What is the difference between WHERE and HAVING?</span><span class="st">GROUP BY</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>WHERE: filters ROWS before grouping. Applied to individual row data. Cannot use aggregate functions. HAVING: filters GROUPS after GROUP BY. Applied to grouped/aggregated data. Can use COUNT(), SUM(), etc. Example: WHERE IsActive = 1 → filter individual rows first. HAVING COUNT(*) > 30 → then filter groups with < 30 students. Order: FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → TOP/OFFSET.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is a CTE and why use it instead of subquery?</span><span class="st">Advanced</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>CTE (Common Table Expression): named temporary result set. WITH CTE_Name AS (SELECT...) SELECT * FROM CTE_Name. Benefits over subquery: 1) Readable — complex logic broken into named steps. 2) Reusable — reference same CTE multiple times. 3) Recursive CTEs possible (tree structures). Subquery: inline, anonymous, hard to read when nested. Rule: simple one-level subquery is fine. Complex multi-step → CTE. ZenCampus: UnpaidStudents CTE → ActiveStudents CTE → JOIN both = clear and readable.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What is an index and what types exist?</span><span class="st">Performance</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Index: separate data structure that speeds up SELECT by allowing direct row lookup without full table scan. Like a book index — go directly to page instead of scanning all pages. Types: 1) Clustered: rows stored physically sorted by key (usually PK). One per table. 2) Non-clustered: separate B-tree structure with pointers to rows. Multiple allowed. 3) Composite: covers multiple columns. Column order matters (leftmost prefix rule). 4) Unique: enforces uniqueness. 5) Covering: includes extra columns to avoid main table lookup. Trade-off: indexes slow INSERT/UPDATE/DELETE (index must be updated too).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">Explain the SQL query execution order.</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>SQL is DECLARED not executed top-to-bottom. Logical processing order: 1) FROM (which tables) 2) JOIN (combine tables) 3) WHERE (filter rows) 4) GROUP BY (group) 5) HAVING (filter groups) 6) SELECT (pick columns) 7) DISTINCT (remove duplicates) 8) ORDER BY (sort) 9) TOP/OFFSET (limit rows). This is why you CANNOT reference a SELECT alias in WHERE — WHERE runs before SELECT. You CAN reference alias in HAVING or ORDER BY in some DB engines.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">What is N+1 query problem and how to fix in SQL?</span><span class="st">Performance</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>N+1: 1 query to get N students, then N separate queries to get each student's fee = N+1 total queries. Example: SELECT 100 students, then for each: SELECT fee WHERE StudentId = 1... 2... 3... → 101 queries! Fix: JOIN in one query. SELECT s.*, f.PendingAmount FROM Students s LEFT JOIN Fees f ON s.Id = f.StudentId WHERE s.SchoolId = 1 → 1 query. ZenCampus: Real bug we fixed — went from 8 seconds (N+1) to 0.4 seconds (JOIN + include in EF Core).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">What is the difference between EXISTS and IN?</span><span class="st">Advanced</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>IN (subquery): fetches all values from subquery, then checks membership. If subquery returns 50,000 IDs → all loaded into memory for comparison. EXISTS: stops at FIRST match. Doesn't fetch all results. Often faster when subquery returns large set. Rule: prefer EXISTS for existence checks with correlated subquery. IN is fine for small static lists: WHERE Status IN ('Active', 'Pending'). For subqueries with large results: WHERE EXISTS (SELECT 1 FROM Fees WHERE StudentId = s.Id).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">Write a query to find the 2nd highest fee paid student.</span><span class="st">Problem</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>-- Method 1: Subquery
+SELECT TOP 1 Name, Fee
+FROM Students
+WHERE Fee < (SELECT MAX(Fee) FROM Students)
+ORDER BY Fee DESC;
+
+-- Method 2: ROW_NUMBER (handles ties correctly)
+WITH Ranked AS (
+    SELECT Name, Fee,
+        ROW_NUMBER() OVER (ORDER BY Fee DESC) AS RowNum
+    FROM Students
+    WHERE SchoolId = 1
+)
+SELECT Name, Fee FROM Ranked WHERE RowNum = 2;
+
+-- DENSE_RANK() for "2nd unique fee value" (handles ties)
+-- ROW_NUMBER() for "2nd row by fee"</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">What are window functions? Give an example.</span><span class="st">Advanced</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>-- Window functions: aggregate over a partition WITHOUT collapsing rows
+-- OVER (PARTITION BY ... ORDER BY ...)
+SELECT
+    Name,
+    ClassId,
+    Fee,
+    RANK()       OVER (PARTITION BY ClassId ORDER BY Fee DESC) AS FeeRank,
+    ROW_NUMBER() OVER (PARTITION BY ClassId ORDER BY Fee DESC) AS RowNum,
+    SUM(Fee)     OVER (PARTITION BY ClassId) AS ClassTotalFee,
+    AVG(Fee)     OVER (PARTITION BY ClassId) AS ClassAvgFee
+FROM Students
+WHERE SchoolId = 1;
+-- Each row kept, but enriched with class-level aggregates and ranking
+-- FeeRank=1 means highest fee in that class</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">What is a transaction and when do you use it?</span><span class="st">Transactions</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>-- Transaction: atomic unit — ALL succeed or ALL rollback
+BEGIN TRANSACTION;
+
+BEGIN TRY
+    -- Admit student
+    INSERT INTO Students (Name, AdmNo, ClassId, SchoolId)
+    VALUES ('Basha', 'ADM001', 5, 1);
+
+    DECLARE @StudentId INT = SCOPE_IDENTITY();
+
+    -- Create fee record
+    INSERT INTO Fees (StudentId, TotalAmount, PaidAmount, Term)
+    VALUES (@StudentId, 5000, 0, 'Term1');
+
+    COMMIT TRANSACTION;  -- both succeed → commit
+END TRY
+BEGIN CATCH
+    ROLLBACK TRANSACTION;  -- any error → undo both
+    THROW;
+END CATCH;
+-- If fee insert fails → student insert also undone. Data consistency!</code></pre></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. A LEFT JOIN returns students with no fee records. What value appears in the fee columns?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','0 is not inserted automatically — only explicit INSERT creates 0.')">0 (zero)</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! When LEFT JOIN finds no matching row on the right table, all columns from the right table appear as NULL in the result. Use IS NULL check to find those unmatched rows.')">NULL</button>
+    <button class="qb" onclick="ans(this,'wrong','Empty string is for VARCHAR columns with explicit empty value — not for join mismatches.')">Empty string ""</button>
+    <button class="qb" onclick="ans(this,'wrong','LEFT JOIN does not exclude rows with no match — that\'s INNER JOIN.')">The row is excluded from results</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What is the difference between WHERE and HAVING?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Both run at the server — not different locations.')">WHERE runs on client, HAVING runs on server</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! WHERE filters individual rows BEFORE GROUP BY. HAVING filters groups AFTER GROUP BY. HAVING can use aggregate functions (COUNT, SUM); WHERE cannot.')">WHERE filters rows before grouping; HAVING filters groups after grouping</button>
+    <button class="qb" onclick="ans(this,'wrong','Both are in the same SQL statement — no caching difference.')">WHERE is cached, HAVING is not</button>
+    <button class="qb" onclick="ans(this,'wrong','WHERE can filter any column, not just indexed ones.')">WHERE only works on indexed columns</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. How many clustered indexes can a SQL Server table have?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Only one clustered index is allowed — it defines the physical row order.')">As many as needed</button>
+    <button class="qb" onclick="ans(this,'wrong','Zero is possible (heap table), but typically tables have one.')">Zero — clustered indexes are optional</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! A table can have exactly ONE clustered index because it defines the physical storage order of rows. The primary key is usually the clustered index by default. Multiple non-clustered indexes are allowed.')">Only ONE</button>
+    <button class="qb" onclick="ans(this,'wrong','Two clustered indexes is not possible.')">Two — one for reads, one for writes</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. Which SQL function is used for row-by-row ranking with no gaps?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','ROW_NUMBER() assigns unique sequential numbers — same rank students get different numbers.')">ROW_NUMBER()</button>
+    <button class="qb" onclick="ans(this,'wrong','RANK() skips numbers after ties: 1,1,3 (not 1,1,2).')">RANK()</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! DENSE_RANK() assigns sequential rank numbers with NO GAPS. Ties get same rank: 1,1,2,2,3. RANK() would give 1,1,3. ROW_NUMBER() gives unique: 1,2,3,4. Use DENSE_RANK for "2nd highest fee" type queries.')">DENSE_RANK()</button>
+    <button class="qb" onclick="ans(this,'wrong','NTILE divides rows into N groups — not individual ranking.')">NTILE()</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can write SELECT with WHERE, ORDER BY, and pagination</li>
+    <li onclick="ck(this)"><input type="checkbox">I know INNER JOIN vs LEFT JOIN and when to use each</li>
+    <li onclick="ck(this)"><input type="checkbox">I can aggregate with GROUP BY, COUNT, SUM, AVG</li>
+    <li onclick="ck(this)"><input type="checkbox">I use HAVING to filter groups (not WHERE)</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write CTEs for readable complex queries</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand clustered vs non-clustered indexes</li>
+    <li onclick="ck(this)"><input type="checkbox">I can use window functions (ROW_NUMBER, RANK, DENSE_RANK)</li>
+    <li onclick="ck(this)"><input type="checkbox">I wrap multi-step operations in transactions</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">SQL Basics Complete ✓ — SELECT, JOINs, GROUP BY, Indexes, Transactions!</p>
+  <p>Accent: Blue #1e40af · Next: Dapper Basics (Final File!)</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SQL Server Interview - 40 Q&A</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Segoe UI',sans-serif;background:#0f1117;color:#e2e8f0;line-height:1.7;}
+
+    header{background:linear-gradient(135deg,#7c3aed,#1a56db);padding:50px 20px;text-align:center;}
+    header h1{font-size:2.4rem;font-weight:800;color:#fff;}
+    header p{color:#c4b5fd;margin-top:8px;font-size:1rem;}
+    .stats{display:flex;justify-content:center;gap:30px;margin-top:20px;flex-wrap:wrap;}
+    .stat{background:rgba(255,255,255,0.1);padding:10px 24px;border-radius:20px;color:#fff;font-weight:700;font-size:0.9rem;}
+
+    /* NAV */
+    .nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:24px 20px;background:#161824;position:sticky;top:0;z-index:100;border-bottom:1px solid #2d3250;}
+    .nav a{background:#1e2130;color:#94a3b8;padding:7px 16px;border-radius:20px;text-decoration:none;font-size:0.82rem;font-weight:600;border:1px solid #2d3250;transition:all 0.2s;}
+    .nav a:hover{background:#7c3aed;color:#fff;border-color:#7c3aed;}
+
+    .container{max-width:960px;margin:0 auto;padding:0 20px;}
+
+    /* SECTION HEADER */
+    .section-hdr{margin:50px 0 24px;padding:20px 28px;border-radius:14px;display:flex;align-items:center;gap:16px;}
+    .section-hdr .ico{font-size:2rem;}
+    .section-hdr h2{font-size:1.5rem;font-weight:800;color:#fff;}
+    .section-hdr span{font-size:0.8rem;color:#94a3b8;margin-top:2px;display:block;}
+    .bg-purple{background:linear-gradient(135deg,#4c1d95,#1e2130);border:1px solid #7c3aed;}
+    .bg-blue{background:linear-gradient(135deg,#1e3a8a,#1e2130);border:1px solid #1a56db;}
+    .bg-green{background:linear-gradient(135deg,#064e3b,#1e2130);border:1px solid #059669;}
+    .bg-orange{background:linear-gradient(135deg,#7c2d12,#1e2130);border:1px solid #ea580c;}
+    .bg-pink{background:linear-gradient(135deg,#831843,#1e2130);border:1px solid #db2777;}
+    .bg-teal{background:linear-gradient(135deg,#134e4a,#1e2130);border:1px solid #0d9488;}
+
+    /* Q&A CARD */
+    .qa{background:#1e2130;border:1px solid #2d3250;border-radius:14px;margin-bottom:14px;overflow:hidden;}
+    .qa-q{padding:18px 24px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;background:#252840;transition:background 0.2s;}
+    .qa-q:hover{background:#2d3250;}
+    .qa-q .meta{display:flex;align-items:flex-start;gap:12px;flex:1;}
+    .qa-q .num{background:#7c3aed;color:#fff;font-size:0.75rem;min-width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;margin-top:2px;}
+    .qa-q h4{font-size:0.95rem;color:#e2e8f0;font-weight:600;}
+    .qa-q .arr{color:#7c3aed;font-size:1rem;transition:transform 0.3s;flex-shrink:0;margin-top:4px;}
+    .qa-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+    .qa-a.open{max-height:2000px;}
+    .qa-a-inner{padding:22px 24px;border-top:1px solid #2d3250;}
+    .qa-a-inner p{color:#cbd5e1;font-size:0.92rem;margin-bottom:10px;}
+    .qa-a-inner ul,.qa-a-inner ol{padding-left:20px;color:#94a3b8;font-size:0.9rem;margin-bottom:10px;}
+    .qa-a-inner li{margin-bottom:6px;}
+    .qa-a-inner strong{color:#c4b5fd;}
+    .arr.open{transform:rotate(180deg);}
+
+    /* CODE */
+    pre{background:#0d1117;border:1px solid #30363d;border-radius:10px;padding:16px 20px;font-family:'Courier New',monospace;font-size:0.82rem;overflow-x:auto;margin:12px 0;color:#e6edf3;line-height:1.6;}
+    .kw{color:#ff7b72;}
+    .fn{color:#d2a8ff;}
+    .cm{color:#6a737d;}
+    .str{color:#a5d6ff;}
+    .num-c{color:#79c0ff;}
+
+    /* HIGHLIGHT BOX */
+    .tip{background:#1a1f35;border-left:3px solid #7c3aed;padding:12px 16px;border-radius:6px;margin:12px 0;color:#c4b5fd;font-size:0.88rem;}
+    .warn{background:#1f1a10;border-left:3px solid #f59e0b;padding:12px 16px;border-radius:6px;margin:12px 0;color:#fcd34d;font-size:0.88rem;}
+    .good{background:#0f1f18;border-left:3px solid #10b981;padding:12px 16px;border-radius:6px;margin:12px 0;color:#6ee7b7;font-size:0.88rem;}
+
+    /* TABLE */
+    .tbl-wrap{overflow-x:auto;border-radius:10px;margin:12px 0;}
+    table{width:100%;border-collapse:collapse;background:#1a1f35;font-size:0.85rem;}
+    thead{background:#7c3aed;}
+    thead th{padding:12px 16px;color:#fff;text-align:left;font-weight:700;}
+    tbody tr{border-bottom:1px solid #2d3250;}
+    tbody tr:hover{background:#252840;}
+    tbody td{padding:10px 16px;color:#cbd5e1;}
+    .g{color:#6ee7b7;font-weight:600;}
+    .r{color:#f87171;font-weight:600;}
+
+    /* SEARCH */
+    .search-wrap{padding:20px;text-align:center;}
+    #search{background:#1e2130;border:1px solid #2d3250;color:#e2e8f0;padding:12px 20px;border-radius:25px;width:100%;max-width:500px;font-size:0.95rem;outline:none;}
+    #search:focus{border-color:#7c3aed;}
+    .hidden{display:none!important;}
+
+    /* PROGRESS */
+    .prog-bar{background:#2d3250;height:6px;border-radius:3px;margin-top:10px;}
+    .prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#7c3aed,#1a56db);}
+
+    /* SCROLL TOP */
+    #top{position:fixed;bottom:24px;right:24px;background:#7c3aed;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.2rem;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:999;box-shadow:0 4px 12px rgba(124,58,237,0.4);}
+
+    footer{text-align:center;padding:40px 20px;color:#4b5563;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:40px;}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🗄️ SQL Server Interview</h1>
+  <p>40 Must-Know Questions with Detailed Answers</p>
+  <div class="stats">
+    <div class="stat">📊 Query Optimization — 8 Qs</div>
+    <div class="stat">🔍 Indexing — 8 Qs</div>
+    <div class="stat">🔒 Transactions — 8 Qs</div>
+    <div class="stat">🏗️ DB Design — 6 Qs</div>
+    <div class="stat">⚡ Advanced SQL — 6 Qs</div>
+    <div class="stat">🚨 Production — 4 Qs</div>
+  </div>
+</header>
+
+<!-- NAV -->
+<div class="nav">
+  <a href="#s1">📊 Query Optimization</a>
+  <a href="#s2">🔍 Indexing</a>
+  <a href="#s3">🔒 Transactions</a>
+  <a href="#s4">🏗️ DB Design</a>
+  <a href="#s5">⚡ Advanced SQL</a>
+  <a href="#s6">🚨 Production</a>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <input id="search" type="text" placeholder="🔎 Search questions..." oninput="searchQA(this.value)"/>
+</div>
+
+<div class="container">
+
+<!-- ==================== SECTION 1: QUERY OPTIMIZATION ==================== -->
+<div id="s1">
+  <div class="section-hdr bg-purple">
+    <div class="ico">📊</div>
+    <div>
+      <h2>Query Optimization</h2>
+      <span>Questions 1–8 | Performance tuning, execution plans, bottlenecks</span>
+    </div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">1</span><h4>How do you optimize a SQL query that takes several minutes to execute?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p>Query slow-ஆ run ஆகும்போது, இந்த steps follow பண்ணு:</p>
+        <ol>
+          <li><strong>Execution Plan பாரு</strong> — SSMS-ல Ctrl+M → actual plan check பண்ணு. "Table Scan" இருந்தா index missing.</li>
+          <li><strong>SELECT * avoid பண்ணு</strong> — தேவையான columns மட்டும் select பண்ணு.</li>
+          <li><strong>WHERE clause-ல functions avoid பண்ணு</strong> — Index use ஆகாது.</li>
+          <li><strong>Proper indexes add பண்ணு</strong> — WHERE, JOIN, ORDER BY columns-ல.</li>
+          <li><strong>JOIN order optimize பண்ணு</strong> — Smaller result set முதல்ல.</li>
+          <li><strong>Subqueries → JOINs/CTEs ஆக மாத்து</strong> — Better performance.</li>
+          <li><strong>Statistics update பண்ணு</strong> — Outdated stats → wrong execution plan.</li>
+        </ol>
+        <pre><span class="cm">-- Bad (function on column = no index)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">WHERE</span> <span class="fn">YEAR</span>(AdmissionDate) = <span class="num-c">2024</span>
+
+<span class="cm">-- Good (sargable query = index can be used)</span>
+<span class="kw">SELECT</span> StudentName, RollNo <span class="kw">FROM</span> Students
+<span class="kw">WHERE</span> AdmissionDate >= <span class="str">'2024-01-01'</span> <span class="kw">AND</span> AdmissionDate < <span class="str">'2025-01-01'</span></pre>
+        <div class="tip">💡 First action: Always check Execution Plan. It shows exactly where time is wasted.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">2</span><h4>How do you identify performance bottlenecks in SQL Server?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p>Performance bottleneck identify பண்ண இந்த tools & DMVs use பண்ணு:</p>
+        <ul>
+          <li><strong>Activity Monitor</strong> — SSMS → Activity Monitor → CPU, waits, expensive queries live-ஆ பாரு</li>
+          <li><strong>sys.dm_exec_query_stats</strong> — Most expensive queries DMV</li>
+          <li><strong>sys.dm_os_wait_stats</strong> — Server எதுக்கு wait பண்றதுன்னு பாரு</li>
+          <li><strong>SQL Server Profiler / Extended Events</strong> — Slow queries capture பண்ணு</li>
+          <li><strong>Performance Dashboard Reports</strong> — SSMS → Reports → Standard Reports</li>
+        </ul>
+        <pre><span class="cm">-- Top 10 most expensive queries (CPU)</span>
+<span class="kw">SELECT TOP</span> <span class="num-c">10</span>
+    <span class="fn">total_worker_time</span>/<span class="fn">execution_count</span> <span class="kw">AS</span> AvgCPU,
+    execution_count,
+    <span class="kw">SUBSTRING</span>(st.text, <span class="num-c">1</span>, <span class="num-c">200</span>) <span class="kw">AS</span> QueryText
+<span class="kw">FROM</span> sys.dm_exec_query_stats qs
+<span class="kw">CROSS APPLY</span> sys.dm_exec_sql_text(qs.sql_handle) st
+<span class="kw">ORDER BY</span> AvgCPU <span class="kw">DESC</span></pre>
+        <div class="tip">💡 Wait stats-ல CXPACKET அதிகமா இருந்தா parallelism issue. PAGEIOLATCH_SH இருந்தா disk I/O issue.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">3</span><h4>What is an Execution Plan, and how do you analyze it?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p>Execution Plan = SQL Server query-ஐ எப்படி execute பண்றதுன்னு show பண்ற visual diagram. SQL Server Query Optimizer தேர்ந்தெடுக்கற best path.</p>
+        <p><strong>Types:</strong></p>
+        <ul>
+          <li><strong>Estimated Plan</strong> (Ctrl+L) — Execute பண்ணாம plan மட்டும் பாரு</li>
+          <li><strong>Actual Plan</strong> (Ctrl+M) — Execute பண்ணி real stats பாரு (accurate)</li>
+        </ul>
+        <p><strong>Analyze பண்றது எப்படி:</strong></p>
+        <ul>
+          <li>🔴 <strong>Table Scan / Clustered Index Scan</strong> — Entire table scan → Index missing</li>
+          <li>🟢 <strong>Index Seek</strong> — Specific rows find → Efficient</li>
+          <li>⚠️ <strong>Key Lookup</strong> — Extra data fetch → Covering index தேவை</li>
+          <li>⚠️ <strong>Hash Match / Sort</strong> — Costly operations → Optimize join/order</li>
+          <li>❗ <strong>Thick arrows</strong> — Lots of rows moving → Bottleneck</li>
+          <li>❗ <strong>Yellow warning icon</strong> — Statistics outdated or missing index</li>
+        </ul>
+        <div class="tip">💡 Right-click any node → Properties → Cost % பாரு. Highest cost node-ஐ முதல்ல fix பண்ணு.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">4</span><h4>How do you troubleshoot slow-running queries in production?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p><strong>Step-by-step production troubleshooting:</strong></p>
+        <ol>
+          <li><strong>Identify the query</strong> — Activity Monitor or sp_who2</li>
+          <li><strong>Check wait types</strong> — sys.dm_os_waiting_tasks</li>
+          <li><strong>Get execution plan</strong> — sys.dm_exec_query_plan</li>
+          <li><strong>Check statistics</strong> — Outdated statistics → wrong plan</li>
+          <li><strong>Check blocking</strong> — sp_lock or sys.dm_exec_requests</li>
+          <li><strong>Parameter Sniffing check</strong> — Wrong cached plan use ஆகுதா?</li>
+          <li><strong>Index fragmentation check</strong> — DBCC SHOWCONTIG</li>
+        </ol>
+        <pre><span class="cm">-- Currently running slow queries</span>
+<span class="kw">SELECT</span> r.session_id, r.status, r.wait_type,
+       r.total_elapsed_time/1000 <span class="kw">AS</span> elapsed_sec,
+       <span class="fn">SUBSTRING</span>(t.text, <span class="num-c">1</span>, <span class="num-c">200</span>) <span class="kw">AS</span> QueryText
+<span class="kw">FROM</span> sys.dm_exec_requests r
+<span class="kw">CROSS APPLY</span> sys.dm_exec_sql_text(r.sql_handle) t
+<span class="kw">WHERE</span> r.total_elapsed_time > <span class="num-c">5000</span>  <span class="cm">-- 5 seconds+</span>
+<span class="kw">ORDER BY</span> r.total_elapsed_time <span class="kw">DESC</span></pre>
+        <div class="warn">⚠️ Production-ல DBCC FREEPROCCACHE பண்ணாதே — Plan cache clear ஆகும், performance worse ஆகும்.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">5</span><h4>What techniques do you use to optimize queries on large tables?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <ul>
+          <li><strong>Proper Indexing</strong> — Clustered + Non-clustered indexes on filter/join columns</li>
+          <li><strong>Table Partitioning</strong> — Large tables-ஐ partition key-ல divide பண்ணு (e.g., by year)</li>
+          <li><strong>Pagination</strong> — OFFSET-FETCH use பண்ணி batch-ஆ data load பண்ணு</li>
+          <li><strong>Avoid SELECT *</strong> — Only needed columns</li>
+          <li><strong>Filtered Indexes</strong> — WHERE condition உள்ள index (smaller, faster)</li>
+          <li><strong>Columnstore Indexes</strong> — Analytics/reporting queries-க்கு</li>
+          <li><strong>Archiving</strong> — Old data separate archive table-க்கு move பண்ணு</li>
+          <li><strong>Query Hints</strong> — NOLOCK (dirty reads ok-ஆ இருந்தா), FORCESEEK</li>
+        </ul>
+        <pre><span class="cm">-- Pagination example</span>
+<span class="kw">SELECT</span> StudentName, RollNo, Class
+<span class="kw">FROM</span> Students
+<span class="kw">ORDER BY</span> StudentName
+<span class="kw">OFFSET</span> <span class="num-c">0</span> <span class="kw">ROWS FETCH NEXT</span> <span class="num-c">100</span> <span class="kw">ROWS ONLY</span>
+
+<span class="cm">-- Filtered index (only active students)</span>
+<span class="kw">CREATE INDEX</span> IX_Students_Active
+<span class="kw">ON</span> Students(StudentName) <span class="kw">WHERE</span> IsActive = <span class="num-c">1</span></pre>
+        <div class="tip">💡 Millions of rows → Columnstore index use பண்ணு → 10x faster for analytics.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">6</span><h4>How do you reduce IO and CPU consumption in SQL Server?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p><strong>IO Reduction:</strong></p>
+        <ul>
+          <li>Proper indexes → Table scan-ஐ Seek-ஆ convert பண்ணு</li>
+          <li>Covering indexes → Key lookup eliminate பண்ணு</li>
+          <li>Read only needed columns (avoid SELECT *)</li>
+          <li>Buffer Pool — Hot data memory-ல cache ஆகும்</li>
+          <li>SSD storage use பண்ணு tempdb-க்கு</li>
+        </ul>
+        <p><strong>CPU Reduction:</strong></p>
+        <ul>
+          <li>Set-based operations → Cursor avoid பண்ணு</li>
+          <li>MAXDOP settings — Parallelism control பண்ணு</li>
+          <li>Stored procedures → Compilation overhead குறையும்</li>
+          <li>Avoid scalar functions in SELECT/WHERE</li>
+          <li>Temp tables instead of repeated subqueries</li>
+        </ul>
+        <pre><span class="cm">-- Avoid scalar function (CPU hog)</span>
+<span class="cm">-- Bad:</span> <span class="kw">SELECT</span> dbo.GetStudentGrade(StudentId) <span class="kw">FROM</span> Students
+<span class="cm">-- Good:</span> <span class="kw">JOIN</span> Grades g <span class="kw">ON</span> g.StudentId = s.StudentId</pre>
+        <div class="good">✅ Tip: MAXDOP = 0 (unlimited parallelism) avoid பண்ணு. OLTP servers-க்கு MAXDOP = 1 or 4.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">7</span><h4>How do you optimize queries involving millions of records?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <ul>
+          <li><strong>Batch Processing</strong> — Millions-ஐ ஒரே time-ல process பண்ணாம batch-ஆ</li>
+          <li><strong>Partitioned Tables</strong> — Partition elimination use ஆகும்</li>
+          <li><strong>Columnstore Indexes</strong> — Aggregation queries-க்கு blazing fast</li>
+          <li><strong>Materialized results</strong> — Frequently needed results pre-compute பண்ணு</li>
+          <li><strong>Indexed Views</strong> — Complex join results pre-aggregate பண்ணு</li>
+          <li><strong>Statistics maintenance</strong> — Regular UPDATE STATISTICS</li>
+        </ul>
+        <pre><span class="cm">-- Batch delete (don't delete millions at once)</span>
+<span class="kw">WHILE</span> <span class="num-c">1</span>=<span class="num-c">1</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">DELETE TOP</span>(<span class="num-c">10000</span>) <span class="kw">FROM</span> ArchivedLogs
+    <span class="kw">WHERE</span> LogDate < <span class="str">'2023-01-01'</span>
+    <span class="kw">IF</span> @@<span class="fn">ROWCOUNT</span> = <span class="num-c">0</span> <span class="kw">BREAK</span>
+    <span class="fn">WAITFOR DELAY</span> <span class="str">'00:00:01'</span>  <span class="cm">-- 1 sec pause</span>
+<span class="kw">END</span></pre>
+        <div class="tip">💡 Million rows delete → Always batch-ஆ பண்ணு. Log file overflow avoid ஆகும்.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">8</span><h4>What tools do you use to monitor SQL Server performance?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Tool</th><th>Purpose</th><th>When to Use</th></tr></thead>
+            <tbody>
+              <tr><td>Activity Monitor</td><td>Live CPU, waits, expensive queries</td><td>Quick real-time check</td></tr>
+              <tr><td>SQL Server Profiler</td><td>Trace queries, deadlocks</td><td>Capture slow queries</td></tr>
+              <tr><td>Extended Events</td><td>Lightweight profiling</td><td>Production monitoring</td></tr>
+              <tr><td>DMVs (sys.dm_*)</td><td>Wait stats, query stats</td><td>Deep dive analysis</td></tr>
+              <tr><td>Database Tuning Advisor</td><td>Index recommendations</td><td>After workload capture</td></tr>
+              <tr><td>Query Store</td><td>Query performance history</td><td>Regression tracking</td></tr>
+              <tr><td>Azure Monitor</td><td>Cloud SQL monitoring</td><td>Azure SQL Database</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip">💡 Query Store = "Flight recorder" for SQL Server. Performance regression-ஐ catch பண்ண best tool.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 2: INDEXING ==================== -->
+<div id="s2">
+  <div class="section-hdr bg-blue">
+    <div class="ico">🔍</div>
+    <div><h2>Indexing</h2><span>Questions 9–16 | Clustered, Non-Clustered, Composite, Fragmentation</span></div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">9</span><h4>What is the difference between Clustered and Non-Clustered Indexes?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>Clustered Index</th><th>Non-Clustered Index</th></tr></thead>
+            <tbody>
+              <tr><td>Data Storage</td><td class="g">Data physically sorted by this</td><td>Separate structure, pointer to data</td></tr>
+              <tr><td>Count per table</td><td class="g">Only 1</td><td class="g">Up to 999</td></tr>
+              <tr><td>Speed (Range scan)</td><td class="g">Fastest</td><td>Slower (extra lookup)</td></tr>
+              <tr><td>Default</td><td class="g">Primary Key auto-creates it</td><td>Manually created</td></tr>
+              <tr><td>Size</td><td>Leaf = actual data</td><td>Leaf = key + row pointer</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <pre><span class="cm">-- Clustered index (Primary Key = auto clustered)</span>
+<span class="kw">CREATE TABLE</span> Students (
+    StudentId <span class="kw">INT PRIMARY KEY</span>,  <span class="cm">-- Clustered by default</span>
+    StudentName <span class="kw">VARCHAR</span>(<span class="num-c">100</span>)
+)
+
+<span class="cm">-- Non-Clustered index</span>
+<span class="kw">CREATE NONCLUSTERED INDEX</span> IX_Students_Name
+<span class="kw">ON</span> Students(StudentName)</pre>
+        <div class="tip">💡 Analogy: Clustered = Library books sorted by call number (physically). Non-Clustered = Index card pointing to book location.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">10</span><h4>When should you create a Composite Index?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p>Composite Index = Multiple columns-ஐ ஒரே index-ல include பண்றது.</p>
+        <p><strong>Create பண்ண வேண்டிய situations:</strong></p>
+        <ul>
+          <li>WHERE clause-ல multiple columns always together use ஆகும்போது</li>
+          <li>One column-ல selectivity குறைவாக இருந்தா (e.g., Gender alone → poor index)</li>
+          <li>JOIN + WHERE combination-ல</li>
+        </ul>
+        <pre><span class="cm">-- Query: WHERE ClassId = 10 AND Section = 'A'</span>
+<span class="kw">CREATE INDEX</span> IX_Students_ClassSection
+<span class="kw">ON</span> Students(ClassId, Section)  <span class="cm">-- Composite!</span>
+
+<span class="cm">-- Column ORDER matters!</span>
+<span class="cm">-- Most selective column FIRST</span>
+<span class="cm">-- ClassId (fewer values) before Section</span></pre>
+        <div class="warn">⚠️ Column order matters! Leading column filter இல்லாம query போனா index use ஆகாது.</div>
+        <div class="tip">💡 Rule: (ClassId, Section) index — WHERE ClassId=10 ✅, WHERE ClassId=10 AND Section='A' ✅, WHERE Section='A' only ❌</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">11</span><h4>How do you determine whether an index is actually being used?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <pre><span class="cm">-- Index usage stats (since last SQL Server restart)</span>
+<span class="kw">SELECT</span>
+    i.name <span class="kw">AS</span> IndexName,
+    ius.user_seeks, ius.user_scans, ius.user_lookups,
+    ius.user_updates,
+    ius.last_user_seek
+<span class="kw">FROM</span> sys.indexes i
+<span class="kw">LEFT JOIN</span> sys.dm_db_index_usage_stats ius
+    <span class="kw">ON</span> i.object_id = ius.object_id <span class="kw">AND</span> i.index_id = ius.index_id
+<span class="kw">WHERE</span> i.object_id = <span class="fn">OBJECT_ID</span>(<span class="str">'Students'</span>)</pre>
+        <ul>
+          <li><strong>user_seeks = 0, user_scans = 0</strong> → Index never used → Drop பண்ணலாம்</li>
+          <li><strong>user_updates high</strong> → Index maintain-ஆக overhead → Worth it-ஆ check பண்ணு</li>
+          <li><strong>Execution Plan</strong> → Index Seek icon இருந்தா use ஆகுது</li>
+        </ul>
+        <div class="tip">💡 Unused indexes-ஐ drop பண்ணு — INSERT/UPDATE/DELETE slowdown ஆகும் otherwise.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">12</span><h4>What are Covering Indexes and Included Columns?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p><strong>Covering Index</strong> = Query-க்கு தேவையான எல்லா columns-உம் index-லயே இருக்கும். Table-க்கு போக வேண்டாம் (Key Lookup இல்ல).</p>
+        <p><strong>Included Columns</strong> = Index key-ல இல்லாம, leaf level-ல extra columns add பண்றது.</p>
+        <pre><span class="cm">-- Query needs: WHERE StudentId = 5, returns Name + Email</span>
+<span class="cm">-- Without covering index: Index Seek + Key Lookup (2 operations)</span>
+<span class="cm">-- With covering index: Index Seek only (1 operation) ✅</span>
+
+<span class="kw">CREATE NONCLUSTERED INDEX</span> IX_Students_Covering
+<span class="kw">ON</span> Students(StudentId)
+<span class="kw">INCLUDE</span> (StudentName, Email)  <span class="cm">-- Included columns!</span></pre>
+        <div class="good">✅ Key Lookup eliminate பண்றதுதான் biggest performance win. Execution plan-ல Key Lookup இருந்தா Covering index add பண்ணு.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">13</span><h4>What are Index Fragmentation and Index Rebuild/Reorganize?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p><strong>Fragmentation</strong> = INSERT/UPDATE/DELETE operations-ஓட காரணமா index pages out-of-order ஆகுது → Slower reads.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Fragmentation %</th><th>Action</th><th>Locking</th></tr></thead>
+            <tbody>
+              <tr><td>&lt; 10%</td><td>Do nothing</td><td>—</td></tr>
+              <tr><td>10% – 30%</td><td class="g">REORGANIZE</td><td>Online (no lock)</td></tr>
+              <tr><td>&gt; 30%</td><td class="g">REBUILD</td><td>Offline (with ONLINE=ON option)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <pre><span class="cm">-- Check fragmentation</span>
+<span class="kw">SELECT</span> index_id, avg_fragmentation_in_percent
+<span class="kw">FROM</span> sys.dm_db_index_physical_stats
+    (<span class="fn">DB_ID</span>(), <span class="fn">OBJECT_ID</span>(<span class="str">'Students'</span>), <span class="kw">NULL</span>, <span class="kw">NULL</span>, <span class="str">'LIMITED'</span>)
+
+<span class="cm">-- Reorganize (online)</span>
+<span class="kw">ALTER INDEX</span> IX_Students_Name <span class="kw">ON</span> Students <span class="kw">REORGANIZE</span>
+
+<span class="cm">-- Rebuild (offline or online)</span>
+<span class="kw">ALTER INDEX</span> IX_Students_Name <span class="kw">ON</span> Students <span class="kw">REBUILD WITH</span> (ONLINE = ON)</pre>
+        <div class="tip">💡 Weekly maintenance job: Reorganize + Update Statistics schedule பண்ணு. Monthly full Rebuild.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">14</span><h4>How many indexes are too many?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p>No hard rule, but context-ல பாரு:</p>
+        <ul>
+          <li><strong>OLTP systems</strong> — 3-5 indexes per table. More = INSERT/UPDATE slow ஆகும்</li>
+          <li><strong>OLAP/Reporting</strong> — More indexes ok. Reads > Writes</li>
+          <li><strong>General rule</strong> — Every write operation, ALL indexes update ஆகும்</li>
+        </ul>
+        <p><strong>Too many indexes signs:</strong></p>
+        <ul>
+          <li>INSERT/UPDATE queries slow ஆகும்</li>
+          <li>Index maintenance time அதிகமாகும்</li>
+          <li>Disk space waste</li>
+          <li>Query Optimizer wrong plan choose பண்ணலாம்</li>
+        </ul>
+        <div class="warn">⚠️ 10 indexes per table-க்கு மேல போனா red flag. Unused indexes drop பண்ணு.</div>
+        <div class="tip">💡 Rule of thumb: "Every index makes SELECT faster, but INSERT/UPDATE/DELETE slower."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">15</span><h4>Why can indexes sometimes reduce performance?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <ul>
+          <li><strong>Write overhead</strong> — INSERT/UPDATE/DELETE → All indexes update ஆகும் → Slower writes</li>
+          <li><strong>Wrong index chosen</strong> — Optimizer bad index select பண்ணலாம் → Table scan faster-ஆ இருந்தாலும்</li>
+          <li><strong>Index fragmentation</strong> — Fragmented index → Poor performance</li>
+          <li><strong>Statistics outdated</strong> — Wrong cardinality estimate → Bad plan</li>
+          <li><strong>Index on low-selectivity column</strong> — e.g., Gender column (only M/F) → Index useless, adds overhead</li>
+          <li><strong>Memory pressure</strong> — Too many indexes → Buffer pool pressure</li>
+        </ul>
+        <div class="good">✅ Solution: Regularly audit indexes using sys.dm_db_index_usage_stats. Drop unused indexes.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">16</span><h4>How do you design indexing strategies for high-volume transactional systems?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <ul>
+          <li><strong>Clustered index on sequential key</strong> — Identity or sequential GUID (avoid random GUIDs → fragmentation)</li>
+          <li><strong>Minimal non-clustered indexes</strong> — Only on frequently queried columns</li>
+          <li><strong>Covering indexes</strong> — Eliminate Key Lookups</li>
+          <li><strong>Filtered indexes</strong> — Only active/recent records</li>
+          <li><strong>Avoid over-indexing</strong> — Write performance critical in OLTP</li>
+          <li><strong>Fill Factor</strong> — 70-80% for high-insert tables (leaves room for growth)</li>
+          <li><strong>Partitioning</strong> — Large tables partition-ஆ split பண்ணி index smaller ஆகும்</li>
+        </ul>
+        <pre><span class="cm">-- Fill factor example</span>
+<span class="kw">CREATE INDEX</span> IX_Orders_Date
+<span class="kw">ON</span> Orders(OrderDate)
+<span class="kw">WITH</span> (FILLFACTOR = <span class="num-c">75</span>)  <span class="cm">-- 75% full, 25% room for inserts</span></pre>
+        <div class="tip">💡 ZenCampus-ல Students table busy ஆ இருந்தா — StudentId (clustered), AdmissionDate (NC), ClassId+Section (composite) மட்டும் போதும்.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 3: TRANSACTIONS & CONCURRENCY ==================== -->
+<div id="s3">
+  <div class="section-hdr bg-green">
+    <div class="ico">🔒</div>
+    <div><h2>Transactions & Concurrency</h2><span>Questions 17–24 | ACID, Deadlocks, Isolation Levels, Locking</span></div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">17</span><h4>Explain ACID properties with real-world examples.</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>Meaning</th><th>Real World Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong style="color:#f472b6">A — Atomicity</strong></td><td>All or Nothing</td><td>Bank transfer: Debit + Credit — ஒண்ணு fail ஆனா both rollback</td></tr>
+              <tr><td><strong style="color:#60a5fa">C — Consistency</strong></td><td>Data always valid state</td><td>Fee payment: Balance negative ஆகாது (constraint enforce)</td></tr>
+              <tr><td><strong style="color:#6ee7b7">I — Isolation</strong></td><td>Transactions don't interfere</td><td>Two users same seat book பண்றா — only one succeeds</td></tr>
+              <tr><td><strong style="color:#fbbf24">D — Durability</strong></td><td>Committed data survives crashes</td><td>Payment confirmed → Power cut → Data still saved</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <pre><span class="cm">-- Atomicity example</span>
+<span class="kw">BEGIN TRANSACTION</span>
+    <span class="kw">UPDATE</span> Accounts <span class="kw">SET</span> Balance = Balance - <span class="num-c">1000</span> <span class="kw">WHERE</span> AccId = <span class="num-c">1</span>
+    <span class="kw">UPDATE</span> Accounts <span class="kw">SET</span> Balance = Balance + <span class="num-c">1000</span> <span class="kw">WHERE</span> AccId = <span class="num-c">2</span>
+    <span class="kw">IF</span> @@<span class="fn">ERROR</span> <> <span class="num-c">0</span>
+        <span class="kw">ROLLBACK TRANSACTION</span>
+    <span class="kw">ELSE</span>
+        <span class="kw">COMMIT TRANSACTION</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">18</span><h4>What are SQL Server Isolation Levels?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Level</th><th>Dirty Read</th><th>Non-Repeatable</th><th>Phantom</th><th>Use Case</th></tr></thead>
+            <tbody>
+              <tr><td>READ UNCOMMITTED</td><td class="r">Yes</td><td class="r">Yes</td><td class="r">Yes</td><td>Rough reports only</td></tr>
+              <tr><td>READ COMMITTED (default)</td><td class="g">No</td><td class="r">Yes</td><td class="r">Yes</td><td>General OLTP</td></tr>
+              <tr><td>REPEATABLE READ</td><td class="g">No</td><td class="g">No</td><td class="r">Yes</td><td>Consistent reads</td></tr>
+              <tr><td>SERIALIZABLE</td><td class="g">No</td><td class="g">No</td><td class="g">No</td><td>Financial systems</td></tr>
+              <tr><td>SNAPSHOT</td><td class="g">No</td><td class="g">No</td><td class="g">No</td><td>Read without blocking</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <pre><span class="cm">-- Set isolation level</span>
+<span class="kw">SET TRANSACTION ISOLATION LEVEL</span> READ COMMITTED
+
+<span class="cm">-- NOLOCK hint (READ UNCOMMITTED)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students <span class="kw">WITH</span> (NOLOCK)</pre>
+        <div class="tip">💡 SNAPSHOT isolation = readers don't block writers. ZenCampus reports-க்கு ideal.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q19 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">19</span><h4>How do you prevent Deadlocks?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p><strong>Deadlock</strong> = Two transactions ஒண்ணோட ஒண்ணு resource-க்கு wait பண்றது → Neither can proceed.</p>
+        <p><strong>Prevention strategies:</strong></p>
+        <ul>
+          <li><strong>Same order table access</strong> — எல்லா transactions-லயும் same table order-ல access பண்ணு</li>
+          <li><strong>Short transactions</strong> — Transaction-ல minimum work பண்ணு, quickly commit பண்ணு</li>
+          <li><strong>SNAPSHOT isolation</strong> — Readers don't block writers</li>
+          <li><strong>Index optimization</strong> — Fewer locks needed with good indexes</li>
+          <li><strong>Avoid user interaction in transaction</strong> — Transaction open-ஆ இருக்கும்போது user input wait பண்ணாதே</li>
+          <li><strong>SELECT before UPDATE</strong> — Needed data select பண்ணி validate பண்ணி then update</li>
+        </ul>
+        <div class="warn">⚠️ SQL Server automatically detects deadlocks and kills the "victim" transaction (lower priority).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">20</span><h4>How do you identify and resolve Deadlocks in production?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p><strong>Identify:</strong></p>
+        <ul>
+          <li>SQL Server Error Log — "Deadlock" error 1205</li>
+          <li>Extended Events — deadlock_graph event capture பண்ணு</li>
+          <li>Trace Flag 1222 → Detailed deadlock info to error log</li>
+          <li>System Health Session → SSMS → Management → Extended Events</li>
+        </ul>
+        <pre><span class="cm">-- Enable deadlock trace</span>
+<span class="kw">DBCC</span> <span class="fn">TRACEON</span>(<span class="num-c">1222</span>, -<span class="num-c">1</span>)
+
+<span class="cm">-- Read system_health deadlock graph</span>
+<span class="kw">SELECT</span>
+    xdr.value(<span class="str">'(event/@timestamp)[1]'</span>, <span class="str">'datetime2'</span>) <span class="kw">AS</span> DeadlockTime,
+    xdr.query(<span class="str">'.'</span>) <span class="kw">AS</span> DeadlockGraph
+<span class="kw">FROM</span> (
+    <span class="kw">SELECT</span> CAST(target_data <span class="kw">AS</span> XML) <span class="kw">AS</span> TargetData
+    <span class="kw">FROM</span> sys.dm_xe_session_targets
+    <span class="kw">WHERE</span> target_name = <span class="str">'ring_buffer'</span>
+) AS Data
+<span class="kw">CROSS APPLY</span> TargetData.nodes(<span class="str">'//RingBufferTarget/event[@name="xml_deadlock_report"]'</span>) AS XEventData(xdr)</pre>
+        <div class="tip">💡 Deadlock graph → SSMS-ல open பண்ணினா visual diagram show ஆகும். Which tables, which processes involved-ன்னு clear-ஆ தெரியும்.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q21 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">21</span><h4>What are Locking, Blocking, and Latching?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Concept</th><th>What</th><th>When</th><th>Duration</th></tr></thead>
+            <tbody>
+              <tr><td><strong style="color:#60a5fa">Locking</strong></td><td>Transaction data protect</td><td>DML operations</td><td>Transaction duration</td></tr>
+              <tr><td><strong style="color:#f87171">Blocking</strong></td><td>One tx waits for another's lock</td><td>Concurrent access</td><td>Until lock released</td></tr>
+              <tr><td><strong style="color:#fbbf24">Latching</strong></td><td>Internal memory structure protect</td><td>Page access</td><td>Milliseconds</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul>
+          <li><strong>Lock types:</strong> Shared (S), Exclusive (X), Update (U), Intent (I)</li>
+          <li><strong>Blocking</strong> = Normal behaviour. Long blocking = Problem</li>
+          <li><strong>Latching</strong> = Internal SQL Server mechanism. Users can't control directly</li>
+        </ul>
+        <pre><span class="cm">-- Check current blocking</span>
+<span class="kw">SELECT</span> blocking_session_id, session_id, wait_type, wait_time
+<span class="kw">FROM</span> sys.dm_exec_requests
+<span class="kw">WHERE</span> blocking_session_id > <span class="num-c">0</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q22 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">22</span><h4>What is Row Versioning?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p>Row Versioning = Row update ஆகும்போது old version-ஐ tempdb-ல save பண்ணுவது. Readers old version read பண்ணலாம் — Writers block ஆகாது.</p>
+        <p><strong>Used by:</strong></p>
+        <ul>
+          <li>SNAPSHOT isolation level</li>
+          <li>READ COMMITTED SNAPSHOT isolation (RCSI)</li>
+        </ul>
+        <pre><span class="cm">-- Enable RCSI (recommended for most apps)</span>
+<span class="kw">ALTER DATABASE</span> ZenCampusDB
+<span class="kw">SET</span> READ_COMMITTED_SNAPSHOT ON
+
+<span class="cm">-- Enable Snapshot isolation</span>
+<span class="kw">ALTER DATABASE</span> ZenCampusDB
+<span class="kw">SET</span> ALLOW_SNAPSHOT_ISOLATION ON</pre>
+        <div class="good">✅ RCSI enable பண்ணினா — Blocking dramatically குறையும். Azure SQL-ல default-ஆவே ON.</div>
+        <div class="warn">⚠️ tempdb usage அதிகமாகும். tempdb-ஐ fast disk-ல வையுங்க.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q23 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">23</span><h4>How do you handle concurrent updates from multiple users?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p><strong>Two approaches:</strong></p>
+        <ul>
+          <li><strong>Pessimistic Concurrency</strong> — Lock the row before updating (UPDLOCK hint)</li>
+          <li><strong>Optimistic Concurrency</strong> — rowversion/timestamp column use பண்ணி conflict detect பண்ணு</li>
+        </ul>
+        <pre><span class="cm">-- Optimistic concurrency with rowversion</span>
+<span class="kw">CREATE TABLE</span> Students (
+    StudentId <span class="kw">INT PRIMARY KEY</span>,
+    StudentName <span class="kw">VARCHAR</span>(<span class="num-c">100</span>),
+    RowVer <span class="kw">ROWVERSION</span>  <span class="cm">-- Auto-updated on every change</span>
+)
+
+<span class="cm">-- Update with version check</span>
+<span class="kw">UPDATE</span> Students
+<span class="kw">SET</span> StudentName = <span class="str">'Updated Name'</span>
+<span class="kw">WHERE</span> StudentId = <span class="num-c">1</span> <span class="kw">AND</span> RowVer = @OriginalVersion
+
+<span class="kw">IF</span> @@<span class="fn">ROWCOUNT</span> = <span class="num-c">0</span>
+    <span class="kw">RAISERROR</span>(<span class="str">'Record was modified by another user'</span>, <span class="num-c">16</span>, <span class="num-c">1</span>)</pre>
+        <div class="tip">💡 ASP.NET Core EF Core-ல [Timestamp] attribute → automatic optimistic concurrency.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q24 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">24</span><h4>What is the difference between pessimistic and optimistic concurrency?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>Pessimistic</th><th>Optimistic</th></tr></thead>
+            <tbody>
+              <tr><td>Assumption</td><td>Conflicts will happen</td><td class="g">Conflicts are rare</td></tr>
+              <tr><td>Mechanism</td><td>Lock the row first</td><td class="g">Check on update</td></tr>
+              <tr><td>Blocking</td><td class="r">High blocking</td><td class="g">No blocking</td></tr>
+              <tr><td>Throughput</td><td class="r">Lower</td><td class="g">Higher</td></tr>
+              <tr><td>Use case</td><td>High conflict scenarios</td><td class="g">Low conflict, web apps</td></tr>
+              <tr><td>SQL</td><td>UPDLOCK, HOLDLOCK</td><td>ROWVERSION column</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip">💡 Modern web apps → Optimistic concurrency preferred. ZenCampus student updates → Optimistic with rowversion.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 4: DATABASE DESIGN ==================== -->
+<div id="s4">
+  <div class="section-hdr bg-orange">
+    <div class="ico">🏗️</div>
+    <div><h2>Database Design</h2><span>Questions 25–30 | Scalability, OLTP/OLAP, Normalization, Partitioning</span></div>
+  </div>
+
+  <!-- Q25 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">25</span><h4>How do you design a database for scalability?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <ul>
+          <li><strong>Proper normalization</strong> — Data redundancy குறைக்கணும் (3NF)</li>
+          <li><strong>Strategic indexing</strong> — Over/under indexing avoid</li>
+          <li><strong>Table partitioning</strong> — Large tables horizontal split</li>
+          <li><strong>Archiving strategy</strong> — Old data archive tables-க்கு move</li>
+          <li><strong>Read replicas</strong> — Read-heavy workload → Secondary replica</li>
+          <li><strong>Caching</strong> — Redis/In-memory cache for frequent reads</li>
+          <li><strong>Connection pooling</strong> — DB connections efficiently manage</li>
+          <li><strong>Avoid EAV pattern</strong> — Entity-Attribute-Value → performance nightmare</li>
+          <li><strong>Use appropriate data types</strong> — INT not BIGINT unnecessarily, VARCHAR not NVARCHAR</li>
+        </ul>
+        <div class="tip">💡 ZenCampus-ல Students table — Partition by AcademicYear. Old students archive table-க்கு move.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q26 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">26</span><h4>What are the differences between OLTP and OLAP databases?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>OLTP</th><th>OLAP</th></tr></thead>
+            <tbody>
+              <tr><td>Full Form</td><td>Online Transaction Processing</td><td>Online Analytical Processing</td></tr>
+              <tr><td>Purpose</td><td>Day-to-day operations</td><td>Business intelligence/Reports</td></tr>
+              <tr><td>Operations</td><td>INSERT, UPDATE, DELETE</td><td>SELECT, Aggregations</td></tr>
+              <tr><td>Data Volume</td><td>Current data</td><td>Historical data (years)</td></tr>
+              <tr><td>Schema</td><td>Normalized (3NF)</td><td>Denormalized (Star/Snowflake)</td></tr>
+              <tr><td>Query Type</td><td>Simple, fast</td><td>Complex, long-running</td></tr>
+              <tr><td>Users</td><td>Many concurrent users</td><td>Few analysts</td></tr>
+              <tr><td>Example</td><td>ZenCampus student admission</td><td>Student performance dashboard</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip">💡 ZenCampus = OLTP (admission, fees). Reports/Analytics = separate OLAP DB or SSRS/Power BI.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q27 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">27</span><h4>When should you normalize or denormalize a database?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p><strong>Normalize when:</strong></p>
+        <ul>
+          <li>OLTP systems (transactions heavy)</li>
+          <li>Data integrity critical</li>
+          <li>Storage space concern</li>
+          <li>Data changes frequently</li>
+        </ul>
+        <p><strong>Denormalize when:</strong></p>
+        <ul>
+          <li>Read performance critical (reporting, analytics)</li>
+          <li>Complex JOINs causing slowness</li>
+          <li>OLAP/Data warehouse</li>
+          <li>Caching/pre-computed results store பண்ண</li>
+        </ul>
+        <div class="tip">💡 "Normalize till it hurts, denormalize till it works" — Start normalized, denormalize specific bottlenecks.</div>
+        <div class="warn">⚠️ Denormalize carefully — data update anomalies risk. Application layer-ல sync manage பண்ணணும்.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q28 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">28</span><h4>Explain the different Normal Forms with practical scenarios.</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Normal Form</th><th>Rule</th><th>Practical Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>1NF</strong></td><td>Atomic values, no repeating groups</td><td>Phone numbers comma-separated one column-ல வைக்காதே → Separate rows</td></tr>
+              <tr><td><strong>2NF</strong></td><td>1NF + No partial dependency</td><td>Student-Subject table-ல StudentName — StudentId-லயே depend பண்றது, full key வேண்டாம்</td></tr>
+              <tr><td><strong>3NF</strong></td><td>2NF + No transitive dependency</td><td>Student table-ல CityName, PinCode இருந்தா separate City table பண்ணு</td></tr>
+              <tr><td><strong>BCNF</strong></td><td>3NF + Every determinant is a candidate key</td><td>Advanced edge cases, rarely needed in practice</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip">💡 Most production DBs target 3NF. BCNF theoretically pure but often over-normalized in practice.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q29 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">29</span><h4>How do you partition very large tables?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p>Table Partitioning = Large table-ஐ logical sections-ஆ divide பண்றது (physically separate filegroups-ல).</p>
+        <pre><span class="cm">-- Step 1: Partition Function (how to split)</span>
+<span class="kw">CREATE PARTITION FUNCTION</span> PF_Year(INT)
+<span class="kw">AS RANGE RIGHT FOR VALUES</span> (<span class="num-c">2022</span>, <span class="num-c">2023</span>, <span class="num-c">2024</span>, <span class="num-c">2025</span>)
+
+<span class="cm">-- Step 2: Partition Scheme (where to store)</span>
+<span class="kw">CREATE PARTITION SCHEME</span> PS_Year
+<span class="kw">AS PARTITION</span> PF_Year
+<span class="kw">TO</span> (FG_2021, FG_2022, FG_2023, FG_2024, FG_2025)
+
+<span class="cm">-- Step 3: Create partitioned table</span>
+<span class="kw">CREATE TABLE</span> StudentAttendance (
+    AttId <span class="kw">INT</span>, StudentId <span class="kw">INT</span>,
+    AttYear <span class="kw">INT</span>, AttDate <span class="kw">DATE</span>
+) <span class="kw">ON</span> PS_Year(AttYear)  <span class="cm">-- Partition by AttYear</span></pre>
+        <p><strong>Benefits:</strong></p>
+        <ul>
+          <li>Partition elimination — Query only relevant partition scan</li>
+          <li>Faster archiving — Old partition switch out</li>
+          <li>Parallel query across partitions</li>
+        </ul>
+        <div class="tip">💡 ZenCampus-ல Attendance table year-ஆ partition பண்ணினா current year data மட்டும் fast ஆ query ஆகும்.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q30 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">30</span><h4>How do you archive historical data without affecting performance?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <ul>
+          <li><strong>Archive tables</strong> — Separate table: Students_Archive</li>
+          <li><strong>Partition switching</strong> — Old partition → Archive table (metadata only, instant)</li>
+          <li><strong>Batch archiving</strong> — Off-peak hours-ல batch-ஆ move பண்ணு</li>
+          <li><strong>Temporal Tables</strong> — SQL Server 2016+ → Automatic history tracking</li>
+          <li><strong>Stretch Database</strong> — Azure-க்கு cold data automatically move</li>
+        </ul>
+        <pre><span class="cm">-- Temporal Table (auto-archives history)</span>
+<span class="kw">CREATE TABLE</span> Students (
+    StudentId <span class="kw">INT PRIMARY KEY</span>,
+    StudentName <span class="kw">VARCHAR</span>(<span class="num-c">100</span>),
+    ValidFrom <span class="kw">DATETIME2 GENERATED ALWAYS AS ROW START</span>,
+    ValidTo   <span class="kw">DATETIME2 GENERATED ALWAYS AS ROW END</span>,
+    <span class="kw">PERIOD FOR SYSTEM_TIME</span> (ValidFrom, ValidTo)
+) <span class="kw">WITH</span> (SYSTEM_VERSIONING = ON)
+
+<span class="cm">-- Query historical data</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Students
+<span class="kw">FOR SYSTEM_TIME AS OF</span> <span class="str">'2024-01-01'</span></pre>
+        <div class="good">✅ Temporal Tables = Built-in time travel. No custom archiving code needed.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 5: ADVANCED SQL ==================== -->
+<div id="s5">
+  <div class="section-hdr bg-pink">
+    <div class="ico">⚡</div>
+    <div><h2>Advanced SQL</h2><span>Questions 31–36 | CTEs, Window Functions, APPLY, Temp Tables, SP</span></div>
+  </div>
+
+  <!-- Q31 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">31</span><h4>What are Common Table Expressions (CTEs), and when do you use them?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p>CTE = Named temporary result set, query duration-க்கு மட்டும் exist ஆகும். WITH keyword use பண்ணி define பண்றோம்.</p>
+        <p><strong>Use when:</strong></p>
+        <ul>
+          <li>Complex query-ஐ readable-ஆ break பண்ண</li>
+          <li>Recursive queries (hierarchy/tree structures)</li>
+          <li>Same subquery multiple times reference பண்ண</li>
+        </ul>
+        <pre><span class="cm">-- Simple CTE</span>
+<span class="kw">WITH</span> TopStudents <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> StudentId, StudentName, TotalMarks
+    <span class="kw">FROM</span> Students
+    <span class="kw">WHERE</span> TotalMarks > <span class="num-c">90</span>
+)
+<span class="kw">SELECT</span> s.*, c.ClassName
+<span class="kw">FROM</span> TopStudents s
+<span class="kw">JOIN</span> Classes c <span class="kw">ON</span> s.ClassId = c.ClassId
+
+<span class="cm">-- Recursive CTE (org hierarchy)</span>
+<span class="kw">WITH</span> OrgHierarchy <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> EmpId, EmpName, ManagerId, <span class="num-c">0</span> <span class="kw">AS</span> Level
+    <span class="kw">FROM</span> Employees <span class="kw">WHERE</span> ManagerId <span class="kw">IS NULL</span>
+    <span class="kw">UNION ALL</span>
+    <span class="kw">SELECT</span> e.EmpId, e.EmpName, e.ManagerId, h.Level+<span class="num-c">1</span>
+    <span class="kw">FROM</span> Employees e
+    <span class="kw">JOIN</span> OrgHierarchy h <span class="kw">ON</span> e.ManagerId = h.EmpId
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> OrgHierarchy</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q32 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">32</span><h4>What are Window Functions, and where have you used them?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p>Window Functions = GROUP BY-ஓட summary result-க்கு பதிலா, individual row-ஐ keep பண்ணி aggregation பண்றது. OVER() clause use பண்றோம்.</p>
+        <pre><span class="cm">-- Running total (each row + cumulative)</span>
+<span class="kw">SELECT</span>
+    StudentName,
+    FeeAmount,
+    <span class="fn">SUM</span>(FeeAmount) <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> PaymentDate) <span class="kw">AS</span> RunningTotal,
+    <span class="fn">AVG</span>(FeeAmount) <span class="kw">OVER</span>(<span class="kw">PARTITION BY</span> ClassId)   <span class="kw">AS</span> ClassAvgFee,
+    <span class="fn">ROW_NUMBER</span>()   <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> TotalMarks <span class="kw">DESC</span>) <span class="kw">AS</span> Rank
+<span class="kw">FROM</span> Students</pre>
+        <p><strong>Common Window Functions:</strong></p>
+        <ul>
+          <li>ROW_NUMBER(), RANK(), DENSE_RANK(), NTILE()</li>
+          <li>SUM(), AVG(), COUNT(), MIN(), MAX() OVER()</li>
+          <li>LAG(), LEAD() — Previous/Next row values</li>
+          <li>FIRST_VALUE(), LAST_VALUE()</li>
+        </ul>
+        <div class="tip">💡 Real use: Student fee running total, class rank, previous month comparison — ZenCampus reports-ல அதிகமா use ஆகும்.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q33 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">33</span><h4>Explain ROW_NUMBER(), RANK(), DENSE_RANK(), and NTILE().</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <pre><span class="cm">-- Example: Students with same marks = 90</span>
+<span class="kw">SELECT</span> StudentName, Marks,
+    <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> Marks <span class="kw">DESC</span>) <span class="kw">AS</span> RowNum,
+    <span class="fn">RANK</span>()       <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> Marks <span class="kw">DESC</span>) <span class="kw">AS</span> Rnk,
+    <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> Marks <span class="kw">DESC</span>) <span class="kw">AS</span> DenseRnk,
+    <span class="fn">NTILE</span>(<span class="num-c">4</span>)    <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> Marks <span class="kw">DESC</span>) <span class="kw">AS</span> Quartile
+<span class="kw">FROM</span> Students</pre>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Marks</th><th>ROW_NUMBER</th><th>RANK</th><th>DENSE_RANK</th><th>NTILE(4)</th></tr></thead>
+            <tbody>
+              <tr><td>Alice</td><td>95</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+              <tr><td>Bob</td><td>90</td><td>2</td><td>2</td><td>2</td><td>1</td></tr>
+              <tr><td>Carol</td><td>90</td><td>3</td><td>2</td><td>2</td><td>2</td></tr>
+              <tr><td>Dave</td><td>85</td><td>4</td><td>4 (gap!)</td><td>3 (no gap)</td><td>2</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip">💡 Key difference: RANK skips numbers after ties. DENSE_RANK doesn't skip. ROW_NUMBER always unique. NTILE divides into N buckets.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q34 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">34</span><h4>What is the difference between CROSS APPLY and OUTER APPLY?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p>APPLY operator = Table-valued function-ஐ each row-க்கும் apply பண்றது. Correlated subquery மாதிரி.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>APPLY Type</th><th>Behaviour</th><th>Like</th></tr></thead>
+            <tbody>
+              <tr><td><strong>CROSS APPLY</strong></td><td>No result return பண்ண rows exclude</td><td>INNER JOIN</td></tr>
+              <tr><td><strong>OUTER APPLY</strong></td><td>No result ஆனாலும் NULL-ஆ include</td><td>LEFT JOIN</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <pre><span class="cm">-- Get top 3 marks per class</span>
+<span class="kw">SELECT</span> c.ClassName, s.StudentName, s.Marks
+<span class="kw">FROM</span> Classes c
+<span class="kw">CROSS APPLY</span> (
+    <span class="kw">SELECT TOP</span> <span class="num-c">3</span> StudentName, Marks
+    <span class="kw">FROM</span> Students
+    <span class="kw">WHERE</span> ClassId = c.ClassId
+    <span class="kw">ORDER BY</span> Marks <span class="kw">DESC</span>
+) s
+<span class="cm">-- Classes with no students won't appear (CROSS APPLY)</span>
+<span class="cm">-- Use OUTER APPLY to include empty classes with NULLs</span></pre>
+        <div class="tip">💡 "Top N per group" pattern-க்கு APPLY is perfect. ROW_NUMBER() alternative but APPLY cleaner.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q35 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">35</span><h4>When would you use Temporary Tables versus Table Variables?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>#Temp Table</th><th>@Table Variable</th></tr></thead>
+            <tbody>
+              <tr><td>Storage</td><td>tempdb</td><td>tempdb (memory first)</td></tr>
+              <tr><td>Scope</td><td>Session</td><td>Batch only</td></tr>
+              <tr><td>Indexes</td><td class="g">Yes (full)</td><td>Only PRIMARY KEY, UNIQUE</td></tr>
+              <tr><td>Statistics</td><td class="g">Yes</td><td class="r">No</td></tr>
+              <tr><td>Row count</td><td class="g">Large (millions)</td><td>Small (&lt;1000)</td></tr>
+              <tr><td>Transaction</td><td class="g">Rolls back</td><td>Doesn't rollback</td></tr>
+              <tr><td>Performance (large)</td><td class="g">Better</td><td class="r">Poor (no stats)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <pre><span class="cm">-- Temp Table (preferred for large data)</span>
+<span class="kw">CREATE TABLE</span> #TempStudents (StudentId <span class="kw">INT</span>, Name <span class="kw">VARCHAR</span>(<span class="num-c">100</span>))
+<span class="kw">INSERT INTO</span> #TempStudents <span class="kw">SELECT</span> StudentId, StudentName <span class="kw">FROM</span> Students
+<span class="kw">DROP TABLE</span> #TempStudents
+
+<span class="cm">-- Table Variable (small result sets)</span>
+<span class="kw">DECLARE</span> @TopStudents <span class="kw">TABLE</span> (StudentId <span class="kw">INT</span>, Name <span class="kw">VARCHAR</span>(<span class="num-c">100</span>))
+<span class="kw">INSERT INTO</span> @TopStudents <span class="kw">SELECT TOP</span> <span class="num-c">10</span> StudentId, StudentName <span class="kw">FROM</span> Students</pre>
+        <div class="tip">💡 Rule: &lt;1000 rows → @Table Variable. 1000+ rows → #Temp Table. Always.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q36 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">36</span><h4>How do you optimize Stored Procedures?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <ul>
+          <li><strong>SET NOCOUNT ON</strong> — Unnecessary rowcount messages stop → reduces network traffic</li>
+          <li><strong>Avoid SELECT *</strong> — Specific columns only</li>
+          <li><strong>Parameter Sniffing fix</strong> — OPTION(RECOMPILE) or local variables</li>
+          <li><strong>Schema prefix</strong> — dbo.ProcName not just ProcName</li>
+          <li><strong>Proper error handling</strong> — TRY/CATCH</li>
+          <li><strong>Avoid dynamic SQL</strong> when possible (SQL injection risk + plan cache pollution)</li>
+          <li><strong>Break large SPs</strong> — Single responsibility principle</li>
+        </ul>
+        <pre><span class="cm">-- Parameter sniffing fix</span>
+<span class="kw">CREATE PROCEDURE</span> <span class="fn">dbo.GetStudents</span> @ClassId <span class="kw">INT</span>
+<span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">SET NOCOUNT ON</span>  <span class="cm">-- Always add this!</span>
+    <span class="kw">DECLARE</span> @LocalClassId <span class="kw">INT</span> = @ClassId  <span class="cm">-- Local var = sniff fix</span>
+    <span class="kw">SELECT</span> StudentName, RollNo
+    <span class="kw">FROM</span> Students
+    <span class="kw">WHERE</span> ClassId = @LocalClassId
+<span class="kw">END</span></pre>
+        <div class="good">✅ SET NOCOUNT ON = Every SP-ல add பண்ணு. Slight performance improvement + cleaner output.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 6: PRODUCTION ==================== -->
+<div id="s6">
+  <div class="section-hdr bg-teal">
+    <div class="ico">🚨</div>
+    <div><h2>Production & Scenario-Based</h2><span>Questions 37–40 | Real-world troubleshooting scenarios</span></div>
+  </div>
+
+  <!-- Q37 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">37</span><h4>A query that normally runs in 2 seconds suddenly takes 2 minutes. How would you troubleshoot it?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p><strong>Systematic troubleshooting steps:</strong></p>
+        <ol>
+          <li><strong>Is it blocked?</strong> — sp_who2 or sys.dm_exec_requests → blocking_session_id check</li>
+          <li><strong>Execution plan changed?</strong> — Query Store → Compare recent plan vs historical plan</li>
+          <li><strong>Statistics outdated?</strong> — UPDATE STATISTICS → Re-run query</li>
+          <li><strong>Parameter sniffing?</strong> — DBCC FREEPROCCACHE (dev only!) → Re-run</li>
+          <li><strong>Data volume changed?</strong> — Table-ல data suddenly much more?</li>
+          <li><strong>Index fragmentation?</strong> — sys.dm_db_index_physical_stats</li>
+          <li><strong>Server resources?</strong> — CPU, Memory, Disk I/O check</li>
+          <li><strong>Tempdb pressure?</strong> — Sort/hash spills to disk?</li>
+        </ol>
+        <pre><span class="cm">-- Quick check: Is it blocking?</span>
+<span class="kw">SELECT</span> session_id, blocking_session_id, wait_type,
+       total_elapsed_time, <span class="fn">SUBSTRING</span>(t.text,<span class="num-c">1</span>,<span class="num-c">100</span>) <span class="kw">AS</span> Query
+<span class="kw">FROM</span> sys.dm_exec_requests r
+<span class="kw">CROSS APPLY</span> sys.dm_exec_sql_text(r.sql_handle) t
+<span class="kw">WHERE</span> total_elapsed_time > <span class="num-c">10000</span>
+
+<span class="cm">-- Fix: Force recompile</span>
+<span class="kw">EXEC</span> dbo.SlowProc @Param <span class="kw">WITH RECOMPILE</span></pre>
+        <div class="tip">💡 Most common cause: Parameter sniffing or statistics outdated. Query Store-ல forced plan → quick fix for production.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q38 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">38</span><h4>How would you migrate a database with minimal downtime?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p><strong>Minimal downtime migration strategies:</strong></p>
+        <ol>
+          <li><strong>Log Shipping</strong> — Source DB logs continuously ship to target → Cutover fast</li>
+          <li><strong>Database Mirroring / Always On</strong> — Real-time sync → Failover seconds</li>
+          <li><strong>Transactional Replication</strong> — Changes replicate in near-realtime</li>
+          <li><strong>Backup/Restore with tail-log</strong> — Small downtime window</li>
+          <li><strong>Azure Database Migration Service</strong> — Online migration to Azure SQL</li>
+        </ol>
+        <p><strong>Steps for minimal downtime:</strong></p>
+        <ul>
+          <li>Phase 1: Offline backup → Restore on target (hours ahead)</li>
+          <li>Phase 2: Transaction log backup + restore (differential catch-up)</li>
+          <li>Phase 3: Brief app downtime → Final tail-log backup → Restore → Cutover</li>
+          <li>Phase 4: Connection string update → App back online</li>
+        </ul>
+        <div class="good">✅ Goal: Downtime in minutes, not hours. Always test full migration on staging first.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q39 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">39</span><h4>How do you investigate CPU spikes caused by SQL Server?</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <ol>
+          <li><strong>Task Manager / Resource Monitor</strong> — sqlservr.exe CPU % confirm</li>
+          <li><strong>Activity Monitor</strong> — Recent Expensive Queries tab</li>
+          <li><strong>DMV query</strong> — Top CPU consuming queries</li>
+          <li><strong>Extended Events</strong> — CPU &gt; threshold captures</li>
+          <li><strong>Check for:</strong> Missing indexes, Table scans, Compilation spikes, Parallelism abuse</li>
+        </ol>
+        <pre><span class="cm">-- Top CPU queries right now</span>
+<span class="kw">SELECT TOP</span> <span class="num-c">5</span>
+    qs.total_worker_time/<span class="num-c">1000</span> <span class="kw">AS</span> TotalCPU_ms,
+    qs.execution_count,
+    qs.total_worker_time/qs.execution_count/<span class="num-c">1000</span> <span class="kw">AS</span> AvgCPU_ms,
+    <span class="fn">SUBSTRING</span>(t.text, <span class="num-c">1</span>, <span class="num-c">200</span>) <span class="kw">AS</span> QueryText
+<span class="kw">FROM</span> sys.dm_exec_query_stats qs
+<span class="kw">CROSS APPLY</span> sys.dm_exec_sql_text(qs.sql_handle) t
+<span class="kw">ORDER BY</span> qs.total_worker_time <span class="kw">DESC</span>
+
+<span class="cm">-- Check plan cache compilation spikes</span>
+<span class="kw">SELECT</span> sql_compilations_per_sec, batch_requests_per_sec
+<span class="kw">FROM</span> sys.dm_os_performance_counters
+<span class="kw">WHERE</span> counter_name <span class="kw">IN</span> (<span class="str">'SQL Compilations/sec'</span>, <span class="str">'Batch Requests/sec'</span>)</pre>
+        <div class="warn">⚠️ Compilations/Batch ratio &gt; 10% → Plan cache issues. Ad-hoc queries parameterize பண்ணு.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q40 -->
+  <div class="qa">
+    <div class="qa-q" onclick="toggle(this)">
+      <div class="meta"><span class="num">40</span><h4>Describe the most challenging SQL performance issue you've solved in production.</h4></div>
+      <span class="arr">▼</span>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-inner">
+        <p><strong>Sample Strong Answer (adapt to your real experience):</strong></p>
+        <p>ZenCampus project-ல Student Attendance Report query — 50,000 students, daily attendance data 3 years — report generate ஆக 8 minutes ஆகுது.</p>
+        <p><strong>Investigation:</strong></p>
+        <ul>
+          <li>Execution plan → Multiple Table Scans found</li>
+          <li>Missing indexes on AttendanceDate, ClassId, StudentId</li>
+          <li>Subquery-ல correlated query — each row-க்கும் execute ஆகுது</li>
+          <li>Statistics 2 months outdated</li>
+        </ul>
+        <p><strong>Solutions applied:</strong></p>
+        <ol>
+          <li>Composite index on (ClassId, AttendanceDate) INCLUDE (StudentId, Status)</li>
+          <li>Correlated subquery → CTE + Window function-ஆ refactor</li>
+          <li>UPDATE STATISTICS</li>
+          <li>Report query → Read-only replica-க்கு redirect</li>
+        </ol>
+        <p><strong>Result:</strong> 8 minutes → 12 seconds (40x improvement)</p>
+        <div class="good">✅ Interview tip: Always follow "Problem → Investigation → Solution → Result" structure. Numbers இருந்தா impressive ஆகும்.</div>
+        <div class="tip">💡 உன் ZenCampus experience-ஐ real answer-ஆ use பண்ணு. Exact numbers இல்லன்னாலும் estimate சொல்லலாம்.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+  <p>🗄️ SQL Server Interview Guide — 40 Questions</p>
+  <p style="margin-top:8px">Basha | Senior Full Stack Cloud + AI Developer Journey 🚀</p>
+</footer>
+
+<button id="top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  function toggle(el) {
+    const ans = el.nextElementSibling;
+    const arr = el.querySelector('.arr');
+    const isOpen = ans.classList.contains('open');
+    document.querySelectorAll('.qa-a.open').forEach(a=>a.classList.remove('open'));
+    document.querySelectorAll('.arr.open').forEach(a=>a.classList.remove('open'));
+    if(!isOpen){ ans.classList.add('open'); arr.classList.add('open'); }
+  }
+
+  function searchQA(val) {
+    const q = val.toLowerCase();
+    document.querySelectorAll('.qa').forEach(el => {
+      const txt = el.textContent.toLowerCase();
+      el.classList.toggle('hidden', q.length > 0 && !txt.includes(q));
+    });
+    if(q.length > 0) {
+      document.querySelectorAll('.qa:not(.hidden) .qa-a').forEach(a=>{
+        a.classList.add('open');
+        a.previousElementSibling.querySelector('.arr').classList.add('open');
+      });
+    }
+  }
+
+  window.addEventListener('scroll', ()=>{
+    document.getElementById('top').style.display = window.scrollY > 400 ? 'flex' : 'none';
+  });
+
+  // Open first Q on load
+  document.querySelector('.qa-q').click();
+</script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top 50 JavaScript Interview Questions - ZenCampus Prep</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --accent:#38bdf8; --text:#e2e8f0; --muted:#94a3b8; --code:#0b1220;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:'Segoe UI',Roboto,Arial,sans-serif; background:var(--bg); color:var(--text);
+    line-height:1.6;
+  }
+  header{
+    background:linear-gradient(135deg,#1e3a8a,#0f172a); padding:40px 20px; text-align:center;
+    border-bottom:3px solid var(--accent);
+  }
+  header h1{ margin:0 0 8px; font-size:2rem; color:#fff; }
+  header p{ margin:0; color:var(--muted); }
+  .container{ max-width:900px; margin:0 auto; padding:30px 20px 80px; }
+  .search-box{
+    width:100%; padding:12px 16px; margin-bottom:24px; border-radius:8px; border:1px solid #334155;
+    background:var(--card); color:var(--text); font-size:1rem;
+  }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
+  .filter-btn{
+    padding:6px 14px; border-radius:20px; border:1px solid #334155; background:transparent;
+    color:var(--muted); cursor:pointer; font-size:0.85rem; transition:.2s;
+  }
+  .filter-btn.active, .filter-btn:hover{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+  .qa{
+    background:var(--card); border-radius:10px; margin-bottom:14px; overflow:hidden;
+    border:1px solid #334155;
+  }
+  .q{
+    padding:16px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+    font-weight:600; gap:12px;
+  }
+  .q:hover{ background:#25344d; }
+  .q .num{ color:var(--accent); margin-right:8px; }
+  .q .tag{
+    font-size:0.7rem; font-weight:400; padding:2px 8px; border-radius:10px; background:#0b1220;
+    color:var(--accent); white-space:nowrap;
+  }
+  .a{
+    max-height:0; overflow:hidden; transition:max-height .25s ease; padding:0 18px; color:var(--muted);
+    border-top:1px solid transparent;
+  }
+  .qa.open .a{ max-height:800px; padding:0 18px 18px; border-top:1px solid #334155; }
+  .a code, .a pre{
+    background:var(--code); color:#a5f3fc; padding:2px 6px; border-radius:4px; font-family:Consolas,Monaco,monospace;
+    font-size:0.88rem;
+  }
+  .a pre{ display:block; padding:12px; overflow-x:auto; white-space:pre-wrap; margin:10px 0; }
+  .toggle-icon{ transition:transform .25s; color:var(--accent); font-size:1.1rem; }
+  .qa.open .toggle-icon{ transform:rotate(45deg); }
+  footer{ text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
+  .count{ color:var(--accent); font-weight:600; }
+  .progress-wrap{ position:sticky; top:0; background:var(--bg); padding:10px 0; z-index:10; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🚀 Top 50 JavaScript Interview Questions</h1>
+  <p>Basic → Advanced | ZenCampus Prep Edition</p>
+</header>
+
+<div class="container">
+  <div class="progress-wrap">
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search a question (e.g. closure, promise, hoisting)...">
+    <div class="filters" id="filters"></div>
+    <p style="color:var(--muted); font-size:0.85rem;">Showing <span class="count" id="visibleCount">50</span> / 50 questions</p>
+  </div>
+
+  <div id="qaList"></div>
+</div>
+
+<footer>Built for ZenCampus JS learning • Click a question to reveal the answer</footer>
+
+<script>
+const questions = [
+  {level:"Basic", q:"What are the different data types in JavaScript?", a:"JS has 7 primitive types: <code>String, Number, BigInt, Boolean, Undefined, Null, Symbol</code>, plus one non-primitive: <code>Object</code> (which includes arrays and functions)."},
+  {level:"Basic", q:"Difference between var, let, and const?", a:"<code>var</code> is function-scoped and hoisted with 'undefined'. <code>let</code> and <code>const</code> are block-scoped and live in the 'temporal dead zone' until initialized. <code>const</code> cannot be reassigned (but object contents can still change)."},
+  {level:"Basic", q:"What is hoisting?", a:"JS moves variable and function declarations to the top of their scope during compilation. <pre>console.log(x); // undefined\nvar x = 5;</pre> Function declarations are fully hoisted; <code>let/const</code> are hoisted but stay in the TDZ (Temporal Dead Zone)."},
+  {level:"Basic", q:"Difference between == and ===?", a:"<code>==</code> compares values after type coercion. <code>===</code> (strict equality) compares both value and type without conversion. Always prefer <code>===</code>."},
+  {level:"Basic", q:"What is NaN and how to check for it?", a:"NaN means 'Not a Number', returned from invalid math operations. Use <code>Number.isNaN(value)</code> instead of the global <code>isNaN()</code> since the global version coerces the value first."},
+  {level:"Basic", q:"What is the difference between null and undefined?", a:"<code>undefined</code> means a variable has been declared but not assigned. <code>null</code> is an intentional assignment representing 'no value'. <code>typeof undefined === 'undefined'</code>, <code>typeof null === 'object'</code> (a known JS quirk)."},
+  {level:"Basic", q:"What are template literals?", a:"Strings wrapped in backticks that allow embedded expressions: <pre>const name='Arjun';\nconsole.log(`Hello ${name}, total is ${10+5}`);</pre>"},
+  {level:"Basic", q:"Explain truthy and falsy values.", a:"Falsy values: <code>false, 0, '', null, undefined, NaN</code>. Everything else (including <code>'0'</code> and <code>[]</code>) is truthy."},
+  {level:"Basic", q:"What is the difference between function declaration and function expression?", a:"Function declarations (<code>function foo(){}</code>) are hoisted fully and callable before definition. Function expressions (<code>const foo = function(){}</code>) are not hoisted with their assignment, so they can't be called before the line executes."},
+  {level:"Basic", q:"What are arrow functions and how do they differ from regular functions?", a:"Arrow functions have no own <code>this</code>, <code>arguments</code>, or <code>super</code> — they inherit <code>this</code> from the enclosing scope. They also cannot be used as constructors (<code>new</code>)."},
+  {level:"Intermediate", q:"What is a closure? Give a real example.", a:"A closure is a function that remembers variables from its outer scope even after that outer function has returned. <pre>function counter(){\n  let count=0;\n  return () => ++count;\n}\nconst inc = counter();\ninc(); inc(); // 2</pre> Used in ZenCampus for receipt-number generators, debounce, and private state."},
+  {level:"Intermediate", q:"Explain the JavaScript event loop.", a:"JS is single-threaded. The call stack executes synchronous code first. Async callbacks (Promises = microtasks, setTimeout = macrotasks) wait in queues and run only when the call stack is empty. Microtasks always run before macrotasks."},
+  {level:"Intermediate", q:"What is the difference between call, apply, and bind?", a:"All three set the <code>this</code> context of a function. <code>call(thisArg, a, b)</code> invokes immediately with individual args. <code>apply(thisArg, [a,b])</code> invokes immediately with an args array. <code>bind(thisArg)</code> returns a new function without invoking it."},
+  {level:"Intermediate", q:"What is event delegation?", a:"Attaching a single event listener to a parent element to handle events from its children (using event bubbling), instead of attaching listeners to every child. Efficient for dynamically added rows in a student/fee table."},
+  {level:"Intermediate", q:"What is the difference between synchronous and asynchronous code?", a:"Synchronous code runs line by line, blocking further execution until done. Asynchronous code (Promises, callbacks, async/await) lets other code run while waiting for a task (like an API call) to finish."},
+  {level:"Intermediate", q:"Explain Promises and their states.", a:"A Promise represents a future value with 3 states: <code>pending</code>, <code>fulfilled</code> (resolved), or <code>rejected</code>. <pre>fetch(url).then(res=>res.json()).catch(err=>console.log(err));</pre>"},
+  {level:"Intermediate", q:"What is async/await and how does it relate to Promises?", a:"Syntactic sugar over Promises that makes async code look synchronous. <code>await</code> pauses execution inside an <code>async</code> function until the Promise settles, without blocking the main thread."},
+  {level:"Intermediate", q:"What is the difference between map(), filter(), and reduce()?", a:"<code>map()</code> transforms each element into a new array of the same length. <code>filter()</code> returns a subset matching a condition. <code>reduce()</code> combines all elements into a single accumulated value."},
+  {level:"Intermediate", q:"What is destructuring?", a:"A syntax to unpack values from arrays or properties from objects into variables. <pre>const {name, age} = student;\nconst [first, second] = marksArray;</pre>"},
+  {level:"Intermediate", q:"What is the spread operator vs rest parameter?", a:"Spread (<code>...</code>) expands an iterable into individual elements (e.g. <code>[...arr1, ...arr2]</code>). Rest collects multiple arguments into a single array (e.g. <code>function sum(...nums){}</code>). Same syntax, opposite direction."},
+  {level:"Intermediate", q:"What is 'this' in JavaScript and how does it behave differently in arrow vs regular functions?", a:"<code>this</code> refers to the object executing the current function. Regular functions get <code>this</code> based on how they're called (dynamic). Arrow functions inherit <code>this</code> lexically from their enclosing scope (static) — they never have their own <code>this</code>."},
+  {level:"Intermediate", q:"What are template methods like debounce and throttle used for?", a:"Debounce delays execution until the user stops triggering an event for X ms (ideal for search boxes). Throttle limits execution to at most once every X ms (ideal for scroll/resize handlers)."},
+  {level:"Intermediate", q:"What is JSON and how do you parse/stringify it?", a:"JSON (JavaScript Object Notation) is a text data format. <code>JSON.parse(str)</code> converts a JSON string to a JS object. <code>JSON.stringify(obj)</code> converts a JS object to a JSON string — commonly used when sending data to ASP.NET Controllers via fetch/AJAX."},
+  {level:"Intermediate", q:"Explain prototypal inheritance.", a:"Every JS object has an internal link (<code>[[Prototype]]</code>) to another object, forming a prototype chain. When a property isn't found on an object, JS looks up the chain. <code>class</code> syntax is sugar over this prototype mechanism."},
+  {level:"Intermediate", q:"What is the difference between a shallow copy and a deep copy?", a:"A shallow copy (<code>{...obj}</code> or <code>Object.assign</code>) copies only the top-level properties — nested objects are still shared by reference. A deep copy duplicates every nested level, e.g. via <code>structuredClone(obj)</code> or <code>JSON.parse(JSON.stringify(obj))</code>."},
+  {level:"Advanced", q:"What is the difference between microtasks and macrotasks?", a:"Microtasks (Promise callbacks, <code>queueMicrotask</code>) run immediately after the current synchronous code finishes, before rendering. Macrotasks (<code>setTimeout</code>, <code>setInterval</code>, I/O) run in the next event loop cycle, after all pending microtasks."},
+  {level:"Advanced", q:"Explain currying in JavaScript.", a:"Currying transforms a function with multiple arguments into a sequence of functions each taking one argument. <pre>const add = a => b => a + b;\nadd(5)(10); // 15</pre> Useful for creating reusable, pre-configured functions (e.g. a fee calculator pre-set with GST rate)."},
+  {level:"Advanced", q:"What is memoization?", a:"An optimization technique that caches the results of expensive function calls and returns the cached result when the same inputs occur again. Useful for repeated attendance/fee percentage calculations."},
+  {level:"Advanced", q:"What are Web APIs vs the JS engine?", a:"The JS engine (e.g., V8) only understands core language features. APIs like <code>setTimeout</code>, <code>fetch</code>, and the DOM are provided by the browser (Web APIs), not JS itself. This is why Node.js and browsers can have different behavior for the same code."},
+  {level:"Advanced", q:"What is the difference between Object.freeze() and const?", a:"<code>const</code> prevents reassignment of the variable binding, but object properties can still be mutated. <code>Object.freeze(obj)</code> prevents modification of the object's existing properties (shallow freeze only)."},
+  {level:"Advanced", q:"Explain the concept of the 'temporal dead zone' (TDZ).", a:"The time between entering a scope and the actual declaration line where a <code>let</code>/<code>const</code> variable exists but cannot be accessed. Accessing it throws a <code>ReferenceError</code>, unlike <code>var</code> which returns <code>undefined</code>."},
+  {level:"Advanced", q:"What is a higher-order function?", a:"A function that takes another function as an argument and/or returns a function. Examples: <code>map</code>, <code>filter</code>, <code>reduce</code>, or a custom <code>debounce(fn, delay)</code>."},
+  {level:"Advanced", q:"Explain the module pattern and ES6 modules (import/export).", a:"ES6 modules let you split code into files with explicit <code>export</code>/<code>import</code>, each module having its own scope (no global pollution). Older code used IIFEs to achieve similar encapsulation before native modules existed."},
+  {level:"Advanced", q:"What is an IIFE and why use it?", a:"Immediately Invoked Function Expression: <pre>(function(){ /* private scope */ })();</pre> Used to avoid polluting the global namespace — common in older jQuery-based page scripts."},
+  {level:"Advanced", q:"What is the difference between Promise.all, Promise.allSettled, Promise.race, and Promise.any?", a:"<code>all</code> resolves when every promise resolves, rejects if any one rejects. <code>allSettled</code> waits for all regardless of outcome and returns each result/status. <code>race</code> settles as soon as the first promise settles (win or lose). <code>any</code> resolves as soon as the first one succeeds, ignoring rejections unless all fail."},
+  {level:"Advanced", q:"What are generators in JavaScript?", a:"Functions that can pause and resume execution using <code>yield</code>, defined with <code>function*</code>. Useful for creating custom iterators or handling async flows before async/await existed."},
+  {level:"Advanced", q:"What is the difference between deep equality and reference equality for objects?", a:"Two objects with identical properties are NOT <code>===</code> equal unless they reference the exact same memory location. <pre>{a:1} === {a:1} // false</pre> Deep equality needs manual comparison or a utility function/library."},
+  {level:"Advanced", q:"What is debouncing used for in a real project like ZenCampus?", a:"Preventing an API call from firing on every keystroke in a student/staff search box — waiting until the user pauses typing for e.g. 400ms before calling the search API, reducing server load."},
+  {level:"Advanced", q:"Explain event bubbling and capturing.", a:"When an event fires on an element, it 'bubbles' up through its ancestors by default (bubbling phase). 'Capturing' is the opposite — the event travels from the root down to the target first. <code>addEventListener(type, fn, true)</code> enables capture phase."},
+  {level:"Advanced", q:"What is the difference between local storage, session storage, and cookies?", a:"localStorage persists indefinitely (until cleared) and is ~5-10MB. sessionStorage clears when the tab closes. Cookies are small (~4KB), sent with every HTTP request, and can have expiry dates — useful for server-readable auth tokens."},
+  {level:"Advanced", q:"What is a WeakMap and why would you use one?", a:"A Map whose keys must be objects and are held weakly — allowing garbage collection when there are no other references to the key. Useful for attaching private metadata to DOM elements without causing memory leaks."},
+  {level:"Advanced", q:"Explain optional chaining (?.) and nullish coalescing (??).", a:"<code>obj?.prop</code> safely accesses a nested property, returning <code>undefined</code> instead of throwing if any part is null/undefined. <code>value ?? 'default'</code> returns the right side only if the left is <code>null</code>/<code>undefined</code> (unlike <code>||</code>, which also triggers on 0 or '')."},
+  {level:"Advanced", q:"What is the difference between synchronous try/catch and handling errors in Promises?", a:"<code>try/catch</code> only catches synchronous errors and errors from <code>await</code>ed promises inside an async function. Unhandled Promise rejections outside <code>await</code> need <code>.catch()</code> or a global <code>window.onunhandledrejection</code> handler."},
+  {level:"Advanced", q:"What are Symbols used for in JavaScript?", a:"A primitive type that creates guaranteed unique values, often used as non-colliding object property keys or to define custom iterator behavior via <code>Symbol.iterator</code>."},
+  {level:"Advanced", q:"What is tree shaking?", a:"A bundler optimization (Webpack/Rollup/Vite) that removes unused exported code from the final bundle by statically analyzing ES module <code>import</code>/<code>export</code> statements, reducing bundle size."},
+  {level:"Advanced", q:"Explain the difference between mutable and immutable operations on arrays.", a:"Mutable methods change the original array: <code>push, pop, splice, sort</code>. Immutable methods return a new array without touching the original: <code>map, filter, concat, slice, [...arr]</code>. Prefer immutable patterns in state-driven UI code to avoid subtle bugs."},
+  {level:"Advanced", q:"What is a Proxy in JavaScript?", a:"An object that wraps another object/function and intercepts fundamental operations (get, set, delete) via 'traps'. Used for validation, logging, or reactive frameworks (e.g. Vue 3's reactivity system is built on Proxy)."},
+  {level:"Advanced", q:"How does JavaScript handle memory management and garbage collection?", a:"JS automatically frees memory for objects no longer reachable from the root (global object, active call stack) using algorithms like 'mark-and-sweep'. Memory leaks commonly happen from forgotten timers, event listeners, or closures holding large references unnecessarily."},
+  {level:"Advanced", q:"What is the difference between CommonJS (require) and ES Modules (import)?", a:"CommonJS (<code>require/module.exports</code>) is Node.js's original synchronous module system. ES Modules (<code>import/export</code>) are the official JS standard, statically analyzed, support tree-shaking, and work natively in modern browsers and Node."},
+  {level:"Advanced", q:"How would you optimize a page in ZenCampus that renders a large student table with 5000+ rows?", a:"Use pagination or virtual scrolling (render only visible rows), debounce filter/search inputs, use <code>DocumentFragment</code> for batch DOM insertion instead of updating the DOM in a loop, and avoid re-querying the DOM repeatedly inside loops — cache element references first."}
+];
+
+const listEl = document.getElementById('qaList');
+const filtersEl = document.getElementById('filters');
+const searchBox = document.getElementById('searchBox');
+const visibleCountEl = document.getElementById('visibleCount');
+
+const levels = ["All", "Basic", "Intermediate", "Advanced"];
+let activeLevel = "All";
+
+function renderFilters(){
+  filtersEl.innerHTML = levels.map(lvl =>
+    `<button class="filter-btn ${lvl===activeLevel?'active':''}" data-level="${lvl}">${lvl}</button>`
+  ).join('');
+  filtersEl.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeLevel = btn.dataset.level;
+      renderFilters();
+      renderList();
+    });
+  });
+}
+
+function renderList(){
+  const searchTerm = searchBox.value.trim().toLowerCase();
+  const filtered = questions
+    .map((item, idx)=>({...item, idx}))
+    .filter(item => activeLevel==="All" || item.level===activeLevel)
+    .filter(item => !searchTerm || item.q.toLowerCase().includes(searchTerm) || item.a.toLowerCase().includes(searchTerm));
+
+  visibleCountEl.textContent = filtered.length;
+
+  listEl.innerHTML = filtered.map(item => `
+    <div class="qa" data-idx="${item.idx}">
+      <div class="q">
+        <span><span class="num">Q${item.idx+1}.</span>${item.q}</span>
+        <span style="display:flex; align-items:center; gap:10px;">
+          <span class="tag">${item.level}</span>
+          <span class="toggle-icon">+</span>
+        </span>
+      </div>
+      <div class="a">${item.a}</div>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.q').forEach(qEl=>{
+    qEl.addEventListener('click', ()=>{
+      qEl.parentElement.classList.toggle('open');
+    });
+  });
+}
+
+searchBox.addEventListener('input', renderList);
+
+renderFilters();
+renderList();
+</script>
+
+</body>
+</html>

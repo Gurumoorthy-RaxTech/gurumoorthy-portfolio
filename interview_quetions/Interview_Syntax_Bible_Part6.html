@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 6 — HTML + CSS · ZenCampus</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; line-height: 1.7; }
+  header { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); padding: 32px 20px; text-align: center; border-bottom: 3px solid #e94560; }
+  header h1 { font-size: 2em; color: #e94560; text-shadow: 0 0 20px #e9456088; }
+  header p  { color: #a0a0c0; margin-top: 8px; }
+  .badge { display: inline-block; background: #e94560; color: white; padding: 4px 12px; border-radius: 20px; font-size: .78em; margin: 4px; }
+  .container { max-width: 1150px; margin: 0 auto; padding: 20px; }
+
+  .section { margin: 36px 0; border-radius: 12px; overflow: hidden; border: 1px solid #2a2a4a; }
+  .section-header { padding: 16px 24px; font-size: 1.2em; font-weight: bold; display: flex; align-items: center; gap: 12px; }
+  .section-body { padding: 20px 24px; background: #13132a; }
+  .html-sec   .section-header { background: linear-gradient(90deg, #4a2000, #e67e22); }
+  .sel-sec    .section-header { background: linear-gradient(90deg, #1a0a3d, #8e44ad); }
+  .box-sec    .section-header { background: linear-gradient(90deg, #001a3d, #1e6091); }
+  .grid-sec   .section-header { background: linear-gradient(90deg, #00301a, #27ae60); }
+  .resp-sec   .section-header { background: linear-gradient(90deg, #2a1a00, #f39c12); }
+  .anim-sec   .section-header { background: linear-gradient(90deg, #300030, #c0392b); }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; margin-top: 16px; }
+  .card { background: #1a1a35; border-radius: 10px; padding: 18px; border-left: 4px solid #e94560; transition: transform .2s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px #e9456033; }
+  .card-title { font-size: 1.05em; font-weight: bold; color: #fff; margin-bottom: 8px; }
+  .card-sub   { font-size: .78em; color: #e94560; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+
+  pre  { background: #0d1117; border-radius: 8px; padding: 14px; overflow-x: auto; font-size: .82em; font-family: 'Consolas', monospace; color: #e0e0e0; margin: 10px 0; border: 1px solid #2a2a4a; line-height: 1.7; }
+  .t   { color: #f97316; }   /* html tag */
+  .a   { color: #9cdcfe; }   /* attribute */
+  .v   { color: #ce9178; }   /* value/string */
+  .p   { color: #4ec9b0; }   /* css property */
+  .val { color: #b5cea8; }   /* css value */
+  .sel { color: #dcdcaa; }   /* css selector */
+  .cm  { color: #6a9955; }   /* comment */
+  .kw  { color: #569cd6; }   /* keyword */
+  .num { color: #b5cea8; }   /* number */
+  code { background: #0d1117; color: #f97316; padding: 2px 7px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: .83em; }
+
+  .movie-ref  { background: #1a0f2e; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #c39bd3; border-left: 3px solid #8e44ad; }
+  .movie-ref .film { color: #f39c12; font-weight: bold; }
+  .zencampus  { background: #0a2010; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #a8e6cf; border-left: 3px solid #27ae60; }
+  .zencampus .label { color: #2ecc71; font-weight: bold; font-size: .8em; }
+  .interview-qa { background: #1a0a0a; border-radius: 6px; padding: 12px 14px; margin: 10px 0; border-left: 3px solid #e74c3c; }
+  .interview-qa .q { color: #e74c3c; font-size: .8em; font-weight: bold; }
+  .interview-qa .a { color: #c0c0c0; font-size: .85em; margin-top: 4px; }
+  .trap  { background: #1a0000; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #ff6b6b; border-left: 3px solid #e74c3c; }
+  .trap .label { color: #e74c3c; font-weight: bold; }
+  .tip-box { background: #1a1000; border: 1px solid #f39c12; border-radius: 8px; padding: 14px; margin: 14px 0; }
+  .tip-box .tip-title { color: #f39c12; font-weight: bold; margin-bottom: 6px; }
+  .tanglish { background: #1a1500; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #f9ca24; border-left: 3px solid #f9ca24; }
+
+  /* LIVE DEMO BOXES */
+  .demo-box { background: #0d1117; border: 1px solid #2a2a4a; border-radius: 8px; padding: 14px; margin: 10px 0; }
+  .demo-box .demo-title { color: #74b9ff; font-size: .8em; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* FLEXBOX LIVE DEMO */
+  .flex-demo { display: flex; gap: 8px; background: #111; padding: 10px; border-radius: 6px; }
+  .flex-item { background: #e94560; color: white; padding: 8px 14px; border-radius: 4px; font-size: .78em; font-weight: bold; }
+  .flex-item:nth-child(2){ background: #f39c12; }
+  .flex-item:nth-child(3){ background: #27ae60; }
+  .flex-demo.col   { flex-direction: column; }
+  .flex-demo.wrap  { flex-wrap: wrap; }
+  .flex-demo.center{ justify-content: center; align-items: center; height: 80px; }
+  .flex-demo.sb    { justify-content: space-between; }
+  .flex-demo.end   { justify-content: flex-end; }
+
+  /* GRID LIVE DEMO */
+  .grid-demo { display: grid; gap: 6px; background: #111; padding: 10px; border-radius: 6px; }
+  .grid-demo.g3    { grid-template-columns: repeat(3, 1fr); }
+  .grid-demo.g-auto{ grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+  .grid-item { background: #1e6091; color: white; padding: 8px; border-radius: 4px; font-size: .75em; text-align: center; font-weight: bold; }
+  .grid-item.span2 { grid-column: span 2; background: #8e44ad; }
+  .grid-item.spanr { grid-row: span 2; background: #27ae60; }
+
+  /* SELECTOR SPECIFICITY TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .84em; }
+  th { background: #1e3a5f; color: #74b9ff; padding: 10px; text-align: left; }
+  td { padding: 8px 10px; border-bottom: 1px solid #2a2a4a; color: #c0c0c0; }
+  tr:hover td { background: #1a1a35; }
+  h3 { color: #74b9ff; margin: 18px 0 10px; font-size: 1em; }
+
+  /* TRANSITION DEMO */
+  .btn-demo { display: inline-block; background: #e94560; color: white; padding: 10px 20px; border-radius: 6px; font-size: .84em; font-weight: bold; transition: all .3s ease; cursor: pointer; margin: 4px; }
+  .btn-demo:hover { background: #c0392b; transform: translateY(-3px); box-shadow: 0 6px 20px #e9456066; }
+
+  /* KEYFRAME DEMO */
+  @keyframes slideIn {
+    from { transform: translateX(-30px); opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
+  }
+  @keyframes pulse {
+    0%,100% { transform: scale(1);    }
+    50%      { transform: scale(1.08); }
+  }
+  .anim-demo { background: #e94560; color: white; padding: 8px 16px; border-radius: 6px; display: inline-block; margin: 6px; font-size: .82em; font-weight: bold; }
+  .anim-slide { animation: slideIn .6s ease forwards; }
+  .anim-pulse { animation: pulse 2s ease infinite; }
+
+  footer { text-align: center; padding: 30px; color: #555; border-top: 1px solid #2a2a4a; margin-top: 40px; }
+  @media(max-width:600px){ .card-grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎨 Part 6 — HTML · CSS Selectors · Flexbox · Grid · Responsive · Animations</h1>
+  <p>ZenCampus Edition · Syntax + Live Demos + Tamil Movie Memory + Interview Answers</p>
+  <div style="margin-top:10px">
+    <span class="badge">HTML5 Semantic</span>
+    <span class="badge">CSS Selectors</span>
+    <span class="badge">Specificity</span>
+    <span class="badge">Flexbox</span>
+    <span class="badge">CSS Grid</span>
+    <span class="badge">Media Queries</span>
+    <span class="badge">Variables</span>
+    <span class="badge">Transitions</span>
+    <span class="badge">Keyframe Animations</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="tip-box" style="margin-top:20px">
+    <div class="tip-title">🎬 Master Memory — This Part's Movie Map</div>
+    <p>
+      <strong>HTML Semantic</strong> = 🎬 Uyarndha Manithan — structure gives meaning, not just appearance.<br>
+      <strong>CSS Selectors</strong> = 🎬 Vikram Vedha — target precisely, chain rules, specificity wins.<br>
+      <strong>Flexbox</strong> = 🎬 96 (96 vayadhinile) — 1-dimensional row/column alignment, items flow naturally.<br>
+      <strong>CSS Grid</strong> = 🎬 Enthiran — 2D layout engine, rows AND columns, complex patterns in seconds.<br>
+      <strong>Animations</strong> = 🎬 Kaaviya Thalaivan — smooth transitions, storytelling through motion.
+    </p>
+  </div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — HTML5 SEMANTIC
+════════════════════════════════════════════ -->
+<div class="section html-sec" id="html">
+  <div class="section-header">🟠 HTML5 — Semantic Structure · Forms · Meta</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Uyarndha Manithan — (Sivaji Ganesan):</span>
+      Meaningful life — not just existing, but having purpose. Semantic HTML = same.
+      &lt;div&gt; vs &lt;article&gt; — both render, but article has MEANING for screen readers, SEO bots, accessibility tools!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- HTML SEMANTIC STRUCTURE -->
+      <div class="card">
+        <div class="card-sub">Syntax — Semantic Layout</div>
+        <div class="card-title">HTML5 Semantic Tags — Full Page</div>
+        <pre><span class="cm">&lt;!-- ZenCampus Page Layout --&gt;</span>
+<span class="t">&lt;!DOCTYPE html&gt;</span>
+<span class="t">&lt;html</span> <span class="a">lang</span>=<span class="v">"en"</span><span class="t">&gt;</span>
+<span class="t">&lt;head&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">charset</span>=<span class="v">"UTF-8"</span><span class="t">&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="v">"viewport"</span>
+        <span class="a">content</span>=<span class="v">"width=device-width,
+                 initial-scale=1.0"</span><span class="t">&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="v">"description"</span>
+        <span class="a">content</span>=<span class="v">"ZenCampus School ERP"</span><span class="t">&gt;</span>
+  <span class="t">&lt;title&gt;</span>ZenCampus — Student Portal<span class="t">&lt;/title&gt;</span>
+  <span class="t">&lt;link</span> <span class="a">rel</span>=<span class="v">"stylesheet"</span>
+        <span class="a">href</span>=<span class="v">"styles.css"</span><span class="t">&gt;</span>
+<span class="t">&lt;/head&gt;</span>
+<span class="t">&lt;body&gt;</span>
+
+  <span class="t">&lt;header&gt;</span>            <span class="cm">&lt;!-- site header --&gt;</span>
+    <span class="t">&lt;nav&gt;</span>             <span class="cm">&lt;!-- navigation --&gt;</span>
+      <span class="t">&lt;ul&gt;</span>
+        <span class="t">&lt;li&gt;&lt;a</span> <span class="a">href</span>=<span class="v">"/"</span><span class="t">&gt;</span>Home<span class="t">&lt;/a&gt;&lt;/li&gt;</span>
+        <span class="t">&lt;li&gt;&lt;a</span> <span class="a">href</span>=<span class="v">"/students"</span><span class="t">&gt;</span>Students<span class="t">&lt;/a&gt;&lt;/li&gt;</span>
+        <span class="t">&lt;li&gt;&lt;a</span> <span class="a">href</span>=<span class="v">"/fees"</span><span class="t">&gt;</span>Fees<span class="t">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="t">&lt;/ul&gt;</span>
+    <span class="t">&lt;/nav&gt;</span>
+  <span class="t">&lt;/header&gt;</span>
+
+  <span class="t">&lt;main&gt;</span>              <span class="cm">&lt;!-- main content --&gt;</span>
+    <span class="t">&lt;section</span> <span class="a">id</span>=<span class="v">"dashboard"</span><span class="t">&gt;</span>
+      <span class="t">&lt;h1&gt;</span>Dashboard<span class="t">&lt;/h1&gt;</span>
+
+      <span class="t">&lt;article</span> <span class="a">class</span>=<span class="v">"stat-card"</span><span class="t">&gt;</span>
+        <span class="t">&lt;h2&gt;</span>Total Students<span class="t">&lt;/h2&gt;</span>
+        <span class="t">&lt;p&gt;</span>1,240<span class="t">&lt;/p&gt;</span>
+      <span class="t">&lt;/article&gt;</span>
+
+      <span class="t">&lt;aside&gt;</span>           <span class="cm">&lt;!-- sidebar --&gt;</span>
+        <span class="t">&lt;h3&gt;</span>Quick Links<span class="t">&lt;/h3&gt;</span>
+      <span class="t">&lt;/aside&gt;</span>
+    <span class="t">&lt;/section&gt;</span>
+
+    <span class="t">&lt;section</span> <span class="a">id</span>=<span class="v">"students"</span><span class="t">&gt;</span>
+      <span class="t">&lt;figure&gt;</span>          <span class="cm">&lt;!-- image + caption --&gt;</span>
+        <span class="t">&lt;img</span> <span class="a">src</span>=<span class="v">"chart.png"</span>
+             <span class="a">alt</span>=<span class="v">"Attendance Chart"</span>
+             <span class="a">loading</span>=<span class="v">"lazy"</span><span class="t">&gt;</span>
+        <span class="t">&lt;figcaption&gt;</span>June 2026<span class="t">&lt;/figcaption&gt;</span>
+      <span class="t">&lt;/figure&gt;</span>
+    <span class="t">&lt;/section&gt;</span>
+  <span class="t">&lt;/main&gt;</span>
+
+  <span class="t">&lt;footer&gt;</span>            <span class="cm">&lt;!-- page footer --&gt;</span>
+    <span class="t">&lt;p&gt;</span>&amp;copy; 2026 ZenCampus<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;/footer&gt;</span>
+
+<span class="t">&lt;/body&gt;</span>
+<span class="t">&lt;/html&gt;</span></pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Why use semantic HTML?</div>
+          <div class="a">1. SEO — search engines understand content hierarchy. 2. Accessibility — screen readers announce "navigation", "main content". 3. Maintainability — &lt;header&gt; vs &lt;div id="header"&gt;, meaning is clear. 4. Browser defaults — &lt;button&gt; vs &lt;div onclick&gt; — keyboard focusable, ARIA roles built-in!</div>
+        </div>
+      </div>
+
+      <!-- HTML FORMS -->
+      <div class="card">
+        <div class="card-sub">Syntax — Forms</div>
+        <div class="card-title">Form Elements · Validation · Input Types</div>
+        <pre><span class="cm">&lt;!-- ZenCampus Student Admission Form --&gt;</span>
+<span class="t">&lt;form</span> <span class="a">id</span>=<span class="v">"admissionForm"</span>
+      <span class="a">method</span>=<span class="v">"post"</span>
+      <span class="a">action</span>=<span class="v">"/api/students"</span>
+      <span class="a">novalidate</span><span class="t">&gt;</span>
+
+  <span class="t">&lt;fieldset&gt;</span>
+    <span class="t">&lt;legend&gt;</span>Student Details<span class="t">&lt;/legend&gt;</span>
+
+    <span class="cm">&lt;!-- Text --&gt;</span>
+    <span class="t">&lt;label</span> <span class="a">for</span>=<span class="v">"name"</span><span class="t">&gt;</span>Full Name<span class="t">&lt;/label&gt;</span>
+    <span class="t">&lt;input</span> <span class="a">type</span>=<span class="v">"text"</span>
+           <span class="a">id</span>=<span class="v">"name"</span>
+           <span class="a">name</span>=<span class="v">"name"</span>
+           <span class="a">placeholder</span>=<span class="v">"Enter full name"</span>
+           <span class="a">required</span>
+           <span class="a">minlength</span>=<span class="v">"3"</span>
+           <span class="a">maxlength</span>=<span class="v">"100"</span><span class="t">&gt;</span>
+
+    <span class="cm">&lt;!-- Email --&gt;</span>
+    <span class="t">&lt;label</span> <span class="a">for</span>=<span class="v">"email"</span><span class="t">&gt;</span>Email<span class="t">&lt;/label&gt;</span>
+    <span class="t">&lt;input</span> <span class="a">type</span>=<span class="v">"email"</span>
+           <span class="a">id</span>=<span class="v">"email"</span>
+           <span class="a">name</span>=<span class="v">"email"</span>
+           <span class="a">required</span><span class="t">&gt;</span>
+
+    <span class="cm">&lt;!-- Number --&gt;</span>
+    <span class="t">&lt;label</span> <span class="a">for</span>=<span class="v">"age"</span><span class="t">&gt;</span>Age<span class="t">&lt;/label&gt;</span>
+    <span class="t">&lt;input</span> <span class="a">type</span>=<span class="v">"number"</span>
+           <span class="a">id</span>=<span class="v">"age"</span>
+           <span class="a">min</span>=<span class="v">"5"</span> <span class="a">max</span>=<span class="v">"18"</span><span class="t">&gt;</span>
+
+    <span class="cm">&lt;!-- Date --&gt;</span>
+    <span class="t">&lt;input</span> <span class="a">type</span>=<span class="v">"date"</span>
+           <span class="a">name</span>=<span class="v">"dob"</span><span class="t">&gt;</span>
+
+    <span class="cm">&lt;!-- Select --&gt;</span>
+    <span class="t">&lt;label</span> <span class="a">for</span>=<span class="v">"class"</span><span class="t">&gt;</span>Class<span class="t">&lt;/label&gt;</span>
+    <span class="t">&lt;select</span> <span class="a">id</span>=<span class="v">"class"</span> <span class="a">name</span>=<span class="v">"class"</span><span class="t">&gt;</span>
+      <span class="t">&lt;option</span> <span class="a">value</span>=<span class="v">""</span><span class="t">&gt;</span>-- Select Class --<span class="t">&lt;/option&gt;</span>
+      <span class="t">&lt;optgroup</span> <span class="a">label</span>=<span class="v">"Primary"</span><span class="t">&gt;</span>
+        <span class="t">&lt;option</span> <span class="a">value</span>=<span class="v">"1"</span><span class="t">&gt;</span>Class 1<span class="t">&lt;/option&gt;</span>
+        <span class="t">&lt;option</span> <span class="a">value</span>=<span class="v">"2"</span><span class="t">&gt;</span>Class 2<span class="t">&lt;/option&gt;</span>
+      <span class="t">&lt;/optgroup&gt;</span>
+    <span class="t">&lt;/select&gt;</span>
+
+    <span class="cm">&lt;!-- Radio --&gt;</span>
+    <span class="t">&lt;label&gt;</span>
+      <span class="t">&lt;input</span> <span class="a">type</span>=<span class="v">"radio"</span>
+             <span class="a">name</span>=<span class="v">"gender"</span>
+             <span class="a">value</span>=<span class="v">"M"</span><span class="t">&gt;</span> Male
+    <span class="t">&lt;/label&gt;</span>
+    <span class="t">&lt;label&gt;</span>
+      <span class="t">&lt;input</span> <span class="a">type</span>=<span class="v">"radio"</span>
+             <span class="a">name</span>=<span class="v">"gender"</span>
+             <span class="a">value</span>=<span class="v">"F"</span><span class="t">&gt;</span> Female
+    <span class="t">&lt;/label&gt;</span>
+
+    <span class="cm">&lt;!-- Checkbox --&gt;</span>
+    <span class="t">&lt;label&gt;</span>
+      <span class="t">&lt;input</span> <span class="a">type</span>=<span class="v">"checkbox"</span>
+             <span class="a">name</span>=<span class="v">"hostel"</span>
+             <span class="a">value</span>=<span class="v">"true"</span><span class="t">&gt;</span>
+      Hostel Required
+    <span class="t">&lt;/label&gt;</span>
+
+    <span class="cm">&lt;!-- Textarea --&gt;</span>
+    <span class="t">&lt;textarea</span> <span class="a">name</span>=<span class="v">"address"</span>
+              <span class="a">rows</span>=<span class="v">"3"</span>
+              <span class="a">cols</span>=<span class="v">"40"</span>
+              <span class="a">placeholder</span>=<span class="v">"Address..."</span><span class="t">&gt;&lt;/textarea&gt;</span>
+
+    <span class="cm">&lt;!-- File --&gt;</span>
+    <span class="t">&lt;input</span> <span class="a">type</span>=<span class="v">"file"</span>
+           <span class="a">accept</span>=<span class="v">".jpg,.png,.pdf"</span>
+           <span class="a">multiple</span><span class="t">&gt;</span>
+  <span class="t">&lt;/fieldset&gt;</span>
+
+  <span class="t">&lt;button</span> <span class="a">type</span>=<span class="v">"submit"</span><span class="t">&gt;</span>Submit<span class="t">&lt;/button&gt;</span>
+  <span class="t">&lt;button</span> <span class="a">type</span>=<span class="v">"reset"</span><span class="t">&gt;</span>Clear<span class="t">&lt;/button&gt;</span>
+<span class="t">&lt;/form&gt;</span></pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: &lt;label for&gt; why important?</div>
+          <div class="a">for="id" links label to input. Click label → focuses input (UX). Screen readers announce label when input focused (accessibility). ZenCampus admission form-la every field must have a linked label!</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SEMANTIC TAG TABLE -->
+    <h3>📋 Semantic Tag Reference</h3>
+    <table>
+      <tr><th>Tag</th><th>Meaning</th><th>Use Case</th></tr>
+      <tr><td><code>&lt;header&gt;</code></td><td>Page/section header</td><td>Logo, nav, school name</td></tr>
+      <tr><td><code>&lt;nav&gt;</code></td><td>Navigation links</td><td>Menu, breadcrumbs</td></tr>
+      <tr><td><code>&lt;main&gt;</code></td><td>Primary content</td><td>Dashboard, forms — only ONE per page</td></tr>
+      <tr><td><code>&lt;section&gt;</code></td><td>Themed group</td><td>Students section, Fees section</td></tr>
+      <tr><td><code>&lt;article&gt;</code></td><td>Self-contained content</td><td>Stat card, news item</td></tr>
+      <tr><td><code>&lt;aside&gt;</code></td><td>Side content</td><td>Sidebar, quick links</td></tr>
+      <tr><td><code>&lt;footer&gt;</code></td><td>Page/section footer</td><td>Copyright, links</td></tr>
+      <tr><td><code>&lt;figure&gt;</code></td><td>Media + caption</td><td>Chart, photo with &lt;figcaption&gt;</td></tr>
+      <tr><td><code>&lt;details&gt; + &lt;summary&gt;</code></td><td>Accordion</td><td>FAQ, expandable panel — no JS!</td></tr>
+      <tr><td><code>&lt;time datetime&gt;</code></td><td>Machine-readable date</td><td><code>&lt;time datetime="2026-06-25"&gt;</code>June 25&lt;/time&gt;</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — CSS SELECTORS + SPECIFICITY
+════════════════════════════════════════════ -->
+<div class="section sel-sec" id="selectors">
+  <div class="section-header">🟣 CSS Selectors · Specificity · Box Model · Variables</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Vikram Vedha (2017) — Vikram vs Vedha:</span>
+      Two forces, one wins based on who has higher authority. CSS specificity = same.
+      ID beats class, class beats tag, inline beats everything!
+      Inspector Vikram (ID=100pts) always overrides class teacher (10pts)!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- SELECTORS FULL SYNTAX -->
+      <div class="card">
+        <div class="card-sub">Syntax — All Selectors</div>
+        <div class="card-title">CSS Selector Types — Full Reference</div>
+        <pre><span class="cm">/* ── BASIC ──────────────────────────── */</span>
+<span class="sel">*</span>            { <span class="p">box-sizing</span>: <span class="val">border-box</span>; }   <span class="cm">/* universal */</span>
+<span class="sel">p</span>            { <span class="p">color</span>: <span class="val">#333</span>; }              <span class="cm">/* element */</span>
+<span class="sel">.card</span>        { <span class="p">padding</span>: <span class="val">16px</span>; }            <span class="cm">/* class */</span>
+<span class="sel">#dashboard</span>   { <span class="p">background</span>: <span class="val">#fff</span>; }        <span class="cm">/* id */</span>
+
+<span class="cm">/* ── COMBINATORS ────────────────────── */</span>
+<span class="sel">.card p</span>      { <span class="p">margin</span>: <span class="val">8px</span>; }      <span class="cm">/* descendant */</span>
+<span class="sel">.card &gt; h2</span>   { <span class="p">font-size</span>: <span class="val">1.2em</span>; } <span class="cm">/* direct child */</span>
+<span class="sel">h2 + p</span>       { <span class="p">margin-top</span>: <span class="val">0</span>; }    <span class="cm">/* adjacent sibling */</span>
+<span class="sel">h2 ~ p</span>       { <span class="p">color</span>: <span class="val">#666</span>; }     <span class="cm">/* general sibling */</span>
+
+<span class="cm">/* ── ATTRIBUTE ──────────────────────── */</span>
+<span class="sel">input[type="text"]</span>   { <span class="p">border</span>: <span class="val">1px solid #ccc</span>; }
+<span class="sel">a[href^="https"]</span>     { <span class="p">color</span>: <span class="val">green</span>; }  <span class="cm">/* starts with */</span>
+<span class="sel">a[href$=".pdf"]</span>      { <span class="p">color</span>: <span class="val">red</span>; }    <span class="cm">/* ends with */</span>
+<span class="sel">a[href*="zencampus"]</span> { <span class="p">font-weight</span>: <span class="val">bold</span>; } <span class="cm">/* contains */</span>
+
+<span class="cm">/* ── PSEUDO-CLASSES ─────────────────── */</span>
+<span class="sel">a:hover</span>          { <span class="p">color</span>: <span class="val">#e94560</span>; }
+<span class="sel">button:focus</span>     { <span class="p">outline</span>: <span class="val">2px solid blue</span>; }
+<span class="sel">input:disabled</span>   { <span class="p">opacity</span>: <span class="val">.5</span>; }
+<span class="sel">input:valid</span>      { <span class="p">border-color</span>: <span class="val">green</span>; }
+<span class="sel">input:invalid</span>    { <span class="p">border-color</span>: <span class="val">red</span>; }
+<span class="sel">li:first-child</span>   { <span class="p">font-weight</span>: <span class="val">bold</span>; }
+<span class="sel">li:last-child</span>    { <span class="p">border-bottom</span>: <span class="val">none</span>; }
+<span class="sel">li:nth-child(2n)</span> { <span class="p">background</span>: <span class="val">#f5f5f5</span>; } <span class="cm">/* even rows */</span>
+<span class="sel">li:nth-child(odd)</span>{ <span class="p">background</span>: <span class="val">#fff</span>; }
+<span class="sel">p:not(.intro)</span>    { <span class="p">color</span>: <span class="val">#666</span>; }
+<span class="sel">.card:empty</span>      { <span class="p">display</span>: <span class="val">none</span>; }
+
+<span class="cm">/* ── PSEUDO-ELEMENTS ────────────────── */</span>
+<span class="sel">p::first-line</span>    { <span class="p">font-weight</span>: <span class="val">bold</span>; }
+<span class="sel">p::first-letter</span>  { <span class="p">font-size</span>: <span class="val">2em</span>; }
+<span class="sel">.card::before</span>    { <span class="p">content</span>: <span class="val">"★ "</span>; <span class="p">color</span>: <span class="val">gold</span>; }
+<span class="sel">.card::after</span>     { <span class="p">content</span>: <span class="val">""</span>; <span class="p">display</span>: <span class="val">block</span>;
+                   <span class="p">clear</span>: <span class="val">both</span>; }
+<span class="sel">::placeholder</span>   { <span class="p">color</span>: <span class="val">#aaa</span>; }
+<span class="sel">::selection</span>     { <span class="p">background</span>: <span class="val">#e94560</span>;
+                   <span class="p">color</span>: <span class="val">white</span>; }</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: :: vs : in CSS?</div>
+          <div class="a">::before/::after = pseudo-elements — create virtual DOM node. :hover/:focus = pseudo-class — state of existing element. Rule: double colon for elements you're generating, single colon for state you're targeting!</div>
+        </div>
+      </div>
+
+      <!-- SPECIFICITY + BOX MODEL + VARIABLES -->
+      <div class="card">
+        <div class="card-sub">Specificity + Box Model + Variables</div>
+        <div class="card-title">Specificity Score · Box Model · CSS Custom Properties</div>
+        <pre><span class="cm">/* ── SPECIFICITY SCORING ──────────── */</span>
+<span class="cm">/*  inline  | ID  | class | tag       */</span>
+<span class="cm">/*  1,0,0,0 | 0,1,0,0 | 0,0,1,0 | 0,0,0,1 */</span>
+
+<span class="sel">p</span>               { } <span class="cm">/* 0-0-0-1  = 1pt  */</span>
+<span class="sel">.card</span>           { } <span class="cm">/* 0-0-1-0  = 10pts */</span>
+<span class="sel">.card p</span>         { } <span class="cm">/* 0-0-1-1  = 11pts */</span>
+<span class="sel">#dashboard</span>      { } <span class="cm">/* 0-1-0-0  = 100pts*/</span>
+<span class="sel">#dashboard .card</span>{ } <span class="cm">/* 0-1-1-0  = 110pts*/</span>
+<span class="cm">/* inline style          1-0-0-0 = 1000pts */</span>
+<span class="cm">/* !important   = nuclear option, avoid!   */</span>
+
+<span class="cm">/* ── BOX MODEL ───────────────────── */</span>
+<span class="sel">.card</span> {
+  <span class="p">width</span>:         <span class="val">300px</span>;
+  <span class="p">padding</span>:       <span class="val">16px</span>;           <span class="cm">/* inside */</span>
+  <span class="p">border</span>:        <span class="val">2px solid #ccc</span>;<span class="cm">/* edge */</span>
+  <span class="p">margin</span>:        <span class="val">20px</span>;           <span class="cm">/* outside */</span>
+
+  <span class="cm">/* CRITICAL: box-sizing */</span>
+  <span class="p">box-sizing</span>:    <span class="val">border-box</span>;
+  <span class="cm">/* total width = 300px (padding INCLUDED) */</span>
+  <span class="cm">/* Without this: 300+32+4 = 336px ACTUAL! */</span>
+}
+
+<span class="cm">/* ── CSS CUSTOM PROPERTIES ───────── */</span>
+<span class="sel">:root</span> {                           <span class="cm">/* global scope */</span>
+  <span class="p">--color-primary</span>:  <span class="val">#e94560</span>;
+  <span class="p">--color-bg</span>:       <span class="val">#0f0f1a</span>;
+  <span class="p">--color-text</span>:     <span class="val">#e0e0e0</span>;
+  <span class="p">--font-size-base</span>: <span class="val">16px</span>;
+  <span class="p">--radius</span>:         <span class="val">8px</span>;
+  <span class="p">--shadow</span>:         <span class="val">0 4px 20px #0006</span>;
+}
+
+<span class="sel">.btn</span> {
+  <span class="p">background</span>:    <span class="val">var(--color-primary)</span>;
+  <span class="p">border-radius</span>: <span class="val">var(--radius)</span>;
+  <span class="p">box-shadow</span>:    <span class="val">var(--shadow)</span>;
+}
+
+<span class="cm">/* Override for dark section */</span>
+<span class="sel">.dark-section</span> {
+  <span class="p">--color-bg</span>: <span class="val">#000</span>;  <span class="cm">/* scoped override */</span>
+}
+
+<span class="cm">/* calc() with variables */</span>
+<span class="sel">.sidebar</span> {
+  <span class="p">width</span>: <span class="val">calc(100% - 280px)</span>;
+  <span class="p">min-height</span>: <span class="val">calc(100vh - 64px)</span>;
+}</pre>
+        <div class="trap">
+          <div class="label">⚠️ Box Model Trap — Biggest CSS Interview Question!</div>
+          Default <code>box-sizing: content-box</code> → padding + border ADD to width.
+          Always use <code>*, *::before, *::after { box-sizing: border-box; }</code> globally!
+          width: 300px WITH border-box = 300px total. Without it = 300 + padding + border!
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SPECIFICITY TABLE -->
+    <h3>⚖️ Specificity Quick Reference</h3>
+    <table>
+      <tr><th>Selector</th><th>Score</th><th>Category</th></tr>
+      <tr><td><code>*</code></td><td>0</td><td>Universal</td></tr>
+      <tr><td><code>p, h1, div</code></td><td>1</td><td>Element</td></tr>
+      <tr><td><code>.card, :hover, [type]</code></td><td>10</td><td>Class/Pseudo-class/Attribute</td></tr>
+      <tr><td><code>#header</code></td><td>100</td><td>ID</td></tr>
+      <tr><td><code>style="..."</code></td><td>1000</td><td>Inline style</td></tr>
+      <tr><td><code>!important</code></td><td>∞</td><td>Nuclear option — avoid in production!</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — FLEXBOX
+════════════════════════════════════════════ -->
+<div class="section box-sec" id="flexbox">
+  <div class="section-header">🔵 Flexbox — 1D Layout · Row · Column · Alignment</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 96 (2018) — Ram &amp; Janu:</span>
+      Sitting across from each other — perfectly centered, naturally aligned, one emotional axis.
+      Flexbox = perfect for 1D alignment. Items flow in ONE direction (row or column), and justify/align put them exactly where you want. Perfect centering: display:flex; justify-content:center; align-items:center — done!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- FLEXBOX SYNTAX -->
+      <div class="card">
+        <div class="card-sub">Syntax — Container Properties</div>
+        <div class="card-title">Flexbox Container — All Properties</div>
+        <pre><span class="sel">.navbar</span> {
+  <span class="p">display</span>:          <span class="val">flex</span>;
+
+  <span class="cm">/* Direction */</span>
+  <span class="p">flex-direction</span>:   <span class="val">row</span>;         <span class="cm">/* default */</span>
+  <span class="cm">/* row | row-reverse | column | column-reverse */</span>
+
+  <span class="cm">/* Wrap */</span>
+  <span class="p">flex-wrap</span>:        <span class="val">nowrap</span>;      <span class="cm">/* default */</span>
+  <span class="cm">/* nowrap | wrap | wrap-reverse */</span>
+
+  <span class="cm">/* Shorthand */</span>
+  <span class="p">flex-flow</span>:        <span class="val">row wrap</span>;    <span class="cm">/* dir + wrap */</span>
+
+  <span class="cm">/* Gap between items */</span>
+  <span class="p">gap</span>:              <span class="val">16px</span>;
+  <span class="p">column-gap</span>:       <span class="val">20px</span>;
+  <span class="p">row-gap</span>:          <span class="val">12px</span>;
+
+  <span class="cm">/* MAIN AXIS alignment (horizontal for row) */</span>
+  <span class="p">justify-content</span>:  <span class="val">flex-start</span>;  <span class="cm">/* default */</span>
+  <span class="cm">/* flex-start | flex-end | center |
+     space-between | space-around | space-evenly */</span>
+
+  <span class="cm">/* CROSS AXIS alignment (vertical for row) */</span>
+  <span class="p">align-items</span>:      <span class="val">stretch</span>;     <span class="cm">/* default */</span>
+  <span class="cm">/* stretch | flex-start | flex-end |
+     center | baseline */</span>
+
+  <span class="cm">/* Multi-line cross axis alignment */</span>
+  <span class="p">align-content</span>:    <span class="val">flex-start</span>;
+  <span class="cm">/* (only works with flex-wrap: wrap) */</span>
+}
+
+<span class="cm">/* Perfect centering trick */</span>
+<span class="sel">.center-me</span> {
+  <span class="p">display</span>:          <span class="val">flex</span>;
+  <span class="p">justify-content</span>:  <span class="val">center</span>;
+  <span class="p">align-items</span>:      <span class="val">center</span>;
+  <span class="p">min-height</span>:       <span class="val">100vh</span>;
+  <span class="cm">/* INTERVIEW FAVOURITE! */</span>
+}</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: justify-content vs align-items?</div>
+          <div class="a">justify-content = MAIN axis (horizontal in row, vertical in column). align-items = CROSS axis (opposite). Tamil trick: J = justify = jungle road (horizontal). A = align = altitude (vertical). flex-direction:column aana — both swap!</div>
+        </div>
+      </div>
+
+      <!-- FLEX ITEM PROPERTIES -->
+      <div class="card">
+        <div class="card-sub">Syntax — Item Properties</div>
+        <div class="card-title">Flex Item — grow · shrink · basis · order</div>
+        <pre><span class="sel">.flex-item</span> {
+  <span class="cm">/* flex-grow: how much extra space to take */</span>
+  <span class="p">flex-grow</span>:    <span class="val">0</span>;   <span class="cm">/* default: don't grow */</span>
+  <span class="p">flex-grow</span>:    <span class="val">1</span>;   <span class="cm">/* take all extra space */</span>
+
+  <span class="cm">/* flex-shrink: how much to shrink if needed */</span>
+  <span class="p">flex-shrink</span>:  <span class="val">1</span>;   <span class="cm">/* default: can shrink */</span>
+  <span class="p">flex-shrink</span>:  <span class="val">0</span>;   <span class="cm">/* never shrink (sticky width) */</span>
+
+  <span class="cm">/* flex-basis: base size before grow/shrink */</span>
+  <span class="p">flex-basis</span>:   <span class="val">auto</span>; <span class="cm">/* use width/content */</span>
+  <span class="p">flex-basis</span>:   <span class="val">200px</span>;
+
+  <span class="cm">/* Shorthand: grow shrink basis */</span>
+  <span class="p">flex</span>: <span class="val">1</span>;          <span class="cm">/* = 1 1 0% */</span>
+  <span class="p">flex</span>: <span class="val">0 0 200px</span>;  <span class="cm">/* fixed 200px */</span>
+  <span class="p">flex</span>: <span class="val">1 1 auto</span>;   <span class="cm">/* grow + shrink */</span>
+
+  <span class="cm">/* order: change visual position */</span>
+  <span class="p">order</span>: <span class="val">0</span>;   <span class="cm">/* default */</span>
+  <span class="p">order</span>: <span class="val">-1</span>;  <span class="cm">/* move to start */</span>
+  <span class="p">order</span>: <span class="val">1</span>;   <span class="cm">/* move to end */</span>
+
+  <span class="cm">/* Self-align override */</span>
+  <span class="p">align-self</span>: <span class="val">flex-end</span>; <span class="cm">/* override align-items */</span>
+}
+
+<span class="cm">/* ZenCampus navbar layout */</span>
+<span class="sel">.navbar</span> {
+  <span class="p">display</span>: <span class="val">flex</span>;
+  <span class="p">align-items</span>: <span class="val">center</span>;
+  <span class="p">padding</span>: <span class="val">0 20px</span>;
+}
+<span class="sel">.navbar .logo</span>  { <span class="p">flex</span>: <span class="val">0 0 auto</span>; }   <span class="cm">/* fixed */</span>
+<span class="sel">.navbar .menu</span>  { <span class="p">flex</span>: <span class="val">1</span>; }           <span class="cm">/* take rest */</span>
+<span class="sel">.navbar .login</span> { <span class="p">margin-left</span>: <span class="val">auto</span>; } <span class="cm">/* push right */</span></pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus Navbar Flex Pattern:</div>
+          Logo (fixed width) | Menu (flex:1 takes remaining space) | Login button (margin-left:auto pushes to far right). Most interview demo question!
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LIVE FLEX DEMOS -->
+    <h3>🖥️ Live Flexbox Demos (rendered in your browser!)</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:10px">
+
+      <div class="demo-box">
+        <div class="demo-title">justify-content: flex-start (default)</div>
+        <div class="flex-demo">
+          <div class="flex-item">Logo</div>
+          <div class="flex-item">Menu</div>
+          <div class="flex-item">Login</div>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <div class="demo-title">justify-content: space-between</div>
+        <div class="flex-demo sb">
+          <div class="flex-item">Logo</div>
+          <div class="flex-item">Menu</div>
+          <div class="flex-item">Login</div>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <div class="demo-title">justify-content: center + align-items: center</div>
+        <div class="flex-demo center">
+          <div class="flex-item">Centered!</div>
+          <div class="flex-item">Items</div>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <div class="demo-title">flex-direction: column</div>
+        <div class="flex-demo col" style="height:auto">
+          <div class="flex-item">Student</div>
+          <div class="flex-item">Fee</div>
+          <div class="flex-item">Attendance</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — CSS GRID
+════════════════════════════════════════════ -->
+<div class="section grid-sec" id="grid">
+  <div class="section-header">🟢 CSS Grid — 2D Layout · Template · Areas · auto-fill</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Enthiran (2010) — Robot army formation:</span>
+      Robots align in PERFECT rows AND columns — 2D precision. CSS Grid = same.
+      Flexbox works in one direction; Grid controls BOTH row and column simultaneously.
+      Dashboard layouts, card grids, page templates — Grid is your superpower!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- GRID SYNTAX -->
+      <div class="card">
+        <div class="card-sub">Syntax — Grid Container</div>
+        <div class="card-title">Grid Template · fr unit · gap · auto-fill</div>
+        <pre><span class="cm">/* ── GRID CONTAINER ─────────────────── */</span>
+<span class="sel">.dashboard</span> {
+  <span class="p">display</span>: <span class="val">grid</span>;
+
+  <span class="cm">/* Define columns */</span>
+  <span class="p">grid-template-columns</span>: <span class="val">1fr 1fr 1fr</span>;   <span class="cm">/* 3 equal */</span>
+  <span class="p">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>;<span class="cm">/* same */</span>
+  <span class="p">grid-template-columns</span>: <span class="val">200px 1fr 1fr</span>; <span class="cm">/* sidebar */</span>
+  <span class="p">grid-template-columns</span>: <span class="val">repeat(auto-fill, minmax(250px, 1fr))</span>;
+  <span class="cm">/* ↑ responsive cards — auto-wrap! */</span>
+
+  <span class="cm">/* Define rows */</span>
+  <span class="p">grid-template-rows</span>:    <span class="val">64px 1fr auto</span>;
+  <span class="cm">/* header=64px, content=rest, footer=auto */</span>
+
+  <span class="cm">/* Gap */</span>
+  <span class="p">gap</span>:         <span class="val">20px</span>;
+  <span class="p">column-gap</span>:  <span class="val">24px</span>;
+  <span class="p">row-gap</span>:     <span class="val">16px</span>;
+
+  <span class="cm">/* Alignment */</span>
+  <span class="p">justify-items</span>:   <span class="val">stretch</span>;  <span class="cm">/* items in cell */</span>
+  <span class="p">align-items</span>:     <span class="val">center</span>;
+  <span class="p">justify-content</span>: <span class="val">start</span>;   <span class="cm">/* whole grid */</span>
+  <span class="p">align-content</span>:   <span class="val">start</span>;
+}
+
+<span class="cm">/* ── GRID AREAS (named layout) ───────── */</span>
+<span class="sel">.page-layout</span> {
+  <span class="p">display</span>: <span class="val">grid</span>;
+  <span class="p">grid-template-areas</span>:
+    <span class="val">"header  header  header"</span>
+    <span class="val">"sidebar content content"</span>
+    <span class="val">"footer  footer  footer"</span>;
+  <span class="p">grid-template-columns</span>: <span class="val">250px 1fr 1fr</span>;
+  <span class="p">grid-template-rows</span>:    <span class="val">64px 1fr 60px</span>;
+  <span class="p">min-height</span>: <span class="val">100vh</span>;
+}
+
+<span class="sel">.page-layout header</span>  { <span class="p">grid-area</span>: <span class="val">header</span>;  }
+<span class="sel">.page-layout aside</span>   { <span class="p">grid-area</span>: <span class="val">sidebar</span>; }
+<span class="sel">.page-layout main</span>    { <span class="p">grid-area</span>: <span class="val">content</span>; }
+<span class="sel">.page-layout footer</span>  { <span class="p">grid-area</span>: <span class="val">footer</span>;  }</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Flexbox vs Grid — when to use?</div>
+          <div class="a">Flexbox = 1D, content-driven layout (navbar items, button groups, card content). Grid = 2D, layout-driven (page template, card gallery, dashboard). Rule: components INSIDE = Flexbox. PAGE LAYOUT = Grid. ZenCampus dashboard = Grid outer, Flexbox inside each card!</div>
+        </div>
+      </div>
+
+      <!-- GRID ITEM SYNTAX -->
+      <div class="card">
+        <div class="card-sub">Syntax — Grid Items</div>
+        <div class="card-title">Grid Item — Span · Place · Line-based</div>
+        <pre><span class="cm">/* ── SPANNING (line numbers) ──────── */</span>
+<span class="sel">.hero-card</span> {
+  <span class="cm">/* column start / end */</span>
+  <span class="p">grid-column</span>: <span class="val">1 / 3</span>;       <span class="cm">/* col 1 to 3 */</span>
+  <span class="p">grid-column</span>: <span class="val">span 2</span>;       <span class="cm">/* span 2 cols */</span>
+  <span class="p">grid-column</span>: <span class="val">1 / -1</span>;       <span class="cm">/* full width! */</span>
+
+  <span class="cm">/* row start / end */</span>
+  <span class="p">grid-row</span>:    <span class="val">1 / 3</span>;
+  <span class="p">grid-row</span>:    <span class="val">span 2</span>;
+}
+
+<span class="cm">/* ── SHORTHAND ───────────────────── */</span>
+<span class="sel">.stat-card</span> {
+  <span class="p">grid-area</span>: <span class="val">2 / 1 / 4 / 3</span>;
+  <span class="cm">/* row-start / col-start / row-end / col-end */</span>
+}
+
+<span class="cm">/* ── AUTO PLACEMENT ──────────────── */</span>
+<span class="sel">.cards-grid</span> {
+  <span class="p">display</span>: <span class="val">grid</span>;
+  <span class="p">grid-template-columns</span>:
+    <span class="val">repeat(auto-fill, minmax(220px, 1fr))</span>;
+  <span class="p">gap</span>: <span class="val">16px</span>;
+  <span class="cm">/* Items auto-place, wrap responsively */</span>
+  <span class="cm">/* No media queries needed! */</span>
+}
+
+<span class="cm">/* ── ALIGN SELF ──────────────────── */</span>
+<span class="sel">.item</span> {
+  <span class="p">justify-self</span>: <span class="val">center</span>;  <span class="cm">/* horizontal */</span>
+  <span class="p">align-self</span>:   <span class="val">end</span>;     <span class="cm">/* vertical */</span>
+  <span class="p">place-self</span>:   <span class="val">center</span>;  <span class="cm">/* both */</span>
+}
+
+<span class="cm">/* ZenCampus Dashboard Grid */</span>
+<span class="sel">.zen-dashboard</span> {
+  <span class="p">display</span>: <span class="val">grid</span>;
+  <span class="p">grid-template-columns</span>: <span class="val">repeat(4, 1fr)</span>;
+  <span class="p">gap</span>: <span class="val">20px</span>;
+  <span class="p">padding</span>: <span class="val">20px</span>;
+}
+<span class="sel">.zen-dashboard .big-chart</span> {
+  <span class="p">grid-column</span>: <span class="val">span 2</span>;  <span class="cm">/* takes 2 cols */</span>
+}
+<span class="sel">.zen-dashboard .stats-full</span> {
+  <span class="p">grid-column</span>: <span class="val">1 / -1</span>;  <span class="cm">/* full width */</span>
+}</pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus Dashboard Layout:</div>
+          4-column grid. Stat cards = 1 col each. Attendance chart = span 2. Fee summary = span 2. Full-width table = 1/-1. All with gap:20px — zero float, zero position hacks!
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LIVE GRID DEMOS -->
+    <h3>🖥️ Live CSS Grid Demos</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:10px">
+      <div class="demo-box">
+        <div class="demo-title">repeat(3, 1fr) — 3 equal columns</div>
+        <div class="grid-demo g3">
+          <div class="grid-item">Student</div>
+          <div class="grid-item">Fee</div>
+          <div class="grid-item">Attend</div>
+          <div class="grid-item">Staff</div>
+          <div class="grid-item">Report</div>
+          <div class="grid-item">Admin</div>
+        </div>
+      </div>
+      <div class="demo-box">
+        <div class="demo-title">grid-column: span 2 (chart takes 2 cols)</div>
+        <div class="grid-demo g3">
+          <div class="grid-item span2">📊 Attendance Chart (span 2)</div>
+          <div class="grid-item spanr">📋 Fees</div>
+          <div class="grid-item">Students</div>
+          <div class="grid-item">Staff</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 5 — RESPONSIVE + MEDIA QUERIES
+════════════════════════════════════════════ -->
+<div class="section resp-sec" id="responsive">
+  <div class="section-header">🟡 Responsive Design · Media Queries · Mobile-First</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Anniyan (2005) — Ambi/Remo/Anniyan:</span>
+      Same person, completely different personality based on the situation!
+      Responsive design = same component, completely different layout based on screen width. One codebase, all devices!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- MEDIA QUERIES -->
+      <div class="card">
+        <div class="card-sub">Syntax — Media Queries</div>
+        <div class="card-title">Mobile-First · Breakpoints · Common Patterns</div>
+        <pre><span class="cm">/* ── MOBILE FIRST APPROACH ──────────
+   Write mobile styles first,
+   add larger-screen styles with min-width  */</span>
+
+<span class="cm">/* Mobile base (0px+) */</span>
+<span class="sel">.cards-grid</span> {
+  <span class="p">display</span>: <span class="val">grid</span>;
+  <span class="p">grid-template-columns</span>: <span class="val">1fr</span>;   <span class="cm">/* 1 col */</span>
+  <span class="p">gap</span>: <span class="val">12px</span>;
+  <span class="p">padding</span>: <span class="val">12px</span>;
+}
+
+<span class="cm">/* Tablet (768px+) */</span>
+<span class="sel">@media (min-width: 768px)</span> {
+  <span class="sel">.cards-grid</span> {
+    <span class="p">grid-template-columns</span>: <span class="val">repeat(2, 1fr)</span>;
+    <span class="p">gap</span>: <span class="val">16px</span>;
+    <span class="p">padding</span>: <span class="val">16px</span>;
+  }
+  <span class="sel">.sidebar</span> { <span class="p">display</span>: <span class="val">block</span>; }
+}
+
+<span class="cm">/* Desktop (1024px+) */</span>
+<span class="sel">@media (min-width: 1024px)</span> {
+  <span class="sel">.cards-grid</span> {
+    <span class="p">grid-template-columns</span>: <span class="val">repeat(4, 1fr)</span>;
+  }
+  <span class="sel">.page-layout</span> {
+    <span class="p">grid-template-columns</span>: <span class="val">260px 1fr</span>;
+  }
+}
+
+<span class="cm">/* Large desktop (1280px+) */</span>
+<span class="sel">@media (min-width: 1280px)</span> {
+  <span class="sel">.container</span> { <span class="p">max-width</span>: <span class="val">1200px</span>;
+               <span class="p">margin</span>: <span class="val">0 auto</span>; }
+}
+
+<span class="cm">/* ── OTHER QUERY TYPES ───────────── */</span>
+<span class="cm">/* Print */</span>
+<span class="sel">@media print</span> {
+  <span class="sel">.sidebar, .navbar</span> { <span class="p">display</span>: <span class="val">none</span>; }
+  <span class="sel">body</span> { <span class="p">font-size</span>: <span class="val">12pt</span>; <span class="p">color</span>: <span class="val">#000</span>; }
+}
+
+<span class="cm">/* Dark mode */</span>
+<span class="sel">@media (prefers-color-scheme: dark)</span> {
+  <span class="sel">body</span> {
+    <span class="p">background</span>: <span class="val">#0f0f1a</span>;
+    <span class="p">color</span>: <span class="val">#e0e0e0</span>;
+  }
+}
+
+<span class="cm">/* Hover capable (not touch) */</span>
+<span class="sel">@media (hover: hover)</span> {
+  <span class="sel">.btn:hover</span> {
+    <span class="p">transform</span>: <span class="val">translateY(-2px)</span>;
+  }
+}
+
+<span class="cm">/* Orientation */</span>
+<span class="sel">@media (orientation: landscape)</span> {
+  <span class="sel">.hero</span> { <span class="p">min-height</span>: <span class="val">60vh</span>; }
+}</pre>
+        <div class="tanglish">
+          💡 <strong>Standard Breakpoints (ZenCampus):</strong><br>
+          &lt; 640px = Mobile (1 col grid)<br>
+          640–768px = Large mobile (1-2 col)<br>
+          768–1024px = Tablet (2-3 col)<br>
+          1024–1280px = Desktop (3-4 col)<br>
+          1280px+ = Large desktop (container max-width)
+        </div>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Mobile-first vs Desktop-first?</div>
+          <div class="a">Mobile-first = write mobile CSS first, ADD with min-width. Desktop-first = desktop CSS first, REDUCE with max-width. Mobile-first preferred: base CSS is small → progressive enhancement. Interview answer: min-width = mobile-first, max-width = desktop-first!</div>
+        </div>
+      </div>
+
+      <!-- RESPONSIVE UTILITIES -->
+      <div class="card">
+        <div class="card-sub">Syntax — Responsive Utilities</div>
+        <div class="card-title">Responsive Units · Fluid Typography · Clamp</div>
+        <pre><span class="cm">/* ── CSS UNITS ───────────────────── */</span>
+<span class="cm">/* Absolute */</span>
+<span class="sel">px</span> <span class="cm">— pixel, fixed (use for borders, icons)</span>
+<span class="sel">pt</span> <span class="cm">— point (for print)</span>
+
+<span class="cm">/* Relative to font */</span>
+<span class="sel">em</span>  <span class="cm">— relative to parent font-size</span>
+<span class="sel">rem</span> <span class="cm">— relative to ROOT font-size (safer!)</span>
+
+<span class="cm">/* Viewport */</span>
+<span class="sel">vw</span>  <span class="cm">— 1% viewport width</span>
+<span class="sel">vh</span>  <span class="cm">— 1% viewport height</span>
+<span class="sel">vmin/vmax</span> <span class="cm">— smaller/larger of vw vs vh</span>
+
+<span class="sel">%</span>   <span class="cm">— relative to parent</span>
+
+<span class="cm">/* ── FLUID TYPOGRAPHY ────────────── */</span>
+<span class="sel">:root</span> {
+  <span class="p">font-size</span>: <span class="val">16px</span>; <span class="cm">/* 1rem = 16px */</span>
+}
+
+<span class="sel">h1</span> { <span class="p">font-size</span>: <span class="val">2rem</span>;   } <span class="cm">/* 32px */</span>
+<span class="sel">h2</span> { <span class="p">font-size</span>: <span class="val">1.5rem</span>; } <span class="cm">/* 24px */</span>
+<span class="sel">p</span>  { <span class="p">font-size</span>: <span class="val">1rem</span>;   } <span class="cm">/* 16px */</span>
+
+<span class="cm">/* clamp() — fluid responsive value */</span>
+<span class="sel">h1</span> {
+  <span class="p">font-size</span>: <span class="val">clamp(1.5rem, 4vw, 3rem)</span>;
+  <span class="cm">/* min=1.5rem, preferred=4vw, max=3rem */</span>
+  <span class="cm">/* scales with viewport — no media query! */</span>
+}
+<span class="sel">.container</span> {
+  <span class="p">padding</span>: <span class="val">clamp(12px, 4vw, 40px)</span>;
+}
+
+<span class="cm">/* ── RESPONSIVE IMAGE ────────────── */</span>
+<span class="sel">img</span> {
+  <span class="p">max-width</span>: <span class="val">100%</span>;   <span class="cm">/* never overflow */</span>
+  <span class="p">height</span>:    <span class="val">auto</span>;   <span class="cm">/* keep aspect ratio */</span>
+  <span class="p">display</span>:   <span class="val">block</span>;
+}
+
+<span class="cm">/* ── HIDE/SHOW ───────────────────── */</span>
+<span class="sel">.mobile-only</span>  { <span class="p">display</span>: <span class="val">block</span>; }
+<span class="sel">.desktop-only</span> { <span class="p">display</span>: <span class="val">none</span>; }
+
+<span class="sel">@media (min-width: 1024px)</span> {
+  <span class="sel">.mobile-only</span>  { <span class="p">display</span>: <span class="val">none</span>; }
+  <span class="sel">.desktop-only</span> { <span class="p">display</span>: <span class="val">block</span>; }
+}</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: em vs rem?</div>
+          <div class="a">em = relative to PARENT element font-size. Nested elements cascade — .5em inside 2em parent = very small. rem = relative to ROOT (:root / html) font-size — always predictable. Interview rule: Use rem for spacing/font, em for component-local scaling (button padding should scale with its own font).</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 6 — TRANSITIONS + ANIMATIONS
+════════════════════════════════════════════ -->
+<div class="section anim-sec" id="animations">
+  <div class="section-header">🔴 Transitions · Keyframe Animations · Transform · Performance</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Kaaviya Thalaivan (2014):</span>
+      Classical performance — smooth, rhythmic, purposeful movements that tell a story.
+      CSS transitions = smooth state changes (hover, focus). Keyframes = controlled multi-step animation.
+      Performance trick: only animate <strong>transform</strong> and <strong>opacity</strong> — GPU accelerated, no layout reflow!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- TRANSITIONS -->
+      <div class="card">
+        <div class="card-sub">Syntax — Transitions</div>
+        <div class="card-title">CSS Transition — Property · Duration · Easing</div>
+        <pre><span class="cm">/* ── TRANSITION SYNTAX ───────────── */</span>
+<span class="sel">.btn</span> {
+  <span class="p">background</span>:  <span class="val">#e94560</span>;
+  <span class="p">transform</span>:   <span class="val">translateY(0)</span>;
+  <span class="p">box-shadow</span>:  <span class="val">none</span>;
+
+  <span class="cm">/* property | duration | timing | delay */</span>
+  <span class="p">transition</span>:  <span class="val">all 0.3s ease 0s</span>;
+
+  <span class="cm">/* Multiple transitions */</span>
+  <span class="p">transition</span>:
+    <span class="val">background 0.3s ease</span>,
+    <span class="val">transform  0.2s ease-out</span>,
+    <span class="val">box-shadow 0.3s ease</span>;
+}
+
+<span class="sel">.btn:hover</span> {
+  <span class="p">background</span>: <span class="val">#c0392b</span>;
+  <span class="p">transform</span>:  <span class="val">translateY(-3px)</span>;
+  <span class="p">box-shadow</span>: <span class="val">0 8px 25px #e9456066</span>;
+}
+
+<span class="cm">/* ── TIMING FUNCTIONS ────────────── */</span>
+<span class="cm">/* ease       — slow start + end (default) */</span>
+<span class="cm">/* linear     — constant speed            */</span>
+<span class="cm">/* ease-in    — slow start, fast end      */</span>
+<span class="cm">/* ease-out   — fast start, slow end      */</span>
+<span class="cm">/* ease-in-out— slow start + slow end     */</span>
+<span class="cm">/* cubic-bezier(x1,y1,x2,y2) — custom    */</span>
+<span class="p">transition-timing-function</span>:
+  <span class="val">cubic-bezier(0.34, 1.56, 0.64, 1)</span>;
+<span class="cm">/* ↑ "spring" bounce effect */</span>
+
+<span class="cm">/* ── ZenCampus CARD HOVER ──────── */</span>
+<span class="sel">.stat-card</span> {
+  <span class="p">transition</span>: <span class="val">transform 0.2s ease,
+               box-shadow 0.2s ease</span>;
+  <span class="p">cursor</span>: <span class="val">pointer</span>;
+}
+<span class="sel">.stat-card:hover</span> {
+  <span class="p">transform</span>:  <span class="val">translateY(-4px)</span>;
+  <span class="p">box-shadow</span>: <span class="val">0 12px 40px #0009</span>;
+}</pre>
+
+        <!-- LIVE DEMO -->
+        <div class="demo-box">
+          <div class="demo-title">Live demo — hover me!</div>
+          <div class="btn-demo">Hover Me</div>
+          <div class="btn-demo" style="background:#27ae60">Admit Student</div>
+          <div class="btn-demo" style="background:#f39c12">Pay Fee</div>
+        </div>
+
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Which CSS properties to animate for performance?</div>
+          <div class="a">ONLY transform and opacity — GPU composited, no layout/paint reflow. Avoid animating width, height, margin, padding, top, left — they trigger full layout recalculation (expensive). Rule: move with transform:translate, not left/top. Fade with opacity, not visibility!</div>
+        </div>
+      </div>
+
+      <!-- KEYFRAMES -->
+      <div class="card">
+        <div class="card-sub">Syntax — @keyframes</div>
+        <div class="card-title">Keyframe Animations — Full Syntax</div>
+        <pre><span class="cm">/* ── DEFINE ANIMATION ───────────── */</span>
+<span class="sel">@keyframes fadeIn</span> {
+  <span class="val">from</span> { <span class="p">opacity</span>: <span class="val">0</span>; }
+  <span class="val">to</span>   { <span class="p">opacity</span>: <span class="val">1</span>; }
+}
+
+<span class="sel">@keyframes slideInUp</span> {
+  <span class="val">from</span> {
+    <span class="p">transform</span>: <span class="val">translateY(30px)</span>;
+    <span class="p">opacity</span>:   <span class="val">0</span>;
+  }
+  <span class="val">to</span> {
+    <span class="p">transform</span>: <span class="val">translateY(0)</span>;
+    <span class="p">opacity</span>:   <span class="val">1</span>;
+  }
+}
+
+<span class="sel">@keyframes pulse</span> {
+  <span class="val">0%</span>, <span class="val">100%</span> { <span class="p">transform</span>: <span class="val">scale(1)</span>; }
+  <span class="val">50%</span>       { <span class="p">transform</span>: <span class="val">scale(1.05)</span>; }
+}
+
+<span class="sel">@keyframes shimmer</span> {        <span class="cm">/* skeleton loader */</span>
+  <span class="val">0%</span>   { <span class="p">background-position</span>: <span class="val">-200px 0</span>; }
+  <span class="val">100%</span> { <span class="p">background-position</span>: <span class="val">200px 0</span>; }
+}
+
+<span class="cm">/* ── APPLY ANIMATION ──────────── */</span>
+<span class="sel">.stat-card</span> {
+  <span class="cm">/* name | duration | timing | delay
+     | iteration | direction | fill-mode */</span>
+  <span class="p">animation</span>: <span class="val">slideInUp 0.5s ease-out
+              0.1s 1 normal forwards</span>;
+}
+
+<span class="sel">.notification-dot</span> {
+  <span class="p">animation</span>: <span class="val">pulse 2s ease infinite</span>;
+}
+
+<span class="cm">/* Stagger with delay */</span>
+<span class="sel">.card:nth-child(1)</span>{ <span class="p">animation-delay</span>:<span class="val">0s</span>;   }
+<span class="sel">.card:nth-child(2)</span>{ <span class="p">animation-delay</span>:<span class="val">0.1s</span>; }
+<span class="sel">.card:nth-child(3)</span>{ <span class="p">animation-delay</span>:<span class="val">0.2s</span>; }
+<span class="sel">.card:nth-child(4)</span>{ <span class="p">animation-delay</span>:<span class="val">0.3s</span>; }
+
+<span class="cm">/* Skeleton loader */</span>
+<span class="sel">.skeleton</span> {
+  <span class="p">background</span>: <span class="val">linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%)</span>;
+  <span class="p">background-size</span>: <span class="val">400px 100%</span>;
+  <span class="p">animation</span>: <span class="val">shimmer 1.2s infinite linear</span>;
+  <span class="p">border-radius</span>: <span class="val">4px</span>;
+  <span class="p">height</span>: <span class="val">16px</span>;
+}</pre>
+
+        <!-- LIVE ANIMATION DEMOS -->
+        <div class="demo-box">
+          <div class="demo-title">Live animations (running now!)</div>
+          <div class="anim-demo anim-slide">SlideIn Card</div>
+          <div class="anim-demo anim-pulse" style="background:#27ae60">Pulse Alert</div>
+          <div style="background: linear-gradient(90deg, #2a2a4a 25%, #3a3a5a 50%, #2a2a4a 75%); background-size: 400px 100%; animation: shimmer 1.2s infinite linear; border-radius:4px; height:16px; margin:8px 0;"></div>
+          <div style="font-size:.75em; color:#888">↑ Skeleton loader animation</div>
+        </div>
+
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: animation-fill-mode: forwards?</div>
+          <div class="a">Without forwards — element snaps back to original state when animation ends. forwards = stay at last keyframe state. ZenCampus card slideInUp → without forwards: card jumps back to translateY(30px) after 0.5s! Always use forwards for entrance animations.</div>
+        </div>
+      </div>
+
+      <!-- TRANSFORMS -->
+      <div class="card">
+        <div class="card-sub">Syntax — Transform</div>
+        <div class="card-title">CSS Transform — translate · rotate · scale · skew</div>
+        <pre><span class="sel">.element</span> {
+  <span class="cm">/* Translate (PREFER over left/top!) */</span>
+  <span class="p">transform</span>: <span class="val">translate(10px, 20px)</span>;
+  <span class="p">transform</span>: <span class="val">translateX(50%)</span>;
+  <span class="p">transform</span>: <span class="val">translateY(-10px)</span>;
+
+  <span class="cm">/* Scale */</span>
+  <span class="p">transform</span>: <span class="val">scale(1.1)</span>;      <span class="cm">/* 110% */</span>
+  <span class="p">transform</span>: <span class="val">scaleX(0.5)</span>;    <span class="cm">/* half width */</span>
+
+  <span class="cm">/* Rotate */</span>
+  <span class="p">transform</span>: <span class="val">rotate(45deg)</span>;
+  <span class="p">transform</span>: <span class="val">rotate(-90deg)</span>;
+
+  <span class="cm">/* Skew */</span>
+  <span class="p">transform</span>: <span class="val">skew(10deg, 5deg)</span>;
+
+  <span class="cm">/* Combine (order matters — right to left!) */</span>
+  <span class="p">transform</span>: <span class="val">translateY(-4px) scale(1.02)</span>;
+
+  <span class="cm">/* 3D */</span>
+  <span class="p">transform</span>: <span class="val">perspective(500px)
+              rotateY(15deg)</span>;
+
+  <span class="cm">/* Transform origin */</span>
+  <span class="p">transform-origin</span>: <span class="val">center center</span>;
+  <span class="p">transform-origin</span>: <span class="val">top left</span>;
+  <span class="p">transform-origin</span>: <span class="val">50% 50%</span>;
+}
+
+<span class="cm">/* ZenCampus dropdown chevron flip */</span>
+<span class="sel">.chevron</span> {
+  <span class="p">transition</span>: <span class="val">transform 0.2s ease</span>;
+}
+<span class="sel">.open .chevron</span> {
+  <span class="p">transform</span>: <span class="val">rotate(180deg)</span>;
+}
+
+<span class="cm">/* Notification badge bounce */</span>
+<span class="sel">@keyframes bounceIn</span> {
+  <span class="val">0%</span>  { <span class="p">transform</span>: <span class="val">scale(0)</span>; }
+  <span class="val">60%</span> { <span class="p">transform</span>: <span class="val">scale(1.2)</span>; }
+  <span class="val">80%</span> { <span class="p">transform</span>: <span class="val">scale(0.9)</span>; }
+  <span class="val">100%</span>{ <span class="p">transform</span>: <span class="val">scale(1)</span>; }
+}</pre>
+        <div class="trap">
+          <div class="label">⚠️ Transform Order Matters!</div>
+          <code>translate(50px) rotate(45deg)</code> ≠ <code>rotate(45deg) translate(50px)</code>
+          — transforms apply RIGHT to LEFT! Rotate first → axis rotates too → translate goes in rotated direction!
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MASTER TABLE -->
+<div style="background:#13132a; border-radius:12px; padding:24px; margin:30px 0; border:1px solid #2a2a4a;">
+  <h2 style="color:#e94560; margin-bottom:16px">🎯 Part 6 — Top 15 Interview Questions</h2>
+  <table>
+    <tr><th>#</th><th>Question</th><th>1-Line Answer</th><th>ZenCampus Hook</th></tr>
+    <tr><td>1</td><td>Semantic HTML vs div?</td><td>Semantic = meaning for SEO + accessibility. div = no meaning</td><td>&lt;main&gt;, &lt;article&gt;, &lt;nav&gt; for dashboard</td></tr>
+    <tr><td>2</td><td>label for= importance?</td><td>Links label to input — click label focuses input, screen reader reads label</td><td>Admission form every field</td></tr>
+    <tr><td>3</td><td>Specificity order?</td><td>Inline&gt;ID&gt;Class/pseudo/attr&gt;Tag. 1000&gt;100&gt;10&gt;1</td><td>Vikram&gt;Vedha movie hook</td></tr>
+    <tr><td>4</td><td>box-sizing: border-box?</td><td>Padding + border included in width — no overflow surprise</td><td>Always set globally with *</td></tr>
+    <tr><td>5</td><td>Flexbox main use case?</td><td>1D layout: navbars, button rows, card content, centering</td><td>ZenCampus navbar: logo-menu-login</td></tr>
+    <tr><td>6</td><td>justify-content vs align-items?</td><td>justify=main axis (horizontal for row), align=cross axis</td><td>Center dashboard card both ways</td></tr>
+    <tr><td>7</td><td>flex: 1 means?</td><td>flex-grow:1 flex-shrink:1 flex-basis:0 — take all available space</td><td>Menu div takes remaining navbar space</td></tr>
+    <tr><td>8</td><td>CSS Grid vs Flexbox?</td><td>Grid=2D page layout, Flex=1D component layout</td><td>Grid for dashboard, Flex inside cards</td></tr>
+    <tr><td>9</td><td>auto-fill vs auto-fit?</td><td>auto-fill keeps empty columns, auto-fit collapses them</td><td>Card gallery — use auto-fill</td></tr>
+    <tr><td>10</td><td>Mobile-first?</td><td>Base CSS for mobile, min-width adds tablet/desktop styles</td><td>ZenCampus: 1col→2col→4col grid</td></tr>
+    <tr><td>11</td><td>rem vs em?</td><td>rem=root font size (consistent), em=parent font size (cascades)</td><td>Use rem for all spacing/text</td></tr>
+    <tr><td>12</td><td>CSS variables?</td><td>--color-primary: #e94560 on :root, used with var(--color-primary)</td><td>Theme color changed in 1 place!</td></tr>
+    <tr><td>13</td><td>Best properties to animate?</td><td>transform + opacity only — GPU composited, no layout reflow</td><td>Card hover = translateY + opacity</td></tr>
+    <tr><td>14</td><td>animation-fill-mode: forwards?</td><td>Keep last keyframe state after animation ends</td><td>SlideIn cards stay in position</td></tr>
+    <tr><td>15</td><td>::before vs :before?</td><td>:: is CSS3 pseudo-element, : is pseudo-class. Double colon for elements you generate</td><td>.card::before adds decorative star</td></tr>
+  </table>
+</div>
+
+<!-- PART 6 END -->
+<div style="background:#13132a; border-radius:12px; padding:20px; margin:30px 0;
+            border:2px dashed #e94560; text-align:center;">
+  <p style="color:#e94560; font-size:1.1em; font-weight:bold;">✅ Part 6 Complete — HTML · CSS Selectors · Flexbox · Grid · Responsive · Animations</p>
+  <p style="color:#a0a0c0; margin-top:6px">
+    Covered: HTML5 Semantic Tags, Forms (all input types), CSS Selectors (all types + specificity), Box Model, CSS Variables,
+    Flexbox (container + item properties + live demos), CSS Grid (template + areas + auto-fill + live demos),
+    Media Queries (mobile-first), Responsive Units (rem/em/vw/clamp), Transitions, Keyframes, Transform<br><br>
+    <strong>Next → Part 7 (FINAL): JavaScript ES6+ · DOM · Async JS · Closures · Array Methods + Master Interview Sheet</strong>
+  </p>
+</div>
+
+</div><!-- container -->
+<footer>
+  <p>ZenCampus Interview Syntax Bible · Part 6 of 7 · Gurumoorthy M · gurumoorthymurugan@gmail.com</p>
+  <p style="margin-top:4px; font-size:.8em">🎬 Uyarndha Manithan=Semantic HTML · Vikram Vedha=Specificity · 96=Flexbox 1D · Enthiran=Grid 2D · Anniyan=Responsive · Kaaviya Thalaivan=Animations!</p>
+</footer>
+</body>
+</html>

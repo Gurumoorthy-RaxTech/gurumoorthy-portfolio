@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenCampus Node.js Complete Guide - 20 Concepts + 50 Interview Q&A</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --accent:#4ade80; --text:#e2e8f0; --muted:#94a3b8; --code:#0b1220; --green:#22c55e;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI',Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  header{ background:linear-gradient(135deg,#14532d,#0f172a); padding:36px 20px; text-align:center; border-bottom:3px solid var(--accent); }
+  header h1{ margin:0 0 8px; font-size:1.9rem; color:#fff; }
+  header p{ margin:0; color:var(--muted); }
+  .tabs{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; background:#0b1220; padding:14px; position:sticky; top:0; z-index:20; border-bottom:1px solid #334155; }
+  .tab-btn{ padding:10px 20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--muted); cursor:pointer; font-weight:600; font-size:0.9rem; }
+  .tab-btn.active{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+  .container{ max-width:920px; margin:0 auto; padding:30px 20px 80px; }
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
+
+  .search-box{ width:100%; padding:12px 16px; margin-bottom:20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--text); font-size:1rem; }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .filter-btn{ padding:6px 14px; border-radius:20px; border:1px solid #334155; background:transparent; color:var(--muted); cursor:pointer; font-size:0.85rem; }
+  .filter-btn.active, .filter-btn:hover{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+
+  .day-block{ margin-bottom:36px; }
+  .day-title{ color:var(--accent); font-size:1.3rem; margin-bottom:14px; border-left:4px solid var(--accent); padding-left:10px; }
+
+  .qa{ background:var(--card); border-radius:10px; margin-bottom:14px; overflow:hidden; border:1px solid #334155; scroll-margin-top:140px; }
+  .q{ padding:16px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; gap:12px; }
+  .q:hover{ background:#132a1c; }
+  .q .num{ color:var(--accent); margin-right:8px; }
+  .q .tag{ font-size:0.7rem; font-weight:400; padding:2px 8px; border-radius:10px; background:#0b1220; color:var(--accent); white-space:nowrap; }
+  .a{ max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 18px; color:var(--muted); border-top:1px solid transparent; }
+  .qa.open .a{ max-height:1300px; padding:0 18px 18px; border-top:1px solid #334155; }
+  .a code, .a pre{ background:var(--code); color:#86efac; padding:2px 6px; border-radius:4px; font-family:Consolas,Monaco,monospace; font-size:0.86rem; }
+  .a pre{ display:block; padding:12px; overflow-x:auto; white-space:pre-wrap; margin:10px 0; }
+  .movie-ref{ background:#3b1e5e; color:#e9d5ff; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .zen-ref{ background:#0e3b2e; color:#bbf7d0; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .toggle-icon{ transition:transform .25s; color:var(--accent); font-size:1.1rem; }
+  .qa.open .toggle-icon{ transform:rotate(45deg); }
+  .count{ color:var(--accent); font-weight:600; }
+
+  .checklist{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media(max-width:600px){ .checklist{ grid-template-columns:1fr; } }
+  .check-item{ background:var(--card); border:1px solid #334155; border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .check-item:hover{ border-color:var(--accent); }
+  .check-item .badge{ color:var(--green); font-size:1.1rem; }
+  .check-item .num{ color:var(--muted); font-size:0.8rem; min-width:20px; }
+
+  footer{ text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
+
+  @media print{
+    .tabs{ display:none; }
+    .tab-content{ display:block !important; }
+    .a{ max-height:none !important; padding:0 18px 18px !important; border-top:1px solid #334155 !important; }
+    .toggle-icon{ display:none; }
+    body{ background:#fff; color:#111; }
+    .qa, .card, header{ break-inside:avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🟢 ZenCampus Node.js Complete Guide</h1>
+  <p>20 Core Concepts (5-Day Plan) + 50 Interview Q&A — All-in-One</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="guide">📘 5-Day Guide</button>
+  <button class="tab-btn" data-tab="interview">🎯 Interview Q&A</button>
+  <button class="tab-btn" data-tab="coverage">✅ Topic Coverage</button>
+</div>
+
+<div class="container">
+
+  <div class="tab-content active" id="tab-guide">
+    <p style="color:var(--muted); font-size:0.85rem;">Tip: To save this whole guide as a PDF, use your browser's Print (Ctrl+P) and choose "Save as PDF" — the print layout auto-expands every section.</p>
+    <div id="guideList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-interview">
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search a question (e.g. event loop, streams, middleware, JWT)...">
+    <div class="filters" id="filters"></div>
+    <p style="color:var(--muted); font-size:0.85rem;">Showing <span class="count" id="visibleCount">50</span> / 50 questions</p>
+    <div id="qaList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-coverage">
+    <p style="color:var(--muted);">All 20 core Node.js concepts every ZenCampus backend dev should know. Click any item to jump to it.</p>
+    <div class="checklist" id="checklist"></div>
+  </div>
+
+</div>
+
+<footer>Built for ZenCampus Node.js learning • 2026-07-03</footer>
+
+<script>
+// ============ 20 CONCEPTS ACROSS 5 DAYS (4 topics/day) ============
+const guideDays = [
+{
+  day:1, title:"Day 1 — Node.js Fundamentals (Runtime, Modules, npm, Event Loop)",
+  topics:[
+    { name:"1. What is Node.js &amp; the V8 Engine",
+      movie:"🎬 Enthiran (Robot) — Chitti operates outside a traditional human body's constraints, running independently and fast. Node.js runs JavaScript outside the browser, on Google's V8 engine, enabling JS to power backend servers.",
+      explain:"Node.js is a JavaScript runtime built on Chrome's V8 engine that executes JS outside a browser. It's single-threaded but non-blocking, making it ideal for I/O-heavy workloads (APIs, real-time apps) rather than CPU-heavy number crunching.",
+      zen:"ZenCampus could run a lightweight Node.js microservice for real-time DVR camera alerts, separate from the main .NET/Angular stack, since Node handles many concurrent lightweight connections (like WebSocket pushes) efficiently.",
+      code:"node -v\n\n// hello.js\nconsole.log('ZenCampus Node service starting...');\n// run: node hello.js" },
+    { name:"2. CommonJS vs ES Modules",
+      movie:"🎬 Vikram — the same character exists in an old form and a new form, both valid, both doing the job. Node supports the older CommonJS module format (require/module.exports) alongside the newer ES Module standard (import/export).",
+      explain:"CommonJS (<code>require()</code>/<code>module.exports</code>) is Node's original, synchronous module system. ES Modules (<code>import</code>/<code>export</code>, enabled via <code>\"type\": \"module\"</code> in package.json or <code>.mjs</code> files) is the standard JS module system, supporting static analysis and top-level await.",
+      zen:"A ZenCampus <code>notify.js</code> file exports a <code>sendNotification</code> function via <code>module.exports</code> in a CommonJS project, or via <code>export</code> in an ESM-configured one — same purpose, different syntax.",
+      code:"// CommonJS\nmodule.exports = { sendNotification };\nconst { sendNotification } = require('./notify');\n\n// ES Modules\nexport function sendNotification() {}\nimport { sendNotification } from './notify.js';" },
+    { name:"3. npm &amp; package.json",
+      movie:"🎬 Sarkar — every vote/asset is tracked against one defined, authoritative roll. package.json is the manifest declaring a Node project's dependencies, scripts, and metadata.",
+      explain:"<code>package.json</code> tracks a project's name, version, dependencies, and npm scripts. <code>npm install</code> reads it and downloads packages into <code>node_modules</code>; <code>package-lock.json</code> pins exact resolved versions for reproducible installs across machines.",
+      zen:"ZenCampus's Node notification service's package.json lists <code>express</code>, <code>mssql</code>, and <code>jsonwebtoken</code> as dependencies, with a <code>\"start\": \"node server.js\"</code> script run via <code>npm start</code> in production.",
+      code:"{\n  \"name\": \"zencampus-notify-service\",\n  \"scripts\": { \"start\": \"node server.js\", \"dev\": \"nodemon server.js\" },\n  \"dependencies\": { \"express\": \"^4.19.0\" }\n}" },
+    { name:"4. The Event Loop &amp; Non-Blocking I/O",
+      movie:"🎬 Bigil — the team plays multiple positions seamlessly; the ball keeps moving without anyone standing still waiting for it. The event loop keeps single-threaded Node responsive by never blocking on I/O — it hands the work off and moves on, picking up the result later via a callback.",
+      explain:"Node runs JS on a single thread, but I/O (file, network, DB) is delegated to the OS/libuv thread pool. The event loop continuously checks whether pending I/O has completed, invoking the corresponding callback — this is why one Node process can serve thousands of concurrent connections without blocking.",
+      zen:"When ZenCampus's Node service reads a file or queries the database, it doesn't block other incoming requests — the event loop keeps serving other students' API calls while that I/O completes in the background.",
+      code:"console.log('1: start');\nsetTimeout(() =&gt; console.log('3: timeout callback'), 0);\nfetchFromDb().then(() =&gt; console.log('4: db result'));\nconsole.log('2: end');\n// Output order: 1, 2, then 3/4 once the event loop picks them up" }
+  ]
+},
+{
+  day:2, title:"Day 2 — Core Modules, File System, Streams, Events",
+  topics:[
+    { name:"5. Core Modules Overview (fs, path, os, http, crypto)",
+      movie:"🎬 Jailer — Muthuvel Pandian already has decades of built-in expertise and tools ready to use, without needing outside help for the basics. Node ships built-in core modules (fs, path, os, http, crypto) ready to use with no npm install needed.",
+      explain:"Core modules are built into Node itself, imported via <code>require('fs')</code> etc. without installation. Common ones: <code>fs</code> (file system), <code>path</code> (cross-platform path building), <code>os</code> (system info), <code>http</code> (raw server), <code>crypto</code> (hashing/encryption).",
+      zen:"ZenCampus's Node report-export service uses the built-in <code>path</code> module to safely build file paths for generated PDF reports across Windows/Linux deployment servers, and <code>crypto</code> to hash uploaded file checksums.",
+      code:"const path = require('path');\nconst os = require('os');\nconst reportPath = path.join(__dirname, 'reports', 'fee-summary.pdf');\nconsole.log('Running on', os.platform());" },
+    { name:"6. File System (fs) — Sync vs Async vs Promises",
+      movie:"🎬 Vaaranam Aayiram — Krishna's memories can either be forced to surface all at once, or allowed to unfold gradually while life goes on around them. <code>fs.readFileSync</code> blocks until done; <code>fs.readFile</code>/<code>fs.promises.readFile</code> let other work continue.",
+      explain:"<code>fs.readFileSync()</code> blocks the entire thread until the file is read — fine for one-off startup scripts, dangerous inside a request handler. <code>fs.readFile()</code> (callback) and <code>fs.promises.readFile()</code> (via <code>require('fs/promises')</code>) are non-blocking and the preferred choice inside servers.",
+      zen:"ZenCampus's Node service reads a large exam-results CSV using <code>fs.promises.readFile</code> inside an async route handler, so one slow file read never blocks other students' concurrent API requests.",
+      code:"const fs = require('fs/promises');\napp.get('/results', async (req, res) =&gt; {\n  const data = await fs.readFile('./results.csv', 'utf-8');\n  res.send(data);\n});" },
+    { name:"7. Streams &amp; Buffers",
+      movie:"🎬 Thani Oruvan — Mithran processes evidence piece by piece as it arrives, rather than needing the entire case file loaded before he can start working. Streams process data in chunks as it arrives, instead of loading an entire file into memory first.",
+      explain:"A <code>Buffer</code> holds raw binary data in memory. A Stream (Readable/Writable/Duplex/Transform) processes data incrementally in chunks — ideal for large files or network data — using <code>.pipe()</code> to connect a readable source directly to a writable destination.",
+      zen:"Streaming a large hostel-allocation CSV export directly to the HTTP response via <code>fs.createReadStream(...).pipe(res)</code> avoids loading the entire multi-MB file into memory before sending it to the browser.",
+      code:"const fs = require('fs');\napp.get('/export/hostel-report', (req, res) =&gt; {\n  fs.createReadStream('./hostel-report.csv').pipe(res);\n});" },
+    { name:"8. EventEmitter",
+      movie:"🎬 Master — JD reacts precisely to specific triggers with a defined response, not randomly. Node's EventEmitter lets any object emit named events and have specific listener functions respond to them.",
+      explain:"Many core Node APIs (streams, HTTP servers) extend <code>EventEmitter</code>. <code>.on('eventName', handler)</code> registers a listener; <code>.emit('eventName', data)</code> triggers all registered listeners for that event — a foundational pattern for decoupled, event-driven code.",
+      zen:"A custom <code>attendanceEvents</code> EventEmitter in ZenCampus's Node service emits an <code>'attendance-marked'</code> event whenever a student is marked present, and a separate listener sends a push notification — without the attendance-marking code needing to know about notifications directly.",
+      code:"const { EventEmitter } = require('events');\nconst attendanceEvents = new EventEmitter();\n\nattendanceEvents.on('attendance-marked', (studentId) =&gt; {\n  sendPushNotification(studentId, 'Attendance marked');\n});\nattendanceEvents.emit('attendance-marked', 101);" }
+  ]
+},
+{
+  day:3, title:"Day 3 — Building a Server: HTTP, Express, Middleware, Routing",
+  topics:[
+    { name:"9. Creating an HTTP Server (http module)",
+      movie:"🎬 Kaithi — Dilli works completely solo through the night, without a big supporting framework, using nothing but raw resourcefulness. The raw <code>http</code> module lets you build a server with zero frameworks — just Node itself.",
+      explain:"<code>require('http').createServer((req, res) =&gt; {...}).listen(port)</code> creates a raw HTTP server, manually parsing the URL/method and writing the response — this is the low-level foundation frameworks like Express are built on top of.",
+      zen:"Understanding the raw <code>http</code> module helps explain what Express is doing under the hood when a ZenCampus API request comes in — useful when debugging low-level connection or header issues in production.",
+      code:"const http = require('http');\nconst server = http.createServer((req, res) =&gt; {\n  res.writeHead(200, { 'Content-Type': 'application/json' });\n  res.end(JSON.stringify({ status: 'ok' }));\n});\nserver.listen(3000, () =&gt; console.log('Server on port 3000'));" },
+    { name:"10. Express.js Basics",
+      movie:"🎬 Ponniyin Selvan — a well-organized royal court has clear, structured processes for handling every kind of affair, instead of the king personally handling each decree from scratch. Express provides a structured, organized way to define routes/middleware instead of manually parsing every request with the raw http module.",
+      explain:"Express is the most widely used Node web framework, providing <code>app.get/post/put/delete()</code> route definitions, middleware support, and built-in helpers (JSON body parsing, static file serving) on top of the raw http module.",
+      zen:"ZenCampus's Node notification microservice defines <code>app.post('/api/notify', handler)</code> with Express instead of manually branching on <code>req.method</code> and <code>req.url</code> like the raw http module would require.",
+      code:"const express = require('express');\nconst app = express();\napp.use(express.json());\n\napp.get('/api/health', (req, res) =&gt; res.json({ status: 'ok' }));\napp.listen(3000, () =&gt; console.log('Express server running'));" },
+    { name:"11. Middleware",
+      movie:"🎬 Jai Bhim — every step of the process passes through a defined checkpoint of scrutiny before proceeding. Express middleware functions run in sequence for every matching request, each able to inspect/modify the request or short-circuit it, before the next one runs.",
+      explain:"Middleware is a function <code>(req, res, next) =&gt; {...}</code> that runs in the request pipeline. Calling <code>next()</code> passes control to the next middleware/route handler; not calling it (after sending a response) stops the chain — used for logging, auth checks, body parsing, and error handling.",
+      zen:"An <code>authMiddleware</code> on ZenCampus's Node service checks the staff JWT token on every protected route before <code>next()</code> is called, rejecting the request with a 401 immediately if the token is missing or invalid.",
+      code:"function authMiddleware(req, res, next) {\n  const token = req.headers.authorization;\n  if (!token) return res.status(401).json({ error: 'Unauthorized' });\n  next();\n}\napp.get('/api/bill/:id', authMiddleware, getBillHandler);" },
+    { name:"12. Routing &amp; REST APIs in Express",
+      movie:"🎬 Vikram — distinctly-named characters each mapped cleanly to a distinct role in the story. Express Router maps a distinct URL path + HTTP verb combination to a distinct handler function, mirroring REST conventions.",
+      explain:"<code>express.Router()</code> groups related routes into a modular, mountable router (e.g. a <code>studentsRouter</code>). REST conventions map HTTP verbs to actions on a resource: GET <code>/students</code> (list), GET <code>/students/:id</code> (one), POST <code>/students</code> (create), PUT/PATCH <code>/students/:id</code> (update), DELETE <code>/students/:id</code> (remove).",
+      zen:"ZenCampus's Node notification-service defines a <code>notificationsRouter</code> with <code>GET /notifications/:studentId</code> and <code>POST /notifications</code>, mounted at <code>app.use('/api/notifications', notificationsRouter)</code> to keep routes organized as the service grows.",
+      code:"const router = express.Router();\nrouter.get('/:studentId', getNotifications);\nrouter.post('/', createNotification);\nmodule.exports = router;\n\n// server.js\napp.use('/api/notifications', require('./routes/notifications'));" }
+  ]
+},
+{
+  day:4, title:"Day 4 — Async Patterns, Error Handling, Databases, Configuration",
+  topics:[
+    { name:"13. Callbacks vs Promises vs Async/Await",
+      movie:"🎬 Ghajini — Sanjay's story is originally told through deeply nested flashbacks (callback hell), later reorganized into a cleaner, linear timeline (async/await) that's far easier to follow.",
+      explain:"Callbacks (<code>fn(err, data) =&gt; {...}</code>) were Node's original async pattern but nest deeply (\"callback hell\"). Promises (<code>.then()</code>/<code>.catch()</code>) flatten that into chains. <code>async/await</code> (syntactic sugar over Promises) lets async code read like synchronous code, with <code>try/catch</code> for errors — the modern standard.",
+      zen:"ZenCampus's Node service rewrote a deeply-nested callback chain (fetch student → fetch fees → fetch discounts) into a single async function using sequential <code>await</code> calls, cutting the code from 4 nested levels down to flat, readable lines.",
+      code:"// Callback hell\ngetStudent(id, (err, student) =&gt; {\n  getFees(student.id, (err, fees) =&gt; { /* ...nested... */ });\n});\n\n// async/await (modern)\nasync function getStudentWithFees(id) {\n  const student = await getStudent(id);\n  const fees = await getFees(student.id);\n  return { student, fees };\n}" },
+    { name:"14. Error Handling",
+      movie:"🎬 Soorarai Pottru — Maara has a defined safety protocol for when something goes wrong mid-flight, instead of letting the whole plane go down. Node needs defined error handling at every layer — sync try/catch, error-first callbacks, Express error middleware, and process-level handlers — so one failure doesn't crash the whole server.",
+      explain:"Sync code uses <code>try/catch</code>; async/await errors are also caught via <code>try/catch</code> around the <code>await</code>. Express has a special 4-argument error-handling middleware <code>(err, req, res, next)</code> that catches errors passed via <code>next(err)</code>. Unhandled errors at the process level should be logged and the process restarted (e.g. via PM2), not silently ignored.",
+      zen:"ZenCampus's Node service wraps each async route handler in a try/catch that calls <code>next(err)</code>, caught by a single centralized Express error-handling middleware that logs the error and returns a consistent JSON error response to the Angular frontend.",
+      code:"app.get('/api/bill/:id', async (req, res, next) =&gt; {\n  try {\n    const bill = await billService.getBill(req.params.id);\n    res.json(bill);\n  } catch (err) { next(err); }\n});\n\napp.use((err, req, res, next) =&gt; {\n  console.error(err);\n  res.status(500).json({ error: 'Something went wrong' });\n});" },
+    { name:"15. Connecting to a Database",
+      movie:"🎬 Mersal — three storylines all ultimately feed into and draw from one central, coordinated truth. A Node service connects to a database (SQL Server/Postgres via a driver/ORM, or MongoDB via Mongoose) to persist and query data beyond in-memory state.",
+      explain:"For relational databases like SQL Server (matching ZenCampus's existing stack), drivers like <code>mssql</code> or ORMs like Prisma/Sequelize provide connection pooling and query building. Mongoose provides schema-based models (<code>Model.find()</code>, <code>Model.create()</code>) for MongoDB-based services.",
+      zen:"ZenCampus's Node notification service connects to the same SQL Server database as the main .NET app (via the <code>mssql</code> package) to read student contact details before dispatching a push notification, keeping a single source of truth for student data.",
+      code:"const sql = require('mssql');\nconst pool = await sql.connect(config);\nconst result = await pool.request()\n  .input('studentId', sql.Int, 101)\n  .query('SELECT Email, Phone FROM Students WHERE Id = @studentId');" },
+    { name:"16. Environment Variables &amp; Configuration",
+      movie:"🎬 Vikram Vedha — the SAME underlying story plays out differently depending on which perspective/environment is currently active. Node config via environment variables lets the SAME codebase behave differently per environment (dev, staging, production) without code changes.",
+      explain:"<code>process.env.VAR_NAME</code> reads environment variables set by the OS/hosting platform. The <code>dotenv</code> package loads a local <code>.env</code> file into <code>process.env</code> during development, keeping secrets (DB passwords, API keys) out of source control.",
+      zen:"ZenCampus's Node service reads <code>DB_CONNECTION_STRING</code> and <code>JWT_SECRET</code> from <code>process.env</code>, set differently in the local <code>.env</code> file (git-ignored) versus the production server's actual environment variables — the same <code>server.js</code> runs correctly in both without modification.",
+      code:"require('dotenv').config();\nconst dbConnStr = process.env.DB_CONNECTION_STRING;\nconst port = process.env.PORT || 3000;" }
+  ]
+},
+{
+  day:5, title:"Day 5 — Authentication, Scaling, Security, Testing &amp; Deployment",
+  topics:[
+    { name:"17. Authentication &amp; JWT",
+      movie:"🎬 Kabali — a defined identity badge grants access to specific areas without needing to re-verify from scratch every single time. A JWT (JSON Web Token) is a signed, verifiable ID card a client presents on every request, proving who they are without the server needing to look up a session every time.",
+      explain:"On login, the server verifies credentials and signs a JWT (<code>jsonwebtoken</code> package) containing the user's id/role, sent back to the client. The client attaches it as an <code>Authorization: Bearer &lt;token&gt;</code> header on future requests; middleware verifies the signature and expiry before allowing access — stateless, no server-side session storage needed.",
+      zen:"A staff member logging into ZenCampus's Node notification-service admin panel receives a JWT containing their <code>staffId</code> and <code>role</code>; every subsequent API call's <code>authMiddleware</code> verifies that token's signature instead of querying a sessions table on every request.",
+      code:"const jwt = require('jsonwebtoken');\nconst token = jwt.sign({ staffId: 42, role: 'Accounts' }, process.env.JWT_SECRET, { expiresIn: '8h' });\n\n// Verify middleware\nconst payload = jwt.verify(token, process.env.JWT_SECRET);" },
+    { name:"18. Clustering &amp; Child Processes",
+      movie:"🎬 Petta — Kaali doesn't work alone when the job is big enough; he brings in a full team to multiply the work being handled in parallel. Node's cluster module spawns multiple worker processes (one per CPU core) to handle more concurrent load than a single-threaded process could alone.",
+      explain:"Node's <code>cluster</code> module forks multiple worker processes sharing the same server port, letting a multi-core machine use all its cores (since a single Node process only ever uses one). <code>child_process.spawn/exec</code> runs separate external processes (e.g. calling a CLI tool) for CPU-heavy or isolated work outside the main event loop.",
+      zen:"Running ZenCampus's Node report-generation service with <code>cluster</code> spawns one worker per CPU core in production, so generating a heavy PDF batch report for one department doesn't block other departments' lightweight API requests from being served by other workers.",
+      code:"const cluster = require('cluster');\nconst os = require('os');\n\nif (cluster.isPrimary) {\n  os.cpus().forEach(() =&gt; cluster.fork());\n} else {\n  require('./server'); // each worker runs the actual app\n}" },
+    { name:"19. Performance &amp; Security Best Practices",
+      movie:"🎬 Anniyan — Ambi guards against threats using multiple defined precautions rather than relying on just one. Securing a Node API means layering multiple defenses — not relying on just one.",
+      explain:"Key practices: <code>helmet</code> (sets secure HTTP headers), <code>express-rate-limit</code> (blocks brute-force/DoS-style abuse per IP), input validation (e.g. via joi/zod) to reject malformed data before it reaches business logic, and never logging or returning raw stack traces/secrets to clients in production.",
+      zen:"ZenCampus's public-facing Node webhook endpoint uses <code>express-rate-limit</code> to cap requests per IP and <code>helmet</code> to set secure headers, preventing a single misbehaving client from overwhelming the service or exposing it to common header-based attacks.",
+      code:"const helmet = require('helmet');\nconst rateLimit = require('express-rate-limit');\n\napp.use(helmet());\napp.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));" },
+    { name:"20. Testing &amp; Deployment",
+      movie:"🎬 Jailer — before really being called into action, everything is verified and rehearsed, and once ready, deployed at exactly the right, controlled moment. Automated tests verify a Node service works correctly BEFORE it's deployed, and process managers keep it running reliably once it's live in production.",
+      explain:"Jest/Mocha + Supertest let you write unit tests (business logic) and integration tests (actual HTTP requests against Express routes) that run in CI before every deploy. In production, a process manager like PM2 (or a container orchestrator) restarts a crashed Node process automatically and can run the app in cluster mode; Docker packages the app + Node runtime + dependencies into one portable, reproducible image.",
+      zen:"ZenCampus's Node notification-service has a Jest+Supertest test suite run automatically in CI on every pull request, and is deployed inside a Docker container managed by PM2 in cluster mode on the production server, so a single unhandled crash doesn't take the whole notification pipeline down.",
+      code:"// notify.test.js\nconst request = require('supertest');\nconst app = require('../app');\n\ntest('POST /api/notify returns 200', async () =&gt; {\n  const res = await request(app).post('/api/notify').send({ studentId: 101, message: 'Fee due' });\n  expect(res.statusCode).toBe(200);\n});\n\n// Deploy: pm2 start server.js -i max   (cluster mode, one process per core)" }
+  ]
+}
+];
+
+// ============ 50 INTERVIEW QUESTIONS ============
+const questions = [
+  {level:"Basic", q:"What is Node.js?", a:"A JavaScript runtime built on Chrome's V8 engine, letting JS run outside the browser (e.g. servers/CLI tools), using an event-driven, non-blocking I/O model."},
+  {level:"Basic", q:"Is Node.js single-threaded or multi-threaded?", a:"Node's JS execution is single-threaded (one event loop), but I/O operations are delegated to a libuv-managed thread pool/the OS behind the scenes, so multiple I/O operations can progress concurrently despite the single JS thread."},
+  {level:"Basic", q:"What is npm?", a:"Node's default package manager, used to install/manage third-party packages (<code>npm install</code>) and run project scripts (<code>npm run</code>) as declared in package.json."},
+  {level:"Basic", q:"What is package.json?", a:"The manifest file for a Node project, declaring its name, version, dependencies, devDependencies, and runnable scripts."},
+  {level:"Basic", q:"What is the difference between dependencies and devDependencies?", a:"dependencies are needed to RUN the app in production (e.g. express); devDependencies are only needed during development (e.g. nodemon, testing libraries), and aren't installed when <code>npm install --production</code> is run."},
+  {level:"Basic", q:"What is the difference between require() and import?", a:"<code>require()</code> is CommonJS's synchronous module loader, Node's original system. <code>import</code> is the ES Module standard syntax, requiring <code>\"type\": \"module\"</code> in package.json (or .mjs files), and supports static analysis and top-level await."},
+  {level:"Basic", q:"What is module.exports used for?", a:"Marks what a CommonJS file exposes to other files that <code>require()</code> it — could be a single function/class, or an object of multiple named exports."},
+  {level:"Basic", q:"What is the Node.js event loop?", a:"The mechanism that lets single-threaded Node handle many concurrent operations: it continuously checks for completed I/O/timers and executes their callbacks, without blocking on any single one."},
+  {level:"Basic", q:"What is a callback function in Node?", a:"A function passed as an argument to be invoked later, typically once an asynchronous operation (file read, DB query, timer) completes."},
+  {level:"Basic", q:"What is the difference between fs.readFile and fs.readFileSync?", a:"<code>fs.readFile</code> is asynchronous/non-blocking (uses a callback or Promise); <code>fs.readFileSync</code> blocks the entire thread until the read completes, which is dangerous inside a request handler serving other users."},
+  {level:"Basic", q:"What is Express.js?", a:"A minimal, widely-used Node web framework providing structured routing, middleware support, and helpers on top of the raw http module."},
+  {level:"Basic", q:"What is middleware in Express?", a:"A function <code>(req, res, next)</code> that runs during the request lifecycle, able to inspect/modify the request/response or end it, calling <code>next()</code> to pass control onward."},
+  {level:"Basic", q:"What does app.listen(port) do?", a:"Binds the Express/HTTP server to the given network port and starts accepting incoming connections — clients then reach it via <code>http://host:port</code>."},
+  {level:"Intermediate", q:"What is the difference between a Promise and async/await?", a:"async/await is syntactic sugar built on top of Promises, letting asynchronous code be written and read like synchronous code (with try/catch for errors) instead of chaining <code>.then()</code>/<code>.catch()</code>."},
+  {level:"Intermediate", q:"What is 'callback hell' and how do Promises/async-await solve it?", a:"Deeply nested callbacks (each depending on the previous one's result) that become hard to read/maintain. Promises flatten this into readable <code>.then()</code> chains, and async/await flattens it further into linear, synchronous-looking code."},
+  {level:"Intermediate", q:"What is the difference between process.nextTick(), setImmediate(), and setTimeout()?", a:"<code>process.nextTick()</code> runs before the event loop continues to the next phase (highest priority). <code>setImmediate()</code> runs in the 'check' phase, after I/O callbacks. <code>setTimeout(fn, 0)</code> runs after a minimum delay, in the timers phase — microtasks like nextTick always run before macrotasks like these."},
+  {level:"Intermediate", q:"What is a Stream in Node.js and why use one?", a:"An abstraction for processing data incrementally in chunks rather than loading it all into memory at once — essential for handling large files or network data efficiently."},
+  {level:"Intermediate", q:"What is the difference between Readable, Writable, Duplex, and Transform streams?", a:"Readable streams produce data (e.g. reading a file). Writable streams consume data (e.g. writing to a file). Duplex streams are both (e.g. a TCP socket). Transform streams are Duplex streams that modify data as it passes through (e.g. compression)."},
+  {level:"Intermediate", q:"What does .pipe() do in Node streams?", a:"Connects a Readable stream's output directly to a Writable stream's input, automatically handling backpressure (pausing the source if the destination can't keep up) without manual buffering logic."},
+  {level:"Intermediate", q:"What is EventEmitter and how is it used?", a:"A core Node class that lets an object emit named events (<code>.emit()</code>) and register listener functions for them (<code>.on()</code>) — the foundation many core APIs (streams, HTTP servers) are built on."},
+  {level:"Intermediate", q:"What is middleware order in Express and why does it matter?", a:"Express runs middleware in the exact order it's registered via <code>app.use()</code>/route definitions; e.g. an auth-check middleware must be registered BEFORE the protected route handler, or it never gets a chance to block the request."},
+  {level:"Intermediate", q:"How do you handle errors in Express route handlers?", a:"Wrap async logic in try/catch and call <code>next(err)</code> to forward it to a centralized error-handling middleware (a 4-argument function: <code>(err, req, res, next)</code>), which formats and sends a consistent error response."},
+  {level:"Intermediate", q:"What is CORS and how is it handled in a Node/Express API?", a:"Cross-Origin Resource Sharing controls whether a browser allows a frontend on one origin (e.g. an Angular app on port 4200) to call an API on another (e.g. Node on port 3000); handled in Express via the <code>cors</code> middleware setting appropriate Access-Control-* response headers."},
+  {level:"Intermediate", q:"What is the difference between GET, POST, PUT, PATCH, and DELETE in a REST API?", a:"GET reads data (no body, safe/idempotent), POST creates a new resource, PUT replaces a resource entirely, PATCH partially updates it, DELETE removes it — REST convention maps these HTTP verbs to CRUD operations on a resource."},
+  {level:"Intermediate", q:"What is dotenv used for?", a:"Loads key-value pairs from a local .env file into <code>process.env</code> during development, keeping secrets (DB credentials, API keys) out of source control while letting the same code read config consistently across environments."},
+  {level:"Intermediate", q:"What is the difference between synchronous and asynchronous error handling in Node?", a:"Synchronous errors are caught with a plain try/catch around the throwing code. Asynchronous errors (in callbacks) must be handled via an error-first callback parameter, or a Promise's <code>.catch()</code>/try-catch around an awaited call — a plain try/catch around an async call that ISN'T awaited will NOT catch its eventual rejection."},
+  {level:"Intermediate", q:"What is a REST API and how does Express typically implement one?", a:"An architectural style using stateless HTTP requests and standard verbs/status codes to operate on named resources; Express implements it via <code>app.get/post/put/delete()</code> routes returning JSON, typically organized with <code>express.Router()</code> per resource."},
+  {level:"Intermediate", q:"What is the purpose of express.json() middleware?", a:"Parses an incoming request's JSON body and populates <code>req.body</code> with a JS object — Express does NOT do this automatically; without it, <code>req.body</code> would be undefined for a JSON POST request."},
+  {level:"Intermediate", q:"What is JWT (JSON Web Token) and how is it structured?", a:"A compact, signed token with three base64 parts: header (algorithm), payload (claims like user id/role), and a signature (verifies it wasn't tampered with) — used for stateless authentication."},
+  {level:"Intermediate", q:"What is the difference between session-based and token-based (JWT) authentication?", a:"Session-based auth stores session state server-side (e.g. in a DB/Redis) and gives the client a session ID cookie; token-based (JWT) auth is stateless — the server verifies a self-contained signed token on each request without storing anything server-side."},
+  {level:"Intermediate", q:"What do the ^ and ~ symbols mean in npm's package.json versions?", a:"<code>^1.2.3</code> allows updates that don't change the leftmost non-zero digit (up to but not including 2.0.0); <code>~1.2.3</code> allows only patch-level updates (up to but not including 1.3.0) — controlling how loosely a dependency's version can float on <code>npm install</code>."},
+  {level:"Intermediate", q:"What is the difference between process.env and a .env file?", a:"<code>process.env</code> is Node's actual runtime object holding environment variables (set by the OS/hosting platform). A .env file is just a local convenience file that the dotenv package reads and copies INTO <code>process.env</code> during startup — Node doesn't read it natively."},
+  {level:"Advanced", q:"Explain the phases of the Node.js event loop.", a:"Roughly: timers (setTimeout/setInterval callbacks) → pending callbacks → poll (retrieve new I/O events, execute I/O callbacks) → check (setImmediate callbacks) → close callbacks — with microtasks (Promises, process.nextTick) draining between each phase."},
+  {level:"Advanced", q:"What is the libuv thread pool and what uses it?", a:"A pool of worker threads (default size 4) that Node uses for operations that can't be done asynchronously at the OS level directly — like certain fs operations, DNS lookups, and crypto functions — keeping the main event loop thread free."},
+  {level:"Advanced", q:"How does Node.js achieve concurrency despite being single-threaded?", a:"By offloading I/O operations to the OS kernel or libuv's thread pool and using the event loop to pick up completed results via callbacks, rather than blocking the single JS thread waiting for each operation to finish."},
+  {level:"Advanced", q:"What is backpressure in Node streams and how is it handled?", a:"When a Writable destination can't consume data as fast as a Readable source produces it, data buffers up in memory. <code>.pipe()</code> automatically pauses the Readable source when the Writable's internal buffer is full and resumes it once drained, preventing unbounded memory growth."},
+  {level:"Advanced", q:"What is the cluster module and how does it improve performance on multi-core machines?", a:"Since one Node process only uses a single CPU core, <code>cluster.fork()</code> spawns multiple worker processes (typically one per core) that all share the same listening port via the OS, letting a multi-core server handle proportionally more concurrent load."},
+  {level:"Advanced", q:"What's the difference between cluster and worker_threads?", a:"<code>cluster</code> forks separate OS PROCESSES (isolated memory, communicate via IPC, good for scaling I/O-bound HTTP servers). <code>worker_threads</code> run in the SAME process with shared memory options, better suited for CPU-bound work that needs true parallel computation without process overhead."},
+  {level:"Advanced", q:"How would you prevent memory leaks in a long-running Node.js server?", a:"Avoid unbounded growth in global caches/arrays, always remove event listeners you no longer need (or use <code>{ once: true }</code>), close DB connections/streams properly, and profile with tools like <code>--inspect</code> + Chrome DevTools or clinic.js to find retained objects over time."},
+  {level:"Advanced", q:"What is the difference between process.on('uncaughtException') and a regular try/catch?", a:"<code>uncaughtException</code> is a LAST-RESORT global handler for otherwise-unhandled synchronous errors — by the time it fires, the process is in an unknown state, and Node's own docs recommend logging and exiting rather than trying to keep running. try/catch handles errors at a known, specific point in the code, which is always the preferred approach."},
+  {level:"Advanced", q:"How do you secure a Node/Express API against common attacks?", a:"<code>helmet</code> for secure HTTP headers, <code>express-rate-limit</code> against brute-force/DoS, input validation (joi/zod) against injection and malformed payloads, parameterized queries (never string-concatenated SQL) against SQL injection, and keeping JWT secrets/DB credentials out of source control via environment variables."},
+  {level:"Advanced", q:"What is the difference between horizontal and vertical scaling, and which does clustering achieve?", a:"Vertical scaling adds more resources (CPU/RAM) to a single machine/process. Horizontal scaling adds more machines/processes to share load. Node's cluster module achieves a form of horizontal scaling WITHIN one machine, by running multiple worker processes across its available cores."},
+  {level:"Advanced", q:"What is graceful shutdown in Node.js and why does it matter?", a:"Listening for termination signals (SIGTERM/SIGINT) to stop accepting new connections, finish in-flight requests, close DB connections cleanly, and THEN exit — preventing dropped requests or corrupted writes during a deploy/restart, especially important behind a process manager or container orchestrator that sends these signals routinely."},
+  {level:"Advanced", q:"What is the difference between Buffer and String in Node.js?", a:"A Buffer holds raw binary data (fixed-size, byte-level) in memory outside the V8 heap, used for I/O (files, network, streams). A String is UTF-16 encoded, immutable JS text — Buffers must be explicitly decoded (<code>buf.toString('utf-8')</code>) to become usable strings."},
+  {level:"Advanced", q:"How does connection pooling work when a Node service connects to a SQL database, and why does it matter at scale?", a:"Instead of opening/closing a new TCP+auth connection per query (slow, resource-heavy), a connection pool keeps a fixed number of already-authenticated connections open and hands them out to queries as needed, releasing them back afterward — critical for a Node API handling many concurrent requests against a database like ZenCampus's SQL Server."},
+  {level:"Advanced", q:"What is the N+1 query problem and how might it show up in a Node/Express API?", a:"Fetching a list of records with one query, then making a SEPARATE query per record for related data (e.g. one query for students, then one fee-lookup query PER student) instead of a single joined/batched query — causing performance to degrade linearly with list size."},
+  {level:"Advanced", q:"What is the difference between exports and module.exports in CommonJS, and a common pitfall?", a:"Both start out pointing to the same object; <code>exports</code> is just a shorthand reference to <code>module.exports</code>. Reassigning <code>exports = {...}</code> breaks that link (<code>module.exports</code> still points to the original object), so the reassignment is silently lost — always reassign <code>module.exports</code> directly if replacing the whole export object."},
+  {level:"Advanced", q:"How would you structure a Node/Express codebase for a growing microservice like a ZenCampus notification service?", a:"Separate concerns into layers: routes (URL → controller mapping), controllers (request/response handling), services (business logic), and a data-access layer (DB queries) — keeping route files thin and business logic independently testable without an HTTP request/response involved."},
+  {level:"Advanced", q:"What's the difference between optimistic and pessimistic concurrency when multiple Node requests update the same database row (e.g. a fee balance)?", a:"Pessimistic locking blocks other transactions from touching a row until the current one finishes (safe but can hurt throughput under load). Optimistic concurrency lets multiple requests proceed and checks a version/timestamp column at write time, rejecting/retrying if it changed — often better for a high-read, low-conflict workload like fee lookups."},
+  {level:"Advanced", q:"How would you monitor and keep a production Node.js service reliable over time?", a:"Structured logging (e.g. Winston/Pino) shipped to a central log aggregator, a process manager (PM2) or container orchestrator restarting crashed instances automatically, health-check endpoints for load balancers, and metrics/alerting on error rates, response times, and event-loop lag — a rising event-loop-lag metric is an early warning sign of a blocking operation slipping into the request path."}
+];
+
+// ============ COVERAGE CHECKLIST ============
+const coverageTopics = guideDays.flatMap(day => day.topics.map(t => ({ name: t.name, day: day.day })));
+
+// ============ RENDER: TABS ============
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ============ RENDER: GUIDE ============
+const guideListEl = document.getElementById('guideList');
+guideListEl.innerHTML = guideDays.map(day => `
+  <div class="day-block" id="day-${day.day}">
+    <h2 class="day-title">${day.title}</h2>
+    ${day.topics.map((t) => `
+      <div class="qa" id="topic-${t.name.split('.')[0].trim()}">
+        <div class="q">
+          <span>${t.name}</span>
+          <span class="toggle-icon">+</span>
+        </div>
+        <div class="a">
+          <div class="movie-ref">${t.movie}</div>
+          <p>${t.explain}</p>
+          <pre>${t.code}</pre>
+          <div class="zen-ref"><strong>ZenCampus use case:</strong> ${t.zen}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+`).join('');
+guideListEl.querySelectorAll('.q').forEach(qEl=>{
+  qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+});
+
+// ============ RENDER: INTERVIEW Q&A ============
+const listEl = document.getElementById('qaList');
+const filtersEl = document.getElementById('filters');
+const searchBox = document.getElementById('searchBox');
+const visibleCountEl = document.getElementById('visibleCount');
+const levels = ["All", "Basic", "Intermediate", "Advanced"];
+let activeLevel = "All";
+
+function renderFilters(){
+  filtersEl.innerHTML = levels.map(lvl =>
+    `<button class="filter-btn ${lvl===activeLevel?'active':''}" data-level="${lvl}">${lvl}</button>`
+  ).join('');
+  filtersEl.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeLevel = btn.dataset.level;
+      renderFilters();
+      renderQAList();
+    });
+  });
+}
+
+function renderQAList(){
+  const searchTerm = searchBox.value.trim().toLowerCase();
+  const filtered = questions
+    .map((item, idx)=>({...item, idx}))
+    .filter(item => activeLevel==="All" || item.level===activeLevel)
+    .filter(item => !searchTerm || item.q.toLowerCase().includes(searchTerm) || item.a.toLowerCase().includes(searchTerm));
+
+  visibleCountEl.textContent = filtered.length;
+
+  listEl.innerHTML = filtered.map(item => `
+    <div class="qa" data-idx="${item.idx}">
+      <div class="q">
+        <span><span class="num">Q${item.idx+1}.</span>${item.q}</span>
+        <span style="display:flex; align-items:center; gap:10px;">
+          <span class="tag">${item.level}</span>
+          <span class="toggle-icon">+</span>
+        </span>
+      </div>
+      <div class="a">${item.a}</div>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.q').forEach(qEl=>{
+    qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+  });
+}
+searchBox.addEventListener('input', renderQAList);
+renderFilters();
+renderQAList();
+
+// ============ RENDER: COVERAGE CHECKLIST ============
+const checklistEl = document.getElementById('checklist');
+checklistEl.innerHTML = coverageTopics.map((t) => `
+  <div class="check-item" data-target="topic-${t.name.split('.')[0].trim()}" data-day="${t.day}">
+    <span class="badge">✅</span>
+    <span class="num">${t.name.split('.')[0]}</span>
+    <span>${t.name.split('. ')[1].replace(/&amp;/g,'&')} <em style="color:var(--muted); font-size:0.8rem;">(Day ${t.day})</em></span>
+  </div>
+`).join('');
+checklistEl.querySelectorAll('.check-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelector('.tab-btn[data-tab="guide"]').click();
+    setTimeout(()=>{
+      const target = document.getElementById(item.dataset.target);
+      if(target){
+        target.classList.add('open');
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }, 50);
+  });
+});
+</script>
+
+</body>
+</html>

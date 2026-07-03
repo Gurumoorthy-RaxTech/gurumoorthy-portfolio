@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C# Basics — Data Types, Strings, Methods, Delegates | ZenCampus</title>
+<style>
+  :root{--accent:#7e22ce;--accent-dim:#6b21a8;--accent-subtle:rgba(126,34,206,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(126,34,206,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.05rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}
+  .movie{background:linear-gradient(135deg,rgba(126,34,206,.12),rgba(126,34,206,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.9rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.5rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">C# BASICS</span>
+  <a href="#types">Data Types</a><a href="#strings">Strings</a><a href="#nullable">Nullable</a>
+  <a href="#methods">Methods</a><a href="#delegates">Delegates</a><a href="#scenarios">Interview Q</a>
+</nav>
+<div class="hero">
+  <h1>C# Basics — Strong Foundation</h1>
+  <p>Data Types · Strings · Nullable · Methods · Delegates · Lambda · Exceptions</p>
+  <div class="tags">
+    <span class="tag">C# 12</span><span class="tag">Value vs Reference</span><span class="tag">Lambda</span><span class="tag">Delegates</span>
+    <span class="tag" style="background:rgba(126,34,206,.2);border-color:#7e22ce;color:#7e22ce;">Purple #7e22ce</span>
+  </div>
+</div>
+<main>
+
+<section id="types">
+  <h2>🔢 Data Types — Value vs Reference</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Kamal Hassan in Vikram (2022) — Identity matters</div>
+    <div class="mb">Vikram-la every character-ku different identity. C# data types same — value types store data directly (like cash in your hand), reference types store an ADDRESS (like a bank account number pointing to money). int a = 5 — value copied. Student s = new Student() — reference (address) stored in s.</div></div>
+  </div>
+  <table>
+    <tr><th>Type</th><th>C# Type</th><th>Size</th><th>ZenCampus Example</th></tr>
+    <tr><td colspan="4" style="background:rgba(126,34,206,.08);font-weight:700;color:var(--accent)">VALUE TYPES (stored on Stack)</td></tr>
+    <tr><td>Integer</td><td>int</td><td>4 bytes</td><td>StudentId, ClassId, SchoolId</td></tr>
+    <tr><td>Long</td><td>long</td><td>8 bytes</td><td>Large fee totals, report row counts</td></tr>
+    <tr><td>Decimal</td><td>decimal</td><td>16 bytes</td><td>Fee amount (precise!), tax calculations</td></tr>
+    <tr><td>Double</td><td>double</td><td>8 bytes</td><td>Attendance percentage (87.5)</td></tr>
+    <tr><td>Boolean</td><td>bool</td><td>1 byte</td><td>IsActive, IsPresent, IsPaid</td></tr>
+    <tr><td>Character</td><td>char</td><td>2 bytes</td><td>Gender ('M', 'F')</td></tr>
+    <tr><td>Date</td><td>DateOnly</td><td>4 bytes</td><td>DateOfBirth, AdmissionDate</td></tr>
+    <tr><td colspan="4" style="background:rgba(126,34,206,.08);font-weight:700;color:var(--accent)">REFERENCE TYPES (stored on Heap)</td></tr>
+    <tr><td>String</td><td>string</td><td>Variable</td><td>Name, Phone, Address</td></tr>
+    <tr><td>Object</td><td>object</td><td>Variable</td><td>Base of all types</td></tr>
+    <tr><td>Array</td><td>int[]</td><td>Variable</td><td>ClassIds[], SubjectIds[]</td></tr>
+    <tr><td>Class</td><td>Student</td><td>Variable</td><td>Student, Teacher, FeeRecord</td></tr>
+  </table>
+  <pre><code><span class="cm">// Value type — copy is made</span>
+<span class="kw">int</span> studentAge = <span class="num">15</span>;
+<span class="kw">int</span> copyAge = studentAge;  <span class="cm">// independent copy</span>
+copyAge = <span class="num">20</span>;
+Console.WriteLine(studentAge); <span class="cm">// still 15 — not affected</span>
+
+<span class="cm">// Reference type — address (reference) is copied</span>
+<span class="kw">var</span> student1 = <span class="kw">new</span> <span class="cl">Student</span> { Name = <span class="str">"Basha"</span> };
+<span class="kw">var</span> student2 = student1;  <span class="cm">// same object! both point to same memory</span>
+student2.Name = <span class="str">"Raja"</span>;
+Console.WriteLine(student1.Name); <span class="cm">// "Raja" — both changed!</span>
+
+<span class="cm">// decimal vs double — ALWAYS use decimal for money</span>
+<span class="kw">double</span>  d = <span class="num">0.1</span> + <span class="num">0.2</span>;           <span class="cm">// 0.30000000000000004 ← floating point error!</span>
+<span class="kw">decimal</span> m = <span class="num">0.1m</span> + <span class="num">0.2m</span>;         <span class="cm">// 0.3 ← exact! Use for fees</span></code></pre>
+</section>
+
+<section id="strings">
+  <h2>📝 Strings — Most Used Type in ZenCampus</h2>
+  <pre><code><span class="kw">string</span> name = <span class="str">"Basha Kumar"</span>;
+
+<span class="cm">// Common string methods</span>
+name.ToUpper()          <span class="cm">// "BASHA KUMAR"</span>
+name.ToLower()          <span class="cm">// "basha kumar"</span>
+name.Trim()             <span class="cm">// remove leading/trailing spaces</span>
+name.TrimStart()        <span class="cm">// remove only leading</span>
+name.Contains(<span class="str">"Kumar"</span>)  <span class="cm">// true</span>
+name.StartsWith(<span class="str">"Basha"</span>) <span class="cm">// true</span>
+name.EndsWith(<span class="str">"Kumar"</span>)  <span class="cm">// true</span>
+name.Replace(<span class="str">"Kumar"</span>, <span class="str">"Mohammed"</span>) <span class="cm">// "Basha Mohammed"</span>
+name.Split(<span class="str">' '</span>)        <span class="cm">// ["Basha", "Kumar"]</span>
+name.Substring(<span class="num">0</span>, <span class="num">5</span>)   <span class="cm">// "Basha" (start, length)</span>
+name.IndexOf(<span class="str">"Kumar"</span>)  <span class="cm">// 6 (position)</span>
+name.Length             <span class="cm">// 11</span>
+
+<span class="cm">// String formatting</span>
+<span class="kw">string</span> admNo = <span class="str">"ADM001"</span>;
+<span class="kw">int</span> classId = <span class="num">5</span>;
+
+<span class="cm">// Interpolation (recommended)</span>
+<span class="kw">string</span> display = <span class="str">$"{name} - Class {classId} - {admNo}"</span>;
+
+<span class="cm">// Format</span>
+<span class="kw">string</span> fee = <span class="kw">string</span>.Format(<span class="str">"Fee: {0:C}"</span>, <span class="num">5000m</span>);  <span class="cm">// "Fee: ₹5,000.00"</span>
+
+<span class="cm">// Null/empty checks</span>
+<span class="kw">string</span>.IsNullOrEmpty(name)       <span class="cm">// true if null or ""</span>
+<span class="kw">string</span>.IsNullOrWhiteSpace(name)  <span class="cm">// true if null, "", or "   " ← use this!</span>
+
+<span class="cm">// StringBuilder — when building large strings in loop</span>
+<span class="kw">var</span> sb = <span class="kw">new</span> <span class="cl">StringBuilder</span>();
+<span class="kw">foreach</span> (<span class="kw">var</span> s <span class="kw">in</span> students)
+    sb.AppendLine(<span class="str">$"{s.Name}: {s.FeeAmount}"</span>);
+<span class="kw">string</span> report = sb.ToString();</code></pre>
+</section>
+
+<section id="nullable">
+  <h2>❓ Nullable Types — Handling Missing Data</h2>
+  <pre><code><span class="cm">// Nullable value type — int? means "int or null"</span>
+<span class="kw">int</span>? studentScore = <span class="kw">null</span>;    <span class="cm">// exam not yet taken</span>
+<span class="kw">decimal</span>? discount = <span class="kw">null</span>;   <span class="cm">// no discount applied</span>
+
+<span class="cm">// Check before use</span>
+<span class="kw">if</span> (studentScore.HasValue)
+    Console.WriteLine(<span class="str">$"Score: {studentScore.Value}"</span>);
+
+<span class="cm">// Null coalescing — default if null</span>
+<span class="kw">int</span> score = studentScore ?? <span class="num">0</span>;          <span class="cm">// 0 if null</span>
+<span class="kw">string</span> phone = student?.Phone ?? <span class="str">"N/A"</span>; <span class="cm">// "N/A" if student or phone is null</span>
+
+<span class="cm">// Null conditional — safe navigation</span>
+<span class="kw">string</span>? upperPhone = student?.Phone?.ToUpper(); <span class="cm">// null if student or Phone is null</span>
+
+<span class="cm">// Null coalescing assignment (C# 8)</span>
+student.Phone ??= <span class="str">"0000000000"</span>; <span class="cm">// assign only if currently null</span>
+
+<span class="cm">// Nullable reference types (C# 8+) — enabled in modern projects</span>
+<span class="kw">string</span>  name  = <span class="str">"Basha"</span>;   <span class="cm">// cannot be null (warning if assigned null)</span>
+<span class="kw">string</span>? email = <span class="kw">null</span>;     <span class="cm">// explicitly allowed to be null</span>
+
+<span class="cm">// Pattern matching null check</span>
+<span class="kw">if</span> (student <span class="kw">is not null</span>)
+    Console.WriteLine(student.Name);</code></pre>
+</section>
+
+<section id="methods">
+  <h2>⚙️ Methods — Modifiers and Patterns</h2>
+  <pre><code><span class="cm">// Method signatures</span>
+<span class="kw">public int</span> Add(<span class="kw">int</span> a, <span class="kw">int</span> b) =&gt; a + b;          <span class="cm">// expression body</span>
+<span class="kw">public void</span> Print(<span class="kw">string</span> msg) { Console.WriteLine(msg); }
+
+<span class="cm">// Optional parameters with defaults</span>
+<span class="kw">public</span> <span class="cl">List</span>&lt;<span class="cl">Student</span>&gt; GetStudents(<span class="kw">int</span> schoolId, <span class="kw">int</span> page = <span class="num">1</span>, <span class="kw">int</span> size = <span class="num">20</span>)
+{
+    <span class="cm">// page=1 and size=20 are defaults if not passed</span>
+    <span class="kw">return</span> _db.Students.Skip((page-<span class="num">1</span>)*size).Take(size).ToList();
+}
+
+<span class="cm">// Named parameters — call in any order</span>
+GetStudents(schoolId: <span class="num">1</span>, size: <span class="num">50</span>, page: <span class="num">2</span>);
+
+<span class="cm">// out parameter — return multiple values</span>
+<span class="kw">public bool</span> TryGetStudent(<span class="kw">int</span> id, <span class="kw">out</span> <span class="cl">Student</span>? student)
+{
+    student = _db.Students.Find(id);
+    <span class="kw">return</span> student != <span class="kw">null</span>;
+}
+<span class="kw">if</span> (TryGetStudent(<span class="num">1</span>, <span class="kw">out var</span> s))
+    Console.WriteLine(s!.Name);
+
+<span class="cm">// params — variable number of arguments</span>
+<span class="kw">public decimal</span> Sum(<span class="kw">params decimal</span>[] amounts)
+    =&gt; amounts.Sum(); <span class="cm">// can call with any number: Sum(100, 200, 300)</span>
+
+<span class="cm">// Extension method — add methods to existing types</span>
+<span class="kw">public static class</span> <span class="cl">StringExtensions</span>
+{
+    <span class="kw">public static string</span> ToTitleCase(<span class="kw">this string</span> s)
+        =&gt; <span class="cl">CultureInfo</span>.CurrentCulture.TextInfo.ToTitleCase(s.ToLower());
+}
+<span class="cm">// Usage: "basha kumar".ToTitleCase() → "Basha Kumar"</span></code></pre>
+</section>
+
+<section id="delegates">
+  <h2>🎯 Delegates, Func, Action, Lambda</h2>
+  <pre><code><span class="cm">// Delegate = type that holds reference to a method</span>
+<span class="kw">public delegate decimal</span> <span class="cl">FeeCalculator</span>(<span class="kw">int</span> studentId);
+
+<span class="cm">// Built-in generic delegates (use these, don't define custom)</span>
+<span class="cm">// Func&lt;T, TResult&gt; — takes input, returns output</span>
+<span class="cl">Func</span>&lt;<span class="kw">int</span>, <span class="kw">decimal</span>&gt; calcFee = (id) =&gt; id * <span class="num">1000m</span>;
+<span class="kw">decimal</span> fee = calcFee(<span class="num">5</span>);  <span class="cm">// 5000</span>
+
+<span class="cm">// Action&lt;T&gt; — takes input, returns void</span>
+<span class="cl">Action</span>&lt;<span class="kw">string</span>&gt; log = (msg) =&gt; Console.WriteLine(<span class="str">$"[LOG] {msg}"</span>);
+log(<span class="str">"Student admitted"</span>);
+
+<span class="cm">// Predicate&lt;T&gt; — takes input, returns bool</span>
+<span class="cl">Predicate</span>&lt;<span class="cl">Student</span>&gt; isActive = (s) =&gt; s.IsActive;
+
+<span class="cm">// Lambda expressions — inline anonymous methods</span>
+<span class="kw">var</span> activeStudents = students.Where(s =&gt; s.IsActive).ToList();
+<span class="kw">var</span> sorted = students.OrderBy(s =&gt; s.Name).ToList();
+<span class="kw">var</span> names = students.Select(s =&gt; s.Name).ToList();
+<span class="kw">var</span> totalFee = students.Sum(s =&gt; s.FeeAmount);
+
+<span class="cm">// Events (delegate-based)</span>
+<span class="kw">public class</span> <span class="cl">AdmissionService</span>
+{
+    <span class="kw">public event</span> <span class="cl">Action</span>&lt;<span class="cl">Student</span>&gt;? StudentAdmitted;
+
+    <span class="kw">public void</span> AdmitStudent(<span class="cl">Student</span> student)
+    {
+        <span class="cm">// ... save to DB ...</span>
+        StudentAdmitted?.Invoke(student); <span class="cm">// fire event</span>
+    }
+}
+<span class="cm">// Subscribe: service.StudentAdmitted += (s) => SendWelcomeSms(s);</span></code></pre>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">Why use decimal instead of double for fee amounts?</span><span class="st">Types</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>double uses binary floating-point (IEEE 754) — cannot represent 0.1 exactly. 0.1 + 0.2 = 0.30000000000000004 in double. decimal uses base-10 representation — exact for financial calculations. decimal is slower than double but precision is mandatory for money. In ZenCampus: fee amount is decimal. Attendance percentage is double (0.01 precision fine). Rule: money/financial = decimal. Scientific/engineering = double.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What is the difference between == and .Equals() for strings?</span><span class="st">Strings</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>For strings in C#: == compares content (value), not reference. "Basha" == "Basha" is true. This is because string overloads the == operator. .Equals() also compares content by default. Difference: .Equals() has overload for StringComparison. "BASHA".Equals("basha", StringComparison.OrdinalIgnoreCase) — case-insensitive. Use Equals when case-insensitive comparison needed. For null safety: use == (Equals throws NullReferenceException if left side is null).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is string immutability? Why use StringBuilder?</span><span class="st">Strings</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>String is immutable — once created, cannot be modified. "Basha" + "Kumar" creates a NEW string object, discards both originals. In a loop concatenating 1,000 strings: 999 intermediate string objects created and garbage collected. StringBuilder uses a buffer, appends without creating new objects. Rule: 3+ concatenations in a loop → StringBuilder. Simple "Hello " + name → string interpolation fine. For ZenCampus report with 1,000 student rows: StringBuilder, not string +.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What is the difference between var and dynamic in C#?</span><span class="st">Types</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>var: type inferred at COMPILE TIME. var student = new Student() — compiler knows it's Student. Fully type-safe. IntelliSense works. No runtime overhead. dynamic: type resolved at RUNTIME. dynamic obj = GetSomething() — type unknown at compile time. No IntelliSense. Runtime errors possible. Use var always for local variables. Use dynamic only when working with COM interop, reflection, or deserialized JSON without a model. ZenCampus: var everywhere, dynamic never.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">Explain the difference between out and ref parameters.</span><span class="st">Methods</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>ref: variable must be initialized BEFORE calling the method. Method can read AND write. out: variable doesn't need initialization before call. Method MUST assign a value before returning. Usage: ref = pass existing value that method may modify. out = declare a variable that method will fill. TryParse pattern uses out: int.TryParse("123", out int result). Prefer returning a tuple or using nullable return instead of out parameters in modern C#.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">What is a lambda expression?</span><span class="st">Lambda</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Lambda: anonymous function written inline. s => s.IsActive is equivalent to bool IsActive(Student s) { return s.IsActive; }. Syntax: (parameters) => expression or (parameters) => { statements; }. Used with LINQ, delegates, Func/Action. Closure: lambda can capture variables from outer scope (be careful with loop variables). students.Where(s => s.SchoolId == currentSchoolId) — captures currentSchoolId.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">What is exception handling in C#? When should you catch exceptions?</span><span class="st">Exceptions</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>try
+{
+    var student = await _repo.GetByIdAsync(id);  // might throw
+    await _uow.CommitAsync();
+}
+catch (NotFoundException ex)       // specific first
+{
+    _log.LogWarning("Student {Id} not found", id);
+    return NotFound(ex.Message);
+}
+catch (DbUpdateException ex)       // DB errors
+{
+    _log.LogError(ex, "DB error saving student");
+    return StatusCode(500, "Database error");
+}
+finally                            // always runs
+{
+    // cleanup, dispose resources
+}
+// Catch specific exceptions, not general Exception
+// Never swallow exceptions silently (empty catch block)
+// finally for resource cleanup (or use using statement)</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">What is an enum and when to use it?</span><span class="st">Types</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>public enum StudentCategory
+{
+    General = 1,
+    ScSt = 2,
+    StaffChild = 3,
+    Minority = 4
+}
+
+public enum AttendanceStatus { Present, Absent, Late, Holiday }
+
+// Usage
+var cat = StudentCategory.General;
+if (cat == StudentCategory.ScSt) { /* different fee */ }
+
+// Enum to/from string
+string name = StudentCategory.General.ToString();       // "General"
+var parsed = Enum.Parse&lt;StudentCategory&gt;("ScSt");       // ScSt
+
+// Use enum instead of magic numbers (1, 2, 3)
+// Stored as int in database</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">What are generics? Why use List&lt;T&gt; instead of ArrayList?</span><span class="st">Generics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Generics: write type-safe, reusable code with a type parameter T. List&lt;Student&gt; only accepts Student objects — compile-time type safety. ArrayList accepts any object — runtime cast errors, boxing overhead for value types. Generic method: T GetById&lt;T&gt;(int id) works for any type. Generic class: Repository&lt;T&gt; where T : class. Benefits: type safety, no boxing, IntelliSense, code reuse. Use generics for collections, repositories, result types.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">What is boxing and unboxing?</span><span class="st">Types</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Boxing: converting value type (int) to reference type (object). Wraps value in heap-allocated object. int x = 5; object boxed = x; — memory allocation on heap. Unboxing: extracting value back. int unboxed = (int)boxed; — explicit cast needed. Performance cost: boxing = heap allocation + copy. Unboxing = type check + copy. Avoid boxing in hot paths. Generics eliminate need for boxing (List&lt;int&gt; vs ArrayList). With modern C#: boxing is rare if you use generics correctly.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. Why is 'decimal' preferred over 'double' for student fee calculations?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Decimal is actually slower than double.')">decimal is faster</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! decimal is base-10 and exact for financial math. double has floating-point precision errors — 0.1 + 0.2 ≠ 0.3 in double. Money must be exact.')">decimal is exact for base-10 arithmetic — no floating point errors</button>
+    <button class="qb" onclick="ans(this,'wrong','Both types support the same range roughly, but decimal has more precision.')">decimal supports larger numbers</button>
+    <button class="qb" onclick="ans(this,'wrong','Both are value types — same memory location behavior.')">decimal is a reference type</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What does string.IsNullOrWhiteSpace() check that IsNullOrEmpty() doesn't?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Both check for null — not specific to null only.')">Whether the string is null</button>
+    <button class="qb" onclick="ans(this,'wrong','Both check for empty string too.')">Whether the string is empty ("")</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! IsNullOrWhiteSpace also returns true for strings containing only spaces/tabs/newlines like "   ". A string with only spaces is logically empty but IsNullOrEmpty returns false.')">Whether the string contains only whitespace characters like "   "</button>
+    <button class="qb" onclick="ans(this,'wrong','Neither checks for specific special characters.')">Whether the string has special characters</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. What is the output of: int a = 5; int b = a; b = 10; Console.WriteLine(a);?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','int is a value type — independent copy made.')">10 — b and a point to same value</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! int is a VALUE TYPE. b = a creates an independent COPY. Changing b does not affect a. Output: 5.')">5 — int is a value type, b is an independent copy</button>
+    <button class="qb" onclick="ans(this,'wrong','No exception occurs — this is valid C#.')">Exception — cannot reassign</button>
+    <button class="qb" onclick="ans(this,'wrong','The code has no output statement error.')">Compile error</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. What is Func&lt;int, decimal&gt; in C#?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Func always returns a value — Action is for void returns.')">A method that takes decimal, returns int</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Func&lt;T, TResult&gt; — last type parameter is RETURN TYPE. Func&lt;int, decimal&gt; = takes int input, returns decimal. Example: id => id * 1000m.')">A function that takes int, returns decimal</button>
+    <button class="qb" onclick="ans(this,'wrong','Func can return any type — not restricted to bool.')">A function that returns bool</button>
+    <button class="qb" onclick="ans(this,'wrong','Func is not a class definition.')">A class with int and decimal properties</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I know value types vs reference types difference</li>
+    <li onclick="ck(this)"><input type="checkbox">I always use decimal for money, not double</li>
+    <li onclick="ck(this)"><input type="checkbox">I can use all string methods (Contains, Replace, Split, etc.)</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand nullable types (int?, string?) and ??, ?.  operators</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write methods with optional/named parameters</li>
+    <li onclick="ck(this)"><input type="checkbox">I know Func, Action, Predicate delegates</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write lambda expressions</li>
+    <li onclick="ck(this)"><input type="checkbox">I know when to use StringBuilder vs string concatenation</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">C# Basics Complete ✓ — Data Types, Strings, Methods, Delegates!</p>
+  <p>Accent: Purple #7e22ce · Next: Loops + Collections (for, foreach, List, Dictionary, LINQ)</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

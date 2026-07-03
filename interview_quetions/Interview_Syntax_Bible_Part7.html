@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 7 (FINAL) — JavaScript + Master Sheet · ZenCampus</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; line-height: 1.7; }
+  header { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); padding: 32px 20px; text-align: center; border-bottom: 3px solid #e94560; }
+  header h1 { font-size: 2em; color: #e94560; text-shadow: 0 0 20px #e9456088; }
+  header p  { color: #a0a0c0; margin-top: 8px; }
+  .badge { display: inline-block; background: #e94560; color: white; padding: 4px 12px; border-radius: 20px; font-size: .78em; margin: 4px; }
+  .container { max-width: 1150px; margin: 0 auto; padding: 20px; }
+
+  .section { margin: 36px 0; border-radius: 12px; overflow: hidden; border: 1px solid #2a2a4a; }
+  .section-header { padding: 16px 24px; font-size: 1.2em; font-weight: bold; display: flex; align-items: center; gap: 12px; }
+  .section-body { padding: 20px 24px; background: #13132a; }
+  .js-sec    .section-header { background: linear-gradient(90deg, #2a2a00, #f9ca24 110%); color: #111; }
+  .dom-sec   .section-header { background: linear-gradient(90deg, #001a3d, #1e6091); }
+  .async-sec .section-header { background: linear-gradient(90deg, #001a30, #0abde3); }
+  .clos-sec  .section-header { background: linear-gradient(90deg, #2a0030, #8e44ad); }
+  .arr-sec   .section-header { background: linear-gradient(90deg, #00201a, #27ae60); }
+  .master-sec .section-header { background: linear-gradient(90deg, #300010, #e94560); }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; margin-top: 16px; }
+  .card { background: #1a1a35; border-radius: 10px; padding: 18px; border-left: 4px solid #e94560; transition: transform .2s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px #e9456033; }
+  .card-title { font-size: 1.05em; font-weight: bold; color: #fff; margin-bottom: 8px; }
+  .card-sub   { font-size: .78em; color: #e94560; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+
+  pre  { background: #0d1117; border-radius: 8px; padding: 14px; overflow-x: auto; font-size: .82em; font-family: 'Consolas', monospace; color: #e0e0e0; margin: 10px 0; border: 1px solid #2a2a4a; line-height: 1.7; }
+  .kw  { color: #569cd6; }
+  .str { color: #ce9178; }
+  .cm  { color: #6a9955; }
+  .num { color: #b5cea8; }
+  .typ { color: #4ec9b0; }
+  .fn  { color: #dcdcaa; }
+  .prop{ color: #9cdcfe; }
+  code { background: #0d1117; color: #f97316; padding: 2px 7px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: .83em; }
+
+  .movie-ref  { background: #1a0f2e; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #c39bd3; border-left: 3px solid #8e44ad; }
+  .movie-ref .film { color: #f39c12; font-weight: bold; }
+  .zencampus  { background: #0a2010; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #a8e6cf; border-left: 3px solid #27ae60; }
+  .zencampus .label { color: #2ecc71; font-weight: bold; font-size: .8em; }
+  .interview-qa { background: #1a0a0a; border-radius: 6px; padding: 12px 14px; margin: 10px 0; border-left: 3px solid #e74c3c; }
+  .interview-qa .q { color: #e74c3c; font-size: .8em; font-weight: bold; }
+  .interview-qa .a { color: #c0c0c0; font-size: .85em; margin-top: 4px; }
+  .trap  { background: #1a0000; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #ff6b6b; border-left: 3px solid #e74c3c; }
+  .trap .label { color: #e74c3c; font-weight: bold; }
+  .tip-box { background: #1a1000; border: 1px solid #f39c12; border-radius: 8px; padding: 14px; margin: 14px 0; }
+  .tip-box .tip-title { color: #f39c12; font-weight: bold; margin-bottom: 6px; }
+  .tanglish { background: #1a1500; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: .84em; color: #f9ca24; border-left: 3px solid #f9ca24; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .84em; }
+  th { background: #1e3a5f; color: #74b9ff; padding: 10px; text-align: left; }
+  td { padding: 8px 10px; border-bottom: 1px solid #2a2a4a; color: #c0c0c0; vertical-align: top; }
+  tr:hover td { background: #1a1a35; }
+  h3 { color: #74b9ff; margin: 18px 0 10px; font-size: 1em; }
+
+  /* MASTER SHEET */
+  .master-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin: 16px 0; }
+  .master-card { background: #0d1117; border-radius: 8px; padding: 14px; border: 1px solid #2a2a4a; }
+  .master-card h4 { color: #e94560; font-size: .9em; margin-bottom: 8px; border-bottom: 1px solid #2a2a4a; padding-bottom: 6px; }
+  .master-card ul { list-style: none; padding: 0; }
+  .master-card li { font-size: .8em; color: #c0c0c0; padding: 3px 0; border-bottom: 1px dotted #2a2a4a; }
+  .master-card li:last-child { border-bottom: none; }
+  .master-card .ans { color: #74b9ff; font-size: .75em; }
+
+  .trophy { background: linear-gradient(135deg, #1a1000, #2a1a00); border: 2px solid #f39c12; border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center; }
+  .trophy h2 { color: #f39c12; font-size: 1.4em; }
+
+  footer { text-align: center; padding: 30px; color: #555; border-top: 1px solid #2a2a4a; margin-top: 40px; }
+  @media(max-width:600px){ .card-grid{ grid-template-columns:1fr; } .master-grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🟡 Part 7 (FINAL) — JavaScript ES6+ · DOM · Async · Closures · Array Methods</h1>
+  <p>ZenCampus Edition · Complete Syntax + Master Interview Cheat Sheet</p>
+  <div style="margin-top:10px">
+    <span class="badge">ES6+ Syntax</span>
+    <span class="badge">var/let/const</span>
+    <span class="badge">Arrow Functions</span>
+    <span class="badge">Destructuring</span>
+    <span class="badge">Spread/Rest</span>
+    <span class="badge">DOM Manipulation</span>
+    <span class="badge">Promises</span>
+    <span class="badge">Async/Await</span>
+    <span class="badge">Closures</span>
+    <span class="badge">Array Methods</span>
+    <span class="badge">Master Sheet</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="tip-box" style="margin-top:20px">
+    <div class="tip-title">🎬 Master Memory — This Part's Movie Map</div>
+    <p>
+      <strong>var/let/const</strong> = 🎬 Kaadhal (2004) — old var is unpredictable like an old relationship (hoisting!), let/const are modern and trustworthy.<br>
+      <strong>Closures</strong> = 🎬 Vinnaithaandi Varuvaayaa — inner function remembers outer scope even after outer returns. "En peyar Jessie!" — remembered forever.<br>
+      <strong>Promises/Async</strong> = 🎬 Mudhalvan — promise made (API call), fulfilled later (response), rejected if failed (error). Arjun waits but doesn't block!<br>
+      <strong>Array Methods</strong> = 🎬 Mersal — Vijay's triple role: map transforms, filter selects, reduce calculates — each a specialist!
+    </p>
+  </div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — ES6+ FUNDAMENTALS
+════════════════════════════════════════════ -->
+<div class="section js-sec" id="es6">
+  <div class="section-header" style="color:#111">🟡 ES6+ JavaScript Fundamentals</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Kaadhal (2004) — Selvam &amp; Anitha:</span>
+      Old-style var romance = unpredictable, leaks everywhere (function scope only).
+      Modern let/const = boundaries respected, block-scoped, no hoisting surprises. Write modern JS — always let/const!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- VAR LET CONST + HOISTING -->
+      <div class="card">
+        <div class="card-sub">Syntax — Variables</div>
+        <div class="card-title">var · let · const · Hoisting · TDZ</div>
+        <pre><span class="cm">/* ── var — AVOID in modern JS ─────── */</span>
+<span class="kw">var</span> <span class="prop">x</span> = <span class="num">10</span>;          <span class="cm">// function scoped</span>
+<span class="kw">var</span> <span class="prop">x</span> = <span class="num">20</span>;          <span class="cm">// re-declaration: OK! (bug!)</span>
+
+<span class="cm">// HOISTING — declaration lifted to top</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="prop">y</span>);    <span class="cm">// undefined (not ReferenceError!)</span>
+<span class="kw">var</span> <span class="prop">y</span> = <span class="num">5</span>;
+
+<span class="cm">/* ── let — block scoped ─────────── */</span>
+<span class="kw">let</span> <span class="prop">count</span> = <span class="num">0</span>;
+<span class="prop">count</span> = <span class="num">1</span>;          <span class="cm">// reassign: OK</span>
+
+<span class="kw">if</span> (<span class="kw">true</span>) {
+  <span class="kw">let</span> <span class="prop">inner</span> = <span class="str">'block'</span>;
+}
+<span class="cm">// console.log(inner) → ReferenceError ✅</span>
+
+<span class="cm">// TDZ — Temporal Dead Zone</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="prop">z</span>);    <span class="cm">// ReferenceError ✅</span>
+<span class="kw">let</span> <span class="prop">z</span> = <span class="num">5</span>;
+
+<span class="cm">/* ── const — block scoped, no reassign */</span>
+<span class="kw">const</span> <span class="prop">PI</span> = <span class="num">3.14</span>;
+<span class="cm">// PI = 3 → TypeError ✅</span>
+
+<span class="cm">// const object — contents CAN change!</span>
+<span class="kw">const</span> <span class="prop">student</span> = { <span class="prop">name</span>: <span class="str">'Guru'</span> };
+<span class="prop">student</span>.<span class="prop">name</span> = <span class="str">'Ram'</span>;   <span class="cm">// OK — property change</span>
+<span class="cm">// student = {} → TypeError (reassign) ✅</span>
+
+<span class="cm">// const array — items CAN change!</span>
+<span class="kw">const</span> <span class="prop">fees</span> = [<span class="num">1000</span>, <span class="num">2000</span>];
+<span class="prop">fees</span>.<span class="fn">push</span>(<span class="num">3000</span>);     <span class="cm">// OK ✅</span>
+<span class="cm">// fees = [] → TypeError ✅</span></pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: var vs let vs const?</div>
+          <div class="a">var = function scope, hoisted to undefined, re-declarable — avoid! let = block scope, TDZ, reassignable. const = block scope, TDZ, no reassign (but object contents mutable). Interview rule: always const first, let if reassignment needed, never var!</div>
+        </div>
+      </div>
+
+      <!-- ARROW FUNCTIONS + TEMPLATE LITERALS -->
+      <div class="card">
+        <div class="card-sub">Syntax — ES6 Essentials</div>
+        <div class="card-title">Arrow Functions · Template Literals · Destructuring</div>
+        <pre><span class="cm">/* ── ARROW FUNCTIONS ─────────────── */</span>
+<span class="cm">// Regular function</span>
+<span class="kw">function</span> <span class="fn">add</span>(<span class="prop">a</span>, <span class="prop">b</span>) { <span class="kw">return</span> <span class="prop">a</span> + <span class="prop">b</span>; }
+
+<span class="cm">// Arrow — concise</span>
+<span class="kw">const</span> <span class="fn">add</span> = (<span class="prop">a</span>, <span class="prop">b</span>) =&gt; <span class="prop">a</span> + <span class="prop">b</span>;       <span class="cm">// implicit return</span>
+<span class="kw">const</span> <span class="fn">greet</span> = <span class="prop">name</span> =&gt; <span class="str">`Hello ${<span class="prop">name</span>}`</span>; <span class="cm">// 1 param: no ()</span>
+<span class="kw">const</span> <span class="fn">log</span> = () =&gt; <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'hi'</span>);   <span class="cm">// no params: ()</span>
+
+<span class="cm">// Arrow returning object — wrap in ()</span>
+<span class="kw">const</span> <span class="fn">getStudent</span> = (<span class="prop">id</span>, <span class="prop">name</span>) =&gt;
+  ({ <span class="prop">id</span>, <span class="prop">name</span> });                         <span class="cm">// shorthand key</span>
+
+<span class="cm">// Arrow — no own 'this' (inherits lexical)</span>
+<span class="kw">class</span> <span class="typ">FeeService</span> {
+  <span class="prop">amount</span> = <span class="num">5000</span>;
+  <span class="fn">show</span>() {
+    <span class="kw">const</span> <span class="fn">inner</span> = () =&gt;
+      <span class="fn">console</span>.<span class="fn">log</span>(<span class="kw">this</span>.<span class="prop">amount</span>); <span class="cm">// ✅ this = class</span>
+    <span class="fn">inner</span>();
+  }
+}
+
+<span class="cm">/* ── TEMPLATE LITERALS ───────────── */</span>
+<span class="kw">const</span> <span class="prop">name</span>  = <span class="str">'Guru'</span>;
+<span class="kw">const</span> <span class="prop">grade</span> = <span class="str">'10A'</span>;
+<span class="kw">const</span> <span class="prop">msg</span>   = <span class="str">`Student ${<span class="prop">name</span>} of class ${<span class="prop">grade</span>}`</span>;
+
+<span class="cm">// Multi-line</span>
+<span class="kw">const</span> <span class="prop">html</span> = <span class="str">`
+  &lt;div class="card"&gt;
+    &lt;h2&gt;${<span class="prop">name</span>}&lt;/h2&gt;
+    &lt;p&gt;Class: ${<span class="prop">grade</span>}&lt;/p&gt;
+  &lt;/div&gt;
+`</span>;
+
+<span class="cm">// Expression</span>
+<span class="kw">const</span> <span class="prop">label</span> = <span class="str">`Fee: ${<span class="prop">isPaid</span> ? <span class="str">'Paid'</span> : <span class="str">'Due'</span>}`</span>;
+
+<span class="cm">/* ── DESTRUCTURING ────────────────── */</span>
+<span class="cm">// Object destructuring</span>
+<span class="kw">const</span> <span class="prop">student</span> = { <span class="prop">name</span>:<span class="str">'Guru'</span>, <span class="prop">class</span>:<span class="str">'10A'</span>, <span class="prop">roll</span>:<span class="num">5</span> };
+<span class="kw">const</span> { <span class="prop">name</span>, <span class="prop">class</span>: <span class="prop">className</span>, <span class="prop">roll</span> = <span class="num">1</span> } = <span class="prop">student</span>;
+<span class="cm">// rename: class → className, default: roll=1</span>
+
+<span class="cm">// Array destructuring</span>
+<span class="kw">const</span> [<span class="prop">first</span>, <span class="prop">second</span>, ...<span class="prop">rest</span>] = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>];
+<span class="cm">// first=10, second=20, rest=[30,40]</span>
+
+<span class="cm">// Swap variables</span>
+<span class="kw">let</span> [<span class="prop">a</span>, <span class="prop">b</span>] = [<span class="num">1</span>, <span class="num">2</span>];
+[<span class="prop">a</span>, <span class="prop">b</span>] = [<span class="prop">b</span>, <span class="prop">a</span>];   <span class="cm">// a=2, b=1 ✅</span>
+
+<span class="cm">// Function parameter destructuring</span>
+<span class="kw">const</span> <span class="fn">display</span> = ({ <span class="prop">name</span>, <span class="prop">roll</span> = <span class="num">0</span> }) =&gt;
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">`${<span class="prop">name</span>} - ${<span class="prop">roll</span>}`</span>);</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Arrow function vs regular function?</div>
+          <div class="a">1. Syntax shorter. 2. No own 'this' — inherits from lexical scope. 3. Cannot be used as constructor (no new). 4. No arguments object. 5. No prototype. ZenCampus-la setTimeout callbacks, array methods — always arrow. Class methods that need their own 'this' — regular function!</div>
+        </div>
+      </div>
+
+      <!-- SPREAD REST OPTIONAL -->
+      <div class="card">
+        <div class="card-sub">Syntax — Modern JS</div>
+        <div class="card-title">Spread · Rest · Optional Chaining · Nullish</div>
+        <pre><span class="cm">/* ── SPREAD OPERATOR (...) ─────── */</span>
+<span class="cm">// Array spread — clone/merge</span>
+<span class="kw">const</span> <span class="prop">arr1</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+<span class="kw">const</span> <span class="prop">arr2</span> = [...<span class="prop">arr1</span>, <span class="num">4</span>, <span class="num">5</span>];    <span class="cm">// [1,2,3,4,5]</span>
+<span class="kw">const</span> <span class="prop">clone</span> = [...<span class="prop">arr1</span>];          <span class="cm">// shallow clone</span>
+
+<span class="cm">// Object spread — merge/override</span>
+<span class="kw">const</span> <span class="prop">base</span>    = { <span class="prop">name</span>:<span class="str">'Guru'</span>, <span class="prop">class</span>:<span class="str">'9A'</span> };
+<span class="kw">const</span> <span class="prop">updated</span> = { ...<span class="prop">base</span>, <span class="prop">class</span>:<span class="str">'10A'</span> };
+<span class="cm">// { name:'Guru', class:'10A' }</span>
+
+<span class="cm">// Spread in function call</span>
+<span class="kw">const</span> <span class="prop">nums</span> = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>];
+<span class="typ">Math</span>.<span class="fn">max</span>(...<span class="prop">nums</span>);  <span class="cm">// 5</span>
+
+<span class="cm">/* ── REST PARAMETER ─────────────── */</span>
+<span class="kw">const</span> <span class="fn">sum</span> = (...<span class="prop">nums</span>) =&gt;
+  <span class="prop">nums</span>.<span class="fn">reduce</span>((<span class="prop">a</span>, <span class="prop">b</span>) =&gt; <span class="prop">a</span> + <span class="prop">b</span>, <span class="num">0</span>);
+<span class="fn">sum</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>);  <span class="cm">// 10</span>
+
+<span class="kw">const</span> <span class="fn">first</span> = (<span class="prop">head</span>, ...<span class="prop">tail</span>) =&gt; <span class="prop">head</span>;
+<span class="fn">first</span>(<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>); <span class="cm">// 10, tail=[20,30]</span>
+
+<span class="cm">/* ── OPTIONAL CHAINING (?.) ─────── */</span>
+<span class="kw">const</span> <span class="prop">student</span> = {
+  <span class="prop">name</span>: <span class="str">'Guru'</span>,
+  <span class="prop">address</span>: { <span class="prop">city</span>: <span class="str">'Chennai'</span> }
+};
+
+<span class="cm">// Without ?. — throws if address is null</span>
+<span class="prop">student</span>.<span class="prop">address</span>.<span class="prop">city</span>   <span class="cm">// 'Chennai'</span>
+<span class="prop">student</span>.<span class="prop">phone</span>?.<span class="prop">mobile</span> <span class="cm">// undefined (not error!)</span>
+
+<span class="cm">// Method optional chain</span>
+<span class="prop">student</span>.<span class="prop">getName</span>?.()     <span class="cm">// undefined if no method</span>
+<span class="prop">arr</span>?.[<span class="num">0</span>]               <span class="cm">// array index optional</span>
+
+<span class="cm">/* ── NULLISH COALESCING (??) ─────── */</span>
+<span class="kw">const</span> <span class="prop">name</span> = <span class="prop">student</span>.<span class="prop">name</span> ?? <span class="str">'Unknown'</span>;
+<span class="cm">// ?? only null/undefined → default</span>
+<span class="cm">// || also catches 0, '', false (bug risk!)</span>
+
+<span class="kw">const</span> <span class="prop">count</span> = <span class="prop">data</span>.<span class="prop">count</span> ?? <span class="num">0</span>;
+<span class="cm">// If count is 0 → keeps 0 (|| would replace!)</span>
+
+<span class="cm">/* ── LOGICAL ASSIGNMENT ─────────── */</span>
+<span class="prop">a</span> ??= <span class="str">'default'</span>; <span class="cm">// assign if null/undefined</span>
+<span class="prop">b</span> ||= <span class="str">'fallback'</span>;<span class="cm">// assign if falsy</span>
+<span class="prop">c</span> &amp;&amp;= <span class="prop">newVal</span>;    <span class="cm">// assign if truthy</span></pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: ?? vs ||?</div>
+          <div class="a">|| = falsy check (0, '', false, null, undefined all trigger default). ?? = nullish check (ONLY null/undefined triggers default). ZenCampus fee count = 0 → || wrongly replaces 0 with default! Always use ?? for null/undefined checks!</div>
+        </div>
+      </div>
+
+      <!-- CLASSES + MODULES -->
+      <div class="card">
+        <div class="card-sub">Syntax — Classes + Modules</div>
+        <div class="card-title">ES6 Class · extends · static · Modules</div>
+        <pre><span class="cm">/* ── ES6 CLASS ───────────────────── */</span>
+<span class="kw">class</span> <span class="typ">Person</span> {
+  <span class="cm">// Class field (modern)</span>
+  <span class="prop">#id</span>;                     <span class="cm">// private field</span>
+  <span class="prop">name</span>;
+
+  <span class="fn">constructor</span>(<span class="prop">id</span>, <span class="prop">name</span>) {
+    <span class="kw">this</span>.<span class="prop">#id</span>   = <span class="prop">id</span>;
+    <span class="kw">this</span>.<span class="prop">name</span> = <span class="prop">name</span>;
+  }
+
+  <span class="cm">// Getter</span>
+  <span class="kw">get</span> <span class="fn">id</span>() { <span class="kw">return</span> <span class="kw">this</span>.<span class="prop">#id</span>; }
+
+  <span class="cm">// Instance method</span>
+  <span class="fn">greet</span>() {
+    <span class="kw">return</span> <span class="str">`Hi, I'm ${<span class="kw">this</span>.<span class="prop">name</span>}`</span>;
+  }
+
+  <span class="cm">// Static — no instance needed</span>
+  <span class="kw">static</span> <span class="fn">create</span>(<span class="prop">id</span>, <span class="prop">name</span>) {
+    <span class="kw">return new</span> <span class="typ">Person</span>(<span class="prop">id</span>, <span class="prop">name</span>);
+  }
+}
+
+<span class="cm">// Inheritance</span>
+<span class="kw">class</span> <span class="typ">Student</span> <span class="kw">extends</span> <span class="typ">Person</span> {
+  <span class="prop">rollNo</span>;
+
+  <span class="fn">constructor</span>(<span class="prop">id</span>, <span class="prop">name</span>, <span class="prop">rollNo</span>) {
+    <span class="kw">super</span>(<span class="prop">id</span>, <span class="prop">name</span>);           <span class="cm">// MUST call super</span>
+    <span class="kw">this</span>.<span class="prop">rollNo</span> = <span class="prop">rollNo</span>;
+  }
+
+  <span class="cm">// Override parent method</span>
+  <span class="fn">greet</span>() {
+    <span class="kw">return</span> <span class="str">`${<span class="kw">super</span>.<span class="fn">greet</span>()}, Roll: ${<span class="kw">this</span>.<span class="prop">rollNo</span>}`</span>;
+  }
+}
+
+<span class="kw">const</span> <span class="prop">s</span> = <span class="kw">new</span> <span class="typ">Student</span>(<span class="num">1</span>, <span class="str">'Guru'</span>, <span class="str">'10'</span>);
+<span class="prop">s</span>.<span class="fn">greet</span>(); <span class="cm">// "Hi, I'm Guru, Roll: 10"</span>
+<span class="prop">s</span> <span class="kw">instanceof</span> <span class="typ">Student</span>; <span class="cm">// true</span>
+<span class="prop">s</span> <span class="kw">instanceof</span> <span class="typ">Person</span>;  <span class="cm">// true</span>
+
+<span class="cm">/* ── ES6 MODULES ─────────────────── */</span>
+<span class="cm">// studentService.js</span>
+<span class="kw">export const</span> <span class="fn">getStudent</span> = (<span class="prop">id</span>) =&gt; { ... };
+<span class="kw">export default class</span> <span class="typ">StudentService</span> { ... }
+
+<span class="cm">// main.js</span>
+<span class="kw">import</span> <span class="typ">StudentService</span> <span class="kw">from</span> <span class="str">'./studentService'</span>;
+<span class="kw">import</span> { <span class="fn">getStudent</span> } <span class="kw">from</span> <span class="str">'./studentService'</span>;
+<span class="kw">import</span> * <span class="kw">as</span> <span class="prop">svc</span> <span class="kw">from</span> <span class="str">'./studentService'</span>;</pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — DOM MANIPULATION
+════════════════════════════════════════════ -->
+<div class="section dom-sec" id="dom">
+  <div class="section-header">🔵 DOM Manipulation · Events · Event Delegation</div>
+  <div class="section-body">
+
+    <div class="card-grid">
+
+      <!-- DOM SELECT + MODIFY -->
+      <div class="card">
+        <div class="card-sub">Syntax — Select + Modify</div>
+        <div class="card-title">Query Selectors · CRUD DOM · Classes</div>
+        <pre><span class="cm">/* ── SELECTING ELEMENTS ─────────── */</span>
+<span class="cm">// Modern — returns single element</span>
+<span class="kw">const</span> <span class="prop">btn</span>    = <span class="prop">document</span>.<span class="fn">querySelector</span>(<span class="str">'#submitBtn'</span>);
+<span class="kw">const</span> <span class="prop">form</span>   = <span class="prop">document</span>.<span class="fn">querySelector</span>(<span class="str">'.admission-form'</span>);
+<span class="kw">const</span> <span class="prop">input</span>  = <span class="prop">document</span>.<span class="fn">querySelector</span>(<span class="str">'input[type="text"]'</span>);
+
+<span class="cm">// Returns NodeList (like array)</span>
+<span class="kw">const</span> <span class="prop">cards</span>  = <span class="prop">document</span>.<span class="fn">querySelectorAll</span>(<span class="str">'.student-card'</span>);
+<span class="prop">cards</span>.<span class="fn">forEach</span>(<span class="prop">c</span> =&gt; <span class="fn">console</span>.<span class="fn">log</span>(<span class="prop">c</span>));
+
+<span class="cm">/* ── READING/WRITING CONTENT ─────── */</span>
+<span class="prop">el</span>.<span class="prop">textContent</span>  = <span class="str">'Safe text'</span>; <span class="cm">// no HTML, XSS safe</span>
+<span class="prop">el</span>.<span class="prop">innerHTML</span>    = <span class="str">'&lt;b&gt;HTML&lt;/b&gt;'</span>; <span class="cm">// HTML — sanitise!</span>
+<span class="prop">el</span>.<span class="prop">innerText</span>    = <span class="str">'Visible text'</span>; <span class="cm">// respects CSS visibility</span>
+<span class="prop">input</span>.<span class="prop">value</span>     = <span class="str">'Guru'</span>;
+
+<span class="cm">/* ── ATTRIBUTES ─────────────────── */</span>
+<span class="prop">el</span>.<span class="fn">getAttribute</span>(<span class="str">'data-id'</span>);
+<span class="prop">el</span>.<span class="fn">setAttribute</span>(<span class="str">'data-id'</span>, <span class="str">'42'</span>);
+<span class="prop">el</span>.<span class="fn">removeAttribute</span>(<span class="str">'disabled'</span>);
+<span class="prop">el</span>.<span class="prop">dataset</span>.<span class="prop">studentId</span>;         <span class="cm">// reads data-student-id</span>
+
+<span class="cm">/* ── CLASSES ────────────────────── */</span>
+<span class="prop">el</span>.<span class="prop">classList</span>.<span class="fn">add</span>(<span class="str">'active'</span>);
+<span class="prop">el</span>.<span class="prop">classList</span>.<span class="fn">remove</span>(<span class="str">'loading'</span>);
+<span class="prop">el</span>.<span class="prop">classList</span>.<span class="fn">toggle</span>(<span class="str">'open'</span>);
+<span class="prop">el</span>.<span class="prop">classList</span>.<span class="fn">contains</span>(<span class="str">'error'</span>); <span class="cm">// true/false</span>
+<span class="prop">el</span>.<span class="prop">classList</span>.<span class="fn">replace</span>(<span class="str">'old'</span>, <span class="str">'new'</span>);
+
+<span class="cm">/* ── STYLE ──────────────────────── */</span>
+<span class="prop">el</span>.<span class="prop">style</span>.<span class="prop">display</span>   = <span class="str">'none'</span>;
+<span class="prop">el</span>.<span class="prop">style</span>.<span class="prop">color</span>    = <span class="str">'red'</span>;
+<span class="prop">el</span>.<span class="prop">style</span>.<span class="prop">cssText</span> = <span class="str">'color:red; font-size:16px'</span>;
+
+<span class="cm">/* ── CREATE + INSERT ─────────────── */</span>
+<span class="kw">const</span> <span class="prop">div</span> = <span class="prop">document</span>.<span class="fn">createElement</span>(<span class="str">'div'</span>);
+<span class="prop">div</span>.<span class="prop">className</span>   = <span class="str">'student-card'</span>;
+<span class="prop">div</span>.<span class="prop">textContent</span> = <span class="str">'Guru — Class 10A'</span>;
+
+<span class="prop">document</span>.<span class="fn">querySelector</span>(<span class="str">'#list'</span>)
+        .<span class="fn">appendChild</span>(<span class="prop">div</span>);          <span class="cm">// append at end</span>
+
+<span class="cm">// Modern insertAdjacentHTML</span>
+<span class="prop">el</span>.<span class="fn">insertAdjacentHTML</span>(<span class="str">'beforeend'</span>,
+  <span class="str">`&lt;li class="item"&gt;New&lt;/li&gt;`</span>);
+<span class="cm">// 'beforebegin'|'afterbegin'|'beforeend'|'afterend'</span>
+
+<span class="cm">/* ── REMOVE ─────────────────────── */</span>
+<span class="prop">el</span>.<span class="fn">remove</span>();                    <span class="cm">// modern</span></pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: textContent vs innerHTML?</div>
+          <div class="a">textContent = plain text only, no HTML parsed — XSS safe. innerHTML = parses HTML — NEVER use with user input (XSS risk!). ZenCampus student name display = textContent always. Dynamic HTML templates = innerHTML with sanitised, trusted data only!</div>
+        </div>
+      </div>
+
+      <!-- EVENTS + DELEGATION -->
+      <div class="card">
+        <div class="card-sub">Syntax — Events</div>
+        <div class="card-title">addEventListener · Event Object · Delegation</div>
+        <pre><span class="cm">/* ── ADD EVENT LISTENER ─────────── */</span>
+<span class="kw">const</span> <span class="prop">btn</span> = <span class="prop">document</span>
+  .<span class="fn">querySelector</span>(<span class="str">'#submitBtn'</span>);
+
+<span class="prop">btn</span>.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, (<span class="prop">e</span>) =&gt; {
+  <span class="prop">e</span>.<span class="fn">preventDefault</span>();   <span class="cm">// stop form submit/link</span>
+  <span class="prop">e</span>.<span class="fn">stopPropagation</span>(); <span class="cm">// stop bubble up</span>
+
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="prop">e</span>.<span class="prop">target</span>);       <span class="cm">// clicked element</span>
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="prop">e</span>.<span class="prop">currentTarget</span>); <span class="cm">// listener element</span>
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="prop">e</span>.<span class="prop">type</span>);          <span class="cm">// 'click'</span>
+});
+
+<span class="cm">// Remove listener — needs named function</span>
+<span class="kw">const</span> <span class="fn">handleClick</span> = (<span class="prop">e</span>) =&gt; { ... };
+<span class="prop">btn</span>.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, <span class="fn">handleClick</span>);
+<span class="prop">btn</span>.<span class="fn">removeEventListener</span>(<span class="str">'click'</span>, <span class="fn">handleClick</span>);
+
+<span class="cm">/* ── COMMON EVENTS ─────────────── */</span>
+<span class="cm">// click, dblclick, contextmenu</span>
+<span class="cm">// keydown, keyup, keypress (deprecated)</span>
+<span class="cm">// input, change, submit, reset, focus, blur</span>
+<span class="cm">// mouseover, mouseout, mouseenter, mouseleave</span>
+<span class="cm">// scroll, resize, load, DOMContentLoaded</span>
+<span class="cm">// touchstart, touchend, touchmove</span>
+
+<span class="cm">/* ── EVENT DELEGATION ─────────────
+   Attach ONE listener to parent,
+   handle many children — better performance! */</span>
+<span class="kw">const</span> <span class="prop">studentList</span> = <span class="prop">document</span>
+  .<span class="fn">querySelector</span>(<span class="str">'#studentList'</span>);
+
+<span class="prop">studentList</span>.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, (<span class="prop">e</span>) =&gt; {
+  <span class="kw">const</span> <span class="prop">row</span> = <span class="prop">e</span>.<span class="prop">target</span>
+    .<span class="fn">closest</span>(<span class="str">'.student-row'</span>); <span class="cm">// bubble up to row</span>
+
+  <span class="kw">if</span> (!<span class="prop">row</span>) <span class="kw">return</span>;
+
+  <span class="kw">const</span> <span class="prop">id</span>     = <span class="prop">row</span>.<span class="prop">dataset</span>.<span class="prop">studentId</span>;
+  <span class="kw">const</span> <span class="prop">action</span> = <span class="prop">e</span>.<span class="prop">target</span>.<span class="prop">dataset</span>.<span class="prop">action</span>;
+
+  <span class="kw">if</span> (<span class="prop">action</span> === <span class="str">'edit'</span>)   <span class="fn">editStudent</span>(<span class="prop">id</span>);
+  <span class="kw">if</span> (<span class="prop">action</span> === <span class="str">'delete'</span>) <span class="fn">deleteStudent</span>(<span class="prop">id</span>);
+});
+
+<span class="cm">/* ── DOMContentLoaded ─────────── */</span>
+<span class="prop">document</span>.<span class="fn">addEventListener</span>(<span class="str">'DOMContentLoaded'</span>,
+  () =&gt; {
+    <span class="fn">initApp</span>();  <span class="cm">// DOM ready, scripts may load</span>
+  });
+<span class="cm">// vs window.onload = DOM + images + CSS loaded</span></pre>
+        <div class="zencampus">
+          <div class="label">🏫 ZenCampus Event Delegation Pattern:</div>
+          Student list has 1000 rows. Don't add 1000 click listeners! One listener on the table parent with e.target.closest('.student-row') — works for dynamically added rows too!
+        </div>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: What is event delegation?</div>
+          <div class="a">Attaching ONE event listener to a PARENT element to handle events from multiple CHILDREN via event bubbling. Benefits: 1. Memory efficient (1 listener vs 1000), 2. Works for dynamically added elements, 3. Simpler code. target.closest() finds the relevant ancestor!</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — ASYNC JS
+════════════════════════════════════════════ -->
+<div class="section async-sec" id="async">
+  <div class="section-header">🔵 Promises · Async/Await · fetch · Error Handling</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Mudhalvan (1999) — Arjun (CM for a day):</span>
+      Arjun makes a promise — "I'll fix the city in 24 hours." He waits for responses (API calls = officers acting).
+      Some fulfill (resolve), some fail (reject). He doesn't freeze — he handles each async result.
+      Promises + async/await = JavaScript doing the same!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- PROMISES -->
+      <div class="card">
+        <div class="card-sub">Syntax — Promises</div>
+        <div class="card-title">Promise · then/catch · Promise.all · race</div>
+        <pre><span class="cm">/* ── CREATE PROMISE ─────────────── */</span>
+<span class="kw">const</span> <span class="prop">fetchFee</span> = (<span class="prop">studentId</span>) =&gt;
+  <span class="kw">new</span> <span class="typ">Promise</span>((<span class="prop">resolve</span>, <span class="prop">reject</span>) =&gt; {
+    <span class="fn">setTimeout</span>(() =&gt; {
+      <span class="kw">if</span> (<span class="prop">studentId</span> &gt; <span class="num">0</span>)
+        <span class="fn">resolve</span>({ <span class="prop">amount</span>: <span class="num">5000</span> });  <span class="cm">// success</span>
+      <span class="kw">else</span>
+        <span class="fn">reject</span>(<span class="kw">new</span> <span class="typ">Error</span>(<span class="str">'Invalid ID'</span>));
+    }, <span class="num">1000</span>);
+  });
+
+<span class="cm">/* ── CONSUME PROMISE ─────────────── */</span>
+<span class="fn">fetchFee</span>(<span class="num">42</span>)
+  .<span class="fn">then</span>(<span class="prop">data</span>  =&gt; <span class="fn">console</span>.<span class="fn">log</span>(<span class="prop">data</span>))
+  .<span class="fn">catch</span>(<span class="prop">err</span>   =&gt; <span class="fn">console</span>.<span class="fn">error</span>(<span class="prop">err</span>))
+  .<span class="fn">finally</span>(() =&gt; <span class="fn">setLoading</span>(<span class="kw">false</span>));
+
+<span class="cm">/* ── PROMISE.ALL — parallel, all or none */</span>
+<span class="kw">const</span> [<span class="prop">students</span>, <span class="prop">fees</span>, <span class="prop">attendance</span>] =
+  <span class="kw">await</span> <span class="typ">Promise</span>.<span class="fn">all</span>([
+    <span class="fn">fetchStudents</span>(),
+    <span class="fn">fetchFees</span>(),
+    <span class="fn">fetchAttendance</span>()
+  ]);
+<span class="cm">// ALL must resolve — one fails = all fail</span>
+
+<span class="cm">/* ── PROMISE.ALLSETTLED — all, partial ok */</span>
+<span class="kw">const</span> <span class="prop">results</span> = <span class="kw">await</span> <span class="typ">Promise</span>.<span class="fn">allSettled</span>([
+  <span class="fn">fetchStudents</span>(),
+  <span class="fn">fetchFees</span>()
+]);
+<span class="prop">results</span>.<span class="fn">forEach</span>(<span class="prop">r</span> =&gt; {
+  <span class="kw">if</span> (<span class="prop">r</span>.<span class="prop">status</span> === <span class="str">'fulfilled'</span>)
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="prop">r</span>.<span class="prop">value</span>);
+  <span class="kw">else</span>
+    <span class="fn">console</span>.<span class="fn">error</span>(<span class="prop">r</span>.<span class="prop">reason</span>);
+});
+
+<span class="cm">/* ── PROMISE.RACE — first settles wins */</span>
+<span class="kw">const</span> <span class="prop">result</span> = <span class="kw">await</span> <span class="typ">Promise</span>.<span class="fn">race</span>([
+  <span class="fn">fetchFromServer1</span>(),
+  <span class="fn">fetchFromServer2</span>()     <span class="cm">// faster wins!</span>
+]);
+
+<span class="cm">/* ── PROMISE.ANY — first RESOLVED wins */</span>
+<span class="kw">const</span> <span class="prop">res</span> = <span class="kw">await</span> <span class="typ">Promise</span>.<span class="fn">any</span>([
+  <span class="fn">cdn1</span>(), <span class="fn">cdn2</span>(), <span class="fn">cdn3</span>()  <span class="cm">// ignores rejects</span>
+]);</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: Promise.all vs Promise.allSettled?</div>
+          <div class="a">Promise.all = ALL must resolve, one rejection = entire promise rejects. allSettled = waits for ALL to finish regardless, gives status:'fulfilled'/'rejected' per promise. ZenCampus dashboard: fetch students+fees+attendance parallel — allSettled if we want partial data even if one API fails!</div>
+        </div>
+      </div>
+
+      <!-- ASYNC AWAIT + FETCH -->
+      <div class="card">
+        <div class="card-sub">Syntax — Async/Await</div>
+        <div class="card-title">async/await · fetch · Error Handling Pattern</div>
+        <pre><span class="cm">/* ── ASYNC/AWAIT ─────────────────── */</span>
+<span class="kw">const</span> <span class="fn">loadDashboard</span> = <span class="kw">async</span> () =&gt; {
+  <span class="fn">setLoading</span>(<span class="kw">true</span>);
+  <span class="kw">try</span> {
+    <span class="cm">// Sequential (when B needs A's result)</span>
+    <span class="kw">const</span> <span class="prop">student</span> = <span class="kw">await</span> <span class="fn">getStudent</span>(<span class="num">42</span>);
+    <span class="kw">const</span> <span class="prop">fees</span>    = <span class="kw">await</span> <span class="fn">getFees</span>(<span class="prop">student</span>.<span class="prop">id</span>);
+
+    <span class="cm">// Parallel (independent calls)</span>
+    <span class="kw">const</span> [<span class="prop">stats</span>, <span class="prop">alerts</span>] = <span class="kw">await</span> <span class="typ">Promise</span>.<span class="fn">all</span>([
+      <span class="fn">getStats</span>(),
+      <span class="fn">getAlerts</span>()
+    ]);
+
+    <span class="fn">renderDashboard</span>({ <span class="prop">student</span>, <span class="prop">fees</span>,
+                       <span class="prop">stats</span>, <span class="prop">alerts</span> });
+  } <span class="kw">catch</span> (<span class="prop">err</span>) {
+    <span class="fn">showError</span>(<span class="prop">err</span>.<span class="prop">message</span>);
+  } <span class="kw">finally</span> {
+    <span class="fn">setLoading</span>(<span class="kw">false</span>);
+  }
+};
+
+<span class="cm">/* ── FETCH API ───────────────────── */</span>
+<span class="kw">const</span> <span class="fn">fetchStudents</span> = <span class="kw">async</span> (<span class="prop">className</span>) =&gt; {
+  <span class="kw">const</span> <span class="prop">response</span> = <span class="kw">await</span> <span class="fn">fetch</span>(
+    <span class="str">`/api/v1/students?class=${<span class="prop">className</span>}`</span>,
+    {
+      <span class="prop">method</span>:  <span class="str">'GET'</span>,
+      <span class="prop">headers</span>: {
+        <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,
+        <span class="str">'Authorization'</span>: <span class="str">`Bearer ${<span class="fn">getToken</span>()}`</span>
+      }
+    }
+  );
+
+  <span class="cm">// IMPORTANT: fetch doesn't throw on 4xx/5xx!</span>
+  <span class="kw">if</span> (!<span class="prop">response</span>.<span class="prop">ok</span>) {
+    <span class="kw">throw new</span> <span class="typ">Error</span>(
+      <span class="str">`HTTP ${<span class="prop">response</span>.<span class="prop">status</span>}: ${<span class="prop">response</span>.<span class="prop">statusText</span>}`</span>
+    );
+  }
+
+  <span class="kw">return</span> <span class="prop">response</span>.<span class="fn">json</span>();
+};
+
+<span class="cm">// POST with body</span>
+<span class="kw">const</span> <span class="fn">admitStudent</span> = <span class="kw">async</span> (<span class="prop">data</span>) =&gt; {
+  <span class="kw">const</span> <span class="prop">res</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/v1/students'</span>, {
+    <span class="prop">method</span>:  <span class="str">'POST'</span>,
+    <span class="prop">headers</span>: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
+    <span class="prop">body</span>:    <span class="typ">JSON</span>.<span class="fn">stringify</span>(<span class="prop">data</span>)
+  });
+  <span class="kw">if</span> (!<span class="prop">res</span>.<span class="prop">ok</span>) <span class="kw">throw new</span> <span class="typ">Error</span>(<span class="kw">await</span> <span class="prop">res</span>.<span class="fn">text</span>());
+  <span class="kw">return</span> <span class="prop">res</span>.<span class="fn">json</span>();
+};</pre>
+        <div class="trap">
+          <div class="label">⚠️ Biggest Fetch Trap — 404 doesn't throw!</div>
+          <code>fetch()</code> only rejects on NETWORK error (offline). HTTP 400/404/500 = response.ok is false but no exception! Always check <code>if (!response.ok) throw new Error()</code> manually!
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — CLOSURES
+════════════════════════════════════════════ -->
+<div class="section clos-sec" id="closures">
+  <div class="section-header">🟣 Closures · Scope · IIFE · Module Pattern</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Vinnaithaandi Varuvaayaa (2010) — Karthik &amp; Jessie:</span>
+      Karthik remembers every moment even after Jessie is gone — closure of memory.
+      JavaScript closures = inner function REMEMBERS outer function's variables even after outer function returns.
+      "En peyar Jessie!" — the reference is closed over, lives forever!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- CLOSURES -->
+      <div class="card">
+        <div class="card-sub">Syntax — Closures</div>
+        <div class="card-title">Closure · Counter · Private Variables</div>
+        <pre><span class="cm">/* ── BASIC CLOSURE ────────────────── */</span>
+<span class="kw">function</span> <span class="fn">makeCounter</span>(<span class="prop">start</span> = <span class="num">0</span>) {
+  <span class="kw">let</span> <span class="prop">count</span> = <span class="prop">start</span>;  <span class="cm">// outer variable</span>
+
+  <span class="kw">return</span> {
+    <span class="fn">increment</span>: () =&gt; ++<span class="prop">count</span>,
+    <span class="fn">decrement</span>: () =&gt; --<span class="prop">count</span>,
+    <span class="fn">value</span>:     () =&gt; <span class="prop">count</span>
+  };
+  <span class="cm">// Inner functions CLOSE OVER count —</span>
+  <span class="cm">// count lives as long as counter object lives!</span>
+}
+
+<span class="kw">const</span> <span class="prop">counter</span> = <span class="fn">makeCounter</span>(<span class="num">10</span>);
+<span class="prop">counter</span>.<span class="fn">increment</span>(); <span class="cm">// 11</span>
+<span class="prop">counter</span>.<span class="fn">increment</span>(); <span class="cm">// 12</span>
+<span class="prop">counter</span>.<span class="fn">value</span>();    <span class="cm">// 12 — private variable!</span>
+
+<span class="cm">/* ── ZenCampus: Private API Store ── */</span>
+<span class="kw">function</span> <span class="fn">createFeeStore</span>(<span class="prop">initialBalance</span>) {
+  <span class="kw">let</span> <span class="prop">balance</span>      = <span class="prop">initialBalance</span>; <span class="cm">// private!</span>
+  <span class="kw">const</span> <span class="prop">transactions</span> = [];
+
+  <span class="kw">return</span> {
+    <span class="fn">pay</span>(<span class="prop">amount</span>) {
+      <span class="kw">if</span> (<span class="prop">amount</span> &gt; <span class="prop">balance</span>)
+        <span class="kw">throw new</span> <span class="typ">Error</span>(<span class="str">'Insufficient balance'</span>);
+      <span class="prop">balance</span> -= <span class="prop">amount</span>;
+      <span class="prop">transactions</span>.<span class="fn">push</span>({ <span class="prop">amount</span>, <span class="prop">type</span>:<span class="str">'pay'</span> });
+    },
+    <span class="fn">credit</span>(<span class="prop">amount</span>) {
+      <span class="prop">balance</span> += <span class="prop">amount</span>;
+      <span class="prop">transactions</span>.<span class="fn">push</span>({ <span class="prop">amount</span>, <span class="prop">type</span>:<span class="str">'credit'</span> });
+    },
+    <span class="fn">getBalance</span>: () =&gt; <span class="prop">balance</span>,
+    <span class="fn">getHistory</span>: () =&gt; [...<span class="prop">transactions</span>] <span class="cm">// copy</span>
+  };
+}
+
+<span class="cm">/* ── CLASSIC CLOSURE BUG ──────────── */</span>
+<span class="cm">// Bug — all print 3</span>
+<span class="kw">for</span> (<span class="kw">var</span> <span class="prop">i</span> = <span class="num">0</span>; <span class="prop">i</span> &lt; <span class="num">3</span>; <span class="prop">i</span>++) {
+  <span class="fn">setTimeout</span>(() =&gt; <span class="fn">console</span>.<span class="fn">log</span>(<span class="prop">i</span>), <span class="num">1000</span>);
+}
+<span class="cm">// ↑ var i is shared — all see final i=3</span>
+
+<span class="cm">// Fix 1 — use let (block scoped)</span>
+<span class="kw">for</span> (<span class="kw">let</span> <span class="prop">i</span> = <span class="num">0</span>; <span class="prop">i</span> &lt; <span class="num">3</span>; <span class="prop">i</span>++) {
+  <span class="fn">setTimeout</span>(() =&gt; <span class="fn">console</span>.<span class="fn">log</span>(<span class="prop">i</span>), <span class="num">1000</span>);
+}
+<span class="cm">// ↑ prints 0, 1, 2 ✅</span>
+
+<span class="cm">// Fix 2 — IIFE</span>
+<span class="kw">for</span> (<span class="kw">var</span> <span class="prop">i</span> = <span class="num">0</span>; <span class="prop">i</span> &lt; <span class="num">3</span>; <span class="prop">i</span>++) {
+  ((<span class="prop">n</span>) =&gt; {
+    <span class="fn">setTimeout</span>(() =&gt;
+      <span class="fn">console</span>.<span class="fn">log</span>(<span class="prop">n</span>), <span class="num">1000</span>);
+  })(<span class="prop">i</span>);
+}</pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: What is a closure?</div>
+          <div class="a">A closure is a function that remembers variables from its outer scope even after that outer function has returned. Inner function + outer scope variables = closure. Use cases: private variables, factory functions, memoization, event handlers with captured data. VTV movie hook: Karthik remembers Jessie — inner function remembers outer variables!</div>
+        </div>
+      </div>
+
+      <!-- SCOPE + HOISTING + THIS -->
+      <div class="card">
+        <div class="card-sub">Syntax — this + Scope</div>
+        <div class="card-title">this Context · bind/call/apply · Scope Chain</div>
+        <pre><span class="cm">/* ── this CONTEXT ────────────────── */</span>
+<span class="kw">const</span> <span class="prop">service</span> = {
+  <span class="prop">name</span>: <span class="str">'FeeService'</span>,
+  <span class="fn">show</span>() {
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="kw">this</span>.<span class="prop">name</span>); <span class="cm">// 'FeeService' ✅</span>
+  },
+  <span class="fn">showArrow</span>: () =&gt; {
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="kw">this</span>.<span class="prop">name</span>); <span class="cm">// undefined ❌</span>
+    <span class="cm">// Arrow: no own this → global/undefined</span>
+  }
+};
+
+<span class="cm">/* ── call, apply, bind ────────────── */</span>
+<span class="kw">function</span> <span class="fn">greet</span>(<span class="prop">greeting</span>, <span class="prop">punct</span>) {
+  <span class="kw">return</span> <span class="str">`${<span class="prop">greeting</span>}, ${<span class="kw">this</span>.<span class="prop">name</span>}${<span class="prop">punct</span>}`</span>;
+}
+<span class="kw">const</span> <span class="prop">student</span> = { <span class="prop">name</span>: <span class="str">'Guru'</span> };
+
+<span class="cm">// call — invoke immediately, args listed</span>
+<span class="fn">greet</span>.<span class="fn">call</span>(<span class="prop">student</span>, <span class="str">'Hi'</span>, <span class="str">'!'</span>);
+<span class="cm">// "Hi, Guru!"</span>
+
+<span class="cm">// apply — invoke immediately, args array</span>
+<span class="fn">greet</span>.<span class="fn">apply</span>(<span class="prop">student</span>, [<span class="str">'Hello'</span>, <span class="str">'.'</span>]);
+<span class="cm">// "Hello, Guru."</span>
+
+<span class="cm">// bind — returns NEW function with this fixed</span>
+<span class="kw">const</span> <span class="fn">boundGreet</span> = <span class="fn">greet</span>.<span class="fn">bind</span>(<span class="prop">student</span>);
+<span class="fn">boundGreet</span>(<span class="str">'Hey'</span>, <span class="str">'?'</span>);
+<span class="cm">// "Hey, Guru?" — this always = student</span>
+
+<span class="cm">/* ── SCOPE CHAIN ─────────────────── */</span>
+<span class="kw">const</span> <span class="prop">schoolName</span> = <span class="str">'ZenCampus'</span>; <span class="cm">// global</span>
+
+<span class="kw">function</span> <span class="fn">outer</span>() {
+  <span class="kw">const</span> <span class="prop">grade</span> = <span class="str">'10A'</span>;     <span class="cm">// outer scope</span>
+
+  <span class="kw">function</span> <span class="fn">inner</span>() {
+    <span class="kw">const</span> <span class="prop">name</span> = <span class="str">'Guru'</span>;   <span class="cm">// inner scope</span>
+    <span class="cm">// Can access: name ✅ grade ✅ schoolName ✅</span>
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">`${<span class="prop">name</span>} ${<span class="prop">grade</span>} ${<span class="prop">schoolName</span>}`</span>);
+  }
+  <span class="cm">// Can access: grade ✅ schoolName ✅</span>
+  <span class="cm">// Cannot access: name ❌</span>
+  <span class="fn">inner</span>();
+}</pre>
+        <div class="tanglish">
+          💡 call/apply/bind memory trick:<br>
+          <strong>call</strong> = comma-separated args (c for comma)<br>
+          <strong>apply</strong> = array args (a for array)<br>
+          <strong>bind</strong> = borrow function, returns new function (b for borrow)
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 5 — ARRAY METHODS
+════════════════════════════════════════════ -->
+<div class="section arr-sec" id="arrays">
+  <div class="section-header">🟢 Array Methods — map · filter · reduce · find · flat</div>
+  <div class="section-body">
+
+    <div class="movie-ref">
+      <span class="film">🎬 Mersal (2017) — Vijay triple role:</span>
+      Three completely different characters, each with a specific purpose.
+      Array methods = same: map (transform every item), filter (select specific items),
+      reduce (calculate one result from all). Each a specialist, chain them together = powerful pipeline!
+    </div>
+
+    <div class="card-grid">
+
+      <!-- MAP FILTER REDUCE -->
+      <div class="card">
+        <div class="card-sub">Syntax — Core Methods</div>
+        <div class="card-title">map · filter · reduce · find · findIndex</div>
+        <pre><span class="kw">const</span> <span class="prop">students</span> = [
+  { <span class="prop">id</span>:<span class="num">1</span>, <span class="prop">name</span>:<span class="str">'Guru'</span>,  <span class="prop">class</span>:<span class="str">'10A'</span>, <span class="prop">fee</span>:<span class="num">5000</span>, <span class="prop">paid</span>:<span class="kw">true</span>  },
+  { <span class="prop">id</span>:<span class="num">2</span>, <span class="prop">name</span>:<span class="str">'Ram'</span>,   <span class="prop">class</span>:<span class="str">'10B'</span>, <span class="prop">fee</span>:<span class="num">4500</span>, <span class="prop">paid</span>:<span class="kw">false</span> },
+  { <span class="prop">id</span>:<span class="num">3</span>, <span class="prop">name</span>:<span class="str">'Priya'</span>, <span class="prop">class</span>:<span class="str">'10A'</span>, <span class="prop">fee</span>:<span class="num">5000</span>, <span class="prop">paid</span>:<span class="kw">true</span>  },
+];
+
+<span class="cm">/* ── map — transform each item ──── */</span>
+<span class="kw">const</span> <span class="prop">names</span> = <span class="prop">students</span>.<span class="fn">map</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">name</span>);
+<span class="cm">// ['Guru', 'Ram', 'Priya']</span>
+
+<span class="kw">const</span> <span class="prop">cards</span> = <span class="prop">students</span>.<span class="fn">map</span>(<span class="prop">s</span> =&gt;
+  <span class="str">`&lt;div class="card"&gt;${<span class="prop">s</span>.<span class="prop">name</span>}&lt;/div&gt;`</span>
+).<span class="fn">join</span>(<span class="str">''</span>);  <span class="cm">// HTML string from array</span>
+
+<span class="cm">/* ── filter — keep matching items ── */</span>
+<span class="kw">const</span> <span class="prop">unpaid</span>  = <span class="prop">students</span>.<span class="fn">filter</span>(<span class="prop">s</span> =&gt; !<span class="prop">s</span>.<span class="prop">paid</span>);
+<span class="kw">const</span> <span class="prop">class10A</span> = <span class="prop">students</span>.<span class="fn">filter</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">class</span> === <span class="str">'10A'</span>);
+
+<span class="cm">/* ── reduce — reduce to single value ─ */</span>
+<span class="kw">const</span> <span class="prop">totalFee</span> = <span class="prop">students</span>
+  .<span class="fn">reduce</span>((<span class="prop">sum</span>, <span class="prop">s</span>) =&gt; <span class="prop">sum</span> + <span class="prop">s</span>.<span class="prop">fee</span>, <span class="num">0</span>);
+<span class="cm">// 14500</span>
+
+<span class="cm">// Group by class</span>
+<span class="kw">const</span> <span class="prop">byClass</span> = <span class="prop">students</span>
+  .<span class="fn">reduce</span>((<span class="prop">acc</span>, <span class="prop">s</span>) =&gt; {
+    (<span class="prop">acc</span>[<span class="prop">s</span>.<span class="prop">class</span>] ??= []).<span class="fn">push</span>(<span class="prop">s</span>);
+    <span class="kw">return</span> <span class="prop">acc</span>;
+  }, {});
+<span class="cm">// { '10A': [...], '10B': [...] }</span>
+
+<span class="cm">/* ── find — first matching item ──── */</span>
+<span class="kw">const</span> <span class="prop">guru</span> = <span class="prop">students</span>.<span class="fn">find</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">id</span> === <span class="num">1</span>);
+<span class="cm">// { id:1, name:'Guru', ... }</span>
+
+<span class="cm">/* ── findIndex ───────────────────── */</span>
+<span class="kw">const</span> <span class="prop">idx</span> = <span class="prop">students</span>.<span class="fn">findIndex</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">id</span> === <span class="num">2</span>);
+<span class="cm">// 1</span>
+
+<span class="cm">/* ── some / every ────────────────── */</span>
+<span class="kw">const</span> <span class="prop">anyUnpaid</span>  = <span class="prop">students</span>.<span class="fn">some</span>(<span class="prop">s</span> =&gt; !<span class="prop">s</span>.<span class="prop">paid</span>); <span class="cm">// true</span>
+<span class="kw">const</span> <span class="prop">allPaid</span>    = <span class="prop">students</span>.<span class="fn">every</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">paid</span>); <span class="cm">// false</span>
+
+<span class="cm">/* ── includes / indexOf ──────────── */</span>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].<span class="fn">includes</span>(<span class="num">2</span>);   <span class="cm">// true</span>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].<span class="fn">indexOf</span>(<span class="num">2</span>);   <span class="cm">// 1</span></pre>
+        <div class="interview-qa">
+          <div class="q">❓ Interview Q: map vs forEach?</div>
+          <div class="a">map = RETURNS new array (non-mutating). forEach = runs function, returns undefined. Use map when you need a transformed array. Use forEach for side effects (logging, DOM updates). ZenCampus: students.map(s => s.name) for name list. students.forEach(s => renderCard(s)) for DOM!</div>
+        </div>
+      </div>
+
+      <!-- SORT FLAT SPREAD AND MORE -->
+      <div class="card">
+        <div class="card-sub">Syntax — More Methods</div>
+        <div class="card-title">sort · flat · flatMap · spread · Object methods</div>
+        <pre><span class="cm">/* ── sort — mutates original! ────── */</span>
+<span class="kw">const</span> <span class="prop">sorted</span> = [...<span class="prop">students</span>]   <span class="cm">// clone first!</span>
+  .<span class="fn">sort</span>((<span class="prop">a</span>, <span class="prop">b</span>) =&gt; <span class="prop">a</span>.<span class="prop">name</span>.<span class="fn">localeCompare</span>(<span class="prop">b</span>.<span class="prop">name</span>));
+
+<span class="cm">// Sort by fee descending</span>
+[...<span class="prop">students</span>].<span class="fn">sort</span>((<span class="prop">a</span>, <span class="prop">b</span>) =&gt; <span class="prop">b</span>.<span class="prop">fee</span> - <span class="prop">a</span>.<span class="prop">fee</span>);
+
+<span class="cm">/* ── flat + flatMap ───────────────── */</span>
+<span class="kw">const</span> <span class="prop">nested</span> = [[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>],[<span class="num">5</span>]];
+<span class="prop">nested</span>.<span class="fn">flat</span>();         <span class="cm">// [1,2,3,4,5]</span>
+<span class="prop">nested</span>.<span class="fn">flat</span>(<span class="num">2</span>);        <span class="cm">// deep flatten 2 levels</span>
+<span class="prop">nested</span>.<span class="fn">flat</span>(<span class="typ">Infinity</span>); <span class="cm">// full flatten</span>
+
+<span class="cm">// flatMap — map then flat(1)</span>
+<span class="kw">const</span> <span class="prop">allSubjects</span> = <span class="prop">students</span>
+  .<span class="fn">flatMap</span>(<span class="prop">s</span> =&gt; <span class="prop">s</span>.<span class="prop">subjects</span> ?? []);
+
+<span class="cm">/* ── slice vs splice ─────────────── */</span>
+<span class="kw">const</span> <span class="prop">arr</span> = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>];
+<span class="prop">arr</span>.<span class="fn">slice</span>(<span class="num">1</span>, <span class="num">3</span>);    <span class="cm">// [2,3] — no mutation</span>
+<span class="prop">arr</span>.<span class="fn">splice</span>(<span class="num">1</span>, <span class="num">2</span>);   <span class="cm">// removes [2,3] — MUTATES</span>
+
+<span class="cm">/* ── Array.from ──────────────────── */</span>
+<span class="typ">Array</span>.<span class="fn">from</span>(<span class="str">'Guru'</span>);          <span class="cm">// ['G','u','r','u']</span>
+<span class="typ">Array</span>.<span class="fn">from</span>({<span class="prop">length</span>:<span class="num">5</span>},(_,<span class="prop">i</span>)=&gt;<span class="prop">i</span>); <span class="cm">// [0,1,2,3,4]</span>
+<span class="typ">Array</span>.<span class="fn">from</span>(<span class="prop">document</span>.<span class="fn">querySelectorAll</span>(<span class="str">'.card'</span>));
+
+<span class="cm">/* ── Object methods ──────────────── */</span>
+<span class="kw">const</span> <span class="prop">obj</span> = { <span class="prop">name</span>:<span class="str">'Guru'</span>, <span class="prop">age</span>:<span class="num">15</span>, <span class="prop">class</span>:<span class="str">'10A'</span> };
+<span class="typ">Object</span>.<span class="fn">keys</span>(<span class="prop">obj</span>);    <span class="cm">// ['name','age','class']</span>
+<span class="typ">Object</span>.<span class="fn">values</span>(<span class="prop">obj</span>);  <span class="cm">// ['Guru', 15, '10A']</span>
+<span class="typ">Object</span>.<span class="fn">entries</span>(<span class="prop">obj</span>); <span class="cm">// [['name','Guru'],...]</span>
+
+<span class="cm">// Iterate entries</span>
+<span class="kw">for</span> (<span class="kw">const</span> [<span class="prop">key</span>, <span class="prop">val</span>] <span class="kw">of</span> <span class="typ">Object</span>.<span class="fn">entries</span>(<span class="prop">obj</span>)) {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">`${<span class="prop">key</span>}: ${<span class="prop">val</span>}`</span>);
+}
+
+<span class="cm">// Object.assign vs spread</span>
+<span class="kw">const</span> <span class="prop">merged</span> = <span class="typ">Object</span>.<span class="fn">assign</span>({}, <span class="prop">obj1</span>, <span class="prop">obj2</span>);
+<span class="kw">const</span> <span class="prop">merged2</span> = { ...<span class="prop">obj1</span>, ...<span class="prop">obj2</span> };  <span class="cm">// cleaner</span>
+
+<span class="cm">// Object.freeze — no modifications</span>
+<span class="kw">const</span> <span class="prop">config</span> = <span class="typ">Object</span>.<span class="fn">freeze</span>({
+  <span class="prop">apiUrl</span>: <span class="str">'https://api.zencampus.in'</span>
+});</pre>
+        <div class="trap">
+          <div class="label">⚠️ sort() mutates original array!</div>
+          Always clone first: <code>[...arr].sort()</code> or <code>arr.slice().sort()</code>.
+          Default sort converts to string — <code>[10, 2, 1].sort()</code> = [1, 10, 2]!
+          Always provide comparator: <code>.sort((a,b) => a - b)</code>!
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 6 — MASTER INTERVIEW CHEAT SHEET
+════════════════════════════════════════════ -->
+<div class="section master-sec" id="master">
+  <div class="section-header">🏆 MASTER INTERVIEW CHEAT SHEET — All 7 Parts</div>
+  <div class="section-body">
+
+    <div class="master-grid">
+
+      <div class="master-card">
+        <h4>C# Fundamentals</h4>
+        <ul>
+          <li>var vs const vs readonly → <span class="ans">var=infer, const=compile, readonly=runtime</span></li>
+          <li>throw vs throw ex → <span class="ans">throw preserves stack trace</span></li>
+          <li>?? vs ?: → <span class="ans">??=null check, ?:=ternary</span></li>
+          <li>StringBuilder vs string → <span class="ans">loop join = StringBuilder, O(n) vs O(n²)</span></li>
+          <li>IDisposable/using → <span class="ans">unmanaged resources, auto-dispose</span></li>
+        </ul>
+      </div>
+
+      <div class="master-card">
+        <h4>OOP Pillars</h4>
+        <ul>
+          <li>Encapsulation → <span class="ans">private fields, public methods</span></li>
+          <li>Inheritance → <span class="ans">:Base, :base() constructor chain</span></li>
+          <li>Polymorphism → <span class="ans">virtual/override, overloading</span></li>
+          <li>Abstraction → <span class="ans">abstract class + interface</span></li>
+          <li>Abstract vs Interface → <span class="ans">abstract=partial impl, interface=contract</span></li>
+          <li>sealed class → <span class="ans">no inheritance (SchoolConfig)</span></li>
+        </ul>
+      </div>
+
+      <div class="master-card">
+        <h4>Async / LINQ / Generics</h4>
+        <ul>
+          <li>async void → <span class="ans">NEVER (can't await, exception lost)</span></li>
+          <li>Task.WhenAll vs WhenAny → <span class="ans">all parallel vs first wins</span></li>
+          <li>ConfigureAwait(false) → <span class="ans">library code, avoid deadlock</span></li>
+          <li>IQueryable vs IEnumerable → <span class="ans">DB vs in-memory, deferred</span></li>
+          <li>Deferred execution → <span class="ans">ToList/First triggers query</span></li>
+          <li>Generic constraint where T:class → <span class="ans">reference type only</span></li>
+        </ul>
+      </div>
+
+      <div class="master-card">
+        <h4>Delegates / Events</h4>
+        <ul>
+          <li>Func vs Action vs Predicate → <span class="ans">returns/void/bool</span></li>
+          <li>Multicast delegate → <span class="ans">+= chains multiple methods</span></li>
+          <li>Event vs delegate → <span class="ans">event=safe pub/sub, += only</span></li>
+          <li>Lambda expression → <span class="ans">x => x * 2 anonymous function</span></li>
+          <li>Closure in loop trap → <span class="ans">var i shared, use let or IIFE</span></li>
+        </ul>
+      </div>
+
+      <div class="master-card">
+        <h4>SQL Core</h4>
+        <ul>
+          <li>Execution order → <span class="ans">FROM→WHERE→GROUP BY→HAVING→SELECT→ORDER</span></li>
+          <li>EXISTS vs IN → <span class="ans">EXISTS faster on large sets</span></li>
+          <li>LEFT JOIN anti-pattern → <span class="ans">LEFT JOIN + WHERE right.Id IS NULL</span></li>
+          <li>Index killers → <span class="ans">YEAR(), LIKE '%x', implicit cast, OR</span></li>
+          <li>SCOPE_IDENTITY() → <span class="ans">last insert in current scope</span></li>
+          <li>ACID → <span class="ans">Atomicity,Consistency,Isolation,Durability</span></li>
+        </ul>
+      </div>
+
+      <div class="master-card">
+        <h4>SQL Advanced</h4>
+        <ul>
+          <li>CTE vs subquery → <span class="ans">CTE reusable, readable</span></li>
+          <li>ROW_NUMBER vs DENSE_RANK → <span class="ans">dense no gap (1,1,2 not 1,1,3)</span></li>
+          <li>LAG/LEAD → <span class="ans">previous/next row value</span></li>
+          <li>Covering index → <span class="ans">INCLUDE non-key cols, no lookup</span></li>
+          <li>Keyset pagination → <span class="ans">WHERE Id > @lastId faster than OFFSET</span></li>
+          <li>N+1 problem → <span class="ans">JOIN in 1 query vs loop queries</span></li>
+        </ul>
+      </div>
+
+      <div class="master-card">
+        <h4>Dapper / Microservices</h4>
+        <ul>
+          <li>Dapper vs EF → <span class="ans">raw SQL fast vs ORM migrations</span></li>
+          <li>Multi-map → <span class="ans">JOIN → nested C# objects, splitOn</span></li>
+          <li>QueryMultiple → <span class="ans">3 result sets, 1 round-trip</span></li>
+          <li>Dapper transaction → <span class="ans">pass tx to every Execute</span></li>
+          <li>IHttpClientFactory → <span class="ans">pool reuse, no socket exhaustion</span></li>
+          <li>API Gateway → <span class="ans">single entry: auth+route+ratelimit</span></li>
+        </ul>
+      </div>
+
+      <div class="master-card">
+        <h4>JWT / Auth</h4>
+        <ul>
+          <li>JWT structure → <span class="ans">Header.Payload.Signature Base64</span></li>
+          <li>Access vs Refresh → <span class="ans">15min vs 7days, revocable</span></li>
+          <li>Claims → <span class="ans">userId, role, schoolId in payload</span></li>
+          <li>Payload security → <span class="ans">NOT encrypted — no sensitive data!</span></li>
+          <li>Role vs Policy → <span class="ans">role=string, policy=custom rules</span></li>
+          <li>Secret key → <span class="ans">env/Key Vault, never appsettings</span></li>
+        </ul>
+      </div>
+
+      <div class="master-card">
+        <h4>HTML / CSS</h4>
+        <ul>
+          <li>Semantic HTML → <span class="ans">meaning for SEO + accessibility</span></li>
+          <li>Specificity → <span class="ans">inline 1000, ID 100, class 10, tag 1</span></li>
+          <li>box-sizing border-box → <span class="ans">padding included in width</span></li>
+          <li>Flexbox vs Grid → <span class="ans">1D components vs 2D page layout</span></li>
+          <li>Mobile-first → <span class="ans">min-width adds, not max-width removes</span></li>
+          <li>Animate what → <span class="ans">transform+opacity only (GPU)</span></li>
+        </ul>
+      </div>
+
+      <div class="master-card">
+        <h4>JavaScript Fundamentals</h4>
+        <ul>
+          <li>var vs let vs const → <span class="ans">func/block/block, const first!</span></li>
+          <li>== vs === → <span class="ans">coercion vs strict type+value</span></li>
+          <li>?? vs || → <span class="ans">??=null/undef only, ||=falsy</span></li>
+          <li>Arrow vs function → <span class="ans">no own this, no arguments</span></li>
+          <li>Closure → <span class="ans">inner fn remembers outer scope</span></li>
+          <li>Hoisting → <span class="ans">var=undefined, let/const=TDZ error</span></li>
+        </ul>
+      </div>
+
+      <div class="master-card">
+        <h4>JavaScript Async / DOM</h4>
+        <ul>
+          <li>Promise.all vs allSettled → <span class="ans">all-or-none vs partial results</span></li>
+          <li>fetch error check → <span class="ans">if(!res.ok) throw (404 not throws!)</span></li>
+          <li>Event delegation → <span class="ans">parent listener, e.target.closest()</span></li>
+          <li>textContent vs innerHTML → <span class="ans">safe vs XSS risk</span></li>
+          <li>call/apply/bind → <span class="ans">comma/array/returns-fn</span></li>
+          <li>DOMContentLoaded vs load → <span class="ans">DOM ready vs all assets ready</span></li>
+        </ul>
+      </div>
+
+      <div class="master-card">
+        <h4>Array Methods</h4>
+        <ul>
+          <li>map → <span class="ans">transform, returns new array</span></li>
+          <li>filter → <span class="ans">select matching, returns new array</span></li>
+          <li>reduce → <span class="ans">single value from array</span></li>
+          <li>find vs filter → <span class="ans">first match vs all matches</span></li>
+          <li>sort mutation → <span class="ans">[...arr].sort() — clone first!</span></li>
+          <li>flat/flatMap → <span class="ans">nested arrays → flat, then map</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FULL TOP 20 JS INTERVIEW TABLE -->
+<div style="background:#13132a; border-radius:12px; padding:24px; margin:30px 0; border:1px solid #2a2a4a;">
+  <h2 style="color:#e94560; margin-bottom:16px">🎯 Part 7 — Top 20 JavaScript Interview Questions</h2>
+  <table>
+    <tr><th>#</th><th>Question</th><th>Answer</th><th>ZenCampus Hook</th></tr>
+    <tr><td>1</td><td>var vs let vs const?</td><td>var=func scope hoisted, let=block TDZ, const=block no reassign</td><td>Always const → let. Never var.</td></tr>
+    <tr><td>2</td><td>== vs ===?</td><td>==coerces types, ===strict. "1"==1→true, "1"===1→false</td><td>Always use === in ZenCampus code</td></tr>
+    <tr><td>3</td><td>null vs undefined?</td><td>null=intentional empty, undefined=not assigned</td><td>Student not found → null. Property missing → undefined</td></tr>
+    <tr><td>4</td><td>What is hoisting?</td><td>var declarations lifted to top of scope as undefined. let/const → TDZ error</td><td>console.log(var) = undefined, let = error</td></tr>
+    <tr><td>5</td><td>What is a closure?</td><td>Inner function retains access to outer scope after outer returns</td><td>VTV: Karthik remembers Jessie. Private feeStore balance.</td></tr>
+    <tr><td>6</td><td>Arrow function this?</td><td>No own this — inherits from lexical (enclosing) scope</td><td>Class event handlers — arrow captures class this</td></tr>
+    <tr><td>7</td><td>Spread vs Rest?</td><td>Spread=expand iterable (call/array). Rest=collect args (...nums in param)</td><td>...students copies array. (...args) collects params</td></tr>
+    <tr><td>8</td><td>Promise states?</td><td>Pending → Fulfilled (resolve) / Rejected (reject). Irreversible once settled</td><td>Mudhalvan: CM promise made → resolved/rejected</td></tr>
+    <tr><td>9</td><td>async/await vs .then?</td><td>await = syntactic sugar over .then, synchronous-looking, try/catch for errors</td><td>Always async/await in ZenCampus API calls</td></tr>
+    <tr><td>10</td><td>fetch 404 doesn't throw?</td><td>fetch only rejects on network error. Check response.ok for 4xx/5xx</td><td>if(!res.ok) throw new Error(res.status)</td></tr>
+    <tr><td>11</td><td>Event bubbling?</td><td>Event propagates from target → up to document root. stopPropagation() blocks it</td><td>Click on .student-row → bubbles to #studentList</td></tr>
+    <tr><td>12</td><td>Event delegation?</td><td>One listener on parent, handles children via e.target.closest()</td><td>1 listener for 1000 student rows</td></tr>
+    <tr><td>13</td><td>map vs forEach?</td><td>map=returns new array. forEach=void, side effects only</td><td>map for student name list. forEach to render DOM</td></tr>
+    <tr><td>14</td><td>Immutable array sort?</td><td>[...arr].sort(comparator) — clone before sort, avoid mutation</td><td>Sort student fee list without mutating original</td></tr>
+    <tr><td>15</td><td>call vs apply vs bind?</td><td>call=comma args invoke, apply=array args invoke, bind=returns new fn</td><td>Tamil hook: c=comma, a=array, b=borrow</td></tr>
+    <tr><td>16</td><td>deep vs shallow copy?</td><td>Spread/Object.assign = shallow (nested objects still shared). structuredClone() = deep</td><td>Student object with nested address — use structuredClone</td></tr>
+    <tr><td>17</td><td>Optional chaining?</td><td>obj?.prop returns undefined instead of TypeError when obj is null/undefined</td><td>student.address?.city safely reads nested</td></tr>
+    <tr><td>18</td><td>Temporal Dead Zone?</td><td>let/const declared but not yet initialised. Access before declaration = ReferenceError</td><td>let after console.log = TDZ error</td></tr>
+    <tr><td>19</td><td>Symbol, WeakMap, WeakRef?</td><td>Symbol=unique key. WeakMap=no memory leak, GC-able keys. WeakRef=soft reference</td><td>Advanced — mention if asked about ES6+ features</td></tr>
+    <tr><td>20</td><td>Event loop?</td><td>Call stack → Web APIs → Callback queue → Microtask queue. Promises = microtask (priority!)</td><td>setTimeout 0 runs AFTER .then — microtask first!</td></tr>
+  </table>
+</div>
+
+<!-- FINAL TROPHY -->
+<div class="trophy">
+  <p style="font-size:3em">🏆</p>
+  <h2>All 7 Parts Complete!</h2>
+  <p style="color:#e0e0e0; margin-top:12px; font-size:1em">
+    You now have a full Interview Syntax Bible covering:<br>
+    <strong>C# · OOPs · Async · LINQ · Generics · Delegates · SQL · Dapper · Microservices · JWT · HTML · CSS · JavaScript</strong>
+  </p>
+  <p style="color:#a0a0c0; margin-top:10px; font-size:.9em">
+    🎬 Movie Hooks: Dasavathaaram · Kaithi · Bigil · Thuppakki · Baasha · Kaadhal · VTV · Mudhalvan · Mersal · Enthiran · 96 · Vikram Vedha<br>
+    🏫 ZenCampus Examples throughout every section<br>
+    💻 Live demos in Part 6 (Flexbox/Grid/Animations)<br>
+    🎯 120+ interview questions across all 7 parts
+  </p>
+  <p style="margin-top:16px; color:#f9ca24; font-weight:bold">
+    Gurumoorthy M — 3.5yr → Senior Full Stack Cloud + AI Developer 🚀
+  </p>
+</div>
+
+</div><!-- container -->
+<footer>
+  <p>ZenCampus Interview Syntax Bible · <strong>COMPLETE — Parts 1–7</strong> · Gurumoorthy M · gurumoorthymurugan@gmail.com</p>
+  <p style="margin-top:4px; font-size:.8em">Parts: 1=C# Basics | 2=OOPs | 3=Async+LINQ+Delegates | 4=SQL | 5=Dapper+Micro+JWT | 6=HTML+CSS | 7=JavaScript</p>
+  <p style="margin-top:6px; font-size:.75em; color:#444">🎬 Kaadhal · VTV · Mudhalvan · Mersal · Enthiran · 96 · Vikram Vedha · Anniyan · Kaithi · Bigil · Thuppakki · Baasha · Dasavathaaram</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 42 — Azure for .NET Developers | ZenCampus Interview Prep</title>
+<style>
+  :root{--accent:#6d28d9;--accent-dim:#5b21b6;--accent-subtle:rgba(109,40,217,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(109,40,217,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.1rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .movie{background:linear-gradient(135deg,rgba(109,40,217,.12),rgba(109,40,217,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}@media(max-width:700px){.grid2{grid-template-columns:1fr;}}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem;}
+  .chead{font-weight:800;color:var(--accent);font-size:.95rem;margin-bottom:.5rem;}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">DAY 42-45</span>
+  <a href="#appservice">App Service</a><a href="#sql">Azure SQL</a><a href="#blob">Blob Storage</a>
+  <a href="#keyvault">Key Vault</a><a href="#mi">Managed Identity</a><a href="#scenarios">Interview Q</a>
+</nav>
+<div class="hero">
+  <h1>Azure for .NET Developers</h1>
+  <p>App Service · Azure SQL · Blob Storage · Key Vault · Managed Identity · Application Insights</p>
+  <div class="tags">
+    <span class="tag">Azure App Service</span><span class="tag">Key Vault</span><span class="tag">Managed Identity</span><span class="tag">Application Insights</span>
+    <span class="tag">Day 42–45 / 60</span>
+    <span class="tag" style="background:rgba(109,40,217,.2);border-color:#6d28d9;color:#6d28d9;">Violet #6d28d9</span>
+  </div>
+</div>
+<main>
+
+<section id="appservice">
+  <h2>🌐 Azure App Service — Deploy ZenCampus API</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Baahubali (2015) — Kingdom without managing the palace walls</div>
+    <div class="mb">Baahubali-la Mahishmati-ya rule panna mahadeva-ku servers manage panna thevaiyilla — kingdom manage pannar. Azure App Service same: ZenCampus API deploy panna, OS patches, scaling, load balancing — Microsoft manage pannaanga. Namma business logic-layum focus pannalaam!</div></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="chead">App Service Tiers</div>
+    <table style="margin:0;font-size:.8rem">
+      <tr><th>Tier</th><th>Use Case</th></tr>
+      <tr><td>Free/Shared</td><td>Dev/experiments only</td></tr>
+      <tr><td>Basic B1-B3</td><td>Dev/staging with custom SSL</td></tr>
+      <tr><td>Standard S1-S3</td><td>Production, auto-scale</td></tr>
+      <tr><td>Premium P1v3+</td><td>High perf, VNet integration</td></tr>
+    </table></div>
+    <div class="card"><div class="chead">Deployment Slots</div>
+    <p style="font-size:.85rem">Staging slot: deploy new ZenCampus version, test with real traffic. Swap with production (zero downtime). Can swap back instantly if issues found. Blue/green deployment for 50,000 students with zero downtime.</p></div>
+  </div>
+  <pre><code><span class="cm">// Program.cs — Configure for Azure App Service</span>
+<span class="kw">var</span> builder = <span class="cl">WebApplication</span>.CreateBuilder(args);
+
+<span class="cm">// Application Insights telemetry</span>
+builder.Services.AddApplicationInsightsTelemetry();
+
+<span class="cm">// Health checks for App Service</span>
+builder.Services.AddHealthChecks()
+    .AddSqlServer(builder.Configuration.GetConnectionString(<span class="str">"ZenCampusDb"</span>)!)
+    .AddRedis(builder.Configuration[<span class="str">"Redis:ConnectionString"</span>]!);
+
+<span class="cm">// Azure App Service passes port via WEBSITES_PORT env var</span>
+<span class="cm">// ASPNETCORE_URLS is set automatically — no need to configure</span></code></pre>
+</section>
+
+<section id="sql">
+  <h2>🗄️ Azure SQL — ZenCampus Database</h2>
+  <table>
+    <tr><th>Feature</th><th>What It Does</th><th>ZenCampus Use</th></tr>
+    <tr><td>Geo-Redundant Backup</td><td>Automated backups, point-in-time restore</td><td>Restore student data if accidental deletion</td></tr>
+    <tr><td>Elastic Pool</td><td>Share DTUs across multiple databases</td><td>200 schools, each with own DB in a pool</td></tr>
+    <tr><td>Active Geo-Replication</td><td>Readable secondary in another region</td><td>Reports read from secondary, writes to primary</td></tr>
+    <tr><td>Always Encrypted</td><td>Encrypt sensitive columns</td><td>Student Aadhaar, parent mobile numbers</td></tr>
+    <tr><td>Transparent Data Encryption</td><td>Encrypt data at rest</td><td>On by default for all Azure SQL</td></tr>
+  </table>
+</section>
+
+<section id="blob">
+  <h2>📦 Azure Blob Storage — Student Documents</h2>
+  <pre><code><span class="cm">// NuGet: Azure.Storage.Blobs</span>
+
+<span class="kw">public class</span> <span class="cl">AzureBlobStorageService</span>(<span class="cl">BlobServiceClient</span> _blobClient) : <span class="cl">IFileStorageService</span>
+{
+    <span class="kw">private const string</span> StudentDocsContainer = <span class="str">"student-documents"</span>;
+    <span class="kw">private const string</span> PhotosContainer = <span class="str">"student-photos"</span>;
+
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="kw">string</span>&gt; UploadStudentPhotoAsync(
+        <span class="kw">int</span> studentId, <span class="cl">Stream</span> photoStream, <span class="kw">string</span> contentType,
+        <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>)
+    {
+        <span class="kw">var</span> container = _blobClient.GetBlobContainerClient(PhotosContainer);
+        <span class="kw">await</span> container.CreateIfNotExistsAsync(cancellationToken: ct);
+
+        <span class="kw">var</span> blobName = <span class="str">$"students/{studentId}/photo_{DateTime.UtcNow:yyyyMMdd}.jpg"</span>;
+        <span class="kw">var</span> blobClient = container.GetBlobClient(blobName);
+
+        <span class="kw">await</span> blobClient.UploadAsync(photoStream, <span class="kw">new</span> <span class="cl">BlobUploadOptions</span>
+        {
+            HttpHeaders = <span class="kw">new</span> <span class="cl">BlobHttpHeaders</span> { ContentType = contentType },
+            Tags = <span class="kw">new</span> <span class="cl">Dictionary</span>&lt;<span class="kw">string</span>, <span class="kw">string</span>&gt;
+            {
+                [<span class="str">"studentId"</span>] = studentId.ToString(),
+                [<span class="str">"uploadedBy"</span>] = <span class="str">"ZenCampus"</span>
+            }
+        }, ct);
+
+        <span class="kw">return</span> blobClient.Uri.ToString();
+    }
+
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="kw">string</span>&gt; GenerateSasUriAsync(<span class="kw">string</span> blobName, <span class="kw">int</span> expiryMinutes = <span class="num">30</span>)
+    {
+        <span class="kw">var</span> blobClient = _blobClient
+            .GetBlobContainerClient(PhotosContainer)
+            .GetBlobClient(blobName);
+
+        <span class="kw">var</span> sasUri = blobClient.GenerateSasUri(<span class="cl">BlobSasPermissions</span>.Read,
+            <span class="cl">DateTimeOffset</span>.UtcNow.AddMinutes(expiryMinutes));
+        <span class="kw">return</span> sasUri.ToString();
+    }
+}</code></pre>
+</section>
+
+<section id="keyvault">
+  <h2>🔐 Key Vault + Managed Identity — Zero Credentials</h2>
+  <pre><code><span class="cm">// Program.cs — Azure Key Vault configuration provider</span>
+<span class="kw">using</span> <span class="cl">Azure.Identity</span>;
+
+<span class="kw">if</span> (builder.Environment.IsProduction())
+{
+    <span class="cm">// DefaultAzureCredential tries: Managed Identity → VS credentials → CLI credentials</span>
+    <span class="kw">var</span> keyVaultUri = <span class="kw">new</span> <span class="cl">Uri</span>(builder.Configuration[<span class="str">"KeyVault:Uri"</span>]!);
+    builder.Configuration.AddAzureKeyVault(keyVaultUri, <span class="kw">new</span> <span class="cl">DefaultAzureCredential</span>());
+}
+
+<span class="cm">// Key Vault stores:
+// ZenCampusDb--ConnectionString   → SqlServer connection string
+// Jwt--SecretKey                  → JWT signing key
+// Msg91--ApiKey                   → SMS service API key
+// BlobStorage--ConnectionString   → Azure Storage connection string</span>
+
+<span class="cm">// Access like normal configuration — Key Vault is transparent</span>
+<span class="kw">var</span> connStr = builder.Configuration.GetConnectionString(<span class="str">"ZenCampusDb"</span>); <span class="cm">// from Key Vault</span>
+
+<span class="cm">// Registration with DefaultAzureCredential (no passwords in code!)</span>
+builder.Services.AddSingleton(sp =&gt; <span class="kw">new</span> <span class="cl">BlobServiceClient</span>(
+    <span class="kw">new</span> <span class="cl">Uri</span>(<span class="str">$"https://{accountName}.blob.core.windows.net"</span>),
+    <span class="kw">new</span> <span class="cl">DefaultAzureCredential</span>()));  <span class="cm">// Managed Identity in Azure, VS/CLI in dev</span></code></pre>
+  <div class="good-box">
+    <strong>Managed Identity = Zero-credential architecture.</strong> App Service gets a system-assigned identity. That identity is granted "Key Vault Secrets User" role. No passwords, no connection strings in config files, no rotation headaches. If credentials leak — there are no credentials to leak.
+  </div>
+</section>
+
+<section id="mi">
+  <h2>🪪 Application Insights — ZenCampus Observability</h2>
+  <pre><code><span class="cm">// NuGet: Microsoft.ApplicationInsights.AspNetCore</span>
+
+<span class="cm">// Program.cs</span>
+builder.Services.AddApplicationInsightsTelemetry(options =&gt;
+{
+    options.ConnectionString = builder.Configuration[<span class="str">"ApplicationInsights:ConnectionString"</span>];
+});
+
+<span class="cm">// Track custom events</span>
+<span class="kw">public class</span> <span class="cl">FeePaymentService</span>(<span class="cl">TelemetryClient</span> _telemetry)
+{
+    <span class="kw">public async</span> <span class="cl">Task</span> ProcessPaymentAsync(<span class="cl">PaymentDto</span> payment)
+    {
+        <span class="kw">var</span> sw = <span class="cl">Stopwatch</span>.StartNew();
+        <span class="cm">// ... payment processing ...</span>
+        sw.Stop();
+
+        _telemetry.TrackEvent(<span class="str">"FeePaymentProcessed"</span>, <span class="kw">new</span> <span class="cl">Dictionary</span>&lt;<span class="kw">string</span>, <span class="kw">string</span>&gt;
+        {
+            [<span class="str">"StudentId"</span>] = payment.StudentId.ToString(),
+            [<span class="str">"SchoolId"</span>]  = payment.SchoolId.ToString(),
+            [<span class="str">"PaymentMode"</span>] = payment.Mode
+        }, <span class="kw">new</span> <span class="cl">Dictionary</span>&lt;<span class="kw">string</span>, <span class="kw">double</span>&gt;
+        {
+            [<span class="str">"Amount"</span>] = (<span class="kw">double</span>)payment.Amount,
+            [<span class="str">"DurationMs"</span>] = sw.Elapsed.TotalMilliseconds
+        });
+    }
+}</code></pre>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is Managed Identity and why is it the best approach for connecting ZenCampus to Azure SQL?</span><span class="st">Core</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Managed Identity: Azure-assigned identity for App Service (like a service account). Grant that identity "db_datareader/datawriter" role in Azure SQL. Connection string becomes "Server=...;Authentication=Active Directory Managed Identity". No username/password. No rotation. If app is compromised, attacker can't steal credentials — there are none. Works seamlessly with DefaultAzureCredential in code.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">How does Azure Key Vault integrate with ASP.NET Core configuration?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>AddAzureKeyVault() adds Key Vault as a configuration source. Secrets use double-dash naming (ZenCampusDb--ConnectionString = ConnectionStrings:ZenCampusDb). On startup, app reads all accessible secrets and merges them into IConfiguration. Code uses GetConnectionString() normally — doesn't know or care that it came from Key Vault. No code changes needed.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What are Azure App Service deployment slots?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Named deployments within the same App Service (e.g., "staging", "canary"). Each slot has its own URL, settings, and can run a different version. Deploy ZenCampus v2 to staging, test with real traffic, then swap staging↔production (instant, zero-downtime). If issues: swap back immediately. Slot-specific settings (like pointing staging to test DB) don't swap — production keeps its production connection string.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">How would you store and retrieve student photos in Azure Blob Storage?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Container "student-photos" set to private. Upload via BlobClient.UploadAsync with ContentType set. Generate time-limited SAS URI for display (30-minute expiry). Never make containers public — student photos are private. Organize: students/{studentId}/photo_20260624.jpg. Set lifecycle policy: archive after 1 year, delete after 7 years. Use CDN for frequently accessed photos.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">What is DefaultAzureCredential and how does it work in different environments?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>DefaultAzureCredential tries multiple auth methods in order: Environment variables → Workload identity → Managed Identity → Visual Studio credentials → Azure CLI credentials → Browser. In Azure: Managed Identity is picked automatically. On dev machine: Visual Studio or CLI credentials. Same code works everywhere — no environment-specific auth branches. One credential class for all environments.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">Explain Azure Elastic Pool for a multi-school ZenCampus setup.</span><span class="st">Architecture</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Problem: 200 schools, each with own Azure SQL database = 200 × min DTUs = expensive. Elastic Pool: pool of shared resources (DTUs/vCores) that databases draw from as needed. School exam time = that school's DB spikes, borrows from pool. At night all databases quiet, pool is mostly idle. One pool for all schools vs 200 independent databases = 60–80% cost reduction.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">What does Application Insights automatically capture without any code changes?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Auto-captured: HTTP requests (URL, method, response code, duration), dependency calls (SQL, HTTP, Redis), exceptions and stack traces, page views (if JS SDK added), performance counters (CPU, memory), request failures, slow requests. For ZenCampus: every /api/students GET, every SQL query duration, every exception in fee calculation — all captured with zero custom code. Useful for production diagnostics.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">How would you configure auto-scaling for ZenCampus during exam season?</span><span class="st">Architecture</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>App Service Standard tier: set auto-scale rules. Scale out when CPU > 70% for 5 minutes (add instance). Scale in when CPU < 30% for 15 minutes (remove instance). Set min instances: 2 (for HA), max: 10. For exam season: schedule-based scaling — automatically add 5 instances during exam hours. Session affinity: disabled (stateless app). Pair with Azure SQL elastic pool scaling.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">Why should you use SAS tokens for blob access instead of making containers public?</span><span class="st">Security</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Public container = anyone with URL can access student photos — GDPR/privacy violation. SAS (Shared Access Signature): time-limited URL (e.g., 30 minutes), specific permissions (read only), specific blob or container. After expiry, URL is useless. Can be revoked via policy. For ZenCampus: generate fresh SAS when parent views child's photo. URL expires before it could be shared or abused.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">What is the difference between App Service Plan and App Service?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>App Service Plan: the VM farm (compute resources — size, scale, region, OS). You pay for the plan regardless of how many apps run on it. App Service: the application running on that plan. You can host multiple App Services (ZenCampus API, ZenCampus Admin, ZenCampus Parent portal) on one plan to share the cost. Plan = infrastructure. App Service = app deployed on that infrastructure.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. What is the primary benefit of Managed Identity for ZenCampus?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Managed Identity doesn\'t affect application speed.')">Faster database queries</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! No passwords in config or code. Azure handles identity. Zero credentials = nothing to rotate, nothing to leak, nothing to accidentally commit to git.')">Zero-credential access — no passwords to manage, rotate, or accidentally expose</button>
+    <button class="qb" onclick="ans(this,'wrong','Managed Identity is specifically for Azure resource access, not general scaling.')">Auto-scaling the database</button>
+    <button class="qb" onclick="ans(this,'wrong','Cost reduction is from Elastic Pool, not Managed Identity.')">Reduced database cost</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. How are Key Vault secrets named for nested configuration (ConnectionStrings:ZenCampusDb)?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Forward slash is used in filesystem paths but not Key Vault secret names.')">ConnectionStrings/ZenCampusDb</button>
+    <button class="qb" onclick="ans(this,'wrong','Single dash is not the Key Vault convention for section separators.')">ConnectionStrings-ZenCampusDb</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Double-dash (--) separates config sections in Key Vault secrets. ZenCampusDb--ConnectionString maps to ConnectionStrings:ZenCampusDb in IConfiguration.')">ConnectionStrings--ZenCampusDb (double dash)</button>
+    <button class="qb" onclick="ans(this,'wrong','Colon cannot be used in Key Vault secret names.')">ConnectionStrings:ZenCampusDb</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. What Azure SQL feature is most cost-effective for 200 school databases?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','200 separate databases = pay for 200 × min DTUs = very expensive.')">200 separate Azure SQL databases</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Elastic Pool shares resources across all school databases. Peak usage spikes absorbed by pool. Idle databases cost near-zero. 60-80% cost reduction vs 200 independent databases.')">Azure SQL Elastic Pool — shared compute across all school databases</button>
+    <button class="qb" onclick="ans(this,'wrong','SQL Server on VMs loses PaaS benefits and is harder to manage.')">SQL Server on Azure VM per school</button>
+    <button class="qb" onclick="ans(this,'wrong','In-memory OLTP is a performance feature, not a multi-tenant cost feature.')">In-memory OLTP</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. How does DefaultAzureCredential work in local development?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Connection strings are exactly what DefaultAzureCredential is designed to eliminate.')">Falls back to connection string from appsettings.json</button>
+    <button class="qb" onclick="ans(this,'wrong','Local dev doesn\'t have Azure-assigned Managed Identity.')">Uses the production Managed Identity</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! DefaultAzureCredential tries Visual Studio signed-in account, then Azure CLI (az login), then browser. Same code works in dev and production — no environment-specific branches.')">Uses Visual Studio logged-in account or Azure CLI credentials (az login)</button>
+    <button class="qb" onclick="ans(this,'wrong','Local dev has no service principal automatically set up.')">Automatically creates a service principal</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I understand App Service tiers and when to use each</li>
+    <li onclick="ck(this)"><input type="checkbox">I can configure deployment slots for zero-downtime deploys</li>
+    <li onclick="ck(this)"><input type="checkbox">I know why Managed Identity is better than connection string passwords</li>
+    <li onclick="ck(this)"><input type="checkbox">I can integrate Key Vault with ASP.NET Core configuration</li>
+    <li onclick="ck(this)"><input type="checkbox">I can upload/retrieve blobs and generate SAS tokens</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand Elastic Pool for multi-school multi-tenant cost optimization</li>
+    <li onclick="ck(this)"><input type="checkbox">I can add Application Insights to ZenCampus API</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand DefaultAzureCredential and how it works in each environment</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Day 42–45 Complete ✓ — Azure App Service + SQL + Blob + Key Vault + Managed Identity</p>
+  <p>Accent: Violet #6d28d9 · Next: Day 46 — CI/CD with GitHub Actions</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

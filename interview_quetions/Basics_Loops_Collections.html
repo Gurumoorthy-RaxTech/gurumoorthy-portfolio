@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loops + Collections — for, foreach, List, Dictionary, LINQ | ZenCampus</title>
+<style>
+  :root{--accent:#b91c1c;--accent-dim:#991b1b;--accent-subtle:rgba(185,28,28,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(185,28,28,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.05rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}
+  .movie{background:linear-gradient(135deg,rgba(185,28,28,.12),rgba(185,28,28,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.9rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.5rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .warn-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">LOOPS + COLLECTIONS</span>
+  <a href="#loops">Loops</a><a href="#collections">Collections</a><a href="#dictionary">Dictionary</a>
+  <a href="#linq">LINQ Basics</a><a href="#scenarios">Interview Q</a><a href="#quiz">Quiz</a>
+</nav>
+<div class="hero">
+  <h1>Loops + Collections</h1>
+  <p>for · foreach · while · List&lt;T&gt; · Dictionary · HashSet · LINQ Basics</p>
+  <div class="tags">
+    <span class="tag">C# Loops</span><span class="tag">Collections</span><span class="tag">LINQ</span><span class="tag">Dictionary</span>
+    <span class="tag" style="background:rgba(185,28,28,.2);border-color:#b91c1c;color:#b91c1c;">Red #b91c1c</span>
+  </div>
+</div>
+<main>
+
+<section id="loops">
+  <h2>🔄 Loops — Repeat Actions</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">96 (2018) — Every memory revisited, one by one</div>
+    <div class="mb">96-la Ram every memory-a loop-la revisit panrar — oru pattern repeat aaguthu. C# loops same: every student's fee check panna, every class's attendance mark panna — loops use pannuvom. foreach = "every oru item"; for = "1 to N with index"; while = "condition satisfied aagum varai".</div></div>
+  </div>
+  <pre><code><span class="kw">var</span> students = <span class="kw">new</span> <span class="cl">List</span>&lt;<span class="cl">Student</span>&gt; { s1, s2, s3, s4, s5 };
+
+<span class="cm">// for loop — when you need index</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; students.Count; i++)
+{
+    Console.WriteLine(<span class="str">$"Student {i + 1}: {students[i].Name}"</span>);
+}
+
+<span class="cm">// foreach — most common, cleaner, no index needed</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> student <span class="kw">in</span> students)
+{
+    Console.WriteLine(<span class="str">$"{student.Name}: {student.FeeAmount:C}"</span>);
+}
+
+<span class="cm">// while — condition-based</span>
+<span class="kw">int</span> page = <span class="num">1</span>;
+<span class="kw">while</span> (<span class="kw">true</span>)
+{
+    <span class="kw">var</span> batch = GetStudents(schoolId: <span class="num">1</span>, page: page, size: <span class="num">100</span>);
+    <span class="kw">if</span> (!batch.Any()) <span class="kw">break</span>;         <span class="cm">// exit when no more data</span>
+    ProcessStudents(batch);
+    page++;
+}
+
+<span class="cm">// do-while — executes AT LEAST ONCE</span>
+<span class="kw">int</span> attempts = <span class="num">0</span>;
+<span class="kw">do</span>
+{
+    attempts++;
+    <span class="kw">var</span> result = TrySendSms(phone, message);
+    <span class="kw">if</span> (result.IsSuccess) <span class="kw">break</span>;
+} <span class="kw">while</span> (attempts &lt; <span class="num">3</span>);  <span class="cm">// retry up to 3 times</span>
+
+<span class="cm">// break — exit loop immediately</span>
+<span class="cm">// continue — skip current iteration, go to next</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> student <span class="kw">in</span> students)
+{
+    <span class="kw">if</span> (!student.IsActive) <span class="kw">continue</span>;  <span class="cm">// skip inactive</span>
+    <span class="kw">if</span> (student.FeeAmount == <span class="num">0</span>) <span class="kw">break</span>;  <span class="cm">// stop at first free student</span>
+    ProcessFee(student);
+}</code></pre>
+</section>
+
+<section id="collections">
+  <h2>📦 Collections — Store Groups of Data</h2>
+  <h3>List&lt;T&gt; — Most Used Collection</h3>
+  <pre><code><span class="kw">var</span> students = <span class="kw">new</span> <span class="cl">List</span>&lt;<span class="cl">Student</span>&gt;();  <span class="cm">// empty list</span>
+
+<span class="cm">// Add</span>
+students.Add(<span class="kw">new</span> <span class="cl">Student</span> { Name = <span class="str">"Basha"</span> });
+students.AddRange(GetNewStudents()); <span class="cm">// add many</span>
+
+<span class="cm">// Access</span>
+<span class="kw">var</span> first = students[<span class="num">0</span>];              <span class="cm">// by index (0-based)</span>
+<span class="kw">int</span> count = students.Count;           <span class="cm">// total count</span>
+
+<span class="cm">// Remove</span>
+students.Remove(student1);            <span class="cm">// by object</span>
+students.RemoveAt(<span class="num">0</span>);               <span class="cm">// by index</span>
+students.RemoveAll(s =&gt; !s.IsActive); <span class="cm">// by condition</span>
+
+<span class="cm">// Check</span>
+students.Contains(student1);          <span class="cm">// true/false</span>
+students.Any(s =&gt; s.Name == <span class="str">"Basha"</span>); <span class="cm">// any match?</span>
+students.All(s =&gt; s.IsActive);       <span class="cm">// all match?</span>
+
+<span class="cm">// Sort</span>
+students.Sort((a, b) =&gt; a.Name.CompareTo(b.Name));
+<span class="kw">var</span> sorted = students.OrderBy(s =&gt; s.Name).ToList();  <span class="cm">// LINQ way</span>
+
+<span class="cm">// Collection initializer syntax</span>
+<span class="kw">var</span> classIds = <span class="kw">new</span> <span class="cl">List</span>&lt;<span class="kw">int</span>&gt; { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span> };
+<span class="kw">var</span> names = <span class="kw">new</span> <span class="cl">List</span>&lt;<span class="kw">string</span>&gt;([<span class="str">"Basha"</span>, <span class="str">"Priya"</span>]); <span class="cm">// C# 12</span></code></pre>
+
+  <h3>Array — Fixed Size</h3>
+  <pre><code><span class="cm">// Array — fixed size, faster than List for fixed data</span>
+<span class="kw">int</span>[] classIds = <span class="kw">new int</span>[<span class="num">5</span>];    <span class="cm">// 5 elements, all 0</span>
+<span class="kw">int</span>[] ids = { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span> };  <span class="cm">// initialize</span>
+<span class="kw">string</span>[] terms = [<span class="str">"Term1"</span>, <span class="str">"Term2"</span>, <span class="str">"Term3"</span>];  <span class="cm">// C# 12 collection expression</span>
+
+ids.Length;         <span class="cm">// 5</span>
+ids[<span class="num">0</span>] = <span class="num">10</span>;         <span class="cm">// modify element</span>
+<span class="cl">Array</span>.Sort(ids);    <span class="cm">// sort in-place</span>
+<span class="cl">Array</span>.Reverse(ids); <span class="cm">// reverse</span>
+<span class="kw">var</span> list = ids.ToList(); <span class="cm">// convert to List</span></code></pre>
+</section>
+
+<section id="dictionary">
+  <h2>🗂️ Dictionary — Key-Value Storage</h2>
+  <pre><code><span class="cm">// Dictionary&lt;TKey, TValue&gt; — O(1) lookup by key</span>
+<span class="kw">var</span> studentMap = <span class="kw">new</span> <span class="cl">Dictionary</span>&lt;<span class="kw">string</span>, <span class="cl">Student</span>&gt;();
+
+<span class="cm">// Add</span>
+studentMap.Add(<span class="str">"ADM001"</span>, basha);        <span class="cm">// throws if key exists</span>
+studentMap[<span class="str">"ADM002"</span>] = priya;           <span class="cm">// add or update</span>
+studentMap.TryAdd(<span class="str">"ADM001"</span>, basha);     <span class="cm">// no throw if exists</span>
+
+<span class="cm">// Lookup</span>
+<span class="kw">var</span> s = studentMap[<span class="str">"ADM001"</span>];           <span class="cm">// throws KeyNotFoundException if missing</span>
+
+<span class="cm">// Safe lookup</span>
+<span class="kw">if</span> (studentMap.TryGetValue(<span class="str">"ADM001"</span>, <span class="kw">out var</span> found))
+    Console.WriteLine(found.Name);
+
+<span class="cm">// Check existence</span>
+studentMap.ContainsKey(<span class="str">"ADM001"</span>);  <span class="cm">// true/false</span>
+
+<span class="cm">// Remove</span>
+studentMap.Remove(<span class="str">"ADM001"</span>);
+
+<span class="cm">// Iterate</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> kvp <span class="kw">in</span> studentMap)
+    Console.WriteLine(<span class="str">$"Key: {kvp.Key}, Student: {kvp.Value.Name}"</span>);
+
+<span class="cm">// Real ZenCampus use: group students by class</span>
+<span class="kw">var</span> byClass = <span class="kw">new</span> <span class="cl">Dictionary</span>&lt;<span class="kw">int</span>, <span class="cl">List</span>&lt;<span class="cl">Student</span>&gt;&gt;();
+<span class="kw">foreach</span> (<span class="kw">var</span> s <span class="kw">in</span> students)
+{
+    <span class="kw">if</span> (!byClass.ContainsKey(s.ClassId))
+        byClass[s.ClassId] = <span class="kw">new</span> <span class="cl">List</span>&lt;<span class="cl">Student</span>&gt;();
+    byClass[s.ClassId].Add(s);
+}
+<span class="cm">// Simpler with LINQ: students.GroupBy(s => s.ClassId).ToDictionary(g => g.Key, g => g.ToList())</span>
+
+<span class="cm">// HashSet — unique values only, O(1) lookup</span>
+<span class="kw">var</span> presentStudentIds = <span class="kw">new</span> <span class="cl">HashSet</span>&lt;<span class="kw">int</span>&gt;();
+presentStudentIds.Add(<span class="num">1</span>);
+presentStudentIds.Add(<span class="num">1</span>);  <span class="cm">// duplicate ignored</span>
+presentStudentIds.Contains(<span class="num">1</span>);  <span class="cm">// O(1) — very fast!</span>
+<span class="cm">// Use HashSet when: storing unique IDs, fast membership check</span></code></pre>
+</section>
+
+<section id="linq">
+  <h2>🔍 LINQ Basics — Query Collections</h2>
+  <pre><code><span class="kw">var</span> students = GetAllStudents(); <span class="cm">// List&lt;Student&gt;</span>
+
+<span class="cm">// Where — filter</span>
+<span class="kw">var</span> active = students.Where(s =&gt; s.IsActive).ToList();
+<span class="kw">var</span> class5 = students.Where(s =&gt; s.ClassId == <span class="num">5</span>).ToList();
+
+<span class="cm">// Select — transform/project</span>
+<span class="kw">var</span> names = students.Select(s =&gt; s.Name).ToList();
+<span class="kw">var</span> dtos  = students.Select(s =&gt; <span class="kw">new</span> StudentDto(s.Id, s.Name)).ToList();
+
+<span class="cm">// OrderBy / OrderByDescending</span>
+<span class="kw">var</span> sorted  = students.OrderBy(s =&gt; s.Name).ToList();
+<span class="kw">var</span> sorted2 = students.OrderByDescending(s =&gt; s.FeeAmount).ToList();
+
+<span class="cm">// First / FirstOrDefault</span>
+<span class="kw">var</span> first  = students.First(s =&gt; s.Name == <span class="str">"Basha"</span>);           <span class="cm">// throws if not found</span>
+<span class="kw">var</span> firstOrNull = students.FirstOrDefault(s =&gt; s.Name == <span class="str">"Basha"</span>); <span class="cm">// null if not found</span>
+
+<span class="cm">// Aggregates</span>
+<span class="kw">decimal</span> total = students.Sum(s =&gt; s.FeeAmount);
+<span class="kw">decimal</span> avg   = students.Average(s =&gt; s.FeeAmount);
+<span class="kw">int</span>     max   = students.Max(s =&gt; s.ClassId);
+<span class="kw">int</span>     count = students.Count(s =&gt; s.IsActive);
+
+<span class="cm">// Any / All / Contains</span>
+<span class="kw">bool</span> hasActive = students.Any(s =&gt; s.IsActive);
+<span class="kw">bool</span> allActive = students.All(s =&gt; s.IsActive);
+
+<span class="cm">// GroupBy — group by class</span>
+<span class="kw">var</span> byClass = students
+    .GroupBy(s =&gt; s.ClassId)
+    .Select(g =&gt; <span class="kw">new</span> { ClassId = g.Key, Count = g.Count(), Students = g.ToList() })
+    .ToList();
+
+<span class="cm">// Chain multiple LINQ methods</span>
+<span class="kw">var</span> top5FeeStudents = students
+    .Where(s =&gt; s.IsActive)
+    .OrderByDescending(s =&gt; s.FeeAmount)
+    .Take(<span class="num">5</span>)
+    .Select(s =&gt; <span class="kw">new</span> { s.Name, s.FeeAmount })
+    .ToList();</code></pre>
+
+  <table>
+    <tr><th>LINQ Method</th><th>Returns</th><th>ZenCampus Use</th></tr>
+    <tr><td>Where(predicate)</td><td>IEnumerable&lt;T&gt;</td><td>Filter active students</td></tr>
+    <tr><td>Select(selector)</td><td>IEnumerable&lt;TResult&gt;</td><td>Convert Student to StudentDto</td></tr>
+    <tr><td>OrderBy/Descending</td><td>IOrderedEnumerable&lt;T&gt;</td><td>Sort by name, fee amount</td></tr>
+    <tr><td>First/FirstOrDefault</td><td>T or null</td><td>Find student by admission number</td></tr>
+    <tr><td>Sum/Average/Max/Min</td><td>numeric</td><td>Total fee collected, avg attendance</td></tr>
+    <tr><td>GroupBy</td><td>IGrouping&lt;K,T&gt;</td><td>Group students by class/section</td></tr>
+    <tr><td>Any/All</td><td>bool</td><td>Has any unpaid? All present today?</td></tr>
+    <tr><td>Take/Skip</td><td>IEnumerable&lt;T&gt;</td><td>Pagination</td></tr>
+    <tr><td>ToList/ToArray</td><td>List/Array</td><td>Execute and materialize</td></tr>
+    <tr><td>ToDictionary</td><td>Dictionary&lt;K,V&gt;</td><td>Students by admission number</td></tr>
+  </table>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">When do you use for loop vs foreach?</span><span class="st">Loops</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>foreach: preferred for iterating collections — cleaner, reads like English, works with any IEnumerable. for: when you need the INDEX (i) — modifying list while iterating, iterating backwards, accessing adjacent elements, or when performance matters (array iteration with for is slightly faster). Rule: default to foreach. Switch to for when you need the index or position.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What is the difference between List and Array?</span><span class="st">Collections</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Array: fixed size, set at creation. Cannot add/remove elements. Faster for random access. int[] ids = new int[5]. List&lt;T&gt;: dynamic size, can add/remove. Built on top of array internally — resizes by doubling. Count property (not Length). Most code uses List because student count is not known upfront. Array for: configuration values, lookup tables with known size.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is the difference between Dictionary and List for student lookup?</span><span class="st">Collections</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>List lookup: students.FirstOrDefault(s => s.AdmissionNo == "ADM001") — O(n) linear scan, checks every element. Gets slower as list grows. Dictionary lookup: studentMap["ADM001"] — O(1) hash lookup, instant regardless of size. For 50,000 students: List lookup = 50,000 comparisons worst case. Dictionary = 1 hash calculation. Use Dictionary when you frequently look up by key. Use List when you iterate all, order matters, or key-based lookup is rare.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What happens if you modify a List while iterating with foreach?</span><span class="st">Gotcha</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>InvalidOperationException: "Collection was modified; enumeration operation may not execute." foreach uses an enumerator that detects modification. Solution: 1) Iterate a copy: foreach (var s in students.ToList()) — iterate copy, modify original. 2) Collect items to remove, then remove after loop. 3) Use for loop with index (be careful with index shifting when removing). Never add/remove from a collection you're currently foreach-ing.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">What is the difference between First() and FirstOrDefault()?</span><span class="st">LINQ</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>First(): throws InvalidOperationException if no element matches. Use when: you KNOW an element exists and its absence is a bug. FirstOrDefault(): returns null (reference type) or default value (0 for int) if no match. Use when: element might not exist — check for null before using result. ZenCampus: GetStudent by AdmissionNumber — use FirstOrDefault, then check if null (student might have left school). Getting CURRENT_TERM — use First (always should exist — bug if missing).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">Explain deferred vs immediate LINQ execution.</span><span class="st">LINQ</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Deferred execution: query is NOT run when defined. It runs when iterated. var q = students.Where(s => s.IsActive) — no execution yet. q.ToList() — NOW it runs. This means if you add students after defining q but before .ToList(), they're included. Immediate execution: ToList(), ToArray(), Count(), Sum(), First() — force execution immediately. Bug: var q = students.Where(...); // modify students; q.ToList() — modified students included! Use .ToList() immediately if you want a snapshot.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">When should you use HashSet instead of List?</span><span class="st">Collections</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>HashSet: stores UNIQUE values, O(1) Contains/Add. Use when: 1) Need to check membership frequently (presentStudentIds.Contains(id)). 2) Need unique values (no duplicates). 3) Set operations needed (Union, Intersect, Except). ZenCampus: tracking which students have paid fee — HashSet&lt;int&gt; paidStudentIds. Contains() check for each student: O(1). If List: O(n) for each check. For 50,000 students: HashSet wins massively.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">How does GroupBy work in LINQ? Give a ZenCampus example.</span><span class="st">LINQ</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>// Group students by class, get count per class
+var classSummary = students
+    .GroupBy(s => s.ClassId)
+    .Select(g => new {
+        ClassId = g.Key,          // the grouping key
+        StudentCount = g.Count(),
+        TotalFee = g.Sum(s => s.FeeAmount),
+        ActiveCount = g.Count(s => s.IsActive)
+    })
+    .OrderBy(x => x.ClassId)
+    .ToList();
+// g = IGrouping — acts like a List + has Key property
+// g.Key = ClassId value for this group</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">What is the difference between IEnumerable&lt;T&gt; and List&lt;T&gt;?</span><span class="st">Collections</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>IEnumerable&lt;T&gt;: interface. Represents a sequence that can be iterated. Read-only, forward-only. Supports foreach and LINQ. Can be lazy (not materialized). List&lt;T&gt; implements IEnumerable&lt;T&gt; plus adds: indexing, Add/Remove, Sort, Count. Method signatures: return IEnumerable&lt;Student&gt; when caller only needs to iterate. Return List&lt;Student&gt; when caller needs Add/Remove/index. In EF Core: IQueryable&lt;T&gt; is the DB version — stays as SQL until ToList() called.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">How do you implement pagination using LINQ?</span><span class="st">LINQ</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>// Page 1 = first 20 items, Page 2 = items 21-40, etc.
+int page = 2;
+int pageSize = 20;
+
+var pagedStudents = students
+    .Where(s => s.SchoolId == schoolId)
+    .OrderBy(s => s.Name)        // always sort before paging!
+    .Skip((page - 1) * pageSize) // skip previous pages
+    .Take(pageSize)              // take current page
+    .ToList();
+
+// In EF Core: same LINQ translates to SQL
+// SELECT * FROM Students
+// ORDER BY Name
+// OFFSET 20 ROWS FETCH NEXT 20 ROWS ONLY</code></pre></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. What exception is thrown if you modify a List while using foreach?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','IndexOutOfRangeException is thrown when array index is out of bounds.')">IndexOutOfRangeException</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! InvalidOperationException: "Collection was modified; enumeration operation may not execute." Foreach detects any modification to the collection being iterated.')">InvalidOperationException</button>
+    <button class="qb" onclick="ans(this,'wrong','NullReferenceException occurs when you access a member of a null object.')">NullReferenceException</button>
+    <button class="qb" onclick="ans(this,'wrong','No exception — code continues but with wrong results.')">No exception, but unexpected behavior</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What is the time complexity of Dictionary lookup vs List search?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Both have the same performance in different scenarios.')">Both are O(n)</button>
+    <button class="qb" onclick="ans(this,'wrong','List has O(1) only for index access, not key-based search.')">Both are O(1)</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Dictionary ContainsKey/TryGetValue = O(1) hash lookup. List FirstOrDefault (searching by value/condition) = O(n) linear scan. For 50,000 student lookup by admission number: Dictionary is vastly faster.')">Dictionary = O(1), List search = O(n)</button>
+    <button class="qb" onclick="ans(this,'wrong','Dictionary is O(1) for lookups, not O(log n).')">Dictionary = O(log n), List = O(n)</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. What is the difference between .Any() and .Count() > 0 in LINQ?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Both return whether there are matching items — just with different performance.')">They are exactly the same</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Any() stops at the FIRST match — O(1) best case. Count() > 0 scans ALL elements to get total count, then compares. Always use Any() for existence checks — it\'s faster, especially for large collections or DB queries.')">Any() stops at first match (faster); Count() > 0 scans everything</button>
+    <button class="qb" onclick="ans(this,'wrong','Any() returns bool, Count() returns int — but that\'s not the key difference in performance.')">Any() returns bool, Count() returns int</button>
+    <button class="qb" onclick="ans(this,'wrong','Both work on collections — Any() doesn\'t need a sorted list.')">Any() requires sorted collection</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. How do you get distinct values from a list using LINQ?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Unique() is not a LINQ method in C#.')">students.Unique(s => s.ClassId)</button>
+    <button class="qb" onclick="ans(this,'wrong','RemoveDuplicates() is not a LINQ method.')">students.RemoveDuplicates()</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! .Distinct() removes duplicates. For complex objects, either override Equals/GetHashCode or use .DistinctBy(s => s.ClassId) (.NET 6+) to distinct by a specific property.')">students.Select(s => s.ClassId).Distinct().ToList() or .DistinctBy()</button>
+    <button class="qb" onclick="ans(this,'wrong','Deduplicate() is not a standard LINQ method.')">students.Deduplicate()</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I know when to use for vs foreach vs while</li>
+    <li onclick="ck(this)"><input type="checkbox">I can use break and continue correctly in loops</li>
+    <li onclick="ck(this)"><input type="checkbox">I can add, remove, and find in List&lt;T&gt;</li>
+    <li onclick="ck(this)"><input type="checkbox">I use Dictionary for O(1) key-based lookups</li>
+    <li onclick="ck(this)"><input type="checkbox">I use HashSet for unique values and fast membership check</li>
+    <li onclick="ck(this)"><input type="checkbox">I can chain LINQ: Where().OrderBy().Take().Select().ToList()</li>
+    <li onclick="ck(this)"><input type="checkbox">I know FirstOrDefault vs First difference</li>
+    <li onclick="ck(this)"><input type="checkbox">I can implement pagination with Skip/Take</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Loops + Collections Complete ✓ — for, foreach, List, Dictionary, LINQ!</p>
+  <p>Accent: Red #b91c1c · Next: JavaScript Basics</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

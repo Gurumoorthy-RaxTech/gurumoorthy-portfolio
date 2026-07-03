@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 2 — OOPs · Interview Syntax Bible · ZenCampus</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; line-height: 1.7; }
+  header { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); padding: 32px 20px; text-align: center; border-bottom: 3px solid #e94560; }
+  header h1 { font-size: 2em; color: #e94560; text-shadow: 0 0 20px #e9456088; }
+  header p  { color: #a0a0c0; margin-top: 8px; font-size: 1.0em; }
+  .badge { display: inline-block; background: #e94560; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.78em; margin: 4px; }
+  .container { max-width: 1150px; margin: 0 auto; padding: 20px; }
+
+  .section { margin: 36px 0; border-radius: 12px; overflow: hidden; border: 1px solid #2a2a4a; }
+  .section-header { padding: 16px 24px; font-size: 1.25em; font-weight: bold; display: flex; align-items: center; gap: 12px; }
+  .section-body { padding: 20px 24px; background: #13132a; }
+  .oops-sec .section-header { background: linear-gradient(90deg, #1a1a50, #2980b9); }
+  .pillar { margin: 28px 0; border-radius: 10px; border: 1px solid #2a2a4a; overflow: hidden; }
+  .pillar-header { padding: 13px 20px; font-size: 1.1em; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+  .p1 .pillar-header { background: linear-gradient(90deg, #1a3d2a, #27ae60); }
+  .p2 .pillar-header { background: linear-gradient(90deg, #1a2a50, #2980b9); }
+  .p3 .pillar-header { background: linear-gradient(90deg, #3d1a3a, #8e44ad); }
+  .p4 .pillar-header { background: linear-gradient(90deg, #3d2a1a, #e67e22); }
+  .pillar-body { padding: 18px 20px; background: #13132a; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; margin-top: 16px; }
+  .card { background: #1a1a35; border-radius: 10px; padding: 18px; border-left: 4px solid #e94560; transition: transform 0.2s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px #e9456033; }
+  .card-title { font-size: 1.05em; font-weight: bold; color: #fff; margin-bottom: 8px; }
+  .card-sub   { font-size: 0.78em; color: #e94560; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+
+  pre { background: #0d1117; border-radius: 8px; padding: 14px; overflow-x: auto; font-size: 0.82em; font-family: 'Consolas', monospace; color: #e0e0e0; margin: 10px 0; border: 1px solid #2a2a4a; line-height: 1.6; }
+  .kw   { color: #569cd6; }
+  .str  { color: #ce9178; }
+  .cmt  { color: #6a9955; }
+  .num  { color: #b5cea8; }
+  .typ  { color: #4ec9b0; }
+  .fn   { color: #dcdcaa; }
+  .prop { color: #9cdcfe; }
+  code  { background: #0d1117; color: #f97316; padding: 2px 7px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: 0.83em; }
+
+  .movie-ref  { background: #1a0f2e; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: 0.84em; color: #c39bd3; border-left: 3px solid #8e44ad; }
+  .movie-ref .film { color: #f39c12; font-weight: bold; }
+  .zencampus  { background: #0a2010; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: 0.84em; color: #a8e6cf; border-left: 3px solid #27ae60; }
+  .zencampus .label { color: #2ecc71; font-weight: bold; font-size: 0.8em; }
+  .interview-qa { background: #1a0a0a; border-radius: 6px; padding: 12px 14px; margin: 10px 0; border-left: 3px solid #e74c3c; }
+  .interview-qa .q { color: #e74c3c; font-size: 0.8em; font-weight: bold; }
+  .interview-qa .a { color: #c0c0c0; font-size: 0.85em; margin-top: 4px; }
+  .tanglish   { background: #1a1500; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: 0.84em; color: #f9ca24; border-left: 3px solid #f9ca24; }
+  .trap       { background: #1a0000; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: 0.84em; color: #ff6b6b; border-left: 3px solid #e74c3c; }
+  .trap .label { color: #e74c3c; font-weight: bold; }
+  .tip-box    { background: #1a1000; border: 1px solid #f39c12; border-radius: 8px; padding: 14px; margin: 14px 0; }
+  .tip-box .tip-title { color: #f39c12; font-weight: bold; margin-bottom: 6px; }
+  .vs-box     { background: #0d1117; border-radius: 8px; padding: 14px; margin: 10px 0; border: 1px solid #2a2a4a; }
+  .vs-box h4  { color: #74b9ff; margin-bottom: 8px; font-size: 0.9em; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.84em; }
+  th { background: #1e3a5f; color: #74b9ff; padding: 10px; text-align: left; }
+  td { padding: 8px 10px; border-bottom: 1px solid #2a2a4a; color: #c0c0c0; }
+  tr:hover td { background: #1a1a35; }
+  h3 { color: #74b9ff; margin: 18px 0 10px; font-size: 1.0em; }
+  .kw-tag { display: inline-block; background: #0d3b5e; color: #74b9ff; padding: 2px 9px; border-radius: 4px; font-size: 0.73em; margin: 2px; font-family: monospace; }
+
+  footer { text-align: center; padding: 30px; color: #555; border-top: 1px solid #2a2a4a; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔷 Part 2 — OOPs: 4 Pillars</h1>
+  <p>Encapsulation · Inheritance · Polymorphism · Abstraction · Interface · Abstract Class · Sealed</p>
+  <div style="margin-top:10px">
+    <span class="badge">Encapsulation</span>
+    <span class="badge">Inheritance</span>
+    <span class="badge">Polymorphism</span>
+    <span class="badge">Abstraction</span>
+    <span class="badge">Interface</span>
+    <span class="badge">Abstract Class</span>
+    <span class="badge">ZenCampus Live</span>
+    <span class="badge">🎬 Tamil Movie</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="tip-box" style="margin-top:20px">
+    <div class="tip-title">🎬 Master Memory — Dasavathaaram (2008) — Kamal Hassan 10 Roles</div>
+    <p>Kamal oru person — 10 different avatars. OOPs-um same!
+    <strong>Encapsulation</strong> = oru character's secrets (private fields).
+    <strong>Inheritance</strong> = base character from previous life.
+    <strong>Polymorphism</strong> = same name, different behaviour per role.
+    <strong>Abstraction</strong> = audience paarkkum role only — internal makeup hidden!
+    </p>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PILLAR 1 — ENCAPSULATION
+  ═══════════════════════════════════════ -->
+  <div class="section oops-sec" id="oops">
+    <div class="section-header">🔷 OOPs — Object Oriented Programming in C#</div>
+    <div class="section-body">
+
+      <div class="pillar p1" id="encapsulation">
+        <div class="pillar-header">🔒 Pillar 1 — Encapsulation (Data Hiding)</div>
+        <div class="pillar-body">
+
+          <div class="movie-ref">
+            <span class="film">🎬 Anniyan (2005):</span>
+            Ambi's inner personalities hidden from outside world — only controlled methods expose behaviour.
+            Encapsulation = private data, public methods only. Nobody can directly touch Ambi's "evil mode"!
+          </div>
+
+          <div class="card-grid">
+
+            <div class="card">
+              <div class="card-sub">Syntax — Access Modifiers</div>
+              <div class="card-title">Encapsulation — Properties &amp; Fields</div>
+              <pre><span class="kw">public class</span> <span class="typ">Student</span>
+{
+    <span class="cmt">// private field — outside access illai</span>
+    <span class="kw">private</span> <span class="kw">string</span> <span class="prop">_name</span>;
+    <span class="kw">private</span> <span class="kw">decimal</span> <span class="prop">_feeBalance</span>;
+
+    <span class="cmt">// public property — controlled access</span>
+    <span class="kw">public string</span> <span class="prop">Name</span>
+    {
+        <span class="kw">get</span> =&gt; <span class="prop">_name</span>;
+        <span class="kw">set</span>
+        {
+            <span class="kw">if</span> (<span class="kw">string</span>.<span class="fn">IsNullOrEmpty</span>(<span class="prop">value</span>))
+                <span class="kw">throw new</span> <span class="typ">ArgumentException</span>(<span class="str">"Name required"</span>);
+            <span class="prop">_name</span> = <span class="prop">value</span>;
+        }
+    }
+
+    <span class="cmt">// read-only property</span>
+    <span class="kw">public decimal</span> <span class="prop">FeeBalance</span> =&gt; <span class="prop">_feeBalance</span>;
+
+    <span class="cmt">// auto property (short form)</span>
+    <span class="kw">public int</span>    <span class="prop">RollNo</span>   { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public string</span> <span class="prop">Class</span>    { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public bool</span>   <span class="prop">IsActive</span> { <span class="kw">get</span>; <span class="kw">private set</span>; }
+
+    <span class="cmt">// method — controlled mutation</span>
+    <span class="kw">public void</span> <span class="fn">PayFee</span>(<span class="kw">decimal</span> <span class="prop">amount</span>)
+    {
+        <span class="kw">if</span> (<span class="prop">amount</span> &lt;= <span class="num">0</span>)
+            <span class="kw">throw new</span> <span class="typ">ArgumentException</span>(<span class="str">"Invalid amount"</span>);
+        <span class="prop">_feeBalance</span> -= <span class="prop">amount</span>;
+    }
+}</pre>
+              <div class="zencampus">
+                <div class="label">🏫 ZenCampus Usage:</div>
+                <pre><span class="kw">var</span> <span class="prop">s</span> = <span class="kw">new</span> <span class="typ">Student</span>();
+<span class="prop">s</span>.<span class="prop">Name</span> = <span class="str">"Guru"</span>;    <span class="cmt">// setter validates</span>
+<span class="prop">s</span>.<span class="fn">PayFee</span>(<span class="num">5000m</span>);   <span class="cmt">// controlled method</span>
+
+<span class="cmt">// s._feeBalance = -999; ← compile error!</span></pre>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-sub">Access Modifiers Quick Ref</div>
+              <div class="card-title">Access Levels — Who Can See What</div>
+              <table>
+                <tr><th>Modifier</th><th>Accessible From</th><th>Use Case</th></tr>
+                <tr><td><code>public</code></td><td>Everywhere</td><td>API contracts, DTOs</td></tr>
+                <tr><td><code>private</code></td><td>Same class only</td><td>Internal fields, helpers</td></tr>
+                <tr><td><code>protected</code></td><td>Class + subclasses</td><td>Base class shared logic</td></tr>
+                <tr><td><code>internal</code></td><td>Same assembly</td><td>Service layer internals</td></tr>
+                <tr><td><code>protected internal</code></td><td>Assembly or subclass</td><td>Framework extensions</td></tr>
+                <tr><td><code>private protected</code></td><td>Same class + subclass in assembly</td><td>Strict base class</td></tr>
+              </table>
+              <div class="interview-qa">
+                <div class="q">❓ Interview Q: What is Encapsulation? Give real example.</div>
+                <div class="a">Encapsulation = bundle data + methods, restrict direct access. ZenCampus Student class-la <code>_feeBalance</code> private — outside directly change panna mudiyaadu. <code>PayFee()</code> method moolama matum change aagum — validation inside!</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PILLAR 2 — INHERITANCE
+      ═══════════════════════════════════════ -->
+      <div class="pillar p2" id="inheritance">
+        <div class="pillar-header">🧬 Pillar 2 — Inheritance (Code Reuse)</div>
+        <div class="pillar-body">
+
+          <div class="movie-ref">
+            <span class="film">🎬 Magadheera (2009):</span>
+            Karthik — modern hero — inherits the warrior soul from previous life Ramaraju. Same core qualities, new capabilities added!
+            Inheritance = child class gets parent's properties + can add/override its own behaviour.
+          </div>
+
+          <div class="card-grid">
+
+            <div class="card">
+              <div class="card-sub">Syntax</div>
+              <div class="card-title">Base Class &amp; Derived Class</div>
+              <pre><span class="cmt">// Base class (Parent)</span>
+<span class="kw">public class</span> <span class="typ">Person</span>
+{
+    <span class="kw">public</span> <span class="kw">string</span> <span class="prop">Name</span>    { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public string</span> <span class="prop">Email</span>   { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public string</span> <span class="prop">Phone</span>   { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    <span class="kw">public virtual string</span> <span class="fn">GetRole</span>()
+        =&gt; <span class="str">"Person"</span>;
+
+    <span class="kw">public void</span> <span class="fn">SendSms</span>(<span class="kw">string</span> <span class="prop">msg</span>)
+    {
+        <span class="cmt">// SMS logic — reused by all</span>
+        <span class="typ">SmsGateway</span>.<span class="fn">Send</span>(<span class="prop">Phone</span>, <span class="prop">msg</span>);
+    }
+}
+
+<span class="cmt">// Derived class (Child) — : Person</span>
+<span class="kw">public class</span> <span class="typ">Student</span> : <span class="typ">Person</span>
+{
+    <span class="kw">public int</span>    <span class="prop">RollNo</span>  { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public string</span> <span class="prop">Class</span>   { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    <span class="cmt">// override parent method</span>
+    <span class="kw">public override string</span> <span class="fn">GetRole</span>()
+        =&gt; <span class="str">"Student"</span>;
+}
+
+<span class="kw">public class</span> <span class="typ">Staff</span> : <span class="typ">Person</span>
+{
+    <span class="kw">public string</span> <span class="prop">Department</span> { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public decimal</span> <span class="prop">Salary</span>    { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    <span class="kw">public override string</span> <span class="fn">GetRole</span>()
+        =&gt; <span class="str">"Staff"</span>;
+}</pre>
+              <div class="zencampus">
+                <div class="label">🏫 ZenCampus — Reuse SendSms:</div>
+                <pre><span class="kw">var</span> <span class="prop">student</span> = <span class="kw">new</span> <span class="typ">Student</span>
+{
+    <span class="prop">Name</span>  = <span class="str">"Guru"</span>,
+    <span class="prop">Phone</span> = <span class="str">"9876543210"</span>,
+    <span class="prop">Class</span> = <span class="str">"10A"</span>
+};
+<span class="cmt">// SendSms inherited from Person!</span>
+<span class="prop">student</span>.<span class="fn">SendSms</span>(<span class="str">"Fee due tomorrow"</span>);
+<span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">student</span>.<span class="fn">GetRole</span>());
+<span class="cmt">// Output: "Student"</span></pre>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-sub">Syntax</div>
+              <div class="card-title">base keyword · Constructor Chaining</div>
+              <pre><span class="kw">public class</span> <span class="typ">Person</span>
+{
+    <span class="kw">public string</span> <span class="prop">Name</span> { <span class="kw">get</span>; }
+
+    <span class="cmt">// Base constructor</span>
+    <span class="kw">public</span> <span class="fn">Person</span>(<span class="kw">string</span> <span class="prop">name</span>)
+    {
+        <span class="prop">Name</span> = <span class="prop">name</span>;
+    }
+
+    <span class="kw">public virtual string</span> <span class="fn">Describe</span>()
+        =&gt; <span class="str">$"Name: {Name}"</span>;
+}
+
+<span class="kw">public class</span> <span class="typ">Student</span> : <span class="typ">Person</span>
+{
+    <span class="kw">public int</span> <span class="prop">RollNo</span> { <span class="kw">get</span>; }
+
+    <span class="cmt">// Call base constructor with : base()</span>
+    <span class="kw">public</span> <span class="fn">Student</span>(<span class="kw">string</span> <span class="prop">name</span>, <span class="kw">int</span> <span class="prop">roll</span>)
+        : <span class="kw">base</span>(<span class="prop">name</span>)   <span class="cmt">// calls Person(name)</span>
+    {
+        <span class="prop">RollNo</span> = <span class="prop">roll</span>;
+    }
+
+    <span class="kw">public override string</span> <span class="fn">Describe</span>()
+        <span class="cmt">// base.Describe() — call parent method</span>
+        =&gt; <span class="str">$"{base.Describe()}, Roll: {RollNo}"</span>;
+}
+
+<span class="cmt">// Usage</span>
+<span class="kw">var</span> <span class="prop">s</span> = <span class="kw">new</span> <span class="typ">Student</span>(<span class="str">"Guru"</span>, <span class="num">42</span>);
+<span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">s</span>.<span class="fn">Describe</span>());
+<span class="cmt">// "Name: Guru, Roll: 42"</span></pre>
+              <div class="interview-qa">
+                <div class="q">❓ Interview Q: What is base keyword?</div>
+                <div class="a"><code>base()</code> — parent constructor call. <code>base.Method()</code> — parent method call from child. ZenCampus Student constructor-la Person constructor call panna <code>: base(name)</code> use panrom.</div>
+              </div>
+              <div class="trap">
+                <div class="label">⚠️ C# Trap: Multiple Inheritance Not Allowed!</div>
+                <code>class A : B, C</code> — compile error. C# allows only single class inheritance. Multiple interfaces is OK: <code>class A : B, IFoo, IBar</code>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PILLAR 3 — POLYMORPHISM
+      ═══════════════════════════════════════ -->
+      <div class="pillar p3" id="polymorphism">
+        <div class="pillar-header">🎭 Pillar 3 — Polymorphism (Many Forms)</div>
+        <div class="pillar-body">
+
+          <div class="movie-ref">
+            <span class="film">🎬 Vikram (2022):</span>
+            Vikram — same name, different identities in different contexts. Polymorphism = same method name,
+            different behaviour depending on the object type. Runtime-la yaar irukkaanganu decide aagum!
+          </div>
+
+          <div class="card-grid">
+
+            <!-- METHOD OVERRIDING -->
+            <div class="card">
+              <div class="card-sub">Runtime Polymorphism</div>
+              <div class="card-title">Method Overriding — virtual / override</div>
+              <pre><span class="kw">public class</span> <span class="typ">FeeCalculator</span>
+{
+    <span class="cmt">// virtual = child override panalaam</span>
+    <span class="kw">public virtual decimal</span> <span class="fn">Calculate</span>(<span class="typ">Student</span> <span class="prop">s</span>)
+        =&gt; <span class="num">15000m</span>; <span class="cmt">// default fee</span>
+}
+
+<span class="kw">public class</span> <span class="typ">HostelFeeCalc</span> : <span class="typ">FeeCalculator</span>
+{
+    <span class="kw">public override decimal</span> <span class="fn">Calculate</span>(<span class="typ">Student</span> <span class="prop">s</span>)
+        =&gt; <span class="num">45000m</span>;
+}
+
+<span class="kw">public class</span> <span class="typ">BusFeeCalc</span> : <span class="typ">FeeCalculator</span>
+{
+    <span class="kw">public override decimal</span> <span class="fn">Calculate</span>(<span class="typ">Student</span> <span class="prop">s</span>)
+        =&gt; <span class="num">20000m</span>;
+}
+
+<span class="cmt">// Runtime polymorphism in action</span>
+<span class="typ">FeeCalculator</span> <span class="prop">calc</span> = <span class="prop">student</span>.<span class="prop">Category</span> <span class="kw">switch</span>
+{
+    <span class="str">"Hosteller"</span> =&gt; <span class="kw">new</span> <span class="typ">HostelFeeCalc</span>(),
+    <span class="str">"Bus"</span>       =&gt; <span class="kw">new</span> <span class="typ">BusFeeCalc</span>(),
+    _           =&gt; <span class="kw">new</span> <span class="typ">FeeCalculator</span>()
+};
+
+<span class="cmt">// Same method call — different result!</span>
+<span class="kw">decimal</span> <span class="prop">fee</span> = <span class="prop">calc</span>.<span class="fn">Calculate</span>(<span class="prop">student</span>);</pre>
+              <div class="interview-qa">
+                <div class="q">❓ Interview Q: virtual vs override?</div>
+                <div class="a"><code>virtual</code> = parent says "I can be overridden". <code>override</code> = child says "I am overriding". Both needed — oru side matum pottuchitta work aagathu!</div>
+              </div>
+            </div>
+
+            <!-- METHOD OVERLOADING -->
+            <div class="card">
+              <div class="card-sub">Compile-Time Polymorphism</div>
+              <div class="card-title">Method Overloading — Same Name, Different Params</div>
+              <pre><span class="kw">public class</span> <span class="typ">ReportService</span>
+{
+    <span class="cmt">// Overloading — same name, diff params</span>
+    <span class="kw">public</span> <span class="typ">Report</span> <span class="fn">Generate</span>(<span class="kw">int</span> <span class="prop">studentId</span>)
+    {
+        <span class="kw">return</span> <span class="fn">GenerateForStudent</span>(<span class="prop">studentId</span>);
+    }
+
+    <span class="kw">public</span> <span class="typ">Report</span> <span class="fn">Generate</span>(<span class="kw">string</span> <span class="prop">className</span>)
+    {
+        <span class="kw">return</span> <span class="fn">GenerateForClass</span>(<span class="prop">className</span>);
+    }
+
+    <span class="kw">public</span> <span class="typ">Report</span> <span class="fn">Generate</span>(
+        <span class="kw">int</span> <span class="prop">studentId</span>, <span class="typ">DateRange</span> <span class="prop">range</span>)
+    {
+        <span class="kw">return</span> <span class="fn">GenerateWithDates</span>(<span class="prop">studentId</span>, <span class="prop">range</span>);
+    }
+}
+
+<span class="cmt">// Caller — same method name!</span>
+<span class="prop">_report</span>.<span class="fn">Generate</span>(<span class="num">42</span>);
+<span class="prop">_report</span>.<span class="fn">Generate</span>(<span class="str">"10A"</span>);
+<span class="prop">_report</span>.<span class="fn">Generate</span>(<span class="num">42</span>, <span class="prop">dateRange</span>);</pre>
+              <div class="zencampus">
+                <div class="label">🏫 ZenCampus Example:</div>
+                <pre><span class="cmt">// Same Generate() — different contexts</span>
+<span class="prop">_reportSvc</span>.<span class="fn">Generate</span>(<span class="prop">studentId</span>);
+<span class="prop">_reportSvc</span>.<span class="fn">Generate</span>(<span class="str">"Class 10"</span>);
+<span class="cmt">// Compiler decides which to call</span></pre>
+              </div>
+              <div class="interview-qa">
+                <div class="q">❓ Interview Q: Overloading vs Overriding?</div>
+                <div class="a"><strong>Overloading</strong> = same class, same name, different parameters — compile time. <strong>Overriding</strong> = parent-child, same signature — runtime. Interview-la table draw panni explain pannu!</div>
+              </div>
+            </div>
+
+            <!-- OPERATOR OVERLOADING -->
+            <div class="card">
+              <div class="card-sub">Bonus</div>
+              <div class="card-title">Operator Overloading + is / as Casting</div>
+              <pre><span class="cmt">// is — type check</span>
+<span class="typ">Person</span> <span class="prop">p</span> = <span class="kw">new</span> <span class="typ">Student</span>();
+<span class="kw">if</span> (<span class="prop">p</span> <span class="kw">is</span> <span class="typ">Student</span> <span class="prop">stu</span>)
+{
+    <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">stu</span>.<span class="prop">RollNo</span>);
+}
+
+<span class="cmt">// as — safe cast (null if fails)</span>
+<span class="typ">Student</span>? <span class="prop">s</span> = <span class="prop">p</span> <span class="kw">as</span> <span class="typ">Student</span>;
+<span class="kw">if</span> (<span class="prop">s</span> <span class="kw">is not null</span>)
+    <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">s</span>.<span class="prop">Class</span>);
+
+<span class="cmt">// Pattern matching (C# 9+)</span>
+<span class="kw">switch</span> (<span class="prop">p</span>)
+{
+    <span class="kw">case</span> <span class="typ">Student</span> { <span class="prop">Class</span>: <span class="str">"10A"</span> } <span class="prop">s10</span>:
+        <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"10A student!"</span>);
+        <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="typ">Staff</span> <span class="prop">staff</span>:
+        <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">staff</span>.<span class="prop">Department</span>);
+        <span class="kw">break</span>;
+}</pre>
+              <div class="trap">
+                <div class="label">⚠️ Trap: Direct cast vs as</div>
+                <code>(Student)person</code> — throws InvalidCastException if wrong type.<br>
+                <code>person as Student</code> — returns null if wrong type. Safe!
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PILLAR 4 — ABSTRACTION
+      ═══════════════════════════════════════ -->
+      <div class="pillar p4" id="abstraction">
+        <div class="pillar-header">🎨 Pillar 4 — Abstraction (Hide Complexity, Show Contract)</div>
+        <div class="pillar-body">
+
+          <div class="movie-ref">
+            <span class="film">🎬 Enthiran (2010) — Chitti:</span>
+            Nee Chitti-ku "Walk" solluva — how the motor works, enna circuit-a use panra nu theriyaadu.
+            Abstraction = "What it does" matum expose pannu, "How it does" hide pannu.
+            Abstract class + Interface = contract define panrom!
+          </div>
+
+          <div class="card-grid">
+
+            <!-- ABSTRACT CLASS -->
+            <div class="card">
+              <div class="card-sub">Syntax</div>
+              <div class="card-title">Abstract Class</div>
+              <pre><span class="cmt">// abstract class — cannot instantiate directly</span>
+<span class="kw">public abstract class</span> <span class="typ">BaseReport</span>
+{
+    <span class="cmt">// concrete method — all children inherit</span>
+    <span class="kw">public void</span> <span class="fn">AddHeader</span>(<span class="kw">string</span> <span class="prop">title</span>)
+    {
+        <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="str">$"=== {title} ==="</span>);
+    }
+
+    <span class="cmt">// abstract method — child MUST implement</span>
+    <span class="kw">public abstract void</span> <span class="fn">GenerateBody</span>();
+
+    <span class="cmt">// virtual method — child CAN override</span>
+    <span class="kw">public virtual string</span> <span class="fn">GetFooter</span>()
+        =&gt; <span class="str">"ZenCampus School ERP"</span>;
+}
+
+<span class="kw">public class</span> <span class="typ">AttendanceReport</span> : <span class="typ">BaseReport</span>
+{
+    <span class="cmt">// Must implement abstract method</span>
+    <span class="kw">public override void</span> <span class="fn">GenerateBody</span>()
+    {
+        <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Attendance data..."</span>);
+    }
+}
+
+<span class="kw">public class</span> <span class="typ">FeeReport</span> : <span class="typ">BaseReport</span>
+{
+    <span class="kw">public override void</span> <span class="fn">GenerateBody</span>()
+    {
+        <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Fee data..."</span>);
+    }
+
+    <span class="kw">public override string</span> <span class="fn">GetFooter</span>()
+        =&gt; <span class="str">"Finance Dept — ZenCampus"</span>;
+}
+
+<span class="cmt">// new BaseReport(); ← compile ERROR!</span>
+<span class="typ">BaseReport</span> <span class="prop">r</span> = <span class="kw">new</span> <span class="typ">AttendanceReport</span>(); <span class="cmt">// OK</span>
+<span class="prop">r</span>.<span class="fn">AddHeader</span>(<span class="str">"Monthly Report"</span>);
+<span class="prop">r</span>.<span class="fn">GenerateBody</span>();</pre>
+              <div class="interview-qa">
+                <div class="q">❓ Interview Q: Abstract class vs Interface?</div>
+                <div class="a">Abstract class = partial implementation + shared state possible. Interface = pure contract, no state. Use abstract class when children share common code (BaseReport.AddHeader). Use interface for contracts across unrelated classes.</div>
+              </div>
+            </div>
+
+            <!-- INTERFACE -->
+            <div class="card">
+              <div class="card-sub">Syntax</div>
+              <div class="card-title">Interface — Pure Contract</div>
+              <pre><span class="cmt">// Interface — I prefix convention</span>
+<span class="kw">public interface</span> <span class="typ">IStudentRepository</span>
+{
+    <span class="typ">Task</span>&lt;<span class="typ">Student</span>&gt;       <span class="fn">GetByIdAsync</span>(<span class="kw">int</span> <span class="prop">id</span>);
+    <span class="typ">Task</span>&lt;<span class="typ">List</span>&lt;<span class="typ">Student</span>&gt;&gt; <span class="fn">GetAllAsync</span>();
+    <span class="typ">Task</span>                <span class="fn">AddAsync</span>(<span class="typ">Student</span> <span class="prop">s</span>);
+    <span class="typ">Task</span>                <span class="fn">UpdateAsync</span>(<span class="typ">Student</span> <span class="prop">s</span>);
+    <span class="typ">Task</span>                <span class="fn">DeleteAsync</span>(<span class="kw">int</span> <span class="prop">id</span>);
+}
+
+<span class="cmt">// Concrete implementation</span>
+<span class="kw">public class</span> <span class="typ">StudentRepository</span>
+    : <span class="typ">IStudentRepository</span>
+{
+    <span class="kw">private readonly</span> <span class="typ">IDbConnection</span> <span class="prop">_db</span>;
+
+    <span class="kw">public</span> <span class="fn">StudentRepository</span>(<span class="typ">IDbConnection</span> <span class="prop">db</span>)
+        =&gt; <span class="prop">_db</span> = <span class="prop">db</span>;
+
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">Student</span>&gt; <span class="fn">GetByIdAsync</span>(<span class="kw">int</span> <span class="prop">id</span>)
+        =&gt; <span class="kw">await</span> <span class="prop">_db</span>.<span class="fn">QueryFirstOrDefaultAsync</span>&lt;<span class="typ">Student</span>&gt;(
+               <span class="str">"SELECT * FROM Students WHERE Id=@Id"</span>,
+               <span class="kw">new</span> { <span class="prop">Id</span> = <span class="prop">id</span> });
+
+    <span class="cmt">// ... other methods</span>
+}
+
+<span class="cmt">// DI Registration — Program.cs</span>
+<span class="prop">builder</span>.<span class="prop">Services</span>
+    .<span class="fn">AddScoped</span>&lt;<span class="typ">IStudentRepository</span>,
+               <span class="typ">StudentRepository</span>&gt;();</pre>
+              <div class="zencampus">
+                <div class="label">🏫 ZenCampus — Controller uses Interface:</div>
+                <pre><span class="kw">public class</span> <span class="typ">StudentController</span>
+{
+    <span class="kw">private readonly</span> <span class="typ">IStudentRepository</span> <span class="prop">_repo</span>;
+
+    <span class="cmt">// depends on interface, not concrete class</span>
+    <span class="kw">public</span> <span class="fn">StudentController</span>(
+        <span class="typ">IStudentRepository</span> <span class="prop">repo</span>)
+        =&gt; <span class="prop">_repo</span> = <span class="prop">repo</span>;
+
+    <span class="kw">public async</span> <span class="typ">Task</span>&lt;<span class="typ">IActionResult</span>&gt; <span class="fn">Get</span>(<span class="kw">int</span> <span class="prop">id</span>)
+    {
+        <span class="kw">var</span> <span class="prop">student</span> = <span class="kw">await</span> <span class="prop">_repo</span>.<span class="fn">GetByIdAsync</span>(<span class="prop">id</span>);
+        <span class="kw">return</span> <span class="fn">Ok</span>(<span class="prop">student</span>);
+    }
+}</pre>
+              </div>
+            </div>
+
+            <!-- INTERFACE vs ABSTRACT -->
+            <div class="card">
+              <div class="card-sub">Comparison</div>
+              <div class="card-title">Interface vs Abstract Class — Full Comparison</div>
+              <table>
+                <tr><th>Feature</th><th>Interface</th><th>Abstract Class</th></tr>
+                <tr><td>Instantiate</td><td>❌ No</td><td>❌ No</td></tr>
+                <tr><td>Multiple</td><td>✅ Yes (many)</td><td>❌ One only</td></tr>
+                <tr><td>Fields</td><td>❌ No</td><td>✅ Yes</td></tr>
+                <tr><td>Constructor</td><td>❌ No</td><td>✅ Yes</td></tr>
+                <tr><td>Access modifier</td><td>Public default</td><td>Any</td></tr>
+                <tr><td>Default impl</td><td>✅ C# 8+ (DIM)</td><td>✅ Yes (virtual)</td></tr>
+                <tr><td>When to use</td><td>Contract for unrelated types</td><td>Shared base for related types</td></tr>
+              </table>
+              <div class="tanglish">
+                💡 <strong>Golden Rule — Interview Trick:</strong><br>
+                "Can object DO this?" → Interface (ISendable, IPayable)<br>
+                "IS object a type of?" → Abstract class (BaseReport, BaseService)<br>
+                ZenCampus-la IStudentRepository = interface. BaseReport = abstract. Ithanai sollu!
+              </div>
+            </div>
+
+            <!-- SEALED CLASS -->
+            <div class="card">
+              <div class="card-sub">Syntax</div>
+              <div class="card-title">sealed Class + static Class</div>
+              <pre><span class="cmt">// sealed — no inheritance allowed</span>
+<span class="kw">public sealed class</span> <span class="typ">SchoolConfig</span>
+{
+    <span class="kw">public string</span> <span class="prop">SchoolCode</span> { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public int</span>    <span class="prop">MaxStudents</span> { <span class="kw">get</span>; <span class="kw">set</span>; }
+}
+<span class="cmt">// class MyConfig : SchoolConfig { } ← ERROR!</span>
+
+<span class="cmt">// static class — no instantiation, no inherit</span>
+<span class="kw">public static class</span> <span class="typ">DateHelper</span>
+{
+    <span class="kw">public static string</span> <span class="fn">ToDisplay</span>(<span class="typ">DateTime</span> <span class="prop">d</span>)
+        =&gt; <span class="prop">d</span>.<span class="fn">ToString</span>(<span class="str">"dd-MMM-yyyy"</span>);
+
+    <span class="kw">public static bool</span> <span class="fn">IsHoliday</span>(<span class="typ">DateTime</span> <span class="prop">d</span>)
+        =&gt; <span class="prop">d</span>.<span class="prop">DayOfWeek</span> == <span class="typ">DayOfWeek</span>.<span class="prop">Sunday</span>;
+}
+
+<span class="cmt">// Usage — no new() needed</span>
+<span class="typ">DateHelper</span>.<span class="fn">ToDisplay</span>(<span class="typ">DateTime</span>.<span class="prop">Now</span>);
+<span class="typ">DateHelper</span>.<span class="fn">IsHoliday</span>(<span class="typ">DateTime</span>.<span class="prop">Now</span>);</pre>
+              <div class="interview-qa">
+                <div class="q">❓ Interview Q: When to use sealed?</div>
+                <div class="a">Security/integrity-critical classes — prevent subclass from overriding security logic. Performance — JIT can optimise sealed methods better. <code>string</code> itself is sealed in .NET!</div>
+              </div>
+            </div>
+
+            <!-- RECORD TYPE -->
+            <div class="card">
+              <div class="card-sub">C# 9+ Modern</div>
+              <div class="card-title">record — Immutable Data Models</div>
+              <pre><span class="cmt">// record — immutable by default, value equality</span>
+<span class="kw">public record</span> <span class="typ">StudentDto</span>(
+    <span class="kw">int</span>    <span class="prop">Id</span>,
+    <span class="kw">string</span> <span class="prop">Name</span>,
+    <span class="kw">string</span> <span class="prop">Class</span>,
+    <span class="kw">decimal</span> <span class="prop">FeeBalance</span>
+);
+
+<span class="cmt">// Usage</span>
+<span class="kw">var</span> <span class="prop">dto</span> = <span class="kw">new</span> <span class="typ">StudentDto</span>(<span class="num">1</span>, <span class="str">"Guru"</span>, <span class="str">"10A"</span>, <span class="num">5000m</span>);
+
+<span class="cmt">// Value equality — records compare by value</span>
+<span class="kw">var</span> <span class="prop">dto2</span> = <span class="kw">new</span> <span class="typ">StudentDto</span>(<span class="num">1</span>, <span class="str">"Guru"</span>, <span class="str">"10A"</span>, <span class="num">5000m</span>);
+<span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">dto</span> == <span class="prop">dto2</span>); <span class="cmt">// true!</span>
+
+<span class="cmt">// with — non-destructive mutation</span>
+<span class="kw">var</span> <span class="prop">updated</span> = <span class="prop">dto</span> <span class="kw">with</span> { <span class="prop">FeeBalance</span> = <span class="num">0m</span> };</pre>
+              <div class="zencampus">
+                <div class="label">🏫 ZenCampus — API Response DTOs:</div>
+                <pre><span class="cmt">// API response — record is perfect for DTOs</span>
+<span class="kw">public record</span> <span class="typ">FeeReceiptDto</span>(
+    <span class="kw">int</span>      <span class="prop">ReceiptNo</span>,
+    <span class="kw">string</span>   <span class="prop">StudentName</span>,
+    <span class="kw">decimal</span>  <span class="prop">AmountPaid</span>,
+    <span class="typ">DateTime</span> <span class="prop">PaidOn</span>
+);</pre>
+              </div>
+              <div class="interview-qa">
+                <div class="q">❓ Interview Q: class vs record vs struct?</div>
+                <div class="a">class = reference type, mutable, reference equality. record = reference type, immutable-friendly, VALUE equality. struct = value type, stack-allocated, small data. API DTOs → record. Domain entities → class. Small primitives → struct.</div>
+              </div>
+            </div>
+
+          </div><!-- end card-grid -->
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           OOPs INTERVIEW MASTER TABLE
+      ═══════════════════════════════════════ -->
+      <h3>🎯 OOPs — Top 10 Interview Questions at a Glance</h3>
+      <table>
+        <tr><th>#</th><th>Question</th><th>1-Line Answer</th><th>ZenCampus Hook</th></tr>
+        <tr><td>1</td><td>What are 4 pillars of OOP?</td><td>Encapsulation, Inheritance, Polymorphism, Abstraction</td><td>Student / Person / FeeCalc / IStudentRepo</td></tr>
+        <tr><td>2</td><td>Encapsulation example?</td><td>Private field + public property with validation</td><td>_feeBalance private, PayFee() controlled</td></tr>
+        <tr><td>3</td><td>Inheritance in C#?</td><td>Child : Parent, single class, multi-interface</td><td>Student : Person — reuses SendSms()</td></tr>
+        <tr><td>4</td><td>Overloading vs Overriding?</td><td>Overload=compile-time, Override=runtime</td><td>Generate(id) vs Generate(class) — overload</td></tr>
+        <tr><td>5</td><td>virtual vs abstract?</td><td>virtual=optional override, abstract=must override</td><td>BaseReport.AddHeader virtual, GenerateBody abstract</td></tr>
+        <tr><td>6</td><td>Interface vs Abstract class?</td><td>Interface=contract only, Abstract=partial impl</td><td>IStudentRepo vs BaseReport</td></tr>
+        <tr><td>7</td><td>sealed class?</td><td>Prevent inheritance, security + performance</td><td>SchoolConfig sealed</td></tr>
+        <tr><td>8</td><td>is vs as?</td><td>is=type check+cast, as=safe cast null on fail</td><td>person is Student s → use s</td></tr>
+        <tr><td>9</td><td>record vs class?</td><td>record=value equality, immutable-friendly</td><td>FeeReceiptDto as record</td></tr>
+        <tr><td>10</td><td>Why interfaces for DI?</td><td>Controller depends on abstraction not impl</td><td>IStudentRepository injected in controller</td></tr>
+      </table>
+
+    </div><!-- end section-body -->
+  </div><!-- end section -->
+
+  <!-- PART 2 END -->
+  <div style="background:#13132a; border-radius:12px; padding:20px; margin:30px 0;
+              border:2px dashed #e94560; text-align:center;">
+    <p style="color:#e94560; font-size:1.1em; font-weight:bold;">✅ Part 2 Complete — OOPs: 4 Pillars</p>
+    <p style="color:#a0a0c0; margin-top:6px">
+      Covered: Encapsulation · Inheritance · Polymorphism (Override + Overload) · Abstraction · Interface · Abstract · sealed · record<br>
+      <strong>Next → Part 3: Async/Await + LINQ + Generics + Delegates</strong>
+    </p>
+  </div>
+
+</div><!-- end container -->
+
+<footer>
+  <p>ZenCampus Interview Syntax Bible · Part 2 of 7 — OOPs · Gurumoorthy M · gurumoorthymurugan@gmail.com</p>
+  <p style="margin-top:4px; font-size:0.8em">🎬 Dasavathaaram — Kamal 10 roles = OOPs 4 pillars × ZenCampus examples!</p>
+</footer>
+
+</body>
+</html>

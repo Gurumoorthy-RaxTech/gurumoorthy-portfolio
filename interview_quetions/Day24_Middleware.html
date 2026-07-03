@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 24 - Middleware & Filters | .NET Interview Prep</title>
+    <style>
+        :root {
+            --accent: #c2410c;
+            --accent-light: #fdba74;
+            --accent-mid: #ea580c;
+            --accent-dark: #7c2d12;
+            --accent-glow: rgba(194,65,12,0.3);
+            --bg: #0d0d1a;
+            --bg3: #140800;
+            --card: #1a0e07;
+            --card2: #111827;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --text-bright: #fff7ed;
+            --border: #7c2d12;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; line-height:1.6; }
+        .progress-bar { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-light)); width:0%; z-index:200; transition:width 0.1s; }
+        nav { position:sticky; top:0; z-index:100; background:rgba(13,13,26,0.96); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); padding:0.75rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+        .nav-brand { font-size:0.9rem; font-weight:700; color:var(--accent-light); }
+        .nav-links { display:flex; gap:1rem; list-style:none; }
+        .nav-links a { color:var(--text-dim); text-decoration:none; font-size:0.8rem; transition:color 0.2s; }
+        .nav-links a:hover { color:var(--accent-light); }
+        .hero { padding:4rem 2rem 2rem; text-align:center; background:radial-gradient(ellipse at top,rgba(194,65,12,0.14) 0%,transparent 70%); }
+        .day-badge { display:inline-block; background:linear-gradient(135deg,var(--accent),var(--accent-light)); color:#fff7ed; padding:0.3rem 1rem; border-radius:2rem; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; margin-bottom:1rem; }
+        .hero h1 { font-size:2.5rem; font-weight:800; background:linear-gradient(135deg,var(--accent-light),#fff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:0.5rem; }
+        .hero-sub { color:var(--text-dim); font-size:1rem; max-width:620px; margin:0 auto 1.5rem; }
+        .hero-tags { display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap; }
+        .tag { background:rgba(194,65,12,0.14); border:1px solid rgba(194,65,12,0.4); color:var(--accent-light); padding:0.25rem 0.75rem; border-radius:1rem; font-size:0.75rem; }
+        .container { max-width:1100px; margin:0 auto; padding:0 1.5rem; }
+        .section-title { font-size:1.5rem; font-weight:700; color:var(--accent-light); margin:2.5rem 0 1rem; display:flex; align-items:center; gap:0.5rem; }
+        .section-title::before { content:''; display:inline-block; width:4px; height:1.5rem; background:linear-gradient(180deg,var(--accent),var(--accent-light)); border-radius:2px; }
+        .concept-card { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; position:relative; overflow:hidden; }
+        .concept-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-light)); }
+        .concept-title { font-size:1.1rem; font-weight:700; color:var(--text-bright); margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+        pre { background:#080400; border:1px solid var(--border); border-radius:8px; padding:1rem 1.25rem; overflow-x:auto; font-family:'Cascadia Code','Fira Code',monospace; font-size:0.82rem; line-height:1.7; margin:0.75rem 0; }
+        .kw { color:#60a5fa; } .kw2 { color:#c084fc; } .str { color:#86efac; } .num { color:#fcd34d; }
+        .cmt { color:#57534e; } .attr { color:#f9a8d4; } .mth { color:#fdba74; } .cls { color:#fde68a; }
+        .info-box { background:rgba(194,65,12,0.1); border:1px solid rgba(194,65,12,0.4); border-left:4px solid var(--accent); border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .warn-box { background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.4); border-left:4px solid #f59e0b; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .danger-box { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        .good-box { background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.3); border-left:4px solid #22c55e; border-radius:0 8px 8px 0; padding:0.75rem 1rem; margin:0.75rem 0; font-size:0.9rem; }
+        table { width:100%; border-collapse:collapse; margin:0.75rem 0; font-size:0.85rem; }
+        th { background:var(--bg3); color:var(--accent-light); padding:0.6rem 0.8rem; text-align:left; border:1px solid var(--border); font-weight:600; }
+        td { padding:0.6rem 0.8rem; border:1px solid var(--border); vertical-align:top; }
+        tr:nth-child(even) td { background:rgba(255,255,255,0.02); }
+        .movie-box { background:linear-gradient(135deg,rgba(194,65,12,0.1),rgba(253,186,116,0.03)); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; display:flex; gap:1rem; align-items:flex-start; }
+        .movie-icon { font-size:2rem; flex-shrink:0; }
+        .movie-content h4 { color:var(--accent-light); font-size:0.9rem; font-weight:700; margin-bottom:0.3rem; }
+        .movie-content p { color:var(--text-dim); font-size:0.85rem; }
+        .scenario-card { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .scenario-header { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+        .scenario-q { font-size:0.95rem; font-weight:600; color:var(--text-bright); flex:1; }
+        .scenario-type { font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:1rem; font-weight:600; white-space:nowrap; flex-shrink:0; }
+        .type-prod { background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.3); }
+        .type-design { background:rgba(194,65,12,0.2); color:#fdba74; border:1px solid rgba(194,65,12,0.3); }
+        .type-perf { background:rgba(245,158,11,0.2); color:#fcd34d; border:1px solid rgba(245,158,11,0.3); }
+        .type-concept { background:rgba(168,85,247,0.2); color:#d8b4fe; border:1px solid rgba(168,85,247,0.3); }
+        .type-exp { background:rgba(34,197,94,0.2); color:#86efac; border:1px solid rgba(34,197,94,0.3); }
+        .reveal-btn { background:none; border:1px solid var(--border); color:var(--accent-light); padding:0.4rem 0.9rem; border-radius:6px; cursor:pointer; font-size:0.8rem; margin-top:0.75rem; transition:all 0.2s; display:block; }
+        .reveal-btn:hover { background:var(--accent); border-color:var(--accent); color:#fff7ed; font-weight:600; }
+        .answer { display:none; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); font-size:0.88rem; line-height:1.7; color:var(--text); }
+        .answer.visible { display:block; }
+        .answer pre { font-size:0.78rem; }
+        .quiz-card { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .quiz-q { font-size:0.95rem; font-weight:600; color:var(--text-bright); margin-bottom:0.75rem; }
+        .quiz-options { display:grid; gap:0.5rem; }
+        .quiz-opt { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.9rem; cursor:pointer; font-size:0.85rem; color:var(--text); text-align:left; transition:all 0.2s; }
+        .quiz-opt:hover:not(:disabled) { border-color:var(--accent); }
+        .quiz-opt.correct { background:rgba(34,197,94,0.15); border-color:#22c55e; color:#86efac; }
+        .quiz-opt.wrong { background:rgba(239,68,68,0.15); border-color:#ef4444; color:#fca5a5; }
+        .quiz-feedback { display:none; margin-top:0.5rem; font-size:0.82rem; padding:0.5rem 0.75rem; border-radius:6px; }
+        .quiz-feedback.show { display:block; }
+        .checklist { list-style:none; display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:0.5rem; margin:1rem 0; }
+        .checklist li { display:flex; align-items:flex-start; gap:0.5rem; font-size:0.85rem; }
+        .checklist input[type="checkbox"] { accent-color:var(--accent-light); width:16px; height:16px; cursor:pointer; flex-shrink:0; margin-top:2px; }
+        .checklist label { cursor:pointer; color:var(--text-dim); }
+        .checklist input:checked + label { color:var(--text); text-decoration:line-through; }
+        .two-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        code { background:rgba(194,65,12,0.14); border:1px solid rgba(194,65,12,0.35); border-radius:4px; padding:0.1rem 0.4rem; font-family:'Cascadia Code',monospace; font-size:0.85em; color:var(--accent-light); }
+        .tanglish { color:var(--accent-light); font-style:italic; }
+        .pipeline { background:#080400; border:1px solid var(--border); border-radius:10px; padding:1.25rem 1.5rem; font-family:'Cascadia Code','Fira Code',monospace; font-size:0.82rem; margin:0.75rem 0; }
+        .pipe-row { display:flex; align-items:center; gap:0.75rem; padding:0.3rem 0; }
+        .pipe-box { padding:0.25rem 0.75rem; border-radius:6px; font-weight:600; font-size:0.78rem; white-space:nowrap; }
+        .p-sec { background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.3); }
+        .p-mw { background:rgba(194,65,12,0.2); color:#fdba74; border:1px solid rgba(194,65,12,0.3); }
+        .p-rt { background:rgba(96,165,250,0.2); color:#93c5fd; border:1px solid rgba(96,165,250,0.3); }
+        .p-ep { background:rgba(34,197,94,0.2); color:#86efac; border:1px solid rgba(34,197,94,0.3); }
+        .p-arr { color:var(--accent-light); font-size:0.9rem; }
+        .p-note { color:var(--text-dim); font-size:0.75rem; margin-left:0.25rem; }
+        footer { text-align:center; padding:2rem; color:var(--text-dim); font-size:0.8rem; border-top:1px solid var(--border); margin-top:3rem; }
+        @media (max-width:768px) { .two-col { grid-template-columns:1fr; } .hero h1 { font-size:1.8rem; } nav { padding:0.75rem 1rem; } .nav-links { display:none; } }
+    </style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<nav>
+    <div class="nav-brand">🎓 Day 24 / 60 — Middleware & Filters</div>
+    <ul class="nav-links">
+        <li><a href="#pipeline">Pipeline</a></li>
+        <li><a href="#middleware">Middleware</a></li>
+        <li><a href="#order">Order</a></li>
+        <li><a href="#action">Action Filters</a></li>
+        <li><a href="#resource">Resource Filters</a></li>
+        <li><a href="#result">Result Filters</a></li>
+        <li><a href="#compare">MW vs Filter</a></li>
+        <li><a href="#scenarios">Scenarios</a></li>
+    </ul>
+</nav>
+
+<div class="hero">
+    <div class="day-badge">DAY 24 OF 60</div>
+    <h1>Middleware & Filters</h1>
+    <p class="hero-sub">Custom Middleware, Action Filters, Resource Filters, Result Filters, Pipeline Order — ZenCampus request pipeline with 50,000 students</p>
+    <div class="hero-tags">
+        <span class="tag">Middleware Pipeline</span>
+        <span class="tag">IMiddleware</span>
+        <span class="tag">Action Filters</span>
+        <span class="tag">Resource Filters</span>
+        <span class="tag">Result Filters</span>
+        <span class="tag">Filter Order</span>
+        <span class="tag">Short-circuit</span>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- THE PIPELINE -->
+<h2 class="section-title" id="pipeline">ASP.NET Core Request Pipeline</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🔩</span> Every request passes through a chain of middleware — order is everything</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Request vandha — pipeline-la oru by oru middleware pass aagum</span>. Each middleware can: process and pass to next, short-circuit and return early, or modify request/response on the way in AND out. Order matters critically — authentication MUST run before authorization.</p>
+
+    <div class="pipeline">
+        <div style="color:var(--accent-light);font-weight:700;margin-bottom:0.75rem;font-size:0.85rem">REQUEST PIPELINE — order in Program.cs = order of execution</div>
+        <div class="pipe-row"><span class="p-arr">→</span><span class="pipe-box p-sec">ExceptionHandler</span><span class="p-note">catch all unhandled exceptions globally</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-sec">HSTS / HTTPS Redirection</span><span class="p-note">security headers</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-rt">Static Files</span><span class="p-note">short-circuit for .js/.css — never hits controllers</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-rt">Routing</span><span class="p-note">match URL → select endpoint</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-sec">CORS</span><span class="p-note">must be BEFORE Auth</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-sec">Authentication</span><span class="p-note">who are you? → populate User</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-sec">Authorization</span><span class="p-note">are you allowed? — MUST be after Auth</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-mw">TenantResolution</span><span class="p-note">ZenCampus: which school?</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-mw">RequestTiming</span><span class="p-note">ZenCampus: log slow requests</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-ep">Endpoints (Controllers)</span></div>
+        <div style="margin-top:0.75rem;color:var(--text-dim);font-size:0.78rem">
+            ← Response flows back through each middleware in REVERSE order (response side of the pipeline)
+        </div>
+    </div>
+
+    <pre><span class="cmt">// Program.cs — correct order (CRITICAL for interviews)</span>
+<span class="kw">var</span> app = builder.<span class="mth">Build</span>();
+
+app.<span class="mth">UseExceptionHandler</span>(<span class="str">"/error"</span>);       <span class="cmt">// 1. Catch everything — must be FIRST</span>
+app.<span class="mth">UseHsts</span>();                              <span class="cmt">// 2. Security headers</span>
+app.<span class="mth">UseHttpsRedirection</span>();                 <span class="cmt">// 3. HTTP → HTTPS redirect</span>
+app.<span class="mth">UseStaticFiles</span>();                      <span class="cmt">// 4. Short-circuit for static assets</span>
+app.<span class="mth">UseRouting</span>();                           <span class="cmt">// 5. Match URL to endpoint</span>
+app.<span class="mth">UseCors</span>();                              <span class="cmt">// 6. CORS — after routing, BEFORE auth</span>
+app.<span class="mth">UseAuthentication</span>();                   <span class="cmt">// 7. Who are you? (parse JWT → User)</span>
+app.<span class="mth">UseAuthorization</span>();                    <span class="cmt">// 8. Are you allowed? — MUST be after 7</span>
+app.<span class="mth">UseMiddleware</span>&lt;<span class="cls">TenantResolutionMiddleware</span>&gt;(); <span class="cmt">// 9. Custom — after auth</span>
+app.<span class="mth">UseMiddleware</span>&lt;<span class="cls">RequestTimingMiddleware</span>&gt;();     <span class="cmt">// 10. Custom</span>
+app.<span class="mth">MapControllers</span>();                      <span class="cmt">// 11. Route to controllers</span></pre>
+
+    <div class="danger-box">❌ <strong>Wrong order — classic interview trap:</strong><br>
+    <code>app.UseAuthorization()</code> before <code>app.UseAuthentication()</code> → Authorization runs without knowing who the user is → every request appears anonymous → all [Authorize] endpoints return 401<br><br>
+    <code>app.UseCors()</code> after <code>app.UseAuthorization()</code> → CORS headers missing on 401 responses → browser can't read the 401 → confusing CORS errors in frontend instead of auth errors</div>
+</div>
+
+<!-- MIDDLEWARE -->
+<h2 class="section-title" id="middleware">Custom Middleware</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🔧</span> Two patterns: convention-based delegate vs IMiddleware interface</div>
+
+    <pre><span class="cmt">// Pattern 1: Convention-based (minimal, no DI constructor injection for scoped)</span>
+<span class="kw">public class</span> <span class="cls">RequestTimingMiddleware</span>(<span class="cls">RequestDelegate</span> _next, <span class="cls">ILogger</span>&lt;<span class="cls">RequestTimingMiddleware</span>&gt; _log)
+{
+    <span class="kw">public async</span> Task <span class="mth">InvokeAsync</span>(<span class="cls">HttpContext</span> ctx)
+    {
+        <span class="kw">var</span> sw = Stopwatch.<span class="mth">StartNew</span>();
+        <span class="kw">await</span> _next(ctx);   <span class="cmt">// ← Call next middleware in pipeline</span>
+        sw.<span class="mth">Stop</span>();
+
+        <span class="kw">var</span> elapsed = sw.ElapsedMilliseconds;
+        <span class="kw">if</span> (elapsed > <span class="num">500</span>)  <span class="cmt">// Log slow requests > 500ms</span>
+            _log.<span class="mth">LogWarning</span>(
+                <span class="str">"SLOW REQUEST: {Method} {Path} took {ElapsedMs}ms"</span>,
+                ctx.Request.Method, ctx.Request.Path, elapsed);
+    }
+}
+<span class="cmt">// Register: app.UseMiddleware&lt;RequestTimingMiddleware&gt;();</span>
+<span class="cmt">// ILogger injected from constructor — singleton scope (safe for ILogger)</span></pre>
+
+    <pre><span class="cmt">// Pattern 2: IMiddleware — injected by DI, supports SCOPED services</span>
+<span class="kw">public class</span> <span class="cls">TenantResolutionMiddleware</span>(<span class="cls">ILogger</span>&lt;<span class="cls">TenantResolutionMiddleware</span>&gt; _log) : <span class="cls">IMiddleware</span>
+{
+    <span class="kw">public async</span> Task <span class="mth">InvokeAsync</span>(<span class="cls">HttpContext</span> ctx, <span class="cls">RequestDelegate</span> next)
+    {
+        <span class="cmt">// IMiddleware gets HttpContext + RequestDelegate — can inject scoped services</span>
+        <span class="kw">var</span> tenantService = ctx.RequestServices.<span class="mth">GetRequiredService</span>&lt;<span class="cls">ITenantService</span>&gt;();
+
+        <span class="cmt">// Resolve school from JWT claim (already populated by UseAuthentication)</span>
+        <span class="kw">var</span> schoolIdClaim = ctx.User.<span class="mth">FindFirst</span>(<span class="str">"schoolId"</span>)?.Value;
+
+        <span class="kw">if</span> (schoolIdClaim <span class="kw">is not null</span> && <span class="kw">int</span>.<span class="mth">TryParse</span>(schoolIdClaim, <span class="kw">out var</span> schoolId))
+        {
+            <span class="kw">var</span> tenant = <span class="kw">await</span> tenantService.<span class="mth">GetSchoolAsync</span>(schoolId, ctx.RequestAborted);
+            <span class="kw">if</span> (tenant <span class="kw">is null</span>)
+            {
+                <span class="cmt">// Short-circuit — school doesn't exist in DB</span>
+                ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
+                <span class="kw">await</span> ctx.Response.<span class="mth">WriteAsJsonAsync</span>(
+                    <span class="kw">new</span> { error = <span class="str">"Invalid school context"</span> });
+                <span class="kw">return</span>;  <span class="cmt">// ← DON'T call next — short-circuit here</span>
+            }
+            ctx.Items[<span class="str">"Tenant"</span>] = tenant;  <span class="cmt">// Available to all downstream middleware + controllers</span>
+            _log.<span class="mth">LogDebug</span>(<span class="str">"Tenant resolved: {SchoolId} {SchoolName}"</span>, tenant.Id, tenant.Name);
+        }
+        <span class="kw">await</span> next(ctx);  <span class="cmt">// Call next — continue pipeline</span>
+    }
+}
+<span class="cmt">// Must register in DI: builder.Services.AddScoped&lt;TenantResolutionMiddleware&gt;();</span>
+<span class="cmt">// Then: app.UseMiddleware&lt;TenantResolutionMiddleware&gt;();</span></pre>
+
+    <div class="info-box"><strong>Convention vs IMiddleware — key difference:</strong><br>
+    <strong>Convention</strong> (<code>RequestDelegate</code> in constructor): Constructor called ONCE — singleton lifetime. Cannot inject scoped services in constructor. Works with <code>ILogger&lt;T&gt;</code>, <code>IOptions&lt;T&gt;</code> (singletons). Access scoped via <code>ctx.RequestServices.GetRequiredService&lt;T&gt;()</code>.<br><br>
+    <strong>IMiddleware</strong>: DI creates instance per request (transient/scoped). Can inject scoped services directly in constructor. More testable (DI-friendly). Requires <code>builder.Services.AddScoped&lt;MyMiddleware&gt;()</code>.</div>
+</div>
+
+<!-- MIDDLEWARE ORDER DETAIL -->
+<h2 class="section-title" id="order">Short-Circuit Pattern</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>⚡</span> Not calling <code>await next(ctx)</code> = short-circuit — stop the pipeline here</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Short-circuit = pipeline-a stop pannum</span> — next middleware, controller — nothing runs. Response middleware writes panna — client-ku return aagum. API key invalid aana short-circuit pannrom — controller-e reach aagaadhu.</p>
+
+    <pre><span class="cmt">// Security headers middleware — adds headers to EVERY response (response side)</span>
+<span class="kw">public class</span> <span class="cls">SecurityHeadersMiddleware</span>(<span class="cls">RequestDelegate</span> _next)
+{
+    <span class="kw">public async</span> Task <span class="mth">InvokeAsync</span>(<span class="cls">HttpContext</span> ctx)
+    {
+        <span class="cmt">// Request side — runs BEFORE next middleware</span>
+        <span class="kw">await</span> _next(ctx);  <span class="cmt">// ← pipeline executes here</span>
+
+        <span class="cmt">// Response side — runs AFTER everything downstream completes</span>
+        ctx.Response.Headers.<span class="mth">Append</span>(<span class="str">"X-Content-Type-Options"</span>, <span class="str">"nosniff"</span>);
+        ctx.Response.Headers.<span class="mth">Append</span>(<span class="str">"X-Frame-Options"</span>,        <span class="str">"DENY"</span>);
+        ctx.Response.Headers.<span class="mth">Append</span>(<span class="str">"X-XSS-Protection"</span>,      <span class="str">"1; mode=block"</span>);
+        ctx.Response.Headers.<span class="mth">Append</span>(<span class="str">"Referrer-Policy"</span>,        <span class="str">"strict-origin-when-cross-origin"</span>);
+    }
+}
+
+<span class="cmt">// Rate limiter — short-circuit before hitting controller</span>
+<span class="kw">public async</span> Task <span class="mth">InvokeAsync</span>(<span class="cls">HttpContext</span> ctx)
+{
+    <span class="kw">var</span> key    = $<span class="str">"rate:{ctx.Connection.RemoteIpAddress}"</span>;
+    <span class="kw">var</span> count  = <span class="kw">await</span> _redis.<span class="mth">StringIncrementAsync</span>(key);
+    <span class="kw">if</span> (count == <span class="num">1</span>) <span class="kw">await</span> _redis.<span class="mth">KeyExpireAsync</span>(key, TimeSpan.<span class="mth">FromMinutes</span>(<span class="num">1</span>));
+
+    <span class="kw">if</span> (count > <span class="num">100</span>)
+    {
+        ctx.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        ctx.Response.Headers.<span class="mth">Append</span>(<span class="str">"Retry-After"</span>, <span class="str">"60"</span>);
+        <span class="kw">return</span>;  <span class="cmt">// Short-circuit — no next() call</span>
+    }
+    <span class="kw">await</span> _next(ctx);
+}</pre>
+</div>
+
+<!-- MVC FILTER PIPELINE -->
+<h2 class="section-title" id="action">MVC Filter Pipeline</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>🔍</span> Filters run INSIDE MVC — access to route data, action context, model state</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Middleware runs outside MVC</span> — route data, controller name, action name — nothing visible. Filters run inside MVC — ActionContext, ModelState, return value — all accessible. Choose wisely!</p>
+
+    <div class="pipeline">
+        <div style="color:var(--accent-light);font-weight:700;margin-bottom:0.75rem;font-size:0.85rem">MVC FILTER PIPELINE (inside app.MapControllers)</div>
+        <div class="pipe-row"><span class="p-arr">→</span><span class="pipe-box p-sec">Authorization Filters</span><span class="p-note">[Authorize], [RequireScope] — runs first, short-circuit if denied</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-mw">Resource Filters (before)</span><span class="p-note">BEFORE model binding — cache hit → short-circuit</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-rt">Model Binding</span><span class="p-note">deserialize request → action parameters</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-mw">Action Filters (before)</span><span class="p-note">validate, check access, log entry</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">→</span><span class="pipe-box p-ep">Action Executes</span><span class="p-note">your controller code runs here</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">←</span><span class="pipe-box p-mw">Action Filters (after)</span><span class="p-note">modify result, add headers</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr"> </span><span class="p-arr">←</span><span class="pipe-box p-mw">Exception Filters</span><span class="p-note">MVC-only exceptions (prefer IExceptionHandler)</span></div>
+        <div class="pipe-row"><span class="p-arr"> </span><span class="p-arr">←</span><span class="pipe-box p-mw">Result Filters (before/after)</span><span class="p-note">wrap IActionResult execution</span></div>
+        <div class="pipe-row"><span class="p-arr">←</span><span class="pipe-box p-mw">Resource Filters (after)</span><span class="p-note">store response in cache</span></div>
+    </div>
+
+    <p style="margin:0.75rem 0;font-weight:600;color:var(--accent-light)">Filter Scope — Global → Controller → Action (outer to inner):</p>
+    <pre><span class="cmt">// Global — applies to ALL controllers and actions</span>
+builder.Services.<span class="mth">AddControllers</span>(opts =>
+{
+    opts.Filters.<span class="mth">Add</span>&lt;<span class="cls">AuditLogFilter</span>&gt;();          <span class="cmt">// Every API call logged</span>
+    opts.Filters.<span class="mth">Add</span>&lt;<span class="cls">ValidateModelStateFilter</span>&gt;(); <span class="cmt">// Auto 400 on invalid model</span>
+});
+
+<span class="cmt">// Controller-level — applies to all actions in this controller</span>
+[<span class="attr">ServiceFilter</span>(<span class="kw">typeof</span>(<span class="cls">ValidateSchoolAccessFilter</span>))]
+[<span class="attr">ApiController</span>]
+<span class="kw">public class</span> <span class="cls">StudentsController</span> : <span class="cls">ControllerBase</span> { ... }
+
+<span class="cmt">// Action-level — one specific action</span>
+[<span class="attr">ServiceFilter</span>(<span class="kw">typeof</span>(<span class="cls">CacheSchoolDataFilter</span>))]
+[<span class="attr">HttpGet</span>(<span class="str">"{schoolId}/students"</span>)]
+<span class="kw">public async</span> Task&lt;IActionResult&gt; <span class="mth">GetStudents</span>(<span class="kw">int</span> schoolId) { ... }</pre>
+
+    <div class="info-box"><strong>ServiceFilter vs TypeFilter:</strong><br>
+    <code>[ServiceFilter(typeof(MyFilter))]</code> — filter resolved from DI. Must be registered (<code>builder.Services.AddScoped&lt;MyFilter&gt;()</code>). Supports scoped services. <strong>Preferred.</strong><br><br>
+    <code>[TypeFilter(typeof(MyFilter))]</code> — filter instantiated by ASP.NET, NOT from DI container. Can pass constructor args: <code>[TypeFilter(typeof(MyFilter), Arguments = new object[] { "arg1" })]</code>. Does NOT support scoped services from DI.</div>
+</div>
+
+<!-- ACTION FILTER -->
+<div class="concept-card">
+    <div class="concept-title"><span>🎬</span> Action Filters — validate, check access, log — before/after action</div>
+
+    <pre><span class="cmt">// ZenCampus: ValidateSchoolAccessFilter
+// Ensures a user can only access their OWN school's data
+// Applied at controller level — no need to repeat in every action</span>
+<span class="kw">public class</span> <span class="cls">ValidateSchoolAccessFilter</span>(
+    <span class="cls">ILogger</span>&lt;<span class="cls">ValidateSchoolAccessFilter</span>&gt; _log) : <span class="cls">IAsyncActionFilter</span>
+{
+    <span class="kw">public async</span> Task <span class="mth">OnActionExecutionAsync</span>(
+        <span class="cls">ActionExecutingContext</span> ctx, <span class="cls">ActionExecutionDelegate</span> next)
+    {
+        <span class="cmt">// Read route value — {schoolId} from URL</span>
+        <span class="kw">if</span> (!ctx.ActionArguments.<span class="mth">TryGetValue</span>(<span class="str">"schoolId"</span>, <span class="kw">out var</span> routeSchoolId))
+        {
+            <span class="kw">await</span> next(); <span class="cmt">// No schoolId in route — let it pass (admin endpoints)</span>
+            <span class="kw">return</span>;
+        }
+
+        <span class="cmt">// Read schoolId from JWT claim</span>
+        <span class="kw">var</span> claimSchoolId = ctx.HttpContext.User.<span class="mth">FindFirst</span>(<span class="str">"schoolId"</span>)?.Value;
+        <span class="kw">var</span> isAdmin       = ctx.HttpContext.User.<span class="mth">IsInRole</span>(<span class="str">"SuperAdmin"</span>);
+
+        <span class="kw">if</span> (!isAdmin && claimSchoolId != routeSchoolId?.<span class="mth">ToString</span>())
+        {
+            _log.<span class="mth">LogWarning</span>(
+                <span class="str">"Cross-school access attempt: UserSchool={ClaimSchool} RouteSchool={RouteSchool} User={UserId}"</span>,
+                claimSchoolId, routeSchoolId, ctx.HttpContext.User.Identity?.Name);
+
+            <span class="cmt">// Short-circuit — set result directly, don't call next()</span>
+            ctx.Result = <span class="kw">new</span> <span class="cls">ForbidResult</span>();
+            <span class="kw">return</span>;  <span class="cmt">// Action never executes</span>
+        }
+
+        <span class="cmt">// ── Before action executes ──────────────────────────────────</span>
+        <span class="kw">var</span> executed = <span class="kw">await</span> next();  <span class="cmt">// ← Action runs HERE</span>
+        <span class="cmt">// ── After action executes ───────────────────────────────────</span>
+
+        <span class="kw">if</span> (executed.Exception <span class="kw">is not null</span>)
+            _log.<span class="mth">LogError</span>(executed.Exception,
+                <span class="str">"Action failed for SchoolId={SchoolId}"</span>, routeSchoolId);
+    }
+}</pre>
+
+    <pre><span class="cmt">// AuditLogFilter — global, logs every API call with user + action + duration</span>
+<span class="kw">public class</span> <span class="cls">AuditLogFilter</span>(<span class="cls">ILogger</span>&lt;<span class="cls">AuditLogFilter</span>&gt; _log) : <span class="cls">IAsyncActionFilter</span>
+{
+    <span class="kw">public async</span> Task <span class="mth">OnActionExecutionAsync</span>(
+        <span class="cls">ActionExecutingContext</span> ctx, <span class="cls">ActionExecutionDelegate</span> next)
+    {
+        <span class="kw">var</span> sw         = Stopwatch.<span class="mth">StartNew</span>();
+        <span class="kw">var</span> controller = ctx.RouteData.Values[<span class="str">"controller"</span>];
+        <span class="kw">var</span> action     = ctx.RouteData.Values[<span class="str">"action"</span>];
+        <span class="kw">var</span> userId     = ctx.HttpContext.User.Identity?.Name;
+
+        <span class="kw">var</span> executed   = <span class="kw">await</span> next();
+        sw.<span class="mth">Stop</span>();
+
+        <span class="kw">var</span> statusCode = ctx.HttpContext.Response.StatusCode;
+        _log.<span class="mth">LogInformation</span>(
+            <span class="str">"AUDIT: {Controller}/{Action} by {UserId} → {StatusCode} in {ElapsedMs}ms"</span>,
+            controller, action, userId, statusCode, sw.ElapsedMilliseconds);
+        <span class="cmt">// Every API call: AUDIT: Students/GetStudents by teacher@school7 → 200 in 45ms</span>
+    }
+}</pre>
+</div>
+
+<!-- RESOURCE FILTER -->
+<h2 class="section-title" id="resource">Resource Filters — Cache at MVC Layer</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>📦</span> Resource filters run BEFORE model binding — cheapest short-circuit point</div>
+    <p style="margin-bottom:0.75rem;color:var(--text-dim)"><span class="tanglish">Model binding = request deserialize pannum</span> — JSON body parse, route values extract — all that work pannuvathu illa cache hit aana. Resource filter = model binding-kku munnaadi cache check panna. Cache hit? Short-circuit — controller-e reach aagaadhu!</p>
+
+    <pre><span class="cmt">// CacheSchoolDataFilter — return cached response without hitting controller or DB
+// Applied on: GET /api/v1/schools/{schoolId}/students (read-heavy, rarely changes)</span>
+<span class="kw">public class</span> <span class="cls">CacheSchoolDataFilter</span>(<span class="cls">IDistributedCache</span> _cache) : <span class="cls">IAsyncResourceFilter</span>
+{
+    <span class="kw">public async</span> Task <span class="mth">OnResourceExecutionAsync</span>(
+        <span class="cls">ResourceExecutingContext</span> ctx, <span class="cls">ResourceExecutionDelegate</span> next)
+    {
+        <span class="cmt">// Build cache key from route + query string</span>
+        <span class="kw">var</span> key = <span class="str">"action:"</span> + ctx.HttpContext.Request.Path
+                  + ctx.HttpContext.Request.QueryString;
+
+        <span class="cmt">// ── BEFORE model binding ─────────────────────────────────────</span>
+        <span class="kw">var</span> cached = <span class="kw">await</span> _cache.<span class="mth">GetStringAsync</span>(key);
+        <span class="kw">if</span> (cached <span class="kw">is not null</span>)
+        {
+            <span class="cmt">// Cache HIT — short-circuit. Controller + DB = skipped entirely</span>
+            ctx.Result = <span class="kw">new</span> <span class="cls">ContentResult</span>
+            {
+                Content     = cached,
+                ContentType = <span class="str">"application/json"</span>,
+                StatusCode  = <span class="num">200</span>
+            };
+            <span class="kw">return</span>;  <span class="cmt">// Don't call next() — pipeline stops here</span>
+        }
+
+        <span class="kw">var</span> executed = <span class="kw">await</span> next();  <span class="cmt">// ← Model binding + Action runs here</span>
+
+        <span class="cmt">// ── AFTER action, BEFORE result execution ────────────────────</span>
+        <span class="kw">if</span> (executed.Exception <span class="kw">is null</span> && ctx.Result <span class="kw">is</span> <span class="cls">ObjectResult</span> { Value: <span class="kw">not null</span> } result)
+        {
+            <span class="cmt">// Cache the response for 5 minutes</span>
+            <span class="kw">var</span> json = <span class="cls">JsonSerializer</span>.<span class="mth">Serialize</span>(result.Value);
+            <span class="kw">await</span> _cache.<span class="mth">SetStringAsync</span>(key, json,
+                <span class="kw">new</span>() { AbsoluteExpirationRelativeToNow = TimeSpan.<span class="mth">FromMinutes</span>(<span class="num">5</span>) });
+        }
+    }
+}
+<span class="cmt">// Resource filter is BETTER than action filter for caching:
+// Action filter: model binding already done before "before" runs
+// Resource filter: catches it BEFORE model binding — zero wasted work on cache hit</span></pre>
+</div>
+
+<!-- RESULT FILTER -->
+<h2 class="section-title" id="result">Result Filters — Wrap the Response</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>📤</span> Result filters — add headers, wrap response, transform output</div>
+
+    <pre><span class="cmt">// AddPaginationHeadersFilter — adds pagination metadata to response headers
+// Instead of wrapping every response in PagedResult&lt;T&gt; wrapper object</span>
+<span class="kw">public class</span> <span class="cls">PaginationHeaderFilter</span> : <span class="cls">IAsyncResultFilter</span>
+{
+    <span class="kw">public async</span> Task <span class="mth">OnResultExecutionAsync</span>(
+        <span class="cls">ResultExecutingContext</span> ctx, <span class="cls">ResultExecutionDelegate</span> next)
+    {
+        <span class="cmt">// Before result executes — add headers if action returned paged data</span>
+        <span class="kw">if</span> (ctx.HttpContext.Items[<span class="str">"X-Total-Count"</span>] <span class="kw">is int</span> total)
+        {
+            ctx.HttpContext.Response.Headers.<span class="mth">Append</span>(<span class="str">"X-Total-Count"</span>,   total.<span class="mth">ToString</span>());
+            ctx.HttpContext.Response.Headers.<span class="mth">Append</span>(<span class="str">"X-Page-Size"</span>,    ctx.HttpContext.Items[<span class="str">"X-Page-Size"</span>]?.<span class="mth">ToString</span>() ?? <span class="str">"20"</span>);
+            ctx.HttpContext.Response.Headers.<span class="mth">Append</span>(<span class="str">"X-Has-Next-Page"</span>, ctx.HttpContext.Items[<span class="str">"X-Has-Next"</span>]?.<span class="mth">ToString</span>() ?? <span class="str">"false"</span>);
+            <span class="cmt">// Client reads headers: X-Total-Count: 1250, X-Page-Size: 20</span>
+        }
+
+        <span class="kw">await</span> next();  <span class="cmt">// Execute the result (write response body)</span>
+    }
+}
+
+<span class="cmt">// In action — set values on HttpContext.Items for the filter to pick up</span>
+[<span class="attr">ServiceFilter</span>(<span class="kw">typeof</span>(<span class="cls">PaginationHeaderFilter</span>))]
+[<span class="attr">HttpGet</span>]
+<span class="kw">public async</span> Task&lt;IActionResult&gt; <span class="mth">GetStudents</span>([<span class="attr">FromQuery</span>] <span class="kw">int</span> page = <span class="num">1</span>, [<span class="attr">FromQuery</span>] <span class="kw">int</span> size = <span class="num">20</span>)
+{
+    <span class="kw">var</span> (students, total) = <span class="kw">await</span> _service.<span class="mth">GetPagedAsync</span>(page, size);
+
+    HttpContext.Items[<span class="str">"X-Total-Count"</span>] = total;
+    HttpContext.Items[<span class="str">"X-Page-Size"</span>]   = size;
+    HttpContext.Items[<span class="str">"X-Has-Next"</span>]    = (page * size) < total;
+
+    <span class="kw">return</span> <span class="mth">Ok</span>(students);  <span class="cmt">// Clean response body — no pagination wrapper</span>
+}</pre>
+</div>
+
+<!-- MW VS FILTER -->
+<h2 class="section-title" id="compare">Middleware vs Filters — Decision Table</h2>
+
+<div class="concept-card">
+    <div class="concept-title"><span>⚖️</span> The most common interview question — know when to use each</div>
+
+    <table>
+        <tr><th>Capability</th><th>Middleware</th><th>Filters</th></tr>
+        <tr><td>Access to route data, controller/action name</td><td>❌ No (before routing)</td><td>✅ Yes</td></tr>
+        <tr><td>Access to model state / action arguments</td><td>❌ No</td><td>✅ Yes</td></tr>
+        <tr><td>Access to IActionResult / return value</td><td>❌ No</td><td>✅ Yes (result filters)</td></tr>
+        <tr><td>Runs for static files, non-MVC routes</td><td>✅ Yes</td><td>❌ No (MVC only)</td></tr>
+        <tr><td>DI scoped service injection</td><td>Via ctx.RequestServices</td><td>✅ Directly (ServiceFilter)</td></tr>
+        <tr><td>Short-circuit before model binding</td><td>✅ Yes</td><td>✅ Resource filter only</td></tr>
+        <tr><td>Apply to specific actions only</td><td>❌ All requests</td><td>✅ Controller/Action attribute</td></tr>
+        <tr><td>Built-in scope control</td><td>❌ Global only</td><td>✅ Global/Controller/Action</td></tr>
+    </table>
+
+    <div class="two-col" style="margin-top:0.75rem">
+        <div>
+            <p style="font-weight:600;color:var(--accent-light);margin-bottom:0.5rem">Use Middleware for:</p>
+            <div class="good-box" style="margin:0">
+                ✅ Security headers (every response)<br>
+                ✅ Rate limiting (every request, before routing)<br>
+                ✅ Request timing (all requests including static files)<br>
+                ✅ Correlation ID (needs to wrap everything)<br>
+                ✅ GZIP compression<br>
+                ✅ Tenant resolution (cross-cutting, after auth)<br>
+                ✅ Request/response logging
+            </div>
+        </div>
+        <div>
+            <p style="font-weight:600;color:var(--accent-light);margin-bottom:0.5rem">Use Filters for:</p>
+            <div class="good-box" style="margin:0">
+                ✅ School access validation (needs route schoolId)<br>
+                ✅ ModelState auto-validation (needs ModelState)<br>
+                ✅ Action-level caching (resource filter)<br>
+                ✅ Response header enrichment (result filter)<br>
+                ✅ Audit logging with action name<br>
+                ✅ Anti-forgery token validation<br>
+                ✅ Per-controller feature flags
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MOVIE REFS -->
+<h2 class="section-title" id="movies">🎬 Tamil Movie Memory Anchors</h2>
+
+<div class="movie-box">
+    <div class="movie-icon">🔒</div>
+    <div class="movie-content">
+        <h4>Middleware Pipeline — "Kaappaan" (2019)</h4>
+        <p>VIP protection duty — multiple security checkpoints before reaching the minister. Gate 1: ID check (Authentication). Gate 2: Clearance level (Authorization). Gate 3: Specific entry permit (Custom middleware). Each gate can short-circuit and turn you away. If you pass all gates — you reach the VIP (controller). Skip a gate? Security breach! Middleware order = checkpoint order.</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">🎬</div>
+    <div class="movie-content">
+        <h4>Action Filters — "Singam" (2010)</h4>
+        <p>Singam/Duraisingam — before any operation, he verifies: "Who are you? What's your clearance? What school do you belong to?" ValidateSchoolAccessFilter same: before action executes — checks "Does this JWT schoolId match the route schoolId?" If school 7's teacher tries to access school 8's students — short-circuit with 403. Singam would never allow cross-jurisdiction!</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">📦</div>
+    <div class="movie-content">
+        <h4>Resource Filters — "Vinnaithaandi Varuvaayaa" (2010)</h4>
+        <p>VTV-la Karthik — before making a long journey to meet Jessie again (expensive DB call), he checks — "Is she still there? Did anything change?" Resource filter same: before model binding (the setup/journey), check cache. If cached response exists — short-circuit, return immediately. No journey needed! Miss the cache → do the full trip (model binding → controller → DB).</p>
+    </div>
+</div>
+
+<div class="movie-box">
+    <div class="movie-icon">📋</div>
+    <div class="movie-content">
+        <h4>Filter Order — "Dasavathaaram" (2008)</h4>
+        <p>Dasavathaaram — 10 avatars, each has its specific role and timing — they don't all act simultaneously. Filter pipeline same: Authorization first, then Resource, then Model Binding, then Action Filter, then Action, then Result Filter. Skip one or reorder? Story breaks. The filter ORDER is as sacred as the avatar order — Authorization must ALWAYS be first.</p>
+    </div>
+</div>
+
+<!-- SCENARIOS -->
+<h2 class="section-title" id="scenarios">🎯 10 Interview Scenarios</h2>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q1. What's the difference between Middleware and Filters? Which do you use for: (a) rate limiting, (b) school access validation?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Key distinction:</strong> Middleware runs outside MVC — before routing decisions, before model binding, no access to route values or action context. Filters run inside MVC — have full access to controller name, action name, route data, model state, and return value.</p>
+        <p style="margin-top:0.5rem"><strong>(a) Rate limiting → Middleware</strong><br>
+        Runs before routing → applies to ALL requests (static files, health checks, API). Needs to fire before any MVC processing wastes CPU. Can check IP-based or API-key-based limits without knowing which controller will handle it.</p>
+        <p style="margin-top:0.5rem"><strong>(b) School access validation → Action Filter</strong><br>
+        Needs the <code>schoolId</code> route value from URL (<code>/api/students/{schoolId}/...</code>). This is only available after routing resolves. Also only applies to MVC controllers — not static files. <code>[ServiceFilter(typeof(ValidateSchoolAccessFilter))]</code> on the controller.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q2. PRODUCTION BUG: All [Authorize] endpoints returning 401. Unauthenticated endpoints work. What's wrong?</div>
+        <span class="scenario-type type-prod">Production Bug</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Root cause:</strong> <code>UseAuthorization()</code> is registered before <code>UseAuthentication()</code> in Program.cs. Authorization runs first — User is not yet populated (JWT not yet parsed) — appears anonymous — every <code>[Authorize]</code> check fails.</p>
+        <pre><span class="cmt">// ❌ Wrong order</span>
+app.<span class="mth">UseAuthorization</span>();    <span class="cmt">// Runs BEFORE auth — User.Identity.IsAuthenticated = false</span>
+app.<span class="mth">UseAuthentication</span>();   <span class="cmt">// Too late — authorization already decided</span>
+
+<span class="cmt">// ✅ Correct order — immutable rule</span>
+app.<span class="mth">UseAuthentication</span>();   <span class="cmt">// 1. Parse JWT → populate HttpContext.User</span>
+app.<span class="mth">UseAuthorization</span>();    <span class="cmt">// 2. Check HttpContext.User claims → allow/deny</span></pre>
+        <p><strong>Why unauthenticated endpoints work:</strong> Endpoints without <code>[Authorize]</code> don't trigger the authorization check — they pass through regardless of order. Only <code>[Authorize]</code> endpoints consult the User object.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q3. How does short-circuiting work in middleware? Write TenantResolutionMiddleware that short-circuits for invalid schools.</div>
+        <span class="scenario-type type-design">Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Short-circuit</strong> = don't call <code>await next(ctx)</code>. Instead write a response directly and return. Everything downstream (more middleware, controllers) never runs.</p>
+        <pre><span class="kw">public async</span> Task <span class="mth">InvokeAsync</span>(<span class="cls">HttpContext</span> ctx, <span class="cls">RequestDelegate</span> next)
+{
+    <span class="kw">var</span> schoolIdClaim = ctx.User.<span class="mth">FindFirst</span>(<span class="str">"schoolId"</span>)?.Value;
+
+    <span class="kw">if</span> (schoolIdClaim <span class="kw">is null</span>)
+    {
+        <span class="kw">await</span> next(ctx); <span class="cmt">// Anonymous user — let auth middleware handle it</span>
+        <span class="kw">return</span>;
+    }
+
+    <span class="kw">var</span> school = <span class="kw">await</span> _tenantService.<span class="mth">GetSchoolAsync</span>(<span class="kw">int</span>.<span class="mth">Parse</span>(schoolIdClaim));
+    <span class="kw">if</span> (school <span class="kw">is null</span>)
+    {
+        ctx.Response.StatusCode = <span class="num">403</span>;
+        <span class="kw">await</span> ctx.Response.<span class="mth">WriteAsJsonAsync</span>(<span class="kw">new</span> { error = <span class="str">"Invalid school"</span> });
+        <span class="kw">return</span>;  <span class="cmt">// ← SHORT-CIRCUIT: no next(), no controller, no nothing</span>
+    }
+
+    ctx.Items[<span class="str">"Tenant"</span>] = school;
+    <span class="kw">await</span> next(ctx);  <span class="cmt">// CONTINUE: valid school, pass to controller</span>
+}</pre>
+        <p><strong>Key rule:</strong> Either call <code>next(ctx)</code> (continue) or write response and return (short-circuit). Never do both — writing to an already-started response causes errors.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q4. Why use a Resource Filter for caching instead of an Action Filter?</div>
+        <span class="scenario-type type-perf">Performance</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Resource filter runs BEFORE model binding. Action filter runs AFTER model binding.</strong></p>
+        <p style="margin-top:0.5rem">Model binding in a complex request: deserialize JSON body (allocations), extract route values, validate types, map to action parameters. This work happens BEFORE the action filter's "before" method.</p>
+        <p style="margin-top:0.5rem">For a cache hit: why do model binding at all? Resource filter avoids the wasted work entirely.</p>
+        <table>
+            <tr><th>Filter Type</th><th>Cache Hit — what still runs?</th><th>Wasted work?</th></tr>
+            <tr><td>Action Filter (OnActionExecuting)</td><td>Authorization + Resource + Model Binding + Action Filter (before)</td><td>❌ Model binding still happens</td></tr>
+            <tr><td>Resource Filter (OnResourceExecuting)</td><td>Authorization filter only</td><td>✅ Model binding skipped entirely</td></tr>
+        </table>
+        <p style="margin-top:0.5rem">For ZenCampus GET /students — model binding is cheap. But for POST with 50KB JSON body — resource filter caching saves real allocations.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q5. Exception Filter vs IExceptionHandler — which do you use in ZenCampus and why?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Prefer <code>IExceptionHandler</code> (ASP.NET Core 8+) over Exception Filters.</strong></p>
+        <table>
+            <tr><th>Feature</th><th>Exception Filter</th><th>IExceptionHandler</th></tr>
+            <tr><td>Scope</td><td>MVC only — won't catch middleware exceptions</td><td>Entire pipeline — catches everything</td></tr>
+            <tr><td>Exceptions caught</td><td>Only from action execution</td><td>Any unhandled exception in pipeline</td></tr>
+            <tr><td>Registration</td><td>Filter attribute or global filter</td><td>AddExceptionHandler + UseExceptionHandler</td></tr>
+            <tr><td>RFC 7807 Problem Details</td><td>Manual</td><td>Works with AddProblemDetails() natively</td></tr>
+            <tr><td>Multiple handlers</td><td>One per scope</td><td>Chain: multiple IExceptionHandler registered</td></tr>
+        </table>
+        <pre><span class="cmt">// ✅ Preferred: IExceptionHandler (catches middleware exceptions too)
+// Registered in Day 20 API Design — handles DomainException → status code mapping</span>
+builder.Services.<span class="mth">AddExceptionHandler</span>&lt;<span class="cls">ZenCampusExceptionHandler</span>&gt;();
+builder.Services.<span class="mth">AddProblemDetails</span>();
+app.<span class="mth">UseExceptionHandler</span>();
+
+<span class="cmt">// Exception Filter — use ONLY if you need per-controller exception behavior
+// Example: PdfControllerExceptionFilter — special handling for PDF generation errors</span></pre>
+        <p><strong>Interview answer:</strong> "We use <code>IExceptionHandler</code> globally — it catches exceptions from middleware too (like <code>TenantResolutionMiddleware</code>), not just MVC actions. Exception filters are scoped to MVC only."</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q6. Global filter vs controller filter vs action filter — what's the execution order when all three apply?</div>
+        <span class="scenario-type type-concept">Concept</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Outer to inner on the way IN, inner to outer on the way OUT.</strong></p>
+        <pre><span class="cmt">// Order: Global → Controller → Action (before)
+//        Action → Controller → Global (after)</span>
+
+<span class="cmt">// 1. [Global] AuditLogFilter.OnActionExecuting     ← first</span>
+<span class="cmt">// 2. [Controller] ValidateSchoolAccessFilter.OnActionExecuting</span>
+<span class="cmt">// 3. [Action] CacheSchoolDataFilter.OnActionExecuting</span>
+<span class="cmt">// ── ACTION EXECUTES ──</span>
+<span class="cmt">// 4. [Action] CacheSchoolDataFilter.OnActionExecuted  ← innermost first on way out</span>
+<span class="cmt">// 5. [Controller] ValidateSchoolAccessFilter.OnActionExecuted</span>
+<span class="cmt">// 6. [Global] AuditLogFilter.OnActionExecuted       ← outermost last on way out</span>
+
+<span class="cmt">// Set Order property to override default (lower Order = runs earlier on way in)</span>
+<span class="kw">public class</span> <span class="cls">AuditLogFilter</span> : <span class="cls">IAsyncActionFilter</span>, <span class="cls">IOrderedFilter</span>
+{
+    <span class="kw">public int</span> Order => <span class="num">-1000</span>;  <span class="cmt">// Very low = runs first in, last out</span>
+}</pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q7. How do you inject scoped services into middleware? What's the trap with conventional middleware?</div>
+        <span class="scenario-type type-design">Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Trap:</strong> Conventional middleware is a singleton (constructor called once at startup). Injecting a scoped service (DbContext, IStudentRepository) in the constructor causes captive dependency bug — scoped object held for the app lifetime → data leaks between requests, potential concurrency errors.</p>
+        <pre><span class="cmt">// ❌ WRONG — scoped DbContext injected in constructor (singleton lifetime!)</span>
+<span class="kw">public class</span> <span class="cls">TenantMiddleware</span>(<span class="cls">RequestDelegate</span> _next, <span class="cls">ZenCampusDbContext</span> _db) { ... }
+
+<span class="cmt">// ✅ Fix Option 1: InvokeAsync parameter injection (DI creates per-request)</span>
+<span class="kw">public class</span> <span class="cls">TenantMiddleware</span>(<span class="cls">RequestDelegate</span> _next)
+{
+    <span class="kw">public async</span> Task <span class="mth">InvokeAsync</span>(<span class="cls">HttpContext</span> ctx, <span class="cls">ZenCampusDbContext</span> db)
+    <span class="cmt">// ↑ DI injects scoped DbContext per-request here — SAFE</span>
+    {
+        <span class="kw">var</span> school = <span class="kw">await</span> db.Schools.<span class="mth">FindAsync</span>(...);
+        <span class="kw">await</span> _next(ctx);
+    }
+}
+
+<span class="cmt">// ✅ Fix Option 2: IMiddleware — registered as scoped, full constructor DI</span>
+<span class="kw">public class</span> <span class="cls">TenantMiddleware</span>(<span class="cls">ZenCampusDbContext</span> _db) : <span class="cls">IMiddleware</span>
+<span class="cmt">// Register: builder.Services.AddScoped&lt;TenantMiddleware&gt;()</span>
+
+<span class="cmt">// ✅ Fix Option 3: ctx.RequestServices (explicit scope)</span>
+<span class="kw">var</span> db = ctx.RequestServices.<span class="mth">GetRequiredService</span>&lt;<span class="cls">ZenCampusDbContext</span>&gt;();</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q8. ValidateModelStateFilter — how do you avoid writing ModelState check in every action?</div>
+        <span class="scenario-type type-design">Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Global Action Filter</strong> checks ModelState before every action — if invalid, returns 400 automatically.</p>
+        <pre><span class="cmt">// ❌ Without filter — repeated in every action</span>
+<span class="kw">public</span> IActionResult <span class="mth">AdmitStudent</span>([<span class="attr">FromBody</span>] <span class="cls">AdmitStudentDto</span> dto)
+{
+    <span class="kw">if</span> (!ModelState.IsValid) <span class="kw">return</span> <span class="mth">BadRequest</span>(ModelState); <span class="cmt">// Repeated 100 times!</span>
+    ...
+}
+
+<span class="cmt">// ✅ Global filter — write once, applies everywhere</span>
+<span class="kw">public class</span> <span class="cls">ValidateModelStateFilter</span> : <span class="cls">IActionFilter</span>
+{
+    <span class="kw">public void</span> <span class="mth">OnActionExecuting</span>(<span class="cls">ActionExecutingContext</span> ctx)
+    {
+        <span class="kw">if</span> (!ctx.ModelState.IsValid)
+            ctx.Result = <span class="kw">new</span> <span class="cls">UnprocessableEntityObjectResult</span>(ctx.ModelState); <span class="cmt">// 422</span>
+    }
+    <span class="kw">public void</span> <span class="mth">OnActionExecuted</span>(<span class="cls">ActionExecutedContext</span> ctx) { }
+}
+
+<span class="cmt">// Program.cs</span>
+builder.Services.<span class="mth">AddControllers</span>(opts => opts.Filters.<span class="mth">Add</span>&lt;<span class="cls">ValidateModelStateFilter</span>&gt;());
+
+<span class="cmt">// OR use [ApiController] — it already does this automatically!
+// [ApiController] attribute enables automatic ModelState validation → 400 response
+// If you have [ApiController], ValidateModelStateFilter is redundant</span></pre>
+        <p><strong>Important:</strong> <code>[ApiController]</code> already auto-validates ModelState. Manual <code>ValidateModelStateFilter</code> only needed when NOT using <code>[ApiController]</code>.</p>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q9. You need to add <code>X-School-Name</code> header to ALL responses from SchoolsController. Best approach?</div>
+        <span class="scenario-type type-design">Design</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p><strong>Result Filter</strong> at controller level — runs after action completes, access to HttpContext to add headers.</p>
+        <pre><span class="kw">public class</span> <span class="cls">SchoolNameHeaderFilter</span> : <span class="cls">IAsyncResultFilter</span>
+{
+    <span class="kw">public async</span> Task <span class="mth">OnResultExecutionAsync</span>(
+        <span class="cls">ResultExecutingContext</span> ctx, <span class="cls">ResultExecutionDelegate</span> next)
+    {
+        <span class="cmt">// HttpContext.Items["Tenant"] set by TenantResolutionMiddleware</span>
+        <span class="kw">if</span> (ctx.HttpContext.Items[<span class="str">"Tenant"</span>] <span class="kw">is</span> <span class="cls">School</span> school)
+            ctx.HttpContext.Response.Headers.<span class="mth">Append</span>(<span class="str">"X-School-Name"</span>, school.Name);
+
+        <span class="kw">await</span> next(); <span class="cmt">// Write the response body</span>
+    }
+}
+
+<span class="cmt">// Apply to controller</span>
+[<span class="attr">ServiceFilter</span>(<span class="kw">typeof</span>(<span class="cls">SchoolNameHeaderFilter</span>))]
+<span class="kw">public class</span> <span class="cls">SchoolsController</span> : <span class="cls">ControllerBase</span> { ... }
+
+<span class="cmt">// Why not Middleware? Middleware can't easily scope to SchoolsController only.
+// Why not Action Filter? Result filter runs after result object is set — headers
+// must be added before response body is written (result execution).</span></pre>
+    </div>
+</div>
+
+<div class="scenario-card">
+    <div class="scenario-header">
+        <div class="scenario-q">Q10. "Describe your middleware and filter usage in ZenCampus." — Full structured answer</div>
+        <span class="scenario-type type-exp">Experience</span>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">Reveal Answer</button>
+    <div class="answer">
+        <p>"ZenCampus serves 200 schools and 50,000 students across multiple tenants. We built a layered pipeline using both middleware and MVC filters based on what each needs to access.</p>
+        <p style="margin-top:0.5rem"><strong>Middleware layer:</strong> RequestTimingMiddleware logs any request exceeding 500ms — runs for all requests including health checks. TenantResolutionMiddleware (IMiddleware pattern, scoped) resolves the school from the JWT claim and populates <code>HttpContext.Items["Tenant"]</code> — this runs after UseAuthentication so the JWT is already parsed. SecurityHeadersMiddleware adds X-Frame-Options, X-Content-Type-Options to every response on the way out.</p>
+        <p style="margin-top:0.5rem"><strong>Action Filter layer:</strong> ValidateSchoolAccessFilter is applied at controller level on all school-scoped controllers — it compares the <code>schoolId</code> route parameter with the JWT claim. If a school 7 teacher tries accessing school 8's data, it logs a warning and short-circuits with 403. This saved us from a cross-tenant data exposure risk we caught in testing.</p>
+        <p style="margin-top:0.5rem"><strong>Resource Filter:</strong> CacheSchoolDataFilter on GET student list endpoints — checks Redis before model binding. Cache hit = controller never runs. On miss, stores the result after action completes.</p>
+        <p style="margin-top:0.5rem"><strong>Global filters:</strong> AuditLogFilter is registered globally — logs every controller/action/user/status/duration. ValidateModelStateFilter was removed when we added <code>[ApiController]</code> — which does it automatically."</p>
+    </div>
+</div>
+
+<!-- QUIZ -->
+<h2 class="section-title" id="quiz">🧠 Quick Quiz</h2>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q1. You need to validate that the <code>schoolId</code> in the URL matches the user's JWT claim. Best implementation?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Middleware — runs early, fast short-circuit</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">B) Action Filter — needs route parameter (schoolId) which is only available after routing</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) Resource Filter — runs before model binding, fastest</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Result Filter — checks after action, can still reject</button>
+    </div>
+    <div class="quiz-feedback">Action Filter — schoolId route parameter is only accessible after routing resolves, inside the MVC pipeline. Middleware runs BEFORE routing so route values are unavailable. Resource filter also has route values, but action filter is the standard choice for pre-action validation. Result filter runs too late — action already executed.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q2. You want to cache entire action responses in Redis. For a cache HIT, what should NOT run at all?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) Authorization filter — security should always run</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">B) Model binding AND the controller action — both skipped with Resource Filter short-circuit</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) Only the controller action — model binding is cheap</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Everything including authentication and authorization</button>
+    </div>
+    <div class="quiz-feedback">Model binding AND controller action — both skipped via Resource Filter. Resource filter runs BEFORE model binding so on cache hit: authentication runs (always), authorization runs (always), then resource filter short-circuits — model binding and controller action never execute. This is why Resource Filter is more efficient than Action Filter for caching.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q3. IMiddleware vs convention-based middleware — why does IMiddleware safely support scoped DbContext injection?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,false)">A) IMiddleware uses a different DI container</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">B) IMiddleware uses singleton lifetime like convention middleware</button>
+        <button class="quiz-opt" onclick="quiz(this,true)">C) IMiddleware is resolved from DI per-request (transient/scoped), so it gets a fresh scope each time</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) Convention middleware can also safely inject scoped services in the constructor</button>
+    </div>
+    <div class="quiz-feedback">IMiddleware is resolved by DI per request — the container creates a new instance (or scoped instance) for each request, so scoped services like DbContext get proper per-request lifetime. Convention middleware constructor is called ONCE at startup (singleton), so injecting scoped services causes captive dependency — the scoped object is held forever, leaking data between requests.</div>
+</div>
+
+<div class="quiz-card">
+    <div class="quiz-q">Q4. Three filters applied: Global AuditLogFilter, Controller ValidateSchoolFilter, Action CacheFilter. What runs FIRST when request arrives?</div>
+    <div class="quiz-options">
+        <button class="quiz-opt" onclick="quiz(this,true)">A) AuditLogFilter (Global) — outermost, first in</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">B) CacheFilter (Action) — closest to the action, runs first</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">C) ValidateSchoolFilter (Controller) — middle wins</button>
+        <button class="quiz-opt" onclick="quiz(this,false)">D) All three run simultaneously</button>
+    </div>
+    <div class="quiz-feedback">Global filter runs first on the way IN (outer → inner: Global → Controller → Action). On the way OUT it's reversed (inner → outer: Action → Controller → Global). This is the "matryoshka doll" / Russian nesting doll model — outermost wraps everything. Exception: you can override this with the Order property (lower Order number = runs first).</div>
+</div>
+
+<!-- CHECKLIST -->
+<h2 class="section-title">✅ Day 24 Mastery Checklist</h2>
+<ul class="checklist">
+    <li><input type="checkbox" id="c1"><label for="c1">Middleware order: ExceptionHandler → HTTPS → Static → Routing → CORS → Auth → Authz → Custom → Endpoints</label></li>
+    <li><input type="checkbox" id="c2"><label for="c2">UseAuthentication BEFORE UseAuthorization — immutable rule, order bug = all 401</label></li>
+    <li><input type="checkbox" id="c3"><label for="c3">Short-circuit: don't call next() + write response + return — nothing downstream runs</label></li>
+    <li><input type="checkbox" id="c4"><label for="c4">Convention middleware: singleton — inject scoped via InvokeAsync parameter or ctx.RequestServices</label></li>
+    <li><input type="checkbox" id="c5"><label for="c5">IMiddleware: resolved per-request by DI — safely inject scoped services in constructor</label></li>
+    <li><input type="checkbox" id="c6"><label for="c6">Filter pipeline: Authorization → Resource → Model Binding → Action → Action → Result → Resource</label></li>
+    <li><input type="checkbox" id="c7"><label for="c7">Filter scope: Global (all) → Controller (class) → Action (method), outer→inner on way in</label></li>
+    <li><input type="checkbox" id="c8"><label for="c8">[ServiceFilter] resolves from DI (register it!), [TypeFilter] creates via framework (no scoped DI)</label></li>
+    <li><input type="checkbox" id="c9"><label for="c9">Resource Filter: runs BEFORE model binding — most efficient cache short-circuit</label></li>
+    <li><input type="checkbox" id="c10"><label for="c10">Action Filter: needs ModelState/route values — use for validation, access control, audit</label></li>
+    <li><input type="checkbox" id="c11"><label for="c11">Result Filter: runs around IActionResult execution — add response headers, transform output</label></li>
+    <li><input type="checkbox" id="c12"><label for="c12">Exception Filter (MVC-only) vs IExceptionHandler (entire pipeline) — prefer IExceptionHandler</label></li>
+</ul>
+
+<div style="text-align:center;margin:2rem 0;padding:1.5rem;background:var(--card2);border-radius:12px;border:1px solid var(--border);">
+    <div style="font-size:1.5rem;font-weight:800;color:var(--accent-light)">Day 24 Complete! 🎯</div>
+    <div style="color:var(--text-dim);margin-top:0.5rem">40% of the 60-day journey done</div>
+    <div style="color:var(--text-dim);font-size:0.85rem;margin-top:0.25rem">Tomorrow: Day 25 — Dependency Injection Deep Dive (Lifetimes, Captive Dependencies, IServiceProvider, Keyed Services, Factory Pattern)</div>
+</div>
+
+</div>
+
+<footer>
+    <div>Day 24 / 60 — Middleware &amp; Filters | ZenCampus .NET Interview Prep</div>
+    <div style="margin-top:0.25rem;color:var(--accent)">Accent: Copper/Rust #c2410c | Days 1–24 colors all unique ✓</div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const p = (doc.scrollTop || document.body.scrollTop) / (doc.scrollHeight - doc.clientHeight) * 100;
+    document.getElementById('progressBar').style.width = p + '%';
+});
+function toggle(btn) {
+    const a = btn.nextElementSibling;
+    a.classList.toggle('visible');
+    btn.textContent = a.classList.contains('visible') ? 'Hide Answer' : 'Reveal Answer';
+}
+function quiz(btn, correct) {
+    const card = btn.closest('.quiz-card');
+    card.querySelectorAll('.quiz-opt').forEach(o => o.disabled = true);
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    if (!correct)
+        card.querySelectorAll('.quiz-opt').forEach(o => {
+            if (o.getAttribute('onclick').includes('true')) o.classList.add('correct');
+        });
+    const fb = card.querySelector('.quiz-feedback');
+    fb.classList.add('show');
+    fb.style.cssText = `background:${correct?'rgba(34,197,94,0.1)':'rgba(239,68,68,0.1)'};color:${correct?'#86efac':'#fca5a5'};border:1px solid ${correct?'rgba(34,197,94,0.3)':'rgba(239,68,68,0.3)'};`;
+}
+</script>
+</body>
+</html>

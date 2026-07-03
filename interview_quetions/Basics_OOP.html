@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP Basics — C# Object-Oriented Programming | ZenCampus</title>
+<style>
+  :root{--accent:#047857;--accent-dim:#065f46;--accent-subtle:rgba(4,120,87,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(4,120,87,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.05rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  p{margin-bottom:.5rem;font-size:.92rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}.prop{color:#f78c6c;}
+  .movie{background:linear-gradient(135deg,rgba(4,120,87,.12),rgba(4,120,87,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .pillar{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem;margin-bottom:.8rem;border-left:4px solid var(--accent);}
+  .pillar h3{color:var(--accent);margin-top:0;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.9rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">OOP BASICS</span>
+  <a href="#class">Class</a><a href="#pillars">4 Pillars</a><a href="#inheritance">Inheritance</a>
+  <a href="#poly">Polymorphism</a><a href="#abstract">Abstract</a><a href="#scenarios">Interview Q</a>
+</nav>
+<div class="hero">
+  <h1>OOP — Object-Oriented Programming</h1>
+  <p>Class · Object · Inheritance · Encapsulation · Polymorphism · Abstraction</p>
+  <div class="tags">
+    <span class="tag">C# OOP</span><span class="tag">4 Pillars</span><span class="tag">ZenCampus Examples</span>
+    <span class="tag" style="background:rgba(4,120,87,.2);border-color:#047857;color:#047857;">Forest Green #047857</span>
+  </div>
+</div>
+<main>
+
+<section id="class">
+  <h2>🧱 Class vs Object — The Foundation</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Baasha (1995) — Blueprint and the real thing</div>
+    <div class="mb">Baasha-la Manickam oru normal auto driver-a vazhkiran — but his "class definition" (history, skills, power) is different. Object = antha specific manickam. Class = blueprint. ZenCampus-la Student class = blueprint. Raju, Priya, Basha — they are OBJECTS (instances) of that blueprint. Create pannina time-la each object has its own data (name, admNo) but same structure!</div></div>
+  </div>
+  <pre><code><span class="cm">// Class = blueprint (schema) — defined once</span>
+<span class="kw">public class</span> <span class="cl">Student</span>
+{
+    <span class="cm">// Fields — data the object holds</span>
+    <span class="kw">public int</span> Id { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public string</span> Name { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="kw">string</span>.Empty;
+    <span class="kw">public string</span> AdmissionNumber { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="kw">string</span>.Empty;
+    <span class="kw">public int</span> ClassId { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    <span class="cm">// Constructor — runs when object is created</span>
+    <span class="kw">public</span> Student(<span class="kw">string</span> name, <span class="kw">string</span> admNo, <span class="kw">int</span> classId)
+    {
+        Name = name;
+        AdmissionNumber = admNo;
+        ClassId = classId;
+    }
+
+    <span class="cm">// Method — behaviour of the object</span>
+    <span class="kw">public string</span> GetDisplayName()
+    {
+        <span class="kw">return</span> <span class="str">$"{Name} ({AdmissionNumber})"</span>;
+    }
+}
+
+<span class="cm">// Object = actual instance (created with 'new')</span>
+<span class="kw">var</span> student1 = <span class="kw">new</span> <span class="cl">Student</span>(<span class="str">"Basha Kumar"</span>, <span class="str">"ADM001"</span>, <span class="num">5</span>);
+<span class="kw">var</span> student2 = <span class="kw">new</span> <span class="cl">Student</span>(<span class="str">"Priya Devi"</span>, <span class="str">"ADM002"</span>, <span class="num">6</span>);
+
+<span class="cm">// Each object is independent</span>
+Console.WriteLine(student1.GetDisplayName()); <span class="cm">// Basha Kumar (ADM001)</span>
+Console.WriteLine(student2.GetDisplayName()); <span class="cm">// Priya Devi (ADM002)</span>
+Console.WriteLine(student1.Name == student2.Name); <span class="cm">// False</span></code></pre>
+</section>
+
+<section id="pillars">
+  <h2>🏛️ 4 Pillars of OOP</h2>
+  <div class="pillar">
+    <h3>1. Encapsulation — Hide Internal Details</h3>
+    <p>Private fields + public properties. Control HOW data is accessed/changed. Like a capsule — protects internal state.</p>
+    <pre><code><span class="kw">public class</span> <span class="cl">FeeAccount</span>
+{
+    <span class="kw">private decimal</span> _balance;  <span class="cm">// private — hidden from outside</span>
+
+    <span class="kw">public decimal</span> Balance =&gt; _balance;  <span class="cm">// read-only property</span>
+
+    <span class="kw">public void</span> Credit(<span class="kw">decimal</span> amount)
+    {
+        <span class="kw">if</span> (amount &lt;= <span class="num">0</span>) <span class="kw">throw new</span> <span class="cl">ArgumentException</span>(<span class="str">"Amount must be positive"</span>);
+        _balance += amount;  <span class="cm">// only this method can modify _balance</span>
+    }
+
+    <span class="kw">public void</span> Debit(<span class="kw">decimal</span> amount)
+    {
+        <span class="kw">if</span> (amount &gt; _balance) <span class="kw">throw new</span> <span class="cl">InvalidOperationException</span>(<span class="str">"Insufficient balance"</span>);
+        _balance -= amount;
+    }
+}
+<span class="cm">// fee.Balance = 5000; ← ERROR! Can't set directly — encapsulated</span>
+<span class="cm">// fee.Credit(5000); ← CORRECT — goes through validation</span></code></pre>
+  </div>
+
+  <div class="pillar">
+    <h3>2. Inheritance — Reuse &amp; Extend</h3>
+    <p>Child class gets all properties/methods of parent. "IS-A" relationship. ZenCampus: Teacher IS-A Person. Student IS-A Person.</p>
+    <pre><code><span class="kw">public class</span> <span class="cl">Person</span>         <span class="cm">// Parent / Base class</span>
+{
+    <span class="kw">public string</span> Name { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="str">""</span>;
+    <span class="kw">public string</span> Phone { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="str">""</span>;
+    <span class="kw">public virtual string</span> GetRole() =&gt; <span class="str">"Person"</span>;
+}
+
+<span class="kw">public class</span> <span class="cl">Student</span> : <span class="cl">Person</span>   <span class="cm">// Child class — inherits from Person</span>
+{
+    <span class="kw">public string</span> AdmissionNumber { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="str">""</span>;
+    <span class="kw">public override string</span> GetRole() =&gt; <span class="str">"Student"</span>;  <span class="cm">// override parent method</span>
+}
+
+<span class="kw">public class</span> <span class="cl">Teacher</span> : <span class="cl">Person</span>
+{
+    <span class="kw">public string</span> EmployeeId { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="str">""</span>;
+    <span class="kw">public string</span> Subject { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="str">""</span>;
+    <span class="kw">public override string</span> GetRole() =&gt; <span class="str">"Teacher"</span>;
+}
+
+<span class="kw">var</span> s = <span class="kw">new</span> <span class="cl">Student</span> { Name = <span class="str">"Basha"</span>, AdmissionNumber = <span class="str">"ADM001"</span> };
+Console.WriteLine(s.Name);    <span class="cm">// inherited from Person</span>
+Console.WriteLine(s.GetRole()); <span class="cm">// "Student" — overridden</span></code></pre>
+  </div>
+
+  <div class="pillar">
+    <h3>3. Polymorphism — Same Method, Different Behaviour</h3>
+    <p>"Many forms." Same method name, different implementation. ZenCampus: SendNotification() — SMS for teacher, email for admin, push for parent.</p>
+    <pre><code><span class="kw">public abstract class</span> <span class="cl">NotificationSender</span>
+{
+    <span class="kw">public abstract void</span> Send(<span class="kw">string</span> message, <span class="kw">string</span> recipient);
+}
+
+<span class="kw">public class</span> <span class="cl">SmsNotification</span> : <span class="cl">NotificationSender</span>
+{
+    <span class="kw">public override void</span> Send(<span class="kw">string</span> message, <span class="kw">string</span> recipient)
+        =&gt; Console.WriteLine(<span class="str">$"SMS to {recipient}: {message}"</span>);
+}
+
+<span class="kw">public class</span> <span class="cl">EmailNotification</span> : <span class="cl">NotificationSender</span>
+{
+    <span class="kw">public override void</span> Send(<span class="kw">string</span> message, <span class="kw">string</span> recipient)
+        =&gt; Console.WriteLine(<span class="str">$"Email to {recipient}: {message}"</span>);
+}
+
+<span class="cm">// Polymorphic usage — same method call, different behavior</span>
+<span class="cl">List</span>&lt;<span class="cl">NotificationSender</span>&gt; senders = [<span class="kw">new</span> <span class="cl">SmsNotification</span>(), <span class="kw">new</span> <span class="cl">EmailNotification</span>()];
+<span class="kw">foreach</span> (<span class="kw">var</span> sender <span class="kw">in</span> senders)
+    sender.Send(<span class="str">"Fee due tomorrow"</span>, <span class="str">"parent@example.com"</span>);
+<span class="cm">// SMS to parent@example.com: Fee due tomorrow</span>
+<span class="cm">// Email to parent@example.com: Fee due tomorrow</span></code></pre>
+  </div>
+
+  <div class="pillar">
+    <h3>4. Abstraction — Show Only What's Needed</h3>
+    <p>Hide complexity, expose simple interface. Like a car — you press accelerator, don't need to know engine internals.</p>
+    <pre><code><span class="kw">public interface</span> <span class="cl">IFeeCalculator</span>
+{
+    <span class="kw">decimal</span> Calculate(<span class="kw">int</span> studentId, <span class="kw">int</span> term);  <span class="cm">// abstraction — what it does</span>
+}
+
+<span class="cm">// Implementation hidden from callers</span>
+<span class="kw">public class</span> <span class="cl">GeneralFeeCalculator</span> : <span class="cl">IFeeCalculator</span>
+{
+    <span class="kw">public decimal</span> Calculate(<span class="kw">int</span> studentId, <span class="kw">int</span> term)
+    {
+        <span class="cm">// Complex logic hidden: base fee + transport + lab fee + etc</span>
+        <span class="kw">return</span> <span class="num">5000m</span> + (<span class="num">500m</span> * term);
+    }
+}
+
+<span class="cm">// Caller only knows interface — doesn't care about internals</span>
+<span class="cl">IFeeCalculator</span> calc = <span class="kw">new</span> <span class="cl">GeneralFeeCalculator</span>();
+<span class="kw">var</span> fee = calc.Calculate(<span class="num">1</span>, <span class="num">2</span>);  <span class="cm">// simple call, complex logic hidden</span></code></pre>
+  </div>
+</section>
+
+<section id="inheritance">
+  <h2>🧬 Inheritance Deep Dive</h2>
+  <table>
+    <tr><th>Keyword</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td>: BaseClass</td><td>Inherit from base class</td><td>class Student : Person</td></tr>
+    <tr><td>virtual</td><td>Parent method can be overridden</td><td>public virtual string GetRole()</td></tr>
+    <tr><td>override</td><td>Child replaces parent method</td><td>public override string GetRole()</td></tr>
+    <tr><td>base</td><td>Call parent class member</td><td>base.GetRole(); or base(name)</td></tr>
+    <tr><td>sealed</td><td>Cannot be inherited further</td><td>public sealed class AdminUser</td></tr>
+    <tr><td>abstract</td><td>Must be implemented by child</td><td>public abstract void Calculate()</td></tr>
+  </table>
+  <pre><code><span class="cm">// base keyword usage</span>
+<span class="kw">public class</span> <span class="cl">HostelStudent</span> : <span class="cl">Student</span>
+{
+    <span class="kw">public string</span> RoomNumber { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="str">""</span>;
+
+    <span class="kw">public</span> HostelStudent(<span class="kw">string</span> name, <span class="kw">string</span> admNo, <span class="kw">int</span> classId, <span class="kw">string</span> room)
+        : <span class="kw">base</span>(name, admNo, classId)  <span class="cm">// call parent constructor</span>
+    {
+        RoomNumber = room;
+    }
+
+    <span class="kw">public override string</span> GetRole() =&gt; <span class="str">$"Hostel Student (Room {RoomNumber})"</span>;
+}
+<span class="cm">// HostelStudent inherits from Student, which inherits from Person</span>
+<span class="cm">// This is a 3-level inheritance chain</span></code></pre>
+</section>
+
+<section id="poly">
+  <h2>🎭 Interface vs Abstract Class</h2>
+  <table>
+    <tr><th>Feature</th><th>Interface</th><th>Abstract Class</th></tr>
+    <tr><td>Implementation</td><td>No (default methods from C# 8)</td><td>Yes — partial implementation</td></tr>
+    <tr><td>Multiple</td><td>A class can implement many</td><td>Only ONE abstract class (single inheritance)</td></tr>
+    <tr><td>Constructor</td><td>No constructor</td><td>Has constructor</td></tr>
+    <tr><td>Fields</td><td>No fields</td><td>Can have fields</td></tr>
+    <tr><td>Use when</td><td>Define a CONTRACT (can do this)</td><td>Share common code + force override</td></tr>
+    <tr><td>ZenCampus</td><td>IFeeCalculator, ISmsService</td><td>BaseReport, BaseNotification</td></tr>
+  </table>
+</section>
+
+<section id="abstract">
+  <h2>🔒 Access Modifiers</h2>
+  <table>
+    <tr><th>Modifier</th><th>Visible To</th><th>ZenCampus Use</th></tr>
+    <tr><td>public</td><td>Everyone</td><td>API endpoints, DTO properties</td></tr>
+    <tr><td>private</td><td>Only same class</td><td>_balance field in FeeAccount</td></tr>
+    <tr><td>protected</td><td>Same class + child classes</td><td>Base class helper methods</td></tr>
+    <tr><td>internal</td><td>Same assembly/project</td><td>Repository implementations</td></tr>
+    <tr><td>protected internal</td><td>Same assembly + child classes</td><td>Rare — base service classes</td></tr>
+    <tr><td>private protected</td><td>Same class + child in same assembly</td><td>Very rare</td></tr>
+  </table>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is the difference between a class and an object?</span><span class="st">Basics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc">Class = blueprint/template (Student). Object = actual instance of that blueprint (Basha Kumar, ADM001). Class is defined once. Objects (instances) can be created many times. Memory allocated for object, not for class. new keyword creates object from class. Analogy: Class = house plan, Object = actual built house.</div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What is encapsulation? Why use private fields?</span><span class="st">OOP</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc">Encapsulation: bundle data (fields) and methods in one class AND restrict direct access. Private fields prevent outside code from setting invalid values. FeeAccount._balance is private — only Credit() and Debit() can change it, with validation. Without encapsulation: fee.balance = -9999 would be possible. With: validation is enforced. "Data hiding."</div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is the difference between method overloading and method overriding?</span><span class="st">OOP</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Overloading: same method name, different parameters, SAME class. Compile-time polymorphism. Example: Calculate(int term) and Calculate(int term, bool isHostel) in same class. Overriding: child class replaces parent's virtual method. Runtime polymorphism. Example: Teacher.GetRole() overrides Person.GetRole(). Overloading = same class, different signatures. Overriding = inheritance, same signature, different class.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">Can you inherit from multiple classes in C#?</span><span class="st">OOP</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>No. C# does not support multiple class inheritance. "Diamond problem" — if both parents have same method, child doesn't know which to use. Solution: multiple interface implementation. class Student : Person, IPayable, IAttendable — one base class + many interfaces. Interfaces define what you CAN DO, base class defines what you ARE.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">What is an abstract class and when to use it vs interface?</span><span class="st">OOP</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Abstract class: partially implemented, cannot be instantiated directly. Mix of abstract (must override) and concrete (already implemented) methods. Use when: sharing code between related classes (BaseReport with common PDF rendering code). Interface: contract with no implementation (or default in C#8+). Use when: unrelated classes should share capability (IDisposable, IComparable, IFeeCalculator). Rule: "IS-A" relationship → abstract class. "CAN-DO" capability → interface.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">What is the 'is' and 'as' keyword in C#?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>Person person = new Student { Name = "Basha" };
+
+// 'is' — check type (returns bool)
+if (person is Student)
+    Console.WriteLine("Is a student");
+
+// 'is' with pattern matching (C# 7+) — recommended
+if (person is Student student)
+    Console.WriteLine(student.AdmissionNumber);
+
+// 'as' — try cast, returns null if fails (not exception)
+var s = person as Student;  // null if person is not Student
+if (s != null) Console.WriteLine(s.Name);</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">What is a constructor and what types are there?</span><span class="st">OOP</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Constructor: special method with same name as class, no return type. Runs when object is created with 'new'. Types: 1) Default constructor — no parameters, provided if you define none. 2) Parameterized — takes arguments (Student(string name, string admNo)). 3) Copy constructor — creates new object from existing. 4) Static constructor — runs once per type, for static initialization. 5) Primary constructor (C# 12): class Student(string Name, string AdmNo).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">What is the difference between a property and a field?</span><span class="st">OOP</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Field: raw variable in class. public string name; — direct access. Property: controlled access via get/set accessors. public string Name { get; set; }. Properties can: validate on set, compute on get, be read-only (get only), raise events. Fields: typically private. Properties: public interface. EF Core, JSON serializer, data binding — all work with properties, not fields. Always use properties for public members.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">Explain static class and static members.</span><span class="st">OOP</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Static member: belongs to the CLASS, not an instance. Shared across all objects. Student.TotalCount++ (shared counter). Static class: cannot be instantiated. Only static members. Use for: utility methods (StringHelper.ToTitleCase()), constants, extension methods. ZenCampus: CacheKeys.Student(id) — static method. DateHelper.IsSchoolDay(date) — static utility. Don't store mutable state in static — thread safety issues.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">What is 'this' keyword in C#?</span><span class="st">OOP</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>this: refers to the CURRENT INSTANCE of the class. Uses: 1) Disambiguate when parameter name == field name: this.name = name; 2) Call another constructor: public Student(string name) : this(name, "N/A") { } 3) Pass current object: repository.Save(this) 4) Extension methods: the 'this' parameter defines what type it extends. In static methods: 'this' not available — no instance.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. Which OOP pillar is implemented by making a field private and providing public getters/setters?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Inheritance is about IS-A relationship between classes.')">Inheritance</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Encapsulation = data hiding + controlled access. Private field + public property = classic encapsulation in C#.')">Encapsulation</button>
+    <button class="qb" onclick="ans(this,'wrong','Polymorphism is about one method having different behaviors.')">Polymorphism</button>
+    <button class="qb" onclick="ans(this,'wrong','Abstraction is about hiding complexity behind a simple interface.')">Abstraction</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What keyword is used to prevent a method from being overridden in a child class?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','private prevents access, not overriding from derived classes.')">private</button>
+    <button class="qb" onclick="ans(this,'wrong','static makes it class-level, not instance — but doesn\'t prevent override.')">static</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! sealed on a method (or class) prevents further overriding or inheritance. public sealed override string GetRole() cannot be overridden in further child classes.')">sealed</button>
+    <button class="qb" onclick="ans(this,'wrong','readonly applies to fields, not methods.')">readonly</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. In ZenCampus, Student IS-A Person. What type of relationship is this?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','HAS-A is composition — Student HAS-A FeeAccount.')">HAS-A (Composition)</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! IS-A = inheritance. Student inherits from Person. class Student : Person. Student "is a" Person — has all Person properties plus its own.')">IS-A (Inheritance)</button>
+    <button class="qb" onclick="ans(this,'wrong','USES-A is a dependency relationship, not structural.')">USES-A (Dependency)</button>
+    <button class="qb" onclick="ans(this,'wrong','KNOWS-A is an association relationship.')">KNOWS-A (Association)</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. What is the difference between 'virtual' and 'abstract' methods?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Both can be in classes — abstract only in abstract classes though.')">virtual is in interfaces, abstract is in classes</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! virtual = has default implementation, child CAN override. abstract = no implementation, child MUST override. Abstract method can only be in abstract class.')">virtual = has default implementation (override optional); abstract = no body (override required)</button>
+    <button class="qb" onclick="ans(this,'wrong','Both can be public.')">virtual is private, abstract is public</button>
+    <button class="qb" onclick="ans(this,'wrong','Both are used for inheritance and overriding.')">They are exactly the same</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can explain class vs object with a real example</li>
+    <li onclick="ck(this)"><input type="checkbox">I can implement encapsulation with private fields</li>
+    <li onclick="ck(this)"><input type="checkbox">I can create inheritance with base/override/virtual</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand polymorphism — same method, different behavior</li>
+    <li onclick="ck(this)"><input type="checkbox">I know when to use interface vs abstract class</li>
+    <li onclick="ck(this)"><input type="checkbox">I know all access modifiers (public/private/protected/internal)</li>
+    <li onclick="ck(this)"><input type="checkbox">I can use 'is' and 'as' for type checking</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand static members and when to use them</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">OOP Basics Complete ✓ — 4 Pillars Strong!</p>
+  <p>Accent: Forest Green #047857 · Next: C# Basics (Data Types, Strings, Methods)</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenCampus .NET MVC - Business Logic &amp; UI Integration Complete Guide</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --accent:#8b5cf6; --text:#e2e8f0; --muted:#94a3b8; --code:#0b1220; --green:#22c55e;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI',Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  header{ background:linear-gradient(135deg,#5b21b6,#0f172a); padding:36px 20px; text-align:center; border-bottom:3px solid var(--accent); }
+  header h1{ margin:0 0 8px; font-size:1.8rem; color:#fff; }
+  header p{ margin:0; color:var(--muted); }
+  .tabs{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; background:#0b1220; padding:14px; position:sticky; top:0; z-index:20; border-bottom:1px solid #334155; }
+  .tab-btn{ padding:10px 20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--muted); cursor:pointer; font-weight:600; font-size:0.9rem; }
+  .tab-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .container{ max-width:920px; margin:0 auto; padding:30px 20px 80px; }
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
+
+  .search-box{ width:100%; padding:12px 16px; margin-bottom:20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--text); font-size:1rem; }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .filter-btn{ padding:6px 14px; border-radius:20px; border:1px solid #334155; background:transparent; color:var(--muted); cursor:pointer; font-size:0.85rem; }
+  .filter-btn.active, .filter-btn:hover{ background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  .day-block{ margin-bottom:36px; }
+  .day-title{ color:var(--accent); font-size:1.3rem; margin-bottom:14px; border-left:4px solid var(--accent); padding-left:10px; }
+
+  .qa{ background:var(--card); border-radius:10px; margin-bottom:14px; overflow:hidden; border:1px solid #334155; scroll-margin-top:140px; }
+  .q{ padding:16px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; gap:12px; }
+  .q:hover{ background:#241c3d; }
+  .q .num{ color:var(--accent); margin-right:8px; }
+  .q .tag{ font-size:0.7rem; font-weight:400; padding:2px 8px; border-radius:10px; background:#0b1220; color:var(--accent); white-space:nowrap; }
+  .q .tag2{ font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:10px; background:#0b1220; white-space:nowrap; }
+  .tag-concept{ color:#a78bfa; }
+  .tag-code{ color:#fb923c; }
+  .a{ max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 18px; color:var(--muted); border-top:1px solid transparent; }
+  .qa.open .a{ max-height:1500px; padding:0 18px 18px; border-top:1px solid #334155; }
+  .a code, .a pre{ background:var(--code); color:#c4b5fd; padding:2px 6px; border-radius:4px; font-family:Consolas,Monaco,monospace; font-size:0.86rem; }
+  .a pre{ display:block; padding:12px; overflow-x:auto; white-space:pre-wrap; margin:10px 0; }
+  .movie-ref{ background:#3b1e5e; color:#e9d5ff; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .zen-ref{ background:#0e3b2e; color:#bbf7d0; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .toggle-icon{ transition:transform .25s; color:var(--accent); font-size:1.1rem; }
+  .qa.open .toggle-icon{ transform:rotate(45deg); }
+  .count{ color:var(--accent); font-weight:600; }
+
+  .checklist{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media(max-width:600px){ .checklist{ grid-template-columns:1fr; } }
+  .check-item{ background:var(--card); border:1px solid #334155; border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .check-item:hover{ border-color:var(--accent); }
+  .check-item .badge{ color:var(--green); font-size:1.1rem; }
+  .check-item .num{ color:var(--muted); font-size:0.8rem; min-width:20px; }
+
+  footer{ text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🟣 ZenCampus .NET MVC — Business Logic &amp; UI Integration</h1>
+  <p>20 Core Concepts (5-Day Plan) + 50 Interview &amp; Coding Q&A — Mapped to the Actual ZenCampus Codebase</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="guide">📘 5-Day Guide</button>
+  <button class="tab-btn" data-tab="interview">🎯 Interview &amp; Coding Q&A</button>
+  <button class="tab-btn" data-tab="coverage">✅ Topic Coverage</button>
+</div>
+
+<div class="container">
+
+  <div class="tab-content active" id="tab-guide">
+    <p style="color:var(--muted); margin-bottom:20px;">This guide is mapped directly to how <strong>ZenCampus itself is structured</strong>: <code>Controllers/</code> → <code>Services/</code> &amp; <code>BusinessLogics/</code> → <code>Models/</code>, rendered via <code>Views/</code> (Razor) with JS/AJAX, guarded by <code>Filters/</code>, using <code>WorkContext/</code> for session-scoped state, and verified by <code>ZenCampusWeb.Tests</code>.</p>
+    <div id="guideList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-interview">
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search a question (e.g. ViewModel, layered architecture, filters, TempData)...">
+    <div class="filters" id="filters"></div>
+    <p style="color:var(--muted); font-size:0.85rem;">Showing <span class="count" id="visibleCount">50</span> / 50 questions</p>
+    <div id="qaList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-coverage">
+    <p style="color:var(--muted);">All 20 concepts across the 5-day plan. Click any item to jump to it.</p>
+    <div class="checklist" id="checklist"></div>
+  </div>
+
+</div>
+
+<footer>Built for ZenCampus .NET MVC + Business Logic + UI Integration learning • 2026-07-02</footer>
+
+<script>
+// ============ 20 CONCEPTS ACROSS 5 DAYS (4 topics/day) ============
+const guideDays = [
+{
+  day:1, title:"Day 1 — ASP.NET MVC Architecture Fundamentals",
+  topics:[
+    { name:"1. The MVC Pattern (Model-View-Controller)",
+      movie:"🎬 Baahubali — the kingdom runs on a clear division of power: the throne room's records (Model, the data/rules), the grand hall where the kingdom is PRESENTED to its people (View, what's shown), and the king who decides what happens and directs both (Controller, coordinates the flow).",
+      explain:"MVC separates an app into three responsibilities: <strong>Model</strong> — the data and business rules (`Models/`, `BusinessLogics/`). <strong>View</strong> — what the user sees, rendered as HTML (`Views/*.cshtml`). <strong>Controller</strong> — receives the HTTP request, coordinates the Model and BusinessLogic, and picks which View to render. This separation is WHY a bug in how fee calculations work never requires touching a `.cshtml` file, and a UI redesign never requires touching calculation logic.",
+      zen:"ZenCampus's `Controllers/BillController.cs` receives the request, asks `BusinessLogics/BillCalculator.cs` to compute the due amount (Model/business logic), then renders `Views/Bill/Details.cshtml` (View) with that result — three cleanly separated responsibilities, one request.",
+      code:"// Controller - coordinates, doesn't calculate\npublic class BillController : Controller\n{\n    private readonly IBillService _billService;\n\n    public IActionResult Details(int studentId)\n    {\n        var feeSummary = _billService.CalculateFeeSummary(studentId); // Model/business logic\n        return View(feeSummary); // View renders it\n    }\n}" },
+    { name:"2. Controllers &amp; Actions in MVC",
+      movie:"🎬 Jai Bhim — Chandru is the SINGLE point handling every request related to a case: hear the complaint, gather evidence, decide the next step — a controller is that same coordinator, but for one AREA of the app (e.g. everything Student-related).",
+      explain:"An MVC controller (inherits <code>Controller</code>, not `ControllerBase` — this is the key difference from a pure Web API controller, since MVC controllers can return `View()` results) groups related HTTP-handling actions. Each public method is an ACTION, matched to a route (by convention `/ControllerName/ActionName/id` unless attribute routing overrides it), and typically ends by returning a `View()`, `RedirectToAction()`, or a JSON result for an AJAX call.",
+      zen:"ZenCampus's `Controllers/StudentController.cs` has actions like `Index()` (list students), `Details(int id)` (one student's profile), `Create()`/`Edit()` (admission forms) — each mapped by convention to `Views/Student/Index.cshtml`, `Views/Student/Details.cshtml`, etc.",
+      code:"public class StudentController : Controller\n{\n    public IActionResult Index() // GET /Student/Index or /Student\n    {\n        var students = _studentService.GetAll();\n        return View(students); // looks for Views/Student/Index.cshtml\n    }\n\n    public IActionResult Details(int id) // GET /Student/Details/101\n    {\n        var student = _studentService.GetById(id);\n        return View(student);\n    }\n}" },
+    { name:"3. Razor Views &amp; Razor Syntax",
+      movie:"🎬 96 — Ram narrates his story by BLENDING spoken memory (dynamic content) seamlessly into the physical reunion hall around him (static HTML) — you can't tell where one starts and the other ends. Razor blends C# directly into HTML the same seamless way.",
+      explain:"Razor syntax (`.cshtml` files) lets you embed C# inside HTML using `@`. `@Model.PropertyName` accesses the strongly-typed model passed from the controller. `@foreach`, `@if` embed control flow directly in markup. `@{ }` blocks hold pure C# statements. `@Html.XxxFor()` HTML helpers generate form elements bound to the model with automatic validation attributes.",
+      zen:"`Views/Bill/Details.cshtml` uses `@model FeeSummaryDto` at the top to declare its expected data shape, then `@Model.DueAmount`, `@foreach (var item in Model.LineItems) { ... }` to render the fee breakdown table directly from the data the controller passed in.",
+      code:"@model FeeSummaryDto\n\n&lt;h2&gt;Fee Summary for @Model.StudentName&lt;/h2&gt;\n\n&lt;table&gt;\n@foreach (var item in Model.LineItems)\n{\n    &lt;tr&gt;\n        &lt;td&gt;@item.Description&lt;/td&gt;\n        &lt;td&gt;₹@item.Amount&lt;/td&gt;\n    &lt;/tr&gt;\n}\n&lt;/table&gt;\n\n@if (Model.DueAmount &gt; 0)\n{\n    &lt;p class=\"due-warning\"&gt;Due: ₹@Model.DueAmount&lt;/p&gt;\n}" },
+    { name:"4. Model Binding &amp; Strongly-Typed Views",
+      movie:"🎬 Vaaranam Aayiram — Krishna's scattered form-filled memories automatically ASSEMBLE into one coherent shape by the time they're told as his life story. Model binding automatically assembles scattered form/route/query data into one strongly-typed C# object.",
+      explain:"When a form POSTs, ASP.NET Core MVC automatically maps the submitted field names to a matching parameter/model's property names (by NAME MATCHING) — no manual `Request.Form[\"...\"]` parsing needed. A 'strongly-typed view' declares `@model SomeType` at the top, giving compile-time checking and IntelliSense for `@Model.X` instead of loosely-typed `ViewBag`/`ViewData` access.",
+      zen:"ZenCampus's Student Admission form posts to `[HttpPost] public IActionResult Create(StudentDto dto)` — the form's `&lt;input name=\"Name\"&gt;`, `&lt;input name=\"ClassName\"&gt;` automatically bind into `dto.Name`, `dto.ClassName` purely by matching names, with zero manual parsing code.",
+      code:"// Razor form (Views/Student/Create.cshtml)\n@model StudentDto\n&lt;form asp-action=\"Create\" method=\"post\"&gt;\n    &lt;input asp-for=\"Name\" /&gt;\n    &lt;input asp-for=\"ClassName\" /&gt;\n    &lt;button type=\"submit\"&gt;Save&lt;/button&gt;\n&lt;/form&gt;\n\n// Controller - dto is auto-populated from the posted form fields\n[HttpPost]\npublic IActionResult Create(StudentDto dto) { ... }" }
+  ]
+},
+{
+  day:2, title:"Day 2 — Business Logic Layer Design (Layered Architecture)",
+  topics:[
+    { name:"5. Layered Architecture (Controller → Service/BusinessLogic → Repository)",
+      movie:"🎬 Indian (1996) — Senapathy's chain of command has clear LAYERS: he sets the values, his lieutenants translate those into concrete plans, and the foot soldiers execute — each layer trusts the one above it and never bypasses the chain.",
+      explain:"A layered architecture separates concerns into: <strong>Controller</strong> (handles HTTP, thin — no business logic), <strong>Service/BusinessLogic layer</strong> (the actual rules — fee calculations, eligibility checks, validations), <strong>Repository/Data layer</strong> (raw database access). Each layer only talks to the layer directly below it, NEVER skips a layer (a Controller should never write raw SQL directly) — this makes each piece independently testable and replaceable.",
+      zen:"ZenCampus's structure literally mirrors this: `Controllers/` (thin, HTTP-only) → `Services/` and `BusinessLogics/` (the real rules) → EF Core/repository data access underneath. A `BillController` action is often just 3-4 lines calling into `BusinessLogics/BillCalculator.cs`.",
+      code:"// Controller - THIN, just coordinates\npublic IActionResult PayFee(int billId, decimal amount)\n{\n    var result = _billService.ProcessPayment(billId, amount); // delegates everything\n    return result.Success ? Ok() : BadRequest(result.Error);\n}\n\n// BusinessLogics/BillCalculator.cs - the ACTUAL rules live here\npublic class BillCalculator\n{\n    public decimal CalculateLateFee(decimal baseAmount, int daysLate)\n        =&gt; daysLate &gt; 0 ? baseAmount * 0.02m * daysLate : 0;\n}" },
+    { name:"6. Separation of Concerns (SoC)",
+      movie:"🎬 Master — JD reorganizes the hostel so each staff member has ONE clear responsibility (discipline, academics, welfare) instead of one overworked person doing everything badly. Separation of Concerns applies that exact discipline to code.",
+      explain:"Each class/file/layer should own ONE well-defined concern. A Controller should not calculate fees. A View should not query the database. A BusinessLogic class should not know about `HttpContext` or HTML. Violating this ('fat controllers', 'business logic in Razor views') makes code hard to test, hard to reuse (e.g. can't reuse fee logic for a scheduled background job if it's trapped inside a Controller action), and hard to reason about.",
+      zen:"A common ZenCampus code-smell to avoid: a `.cshtml` view with `@{ var fee = Model.Amount * 1.18; }` computing GST directly in the VIEW — that calculation belongs in `BusinessLogics/`, where it's testable and reusable by both the web UI and, say, a future report-generation job.",
+      code:"// BAD - business logic leaking into the View\n@{ var totalWithGst = Model.Amount * 1.18m; }\n&lt;p&gt;Total: ₹@totalWithGst&lt;/p&gt;\n\n// GOOD - calculation lives in BusinessLogics, View just displays\n// BusinessLogics/BillCalculator.cs: public decimal CalculateWithGst(decimal amount) =&gt; amount * 1.18m;\n&lt;p&gt;Total: ₹@Model.TotalWithGst&lt;/p&gt; // already calculated before reaching the view" },
+    { name:"7. The Service Layer Pattern",
+      movie:"🎬 Enthiran (Robot) — Chitti exposes a clean set of COMMANDS to the outside world (fetch tea, protect Sana) while all the messy internal circuitry stays hidden. A service class exposes a clean set of business OPERATIONS while hiding how they're actually implemented underneath.",
+      explain:"A Service (`Services/StudentService.cs`, registered as `IStudentService` via DI) is the orchestration layer BETWEEN controllers and lower-level pieces (repositories, BusinessLogics calculators, external APIs) — it coordinates a full business OPERATION (e.g. 'admit a new student' might involve creating the student record, generating an initial bill, AND sending a welcome email) as one coherent unit that a Controller simply calls once.",
+      zen:"`Services/StudentAdmissionService.cs` in ZenCampus might orchestrate: validate the DTO → save via repository → call `BusinessLogics/BillCalculator` to generate the first fee bill → trigger a welcome notification — the Controller just calls `_admissionService.AdmitStudent(dto)` once, unaware of these multiple internal steps.",
+      code:"public class StudentAdmissionService : IStudentAdmissionService\n{\n    private readonly IStudentRepository _repo;\n    private readonly BillCalculator _billCalc;\n\n    public async Task AdmitStudent(StudentDto dto)\n    {\n        var student = await _repo.AddAsync(dto);           // step 1\n        var bill = _billCalc.GenerateInitialBill(student);   // step 2\n        await _repo.SaveBillAsync(bill);                     // step 3\n        // Controller only sees ONE call: _admissionService.AdmitStudent(dto)\n    }\n}" },
+    { name:"8. The BusinessLogics Folder Pattern (Rules &amp; Calculations)",
+      movie:"🎬 Thani Oruvan — Mithran's investigative METHODOLOGY (how to connect evidence, how to judge credibility) is a distinct, reusable skill separate from any ONE specific case he's working. `BusinessLogics/` holds that same reusable RULES/CALCULATIONS layer, independent of any specific HTTP request.",
+      explain:"A `BusinessLogics/` class typically contains PURE calculation/validation logic with no dependency on HTTP, databases, or the UI — just inputs in, a decision/number out. This makes it trivially UNIT TESTABLE (no mocking a database or HTTP context needed) and reusable from anywhere: a Controller, a background job, a console utility, or a test project.",
+      zen:"`BusinessLogics/AttendanceEligibilityChecker.cs` in ZenCampus might contain `public bool IsEligibleForExam(decimal attendancePercent) =&gt; attendancePercent &gt;= 75;` — a pure function with zero dependencies, directly unit-testable in `ZenCampusWeb.Tests` without spinning up a database or web server.",
+      code:"// BusinessLogics/AttendanceEligibilityChecker.cs - pure, no dependencies\npublic class AttendanceEligibilityChecker\n{\n    private const decimal MinimumRequiredPercent = 75m;\n\n    public bool IsEligibleForExam(decimal attendancePercent)\n        =&gt; attendancePercent &gt;= MinimumRequiredPercent;\n}\n\n// Trivially testable - no DB, no HTTP, no mocking needed\n[Fact]\npublic void Student_With_80_Percent_Is_Eligible()\n{\n    var checker = new AttendanceEligibilityChecker();\n    Assert.True(checker.IsEligibleForExam(80m));\n}" }
+  ]
+},
+{
+  day:3, title:"Day 3 — Data Flow: ViewModels, Layouts, Partial Views &amp; Filters",
+  topics:[
+    { name:"9. ViewModel vs Domain Model",
+      movie:"🎬 Indian (1996) — Senapathy shows the world only what a SPECIFIC situation calls for, never his full raw internal history at once. A ViewModel is that same purpose-built, page-specific shape of data — never your raw database entity handed straight to the View.",
+      explain:"A domain Model (`Models/Student.cs`) represents the database entity, potentially with fields irrelevant or even sensitive for a given page. A ViewModel is shaped SPECIFICALLY for what one View needs to display/collect — often combining data from MULTIPLE domain models (e.g. a dashboard ViewModel combining Student + Bill + Attendance summaries) into one convenient object the Razor view can bind to directly.",
+      zen:"ZenCampus's `Views/Bill/Details.cshtml` doesn't receive a raw `Bill` entity — it receives a `BillDetailsViewModel` combining the student's name (from `Student`), the fee breakdown (from `Bill`), and payment history (from `PaymentHistory`) — exactly what that ONE page needs, nothing more.",
+      code:"// Domain models - raw entities\npublic class Student { public int Id; public string Name; }\npublic class Bill { public int Id; public decimal DueAmount; }\n\n// ViewModel - shaped for ONE specific page\npublic class BillDetailsViewModel\n{\n    public string StudentName { get; set; }\n    public decimal DueAmount { get; set; }\n    public List&lt;PaymentHistoryItem&gt; History { get; set; }\n}" },
+    { name:"10. Passing Data: ViewBag, ViewData, TempData &amp; Strongly-Typed Models",
+      movie:"🎬 Ghajini — Sanjay uses different memory tools for different durations: a permanent tattoo for lasting facts (strongly-typed model, the reliable main channel), a quick sticky note for the current moment (ViewBag/ViewData, THIS request only), and a note meant to survive exactly ONE redirect to the next scene (TempData).",
+      explain:"A strongly-typed <code>@model</code> is the PRIMARY, most reliable way to pass data — compile-time checked. <code>ViewBag</code>/<code>ViewData</code> pass EXTRA loosely-typed data alongside the model for the CURRENT request only (no compile-time safety, easy to typo). <code>TempData</code> survives exactly ONE additional redirect (stored in session/cookie under the hood) — the standard way to pass a 'success message' across a `RedirectToAction()` call, since the model itself doesn't survive a redirect.",
+      zen:"After successfully saving a fee payment, ZenCampus's controller does `TempData[\"SuccessMessage\"] = \"Payment recorded\"; return RedirectToAction(\"Details\");` — the message survives that one redirect and displays on the next page, then is automatically cleared.",
+      code:"[HttpPost]\npublic IActionResult PayFee(int billId, decimal amount)\n{\n    _billService.ProcessPayment(billId, amount);\n    TempData[\"SuccessMessage\"] = \"Payment recorded successfully\"; // survives ONE redirect\n    return RedirectToAction(\"Details\", new { id = billId });\n}\n\n// In the redirected-to view:\n@if (TempData[\"SuccessMessage\"] != null)\n{\n    &lt;div class=\"alert-success\"&gt;@TempData[\"SuccessMessage\"]&lt;/div&gt;\n}" },
+    { name:"11. Partial Views &amp; Layouts",
+      movie:"🎬 Mersal — Vijay's three roles are distinct SCENES, but they're all framed within the SAME overarching film structure (opening credits, theatrical style) that doesn't need to be redefined for each role. A Layout is that shared outer frame; Partial Views are reusable inner scenes.",
+      explain:"<code>_Layout.cshtml</code> defines the shared page shell (header, nav, footer) that every View renders INSIDE via <code>@RenderBody()</code> — avoiding duplicating that HTML on every single page. A Partial View (<code>_StudentCard.cshtml</code>) is a smaller, REUSABLE chunk of markup rendered via <code>@await Html.PartialAsync(\"_StudentCard\", student)</code> — used when the SAME UI fragment (like a student summary card) appears on multiple different pages.",
+      zen:"Every ZenCampus page (Bill, Hostel, Attendance) shares one `_Layout.cshtml` for the sidebar/navbar; a `_FeeStatusBadge.cshtml` partial view rendering a colored Paid/Due badge is reused across the Dashboard, Student Details, AND Bill Report pages instead of duplicating that markup three times.",
+      code:"@* _Layout.cshtml *@\n&lt;html&gt;\n&lt;body&gt;\n    &lt;nav&gt;...ZenCampus menu...&lt;/nav&gt;\n    @RenderBody() @* each page's specific content renders here *@\n&lt;/body&gt;\n&lt;/html&gt;\n\n@* Used inside Views/Bill/Details.cshtml *@\n@await Html.PartialAsync(\"_FeeStatusBadge\", Model.FeesPaid)" },
+    { name:"12. Filters (Action Filters &amp; Authorization Filters)",
+      movie:"🎬 Kaithi — every visitor to the hospital passes through a SEQUENCE of checkpoints (ID check, security scan) automatically BEFORE reaching their destination room. MVC Filters run that same automatic checkpoint logic before/after a controller action, without every action needing to repeat that code.",
+      explain:"Filters run at specific points in the request pipeline: <strong>Authorization filters</strong> (`[Authorize]`) run FIRST, checking if the user is allowed to even reach the action. <strong>Action filters</strong> (`OnActionExecuting`/`OnActionExecuted`) run just before/after the action itself — used for logging, auditing, or auto-injecting common ViewBag data. <strong>Exception filters</strong> catch unhandled errors from actions. Applying a filter as an ATTRIBUTE on a controller/action avoids repeating the same cross-cutting code in every single action method.",
+      zen:"ZenCampus's `Filters/` folder likely has a custom `[LogUserActivity]` action filter applied across sensitive controllers (Bill, Student) to automatically audit-log every action call, and `[Authorize(Roles=\"Admin\")]` guarding admin-only actions — both without repeating that logic inside every single action body.",
+      code:"public class LogUserActivityFilter : ActionFilterAttribute\n{\n    public override void OnActionExecuting(ActionExecutingContext context)\n    {\n        var user = context.HttpContext.User.Identity.Name;\n        var action = context.ActionDescriptor.DisplayName;\n        Log($\"{user} called {action}\"); // runs automatically before EVERY decorated action\n    }\n}\n\n[LogUserActivity] // applied once on the controller, covers ALL its actions\npublic class BillController : Controller { ... }" }
+  ]
+},
+{
+  day:4, title:"Day 4 — UI Integration (Razor + JS/AJAX, Client &amp; Server Validation, Session/WorkContext)",
+  topics:[
+    { name:"13. Razor + JavaScript Integration Patterns",
+      movie:"🎬 Vikram Vedha — the story is told through TWO complementary perspectives that together form one coherent film — Razor (server-rendered structure) and JavaScript (client-side interactivity) work the same way, two halves of one page.",
+      explain:"A `.cshtml` view can embed a `&lt;script&gt;` block that reads server-rendered data (via `@Html.Raw(Json.Serialize(Model))` or `data-*` attributes) to bootstrap client-side JS — letting JS enhance a page that was ALREADY rendered with real data server-side, rather than fetching everything fresh via a separate API call. This hybrid ('progressive enhancement') pattern is common in traditional MVC apps like ZenCampus.",
+      zen:"`Views/Bill/Details.cshtml` might render the fee table server-side with Razor for the INITIAL page load (fast, works even if JS fails), then JS attaches to that already-rendered table for interactive features like inline editing or live filtering, using `data-bill-id=\"@item.Id\"` attributes set by Razor as the bridge.",
+      code:"@* Razor renders the initial HTML with real data *@\n&lt;table&gt;\n@foreach (var item in Model.LineItems)\n{\n    &lt;tr data-bill-id=\"@item.Id\"&gt;&lt;td&gt;@item.Description&lt;/td&gt;&lt;/tr&gt;\n}\n&lt;/table&gt;\n\n&lt;script&gt;\n// JS enhances the already-rendered rows\ndocument.querySelectorAll('tr[data-bill-id]').forEach(row =&gt; {\n    row.addEventListener('click', () =&gt; openEditModal(row.dataset.billId));\n});\n&lt;/script&gt;" },
+    { name:"14. AJAX Calls from Views to Controllers",
+      movie:"🎬 Jai Bhim — Chandru sends a quick, TARGETED request for one specific piece of evidence, gets JUST that answer back, without reopening the entire case file. An AJAX call does that same targeted request-response, without a full page reload.",
+      explain:"A View's JS can `fetch()` a Controller action that returns JSON (via `return Json(data)` instead of `return View()`), updating just PART of the page dynamically — no full page reload. This requires the Controller action to detect it's being called via AJAX (or simply have a DEDICATED endpoint for it) and return `Json(...)` instead of a full HTML `View()`.",
+      zen:"ZenCampus's live search box on the Student list page calls `GET /Student/SearchJson?query=arjun`, which returns `Json(matchingStudents)` — the JS then updates only the table body's HTML, instead of reloading the entire `/Student/Index` page for every keystroke.",
+      code:"// Controller - dedicated JSON endpoint for AJAX\n[HttpGet]\npublic IActionResult SearchJson(string query)\n{\n    var results = _studentService.Search(query);\n    return Json(results); // NOT View() - raw JSON for JS to consume\n}\n\n// View's JS\nasync function searchStudents(query) {\n    const res = await fetch(`/Student/SearchJson?query=${query}`);\n    const students = await res.json();\n    renderTableRows(students); // update just the table, no page reload\n}" },
+    { name:"15. Client-Side vs Server-Side Validation",
+      movie:"🎬 Sarkar — every vote gets checked TWICE: once at the local polling booth for obvious errors (client-side, instant feedback), and again at the central counting office where it truly can't be tampered with (server-side, the real authority).",
+      explain:"Client-side validation (via jQuery Unobtrusive Validation auto-generated from Data Annotations, or custom JS) gives INSTANT feedback without a round-trip — good UX, but can be bypassed (disabled JS, direct API calls, browser dev tools). Server-side validation (`ModelState.IsValid` checked in the Controller, backed by the SAME Data Annotations on the model) is the actual SOURCE OF TRUTH and must NEVER be skipped, even though client-side validation already ran.",
+      zen:"ZenCampus's admission form shows an instant red border via client-side jQuery validation if `Name` is left empty — but the `[HttpPost] Create(StudentDto dto)` action STILL checks `ModelState.IsValid` server-side, since a malicious or buggy client could submit invalid data directly, bypassing the browser entirely.",
+      code:"// Same Data Annotations power BOTH client and server validation\npublic class StudentDto\n{\n    [Required(ErrorMessage = \"Name is required\")]\n    public string Name { get; set; }\n}\n\n// Server-side - the REAL enforcement, never skip this\n[HttpPost]\npublic IActionResult Create(StudentDto dto)\n{\n    if (!ModelState.IsValid) return View(dto); // re-show form with errors\n    _studentService.Create(dto);\n    return RedirectToAction(\"Index\");\n}" },
+    { name:"16. Session State &amp; the WorkContext Pattern",
+      movie:"🎬 Master — JD's identity and current context (which hostel block, which set of responsibilities) stays CONSISTENT throughout his entire visit, without him needing to re-introduce himself at every single door. A WorkContext keeps that same 'who is this, what are they currently working on' state consistent across an entire user session.",
+      explain:"ASP.NET Core Session stores small amounts of user-specific state SERVER-SIDE between requests (backed by a cookie holding just a session ID). A 'WorkContext' pattern (as ZenCampus's `WorkContext/` folder suggests) wraps raw session access behind a clean, strongly-typed service — e.g. `IWorkContext.CurrentStaffId`, `IWorkContext.CurrentAcademicYear` — so controllers/services never touch `HttpContext.Session[\"...\"]` strings directly, avoiding typo-prone magic strings scattered everywhere.",
+      zen:"ZenCampus's `WorkContext/CurrentWorkContext.cs` likely exposes `CurrentStaffId` and `SelectedAcademicYear` as clean properties, backed by session underneath — every controller/service just injects `IWorkContext` and reads `.CurrentStaffId` instead of duplicating `HttpContext.Session.GetInt32(\"StaffId\")` calls everywhere.",
+      code:"public interface IWorkContext\n{\n    int CurrentStaffId { get; }\n    string SelectedAcademicYear { get; set; }\n}\n\npublic class WorkContext : IWorkContext\n{\n    private readonly IHttpContextAccessor _httpContextAccessor;\n    public int CurrentStaffId =&gt;\n        _httpContextAccessor.HttpContext.Session.GetInt32(\"StaffId\") ?? 0;\n    // clean, typed access - no magic strings scattered across controllers\n}" }
+  ]
+},
+{
+  day:5, title:"Day 5 — Advanced Integration (DI Across Layers, Error Handling, Async, Testing)",
+  topics:[
+    { name:"17. Dependency Injection Across Layers",
+      movie:"🎬 Vikram — the agency supplies EVERY agent (Amar, the mission handlers, backup teams) with exactly the tools/resources they need, all coordinated from one central supply chain. DI wires up EVERY layer (Controller → Service → BusinessLogic → Repository) from one central registration point.",
+      explain:"Every layer declares what it NEEDS via its constructor (an interface), and `Program.cs` registers the concrete implementation ONCE for the whole app. This means a Controller never constructs a Service with `new`, a Service never constructs a Repository with `new` — the DI container wires the ENTIRE chain together automatically for every request, and any layer can be swapped/mocked independently for testing.",
+      zen:"ZenCampus's `Program.cs` registers `AddScoped&lt;IStudentRepository, StudentRepository&gt;()`, `AddScoped&lt;IStudentService, StudentService&gt;()`, `AddScoped&lt;IWorkContext, WorkContext&gt;()` — `StudentController` just asks for `IStudentService` in its constructor, and the ENTIRE chain (Service → Repository → DbContext) gets automatically wired up behind it.",
+      code:"// Program.cs - the ONE place the whole chain is wired\nbuilder.Services.AddScoped&lt;IStudentRepository, StudentRepository&gt;();\nbuilder.Services.AddScoped&lt;IStudentService, StudentService&gt;();\nbuilder.Services.AddScoped&lt;IWorkContext, WorkContext&gt;();\n\n// Controller only knows about IStudentService - the rest is invisible to it\npublic class StudentController : Controller\n{\n    public StudentController(IStudentService studentService) { ... }\n}" },
+    { name:"18. Exception Handling Across Layers",
+      movie:"🎬 Soorarai Pottru — if something fails deep in the engine room, that failure must be COMMUNICATED clearly up to the cockpit in a way the pilot can actually act on — not just a raw mechanical error dump. Exceptions must be translated appropriately as they cross layer boundaries.",
+      explain:"A common pattern: BusinessLogics/Repository throw SPECIFIC, meaningful exceptions (`InsufficientFeeBalanceException`, `StudentNotFoundException`) rather than generic `Exception`. The Service layer either lets these propagate (if the Controller can meaningfully react) or wraps/translates lower-level exceptions (e.g. a raw `SqlException`) into a domain-meaningful one. The Controller/global exception filter catches these at the TOP, translating them into user-friendly messages or the appropriate HTTP status — raw stack traces should never reach the end user.",
+      zen:"ZenCampus's `BusinessLogics/BillCalculator` might throw `InsufficientFeeBalanceException` when a refund exceeds the paid amount; `BillController` specifically catches THAT exception to show a friendly `TempData[\"Error\"]` message, while a global exception filter catches anything ELSE unexpected and logs it without exposing internals.",
+      code:"// BusinessLogics - throws a MEANINGFUL, specific exception\npublic void ProcessRefund(decimal amount, decimal paidAmount)\n{\n    if (amount &gt; paidAmount)\n        throw new InsufficientFeeBalanceException(\"Refund exceeds amount paid\");\n}\n\n// Controller - catches it specifically, translates to a friendly UI message\ntry { _billService.ProcessRefund(billId, amount); }\ncatch (InsufficientFeeBalanceException ex)\n{\n    TempData[\"Error\"] = ex.Message;\n    return RedirectToAction(\"Details\", new { id = billId });\n}" },
+    { name:"19. Async Actions in MVC Controllers",
+      movie:"🎬 Master — JD juggles MULTIPLE hostel matters at once without getting stuck fully blocked on just one. An async MVC action lets the web server keep serving OTHER users' page requests while one user's request waits on a slow database call.",
+      explain:"Exactly like Web API controllers (see the Web API guide), MVC controller actions returning views should ALSO be `async Task&lt;IActionResult&gt;` when they call I/O-bound operations (database queries, external API calls) — `await`ing frees the request-handling thread during the wait, which matters for ZenCampus staying responsive when many staff/parents are browsing simultaneously.",
+      zen:"ZenCampus's `Details(int id)` action for a student profile page awaits `await _studentService.GetByIdAsync(id)` rather than a blocking synchronous call, so the server can keep rendering other staff members' dashboard/report pages concurrently while this one database lookup completes.",
+      code:"public async Task&lt;IActionResult&gt; Details(int id)\n{\n    var student = await _studentService.GetByIdAsync(id); // non-blocking\n    if (student == null) return NotFound();\n    return View(student);\n}" },
+    { name:"20. Unit Testing Business Logic (ZenCampusWeb.Tests)",
+      movie:"🎬 Ratsasan — Arun Kumar VERIFIES every piece of evidence rigorously before trusting it in court, rather than assuming it's correct. Unit tests are that same rigorous verification applied to your BusinessLogics code, BEFORE it ever reaches production.",
+      explain:"Because pure `BusinessLogics/` classes have NO dependency on HTTP/database (per topic #8), they're trivially unit-testable: create the class, call the method, assert the result — no mocking a database or spinning up a web server required. This is exactly why keeping business rules OUT of Controllers and Views (which ARE hard to unit test) is so valuable — `ZenCampusWeb.Tests` can thoroughly verify fee/attendance/eligibility RULES in isolation, fast and reliably.",
+      zen:"`ZenCampusWeb.Tests` likely has a test class verifying `AttendanceEligibilityChecker.IsEligibleForExam()` against boundary cases (exactly 75%, 74.99%, 100%, 0%) — catching an off-by-one bug in the eligibility rule LONG before a real student is wrongly marked ineligible in production.",
+      code:"public class AttendanceEligibilityCheckerTests\n{\n    private readonly AttendanceEligibilityChecker _checker = new();\n\n    [Theory]\n    [InlineData(75, true)]   // boundary: exactly the minimum\n    [InlineData(74.99, false)] // boundary: just under\n    [InlineData(100, true)]\n    [InlineData(0, false)]\n    public void IsEligibleForExam_ChecksThreshold_Correctly(decimal percent, bool expected)\n    {\n        Assert.Equal(expected, _checker.IsEligibleForExam(percent));\n    }\n}" }
+  ]
+}
+];
+
+// ============ 50 INTERVIEW &amp; CODING QUESTIONS ============
+const questions = [
+  {level:"Basic", type:"Concept", q:"What is the MVC pattern and what does each part represent?", a:"Model (data + business rules), View (what the user sees, the rendered HTML), Controller (receives the HTTP request, coordinates Model and View). This separation keeps UI, data, and logic independently changeable."},
+  {level:"Basic", type:"Concept", q:"What is the difference between an ASP.NET Core MVC controller and a Web API controller?", a:"An MVC controller (inherits Controller) can return rendered Razor Views along with other result types. A Web API controller (inherits ControllerBase, typically with [ApiController]) returns data (usually JSON) with no view-rendering capability — MVC controllers are actually a superset that can do both."},
+  {level:"Basic", type:"Concept", q:"What is Razor syntax used for?", a:"Embedding C# code directly inside HTML markup in .cshtml files using the @ symbol — for rendering dynamic data, control flow (@if, @foreach), and generating HTML helpers, blending server-side logic with the page's structure."},
+  {level:"Basic", type:"Concept", q:"What does @model at the top of a Razor view do?", a:"Declares the strongly-typed data shape that view expects to receive from the controller, enabling compile-time checking and IntelliSense for @Model.PropertyName references throughout the page."},
+  {level:"Basic", type:"Concept", q:"What is model binding in ASP.NET Core MVC?", a:"The automatic process of mapping incoming form fields, route values, and query string parameters to a C# action method's parameters or a bound model object, based on matching names — removing the need for manual Request.Form parsing."},
+  {level:"Basic", type:"Concept", q:"What is the difference between a ViewModel and a domain Model?", a:"A domain Model represents the raw database entity. A ViewModel is a class shaped SPECIFICALLY for what one particular View needs to display or collect, often combining fields from multiple domain models into one convenient object."},
+  {level:"Basic", type:"Concept", q:"What is the purpose of a Layout page (_Layout.cshtml)?", a:"Defines the shared page shell (header, navigation, footer) that every individual View renders inside via @RenderBody(), avoiding duplicating that common HTML structure across every single page."},
+  {level:"Basic", type:"Concept", q:"What is a Partial View and when should you use one?", a:"A smaller, reusable chunk of Razor markup rendered via Html.PartialAsync(), used when the same UI fragment (like a status badge or a card component) needs to appear identically on multiple different pages."},
+  {level:"Basic", type:"Concept", q:"What is the difference between ViewBag/ViewData and a strongly-typed model?", a:"A strongly-typed @model is the primary, compile-time-checked way to pass the main data a view needs. ViewBag/ViewData pass EXTRA loosely-typed data for the current request only, with no compile-time safety — easy to introduce typos that only fail at runtime."},
+  {level:"Basic", type:"Concept", q:"What is TempData used for and how is it different from ViewBag?", a:"TempData survives exactly ONE additional redirect (backed by session/cookie storage), commonly used to pass a success/error message across a RedirectToAction() call. ViewBag only lives for the CURRENT request and does not survive a redirect at all."},
+  {level:"Intermediate", type:"Concept", q:"What is a layered architecture and why does a Controller typically delegate to a Service or BusinessLogics class instead of doing the work itself?", a:"A layered architecture separates HTTP handling (Controller), business rules (Service/BusinessLogics), and data access (Repository) into distinct responsibilities. A thin Controller delegating to a Service keeps the business logic reusable (callable from background jobs, other controllers, or tests) and independently testable, rather than tightly coupled to the web request pipeline."},
+  {level:"Intermediate", type:"Concept", q:"Why is it considered bad practice to put business/calculation logic directly inside a Razor view?", a:"Logic embedded in a .cshtml file is hard to unit test (requires rendering the whole view), not reusable from other contexts (like a background job or API), and mixes presentation concerns with business rules — violating separation of concerns and making the codebase harder to maintain as it grows."},
+  {level:"Intermediate", type:"Concept", q:"What is the Service layer pattern and how does it differ from the Repository pattern?", a:"A Service orchestrates a full business OPERATION, potentially coordinating multiple repositories, calculators, and external calls as one coherent unit (e.g. 'admit a student' = save record + generate bill + send email). A Repository is narrower — it's purely responsible for data access (CRUD) against ONE entity type."},
+  {level:"Intermediate", type:"Concept", q:"Why should BusinessLogics classes avoid depending on HttpContext or the database directly?", a:"Keeping business rule classes free of HTTP/database dependencies makes them pure and trivially unit-testable (no mocking HttpContext or spinning up a test database needed) and reusable from ANY context — a web controller, a scheduled background job, or a console utility — not just a web request."},
+  {level:"Intermediate", type:"Concept", q:"What is the difference between client-side and server-side validation, and why do you need both?", a:"Client-side validation (JS, often auto-generated from Data Annotations) gives instant feedback without a server round-trip but can be bypassed (disabled JS, direct requests). Server-side validation (ModelState.IsValid in the controller) is the actual authoritative check and must always run, since it cannot be bypassed by the client."},
+  {level:"Intermediate", type:"Concept", q:"What is an Action Filter and give an example of when you'd use one.", a:"Code that runs automatically before/after a controller action executes, applied declaratively via an attribute — avoiding repeating the same cross-cutting logic (like audit logging, or auto-populating common ViewBag data) inside every individual action method."},
+  {level:"Intermediate", type:"Concept", q:"What is the purpose of a WorkContext / session-scoped context class in an MVC app?", a:"It wraps raw ASP.NET Core Session access behind a clean, strongly-typed service (e.g. IWorkContext.CurrentStaffId), avoiding magic-string session key access scattered across the codebase, and centralizing session-derived, request-scoped state that many controllers/services need."},
+  {level:"Intermediate", type:"Concept", q:"How would you pass a success message from a POST action to the page the user is redirected to afterward?", a:"Store it in TempData before calling RedirectToAction() — TempData survives exactly one subsequent request, letting the redirected-to view display the message, then it's automatically cleared."},
+  {level:"Intermediate", type:"Concept", q:"What is the Post-Redirect-Get (PRG) pattern and why is it used after a form submission?", a:"After a successful POST, the server redirects the browser to a GET request (rather than directly rendering a View from the POST action) — this prevents the classic 'form resubmission' warning if the user refreshes the page, since a refresh just re-runs the harmless GET, not the POST."},
+  {level:"Intermediate", type:"Concept", q:"How does dependency injection make unit testing a controller easier?", a:"Because a controller receives its dependencies (services/repositories) as constructor-injected INTERFACES rather than creating concrete implementations itself, a unit test can pass in a MOCK implementation of that interface, letting you test the controller's logic in complete isolation from the real database/business logic."},
+  {level:"Advanced", type:"Concept", q:"How would you structure exception handling so a low-level database error becomes a meaningful, user-friendly message on the page?", a:"The Repository/BusinessLogics layer should throw or translate low-level exceptions (like a raw SqlException for a constraint violation) into a specific, domain-meaningful exception (e.g. DuplicateAdmissionNumberException). The Controller (or a global exception filter) catches that specific exception type and translates it into a friendly TempData message or appropriate HTTP response, never exposing the raw technical error to the end user."},
+  {level:"Advanced", type:"Concept", q:"What's the risk of injecting a Scoped service into a Singleton service in an MVC app, and how does this relate to session/WorkContext design?", a:"A Singleton is created ONCE for the app's lifetime and shared across ALL requests/users. If it captures a Scoped service (like a WorkContext tied to one user's session) at construction time, that captured instance gets incorrectly reused for EVERY subsequent request/user — a serious bug where one user's session data could leak into another user's request."},
+  {level:"Advanced", type:"Concept", q:"How would you unit test a BusinessLogics class that depends on an injected repository interface?", a:"Use a mocking library (like Moq) to create a fake implementation of the repository interface that returns controlled test data, inject that mock into the BusinessLogics class under test, then assert the class's behavior/output — testing the business logic in complete isolation from any real database."},
+  {level:"Advanced", type:"Concept", q:"Why is it important for a Controller action to remain 'thin', and what specifically should NOT live inside it?", a:"A thin controller action should only: receive input, call ONE service/business-logic method, and return an appropriate result. It should NOT contain calculation logic, direct database queries, complex conditional business rules, or multi-step orchestration — all of that belongs in the Service/BusinessLogics layer, where it's reusable and independently testable."},
+  {level:"Advanced", type:"Concept", q:"How would you design the AttendanceEligibilityChecker BusinessLogics class so its 75% threshold rule could be changed via configuration without a code deployment?", a:"Inject an IConfiguration (or a strongly-typed options class bound from appsettings.json) into the checker instead of hardcoding the threshold as a constant, reading the value at runtime — this lets the eligibility rule be adjusted per academic year or policy change without recompiling and redeploying the application."},
+  {level:"Coding", type:"Coding", q:"How would you write a Controller action that fetches a student and returns a strongly-typed View, handling the not-found case?", a:"Await the service call, check for null, and return NotFound() or the View accordingly: <pre>public async Task&lt;IActionResult&gt; Details(int id)\n{\n    var student = await _studentService.GetByIdAsync(id);\n    if (student == null) return NotFound();\n    return View(student);\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you implement the Post-Redirect-Get pattern for a fee payment form?", a:"On successful POST, redirect to a GET action instead of returning a View directly: <pre>[HttpPost]\npublic IActionResult PayFee(int billId, decimal amount)\n{\n    if (!ModelState.IsValid) return View();\n    _billService.ProcessPayment(billId, amount);\n    TempData[\"SuccessMessage\"] = \"Payment recorded\";\n    return RedirectToAction(\"Details\", new { id = billId }); // PRG pattern\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you build an AJAX-friendly search endpoint and consume it from Razor view JavaScript?", a:"A dedicated JSON-returning action, called from fetch(): <pre>// Controller\n[HttpGet]\npublic IActionResult SearchJson(string q)\n    =&gt; Json(_studentService.Search(q));\n\n// View JS\nconst res = await fetch(`/Student/SearchJson?q=${query}`);\nconst students = await res.json();\nrenderRows(students);</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you write a BusinessLogics class method with a unit test verifying a late-fee calculation at the exact boundary (0 days late)?", a:"Pure method, no dependencies, tested directly: <pre>public class BillCalculator\n{\n    public decimal CalculateLateFee(decimal baseAmount, int daysLate)\n        =&gt; daysLate &gt; 0 ? baseAmount * 0.02m * daysLate : 0;\n}\n\n[Fact]\npublic void Zero_Days_Late_Has_No_Fee()\n{\n    var calc = new BillCalculator();\n    Assert.Equal(0, calc.CalculateLateFee(5000, 0));\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you create an Action Filter that automatically logs which staff member accessed which action, applied to a whole controller?", a:"Implement ActionFilterAttribute and apply it as a class-level attribute: <pre>public class LogUserActivityFilter : ActionFilterAttribute\n{\n    public override void OnActionExecuting(ActionExecutingContext context)\n    {\n        var user = context.HttpContext.User.Identity?.Name;\n        _logger.LogInfo($\"{user} accessed {context.ActionDescriptor.DisplayName}\");\n    }\n}\n\n[LogUserActivity]\npublic class BillController : Controller { ... }</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you register a Service and its Repository dependency in Program.cs, then inject the Service into a Controller?", a:"Register both against their interfaces, then declare the interface in the controller constructor: <pre>// Program.cs\nbuilder.Services.AddScoped&lt;IStudentRepository, StudentRepository&gt;();\nbuilder.Services.AddScoped&lt;IStudentService, StudentService&gt;();\n\n// Controller\npublic class StudentController : Controller\n{\n    private readonly IStudentService _service;\n    public StudentController(IStudentService service) =&gt; _service = service;\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you catch a specific custom exception thrown from the business logic layer and show a friendly message via TempData?", a:"Wrap the service call in try/catch for the specific exception type: <pre>[HttpPost]\npublic IActionResult ProcessRefund(int billId, decimal amount)\n{\n    try\n    {\n        _billService.ProcessRefund(billId, amount);\n    }\n    catch (InsufficientFeeBalanceException ex)\n    {\n        TempData[\"Error\"] = ex.Message;\n    }\n    return RedirectToAction(\"Details\", new { id = billId });\n}</pre>"},
+  {level:"Coding", type:"Coding", q:"How would you build a ViewModel that combines data from Student, Bill, and Attendance to power one dashboard page?", a:"Define a purpose-built class and populate it in the Service/Controller before passing to the View: <pre>public class StudentDashboardViewModel\n{\n    public string StudentName { get; set; }\n    public decimal DueAmount { get; set; }\n    public decimal AttendancePercent { get; set; }\n}\n\n// Service composes it from 3 sources\nvar vm = new StudentDashboardViewModel {\n    StudentName = student.Name,\n    DueAmount = bill.DueAmount,\n    AttendancePercent = attendance.Percent\n};\nreturn View(vm);</pre>"}
+];
+
+// ============ COVERAGE CHECKLIST ============
+const coverageTopics = guideDays.flatMap(day => day.topics.map(t => ({ name: t.name, day: day.day })));
+
+// ============ RENDER: TABS ============
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ============ RENDER: GUIDE ============
+const guideListEl = document.getElementById('guideList');
+guideListEl.innerHTML = guideDays.map(day => `
+  <div class="day-block" id="day-${day.day}">
+    <h2 class="day-title">${day.title}</h2>
+    ${day.topics.map((t) => `
+      <div class="qa" id="topic-${t.name.split('.')[0].trim()}">
+        <div class="q">
+          <span>${t.name}</span>
+          <span class="toggle-icon">+</span>
+        </div>
+        <div class="a">
+          <div class="movie-ref">${t.movie}</div>
+          <p>${t.explain}</p>
+          <pre>${t.code}</pre>
+          <div class="zen-ref"><strong>ZenCampus use case:</strong> ${t.zen}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+`).join('');
+guideListEl.querySelectorAll('.q').forEach(qEl=>{
+  qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+});
+
+// ============ RENDER: INTERVIEW Q&A ============
+const listEl = document.getElementById('qaList');
+const filtersEl = document.getElementById('filters');
+const searchBox = document.getElementById('searchBox');
+const visibleCountEl = document.getElementById('visibleCount');
+const levels = ["All", "Concept", "Coding", "Basic", "Intermediate", "Advanced"];
+let activeLevel = "All";
+
+function matchesFilter(item){
+  if(activeLevel==="All") return true;
+  if(activeLevel==="Concept" || activeLevel==="Coding") return item.type===activeLevel;
+  return item.level===activeLevel;
+}
+
+function renderFilters(){
+  filtersEl.innerHTML = levels.map(lvl =>
+    `<button class="filter-btn ${lvl===activeLevel?'active':''}" data-level="${lvl}">${lvl}</button>`
+  ).join('');
+  filtersEl.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeLevel = btn.dataset.level;
+      renderFilters();
+      renderQAList();
+    });
+  });
+}
+
+function renderQAList(){
+  const searchTerm = searchBox.value.trim().toLowerCase();
+  const filtered = questions
+    .map((item, idx)=>({...item, idx}))
+    .filter(matchesFilter)
+    .filter(item => !searchTerm || item.q.toLowerCase().includes(searchTerm) || item.a.toLowerCase().includes(searchTerm));
+
+  visibleCountEl.textContent = filtered.length;
+
+  listEl.innerHTML = filtered.map(item => `
+    <div class="qa" data-idx="${item.idx}">
+      <div class="q">
+        <span><span class="num">Q${item.idx+1}.</span>${item.q}</span>
+        <span style="display:flex; align-items:center; gap:8px;">
+          <span class="tag2 ${item.type==='Coding'?'tag-code':'tag-concept'}">${item.type}</span>
+          <span class="tag">${item.level}</span>
+          <span class="toggle-icon">+</span>
+        </span>
+      </div>
+      <div class="a">${item.a}</div>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.q').forEach(qEl=>{
+    qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+  });
+}
+searchBox.addEventListener('input', renderQAList);
+renderFilters();
+renderQAList();
+
+// ============ RENDER: COVERAGE CHECKLIST ============
+const checklistEl = document.getElementById('checklist');
+checklistEl.innerHTML = coverageTopics.map((t) => `
+  <div class="check-item" data-target="topic-${t.name.split('.')[0].trim()}" data-day="${t.day}">
+    <span class="badge">✅</span>
+    <span class="num">${t.name.split('.')[0]}</span>
+    <span>${t.name.split('. ')[1].replace(/&amp;/g,'&')} <em style="color:var(--muted); font-size:0.8rem;">(Day ${t.day})</em></span>
+  </div>
+`).join('');
+checklistEl.querySelectorAll('.check-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelector('.tab-btn[data-tab="guide"]').click();
+    setTimeout(()=>{
+      const target = document.getElementById(item.dataset.target);
+      if(target){
+        target.classList.add('open');
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }, 50);
+  });
+});
+</script>
+
+</body>
+</html>

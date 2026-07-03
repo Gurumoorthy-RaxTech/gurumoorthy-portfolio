@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 59 — AI Integration with .NET | ZenCampus Interview Prep</title>
+<style>
+  :root{--accent:#78350f;--accent-dim:#6b2f0a;--accent-subtle:rgba(120,53,15,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(120,53,15,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.1rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .movie{background:linear-gradient(135deg,rgba(120,53,15,.12),rgba(120,53,15,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;}
+  .rag-flow{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin:1rem 0;}
+  .rfs{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--text);padding:.5rem .9rem;border-radius:8px;font-size:.82rem;}
+  .rfa{color:var(--accent);font-size:1.2rem;font-weight:700;}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">DAY 59</span>
+  <a href="#openai">OpenAI API</a><a href="#sk">Semantic Kernel</a><a href="#rag">RAG Pattern</a>
+  <a href="#chatbot">ZenCampus Chatbot</a><a href="#scenarios">Interview Q</a><a href="#quiz">Quiz</a>
+</nav>
+<div class="hero">
+  <h1>AI Integration with .NET</h1>
+  <p>OpenAI API · Semantic Kernel · Embeddings · RAG · ZenCampus AI Chatbot</p>
+  <div class="tags">
+    <span class="tag">OpenAI</span><span class="tag">Semantic Kernel</span><span class="tag">RAG</span><span class="tag">Embeddings</span>
+    <span class="tag">Day 59 / 60</span>
+    <span class="tag" style="background:rgba(120,53,15,.2);border-color:#78350f;color:#78350f;">Dark Chocolate #78350f</span>
+  </div>
+</div>
+<main>
+
+<section id="openai">
+  <h2>🤖 OpenAI API in .NET — Direct Integration</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Dasavathaaram (2008) — 10 forms, one purpose</div>
+    <div class="mb">Dasavathaaram-la Kamal 10 roledla vanthu oru goal achieve panrar. AI models same: GPT-4, embeddings, vision, function calling — different capabilities, one OpenAI platform. ZenCampus-la parent "my son's fee pending?" kekkapoitu AI-ya use pannalaam — chatbot automatically DB-la query panni answer kodukkkum!</div></div>
+  </div>
+  <pre><code><span class="cm">// NuGet: Azure.AI.OpenAI or OpenAI (official SDK)</span>
+
+<span class="cm">// Program.cs</span>
+builder.Services.AddSingleton(sp =&gt;
+{
+    <span class="kw">var</span> config = sp.GetRequiredService&lt;<span class="cl">IConfiguration</span>&gt;();
+    <span class="kw">return new</span> <span class="cl">AzureOpenAIClient</span>(
+        <span class="kw">new</span> <span class="cl">Uri</span>(config[<span class="str">"AzureOpenAI:Endpoint"</span>]!),
+        <span class="kw">new</span> <span class="cl">DefaultAzureCredential</span>());   <span class="cm">// Managed Identity — no API key!</span>
+});
+
+<span class="cm">// Simple chat completion</span>
+<span class="kw">public class</span> <span class="cl">ZenCampusAiService</span>(<span class="cl">AzureOpenAIClient</span> _ai,
+    <span class="cl">IStudentRepository</span> _students)
+{
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="kw">string</span>&gt; AnswerParentQueryAsync(
+        <span class="kw">int</span> studentId, <span class="kw">string</span> question, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>)
+    {
+        <span class="cm">// 1. Fetch student context from DB</span>
+        <span class="kw">var</span> student = <span class="kw">await</span> _students.GetByIdAsync(studentId, ct);
+        <span class="kw">var</span> context  = <span class="str">$"""
+            Student: {student!.Name}
+            Class: {student.ClassName}
+            Total Fees: {student.TotalFees:C}
+            Paid: {student.PaidAmount:C}
+            Pending: {(student.TotalFees - student.PaidAmount):C}
+            Attendance: {student.AttendancePercentage}%
+            """</span>;
+
+        <span class="cm">// 2. Send to GPT-4 with context (RAG principle)</span>
+        <span class="kw">var</span> chatClient = _ai.GetChatClient(<span class="str">"gpt-4o"</span>);
+        <span class="kw">var</span> messages = <span class="kw">new</span> []
+        {
+            <span class="kw">new</span> <span class="cl">SystemChatMessage</span>(<span class="str">"""
+                You are ZenCampus AI assistant. Answer parent queries about their child.
+                Be concise, accurate, and friendly. Respond in the same language as the question.
+                Only use the provided context. Never make up information.
+                """</span>),
+            <span class="kw">new</span> <span class="cl">UserChatMessage</span>(<span class="str">$"Context:\n{context}\n\nQuestion: {question}"</span>)
+        };
+
+        <span class="kw">var</span> response = <span class="kw">await</span> chatClient.CompleteChatAsync(messages,
+            <span class="kw">new</span> <span class="cl">ChatCompletionOptions</span> { MaxOutputTokenCount = <span class="num">500</span> }, ct);
+        <span class="kw">return</span> response.Value.Content[<span class="num">0</span>].Text;
+    }
+}</code></pre>
+</section>
+
+<section id="sk">
+  <h2>🧠 Semantic Kernel — Orchestrate AI in .NET</h2>
+  <pre><code><span class="cm">// NuGet: Microsoft.SemanticKernel</span>
+
+<span class="cm">// Program.cs — Register Semantic Kernel</span>
+<span class="kw">var</span> kernel = <span class="cl">Kernel</span>.CreateBuilder()
+    .AddAzureOpenAIChatCompletion(
+        deploymentName: <span class="str">"gpt-4o"</span>,
+        endpoint:       config[<span class="str">"AzureOpenAI:Endpoint"</span>]!,
+        credential:     <span class="kw">new</span> <span class="cl">DefaultAzureCredential</span>())
+    .Build();
+
+builder.Services.AddSingleton(kernel);
+
+<span class="cm">// Semantic Kernel Plugin — native functions the AI can call</span>
+<span class="kw">public class</span> <span class="cl">ZenCampusPlugin</span>
+{
+    <span class="kw">private readonly</span> <span class="cl">IStudentRepository</span> _students;
+    <span class="kw">private readonly</span> <span class="cl">IFeeRepository</span>     _fees;
+
+    <span class="dec">[KernelFunction, Description("Get student attendance percentage for current month")]</span>
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="kw">string</span>&gt; GetStudentAttendanceAsync(
+        <span class="dec">[Description("Student admission number")]</span> <span class="kw">string</span> admissionNo)
+    {
+        <span class="kw">var</span> student = <span class="kw">await</span> _students.GetByAdmissionNoAsync(admissionNo);
+        <span class="kw">if</span> (student <span class="kw">is null</span>) <span class="kw">return</span> <span class="str">"Student not found"</span>;
+        <span class="kw">return</span> <span class="str">$"{student.Name} attendance: {student.AttendancePercentage}% this month"</span>;
+    }
+
+    <span class="dec">[KernelFunction, Description("Get pending fee amount for a student")]</span>
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="kw">string</span>&gt; GetPendingFeesAsync(
+        <span class="dec">[Description("Student admission number")]</span> <span class="kw">string</span> admissionNo)
+    {
+        <span class="kw">var</span> fee = <span class="kw">await</span> _fees.GetPendingByAdmissionNoAsync(admissionNo);
+        <span class="kw">return</span> <span class="str">$"Pending fee: Rs {fee?.PendingAmount ?? 0}"</span>;
+    }
+}
+
+<span class="cm">// Use with auto function calling (SK calls tools automatically)</span>
+<span class="kw">var</span> kernel = app.Services.GetRequiredService&lt;<span class="cl">Kernel</span>&gt;();
+kernel.Plugins.AddFromType&lt;<span class="cl">ZenCampusPlugin</span>&gt;(<span class="str">"ZenCampus"</span>);
+
+<span class="kw">var</span> result = <span class="kw">await</span> kernel.InvokePromptAsync(
+    <span class="str">"What is the pending fee for student ADM2026001?"</span>,
+    <span class="kw">new</span> <span class="cl">KernelArguments</span>(<span class="kw">new</span> <span class="cl">OpenAIPromptExecutionSettings</span>
+    {
+        FunctionChoiceBehavior = <span class="cl">FunctionChoiceBehavior</span>.Auto() <span class="cm">// SK calls tools automatically</span>
+    }));
+<span class="cm">// SK: calls GetPendingFeesAsync("ADM2026001") → returns result to GPT → natural language answer</span></code></pre>
+</section>
+
+<section id="rag">
+  <h2>🔍 RAG — Retrieval Augmented Generation</h2>
+  <div class="rag-flow">
+    <div class="rfs">Parent Question</div><div class="rfa">→</div>
+    <div class="rfs">Generate Embedding</div><div class="rfa">→</div>
+    <div class="rfs">Vector Search in DB</div><div class="rfa">→</div>
+    <div class="rfs">Top-K Relevant Docs</div><div class="rfa">→</div>
+    <div class="rfs">Stuff into GPT Prompt</div><div class="rfa">→</div>
+    <div class="rfs">Grounded Answer</div>
+  </div>
+  <pre><code><span class="cm">// Generate embedding for semantic search</span>
+<span class="kw">public class</span> <span class="cl">ZenCampusKnowledgeBase</span>(<span class="cl">AzureOpenAIClient</span> _ai,
+    <span class="cl">ZenCampusDbContext</span> _db)
+{
+    <span class="cm">// Store: embed each FAQ/policy document</span>
+    <span class="kw">public async</span> <span class="cl">Task</span> IndexDocumentAsync(<span class="kw">string</span> title, <span class="kw">string</span> content)
+    {
+        <span class="kw">var</span> embeddingClient = _ai.GetEmbeddingClient(<span class="str">"text-embedding-3-small"</span>);
+        <span class="kw">var</span> embedding = <span class="kw">await</span> embeddingClient.GenerateEmbeddingAsync(content);
+
+        _db.KnowledgeDocuments.Add(<span class="kw">new</span> <span class="cl">KnowledgeDocument</span>
+        {
+            Title     = title,
+            Content   = content,
+            Embedding = embedding.Value.ToFloats().ToArray()  <span class="cm">// 1536 dimensions</span>
+        });
+        <span class="kw">await</span> _db.SaveChangesAsync();
+    }
+
+    <span class="cm">// Retrieve: find most similar documents to a query</span>
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">List</span>&lt;<span class="kw">string</span>&gt;&gt; SearchAsync(<span class="kw">string</span> query, <span class="kw">int</span> topK = <span class="num">3</span>)
+    {
+        <span class="kw">var</span> embeddingClient = _ai.GetEmbeddingClient(<span class="str">"text-embedding-3-small"</span>);
+        <span class="kw">var</span> queryEmbedding = <span class="kw">await</span> embeddingClient.GenerateEmbeddingAsync(query);
+        <span class="kw">var</span> queryVec = queryEmbedding.Value.ToFloats();
+
+        <span class="cm">// Azure SQL vector search (or pgvector, or Azure AI Search)</span>
+        <span class="kw">var</span> docs = <span class="kw">await</span> _db.KnowledgeDocuments
+            .OrderByDescending(d =&gt; <span class="cl">VectorFunctions</span>.CosineSimilarity(d.Embedding, queryVec))
+            .Take(topK)
+            .Select(d =&gt; d.Content)
+            .ToListAsync();
+        <span class="kw">return</span> docs;
+    }
+}</code></pre>
+</section>
+
+<section id="chatbot">
+  <h2>💬 ZenCampus AI Chatbot API Endpoint</h2>
+  <pre><code><span class="cm">// ChatController.cs</span>
+<span class="dec">[ApiController]</span>
+<span class="dec">[Route("api/[controller]")]</span>
+<span class="dec">[Authorize]</span>
+<span class="kw">public class</span> <span class="cl">ChatController</span>(<span class="cl">ZenCampusAiService</span> _ai,
+    <span class="cl">ZenCampusKnowledgeBase</span> _kb) : <span class="cl">ControllerBase</span>
+{
+    <span class="dec">[HttpPost("parent-query")]</span>
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">IActionResult</span>&gt; ParentChatAsync(<span class="cl">ParentChatRequest</span> req)
+    {
+        <span class="kw">var</span> parentId  = User.GetParentId();   <span class="cm">// JWT claim</span>
+        <span class="kw">var</span> studentId = User.GetStudentId();  <span class="cm">// parent's child</span>
+
+        <span class="cm">// RAG: find relevant policies/FAQs</span>
+        <span class="kw">var</span> relevantDocs = <span class="kw">await</span> _kb.SearchAsync(req.Question);
+        <span class="kw">var</span> answer = <span class="kw">await</span> _ai.AnswerParentQueryAsync(studentId, req.Question, relevantDocs);
+
+        <span class="kw">return</span> Ok(<span class="kw">new</span> { Answer = answer, Source = <span class="str">"ZenCampus AI"</span> });
+    }
+
+    <span class="cm">// Streaming response (typing effect)</span>
+    <span class="dec">[HttpPost("stream")]</span>
+    <span class="kw">public async</span> <span class="cl">Task</span> StreamChatAsync(<span class="cl">ParentChatRequest</span> req)
+    {
+        Response.Headers.ContentType = <span class="str">"text/event-stream"</span>;
+        <span class="kw">await foreach</span> (<span class="kw">var</span> chunk <span class="kw">in</span> _ai.StreamAnswerAsync(req.Question))
+        {
+            <span class="kw">await</span> Response.WriteAsync(<span class="str">$"data: {chunk}\n\n"</span>);
+            <span class="kw">await</span> Response.Body.FlushAsync();
+        }
+    }
+}
+
+<span class="kw">public record</span> <span class="cl">ParentChatRequest</span>(<span class="kw">string</span> Question);</code></pre>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is RAG and why is it better than fine-tuning for ZenCampus?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>RAG (Retrieval Augmented Generation): retrieve relevant data from your own sources, inject into the LLM prompt. The model generates answers grounded in your data. Better than fine-tuning for ZenCampus because: student data changes daily (fine-tuning is static). Answers must be accurate and school-specific (RAG pulls live DB data). Fine-tuning: expensive, takes hours, still hallucinates. RAG: real-time, accurate, auditable (can show source).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What is Semantic Kernel and how does it differ from calling OpenAI API directly?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Direct OpenAI API: you send messages, get text back. Manual function calling. No orchestration. Semantic Kernel: Microsoft's AI orchestration SDK. Register your C# methods as [KernelFunction]. SK automatically calls your functions when the AI needs data. Handles: function calling, chaining multiple AI calls, prompt templates, memory/context, multiple AI providers. For ZenCampus: SK calls GetPendingFees() automatically when parent asks about fees — no manual parsing.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What are embeddings and what makes them useful for semantic search?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Embeddings: convert text to a vector of numbers (e.g., 1536 dimensions for text-embedding-3-small). Semantically similar texts → vectors that are numerically close (cosine similarity ≈ 1). "Fee payment" and "outstanding dues" → similar vectors even though different words. For ZenCampus: parent asks "what money does my son owe?" — embedding search finds fee FAQ documents even without exact keyword match. Traditional SQL LIKE '%fee%' would miss this.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">How do you prevent the AI chatbot from making up information about students?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>System prompt guardrail: "Only use the provided context. Never make up information. If you don't know, say 'I don't have that information.'" Inject actual DB data as context in every prompt. Grounding = hallucination prevention. Additionally: fact-check critical answers programmatically (fee amounts should match DB). Log all AI interactions. User feedback loop to catch wrong answers. Temperature = 0 (deterministic, not creative) for factual queries.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">How would you handle multi-turn conversation (chat history) in ZenCampus chatbot?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Store conversation history in Redis per session (sessionId from JWT). Each turn: load previous messages from Redis, append new user message, send full history to GPT, append AI response, save back to Redis. Limit history to last 10 turns (token budget). Redis TTL = 30 minutes (session timeout). For ZenCampus: parent asks "what's his fee?" → "how much did he pay last month?" — context maintained across turns.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">What is function calling / tool use in OpenAI API?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Define functions (tools) with JSON Schema description. Send to GPT. GPT decides which function to call with what arguments. Your app executes the function. Return result to GPT. GPT generates final response. For ZenCampus: define GetStudentFees(admissionNo), GetAttendance(admissionNo), GetExamResults(admissionNo) as tools. Parent asks "how is Basha doing?" → GPT calls all three tools → generates comprehensive answer. Semantic Kernel automates this.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">How do you manage OpenAI API costs for a 50,000-student ZenCampus chatbot?</span><span class="st">Practical</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Token budgeting: limit context to relevant data (not all 50,000 students). Cache common questions/answers in Redis. Rate limiting per parent (max 20 queries/day). Use cheaper models for simple queries (GPT-4o mini for FAQ, GPT-4o only for complex analysis). Log token usage per request. Set Azure OpenAI spending limits. Async processing for non-urgent queries. Pre-generate common reports instead of real-time AI generation.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">What is the system prompt and why is it critical for ZenCampus AI?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>System prompt: persistent instructions given to the AI at the start of every conversation. Sets persona, constraints, language, behavior. For ZenCampus: "You are ZenCampus AI for parents. Only discuss student information provided in context. Respond in the language the parent uses (Tamil/English). Never discuss other schools' data. Never make up fees or attendance. Escalate to school admin for urgent issues." Weak system prompt = jailbreak risk, hallucinations, privacy violations.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">How would you test an AI chatbot integration?</span><span class="st">Testing</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div name="rc" class="rc"><p>Integration test with real API (mark as [Trait("Category","Integration")]): send test question, verify response contains expected data (student name, fee amount). Unit test the prompt building logic (string construction, context injection). Mock the AI client for unit tests of the controller. Evaluation: golden dataset of questions + expected answers, measure accuracy. Monitor in production: log all Q&A, review flagged responses, user satisfaction ratings.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">What is the difference between GPT-4o and text-embedding-3-small — when to use each?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>GPT-4o: generative model, text in → text out. Understands context, answers questions, reasons, writes. Use for: chatbot responses, summarization, translation, analysis. text-embedding-3-small: converts text to vector (numbers). No natural language output. Use for: semantic search (find similar documents), RAG (find relevant context), content recommendation. Never use embedding model for generating answers — it doesn't generate text. Never use GPT-4o for search — it's too expensive and doesn't produce vectors.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. What is the core mechanism of RAG?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Fine-tuning is different — it changes the model weights.')">Training the AI on ZenCampus data</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Retrieve relevant context from your data sources, inject it into the AI prompt. AI generates answers grounded in your real data — not hallucinated. Student DB data → injected context → accurate answers.')">Retrieve relevant data → inject into prompt → AI generates grounded answer</button>
+    <button class="qb" onclick="ans(this,'wrong','RAG retrieves external data, not just prompting harder.')">Sending longer prompts to the model</button>
+    <button class="qb" onclick="ans(this,'wrong','RAG doesn\'t store model outputs — it retrieves context from your sources.')">Storing AI responses in the database</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What is an embedding used for in ZenCampus AI?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','JWT encryption uses cryptographic algorithms, not embeddings.')">Encrypting student JWT tokens</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Embeddings convert FAQ/policy text to vectors. Parent question converted to vector. Cosine similarity finds most relevant documents — semantic search, not keyword matching.')">Converting text to vectors for semantic similarity search</button>
+    <button class="qb" onclick="ans(this,'wrong','Embeddings are vectors/numbers — they don\'t compress storage directly.')">Compressing student data in Blob Storage</button>
+    <button class="qb" onclick="ans(this,'wrong','SQL queries are not enhanced by embeddings directly.')">Generating faster SQL queries</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. What is [KernelFunction] attribute in Semantic Kernel?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Authentication is handled by ASP.NET Core middleware, not SK attributes.')">Marks a method as requiring authentication</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! [KernelFunction] registers a C# method as a tool the AI can call. When the AI needs fee data, SK automatically calls GetPendingFees() — no manual function parsing needed.')">Registers a C# method as a tool that the AI can automatically call</button>
+    <button class="qb" onclick="ans(this,'wrong','Background jobs are handled by Hangfire, not SK attributes.')">Marks a method as a background job</button>
+    <button class="qb" onclick="ans(this,'wrong','[KernelFunction] doesn\'t do caching.')">Caches the method result in Redis</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. How do you prevent hallucination in ZenCampus chatbot fee answers?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Temperature 0 reduces creativity but doesn\'t guarantee accuracy with no context.')">Set temperature to 0 only</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Inject actual DB data as context + system prompt "only use provided context". The model can only answer based on what you provide — can\'t invent fees. Fact-check numerical values programmatically.')">Inject actual fee data from DB into context + system prompt to only use provided data</button>
+    <button class="qb" onclick="ans(this,'wrong','Response filtering alone can\'t prevent hallucination if model makes up realistic-looking numbers.')">Filter AI responses for numbers before returning</button>
+    <button class="qb" onclick="ans(this,'wrong','GPT-4o does not have direct database access by default.')">Give GPT-4o direct database access</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can call OpenAI API with DefaultAzureCredential (no API key)</li>
+    <li onclick="ck(this)"><input type="checkbox">I can register Semantic Kernel with Azure OpenAI</li>
+    <li onclick="ck(this)"><input type="checkbox">I can create a [KernelFunction] plugin for ZenCampus data</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand RAG: retrieve → inject → generate</li>
+    <li onclick="ck(this)"><input type="checkbox">I know when to use embeddings vs chat completion</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write a system prompt that prevents hallucinations</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand function calling / tool use pattern</li>
+    <li onclick="ck(this)"><input type="checkbox">I know how to manage AI API costs at ZenCampus scale</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Day 59 Complete ✓ — AI Integration: OpenAI, Semantic Kernel, RAG, ZenCampus Chatbot</p>
+  <p>Accent: Dark Chocolate #78350f · Next: Day 60 — FINAL: Interview Prep + STAR Method + ZenCampus Pitch</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

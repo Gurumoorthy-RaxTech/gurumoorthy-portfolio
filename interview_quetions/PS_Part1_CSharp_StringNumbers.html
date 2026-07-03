@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>50 Problems · Part 1 — C# String & Number</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0f0f1a;color:#e0e0e0;line-height:1.7}
+header{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);padding:26px 20px;text-align:center;border-bottom:3px solid #e94560}
+header h1{font-size:1.8em;color:#e94560}
+header p{color:#a0a0c0;margin-top:5px}
+.nav-pills{display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.nav-pills a{background:#1e3a5f;color:#74b9ff;padding:5px 14px;border-radius:20px;text-decoration:none;font-size:.8em}
+.nav-pills a:hover{background:#e94560;color:#fff}
+.container{max-width:1060px;margin:0 auto;padding:20px}
+.toc{background:#13132a;border:1px solid #2a2a4a;border-radius:10px;padding:16px 20px;margin:16px 0}
+.toc h3{color:#f39c12;margin-bottom:8px;font-size:.95em}
+.toc a{color:#74b9ff;text-decoration:none;font-size:.82em;margin-right:14px;line-height:2}
+.toc a:hover{color:#e94560}
+.q-card{background:#13132a;border-radius:12px;margin:22px 0;border:1px solid #2a2a4a;overflow:hidden}
+.q-hdr{padding:13px 20px;display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#1a2030,#1e3a5f)}
+.q-num{background:#e94560;color:#fff;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.85em;flex-shrink:0}
+.q-title{font-size:1em;font-weight:bold;color:#fff}
+.tag{font-size:.7em;padding:2px 8px;border-radius:12px;font-weight:bold}
+.easy{background:#0a2010;color:#2ecc71;border:1px solid #2ecc71}
+.med{background:#1a1000;color:#f39c12;border:1px solid #f39c12}
+.hard{background:#1a0000;color:#e74c3c;border:1px solid #e74c3c}
+.q-body{padding:16px 20px}
+.method-lbl{font-size:.75em;color:#e94560;font-weight:bold;text-transform:uppercase;letter-spacing:1px;margin:12px 0 5px}
+.mbox{background:#0d1117;border-radius:7px;padding:13px;margin:7px 0;border-left:4px solid #e94560}
+.mbox.m2{border-left-color:#f39c12}.mbox.m3{border-left-color:#27ae60}.mbox.m4{border-left-color:#8e44ad}
+.mtitle{font-size:.8em;font-weight:bold;color:#74b9ff;margin-bottom:5px}
+pre{background:#080c12;border-radius:5px;padding:11px;overflow-x:auto;font-size:.78em;font-family:'Consolas',monospace;color:#e0e0e0;margin:6px 0;border:1px solid #1e2a3a;line-height:1.75}
+.kw{color:#569cd6}.str{color:#ce9178}.cm{color:#6a9955}.num{color:#b5cea8}.typ{color:#4ec9b0}.fn{color:#dcdcaa}.prop{color:#9cdcfe}
+.exp{background:#0a2010;border-radius:6px;padding:11px 14px;margin:10px 0;border-left:3px solid #2ecc71}
+.exp .lbl{color:#2ecc71;font-size:.75em;font-weight:bold;margin-bottom:3px}
+.hint{background:#1a1a35;border-radius:6px;padding:10px 14px;margin:8px 0;border-left:3px solid #74b9ff}
+.hint .lbl{color:#74b9ff;font-size:.75em;font-weight:bold;margin-bottom:3px}
+.cx{display:flex;gap:8px;margin:7px 0;flex-wrap:wrap}
+.c{background:#0d1117;border:1px solid #2a2a4a;border-radius:3px;padding:3px 9px;font-size:.76em}
+.c span{color:#f39c12;font-weight:bold}
+footer{text-align:center;padding:22px;color:#555;border-top:1px solid #2a2a4a;margin-top:30px}
+</style>
+</head>
+<body>
+<header>
+  <h1>💻 50 Problems — Part 1: C# String &amp; Number</h1>
+  <p>Q1–Q17 · Palindrome · Reverse · Anagram · Fibonacci · Prime · Pattern Printing</p>
+  <div class="nav-pills">
+    <a href="#">Part 1: String &amp; Number (You are here)</a>
+    <a href="PS_Part2_CSharp_Arrays_LINQ.html">Part 2: Arrays, LINQ &amp; OOP →</a>
+    <a href="PS_Part3_SQL_Classic.html">Part 3: SQL Problems →</a>
+  </div>
+</header>
+<div class="container">
+
+<div class="toc">
+  <h3>📋 Q1–Q17 Jump</h3>
+  <a href="#q1">1. Palindrome</a><a href="#q2">2. Reverse</a><a href="#q3">3. Anagram</a>
+  <a href="#q4">4. Count Vowels</a><a href="#q5">5. First Non-Repeat</a>
+  <a href="#q6">6. String Compression</a><a href="#q7">7. Count Words</a>
+  <a href="#q8">8. Remove Spaces</a><a href="#q9">9. Caesar Cipher</a>
+  <a href="#q10">10. Fibonacci</a><a href="#q11">11. Factorial</a><a href="#q12">12. Prime</a>
+  <a href="#q13">13. Armstrong</a><a href="#q14">14. FizzBuzz</a>
+  <a href="#q15">15. Sum of Digits</a><a href="#q16">16. Reverse Number</a>
+  <a href="#q17">17. Pattern Print</a>
+</div>
+
+<!-- ===== Q1 PALINDROME ===== -->
+<div class="q-card" id="q1">
+  <div class="q-hdr"><div class="q-num">1</div><div class="q-title">Check if a string is Palindrome</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="hint"><div class="lbl">🎯 Question</div>"Write a program to check if 'madam' is palindrome. Also handle 'A man a plan a canal Panama'."</div>
+    <div class="method-lbl">Method 1 — Two Pointer (O(n), O(1) space)</div>
+    <div class="mbox">
+      <div class="mtitle">✅ Best Answer for Interview</div>
+<pre><span class="kw">public static bool</span> <span class="fn">IsPalindrome</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="kw">if</span> (<span class="kw">string</span>.<span class="fn">IsNullOrEmpty</span>(<span class="prop">s</span>)) <span class="kw">return true</span>;
+    <span class="prop">s</span> = <span class="kw">new string</span>(<span class="prop">s</span>.<span class="fn">ToLower</span>()
+            .<span class="fn">Where</span>(<span class="prop">c</span> =&gt; <span class="kw">char</span>.<span class="fn">IsLetterOrDigit</span>(<span class="prop">c</span>))
+            .<span class="fn">ToArray</span>());          <span class="cm">// strip non-alpha</span>
+    <span class="kw">int</span> <span class="prop">l</span> = <span class="num">0</span>, <span class="prop">r</span> = <span class="prop">s</span>.<span class="prop">Length</span> - <span class="num">1</span>;
+    <span class="kw">while</span> (<span class="prop">l</span> &lt; <span class="prop">r</span>)
+    {
+        <span class="kw">if</span> (<span class="prop">s</span>[<span class="prop">l</span>] != <span class="prop">s</span>[<span class="prop">r</span>]) <span class="kw">return false</span>;
+        <span class="prop">l</span>++; <span class="prop">r</span>--;
+    }
+    <span class="kw">return true</span>;
+}
+<span class="cm">// "madam"   → true   "racecar" → true
+// "hello"   → false
+// "A man a plan a canal Panama" → true</span></pre>
+      <div class="cx"><div class="c"><span>Time:</span> O(n)</div><div class="c"><span>Space:</span> O(1)</div></div>
+    </div>
+    <div class="method-lbl">Method 2 — LINQ One-liner</div>
+    <div class="mbox m2">
+<pre><span class="kw">bool</span> <span class="fn">IsPalindromeLinq</span>(<span class="kw">string</span> <span class="prop">s</span>) =&gt;
+    <span class="prop">s</span>.<span class="fn">SequenceEqual</span>(<span class="prop">s</span>.<span class="fn">Reverse</span>());
+<span class="cm">// Clean one-liner — show LINQ knowledge</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"I use two-pointer: left and right move inward comparing characters. Mismatch → immediately return false (short-circuit, don't process full string). I normalise first — toLower and strip spaces/punctuation — to handle 'A man a plan a canal Panama'. Two-pointer is O(n/2) comparisons, O(1) space. LINQ Reverse() is clean but O(n) space since it creates a reversed copy."</div>
+  </div>
+</div>
+
+<!-- ===== Q2 REVERSE STRING ===== -->
+<div class="q-card" id="q2">
+  <div class="q-hdr"><div class="q-num">2</div><div class="q-title">Reverse a String — without built-in Reverse</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+      <div class="mtitle">✅ Two Pointer In-place Swap</div>
+<pre><span class="kw">public static string</span> <span class="fn">Reverse</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="kw">char</span>[] <span class="prop">arr</span> = <span class="prop">s</span>.<span class="fn">ToCharArray</span>();
+    <span class="kw">int</span> <span class="prop">l</span> = <span class="num">0</span>, <span class="prop">r</span> = <span class="prop">arr</span>.<span class="prop">Length</span> - <span class="num">1</span>;
+    <span class="kw">while</span> (<span class="prop">l</span> &lt; <span class="prop">r</span>)
+    {
+        (<span class="prop">arr</span>[<span class="prop">l</span>], <span class="prop">arr</span>[<span class="prop">r</span>]) = (<span class="prop">arr</span>[<span class="prop">r</span>], <span class="prop">arr</span>[<span class="prop">l</span>]);
+        <span class="prop">l</span>++; <span class="prop">r</span>--;
+    }
+    <span class="kw">return new string</span>(<span class="prop">arr</span>);
+}
+<span class="cm">// "ZenCampus" → "supmaCreZ"</span></pre>
+    </div>
+    <div class="mbox m2"><div class="mtitle">Reverse Words in a Sentence</div>
+<pre><span class="cm">// "ZenCampus School ERP" → "ERP School ZenCampus"</span>
+<span class="kw">string</span> <span class="fn">ReverseWords</span>(<span class="kw">string</span> <span class="prop">s</span>) =&gt;
+    <span class="kw">string</span>.<span class="fn">Join</span>(<span class="str">" "</span>, <span class="prop">s</span>.<span class="fn">Split</span>(<span class="str">' '</span>,
+        <span class="typ">StringSplitOptions</span>.<span class="prop">RemoveEmptyEntries</span>)
+        .<span class="fn">Reverse</span>());</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Strings are immutable in C# — I convert to char array, do in-place swap with two pointers. No extra string allocations inside the loop. Tuple swap syntax (a,b) = (b,a) is cleaner than temp variable. Follow-up 'reverse words' = Split → Reverse → Join. I'd always ask: reverse characters or reverse words? Two different problems!"</div>
+  </div>
+</div>
+
+<!-- ===== Q3 ANAGRAM ===== -->
+<div class="q-card" id="q3">
+  <div class="q-hdr"><div class="q-num">3</div><div class="q-title">Anagram Check — "listen" vs "silent"</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+      <div class="mtitle">✅ Method 1: Frequency Dictionary O(n)</div>
+<pre><span class="kw">public static bool</span> <span class="fn">IsAnagram</span>(<span class="kw">string</span> <span class="prop">a</span>, <span class="kw">string</span> <span class="prop">b</span>)
+{
+    <span class="kw">if</span> (<span class="prop">a</span>.<span class="prop">Length</span> != <span class="prop">b</span>.<span class="prop">Length</span>) <span class="kw">return false</span>;
+    <span class="kw">var</span> <span class="prop">freq</span> = <span class="kw">new</span> <span class="typ">Dictionary</span>&lt;<span class="kw">char</span>,<span class="kw">int</span>&gt;();
+    <span class="kw">foreach</span> (<span class="kw">char</span> <span class="prop">c</span> <span class="kw">in</span> <span class="prop">a</span>.<span class="fn">ToLower</span>())
+        <span class="prop">freq</span>[<span class="prop">c</span>] = <span class="prop">freq</span>.<span class="fn">GetValueOrDefault</span>(<span class="prop">c</span>) + <span class="num">1</span>;
+    <span class="kw">foreach</span> (<span class="kw">char</span> <span class="prop">c</span> <span class="kw">in</span> <span class="prop">b</span>.<span class="fn">ToLower</span>())
+    {
+        <span class="kw">if</span> (!<span class="prop">freq</span>.<span class="fn">ContainsKey</span>(<span class="prop">c</span>) || <span class="prop">freq</span>[<span class="prop">c</span>] == <span class="num">0</span>)
+            <span class="kw">return false</span>;
+        <span class="prop">freq</span>[<span class="prop">c</span>]--;
+    }
+    <span class="kw">return true</span>;
+}
+<span class="cm">// "listen"/"silent" → true
+// "hello"/"world"   → false</span></pre>
+    </div>
+    <div class="mbox m2"><div class="mtitle">Method 2: Sort Both — O(n log n)</div>
+<pre><span class="kw">bool</span> <span class="fn">IsAnagramSort</span>(<span class="kw">string</span> <span class="prop">a</span>, <span class="kw">string</span> <span class="prop">b</span>)
+{
+    <span class="kw">var</span> <span class="prop">s1</span> = <span class="prop">a</span>.<span class="fn">ToLower</span>().<span class="fn">ToCharArray</span>(); <span class="typ">Array</span>.<span class="fn">Sort</span>(<span class="prop">s1</span>);
+    <span class="kw">var</span> <span class="prop">s2</span> = <span class="prop">b</span>.<span class="fn">ToLower</span>().<span class="fn">ToCharArray</span>(); <span class="typ">Array</span>.<span class="fn">Sort</span>(<span class="prop">s2</span>);
+    <span class="kw">return</span> <span class="prop">s1</span>.<span class="fn">SequenceEqual</span>(<span class="prop">s2</span>);
+}</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Dictionary frequency map is O(n) — build from s1, decrement for each char in s2. If count goes to -1 or key missing → not anagram. Only 26 possible chars so O(1) space. Sort approach is O(n log n) but simpler to explain. I'd use dictionary for production — faster for large strings. Key edge case: length check first for quick fail."</div>
+  </div>
+</div>
+
+<!-- ===== Q4 VOWELS ===== -->
+<div class="q-card" id="q4">
+  <div class="q-hdr"><div class="q-num">4</div><div class="q-title">Count Vowels and Consonants in a String</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">public static</span> (<span class="kw">int</span> Vowels, <span class="kw">int</span> Consonants)
+    <span class="fn">CountVowelsConsonants</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="kw">const string</span> <span class="prop">v</span> = <span class="str">"aeiou"</span>;
+    <span class="kw">int</span> <span class="prop">vowels</span> = <span class="num">0</span>, <span class="prop">cons</span> = <span class="num">0</span>;
+    <span class="kw">foreach</span> (<span class="kw">char</span> <span class="prop">c</span> <span class="kw">in</span> <span class="prop">s</span>.<span class="fn">ToLower</span>())
+    {
+        <span class="kw">if</span> (!<span class="kw">char</span>.<span class="fn">IsLetter</span>(<span class="prop">c</span>)) <span class="kw">continue</span>;
+        <span class="kw">if</span> (<span class="prop">v</span>.<span class="fn">Contains</span>(<span class="prop">c</span>)) <span class="prop">vowels</span>++;
+        <span class="kw">else</span> <span class="prop">cons</span>++;
+    }
+    <span class="kw">return</span> (<span class="prop">vowels</span>, <span class="prop">cons</span>);
+}
+<span class="cm">// "ZenCampus" → Vowels:3 (e,a,u), Consonants:5</span>
+
+<span class="cm">// LINQ version</span>
+<span class="kw">int</span> <span class="prop">vCount</span> = <span class="str">"ZenCampus"</span>
+    .<span class="fn">Count</span>(<span class="prop">c</span> =&gt; <span class="str">"aeiouAEIOU"</span>.<span class="fn">Contains</span>(<span class="prop">c</span>));</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"I use a tuple return for both counts in one pass — no need to iterate twice. char.IsLetter() filters out spaces and punctuation. LINQ Count with predicate is clean for just vowels. I'd return a ValueTuple — lightweight, no heap allocation compared to a class."</div>
+  </div>
+</div>
+
+<!-- ===== Q5 FIRST NON-REPEAT ===== -->
+<div class="q-card" id="q5">
+  <div class="q-hdr"><div class="q-num">5</div><div class="q-title">First Non-Repeating Character — "aabbcd" → 'c'</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+      <div class="mtitle">✅ LinkedDictionary approach — preserves order</div>
+<pre><span class="kw">public static char</span>? <span class="fn">FirstNonRepeat</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="cm">// Dictionary preserves insertion order in C# (.NET 5+)</span>
+    <span class="kw">var</span> <span class="prop">freq</span> = <span class="kw">new</span> <span class="typ">Dictionary</span>&lt;<span class="kw">char</span>,<span class="kw">int</span>&gt;();
+    <span class="kw">foreach</span> (<span class="kw">char</span> <span class="prop">c</span> <span class="kw">in</span> <span class="prop">s</span>)
+        <span class="prop">freq</span>[<span class="prop">c</span>] = <span class="prop">freq</span>.<span class="fn">GetValueOrDefault</span>(<span class="prop">c</span>) + <span class="num">1</span>;
+
+    <span class="kw">foreach</span> (<span class="kw">var</span> <span class="prop">kv</span> <span class="kw">in</span> <span class="prop">freq</span>)
+        <span class="kw">if</span> (<span class="prop">kv</span>.<span class="prop">Value</span> == <span class="num">1</span>) <span class="kw">return</span> <span class="prop">kv</span>.<span class="prop">Key</span>;
+
+    <span class="kw">return null</span>; <span class="cm">// all chars repeated</span>
+}
+<span class="cm">// "aabbcd"    → 'c'
+// "aabb"      → null
+// "stress"    → 't'</span></pre>
+    </div>
+    <div class="mbox m2"><div class="mtitle">LINQ one-liner</div>
+<pre><span class="kw">char</span>? <span class="fn">FirstNonRepeatLinq</span>(<span class="kw">string</span> <span class="prop">s</span>) =&gt;
+    <span class="prop">s</span>.<span class="fn">GroupBy</span>(<span class="prop">c</span> =&gt; <span class="prop">c</span>)
+     .<span class="fn">FirstOrDefault</span>(<span class="prop">g</span> =&gt; <span class="prop">g</span>.<span class="fn">Count</span>() == <span class="num">1</span>)
+     ?.<span class="prop">Key</span>;</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Two passes: first build frequency map, then scan for first key with count = 1. Two passes but both O(n), still O(n) overall. The nullable char? return handles the 'all chars repeated' edge case. LINQ GroupBy is elegant but hides two iterations — I'd use explicit loop in performance-critical code. ZenCampus: same pattern to find first student who registered only once."</div>
+  </div>
+</div>
+
+<!-- ===== Q6 STRING COMPRESSION ===== -->
+<div class="q-card" id="q6">
+  <div class="q-hdr"><div class="q-num">6</div><div class="q-title">String Compression — "aaabbc" → "a3b2c1"</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">public static string</span> <span class="fn">Compress</span>(<span class="kw">string</span> <span class="prop">s</span>)
+{
+    <span class="kw">if</span> (<span class="kw">string</span>.<span class="fn">IsNullOrEmpty</span>(<span class="prop">s</span>)) <span class="kw">return</span> <span class="prop">s</span>;
+    <span class="kw">var</span> <span class="prop">sb</span>    = <span class="kw">new</span> <span class="typ">StringBuilder</span>();
+    <span class="kw">int</span> <span class="prop">count</span> = <span class="num">1</span>;
+
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">1</span>; <span class="prop">i</span> &lt;= <span class="prop">s</span>.<span class="prop">Length</span>; <span class="prop">i</span>++)
+    {
+        <span class="kw">if</span> (<span class="prop">i</span> &lt; <span class="prop">s</span>.<span class="prop">Length</span> &amp;&amp; <span class="prop">s</span>[<span class="prop">i</span>] == <span class="prop">s</span>[<span class="prop">i</span>-<span class="num">1</span>])
+            <span class="prop">count</span>++;
+        <span class="kw">else</span>
+        {
+            <span class="prop">sb</span>.<span class="fn">Append</span>(<span class="prop">s</span>[<span class="prop">i</span>-<span class="num">1</span>]).<span class="fn">Append</span>(<span class="prop">count</span>);
+            <span class="prop">count</span> = <span class="num">1</span>;
+        }
+    }
+    <span class="kw">string</span> <span class="prop">result</span> = <span class="prop">sb</span>.<span class="fn">ToString</span>();
+    <span class="cm">// return shorter of original or compressed</span>
+    <span class="kw">return</span> <span class="prop">result</span>.<span class="prop">Length</span> &lt; <span class="prop">s</span>.<span class="prop">Length</span> ? <span class="prop">result</span> : <span class="prop">s</span>;
+}
+<span class="cm">// "aaabbc"   → "a3b2c1"
+// "abc"      → "abc"   (compressed is longer, return original)
+// "aaaaabbb" → "a5b3"</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Compare current char with previous — if same, increment count. When different, append char + count to StringBuilder. StringBuilder is critical here — string concatenation in a loop is O(n²) due to immutability, StringBuilder is O(n). I always check if compressed is shorter than original — if not, return original. Edge case: 'ab' compresses to 'a1b1' which is longer!"</div>
+  </div>
+</div>
+
+<!-- ===== Q7 COUNT WORDS ===== -->
+<div class="q-card" id="q7">
+  <div class="q-hdr"><div class="q-num">7</div><div class="q-title">Count Words in a Sentence + Find Longest Word</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">public static</span> (<span class="kw">int</span> Count, <span class="kw">string</span> Longest)
+    <span class="fn">WordStats</span>(<span class="kw">string</span> <span class="prop">sentence</span>)
+{
+    <span class="kw">var</span> <span class="prop">words</span> = <span class="prop">sentence</span>.<span class="fn">Split</span>(<span class="kw">new</span> <span class="kw">char</span>[]{ <span class="str">' '</span>, <span class="str">','</span>, <span class="str">'.'</span> },
+        <span class="typ">StringSplitOptions</span>.<span class="prop">RemoveEmptyEntries</span>);
+
+    <span class="kw">string</span> <span class="prop">longest</span> = <span class="prop">words</span>
+        .<span class="fn">OrderByDescending</span>(<span class="prop">w</span> =&gt; <span class="prop">w</span>.<span class="prop">Length</span>)
+        .<span class="fn">FirstOrDefault</span>() ?? <span class="str">""</span>;
+
+    <span class="kw">return</span> (<span class="prop">words</span>.<span class="prop">Length</span>, <span class="prop">longest</span>);
+}
+<span class="cm">// "ZenCampus is the best ERP system"
+// → Count:6, Longest:"ZenCampus"</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Point</div>"Split with multiple delimiters (space, comma, period) using char array overload. RemoveEmptyEntries handles double spaces. For longest word, MaxBy() in .NET 6+ is cleaner than OrderByDescending().First()."</div>
+  </div>
+</div>
+
+<!-- ===== Q8 REMOVE SPACES ===== -->
+<div class="q-card" id="q8">
+  <div class="q-hdr"><div class="q-num">8</div><div class="q-title">Remove All Spaces + Trim Extra Whitespace</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="cm">// Remove ALL spaces</span>
+<span class="kw">string</span> <span class="fn">RemoveSpaces</span>(<span class="kw">string</span> <span class="prop">s</span>) =&gt;
+    <span class="prop">s</span>.<span class="fn">Replace</span>(<span class="str">" "</span>, <span class="str">""</span>);
+
+<span class="cm">// Remove extra whitespace (keep single space)</span>
+<span class="kw">string</span> <span class="fn">NormalizeSpaces</span>(<span class="kw">string</span> <span class="prop">s</span>) =&gt;
+    <span class="kw">string</span>.<span class="fn">Join</span>(<span class="str">" "</span>, <span class="prop">s</span>.<span class="fn">Split</span>(
+        <span class="kw">new char</span>[]{ <span class="str">' '</span> },
+        <span class="typ">StringSplitOptions</span>.<span class="prop">RemoveEmptyEntries</span>));
+
+<span class="cm">// "  ZenCampus   School  "
+// → "ZenCampus School"</span>
+
+<span class="cm">// Remove specific characters</span>
+<span class="kw">string</span> <span class="fn">RemoveChars</span>(<span class="kw">string</span> <span class="prop">s</span>, <span class="kw">string</span> <span class="prop">toRemove</span>) =&gt;
+    <span class="kw">new string</span>(<span class="prop">s</span>.<span class="fn">Where</span>(<span class="prop">c</span> =&gt; !<span class="prop">toRemove</span>.<span class="fn">Contains</span>(<span class="prop">c</span>))
+                .<span class="fn">ToArray</span>());</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Point</div>"Regex.Replace is powerful but heavyweight for simple cases. Split + RemoveEmptyEntries + Join is the standard pattern for normalising whitespace. For removing specific chars — LINQ Where filter on char array."</div>
+  </div>
+</div>
+
+<!-- ===== Q9 CAESAR CIPHER ===== -->
+<div class="q-card" id="q9">
+  <div class="q-hdr"><div class="q-num">9</div><div class="q-title">Caesar Cipher — Encrypt &amp; Decrypt with shift key</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">public static string</span> <span class="fn">CaesarEncrypt</span>(<span class="kw">string</span> <span class="prop">text</span>, <span class="kw">int</span> <span class="prop">shift</span>)
+{
+    <span class="kw">return new string</span>(<span class="prop">text</span>.<span class="fn">Select</span>(<span class="prop">c</span> =&gt;
+    {
+        <span class="kw">if</span> (!<span class="kw">char</span>.<span class="fn">IsLetter</span>(<span class="prop">c</span>)) <span class="kw">return</span> <span class="prop">c</span>;
+        <span class="kw">char</span> <span class="prop">baseChar</span> = <span class="kw">char</span>.<span class="fn">IsUpper</span>(<span class="prop">c</span>) ? <span class="str">'A'</span> : <span class="str">'a'</span>;
+        <span class="kw">return</span> (<span class="kw">char</span>)((<span class="prop">c</span> - <span class="prop">baseChar</span> + <span class="prop">shift</span>) % <span class="num">26</span> + <span class="prop">baseChar</span>);
+    }).<span class="fn">ToArray</span>());
+}
+
+<span class="kw">public static string</span> <span class="fn">CaesarDecrypt</span>(<span class="kw">string</span> <span class="prop">text</span>, <span class="kw">int</span> <span class="prop">shift</span>)
+    =&gt; <span class="fn">CaesarEncrypt</span>(<span class="prop">text</span>, <span class="num">26</span> - <span class="prop">shift</span>); <span class="cm">// reverse shift</span>
+
+<span class="cm">// "HELLO" shift=3 → "KHOOR"
+// "KHOOR" decrypt shift=3 → "HELLO"</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Point</div>"Modulo 26 wraps around: 'Z' + 1 → 'A'. Preserve case — use 'A' as base for uppercase, 'a' for lowercase. Non-letters pass through unchanged. Decrypt = encrypt with (26 - shift). Classic interview problem that tests char arithmetic."</div>
+  </div>
+</div>
+
+<!-- ===== NUMBER SECTION DIVIDER ===== -->
+<div style="background:linear-gradient(90deg,#1a1a2e,#16213e);border-radius:10px;padding:12px 18px;margin:26px 0 10px;border-left:4px solid #f39c12">
+  <h2 style="color:#f39c12;font-size:1em">🔢 Number Problems (Q10–Q17)</h2>
+</div>
+
+<!-- ===== Q10 FIBONACCI ===== -->
+<div class="q-card" id="q10">
+  <div class="q-hdr"><div class="q-num">10</div><div class="q-title">Fibonacci — Iterative, Recursive, Memoization, yield</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+      <div class="mtitle">✅ Method 1: Iterative — Best (O(n) O(1))</div>
+<pre><span class="kw">public static long</span> <span class="fn">FibIterative</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">if</span> (<span class="prop">n</span> &lt;= <span class="num">1</span>) <span class="kw">return</span> <span class="prop">n</span>;
+    <span class="kw">long</span> <span class="prop">a</span> = <span class="num">0</span>, <span class="prop">b</span> = <span class="num">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">2</span>; <span class="prop">i</span> &lt;= <span class="prop">n</span>; <span class="prop">i</span>++)
+        (<span class="prop">a</span>, <span class="prop">b</span>) = (<span class="prop">b</span>, <span class="prop">a</span> + <span class="prop">b</span>);
+    <span class="kw">return</span> <span class="prop">b</span>;
+}
+<span class="cm">// Fib(10) = 55,  Fib(20) = 6765</span></pre>
+    </div>
+    <div class="mbox m2"><div class="mtitle">Method 2: Recursive — O(2ⁿ) — Explain why it's bad</div>
+<pre><span class="kw">long</span> <span class="fn">FibRec</span>(<span class="kw">int</span> <span class="prop">n</span>) =&gt; <span class="prop">n</span> &lt;= <span class="num">1</span> ? <span class="prop">n</span>
+    : <span class="fn">FibRec</span>(<span class="prop">n</span>-<span class="num">1</span>) + <span class="fn">FibRec</span>(<span class="prop">n</span>-<span class="num">2</span>);
+<span class="cm">// Fib(40) = ~1 billion calls! Don't use this.</span></pre>
+    </div>
+    <div class="mbox m3"><div class="mtitle">Method 3: Memoization — Recursive + Cache = O(n)</div>
+<pre><span class="kw">private static</span> <span class="typ">Dictionary</span>&lt;<span class="kw">int</span>,<span class="kw">long</span>&gt; <span class="prop">_cache</span> = <span class="kw">new</span>();
+<span class="kw">long</span> <span class="fn">FibMemo</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">if</span> (<span class="prop">n</span> &lt;= <span class="num">1</span>) <span class="kw">return</span> <span class="prop">n</span>;
+    <span class="kw">if</span> (<span class="prop">_cache</span>.<span class="fn">TryGetValue</span>(<span class="prop">n</span>, <span class="kw">out var</span> <span class="prop">v</span>)) <span class="kw">return</span> <span class="prop">v</span>;
+    <span class="kw">return</span> <span class="prop">_cache</span>[<span class="prop">n</span>] = <span class="fn">FibMemo</span>(<span class="prop">n</span>-<span class="num">1</span>) + <span class="fn">FibMemo</span>(<span class="prop">n</span>-<span class="num">2</span>);
+}</pre>
+    </div>
+    <div class="mbox m4"><div class="mtitle">Method 4: yield return — Infinite Fibonacci stream!</div>
+<pre><span class="kw">public static</span> <span class="typ">IEnumerable</span>&lt;<span class="kw">long</span>&gt; <span class="fn">FibonacciStream</span>()
+{
+    <span class="kw">long</span> <span class="prop">a</span> = <span class="num">0</span>, <span class="prop">b</span> = <span class="num">1</span>;
+    <span class="kw">while</span> (<span class="kw">true</span>)   <span class="cm">// infinite! Use Take()</span>
+    {
+        <span class="kw">yield return</span> <span class="prop">a</span>;
+        (<span class="prop">a</span>, <span class="prop">b</span>) = (<span class="prop">b</span>, <span class="prop">a</span> + <span class="prop">b</span>);
+    }
+}
+<span class="cm">// First 10: FibonacciStream().Take(10).ToList()
+// → [0,1,1,2,3,5,8,13,21,34]</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"4 approaches — I'd start with iterative in an interview: O(n) time, O(1) space. Recursive is the naive approach — exponential O(2ⁿ), Fib(50) would take years! Memoization fixes it: cache each result, O(n) time and space. For production where you need a sequence, yield return is powerful — lazy evaluation, infinite stream, take only what you need. One important note: use long not int — Fib(93) overflows int!"</div>
+  </div>
+</div>
+
+<!-- ===== Q11 FACTORIAL ===== -->
+<div class="q-card" id="q11">
+  <div class="q-hdr"><div class="q-num">11</div><div class="q-title">Factorial — 5! = 120. Handle large numbers with BigInteger</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">public static long</span> <span class="fn">Factorial</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">if</span> (<span class="prop">n</span> &lt; <span class="num">0</span>) <span class="kw">throw new</span> <span class="typ">ArgumentException</span>(<span class="str">"n >= 0"</span>);
+    <span class="kw">if</span> (<span class="prop">n</span> == <span class="num">0</span>) <span class="kw">return</span> <span class="num">1</span>; <span class="cm">// 0! = 1 by definition</span>
+    <span class="kw">long</span> <span class="prop">result</span> = <span class="num">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">2</span>; <span class="prop">i</span> &lt;= <span class="prop">n</span>; <span class="prop">i</span>++) <span class="prop">result</span> *= <span class="prop">i</span>;
+    <span class="kw">return</span> <span class="prop">result</span>;
+}
+
+<span class="cm">// LINQ Aggregate — shows functional thinking!</span>
+<span class="kw">long</span> <span class="fn">FactLinq</span>(<span class="kw">int</span> <span class="prop">n</span>) =&gt;
+    <span class="typ">Enumerable</span>.<span class="fn">Range</span>(<span class="num">1</span>, <span class="prop">n</span>)
+               .<span class="fn">Aggregate</span>(<span class="num">1L</span>, (<span class="prop">acc</span>, <span class="prop">x</span>) =&gt; <span class="prop">acc</span> * <span class="prop">x</span>);
+
+<span class="cm">// For very large: use BigInteger (System.Numerics)</span>
+<span class="kw">using</span> System.Numerics;
+<span class="typ">BigInteger</span> <span class="fn">BigFactorial</span>(<span class="kw">int</span> <span class="prop">n</span>) =&gt;
+    <span class="prop">n</span> == <span class="num">0</span> ? <span class="num">1</span> : (<span class="typ">BigInteger</span>)<span class="prop">n</span> * <span class="fn">BigFactorial</span>(<span class="prop">n</span>-<span class="num">1</span>);
+<span class="cm">// BigFactorial(100) = 93326215443944... (158 digits!)</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Points</div>"0! = 1 by mathematical definition — always handle. long overflows at 20! (9.2 * 10^18). For 21+, use BigInteger from System.Numerics. LINQ Aggregate is the functional programming approach — accumulator starts at 1, multiplies each element. Shows different thinking styles."</div>
+  </div>
+</div>
+
+<!-- ===== Q12 PRIME ===== -->
+<div class="q-card" id="q12">
+  <div class="q-hdr"><div class="q-num">12</div><div class="q-title">Prime Number Check — Why check only up to √n?</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">public static bool</span> <span class="fn">IsPrime</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">if</span> (<span class="prop">n</span> &lt; <span class="num">2</span>) <span class="kw">return false</span>;
+    <span class="kw">if</span> (<span class="prop">n</span> == <span class="num">2</span>) <span class="kw">return true</span>;
+    <span class="kw">if</span> (<span class="prop">n</span> % <span class="num">2</span> == <span class="num">0</span>) <span class="kw">return false</span>; <span class="cm">// even shortcut</span>
+
+    <span class="cm">// Check up to √n, step 2 (skip evens)</span>
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">3</span>; <span class="prop">i</span> * <span class="prop">i</span> &lt;= <span class="prop">n</span>; <span class="prop">i</span> += <span class="num">2</span>)
+        <span class="kw">if</span> (<span class="prop">n</span> % <span class="prop">i</span> == <span class="num">0</span>) <span class="kw">return false</span>;
+
+    <span class="kw">return true</span>;
+}
+<span class="cm">// IsPrime(17) → true,  IsPrime(100) → false
+// For n=100: check 3,5,7,9 → 10*10=100, stop at i=10
+
+// Sieve of Eratosthenes — all primes up to N</span>
+<span class="kw">static</span> <span class="typ">List</span>&lt;<span class="kw">int</span>&gt; <span class="fn">Sieve</span>(<span class="kw">int</span> <span class="prop">limit</span>)
+{
+    <span class="kw">var</span> <span class="prop">prime</span> = <span class="kw">new bool</span>[<span class="prop">limit</span>+<span class="num">1</span>];
+    <span class="typ">Array</span>.<span class="fn">Fill</span>(<span class="prop">prime</span>, <span class="kw">true</span>);
+    <span class="prop">prime</span>[<span class="num">0</span>] = <span class="prop">prime</span>[<span class="num">1</span>] = <span class="kw">false</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="num">2</span>; <span class="prop">i</span>*<span class="prop">i</span>&lt;=<span class="prop">limit</span>; <span class="prop">i</span>++)
+        <span class="kw">if</span> (<span class="prop">prime</span>[<span class="prop">i</span>])
+            <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">j</span>=<span class="prop">i</span>*<span class="prop">i</span>; <span class="prop">j</span>&lt;=<span class="prop">limit</span>; <span class="prop">j</span>+=<span class="prop">i</span>)
+                <span class="prop">prime</span>[<span class="prop">j</span>] = <span class="kw">false</span>;
+    <span class="kw">return</span> <span class="typ">Enumerable</span>.<span class="fn">Range</span>(<span class="num">2</span>, <span class="prop">limit</span>-<span class="num">1</span>)
+                      .<span class="fn">Where</span>(<span class="prop">i</span>=&gt;<span class="prop">prime</span>[<span class="prop">i</span>]).<span class="fn">ToList</span>();
+}
+<span class="cm">// Sieve(20) → [2,3,5,7,11,13,17,19]</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Why √n? — Must know this!</div>"If n is composite (not prime), it MUST have a factor ≤ √n. Proof: if both factors were &gt;√n, their product &gt; n — contradiction! So checking 2 to √n is sufficient. For Sieve: mark multiples starting from i*i (not 2*i) because smaller multiples were already marked by previous primes. O(n log log n) — fastest bulk prime generator."</div>
+  </div>
+</div>
+
+<!-- ===== Q13 ARMSTRONG ===== -->
+<div class="q-card" id="q13">
+  <div class="q-hdr"><div class="q-num">13</div><div class="q-title">Armstrong Number — 153 = 1³+5³+3³ = 153</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">public static bool</span> <span class="fn">IsArmstrong</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="kw">string</span> <span class="prop">digits</span> = <span class="prop">n</span>.<span class="fn">ToString</span>();
+    <span class="kw">int</span>    <span class="prop">power</span>  = <span class="prop">digits</span>.<span class="prop">Length</span>;
+    <span class="kw">int</span>    <span class="prop">sum</span>    = <span class="prop">digits</span>
+        .<span class="fn">Sum</span>(<span class="prop">c</span> =&gt; (<span class="kw">int</span>)<span class="typ">Math</span>.<span class="fn">Pow</span>(<span class="prop">c</span> - <span class="str">'0'</span>, <span class="prop">power</span>));
+    <span class="kw">return</span> <span class="prop">sum</span> == <span class="prop">n</span>;
+}
+<span class="cm">// Armstrong numbers: 1, 153, 370, 371, 407, 1634...
+
+// List all 3-digit armstrong numbers:</span>
+<span class="kw">var</span> <span class="prop">all</span> = <span class="typ">Enumerable</span>.<span class="fn">Range</span>(<span class="num">100</span>, <span class="num">900</span>)
+                    .<span class="fn">Where</span>(<span class="fn">IsArmstrong</span>);
+<span class="cm">// → 153, 370, 371, 407</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Point</div>"Power = number of digits, not always 3. '1634' = 4-digit Armstrong (1⁴+6⁴+3⁴+4⁴=1634). I convert to string to get digit count, then 'c - '0'' converts char to int for the math. LINQ Sum with lambda is clean. Math.Pow returns double — cast to int for comparison."</div>
+  </div>
+</div>
+
+<!-- ===== Q14 FIZZBUZZ ===== -->
+<div class="q-card" id="q14">
+  <div class="q-hdr"><div class="q-num">14</div><div class="q-title">FizzBuzz — Senior developer version</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox"><div class="mtitle">❌ Junior approach — 4 conditions, not extendable</div>
+<pre><span class="cm">// DON'T write this in a senior interview!</span>
+<span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="num">1</span>; <span class="prop">i</span>&lt;=<span class="num">15</span>; <span class="prop">i</span>++)
+    <span class="kw">if</span> (<span class="prop">i</span>%<span class="num">15</span>==<span class="num">0</span>) <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"FizzBuzz"</span>);
+    <span class="kw">else if</span> (<span class="prop">i</span>%<span class="num">3</span>==<span class="num">0</span>) <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Fizz"</span>);
+    <span class="kw">else if</span> (<span class="prop">i</span>%<span class="num">5</span>==<span class="num">0</span>) <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Buzz"</span>);
+    <span class="kw">else</span> <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="prop">i</span>);</pre>
+    </div>
+    <div class="mbox m3"><div class="mtitle">✅ Senior: Extendable dictionary-based</div>
+<pre><span class="kw">public static</span> <span class="typ">IEnumerable</span>&lt;<span class="kw">string</span>&gt; <span class="fn">FizzBuzz</span>(
+    <span class="kw">int</span> <span class="prop">n</span>,
+    <span class="typ">Dictionary</span>&lt;<span class="kw">int</span>,<span class="kw">string</span>&gt; <span class="prop">rules</span> = <span class="kw">null</span>)
+{
+    <span class="prop">rules</span> ??= <span class="kw">new</span> { { <span class="num">3</span>, <span class="str">"Fizz"</span> }, { <span class="num">5</span>, <span class="str">"Buzz"</span> } };
+
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span> = <span class="num">1</span>; <span class="prop">i</span> &lt;= <span class="prop">n</span>; <span class="prop">i</span>++)
+    {
+        <span class="kw">var</span> <span class="prop">result</span> = <span class="kw">string</span>.<span class="fn">Concat</span>(
+            <span class="prop">rules</span>.<span class="fn">Where</span>(<span class="prop">r</span> =&gt; <span class="prop">i</span> % <span class="prop">r</span>.<span class="prop">Key</span> == <span class="num">0</span>)
+                  .<span class="fn">Select</span>(<span class="prop">r</span> =&gt; <span class="prop">r</span>.<span class="prop">Value</span>));
+        <span class="kw">yield return string</span>.<span class="fn">IsNullOrEmpty</span>(<span class="prop">result</span>)
+            ? <span class="prop">i</span>.<span class="fn">ToString</span>() : <span class="prop">result</span>;
+    }
+}</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Experienced Answer</div>"Junior approach hard-codes 4 conditions and uses %15 as a hack. Senior approach: dictionary of divisor→word rules, check all rules and concatenate matching words. Adding 'Bazz' for 7? Just add one dictionary entry. The %15 approach breaks if you add a 3rd rule. This also uses yield return for lazy evaluation — O(1) memory regardless of n."</div>
+  </div>
+</div>
+
+<!-- ===== Q15 SUM DIGITS ===== -->
+<div class="q-card" id="q15">
+  <div class="q-hdr"><div class="q-num">15</div><div class="q-title">Sum of Digits — 1234 → 10. Digital root of a number.</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="cm">// Method 1: Loop with modulo</span>
+<span class="kw">public static int</span> <span class="fn">SumOfDigits</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="prop">n</span> = <span class="typ">Math</span>.<span class="fn">Abs</span>(<span class="prop">n</span>); <span class="cm">// handle negatives</span>
+    <span class="kw">int</span> <span class="prop">sum</span> = <span class="num">0</span>;
+    <span class="kw">while</span> (<span class="prop">n</span> &gt; <span class="num">0</span>)
+    {
+        <span class="prop">sum</span> += <span class="prop">n</span> % <span class="num">10</span>; <span class="cm">// last digit</span>
+        <span class="prop">n</span>   /= <span class="num">10</span>;    <span class="cm">// remove last digit</span>
+    }
+    <span class="kw">return</span> <span class="prop">sum</span>;
+}
+<span class="cm">// 1234: 4+3+2+1 = 10
+
+// Method 2: LINQ (elegant)</span>
+<span class="kw">int</span> <span class="fn">SumDigitsLinq</span>(<span class="kw">int</span> <span class="prop">n</span>) =&gt;
+    <span class="typ">Math</span>.<span class="fn">Abs</span>(<span class="prop">n</span>).<span class="fn">ToString</span>()
+        .<span class="fn">Sum</span>(<span class="prop">c</span> =&gt; <span class="prop">c</span> - <span class="str">'0'</span>);
+
+<span class="cm">// Digital Root: keep summing until single digit
+// 493 → 4+9+3=16 → 1+6=7 (digital root = 7)</span>
+<span class="kw">int</span> <span class="fn">DigitalRoot</span>(<span class="kw">int</span> <span class="prop">n</span>)
+    =&gt; <span class="prop">n</span> &lt; <span class="num">10</span> ? <span class="prop">n</span> : <span class="fn">DigitalRoot</span>(<span class="fn">SumOfDigits</span>(<span class="prop">n</span>));</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Point</div>"n % 10 extracts last digit, n / 10 removes it. Loop until n=0. Handle negative with Math.Abs. String approach is readable but converts to string first. Follow-up: Digital root — recursively sum digits until single digit. Used in credit card validation (Luhn algorithm), ISBN check."</div>
+  </div>
+</div>
+
+<!-- ===== Q16 REVERSE NUMBER ===== -->
+<div class="q-card" id="q16">
+  <div class="q-hdr"><div class="q-num">16</div><div class="q-title">Reverse a Number — 12345 → 54321. Handle overflow!</div><span class="tag med">Medium</span></div>
+  <div class="q-body">
+    <div class="mbox">
+<pre><span class="kw">public static long</span> <span class="fn">ReverseNumber</span>(<span class="kw">long</span> <span class="prop">n</span>)
+{
+    <span class="kw">bool</span> <span class="prop">negative</span> = <span class="prop">n</span> &lt; <span class="num">0</span>;
+    <span class="prop">n</span> = <span class="typ">Math</span>.<span class="fn">Abs</span>(<span class="prop">n</span>);
+    <span class="kw">long</span> <span class="prop">reversed</span> = <span class="num">0</span>;
+
+    <span class="kw">while</span> (<span class="prop">n</span> &gt; <span class="num">0</span>)
+    {
+        <span class="prop">reversed</span> = <span class="prop">reversed</span> * <span class="num">10</span> + <span class="prop">n</span> % <span class="num">10</span>;
+        <span class="prop">n</span> /= <span class="num">10</span>;
+    }
+    <span class="kw">return</span> <span class="prop">negative</span> ? -<span class="prop">reversed</span> : <span class="prop">reversed</span>;
+}
+<span class="cm">// 12345 → 54321
+// -9080 → -809 (leading zeros drop naturally!)
+// 1000  → 1</span></pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Key Points</div>"reversed = reversed*10 + lastDigit builds the reversed number digit by digit. Use long not int to handle overflow during reversal — 1999999999 reversed would overflow int. Leading zeros disappear naturally (1000 → 0001 = 1). Handle negative sign separately."</div>
+  </div>
+</div>
+
+<!-- ===== Q17 PATTERN PRINT ===== -->
+<div class="q-card" id="q17">
+  <div class="q-hdr"><div class="q-num">17</div><div class="q-title">Pattern Printing — Triangle, Diamond, Number Pyramid</div><span class="tag easy">Easy</span></div>
+  <div class="q-body">
+    <div class="mbox"><div class="mtitle">Right Triangle of *</div>
+<pre><span class="cm">/*
+*
+**
+***
+****
+*/</span>
+<span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="num">1</span>; <span class="prop">i</span>&lt;=<span class="num">4</span>; <span class="prop">i</span>++)
+    <span class="fn">Console</span>.<span class="fn">WriteLine</span>(<span class="kw">new string</span>(<span class="str">'*'</span>, <span class="prop">i</span>));</pre>
+    </div>
+    <div class="mbox m2"><div class="mtitle">Number Pyramid</div>
+<pre><span class="cm">/*
+    1
+   121
+  12321
+*/</span>
+<span class="kw">int</span> <span class="prop">rows</span> = <span class="num">3</span>;
+<span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="num">1</span>; <span class="prop">i</span>&lt;=<span class="prop">rows</span>; <span class="prop">i</span>++)
+{
+    <span class="fn">Console</span>.<span class="fn">Write</span>(<span class="kw">new string</span>(<span class="str">' '</span>, <span class="prop">rows</span>-<span class="prop">i</span>));
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">j</span>=<span class="num">1</span>; <span class="prop">j</span>&lt;=<span class="prop">i</span>; <span class="prop">j</span>++)   <span class="fn">Console</span>.<span class="fn">Write</span>(<span class="prop">j</span>);
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">j</span>=<span class="prop">i</span>-<span class="num">1</span>; <span class="prop">j</span>&gt;=<span class="num">1</span>; <span class="prop">j</span>--) <span class="fn">Console</span>.<span class="fn">Write</span>(<span class="prop">j</span>);
+    <span class="fn">Console</span>.<span class="fn">WriteLine</span>();
+}</pre>
+    </div>
+    <div class="mbox m3"><div class="mtitle">Diamond Pattern</div>
+<pre><span class="kw">void</span> <span class="fn">Diamond</span>(<span class="kw">int</span> <span class="prop">n</span>)
+{
+    <span class="cm">// Upper half</span>
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="num">1</span>; <span class="prop">i</span>&lt;=<span class="prop">n</span>; <span class="prop">i</span>+=<span class="num">2</span>)
+        <span class="fn">Console</span>.<span class="fn">WriteLine</span>(
+            <span class="kw">new string</span>(<span class="str">' '</span>, (<span class="prop">n</span>-<span class="prop">i</span>)/<span class="num">2</span>) +
+            <span class="kw">new string</span>(<span class="str">'*'</span>, <span class="prop">i</span>));
+    <span class="cm">// Lower half</span>
+    <span class="kw">for</span> (<span class="kw">int</span> <span class="prop">i</span>=<span class="prop">n</span>-<span class="num">2</span>; <span class="prop">i</span>&gt;=<span class="num">1</span>; <span class="prop">i</span>-=<span class="num">2</span>)
+        <span class="fn">Console</span>.<span class="fn">WriteLine</span>(
+            <span class="kw">new string</span>(<span class="str">' '</span>, (<span class="prop">n</span>-<span class="prop">i</span>)/<span class="num">2</span>) +
+            <span class="kw">new string</span>(<span class="str">'*'</span>, <span class="prop">i</span>));
+}</pre>
+    </div>
+    <div class="exp"><div class="lbl">🎤 Pattern Strategy</div>"All patterns follow the same rule: outer loop = rows, inner loops = spaces + characters. For symmetric patterns: print ascending then descending in same row. new string(char, count) is clean C# way to repeat a character. Understand the row/col relationship and patterns become formulaic."</div>
+  </div>
+</div>
+
+</div>
+<footer>
+  <p>Part 1 of 3 · Q1–Q17 · C# String &amp; Number Problems</p>
+  <p style="margin-top:4px"><a href="PS_Part2_CSharp_Arrays_LINQ.html" style="color:#74b9ff">→ Part 2: Arrays, LINQ &amp; OOP (Q18–Q34)</a> &nbsp;|&nbsp; <a href="PS_Part3_SQL_Classic.html" style="color:#f39c12">→ Part 3: SQL Problems (Q35–Q50)</a></p>
+</footer>
+</body>
+</html>

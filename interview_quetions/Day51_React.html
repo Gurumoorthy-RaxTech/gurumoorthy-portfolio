@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 51 — React for .NET Developers | ZenCampus Interview Prep</title>
+<style>
+  :root{--accent:#1d4ed8;--accent-dim:#1e40af;--accent-subtle:rgba(29,78,216,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(29,78,216,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.1rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}.jsx{color:#f78c6c;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .movie{background:linear-gradient(135deg,rgba(29,78,216,.12),rgba(29,78,216,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;}
+  .analogy{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:1rem 0;}
+  .an-left,.an-right{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem;font-size:.85rem;}
+  .an-head{font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;}
+  .an-left .an-head{color:var(--info);}.an-right .an-head{color:var(--accent);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">DAY 51-54</span>
+  <a href="#hooks">React Hooks</a><a href="#axios">Axios + API</a><a href="#context">Context</a>
+  <a href="#router">React Router</a><a href="#scenarios">Interview Q</a><a href="#quiz">Quiz</a>
+</nav>
+<div class="hero">
+  <h1>React for .NET Developers</h1>
+  <p>useState · useEffect · useContext · Axios · React Router — ZenCampus Frontend</p>
+  <div class="tags">
+    <span class="tag">React 18</span><span class="tag">Hooks</span><span class="tag">Axios</span><span class="tag">React Router v6</span>
+    <span class="tag">Day 51–54 / 60</span>
+    <span class="tag" style="background:rgba(29,78,216,.2);border-color:#1d4ed8;color:#1d4ed8;">Royal Blue #1d4ed8</span>
+  </div>
+</div>
+<main>
+
+<section>
+  <h2>🔄 .NET to React — Mental Model Mapping</h2>
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Anniyan (2005) — Same person, different faces</div>
+    <div class="mb">Anniyan-la Ambi, Remo, Anniyan — onru than, different modes. React components same: same UI logic, different states. useState = component's own memory. ZenCampus student list page = StudentList component with state for loading/students/error — each state change, React re-renders only what changed!</div></div>
+  </div>
+  <div class="analogy">
+    <div class="an-left"><div class="an-head">.NET / C# Concept</div>
+      <p>Class with private fields</p>
+      <p>INotifyPropertyChanged</p>
+      <p>DI / IServiceProvider</p>
+      <p>HttpClient GET /api/students</p>
+      <p>async/await Task</p>
+      <p>Razor Pages / MVC View</p>
+    </div>
+    <div class="an-right"><div class="an-head">React Equivalent</div>
+      <p>Component with useState</p>
+      <p>useState triggers re-render</p>
+      <p>useContext (AuthContext etc.)</p>
+      <p>axios.get('/api/students')</p>
+      <p>async/await in useEffect</p>
+      <p>JSX Component</p>
+    </div>
+  </div>
+</section>
+
+<section id="hooks">
+  <h2>🎣 React Hooks — ZenCampus Student List</h2>
+  <pre><code><span class="cm">// StudentList.tsx — Core hooks pattern</span>
+<span class="kw">import</span> { useState, useEffect, useCallback } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { studentApi } <span class="kw">from</span> <span class="str">'../api/studentApi'</span>;
+<span class="kw">import</span> { useAuth } <span class="kw">from</span> <span class="str">'../context/AuthContext'</span>;
+
+<span class="kw">interface</span> <span class="cl">Student</span> {
+  id: <span class="kw">number</span>;
+  name: <span class="kw">string</span>;
+  admissionNumber: <span class="kw">string</span>;
+  className: <span class="kw">string</span>;
+  isActive: <span class="kw">boolean</span>;
+}
+
+<span class="kw">export function</span> <span class="cl">StudentList</span>() {
+  <span class="cm">// State hooks — like private fields in a class</span>
+  <span class="kw">const</span> [students, setStudents] = useState&lt;<span class="cl">Student</span>[]&gt;([]);
+  <span class="kw">const</span> [loading, setLoading]   = useState(<span class="kw">true</span>);
+  <span class="kw">const</span> [error, setError]       = useState&lt;<span class="kw">string</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+  <span class="kw">const</span> [page, setPage]         = useState(<span class="num">1</span>);
+  <span class="kw">const</span> [search, setSearch]     = useState(<span class="str">''</span>);
+  <span class="kw">const</span> { user } = useAuth(); <span class="cm">// from context</span>
+
+  <span class="cm">// Effect hook — runs after render (like OnParametersSetAsync in Blazor)</span>
+  <span class="kw">const</span> loadStudents = useCallback(<span class="kw">async</span> () =&gt; {
+    <span class="kw">try</span> {
+      setLoading(<span class="kw">true</span>);
+      setError(<span class="kw">null</span>);
+      <span class="kw">const</span> data = <span class="kw">await</span> studentApi.getAll({
+        schoolId: user!.schoolId,
+        page,
+        search
+      });
+      setStudents(data.items);
+    } <span class="kw">catch</span> (err) {
+      setError(<span class="str">'Failed to load students. Please try again.'</span>);
+      console.error(err);
+    } <span class="kw">finally</span> {
+      setLoading(<span class="kw">false</span>);
+    }
+  }, [user, page, search]); <span class="cm">// re-run when these change</span>
+
+  useEffect(() =&gt; {
+    <span class="kw">const</span> debounce = setTimeout(loadStudents, <span class="num">300</span>); <span class="cm">// debounce search</span>
+    <span class="kw">return</span> () =&gt; clearTimeout(debounce); <span class="cm">// cleanup</span>
+  }, [loadStudents]);
+
+  <span class="kw">if</span> (loading) <span class="kw">return</span> <span class="jsx">&lt;LoadingSpinner /&gt;</span>;
+  <span class="kw">if</span> (error)   <span class="kw">return</span> <span class="jsx">&lt;ErrorAlert message={error} onRetry={loadStudents} /&gt;</span>;
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div&gt;
+      &lt;SearchInput value={search} onChange={e =&gt; setSearch(e.target.value)} /&gt;
+      &lt;table&gt;
+        &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Adm No&lt;/th&gt;&lt;th&gt;Class&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+        &lt;tbody&gt;
+          {students.map(s =&gt; (
+            &lt;tr key={s.id}&gt;
+              &lt;td&gt;{s.name}&lt;/td&gt;
+              &lt;td&gt;{s.admissionNumber}&lt;/td&gt;
+              &lt;td&gt;{s.className}&lt;/td&gt;
+            &lt;/tr&gt;
+          ))}
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+      &lt;Pagination page={page} onPageChange={setPage} /&gt;
+    &lt;/div&gt;</span>
+  );
+}</code></pre>
+</section>
+
+<section id="axios">
+  <h2>🌐 Axios — Typed API Client for ZenCampus</h2>
+  <pre><code><span class="cm">// src/api/axiosInstance.ts</span>
+<span class="kw">import</span> axios <span class="kw">from</span> <span class="str">'axios'</span>;
+
+<span class="kw">const</span> api = axios.create({
+  baseURL: <span class="kw">import</span>.meta.env.VITE_API_URL ?? <span class="str">'https://api.zencampus.com'</span>,
+  timeout: <span class="num">10000</span>,
+  headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> }
+});
+
+<span class="cm">// Request interceptor — attach JWT token</span>
+api.interceptors.request.use(config =&gt; {
+  <span class="kw">const</span> token = localStorage.getItem(<span class="str">'zencampus_token'</span>);
+  <span class="kw">if</span> (token) config.headers.Authorization = <span class="str">`Bearer ${token}`</span>;
+  <span class="kw">return</span> config;
+});
+
+<span class="cm">// Response interceptor — handle 401 globally</span>
+api.interceptors.response.use(
+  response =&gt; response,
+  error =&gt; {
+    <span class="kw">if</span> (error.response?.status === <span class="num">401</span>) {
+      localStorage.removeItem(<span class="str">'zencampus_token'</span>);
+      window.location.href = <span class="str">'/login'</span>;
+    }
+    <span class="kw">return</span> Promise.reject(error);
+  }
+);
+
+<span class="kw">export default</span> api;
+
+<span class="cm">// src/api/studentApi.ts — typed API functions</span>
+<span class="kw">export const</span> studentApi = {
+  getAll: (params: { schoolId: <span class="kw">number</span>; page: <span class="kw">number</span>; search?: <span class="kw">string</span> }) =&gt;
+    api.get&lt;<span class="cl">PagedResult</span>&lt;<span class="cl">StudentDto</span>&gt;&gt;(<span class="str">'/api/students'</span>, { params }).then(r =&gt; r.data),
+
+  getById: (id: <span class="kw">number</span>) =&gt;
+    api.get&lt;<span class="cl">StudentDetailDto</span>&gt;(<span class="str">`/api/students/${id}`</span>).then(r =&gt; r.data),
+
+  create: (cmd: <span class="cl">CreateStudentCommand</span>) =&gt;
+    api.post&lt;{ id: <span class="kw">number</span> }&gt;(<span class="str">'/api/students'</span>, cmd).then(r =&gt; r.data),
+
+  update: (id: <span class="kw">number</span>, cmd: <span class="cl">UpdateStudentCommand</span>) =&gt;
+    api.put(<span class="str">`/api/students/${id}`</span>, cmd),
+
+  deactivate: (id: <span class="kw">number</span>, reason: <span class="kw">string</span>) =&gt;
+    api.delete(<span class="str">`/api/students/${id}`</span>, { data: { reason } }),
+};</code></pre>
+</section>
+
+<section id="context">
+  <h2>🌍 useContext — Auth + School Context</h2>
+  <pre><code><span class="cm">// src/context/AuthContext.tsx</span>
+<span class="kw">interface</span> <span class="cl">AuthUser</span> { id: <span class="kw">number</span>; name: <span class="kw">string</span>; schoolId: <span class="kw">number</span>; role: <span class="kw">string</span>; }
+<span class="kw">interface</span> <span class="cl">AuthContextType</span> {
+  user: <span class="cl">AuthUser</span> | <span class="kw">null</span>;
+  login: (token: <span class="kw">string</span>) =&gt; <span class="kw">void</span>;
+  logout: () =&gt; <span class="kw">void</span>;
+  isAuthenticated: <span class="kw">boolean</span>;
+}
+
+<span class="kw">const</span> AuthContext = createContext&lt;<span class="cl">AuthContextType</span>&gt;(<span class="kw">null</span>!);
+
+<span class="kw">export function</span> <span class="cl">AuthProvider</span>({ children }: { children: ReactNode }) {
+  <span class="kw">const</span> [user, setUser] = useState&lt;<span class="cl">AuthUser</span> | <span class="kw">null</span>&gt;(() =&gt; {
+    <span class="kw">const</span> token = localStorage.getItem(<span class="str">'zencampus_token'</span>);
+    <span class="kw">return</span> token ? parseJwtPayload(token) : <span class="kw">null</span>;
+  });
+
+  <span class="kw">const</span> login = useCallback((token: <span class="kw">string</span>) =&gt; {
+    localStorage.setItem(<span class="str">'zencampus_token'</span>, token);
+    setUser(parseJwtPayload(token));
+  }, []);
+
+  <span class="kw">const</span> logout = useCallback(() =&gt; {
+    localStorage.removeItem(<span class="str">'zencampus_token'</span>);
+    setUser(<span class="kw">null</span>);
+  }, []);
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}&gt;
+      {children}
+    &lt;/AuthContext.Provider&gt;</span>
+  );
+}
+
+<span class="kw">export const</span> useAuth = () =&gt; useContext(AuthContext);</code></pre>
+</section>
+
+<section id="router">
+  <h2>🗺️ React Router v6 — ZenCampus Navigation</h2>
+  <pre><code><span class="cm">// src/App.tsx — Route structure</span>
+<span class="kw">import</span> { BrowserRouter, Routes, Route, Navigate } <span class="kw">from</span> <span class="str">'react-router-dom'</span>;
+
+<span class="kw">function</span> <span class="cl">App</span>() {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;BrowserRouter&gt;
+      &lt;AuthProvider&gt;
+        &lt;Routes&gt;
+          &lt;Route path="/login" element={&lt;LoginPage /&gt;} /&gt;
+
+          &lt;Route element={&lt;ProtectedLayout /&gt;}&gt;  {/* all guarded routes */}
+            &lt;Route path="/" element={&lt;Navigate to="/dashboard" replace /&gt;} /&gt;
+            &lt;Route path="/dashboard" element={&lt;Dashboard /&gt;} /&gt;
+            &lt;Route path="/students" element={&lt;StudentList /&gt;} /&gt;
+            &lt;Route path="/students/new" element={&lt;StudentAdmission /&gt;} /&gt;
+            &lt;Route path="/students/:id" element={&lt;StudentDetail /&gt;} /&gt;
+            &lt;Route path="/fees" element={&lt;FeeCollection /&gt;} /&gt;
+            &lt;Route path="/attendance" element={&lt;Attendance /&gt;} /&gt;
+          &lt;/Route&gt;
+
+          &lt;Route path="*" element={&lt;NotFound /&gt;} /&gt;
+        &lt;/Routes&gt;
+      &lt;/AuthProvider&gt;
+    &lt;/BrowserRouter&gt;</span>
+  );
+}
+
+<span class="cm">// Protected layout — guard all nested routes</span>
+<span class="kw">function</span> <span class="cl">ProtectedLayout</span>() {
+  <span class="kw">const</span> { isAuthenticated } = useAuth();
+  <span class="kw">if</span> (!isAuthenticated) <span class="kw">return</span> <span class="jsx">&lt;Navigate to="/login" replace /&gt;</span>;
+  <span class="kw">return</span> <span class="jsx">&lt;&gt;&lt;Navbar /&gt;&lt;Outlet /&gt;&lt;/&gt;</span>;
+}
+
+<span class="cm">// Route params — student detail page</span>
+<span class="kw">function</span> <span class="cl">StudentDetail</span>() {
+  <span class="kw">const</span> { id } = useParams();           <span class="cm">// /students/42 → id = "42"</span>
+  <span class="kw">const</span> navigate = useNavigate();
+  <span class="kw">const</span> [student, setStudent] = useState&lt;<span class="cl">StudentDetailDto</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+  <span class="cm">// ... load student by id, navigate(-1) to go back</span>
+}</code></pre>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is the difference between useState and useEffect?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>useState: holds component state (memory). When you call setState, React re-renders the component. Like a class field that triggers UI update when changed. useEffect: runs side effects after render (data fetching, subscriptions, timers). Like OnAfterRenderAsync in Blazor. useEffect with dependency array = only re-run when specified values change. Cleanup function prevents memory leaks.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Why do you need a cleanup function in useEffect for API calls?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Race condition: user types "Basha", effect fires API call. Before it returns, user types "Ba" — second API call fires. First call returns after second: students get set to "Ba" results, then "Basha" results overwrite — wrong order. Fix: AbortController. Cleanup calls controller.abort() — when effect re-runs, previous fetch is cancelled. Also prevents setting state on unmounted component warning.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is useCallback and why use it with useEffect?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>useCallback memoizes a function — same reference returned unless dependencies change. Without useCallback: function is re-created on every render. If that function is in useEffect's dependency array, useEffect re-runs every render = infinite loop. useCallback with [user, page, search]: function only re-created when those change, useEffect only re-fires when they change. Correct for ZenCampus loadStudents.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What is Context and when should it be used vs prop drilling?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Prop drilling: pass user info through 5 component levels just to reach a deep component. Context: global state accessible by any component without passing through intermediaries. Use Context for: auth user, theme, school selection, language. DON'T use for: frequent updates (cart item count changing) — it causes all consumers to re-render. ZenCampus: AuthContext (login/logout/user), SchoolContext (selected school).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">How does Axios interceptor handle JWT refresh?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Response interceptor catches 401. Options: 1) Simple: redirect to login. 2) Advanced: try refreshToken API with the refresh token stored in httpOnly cookie. If refresh succeeds, retry the original request. If refresh fails, redirect to login. Interceptor runs globally — all API calls benefit. Without interceptor: every API function must handle 401 separately — duplicated code.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">Explain the key prop in React lists and why it matters.</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>React uses key to identify which items changed, added, or removed when re-rendering a list. Without key (or with index as key): React re-renders wrong elements, input values shift, animations break. Use stable, unique ID: student.id (from DB). Never use array index — if items reorder or delete, React gets confused. For ZenCampus student list: key={student.id} ensures correct DOM updates when sorting or filtering.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">What is the difference between controlled and uncontrolled form inputs in React?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Controlled: input value driven by React state. value={name} onChange={e => setName(e.target.value)}. React is the single source of truth. Easy validation, easy reset. Uncontrolled: input has its own DOM state. Read via ref.current.value. Simpler for basic cases, harder to validate. React Hook Form uses controlled + performance optimizations. ZenCampus admission form: controlled inputs for all student data fields for validation.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">How would you protect ZenCampus routes for teacher-only pages?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Role-based ProtectedRoute component: check user.role from AuthContext. If user.role !== 'Teacher' and !== 'Admin', redirect to /unauthorized. Apply to routes: &lt;Route element={&lt;RoleGuard roles={['Teacher','Admin']}&gt;}&gt;. Backend MUST also enforce roles — frontend guard is UX only, not security. ZenCampus: fee collection routes = Admin/Accountant only, attendance = Teacher/Admin.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">What is the issue with calling setState in useEffect without dependencies?</span><span class="st">Bug</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Infinite loop: useEffect runs after every render. Inside, setState is called. setState triggers re-render. Re-render triggers useEffect again. Repeat forever. Fix: add a dependency array []. Empty array = run once after mount. Non-empty array = run when specific values change. If you need to react to state changes, include those state vars in the dependency array and break the cycle with conditions.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">How does React Router v6 handle navigation and what replaced history.push?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>React Router v6: useNavigate() hook replaces useHistory(). const navigate = useNavigate(); navigate('/students/42') — go to page. navigate(-1) — go back. navigate('/login', { replace: true }) — replace current history entry. Declarative: &lt;Navigate to="/login" replace /&gt; for redirect in render. &lt;Link to="/students"&gt; for anchor tags. For ZenCampus: after successful admission, navigate('/students', { state: { admitted: true } }).</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. What is the correct way to fetch data in a functional component?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Direct await in component body is not valid React — hooks are the way.')">Directly with await at the top of the component</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! useEffect with async function inside. The cleanup function cancels in-flight requests. Dependency array controls when to re-fetch.')">Inside useEffect with an async function, dependency array, and cleanup</button>
+    <button class="qb" onclick="ans(this,'wrong','While renders synchronously, no async operations possible.')">Inside a while loop using useState</button>
+    <button class="qb" onclick="ans(this,'wrong','Fetch should not run at module-level — it won\'t re-run when props/state change.')">At module level outside the component</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. Why should you NOT use array index as key for student list?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Index keys are valid syntax — but cause bugs.')">Index is not valid JavaScript for React keys</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! When items are reordered or deleted, indexes shift. React maps old key=0 to new first item — wrong. Input values, animations, focus — all break. Use stable student.id instead.')">When items reorder or are deleted, React maps wrong elements — causes UI bugs</button>
+    <button class="qb" onclick="ans(this,'wrong','Index keys don\'t affect bundle size.')">It increases the bundle size</button>
+    <button class="qb" onclick="ans(this,'wrong','TypeScript does not require string keys.')">TypeScript only accepts string keys</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. What does the Axios request interceptor do in the ZenCampus setup?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Data transformation is done in response interceptors or individual calls.')">Transforms API response data to camelCase</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Interceptor runs before every request — attaches Authorization: Bearer {token} header automatically. Without it, every individual API call must manually add the header.')">Automatically attaches the JWT Bearer token to every outgoing API request</button>
+    <button class="qb" onclick="ans(this,'wrong','CORS is configured on the server side, not in Axios.')">Handles CORS by adding headers</button>
+    <button class="qb" onclick="ans(this,'wrong','Caching is not handled by Axios request interceptors by default.')">Caches API responses in localStorage</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. When should you use useContext vs local useState?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','useContext is overkill for component-local data.')">For all component state, useContext is better</button>
+    <button class="qb" onclick="ans(this,'wrong','Performance-wise, local useState is often faster for local data.')">For better performance in all cases</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! useContext = shared state needed by many components (auth, theme, school). useState = local component state (loading, form values, UI toggle). Context changes re-render all consumers — don\'t over-use.')">useContext for shared/global state (auth, school); useState for local component state</button>
+    <button class="qb" onclick="ans(this,'wrong','Both useState and useContext work without Redux.')">Only when Redux is not installed</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I understand useState and when React re-renders</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write useEffect with dependencies and cleanup</li>
+    <li onclick="ck(this)"><input type="checkbox">I can create Axios instance with request/response interceptors</li>
+    <li onclick="ck(this)"><input type="checkbox">I can create and consume a Context (AuthContext)</li>
+    <li onclick="ck(this)"><input type="checkbox">I can set up React Router v6 with protected routes</li>
+    <li onclick="ck(this)"><input type="checkbox">I know why not to use array index as key</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand controlled vs uncontrolled inputs</li>
+    <li onclick="ck(this)"><input type="checkbox">I can map .NET/C# concepts to React equivalents</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Day 51–54 Complete ✓ — React Hooks, Axios, Context, React Router</p>
+  <p>Accent: Royal Blue #1d4ed8 · Next: Day 55 — System Design for ZenCampus Scale</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

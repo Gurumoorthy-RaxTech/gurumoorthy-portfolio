@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 6 – SOLID + Design Patterns | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#001a1a,#003030,#001a1a);padding:36px 20px;text-align:center;border-bottom:3px solid #00d4d4}
+header h1{font-size:2em;color:#00d4d4;text-shadow:0 0 20px #00d4d455}
+header p{color:#a0c0c0;margin-top:6px}
+.badge{display:inline-block;background:#00d4d422;border:1px solid #00d4d455;color:#00d4d4;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#00d4d4;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#00d4d4;color:#000;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.c-kw{color:#569cd6}.c-type{color:#4ec9b0}.c-str{color:#ce9178}.c-num{color:#b5cea8}.c-cmt{color:#6a9955;font-style:italic}.c-prop{color:#9cdcfe}.c-method{color:#dcdcaa}
+code{background:#1a1a2e;color:#f97316;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#1a0f2e;border-left:4px solid #9b59b6;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#c39bd3;font-size:0.9em;margin-top:4px}
+.tip{background:#1a1500;border-left:4px solid #f9ca24;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#f9ca24;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#f0dc82;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.info{background:#0a1020;border-left:4px solid #3498db;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.info p{color:#85c1e9;font-size:0.9em}
+.proj{background:#0a1f0f;border-left:4px solid #27ae60;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.proj .label{color:#2ecc71;font-weight:bold;font-size:0.8em;margin-bottom:6px}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.s-num{background:#00d4d4;color:#000;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#2a0a4a;color:#a855f7}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#001a1a;border:1px solid #00d4d4;color:#00d4d4;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#00d4d4;color:#000}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #001a1a}
+.answer.shown{display:block}
+.answer .a-label{color:#00d4d4;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.gold{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#001a1a;color:#00d4d4;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#1a1a35}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#00d4d4;color:#00d4d4}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:700px){.two-col,.three-col{grid-template-columns:1fr}}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#00d4d4}
+h3{color:#67e8f9;margin:16px 0 8px;font-size:1em}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#67e8f9;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #001a1a}
+.sticky-nav a:hover{background:#001a1a}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#00d4d4,#f39c12)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+.solid-card{background:#0a1a1a;border:1px solid #003030;border-radius:10px;padding:16px;margin:12px 0}
+.solid-card h4{color:#00d4d4;font-size:1em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.solid-letter{background:#00d4d4;color:#000;width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1em;flex-shrink:0}
+.pattern-card{background:#0a0a1a;border:1px solid #003030;border-radius:8px;padding:14px;margin:10px 0}
+.pattern-card h4{color:#00d4d4;font-size:0.9em;margin-bottom:8px}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.72em;font-weight:bold;margin-left:6px}
+.tag-i{background:#e94560;color:white}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#f39c12;font-size:0.85em;margin-bottom:6px">📅 Day 6 of 60 | Phase 1: Advanced C#</div>
+  <h1>🏗️ SOLID Principles + Design Patterns</h1>
+  <p>SRP · OCP · LSP · ISP · DIP · Strategy · Factory · Repository · Singleton · Observer</p>
+  <div style="margin-top:12px">
+    <span class="badge">SOLID</span><span class="badge">Strategy</span><span class="badge">Factory</span>
+    <span class="badge">Repository</span><span class="badge">Singleton</span><span class="badge">Observer</span><span class="badge">Decorator</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#solid">🏛️ SOLID</a>
+  <a href="#strategy">♟️ Strategy</a>
+  <a href="#factory">🏭 Factory</a>
+  <a href="#repository">🗄️ Repository</a>
+  <a href="#singleton">1️⃣ Singleton</a>
+  <a href="#observer">👁️ Observer</a>
+  <a href="#decorator">🎁 Decorator</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SOLID -->
+<div class="section" id="solid">
+  <div class="section-title"><span class="num">1</span> SOLID Principles — ZenCampus Examples</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram (2022) — Each agent has ONE specialization</span>
+    <p>Vikram = investigation. Rolex = ground ops. Amar = strategy. Each ஒரே responsibility! SOLID = good software design-ku 5 rules. Interview-la SOLID கேட்டா — ZenCampus example-a படிங்க!</p>
+  </div>
+
+  <!-- S -->
+  <div class="solid-card">
+    <h4><span class="solid-letter">S</span> Single Responsibility — ஒரு class, ஒரே job</h4>
+    <pre><span class="c-cmt">// ❌ WRONG — StudentService doing too many things!</span>
+<span class="c-kw">public class</span> <span class="c-type">StudentService</span>
+{
+    <span class="c-kw">public void</span> <span class="c-method">AdmitStudent</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>)   { <span class="c-cmt">/* DB save */</span> }
+    <span class="c-kw">public void</span> <span class="c-method">SendWelcomeSms</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) { <span class="c-cmt">/* SMS logic */</span> }
+    <span class="c-kw">public void</span> <span class="c-method">GenerateReport</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>)  { <span class="c-cmt">/* PDF creation */</span> }
+    <span class="c-kw">public void</span> <span class="c-method">LogActivity</span>(<span class="c-kw">string</span> <span class="c-prop">msg</span>)   { <span class="c-cmt">/* Logging */</span> }
+    <span class="c-cmt">// 4 reasons to change = 4 responsibilities = WRONG!</span>
+}
+
+<span class="c-cmt">// ✅ CORRECT — each class = one reason to change</span>
+<span class="c-kw">public class</span> <span class="c-type">StudentRepository</span>  { <span class="c-kw">public void</span> <span class="c-method">Save</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) { } }
+<span class="c-kw">public class</span> <span class="c-type">SmsService</span>         { <span class="c-kw">public void</span> <span class="c-method">SendWelcome</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) { } }
+<span class="c-kw">public class</span> <span class="c-type">ReportService</span>       { <span class="c-kw">public void</span> <span class="c-method">Generate</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) { } }
+<span class="c-kw">public class</span> <span class="c-type">ActivityLogger</span>      { <span class="c-kw">public void</span> <span class="c-method">Log</span>(<span class="c-kw">string</span> <span class="c-prop">msg</span>) { } }
+
+<span class="c-kw">public class</span> <span class="c-type">AdmissionService</span>   <span class="c-cmt">// orchestrates only</span>
+{
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">AdmitAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>)
+    {
+        <span class="c-kw">await</span> <span class="c-prop">_repo</span>.<span class="c-method">SaveAsync</span>(<span class="c-prop">s</span>);
+        <span class="c-kw">await</span> <span class="c-prop">_sms</span>.<span class="c-method">SendWelcomeAsync</span>(<span class="c-prop">s</span>);
+        <span class="c-prop">_logger</span>.<span class="c-method">Log</span>(<span class="c-str">$"Admitted {s.Name}"</span>);
+    }
+}</pre>
+  </div>
+
+  <!-- O -->
+  <div class="solid-card">
+    <h4><span class="solid-letter">O</span> Open/Closed — Extend பண்ணலாம், Modify பண்ணக்கூடாது</h4>
+    <pre><span class="c-cmt">// ❌ WRONG — new fee type = modify existing code!</span>
+<span class="c-kw">public decimal</span> <span class="c-method">CalcFee</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>, <span class="c-kw">string</span> <span class="c-prop">type</span>)
+{
+    <span class="c-kw">if</span> (<span class="c-prop">type</span> == <span class="c-str">"Term"</span>)   <span class="c-kw">return</span> <span class="c-prop">s</span>.<span class="c-prop">Grade</span> * <span class="c-num">500m</span>;
+    <span class="c-kw">if</span> (<span class="c-prop">type</span> == <span class="c-str">"Bus"</span>)    <span class="c-kw">return</span> <span class="c-prop">s</span>.<span class="c-prop">Distance</span> * <span class="c-num">20m</span>;
+    <span class="c-cmt">// Add "Lab" → must edit this method!</span>
+}
+
+<span class="c-cmt">// ✅ CORRECT — new type = new class, zero existing code change!</span>
+<span class="c-kw">public interface</span> <span class="c-type">IFeeCalculator</span>
+{
+    <span class="c-kw">bool</span> <span class="c-method">Applies</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>);
+    <span class="c-kw">decimal</span> <span class="c-method">Calculate</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>);
+}
+
+<span class="c-kw">public class</span> <span class="c-type">TermFeeCalculator</span>    : <span class="c-type">IFeeCalculator</span>
+{
+    <span class="c-kw">public bool</span>    <span class="c-method">Applies</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>)    => <span class="c-kw">true</span>;
+    <span class="c-kw">public decimal</span> <span class="c-method">Calculate</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) => <span class="c-prop">s</span>.<span class="c-prop">Grade</span> * <span class="c-num">500m</span>;
+}
+<span class="c-kw">public class</span> <span class="c-type">BusFeeCalculator</span>     : <span class="c-type">IFeeCalculator</span>
+{
+    <span class="c-kw">public bool</span>    <span class="c-method">Applies</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>)    => <span class="c-prop">s</span>.<span class="c-prop">HasBus</span>;
+    <span class="c-kw">public decimal</span> <span class="c-method">Calculate</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) => <span class="c-prop">s</span>.<span class="c-prop">Distance</span> * <span class="c-num">20m</span>;
+}
+<span class="c-cmt">// NEW: just add this class — nothing else changes!</span>
+<span class="c-kw">public class</span> <span class="c-type">LabFeeCalculator</span>      : <span class="c-type">IFeeCalculator</span>
+{
+    <span class="c-kw">public bool</span>    <span class="c-method">Applies</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>)    => <span class="c-prop">s</span>.<span class="c-prop">HasLabSubject</span>;
+    <span class="c-kw">public decimal</span> <span class="c-method">Calculate</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) => <span class="c-num">500m</span>;
+}
+
+<span class="c-kw">public class</span> <span class="c-type">FeeService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IEnumerable</span>&lt;<span class="c-type">IFeeCalculator</span>&gt; <span class="c-prop">_calcs</span>;
+    <span class="c-kw">public decimal</span> <span class="c-method">TotalFee</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) =>
+        <span class="c-prop">_calcs</span>.<span class="c-method">Where</span>(<span class="c-prop">c</span> => <span class="c-prop">c</span>.<span class="c-method">Applies</span>(<span class="c-prop">s</span>)).<span class="c-method">Sum</span>(<span class="c-prop">c</span> => <span class="c-prop">c</span>.<span class="c-method">Calculate</span>(<span class="c-prop">s</span>));
+}</pre>
+  </div>
+
+  <!-- L -->
+  <div class="solid-card">
+    <h4><span class="solid-letter">L</span> Liskov Substitution — Subclass, parent-a replace பண்ணலாம்</h4>
+    <pre><span class="c-cmt">// ❌ WRONG — Square inherits Rectangle but breaks it!</span>
+<span class="c-kw">public class</span> <span class="c-type">Rectangle</span> { <span class="c-kw">public virtual int</span> <span class="c-prop">W</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } <span class="c-kw">public virtual int</span> <span class="c-prop">H</span> { <span class="c-kw">get</span>; <span class="c-kw">set</span>; } }
+<span class="c-kw">public class</span> <span class="c-type">Square</span> : <span class="c-type">Rectangle</span>
+{
+    <span class="c-kw">public override int</span> <span class="c-prop">W</span> { <span class="c-kw">set</span> { <span class="c-kw">base</span>.<span class="c-prop">W</span> = <span class="c-prop">H</span> = <span class="c-prop">value</span>; } <span class="c-kw">get</span> => <span class="c-kw">base</span>.<span class="c-prop">W</span>; }
+    <span class="c-cmt">// Setting W also sets H — caller won't expect this! LSP violated.</span>
+}
+
+<span class="c-cmt">// ZenCampus — LSP correct: SubStudent can be used as Student everywhere</span>
+<span class="c-kw">public class</span> <span class="c-type">Student</span>    { <span class="c-kw">public virtual decimal</span> <span class="c-method">GetFee</span>() => <span class="c-num">5000m</span>; }
+<span class="c-kw">public class</span> <span class="c-type">Scholar</span> : <span class="c-type">Student</span>
+{
+    <span class="c-kw">public override decimal</span> <span class="c-method">GetFee</span>() => <span class="c-kw">base</span>.<span class="c-method">GetFee</span>() * <span class="c-num">0.5m</span>;
+    <span class="c-cmt">// Returns fee (always decimal) — caller behaviour unchanged. LSP ok!</span>
+}</pre>
+  </div>
+
+  <!-- I -->
+  <div class="solid-card">
+    <h4><span class="solid-letter">I</span> Interface Segregation — Fat interface பண்ணாத</h4>
+    <pre><span class="c-cmt">// ❌ WRONG — fat interface forces unnecessary implementation</span>
+<span class="c-kw">public interface</span> <span class="c-type">IStudentService</span>
+{
+    <span class="c-type">Task</span> <span class="c-method">AdmitAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>);
+    <span class="c-type">Task</span> <span class="c-method">SendSmsAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>);
+    <span class="c-type">Task</span> <span class="c-method">GenerateReportAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>);
+    <span class="c-type">Task</span> <span class="c-method">ExportExcelAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>);
+    <span class="c-cmt">// SMS gateway class must implement ExportExcel? Nonsense!</span>
+}
+
+<span class="c-cmt">// ✅ CORRECT — focused interfaces</span>
+<span class="c-kw">public interface</span> <span class="c-type">IStudentAdmission</span>  { <span class="c-type">Task</span> <span class="c-method">AdmitAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>); }
+<span class="c-kw">public interface</span> <span class="c-type">IStudentNotifier</span>   { <span class="c-type">Task</span> <span class="c-method">SendSmsAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>); }
+<span class="c-kw">public interface</span> <span class="c-type">IStudentReporter</span>   { <span class="c-type">Task</span> <span class="c-method">GenerateReportAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>); }
+
+<span class="c-cmt">// SmsGateway implements only what it needs!</span>
+<span class="c-kw">public class</span> <span class="c-type">SmsGateway</span> : <span class="c-type">IStudentNotifier</span>
+{
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">SendSmsAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>) { <span class="c-cmt">/* ... */</span> }
+}</pre>
+  </div>
+
+  <!-- D -->
+  <div class="solid-card">
+    <h4><span class="solid-letter">D</span> Dependency Inversion — Abstraction-a depend பண்ணு, concrete-a இல்ல</h4>
+    <pre><span class="c-cmt">// ❌ WRONG — high-level depends on low-level concrete</span>
+<span class="c-kw">public class</span> <span class="c-type">AdmissionService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">SqlStudentRepository</span> <span class="c-prop">_repo</span>; <span class="c-cmt">// concrete!</span>
+    <span class="c-kw">public</span> <span class="c-method">AdmissionService</span>() => <span class="c-prop">_repo</span> = <span class="c-kw">new</span> <span class="c-type">SqlStudentRepository</span>(); <span class="c-cmt">// new = hard couple</span>
+}
+
+<span class="c-cmt">// ✅ CORRECT — depend on abstraction, DI injects concrete</span>
+<span class="c-kw">public class</span> <span class="c-type">AdmissionService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IStudentRepository</span> <span class="c-prop">_repo</span>; <span class="c-cmt">// interface!</span>
+
+    <span class="c-kw">public</span> <span class="c-method">AdmissionService</span>(<span class="c-type">IStudentRepository</span> <span class="c-prop">repo</span>)
+        => <span class="c-prop">_repo</span> = <span class="c-prop">repo</span>; <span class="c-cmt">// injected — swappable, testable!</span>
+}
+
+<span class="c-cmt">// Test: inject MockStudentRepository → no DB needed!</span>
+<span class="c-cmt">// Prod: inject SqlStudentRepository → real DB</span>
+<span class="c-cmt">// DI Container: builder.Services.AddScoped&lt;IStudentRepository, SqlStudentRepository&gt;()</span></pre>
+  </div>
+</div>
+
+<!-- STRATEGY -->
+<div class="section" id="strategy">
+  <div class="section-title"><span class="num">2</span> Strategy Pattern — Algorithm swap at runtime</div>
+
+  <div class="movie">
+    <span class="film">🎬 Anniyan (2005) — Same person, different punishment style</span>
+    <p>Ambi/Anniyan/Remo — same goal, different approach. Strategy Pattern = same interface, different algorithms. FeeCalculation, NotificationStrategy, ReportFormat — all interchangeable!</p>
+  </div>
+
+  <pre><span class="c-cmt">// Strategy — ZenCampus notification system</span>
+<span class="c-kw">public interface</span> <span class="c-type">INotificationStrategy</span>
+{
+    <span class="c-type">Task</span> <span class="c-method">NotifyAsync</span>(<span class="c-type">Student</span> <span class="c-prop">student</span>, <span class="c-kw">string</span> <span class="c-prop">message</span>);
+    <span class="c-kw">string</span> <span class="c-prop">Channel</span> { <span class="c-kw">get</span>; }
+}
+
+<span class="c-kw">public class</span> <span class="c-type">SmsStrategy</span> : <span class="c-type">INotificationStrategy</span>
+{
+    <span class="c-kw">public string</span> <span class="c-prop">Channel</span> => <span class="c-str">"SMS"</span>;
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">NotifyAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>, <span class="c-kw">string</span> <span class="c-prop">msg</span>)
+        => <span class="c-kw">await</span> <span class="c-prop">_smsGateway</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">s</span>.<span class="c-prop">Mobile</span>, <span class="c-prop">msg</span>);
+}
+
+<span class="c-kw">public class</span> <span class="c-type">EmailStrategy</span> : <span class="c-type">INotificationStrategy</span>
+{
+    <span class="c-kw">public string</span> <span class="c-prop">Channel</span> => <span class="c-str">"Email"</span>;
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">NotifyAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>, <span class="c-kw">string</span> <span class="c-prop">msg</span>)
+        => <span class="c-kw">await</span> <span class="c-prop">_emailSvc</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">s</span>.<span class="c-prop">Email</span>, <span class="c-prop">msg</span>);
+}
+
+<span class="c-kw">public class</span> <span class="c-type">WhatsAppStrategy</span> : <span class="c-type">INotificationStrategy</span>
+{
+    <span class="c-kw">public string</span> <span class="c-prop">Channel</span> => <span class="c-str">"WhatsApp"</span>;
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">NotifyAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>, <span class="c-kw">string</span> <span class="c-prop">msg</span>)
+        => <span class="c-kw">await</span> <span class="c-prop">_waSvc</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">s</span>.<span class="c-prop">Mobile</span>, <span class="c-prop">msg</span>);
+}
+
+<span class="c-cmt">// Context — uses any strategy</span>
+<span class="c-kw">public class</span> <span class="c-type">NotificationService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">Dictionary</span>&lt;<span class="c-kw">string</span>, <span class="c-type">INotificationStrategy</span>&gt; <span class="c-prop">_strategies</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">NotificationService</span>(<span class="c-type">IEnumerable</span>&lt;<span class="c-type">INotificationStrategy</span>&gt; <span class="c-prop">strategies</span>)
+        => <span class="c-prop">_strategies</span> = <span class="c-prop">strategies</span>.<span class="c-method">ToDictionary</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-prop">Channel</span>);
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">NotifyAsync</span>(<span class="c-type">Student</span> <span class="c-prop">student</span>, <span class="c-kw">string</span> <span class="c-prop">channel</span>, <span class="c-kw">string</span> <span class="c-prop">msg</span>)
+    {
+        <span class="c-kw">if</span> (!<span class="c-prop">_strategies</span>.<span class="c-method">TryGetValue</span>(<span class="c-prop">channel</span>, <span class="c-kw">out var</span> <span class="c-prop">strategy</span>))
+            <span class="c-kw">throw new</span> <span class="c-type">ArgumentException</span>(<span class="c-str">$"Unknown channel: {channel}"</span>);
+        <span class="c-kw">await</span> <span class="c-prop">strategy</span>.<span class="c-method">NotifyAsync</span>(<span class="c-prop">student</span>, <span class="c-prop">msg</span>);
+    }
+
+    <span class="c-cmt">// Multi-channel blast</span>
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">NotifyAllAsync</span>(<span class="c-type">Student</span> <span class="c-prop">student</span>, <span class="c-kw">string</span> <span class="c-prop">msg</span>)
+        => <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">_strategies</span>.<span class="c-prop">Values</span>.<span class="c-method">Select</span>(<span class="c-prop">s</span> => <span class="c-prop">s</span>.<span class="c-method">NotifyAsync</span>(<span class="c-prop">student</span>, <span class="c-prop">msg</span>)));
+}
+
+<span class="c-cmt">// DI: register all strategies — auto-discovered!</span>
+<span class="c-prop">services</span>.<span class="c-method">AddScoped</span>&lt;<span class="c-type">INotificationStrategy</span>, <span class="c-type">SmsStrategy</span>&gt;();
+<span class="c-prop">services</span>.<span class="c-method">AddScoped</span>&lt;<span class="c-type">INotificationStrategy</span>, <span class="c-type">EmailStrategy</span>&gt;();
+<span class="c-prop">services</span>.<span class="c-method">AddScoped</span>&lt;<span class="c-type">INotificationStrategy</span>, <span class="c-type">WhatsAppStrategy</span>&gt;();</pre>
+</div>
+
+<!-- FACTORY -->
+<div class="section" id="factory">
+  <div class="section-title"><span class="num">3</span> Factory Pattern — Object creation centralize பண்ணு</div>
+
+  <div class="movie">
+    <span class="film">🎬 Enthiran — Chitti factory-la உருவாகுது</span>
+    <p>Robot directly new() பண்றோம் இல்ல — factory assembly line create பண்ணுது. Factory Pattern = object creation logic centralize, caller doesn't need to know HOW to create!</p>
+  </div>
+
+  <pre><span class="c-cmt">// Factory Method — ZenCampus fee receipt generator</span>
+<span class="c-kw">public interface</span> <span class="c-type">IReceiptGenerator</span>
+{
+    <span class="c-kw">byte</span>[] <span class="c-method">Generate</span>(<span class="c-type">FeeRecord</span> <span class="c-prop">record</span>);
+    <span class="c-kw">string</span> <span class="c-prop">ContentType</span> { <span class="c-kw">get</span>; }
+}
+
+<span class="c-kw">public class</span> <span class="c-type">PdfReceiptGenerator</span>  : <span class="c-type">IReceiptGenerator</span>
+{
+    <span class="c-kw">public string</span> <span class="c-prop">ContentType</span> => <span class="c-str">"application/pdf"</span>;
+    <span class="c-kw">public byte</span>[] <span class="c-method">Generate</span>(<span class="c-type">FeeRecord</span> <span class="c-prop">r</span>) { <span class="c-cmt">/* iTextSharp PDF */</span> <span class="c-kw">return</span> <span class="c-kw">null</span>; }
+}
+<span class="c-kw">public class</span> <span class="c-type">ExcelReceiptGenerator</span>: <span class="c-type">IReceiptGenerator</span>
+{
+    <span class="c-kw">public string</span> <span class="c-prop">ContentType</span> => <span class="c-str">"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"</span>;
+    <span class="c-kw">public byte</span>[] <span class="c-method">Generate</span>(<span class="c-type">FeeRecord</span> <span class="c-prop">r</span>) { <span class="c-cmt">/* EPPlus Excel */</span> <span class="c-kw">return</span> <span class="c-kw">null</span>; }
+}
+
+<span class="c-cmt">// Factory — caller asks for type, factory handles creation</span>
+<span class="c-kw">public static class</span> <span class="c-type">ReceiptGeneratorFactory</span>
+{
+    <span class="c-kw">public static</span> <span class="c-type">IReceiptGenerator</span> <span class="c-method">Create</span>(<span class="c-kw">string</span> <span class="c-prop">format</span>) => <span class="c-prop">format</span>.<span class="c-method">ToLower</span>() <span class="c-kw">switch</span>
+    {
+        <span class="c-str">"pdf"</span>   => <span class="c-kw">new</span> <span class="c-type">PdfReceiptGenerator</span>(),
+        <span class="c-str">"excel"</span> => <span class="c-kw">new</span> <span class="c-type">ExcelReceiptGenerator</span>(),
+        _       => <span class="c-kw">throw new</span> <span class="c-type">ArgumentException</span>(<span class="c-str">$"Unknown format: {format}"</span>)
+    };
+}
+
+<span class="c-cmt">// Usage — caller doesn't know PDF vs Excel internals</span>
+<span class="c-kw">var</span> <span class="c-prop">gen</span> = <span class="c-type">ReceiptGeneratorFactory</span>.<span class="c-method">Create</span>(<span class="c-prop">userPreference</span>);
+<span class="c-kw">var</span> <span class="c-prop">bytes</span> = <span class="c-prop">gen</span>.<span class="c-method">Generate</span>(<span class="c-prop">feeRecord</span>);
+<span class="c-kw">return</span> <span class="c-type">File</span>(<span class="c-prop">bytes</span>, <span class="c-prop">gen</span>.<span class="c-prop">ContentType</span>);</pre>
+
+  <div class="tip">
+    <div class="t-label">💡 Abstract Factory vs Factory Method</div>
+    <p><strong>Factory Method</strong> = one product, one factory method (PDF or Excel).<br>
+    <strong>Abstract Factory</strong> = family of related products (Report + Receipt + Certificate — all PDF together OR all Excel together).</p>
+  </div>
+</div>
+
+<!-- REPOSITORY -->
+<div class="section" id="repository">
+  <div class="section-title"><span class="num">4</span> Repository Pattern — Data access abstraction</div>
+
+  <div class="movie">
+    <span class="film">🎬 Ratsasan — Evidence room, one person manages</span>
+    <p>Direct evidence access பண்றோம் இல்ல — Evidence room officer மூலம்! Repository = DB access one layer. Business code SQL தெரியாம StudentRepository use பண்ணும். Testable, swappable!</p>
+  </div>
+
+  <pre><span class="c-cmt">// Repository with Unit of Work — ZenCampus</span>
+<span class="c-kw">public interface</span> <span class="c-type">IStudentRepository</span>
+{
+    <span class="c-type">Task</span>&lt;<span class="c-type">Student</span>?&gt; <span class="c-method">GetByIdAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>);
+    <span class="c-type">Task</span>&lt;<span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt;&gt; <span class="c-method">GetByClassAsync</span>(<span class="c-kw">string</span> <span class="c-prop">className</span>);
+    <span class="c-type">Task</span>&lt;<span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt;&gt; <span class="c-method">GetFeePendingAsync</span>();
+    <span class="c-type">Task</span> <span class="c-method">AddAsync</span>(<span class="c-type">Student</span> <span class="c-prop">student</span>);
+    <span class="c-type">Task</span> <span class="c-method">UpdateAsync</span>(<span class="c-type">Student</span> <span class="c-prop">student</span>);
+}
+
+<span class="c-kw">public interface</span> <span class="c-type">IUnitOfWork</span> : <span class="c-type">IDisposable</span>
+{
+    <span class="c-type">IStudentRepository</span> <span class="c-prop">Students</span> { <span class="c-kw">get</span>; }
+    <span class="c-type">IFeeRepository</span>     <span class="c-prop">Fees</span>     { <span class="c-kw">get</span>; }
+    <span class="c-type">Task</span>&lt;<span class="c-kw">int</span>&gt; <span class="c-method">SaveChangesAsync</span>();
+}
+
+<span class="c-cmt">// Service uses UoW — no DB details!</span>
+<span class="c-kw">public class</span> <span class="c-type">FeePaymentService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IUnitOfWork</span> <span class="c-prop">_uow</span>;
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">ProcessPaymentAsync</span>(<span class="c-kw">int</span> <span class="c-prop">studentId</span>, <span class="c-kw">decimal</span> <span class="c-prop">amount</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-kw">await</span> <span class="c-prop">_uow</span>.<span class="c-prop">Students</span>.<span class="c-method">GetByIdAsync</span>(<span class="c-prop">studentId</span>)
+            ?? <span class="c-kw">throw new</span> <span class="c-type">StudentNotFoundException</span>(<span class="c-prop">studentId</span>);
+
+        <span class="c-kw">await</span> <span class="c-prop">_uow</span>.<span class="c-prop">Fees</span>.<span class="c-method">AddAsync</span>(<span class="c-kw">new</span> <span class="c-type">FeeRecord</span>
+        {
+            <span class="c-prop">StudentId</span> = <span class="c-prop">studentId</span>,
+            <span class="c-prop">Amount</span>    = <span class="c-prop">amount</span>,
+            <span class="c-prop">PaidOn</span>    = <span class="c-type">DateTime</span>.<span class="c-prop">Now</span>
+        });
+        student.FeesPaid = <span class="c-kw">true</span>;
+        <span class="c-kw">await</span> <span class="c-prop">_uow</span>.<span class="c-prop">Students</span>.<span class="c-method">UpdateAsync</span>(<span class="c-prop">student</span>);
+        <span class="c-kw">await</span> <span class="c-prop">_uow</span>.<span class="c-method">SaveChangesAsync</span>(); <span class="c-cmt">// atomic transaction!</span>
+    }
+}</pre>
+</div>
+
+<!-- SINGLETON -->
+<div class="section" id="singleton">
+  <div class="section-title"><span class="num">5</span> Singleton Pattern — One instance globally</div>
+
+  <div class="movie">
+    <span class="film">🎬 Baasha — ஒரே Don</span>
+    <p>Chennai-la ஒரே Don — duplicate Don இல்ல. Singleton = application-la ஒரே instance. Logger, Config, Cache — global single state வேண்டும் போது.</p>
+  </div>
+
+  <pre><span class="c-cmt">// Thread-safe Singleton — lazy initialization</span>
+<span class="c-kw">public sealed class</span> <span class="c-type">ZenCampusConfig</span>
+{
+    <span class="c-kw">private static readonly</span> <span class="c-type">Lazy</span>&lt;<span class="c-type">ZenCampusConfig</span>&gt; <span class="c-prop">_instance</span>
+        = <span class="c-kw">new</span>(() => <span class="c-kw">new</span> <span class="c-type">ZenCampusConfig</span>(), <span class="c-type">LazyThreadSafetyMode</span>.<span class="c-prop">ExecutionAndPublication</span>);
+
+    <span class="c-kw">public static</span> <span class="c-type">ZenCampusConfig</span> <span class="c-prop">Instance</span> => <span class="c-prop">_instance</span>.<span class="c-prop">Value</span>;
+
+    <span class="c-kw">public string</span> <span class="c-prop">ConnectionString</span> { <span class="c-kw">get</span>; <span class="c-kw">private set</span>; }
+    <span class="c-kw">public int</span> <span class="c-prop">MaxStudentsPerClass</span> { <span class="c-kw">get</span>; <span class="c-kw">private set</span>; }
+
+    <span class="c-kw">private</span> <span class="c-method">ZenCampusConfig</span>()  <span class="c-cmt">// private constructor!</span>
+    {
+        <span class="c-prop">ConnectionString</span>     = <span class="c-type">Environment</span>.<span class="c-method">GetEnvironmentVariable</span>(<span class="c-str">"DB_CS"</span>)!;
+        <span class="c-prop">MaxStudentsPerClass</span>  = <span class="c-num">40</span>;
+    }
+}
+
+<span class="c-cmt">// Usage</span>
+<span class="c-kw">var</span> <span class="c-prop">cs</span> = <span class="c-type">ZenCampusConfig</span>.<span class="c-prop">Instance</span>.<span class="c-prop">ConnectionString</span>;</pre>
+
+  <div class="danger">
+    <div class="d-label">⚠️ Singleton in ASP.NET Core — use DI lifetime instead!</div>
+    <p>Manual Singleton anti-pattern in web apps — not testable, hidden dependency. Prefer <code>services.AddSingleton&lt;IConfig, ZenCampusConfig&gt;()</code> — same single instance via DI, testable, mockable!</p>
+  </div>
+</div>
+
+<!-- OBSERVER -->
+<div class="section" id="observer">
+  <div class="section-title"><span class="num">6</span> Observer Pattern — Events on steroids</div>
+
+  <div class="movie">
+    <span class="film">🎬 96 (2018) — Ram's phone rings, memories flood</span>
+    <p>Phone ring = event raised. Memory = reaction. Observer Pattern = publisher doesn't know who's listening, subscribers react independently. Day 3 Events = Observer Pattern implementation!</p>
+  </div>
+
+  <pre><span class="c-cmt">// MediatR style — ZenCampus domain events</span>
+<span class="c-kw">public record</span> <span class="c-type">StudentAdmittedEvent</span>(<span class="c-type">Student</span> <span class="c-prop">Student</span>, <span class="c-type">DateTime</span> <span class="c-prop">AdmittedAt</span>);
+
+<span class="c-kw">public interface</span> <span class="c-type">IEventHandler</span>&lt;<span class="c-type">T</span>&gt;
+{
+    <span class="c-type">Task</span> <span class="c-method">HandleAsync</span>(<span class="c-type">T</span> <span class="c-prop">eventData</span>);
+}
+
+<span class="c-cmt">// Handlers — all independent, all reactive</span>
+<span class="c-kw">public class</span> <span class="c-type">SendWelcomeSmsHandler</span> : <span class="c-type">IEventHandler</span>&lt;<span class="c-type">StudentAdmittedEvent</span>&gt;
+{
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">HandleAsync</span>(<span class="c-type">StudentAdmittedEvent</span> <span class="c-prop">e</span>)
+        => <span class="c-kw">await</span> <span class="c-prop">_sms</span>.<span class="c-method">SendAsync</span>(<span class="c-prop">e</span>.<span class="c-prop">Student</span>.<span class="c-prop">Mobile</span>, <span class="c-str">"Welcome!"</span>);
+}
+
+<span class="c-kw">public class</span> <span class="c-type">CreatePortalAccountHandler</span> : <span class="c-type">IEventHandler</span>&lt;<span class="c-type">StudentAdmittedEvent</span>&gt;
+{
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">HandleAsync</span>(<span class="c-type">StudentAdmittedEvent</span> <span class="c-prop">e</span>)
+        => <span class="c-kw">await</span> <span class="c-prop">_portal</span>.<span class="c-method">CreateLoginAsync</span>(<span class="c-prop">e</span>.<span class="c-prop">Student</span>);
+}
+
+<span class="c-cmt">// Event dispatcher</span>
+<span class="c-kw">public class</span> <span class="c-type">EventDispatcher</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IServiceProvider</span> <span class="c-prop">_sp</span>;
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">DispatchAsync</span>&lt;<span class="c-type">T</span>&gt;(<span class="c-type">T</span> <span class="c-prop">eventData</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">handlers</span> = <span class="c-prop">_sp</span>.<span class="c-method">GetServices</span>&lt;<span class="c-type">IEventHandler</span>&lt;<span class="c-type">T</span>&gt;&gt;();
+        <span class="c-kw">await</span> <span class="c-type">Task</span>.<span class="c-method">WhenAll</span>(<span class="c-prop">handlers</span>.<span class="c-method">Select</span>(<span class="c-prop">h</span> => <span class="c-prop">h</span>.<span class="c-method">HandleAsync</span>(<span class="c-prop">eventData</span>)));
+    }
+}
+
+<span class="c-cmt">// Admission service just fires event — doesn't know handlers!</span>
+<span class="c-kw">await</span> <span class="c-prop">_dispatcher</span>.<span class="c-method">DispatchAsync</span>(<span class="c-kw">new</span> <span class="c-type">StudentAdmittedEvent</span>(<span class="c-prop">student</span>, <span class="c-type">DateTime</span>.<span class="c-prop">Now</span>));</pre>
+</div>
+
+<!-- DECORATOR -->
+<div class="section" id="decorator">
+  <div class="section-title"><span class="num">7</span> Decorator Pattern — Add behavior without modifying class</div>
+
+  <div class="movie">
+    <span class="film">🎬 Dasavathaaram — Kamal wears different costumes, same actor underneath</span>
+    <p>Costume (decorator) adds behavior — same actor underneath. Decorator wraps existing class, adds new behavior. Logging, Caching, Retry — add without touching original!</p>
+  </div>
+
+  <pre><span class="c-cmt">// Decorator — add caching to StudentRepository</span>
+<span class="c-kw">public class</span> <span class="c-type">CachedStudentRepository</span> : <span class="c-type">IStudentRepository</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IStudentRepository</span> <span class="c-prop">_inner</span>;  <span class="c-cmt">// wrapped!</span>
+    <span class="c-kw">private readonly</span> <span class="c-type">IMemoryCache</span>       <span class="c-prop">_cache</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">CachedStudentRepository</span>(
+        <span class="c-type">IStudentRepository</span> <span class="c-prop">inner</span>,
+        <span class="c-type">IMemoryCache</span> <span class="c-prop">cache</span>)
+    {
+        <span class="c-prop">_inner</span> = <span class="c-prop">inner</span>;
+        <span class="c-prop">_cache</span> = <span class="c-prop">cache</span>;
+    }
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">Student</span>?&gt; <span class="c-method">GetByIdAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+    {
+        <span class="c-kw">var</span> <span class="c-prop">key</span> = <span class="c-str">$"student:{id}"</span>;
+        <span class="c-kw">if</span> (<span class="c-prop">_cache</span>.<span class="c-method">TryGetValue</span>(<span class="c-prop">key</span>, <span class="c-kw">out</span> <span class="c-type">Student</span>? <span class="c-prop">cached</span>))
+            <span class="c-kw">return</span> <span class="c-prop">cached</span>; <span class="c-cmt">// cache hit!</span>
+
+        <span class="c-kw">var</span> <span class="c-prop">student</span> = <span class="c-kw">await</span> <span class="c-prop">_inner</span>.<span class="c-method">GetByIdAsync</span>(<span class="c-prop">id</span>); <span class="c-cmt">// delegate</span>
+        <span class="c-prop">_cache</span>.<span class="c-method">Set</span>(<span class="c-prop">key</span>, <span class="c-prop">student</span>, <span class="c-type">TimeSpan</span>.<span class="c-method">FromMinutes</span>(<span class="c-num">5</span>));
+        <span class="c-kw">return</span> <span class="c-prop">student</span>;
+    }
+
+    <span class="c-cmt">// Other methods delegate directly to _inner</span>
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt;&gt; <span class="c-method">GetByClassAsync</span>(<span class="c-kw">string</span> <span class="c-prop">c</span>)
+        => <span class="c-kw">await</span> <span class="c-prop">_inner</span>.<span class="c-method">GetByClassAsync</span>(<span class="c-prop">c</span>);
+}
+
+<span class="c-cmt">// DI — Decorator wires up transparently</span>
+<span class="c-prop">services</span>.<span class="c-method">AddScoped</span>&lt;<span class="c-type">SqlStudentRepository</span>&gt;();
+<span class="c-prop">services</span>.<span class="c-method">AddScoped</span>&lt;<span class="c-type">IStudentRepository</span>&gt;(<span class="c-prop">sp</span> =>
+    <span class="c-kw">new</span> <span class="c-type">CachedStudentRepository</span>(
+        <span class="c-prop">sp</span>.<span class="c-method">GetRequiredService</span>&lt;<span class="c-type">SqlStudentRepository</span>&gt;(),
+        <span class="c-prop">sp</span>.<span class="c-method">GetRequiredService</span>&lt;<span class="c-type">IMemoryCache</span>&gt;()));</pre>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">8</span> 🎯 Scenario-Based Interview Questions</div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">1</div>
+      <div>
+        <div class="scenario-title">SRP Violation — God class refactor <span class="diff easy">Easy</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: S in SOLID — most asked</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Code review-la இந்த class பாத்தீங்க. SRP violation explain பண்ணி refactor பண்ணு.
+      <pre style="font-size:0.85em;margin-top:8px"><span class="c-kw">public class</span> <span class="c-type">AttendanceManager</span>
+{
+    <span class="c-kw">public void</span> <span class="c-method">MarkAttendance</span>(<span class="c-kw">int</span> <span class="c-prop">studentId</span>, <span class="c-kw">bool</span> <span class="c-prop">present</span>) { }
+    <span class="c-kw">public void</span> <span class="c-method">SendAbsenceAlert</span>(<span class="c-kw">int</span> <span class="c-prop">studentId</span>) { }
+    <span class="c-kw">public void</span> <span class="c-method">SaveToDB</span>(<span class="c-type">Attendance</span> <span class="c-prop">a</span>) { }
+    <span class="c-kw">public</span> <span class="c-type">List</span>&lt;<span class="c-type">Attendance</span>&gt; <span class="c-method">GetMonthlyReport</span>(<span class="c-kw">int</span> <span class="c-prop">month</span>) { <span class="c-kw">return null</span>; }
+    <span class="c-kw">public void</span> <span class="c-method">ExportToPdf</span>(<span class="c-type">List</span>&lt;<span class="c-type">Attendance</span>&gt; <span class="c-prop">data</span>) { }
+}</pre>
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <p><strong>Violations — 5 responsibilities!</strong> Mark attendance (business logic), Send alert (notification), DB save (data), Report (query), PDF export (presentation). 5 reasons to change = SRP violation!</p>
+      <pre><span class="c-cmt">// ✅ Refactored — each class = one responsibility</span>
+<span class="c-kw">public class</span> <span class="c-type">AttendanceService</span>
+{
+    <span class="c-kw">public void</span> <span class="c-method">MarkAttendance</span>(<span class="c-kw">int</span> <span class="c-prop">studentId</span>, <span class="c-kw">bool</span> <span class="c-prop">present</span>) { } <span class="c-cmt">// business</span>
+}
+
+<span class="c-kw">public class</span> <span class="c-type">AttendanceRepository</span>
+{
+    <span class="c-kw">public void</span> <span class="c-method">Save</span>(<span class="c-type">Attendance</span> <span class="c-prop">a</span>) { } <span class="c-cmt">// data access</span>
+    <span class="c-kw">public</span> <span class="c-type">List</span>&lt;<span class="c-type">Attendance</span>&gt; <span class="c-method">GetMonthly</span>(<span class="c-kw">int</span> <span class="c-prop">m</span>) { <span class="c-kw">return null</span>; } <span class="c-cmt">// query</span>
+}
+
+<span class="c-kw">public class</span> <span class="c-type">AttendanceNotifier</span>
+{
+    <span class="c-kw">public void</span> <span class="c-method">SendAbsenceAlert</span>(<span class="c-kw">int</span> <span class="c-prop">studentId</span>) { } <span class="c-cmt">// notification</span>
+}
+
+<span class="c-kw">public class</span> <span class="c-type">AttendanceReportExporter</span>
+{
+    <span class="c-kw">public void</span> <span class="c-method">ExportToPdf</span>(<span class="c-type">List</span>&lt;<span class="c-type">Attendance</span>&gt; <span class="c-prop">data</span>) { } <span class="c-cmt">// presentation</span>
+}</pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div>
+        <div class="scenario-title">OCP — New Report type add பண்ண existing code touch பண்றோம் <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Open/Closed — extend without modify</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus-la every new report type (Attendance/Fee/Progress/Hostel) add பண்ண ReportService modify பண்றோம். 3 devs merge conflict பண்றாங்க. OCP use பண்ணி fix பண்ணு.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-kw">public interface</span> <span class="c-type">IReportGenerator</span>
+{
+    <span class="c-kw">string</span> <span class="c-prop">ReportType</span> { <span class="c-kw">get</span>; }
+    <span class="c-type">Task</span>&lt;<span class="c-kw">byte</span>[]&gt; <span class="c-method">GenerateAsync</span>(<span class="c-kw">int</span> <span class="c-prop">schoolId</span>, <span class="c-type">DateRange</span> <span class="c-prop">range</span>);
+}
+
+<span class="c-kw">public class</span> <span class="c-type">AttendanceReportGenerator</span> : <span class="c-type">IReportGenerator</span>
+{
+    <span class="c-kw">public string</span> <span class="c-prop">ReportType</span> => <span class="c-str">"Attendance"</span>;
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-kw">byte</span>[]&gt; <span class="c-method">GenerateAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>, <span class="c-type">DateRange</span> <span class="c-prop">r</span>) { <span class="c-kw">return</span> <span class="c-kw">null</span>; }
+}
+<span class="c-cmt">// New report? Just add new class — ReportService UNCHANGED!</span>
+<span class="c-kw">public class</span> <span class="c-type">HostelReportGenerator</span>    : <span class="c-type">IReportGenerator</span>
+{
+    <span class="c-kw">public string</span> <span class="c-prop">ReportType</span> => <span class="c-str">"Hostel"</span>;
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-kw">byte</span>[]&gt; <span class="c-method">GenerateAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>, <span class="c-type">DateRange</span> <span class="c-prop">r</span>) { <span class="c-kw">return</span> <span class="c-kw">null</span>; }
+}
+
+<span class="c-kw">public class</span> <span class="c-type">ReportService</span> <span class="c-cmt">// NEVER changes when new report added!</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">Dictionary</span>&lt;<span class="c-kw">string</span>, <span class="c-type">IReportGenerator</span>&gt; <span class="c-prop">_generators</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">ReportService</span>(<span class="c-type">IEnumerable</span>&lt;<span class="c-type">IReportGenerator</span>&gt; <span class="c-prop">generators</span>)
+        => <span class="c-prop">_generators</span> = <span class="c-prop">generators</span>.<span class="c-method">ToDictionary</span>(<span class="c-prop">g</span> => <span class="c-prop">g</span>.<span class="c-prop">ReportType</span>);
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-kw">byte</span>[]&gt; <span class="c-method">GenerateAsync</span>(<span class="c-kw">string</span> <span class="c-prop">type</span>, <span class="c-kw">int</span> <span class="c-prop">id</span>, <span class="c-type">DateRange</span> <span class="c-prop">r</span>)
+        => <span class="c-kw">await</span> <span class="c-prop">_generators</span>[<span class="c-prop">type</span>].<span class="c-method">GenerateAsync</span>(<span class="c-prop">id</span>, <span class="c-prop">r</span>);
+}
+
+<span class="c-cmt">// DI: just register new class — auto-discovered!</span>
+<span class="c-prop">services</span>.<span class="c-method">AddScoped</span>&lt;<span class="c-type">IReportGenerator</span>, <span class="c-type">AttendanceReportGenerator</span>&gt;();
+<span class="c-prop">services</span>.<span class="c-method">AddScoped</span>&lt;<span class="c-type">IReportGenerator</span>, <span class="c-type">HostelReportGenerator</span>&gt;();</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Merge conflict gone!</div>
+        <p>Each developer adds their own class — no one touches ReportService. Zero merge conflicts. OCP + DI + Strategy combo!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div>
+        <div class="scenario-title">DIP — Unit test பண்ண முடியல! <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Dependency Inversion — testability</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> AdmissionService unit test பண்ண try பண்றோம் — actual DB connection வேணும், SMS API key வேணும். Test impossible! Code-la <code>new SqlStudentRepository()</code> இருக்கு. DIP use பண்ணி fix பண்ணு.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — DIP enables testing</div>
+      <pre><span class="c-cmt">// ❌ Untestable — concrete dependencies!</span>
+<span class="c-kw">public class</span> <span class="c-type">AdmissionService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">SqlStudentRepository</span> <span class="c-prop">_repo</span> = <span class="c-kw">new</span>();  <span class="c-cmt">// coupled!</span>
+    <span class="c-kw">private readonly</span> <span class="c-type">TwilioSmsService</span>     <span class="c-prop">_sms</span>  = <span class="c-kw">new</span>();  <span class="c-cmt">// coupled!</span>
+}
+
+<span class="c-cmt">// ✅ DIP — depend on interfaces, inject!</span>
+<span class="c-kw">public class</span> <span class="c-type">AdmissionService</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IStudentRepository</span>   <span class="c-prop">_repo</span>;
+    <span class="c-kw">private readonly</span> <span class="c-type">INotificationService</span> <span class="c-prop">_notify</span>;
+
+    <span class="c-kw">public</span> <span class="c-method">AdmissionService</span>(<span class="c-type">IStudentRepository</span> <span class="c-prop">repo</span>, <span class="c-type">INotificationService</span> <span class="c-prop">notify</span>)
+    {
+        <span class="c-prop">_repo</span>   = <span class="c-prop">repo</span>;
+        <span class="c-prop">_notify</span> = <span class="c-prop">notify</span>;
+    }
+}
+
+<span class="c-cmt">// Test — inject mocks!</span>
+<span class="c-kw">var</span> <span class="c-prop">repoMock</span>   = <span class="c-kw">new</span> <span class="c-type">Mock</span>&lt;<span class="c-type">IStudentRepository</span>&gt;();
+<span class="c-kw">var</span> <span class="c-prop">notifyMock</span> = <span class="c-kw">new</span> <span class="c-type">Mock</span>&lt;<span class="c-type">INotificationService</span>&gt;();
+<span class="c-prop">repoMock</span>.<span class="c-method">Setup</span>(<span class="c-prop">r</span> => <span class="c-prop">r</span>.<span class="c-method">GetByIdAsync</span>(<span class="c-num">1</span>))
+        .<span class="c-method">ReturnsAsync</span>(<span class="c-kw">new</span> <span class="c-type">Student</span> { <span class="c-prop">Id</span> = <span class="c-num">1</span>, <span class="c-prop">Name</span> = <span class="c-str">"Ravi"</span> });
+
+<span class="c-kw">var</span> <span class="c-prop">svc</span> = <span class="c-kw">new</span> <span class="c-type">AdmissionService</span>(<span class="c-prop">repoMock</span>.<span class="c-prop">Object</span>, <span class="c-prop">notifyMock</span>.<span class="c-prop">Object</span>);
+<span class="c-cmt">// Test without DB or SMS API!</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">4</div>
+      <div>
+        <div class="scenario-title">Strategy Pattern — Runtime notification channel switch <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Strategy — behavior swap without if-else</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> ZenCampus-la school settings-la admin choose பண்றான் — SMS or Email or WhatsApp. Current code massive if-else. Strategy use பண்ணு.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Strategy eliminates if-else</div>
+      <pre><span class="c-cmt">// INotificationStrategy already shown above — real answer:</span>
+
+<span class="c-cmt">// ❌ if-else hell</span>
+<span class="c-kw">if</span> (<span class="c-prop">school</span>.<span class="c-prop">NotifyChannel</span> == <span class="c-str">"SMS"</span>)      <span class="c-prop">_sms</span>.<span class="c-method">Send</span>(...);
+<span class="c-kw">else if</span> (<span class="c-prop">school</span>.<span class="c-prop">NotifyChannel</span> == <span class="c-str">"Email"</span>)  <span class="c-prop">_email</span>.<span class="c-method">Send</span>(...);
+<span class="c-kw">else if</span> (<span class="c-prop">school</span>.<span class="c-prop">NotifyChannel</span> == <span class="c-str">"WA"</span>)     <span class="c-prop">_wa</span>.<span class="c-method">Send</span>(...);
+<span class="c-cmt">// Add Telegram? Add another else! OCP violated too.</span>
+
+<span class="c-cmt">// ✅ Strategy — zero if-else, OCP compliant</span>
+<span class="c-kw">var</span> <span class="c-prop">strategy</span> = <span class="c-prop">_notifyService</span>.<span class="c-method">GetStrategy</span>(<span class="c-prop">school</span>.<span class="c-prop">NotifyChannel</span>);
+<span class="c-kw">await</span> <span class="c-prop">strategy</span>.<span class="c-method">NotifyAsync</span>(<span class="c-prop">student</span>, <span class="c-prop">message</span>);
+<span class="c-cmt">// New channel? Add new INotificationStrategy class + DI register. Done.</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div>
+        <div class="scenario-title">Decorator — Caching + Logging without modifying repository <span class="diff hard">Hard</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Decorator pattern in production</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Production-la StudentRepository-ku caching add பண்ணணும் + every call log பண்ணணும். Existing SqlStudentRepository touch பண்ணாம எப்படி? (SqlStudentRepository sealed இல்ல, ஆனா modify பண்றோம் OCP violate ஆகும்.)
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER — Decorator chain</div>
+      <pre><span class="c-cmt">// Layer 1 — Logging decorator</span>
+<span class="c-kw">public class</span> <span class="c-type">LoggingStudentRepository</span> : <span class="c-type">IStudentRepository</span>
+{
+    <span class="c-kw">private readonly</span> <span class="c-type">IStudentRepository</span> <span class="c-prop">_inner</span>;
+    <span class="c-kw">private readonly</span> <span class="c-type">ILogger</span>           <span class="c-prop">_log</span>;
+
+    <span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">Student</span>?&gt; <span class="c-method">GetByIdAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>)
+    {
+        <span class="c-prop">_log</span>.<span class="c-method">LogInformation</span>(<span class="c-str">"GetStudent {id}"</span>, <span class="c-prop">id</span>);
+        <span class="c-kw">var</span> <span class="c-prop">sw</span> = <span class="c-type">Stopwatch</span>.<span class="c-method">StartNew</span>();
+        <span class="c-kw">var</span> <span class="c-prop">result</span> = <span class="c-kw">await</span> <span class="c-prop">_inner</span>.<span class="c-method">GetByIdAsync</span>(<span class="c-prop">id</span>);
+        <span class="c-prop">_log</span>.<span class="c-method">LogInformation</span>(<span class="c-str">"GetStudent {id} took {ms}ms"</span>, <span class="c-prop">id</span>, <span class="c-prop">sw</span>.<span class="c-prop">ElapsedMilliseconds</span>);
+        <span class="c-kw">return</span> <span class="c-prop">result</span>;
+    }
+}
+
+<span class="c-cmt">// Chain: Cache → Log → SQL
+// Cached checks cache → LoggingRepo logs → SqlRepo hits DB</span>
+<span class="c-prop">services</span>.<span class="c-method">AddScoped</span>&lt;<span class="c-type">SqlStudentRepository</span>&gt;();
+<span class="c-prop">services</span>.<span class="c-method">AddScoped</span>&lt;<span class="c-type">IStudentRepository</span>&gt;(<span class="c-prop">sp</span> => {
+    <span class="c-kw">var</span> <span class="c-prop">sql</span>    = <span class="c-prop">sp</span>.<span class="c-method">GetRequiredService</span>&lt;<span class="c-type">SqlStudentRepository</span>&gt;();
+    <span class="c-kw">var</span> <span class="c-prop">logged</span> = <span class="c-kw">new</span> <span class="c-type">LoggingStudentRepository</span>(<span class="c-prop">sql</span>, <span class="c-prop">sp</span>.<span class="c-method">GetRequiredService</span>&lt;<span class="c-type">ILogger</span>&lt;<span class="c-type">LoggingStudentRepository</span>&gt;&gt;());
+    <span class="c-kw">return new</span> <span class="c-type">CachedStudentRepository</span>(<span class="c-prop">logged</span>, <span class="c-prop">sp</span>.<span class="c-method">GetRequiredService</span>&lt;<span class="c-type">IMemoryCache</span>&gt;());
+});</pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div>
+        <div class="scenario-title">ISP — Fat interface vs thin interfaces <span class="diff easy">Easy</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Interface Segregation</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Read-only dashboard service-ku IStudentService inject பண்றோம். But IStudentService-la <code>DeleteAsync</code>, <code>BulkImportAsync</code> இருக்கு — dangerous! ISP fix பண்ணு.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-cmt">// ✅ Split by read vs write</span>
+<span class="c-kw">public interface</span> <span class="c-type">IStudentReader</span>
+{
+    <span class="c-type">Task</span>&lt;<span class="c-type">Student</span>?&gt; <span class="c-method">GetByIdAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>);
+    <span class="c-type">Task</span>&lt;<span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt;&gt; <span class="c-method">GetAllAsync</span>();
+    <span class="c-type">Task</span>&lt;<span class="c-kw">int</span>&gt; <span class="c-method">GetCountAsync</span>();
+}
+
+<span class="c-kw">public interface</span> <span class="c-type">IStudentWriter</span>
+{
+    <span class="c-type">Task</span> <span class="c-method">AddAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>);
+    <span class="c-type">Task</span> <span class="c-method">UpdateAsync</span>(<span class="c-type">Student</span> <span class="c-prop">s</span>);
+    <span class="c-type">Task</span> <span class="c-method">DeleteAsync</span>(<span class="c-kw">int</span> <span class="c-prop">id</span>);
+    <span class="c-type">Task</span> <span class="c-method">BulkImportAsync</span>(<span class="c-type">List</span>&lt;<span class="c-type">Student</span>&gt; <span class="c-prop">students</span>);
+}
+
+<span class="c-cmt">// Dashboard — only reads. Cannot delete by accident!</span>
+<span class="c-kw">public class</span> <span class="c-type">DashboardService</span>
+{
+    <span class="c-kw">public</span> <span class="c-method">DashboardService</span>(<span class="c-type">IStudentReader</span> <span class="c-prop">reader</span>) { } <span class="c-cmt">// safe!</span>
+}
+
+<span class="c-cmt">// Admin service — full access</span>
+<span class="c-kw">public class</span> <span class="c-type">AdminService</span>
+{
+    <span class="c-kw">public</span> <span class="c-method">AdminService</span>(<span class="c-type">IStudentReader</span> <span class="c-prop">r</span>, <span class="c-type">IStudentWriter</span> <span class="c-prop">w</span>) { }
+}
+
+<span class="c-cmt">// One class can implement both</span>
+<span class="c-kw">public class</span> <span class="c-type">StudentRepository</span> : <span class="c-type">IStudentReader</span>, <span class="c-type">IStudentWriter</span> { }</pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div>
+        <div class="scenario-title">Observer — New handler add பண்ண zero existing code change <span class="diff senior">Senior</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Observer/Event decoupling</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> Requirement: Student admitted ஆனா — (1) SMS (2) Email (3) Portal create. Next week: (4) Teacher notify. Week after: (5) Fee schedule create. Every week new requirement! Admission service touch பண்றோம். Observer fix பண்ணு.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <pre><span class="c-cmt">// IEventHandler&lt;T&gt; pattern (shown in section 6 above)</span>
+<span class="c-cmt">// New requirement = new handler class + DI registration
+// AdmissionService NEVER changes!</span>
+
+<span class="c-kw">public class</span> <span class="c-type">NotifyClassTeacherHandler</span> : <span class="c-type">IEventHandler</span>&lt;<span class="c-type">StudentAdmittedEvent</span>&gt;
+{
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">HandleAsync</span>(<span class="c-type">StudentAdmittedEvent</span> <span class="c-prop">e</span>)
+        => <span class="c-kw">await</span> <span class="c-prop">_notify</span>.<span class="c-method">NotifyTeacherAsync</span>(<span class="c-prop">e</span>.<span class="c-prop">Student</span>.<span class="c-prop">ClassId</span>);
+}
+
+<span class="c-kw">public class</span> <span class="c-type">CreateFeeScheduleHandler</span> : <span class="c-type">IEventHandler</span>&lt;<span class="c-type">StudentAdmittedEvent</span>&gt;
+{
+    <span class="c-kw">public async</span> <span class="c-type">Task</span> <span class="c-method">HandleAsync</span>(<span class="c-type">StudentAdmittedEvent</span> <span class="c-prop">e</span>)
+        => <span class="c-kw">await</span> <span class="c-prop">_feeSvc</span>.<span class="c-method">CreateScheduleAsync</span>(<span class="c-prop">e</span>.<span class="c-prop">Student</span>);
+}
+
+<span class="c-cmt">// Register new handler → auto-dispatched!</span>
+<span class="c-prop">services</span>.<span class="c-method">AddScoped</span>&lt;<span class="c-type">IEventHandler</span>&lt;<span class="c-type">StudentAdmittedEvent</span>&gt;, <span class="c-type">NotifyClassTeacherHandler</span>&gt;();
+<span class="c-prop">services</span>.<span class="c-method">AddScoped</span>&lt;<span class="c-type">IEventHandler</span>&lt;<span class="c-type">StudentAdmittedEvent</span>&gt;, <span class="c-type">CreateFeeScheduleHandler</span>&gt;();</pre>
+      <div class="gold">
+        <div class="gold-label">⭐ Combined SOLID explanation</div>
+        <p>"Observer + OCP + SRP together — AdmissionService has one job (admit). New behaviors = new classes (OCP). Each handler one job (SRP). Dispatcher depends on interface (DIP). This IS senior-level architecture!"</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div>
+        <div class="scenario-title">Singleton vs Scoped vs Transient — lifetime choose <span class="diff medium">Medium</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: DI lifetime — common interview trap</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "AddSingleton, AddScoped, AddTransient — difference enna? ZenCampus-la which service which lifetime?" Whiteboard question.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <table style="font-size:0.83em">
+        <tr><th>Lifetime</th><th>Created</th><th>Destroyed</th><th>ZenCampus Use</th></tr>
+        <tr><td><code>Singleton</code></td><td class="green">App start — once</td><td>App shutdown</td><td>Config, IHttpClientFactory, Cache</td></tr>
+        <tr><td><code>Scoped</code></td><td class="yellow">Per HTTP request</td><td>Request end</td><td>DbContext, Repositories, Services</td></tr>
+        <tr><td><code>Transient</code></td><td class="red">Every injection</td><td>Injected scope ends</td><td>Lightweight stateless utils, Email sender</td></tr>
+      </table>
+      <div class="danger">
+        <div class="d-label">⚠️ Captive Dependency Trap!</div>
+        <p>Singleton cannot depend on Scoped! Singleton lives forever — Scoped dependency gets stuck in singleton — wrong scope! ASP.NET Core throws exception at startup if detected.</p>
+        <pre style="font-size:0.82em"><span class="c-cmt">// ❌ Singleton injecting Scoped = runtime error!</span>
+<span class="c-kw">public class</span> <span class="c-type">ConfigService</span> <span class="c-cmt">// Singleton</span>
+{
+    <span class="c-kw">public</span> <span class="c-method">ConfigService</span>(<span class="c-type">AppDbContext</span> <span class="c-prop">ctx</span>) { } <span class="c-cmt">// Scoped! WRONG!</span>
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div>
+        <div class="scenario-title">Factory vs new() — when to use each? <span class="diff easy">Easy</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Factory pattern decision</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "new() vs Factory Pattern — eppoluthe factory use பண்றுவ?" One-line answer கொடு, then ZenCampus example கொடு.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ ANSWER</div>
+      <div style="background:#0a1a0a;padding:12px;border-radius:6px;font-size:0.9em;line-height:1.8">
+        <p style="color:#2ecc71"><strong>Use new():</strong> Simple, known type, no conditions — <code>new Student()</code></p>
+        <p style="color:#f39c12"><strong>Use Factory when:</strong></p>
+        <p>1. Type determined at runtime (PDF or Excel based on user choice)</p>
+        <p>2. Complex creation logic (multiple steps)</p>
+        <p>3. DI container can't create it (needs runtime params)</p>
+        <p>4. Want to hide implementation details</p>
+        <p>5. Creation is expensive — factory can return cached instance</p>
+      </div>
+      <pre style="margin-top:8px"><span class="c-cmt">// ZenCampus — runtime type decision → factory</span>
+<span class="c-kw">var</span> <span class="c-prop">gen</span> = <span class="c-type">ReceiptGeneratorFactory</span>.<span class="c-method">Create</span>(<span class="c-prop">requestDto</span>.<span class="c-prop">Format</span>);
+<span class="c-cmt">// Caller doesn't know if it's PDF or Excel — factory decides</span></pre>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div>
+        <div class="scenario-title">"SOLID explain பண்ணு with your project" — Complete Answer <span class="diff senior">Senior</span></div>
+        <div style="color:#888;font-size:0.8em">Topic: Full interview response</div>
+      </div>
+    </div>
+    <div class="scenario-q">
+      📋 <strong>Scenario:</strong> "SOLID-a real project-la use பண்ணீங்களா? Example கொடு" — structured answer practice.
+    </div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE INTERVIEW ANSWER</div>
+      <div style="background:#0a1a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p>"Yes, ZenCampus — 50,000 students, 200 schools — SOLID was essential:"</p>
+        <p><strong>S (SRP):</strong> StudentRepository only data access. AdmissionService only orchestration. SmsService only messaging. Each has one reason to change.</p>
+        <p><strong>O (OCP):</strong> New fee type, notification channel, report format — add new class, register in DI. Existing services never touched. No merge conflicts.</p>
+        <p><strong>L (LSP):</strong> Scholar extends Student — overrides GetFee() but contract preserved. Caller using IEnumerable&lt;Student&gt; gets correct fee for Scholar too.</p>
+        <p><strong>I (ISP):</strong> IStudentReader for dashboard (read-only), IStudentWriter for admin. Dashboard can't accidentally delete.</p>
+        <p><strong>D (DIP):</strong> AdmissionService depends on IStudentRepository, INotificationService — interfaces. Unit tests inject mocks, production injects SQL+Twilio. No DB needed in tests.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">9</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: OCP — "Open for extension, closed for modification" — what does "extension" mean?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Using extension methods</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Add new class/behavior without modifying existing code</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Extending base classes only</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Using partial classes</div>
+    <div class="quiz-fb ok">✅ OCP = add new behavior by creating new classes, not editing existing ones. New fee type = new IFeeCalculator class, not modifying FeeService!</div>
+    <div class="quiz-fb nope">❌ Extension = new class, not modifying existing. New IFeeCalculator implementation + DI register = zero existing code change = OCP!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: Strategy vs Factory — key difference?</p>
+    <div class="quiz-opt" onclick="ans(this,'correct')">A) Strategy = swap algorithms at runtime. Factory = centralize object creation.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Same pattern, different names</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Factory = runtime swap, Strategy = creation</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Strategy uses interfaces, Factory doesn't</div>
+    <div class="quiz-fb ok">✅ Strategy = behavior swap (SMS vs Email notify). Factory = object creation logic (PDF vs Excel generator creator). Both useful in ZenCampus!</div>
+    <div class="quiz-fb nope">❌ Strategy = algorithm/behavior swap. Factory = creation abstraction. Different concerns, often used together!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: Singleton scoped dependency trap — what happens?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Works fine</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Performance issue only</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) Scoped service captured in Singleton — wrong scope, stale data, runtime error</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Compile error</div>
+    <div class="quiz-fb ok">✅ Captive dependency! Singleton (app lifetime) captures Scoped (request lifetime) → same scoped instance reused across all requests → stale data, potential bugs. ASP.NET Core detects and throws!</div>
+    <div class="quiz-fb nope">❌ Captive dependency trap! Scoped service in Singleton = same instance used for all requests = wrong scope = stale DbContext = data corruption!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: Decorator pattern — how different from inheritance?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) No difference</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Decorator wraps existing instance (composition). Inheritance extends compile-time (static). Decorator swappable at runtime.</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Decorator is faster</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Decorator needs abstract class</div>
+    <div class="quiz-fb ok">✅ Decorator = composition over inheritance. Wraps object, adds behavior. Can chain decorators (Cache → Log → SQL). Inheritance = static, single parent, compile-time only.</div>
+    <div class="quiz-fb nope">❌ Decorator = runtime composition! Wrap instance, add behavior, chain multiple. Inheritance = static, one parent. "Favor composition over inheritance" = Decorator!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">10</span> ✅ Day 6 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory (50 min)</h3>
+      <ul class="check-list">
+        <li>S — one reason to change</li>
+        <li>O — new class not modify</li>
+        <li>L — subclass substitutable</li>
+        <li>I — thin interfaces over fat</li>
+        <li>D — depend on abstraction</li>
+        <li>Strategy, Factory, Repository, Singleton, Observer, Decorator</li>
+        <li>DI lifetime — Singleton vs Scoped vs Transient</li>
+      </ul>
+    </div>
+    <div>
+      <h3>💻 Hands-On (60 min)</h3>
+      <ul class="check-list">
+        <li>OCP — IFeeCalculator implementations</li>
+        <li>Strategy — INotificationStrategy (SMS/Email/WA)</li>
+        <li>Observer — IEventHandler domain events</li>
+        <li>Decorator — CachedStudentRepository</li>
+        <li>DI register all patterns in Program.cs</li>
+        <li>Unit test with mock (DIP enables this)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Key Scenarios</h3>
+      <ul class="check-list">
+        <li>S1: God class refactor (SRP)</li>
+        <li>S2: OCP with report generators</li>
+        <li>S3: DIP enables unit testing</li>
+        <li>S7: Observer = new handler, zero change</li>
+        <li>S8: DI lifetime + captive dependency</li>
+        <li>S10: Full SOLID interview answer</li>
+      </ul>
+    </div>
+    <div>
+      <h3>⭐ Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"One reason to change = SRP"</li>
+        <li>"New class, not modify = OCP"</li>
+        <li>"Depend on interface, not concrete = DIP"</li>
+        <li>"Strategy = runtime algorithm swap"</li>
+        <li>"Decorator = composition over inheritance"</li>
+        <li>"Singleton in Scoped = captive dependency"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#001a1a,#0a1020);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">🎬 Day 6 Motivation</div>
+    <p style="color:#f39c12;font-style:italic">"Vikram team-la each agent one specialty — SOLID. New agent join பண்ணா existing agents change ஆகல — OCP. Observer pattern = new handler add பண்றோம், dispatcher doesn't know. <strong>ZenCampus-la ithai follow பண்றோம்னு interview-la சொல்லு — senior level confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 6/60 ✅ | Tomorrow: Entity Framework Core — Migrations, Relationships, Query Optimization</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:10%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">6 of 60 days (10%) — Phase 1 almost done!</div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p>Day 6 – SOLID Principles + Design Patterns | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">🎬 "Vikram = SRP. Anniyan = Strategy. Enthiran = Factory. Ratsasan = Repository. 96 = Observer. Dasavathaaram = Decorator!"</p>
+</footer>
+
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent='💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

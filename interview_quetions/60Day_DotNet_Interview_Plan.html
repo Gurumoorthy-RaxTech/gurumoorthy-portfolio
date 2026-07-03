@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>60-Day .NET Interview Cracker – ZenCampus Edition</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; line-height: 1.7; }
+  header { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); padding: 40px 20px; text-align: center; border-bottom: 3px solid #e94560; }
+  header h1 { font-size: 2.2em; color: #e94560; text-shadow: 0 0 20px #e9456088; }
+  header p { color: #a0a0c0; margin-top: 8px; font-size: 1.1em; }
+  .badge { display: inline-block; background: #e94560; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em; margin: 4px; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+  .phase { margin: 30px 0; border-radius: 12px; overflow: hidden; border: 1px solid #2a2a4a; }
+  .phase-header { padding: 18px 24px; font-size: 1.3em; font-weight: bold; display: flex; align-items: center; gap: 12px; }
+  .phase-body { padding: 20px 24px; background: #13132a; }
+  .ph1 .phase-header { background: linear-gradient(90deg, #1a472a, #2d6a4f); }
+  .ph2 .phase-header { background: linear-gradient(90deg, #1a3a5c, #1e6091); }
+  .ph3 .phase-header { background: linear-gradient(90deg, #4a1a5c, #7b2d8b); }
+  .ph4 .phase-header { background: linear-gradient(90deg, #5c2d1a, #a0522d); }
+  .ph5 .phase-header { background: linear-gradient(90deg, #1a3d5c, #c0392b); }
+  .ph6 .phase-header { background: linear-gradient(90deg, #1c2833, #e74c3c); }
+  .day-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-top: 16px; }
+  .day-card { background: #1a1a35; border-radius: 10px; padding: 16px; border-left: 4px solid #e94560; transition: transform 0.2s; }
+  .day-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px #e9456033; }
+  .day-num { font-size: 0.75em; color: #e94560; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+  .day-title { font-size: 1.1em; font-weight: bold; color: #fff; margin: 4px 0; }
+  .movie-ref { background: #1a0f2e; border-radius: 6px; padding: 8px 12px; margin: 8px 0; font-size: 0.85em; color: #c39bd3; border-left: 3px solid #8e44ad; }
+  .movie-ref .film { color: #f39c12; font-weight: bold; }
+  .keywords { margin: 8px 0; }
+  .kw { display: inline-block; background: #0d3b5e; color: #74b9ff; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; margin: 2px; font-family: monospace; }
+  .project-eg { background: #0a2010; border-radius: 6px; padding: 8px 12px; margin: 8px 0; font-size: 0.85em; color: #a8e6cf; border-left: 3px solid #27ae60; }
+  .project-eg .label { color: #2ecc71; font-weight: bold; font-size: 0.8em; }
+  .tanglish { background: #1a1500; border-radius: 6px; padding: 8px 12px; margin: 8px 0; font-size: 0.85em; color: #f9ca24; border-left: 3px solid #f9ca24; }
+  code { background: #0d1117; color: #f97316; padding: 2px 6px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: 0.85em; }
+  .interview-q { background: #1a0a0a; border-radius: 6px; padding: 10px 14px; margin: 8px 0; border-left: 3px solid #e74c3c; }
+  .interview-q .q { color: #e74c3c; font-size: 0.8em; font-weight: bold; }
+  .interview-q .a { color: #c0c0c0; font-size: 0.85em; margin-top: 4px; }
+  .tip-box { background: #1a1000; border: 1px solid #f39c12; border-radius: 8px; padding: 14px; margin: 12px 0; }
+  .tip-box .tip-title { color: #f39c12; font-weight: bold; margin-bottom: 6px; }
+  .progress-bar { background: #2a2a4a; border-radius: 20px; height: 6px; margin: 8px 0; }
+  .progress-fill { background: linear-gradient(90deg, #e94560, #f39c12); border-radius: 20px; height: 6px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.85em; }
+  th { background: #1e3a5f; color: #74b9ff; padding: 10px; text-align: left; }
+  td { padding: 8px 10px; border-bottom: 1px solid #2a2a4a; color: #c0c0c0; }
+  tr:hover td { background: #1a1a35; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
+  .summary-card { background: #1a1a35; border-radius: 8px; padding: 14px; text-align: center; border: 1px solid #2a2a4a; }
+  .summary-card .num { font-size: 2em; font-weight: bold; color: #e94560; }
+  .summary-card .label { font-size: 0.8em; color: #a0a0c0; margin-top: 4px; }
+  h3 { color: #74b9ff; margin: 16px 0 10px; font-size: 1.05em; }
+  .checklist { list-style: none; }
+  .checklist li { padding: 4px 0; color: #c0c0c0; font-size: 0.9em; }
+  .checklist li::before { content: "☐ "; color: #e94560; }
+  .week-label { background: #e94560; color: white; padding: 2px 10px; border-radius: 4px; font-size: 0.75em; margin-right: 8px; }
+  .highlight { color: #f39c12; font-weight: bold; }
+  @media print { body { background: white; color: black; } .day-card { break-inside: avoid; } }
+  footer { text-align: center; padding: 30px; color: #555; border-top: 1px solid #2a2a4a; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎬 60-Day .NET Interview Cracker</h1>
+  <p>ZenCampus Project + Tamil Movie References + Tanglish Keywords</p>
+  <div style="margin-top:12px">
+    <span class="badge">3.5yr Experience</span>
+    <span class="badge">Senior Level Target</span>
+    <span class="badge">Started: 22-Jun-2026</span>
+    <span class="badge">Target: 21-Aug-2026</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- SUMMARY -->
+  <div class="summary-grid" style="margin-top:24px">
+    <div class="summary-card"><div class="num">60</div><div class="label">Days Total</div></div>
+    <div class="summary-card"><div class="num">6</div><div class="label">Phases</div></div>
+    <div class="summary-card"><div class="num">2-3</div><div class="label">Hours/Day</div></div>
+    <div class="summary-card"><div class="num">1</div><div class="label">Capstone Project</div></div>
+    <div class="summary-card"><div class="num">∞</div><div class="label">Tamil Movie Refs 🎬</div></div>
+  </div>
+
+  <div class="tip-box">
+    <div class="tip-title">🧠 Strategy: Nee Already Strong Irukkiya Topics Skip Panni Fast Forward Panna!</div>
+    <p>C# basics, MVC, SQL, Dapper — nee already 3.5 years use panra. So those-a 30% time-la cover panni, 70% time-a <strong>Azure, React, System Design, Docker, AI</strong> ku spend pannu. Interview-la ivanga mathu kekuvanga!</p>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase ph1">
+    <div class="phase-header">
+      <span>🟢</span>
+      <span>Phase 1: Advanced C# + SQL Mastery (Day 1–12)</span>
+      <span class="week-label">FAST TRACK</span>
+    </div>
+    <div class="phase-body">
+      <p style="color:#a0a0c0; margin-bottom:16px">Nee C# theriyum, but Senior-level questions — LINQ performance, async internals, SQL tuning — ivanga mariyadha theriyanum!</p>
+
+      <div class="day-grid">
+
+        <div class="day-card">
+          <div class="day-num">Day 1-2</div>
+          <div class="day-title">LINQ Deep Dive + Performance</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Vikram (2022):</span> Vikram — different identities, different roles. LINQ-um same — oru data-ku <code>Where</code>, <code>Select</code>, <code>GroupBy</code>, <code>Join</code> — different operations, oru chain-la!
+          </div>
+          <div class="keywords">
+            <span class="kw">Deferred Execution</span>
+            <span class="kw">IEnumerable vs IQueryable</span>
+            <span class="kw">ToList() trap</span>
+            <span class="kw">Any() vs Count()</span>
+            <span class="kw">SelectMany</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            Student attendance filter panna:<br>
+            <code>students.Where(s => s.IsActive).Select(s => new { s.Name, s.Class })</code><br>
+            DB-la run aagum vs memory-la — ivvavvu difference!
+          </div>
+          <div class="tanglish">
+            💡 <strong>Interview Trick:</strong> "IEnumerable vs IQueryable difference?" — IEnumerable = memory-la filter, IQueryable = DB-la filter. ZenCampus-la StudentService-la ithai use panrom nu sollu!
+          </div>
+          <div class="interview-q">
+            <div class="q">❓ Interview Q:</div>
+            <div class="a">Q: What is deferred execution in LINQ?<br>
+            A: Query create panna execute aagaadu. <code>.ToList()</code> or <code>foreach</code> call panna execute aagum. Ithunale unnecessary DB calls avoid pannalaam.</div>
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 3-4</div>
+          <div class="day-title">Async/Await + Task Parallel Library</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Enthiran (2010):</span> Chitti oru nanosecond-la 1000 calculations panuvan — parallel processing! <code>Task.WhenAll()</code> — multiple APIs simultaneously call panna, Chitti maari!
+          </div>
+          <div class="keywords">
+            <span class="kw">async/await</span>
+            <span class="kw">Task.WhenAll</span>
+            <span class="kw">Task.WhenAny</span>
+            <span class="kw">CancellationToken</span>
+            <span class="kw">ConfigureAwait(false)</span>
+            <span class="kw">Deadlock</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            Student details load panna — simultaneously student info + attendance + fees fetch panna:<br>
+            <code>await Task.WhenAll(GetStudentAsync(), GetAttendanceAsync(), GetFeesAsync())</code>
+          </div>
+          <div class="tanglish">
+            💡 <strong>Deadlock Danger:</strong> <code>.Result</code> or <code>.Wait()</code> use pannaa — UI thread block aagum. Always <code>await</code> use pannu. ZenCampus-la Controller-la ithaye pattern follow panrom.
+          </div>
+          <div class="interview-q">
+            <div class="q">❓ Interview Q:</div>
+            <div class="a">Q: ConfigureAwait(false) yen use panuvu?<br>
+            A: Library code-la original thread-ku return aaga vendam — performance improve aagum. UI project-la vendaam, Web API-la always use pannu.</div>
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 5-6</div>
+          <div class="day-title">Delegates, Events, Func/Action</div>
+          <div class="movie-ref">
+            <span class="film">🎬 96 (2018):</span> Ram-ku Janu call varuvaa nu wait panruvan. Event = somebody subscribe pannirukkaan, action trigger aana execute aagum — exactly 96 climax maari emotional trigger!
+          </div>
+          <div class="keywords">
+            <span class="kw">Delegate</span>
+            <span class="kw">Func&lt;T&gt;</span>
+            <span class="kw">Action&lt;T&gt;</span>
+            <span class="kw">Predicate&lt;T&gt;</span>
+            <span class="kw">Event</span>
+            <span class="kw">Multicast</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            Fee calculation strategy — different formulae for different student categories:<br>
+            <code>Func&lt;Student, decimal&gt; calcFee = GetFeeStrategy(student.Category)</code>
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 7-9</div>
+          <div class="day-title">SQL Advanced — Joins, CTE, Stored Procedures</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Kaaka Muttai (2015):</span> Two brothers — join pannaa strong. SQL Joins-um same — Students JOIN Attendance JOIN Fees — single query-la complete picture!
+          </div>
+          <div class="keywords">
+            <span class="kw">INNER/LEFT/RIGHT JOIN</span>
+            <span class="kw">CTE</span>
+            <span class="kw">Window Functions</span>
+            <span class="kw">ROW_NUMBER()</span>
+            <span class="kw">PARTITION BY</span>
+            <span class="kw">Index</span>
+            <span class="kw">Execution Plan</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            Top 3 students per class — Window Function:<br>
+            <code>ROW_NUMBER() OVER (PARTITION BY ClassId ORDER BY Marks DESC)</code><br>
+            StudentService-la ithai stored procedure-la use panrom.
+          </div>
+          <div class="tanglish">
+            💡 <strong>Interview Gold:</strong> "Clustered vs Non-Clustered Index?" — Clustered = data physically sorted (oru table-ku oru matum). Non-Clustered = pointer-based (multiple possible). ZenCampus StudentId = Clustered!
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 10-12</div>
+          <div class="day-title">Query Optimization + Execution Plans</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Ratsasan (2018):</span> Detective methodically clues collect panruvan — slow queries-um same, execution plan-la Table Scan vs Index Seek — serial killeraa find panra maari!
+          </div>
+          <div class="keywords">
+            <span class="kw">Table Scan</span>
+            <span class="kw">Index Seek</span>
+            <span class="kw">Covering Index</span>
+            <span class="kw">Query Cost</span>
+            <span class="kw">SET STATISTICS TIME</span>
+            <span class="kw">N+1 Problem</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            Student list load — N+1 problem: oru loop-la each student-ku separate DB call. Fix: JOIN use panni single query-la fetch pannu. ZenCampus StudentService-la ithai already fix pannirukkom.
+          </div>
+          <div class="interview-q">
+            <div class="q">❓ Interview Q:</div>
+            <div class="a">Q: What is the N+1 problem and how to fix it?<br>
+            A: 1 query returns N records, then N additional queries run. Fix: Use JOIN or include navigation properties. In ZenCampus, we fixed this in attendance reporting.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase ph2">
+    <div class="phase-header">
+      <span>🔵</span>
+      <span>Phase 2: ASP.NET Core + Web API Mastery (Day 13–25)</span>
+      <span class="week-label">HIGH PRIORITY</span>
+    </div>
+    <div class="phase-body">
+      <p style="color:#a0a0c0; margin-bottom:16px">MVC nee theriyum — but Core-la Middleware, DI, Minimal API, JWT — ithellam deep-a theriyanum. Every interview-la kekuvanga!</p>
+
+      <div class="day-grid">
+
+        <div class="day-card">
+          <div class="day-num">Day 13-15</div>
+          <div class="day-title">Middleware Pipeline + DI Deep Dive</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Baasha (1995):</span> Manikkam oru vela varuvaan — step by step. Middleware-um same — Request varum, Authentication → Authorization → Controller → Response — train coaches maari!
+          </div>
+          <div class="keywords">
+            <span class="kw">app.Use()</span>
+            <span class="kw">app.Run()</span>
+            <span class="kw">app.Map()</span>
+            <span class="kw">Transient</span>
+            <span class="kw">Scoped</span>
+            <span class="kw">Singleton</span>
+            <span class="kw">IServiceCollection</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            ZenCampus-la custom middleware — each request-ku school code validate panrom, logging panrom — Program.cs-la <code>app.UseMiddleware&lt;SchoolContextMiddleware&gt;()</code>
+          </div>
+          <div class="interview-q">
+            <div class="q">❓ Interview Q:</div>
+            <div class="a">Q: Transient vs Scoped vs Singleton?<br>
+            A: Transient = every time new (DbContext mathiri heavyweight avoid), Scoped = per request (DB connection perfect), Singleton = app lifetime (cache, config). ZenCampus-la ApiClient = Singleton, StudentService = Scoped.</div>
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 16-18</div>
+          <div class="day-title">JWT Authentication + Authorization Policies</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Thuppakki (2012):</span> Jagadish (Vijay) — undercover identity. JWT Token = encrypted identity card. Header.Payload.Signature — verify panna mathum theriyum, change panna mudiyaadu!
+          </div>
+          <div class="keywords">
+            <span class="kw">JWT</span>
+            <span class="kw">Claims</span>
+            <span class="kw">Bearer Token</span>
+            <span class="kw">Refresh Token</span>
+            <span class="kw">[Authorize]</span>
+            <span class="kw">Policy</span>
+            <span class="kw">Role-based</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            Principal login → JWT generate → School code, Role claims include → Student/Staff APIs-la <code>[Authorize(Policy="SchoolAdmin")]</code> — ZenCampus multi-school architecture!
+          </div>
+          <div class="tanglish">
+            💡 <strong>Refresh Token Pattern:</strong> Access token = 15 minutes (short). Refresh token = 7 days (DB-la store pannuvu). Token expire aana refresh endpoint call panni new token get pannuvu — interview-la ithaye sollu!
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 19-21</div>
+          <div class="day-title">REST API Design + Versioning + Swagger</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Sarpatta Parambarai (2021):</span> Boxing rules follow pannaa matum win aagalaam. REST-um same — conventions follow pannaa — status codes, URL patterns, HTTP verbs — clean API!
+          </div>
+          <div class="keywords">
+            <span class="kw">GET/POST/PUT/PATCH/DELETE</span>
+            <span class="kw">200/201/400/401/404/500</span>
+            <span class="kw">API Versioning</span>
+            <span class="kw">Swagger/OpenAPI</span>
+            <span class="kw">Problem Details</span>
+            <span class="kw">ActionResult&lt;T&gt;</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            <code>GET /api/v1/students</code> — list<br>
+            <code>GET /api/v1/students/{id}</code> — single<br>
+            <code>POST /api/v1/students</code> — create<br>
+            <code>PATCH /api/v1/students/{id}</code> — partial update<br>
+            ZenCampus-la StudentController ithai follow panrom.
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 22-25</div>
+          <div class="day-title">Global Exception Handling + Validation + Model Binding</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Anniyan (2005):</span> Ambi — good side. Anniyan — punishes errors. Global Exception Handler = Anniyan — any unhandled exception-a catch panni proper response kudukkum!
+          </div>
+          <div class="keywords">
+            <span class="kw">IExceptionHandler</span>
+            <span class="kw">ProblemDetails</span>
+            <span class="kw">DataAnnotations</span>
+            <span class="kw">FluentValidation</span>
+            <span class="kw">ModelState</span>
+            <span class="kw">Filter</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            Student admission form — Name required, DOB valid range, Mobile 10 digits — FluentValidation rules. Exception vaana log panni <code>{"status": 400, "title": "Validation Error"}</code> return panrom.
+          </div>
+          <div class="interview-q">
+            <div class="q">❓ Interview Q:</div>
+            <div class="a">Q: How do you handle exceptions globally in .NET Core?<br>
+            A: UseExceptionHandler middleware or IExceptionHandler (NET 8). ProblemDetails RFC format-la return pannom. Logging-ku Serilog use pannom — ZenCampus-la ithanai use panrom.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase ph3">
+    <div class="phase-header">
+      <span>🟣</span>
+      <span>Phase 3: Enterprise Patterns + Clean Architecture (Day 26–38)</span>
+      <span class="week-label">SENIOR LEVEL</span>
+    </div>
+    <div class="phase-body">
+      <p style="color:#a0a0c0; margin-bottom:16px">Itha therinja nee "Senior Developer" — Design patterns, SOLID, CQRS, Clean Architecture — interview-la ivanga difference create pannuvu!</p>
+
+      <div class="day-grid">
+
+        <div class="day-card">
+          <div class="day-num">Day 26-27</div>
+          <div class="day-title">SOLID Principles</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Magadheera (2009):</span> Every warrior has ONE purpose — S = Single Responsibility. Bairavan kodukkaadaan — O = Open/Closed. Character never changes core identity — L = Liskov!
+          </div>
+          <div class="keywords">
+            <span class="kw">S - Single Responsibility</span>
+            <span class="kw">O - Open/Closed</span>
+            <span class="kw">L - Liskov</span>
+            <span class="kw">I - Interface Segregation</span>
+            <span class="kw">D - Dependency Inversion</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            S: StudentService only handles students (not fees, not attendance)<br>
+            O: New fee type add panna existing code change vendam — new class add pannuvu<br>
+            D: Controller depends on IStudentService (interface), not StudentService (concrete)
+          </div>
+          <div class="interview-q">
+            <div class="q">❓ Interview Q:</div>
+            <div class="a">Q: Give a real example of Open/Closed Principle.<br>
+            A: ZenCampus-la fee calculation — Term fee, Bus fee, Hostel fee — each one separate class implements IFeeCalculator. New fee type add panna existing code touch vendam!</div>
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 28-30</div>
+          <div class="day-title">Design Patterns — Repository, Factory, Strategy</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Kamal + 10 Roles (Dasavathaaram 2008):</span> Same actor, different avatars. Strategy Pattern — same interface, different implementations. Factory = enna role venumnu decide pannuvu!
+          </div>
+          <div class="keywords">
+            <span class="kw">Repository Pattern</span>
+            <span class="kw">Unit of Work</span>
+            <span class="kw">Factory Pattern</span>
+            <span class="kw">Strategy Pattern</span>
+            <span class="kw">Singleton</span>
+            <span class="kw">Decorator</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            Repository: <code>IStudentRepository</code> — CRUD abstraction<br>
+            Strategy: <code>IFeeCalculator</code> — Term/Bus/Hostel implementations<br>
+            Factory: <code>ReportFactory.Create("attendance")</code> — type based report
+          </div>
+          <div class="tanglish">
+            💡 <strong>Repository vs Direct Dapper:</strong> Repository = testable, mockable, swappable. ZenCampus-la already use panrom — interview-la real example kudukkalam!
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 31-33</div>
+          <div class="day-title">CQRS + MediatR Pattern</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Thalapathy (1991):</span> Surya (write) = commands execute pannuvan. Dev (read) = information gather pannuvan. CQRS = Commands (write) and Queries (read) separated — same maari!
+          </div>
+          <div class="keywords">
+            <span class="kw">CQRS</span>
+            <span class="kw">Command</span>
+            <span class="kw">Query</span>
+            <span class="kw">MediatR</span>
+            <span class="kw">IRequest</span>
+            <span class="kw">IRequestHandler</span>
+            <span class="kw">Pipeline Behavior</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            Command: <code>CreateStudentCommand</code> → <code>CreateStudentHandler</code><br>
+            Query: <code>GetStudentQuery</code> → <code>GetStudentHandler</code><br>
+            Controller sirf <code>mediator.Send(command)</code> — handler veruppu!
+          </div>
+          <div class="interview-q">
+            <div class="q">❓ Interview Q:</div>
+            <div class="a">Q: Why use CQRS?<br>
+            A: Read and write different scales, optimizations needed. Read = denormalized views, Write = validated commands. In large systems like ZenCampus multi-school, reporting queries separate DB use panalaam.</div>
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 34-36</div>
+          <div class="day-title">Clean Architecture + Onion Architecture</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Vikram Vedha (2017):</span> Story layers — outer nee theriyum, inner core — moral truth! Clean Architecture-um same — outer layers change aagalaam, Domain (core) = change aagaadu!
+          </div>
+          <div class="keywords">
+            <span class="kw">Domain Layer</span>
+            <span class="kw">Application Layer</span>
+            <span class="kw">Infrastructure Layer</span>
+            <span class="kw">Presentation Layer</span>
+            <span class="kw">Dependency Rule</span>
+            <span class="kw">Use Cases</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Restructured:</div>
+            📁 ZenCampus.Domain → Student entity, interfaces<br>
+            📁 ZenCampus.Application → Services, CQRS handlers<br>
+            📁 ZenCampus.Infrastructure → Dapper repos, API clients<br>
+            📁 ZenCampus.Web → Controllers, Views
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 37-38</div>
+          <div class="day-title">Unit Testing + Integration Testing</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Roja (1992):</span> Every negotiation — test panni prove panuvaanga. Unit test — single function prove panrom. Integration test — system-level prove panrom!
+          </div>
+          <div class="keywords">
+            <span class="kw">xUnit</span>
+            <span class="kw">Moq</span>
+            <span class="kw">Arrange-Act-Assert</span>
+            <span class="kw">Mock</span>
+            <span class="kw">Stub</span>
+            <span class="kw">WebApplicationFactory</span>
+            <span class="kw">Test Coverage</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            <code>// Arrange</code><br>
+            <code>var mockRepo = new Mock&lt;IStudentRepo&gt;();</code><br>
+            <code>// Act</code><br>
+            <code>var result = await service.GetStudentAsync(1);</code><br>
+            <code>// Assert</code><br>
+            <code>Assert.Equal("John", result.Name);</code>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase ph4">
+    <div class="phase-header">
+      <span>🟠</span>
+      <span>Phase 4: Cloud + Docker + DevOps (Day 39–50)</span>
+      <span class="week-label">MARKET DEMAND</span>
+    </div>
+    <div class="phase-body">
+      <p style="color:#a0a0c0; margin-bottom:16px">90% .NET roles now require Azure/Docker knowledge. Itha therinja salary 30-40% jump aagum!</p>
+
+      <div class="day-grid">
+
+        <div class="day-card">
+          <div class="day-num">Day 39-41</div>
+          <div class="day-title">Docker Fundamentals + Containerize ZenCampus</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Kaithi (2019):</span> Dilli — self-contained truck, anywhere run aagum. Docker container-um same — OS vendam, dependencies vendam — image-la everything packed!
+          </div>
+          <div class="keywords">
+            <span class="kw">Dockerfile</span>
+            <span class="kw">docker build</span>
+            <span class="kw">docker run</span>
+            <span class="kw">docker-compose</span>
+            <span class="kw">Image vs Container</span>
+            <span class="kw">Port mapping</span>
+            <span class="kw">Volume</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Dockerfile:</div>
+            <code>FROM mcr.microsoft.com/dotnet/aspnet:8.0</code><br>
+            <code>COPY . /app</code><br>
+            <code>WORKDIR /app</code><br>
+            <code>EXPOSE 80</code><br>
+            <code>ENTRYPOINT ["dotnet", "ZenCampusWeb.dll"]</code>
+          </div>
+          <div class="tanglish">
+            💡 <strong>Docker Compose:</strong> ZenCampus Web + SQL Server + Redis — ellam oru <code>docker-compose.yml</code>-la define panni <code>docker-compose up</code> — team member-ku setup time zero!
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 42-45</div>
+          <div class="day-title">Azure Fundamentals — App Service, SQL, Storage</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Bigil (2019):</span> Girls team — distributed, different locations, oru captain. Azure — App Service (captain), SQL Database (data), Storage (files), Key Vault (secrets) — oru platform!
+          </div>
+          <div class="keywords">
+            <span class="kw">Azure App Service</span>
+            <span class="kw">Azure SQL</span>
+            <span class="kw">Blob Storage</span>
+            <span class="kw">Azure Key Vault</span>
+            <span class="kw">Connection String</span>
+            <span class="kw">Managed Identity</span>
+            <span class="kw">App Settings</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus on Azure:</div>
+            Student photos → Azure Blob Storage<br>
+            Student data → Azure SQL<br>
+            API secrets → Azure Key Vault<br>
+            Web app → Azure App Service (auto-scale!)<br>
+            No server maintain vendam!
+          </div>
+          <div class="interview-q">
+            <div class="q">❓ Interview Q:</div>
+            <div class="a">Q: How would you deploy ZenCampus to Azure?<br>
+            A: App Service Plan create → Web App deploy (CI/CD via GitHub Actions) → Connection strings Key Vault-la store → Managed Identity use panni DB connect → Application Insights for monitoring.</div>
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 46-48</div>
+          <div class="day-title">CI/CD with GitHub Actions</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Robot 2.0 (2018):</span> 5G network — automatic, instant signal. CI/CD-um same — code push panna → automatically build → test → deploy → Azure-la live!
+          </div>
+          <div class="keywords">
+            <span class="kw">GitHub Actions</span>
+            <span class="kw">workflow.yml</span>
+            <span class="kw">on: push</span>
+            <span class="kw">dotnet build</span>
+            <span class="kw">dotnet test</span>
+            <span class="kw">Azure Deploy</span>
+            <span class="kw">Secrets</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Pipeline:</div>
+            Push to main → <br>
+            ✅ dotnet build → <br>
+            ✅ dotnet test → <br>
+            ✅ docker build → <br>
+            ✅ deploy to Azure App Service → <br>
+            ✅ Notification!
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 49-50</div>
+          <div class="day-title">Redis Caching + Background Jobs (Hangfire)</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Ghilli (2004):</span> Velu — quick reactions! Redis = in-memory cache — DB-ku poga vendam, milliseconds-la response! Hangfire = background worker — like Velu doing work silently behind the scenes!
+          </div>
+          <div class="keywords">
+            <span class="kw">Redis</span>
+            <span class="kw">IDistributedCache</span>
+            <span class="kw">Cache-aside pattern</span>
+            <span class="kw">TTL</span>
+            <span class="kw">Hangfire</span>
+            <span class="kw">RecurringJob</span>
+            <span class="kw">BackgroundJob</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus Example:</div>
+            School timetable — daily 1000 students access panuvaanga — Redis-la cache pannuvu (TTL: 1 hour). Fee reminder — Hangfire recurring job — every day 8AM parents-ku SMS!
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 5 -->
+  <div class="phase ph5">
+    <div class="phase-header">
+      <span>🔴</span>
+      <span>Phase 5: React Frontend + System Design (Day 51–58)</span>
+      <span class="week-label">FULL STACK</span>
+    </div>
+    <div class="phase-body">
+      <div class="day-grid">
+
+        <div class="day-card">
+          <div class="day-num">Day 51-54</div>
+          <div class="day-title">React Essentials — Hooks, State, API Calls</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Mersal (2017):</span> Victor = oru naal doctor, oru naal magician. React components — same way different "modes" based on state. useState = mode change, useEffect = side effects!
+          </div>
+          <div class="keywords">
+            <span class="kw">useState</span>
+            <span class="kw">useEffect</span>
+            <span class="kw">useContext</span>
+            <span class="kw">axios/fetch</span>
+            <span class="kw">props</span>
+            <span class="kw">JSX</span>
+            <span class="kw">React Router</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus React Dashboard:</div>
+            Student list component → <code>useEffect</code>-la API call → <code>useState</code>-la data store → table render. Search filter → controlled input → filter students. Simple but complete!
+          </div>
+          <div class="tanglish">
+            💡 <strong>Itha therinja enough:</strong> Full React mastery vendam. "ZenCampus API consume panna React-la dashboard build panninen" nu sollividu — practical experience-u!
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 55-58</div>
+          <div class="day-title">System Design — Scale ZenCampus!</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Indian 2 (2024):</span> Senapathi — system-level thinker, not just individual fights. System Design-um same — big picture, scale, reliability, cost — individual component-a paarkaama!
+          </div>
+          <div class="keywords">
+            <span class="kw">Load Balancer</span>
+            <span class="kw">Horizontal Scaling</span>
+            <span class="kw">Database Sharding</span>
+            <span class="kw">CDN</span>
+            <span class="kw">Message Queue</span>
+            <span class="kw">Microservices</span>
+            <span class="kw">API Gateway</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus at Scale (1000 Schools):</div>
+            Load Balancer → Multiple App Servers<br>
+            Redis Cluster → Distributed Cache<br>
+            Azure SQL → Read Replica for reports<br>
+            RabbitMQ → Fee reminder queue<br>
+            Azure CDN → Student photos fast load<br>
+            API Gateway → Rate limiting per school
+          </div>
+          <div class="interview-q">
+            <div class="q">❓ Interview Q:</div>
+            <div class="a">Q: How would you design ZenCampus for 1 million students?<br>
+            A: Horizontal scaling with load balancer, Redis for session/cache, read replicas for reporting, blob storage for files, message queue for notifications, CDN for static assets. School-wise data partition for multi-tenancy.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 6 -->
+  <div class="phase ph6">
+    <div class="phase-header">
+      <span>⚡</span>
+      <span>Phase 6: AI Integration + Interview Prep (Day 59–60)</span>
+      <span class="week-label">FUTURE PROOF</span>
+    </div>
+    <div class="phase-body">
+      <div class="day-grid">
+
+        <div class="day-card">
+          <div class="day-num">Day 59</div>
+          <div class="day-title">AI Integration — OpenAI + RAG Basics</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Enthiran (Chitti 3.0 Concept):</span> Chitti learns from data — RAG exactly same! AI + ZenCampus data = Smart school assistant!
+          </div>
+          <div class="keywords">
+            <span class="kw">OpenAI API</span>
+            <span class="kw">Chat Completion</span>
+            <span class="kw">Embeddings</span>
+            <span class="kw">Vector Search</span>
+            <span class="kw">RAG</span>
+            <span class="kw">Semantic Kernel</span>
+          </div>
+          <div class="project-eg">
+            <div class="label">🏫 ZenCampus AI Feature:</div>
+            "Ivanda student-oda attendance trend enna?" → OpenAI API → Student data context → AI answer generate! Parent portal-la chatbot add pannuvu!
+          </div>
+        </div>
+
+        <div class="day-card">
+          <div class="day-num">Day 60</div>
+          <div class="day-title">Final Interview Prep + Mock Answers</div>
+          <div class="movie-ref">
+            <span class="film">🎬 Sivaji The Boss (2007):</span> Sivaji — plan panni, practice panni, execute panni win pannuvan. Interview-um same — prepare + confident deliver = win!
+          </div>
+          <div class="keywords">
+            <span class="kw">Tell me about yourself</span>
+            <span class="kw">Your biggest project</span>
+            <span class="kw">Technical challenges</span>
+            <span class="kw">Salary negotiation</span>
+          </div>
+          <div class="tanglish">
+            💡 <strong>Golden Template:</strong><br>
+            "I have 3.5 years experience in .NET MVC building ZenCampus — a multi-school ERP serving 50,000+ students. I've handled [specific challenge] using [specific tech]. Recently I've been learning [Azure/Docker/React] and built [specific feature]. I'm targeting [role] because [reason]."
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERVIEW MASTER SHEET -->
+  <div style="background:#13132a; border-radius:12px; padding:24px; margin:30px 0; border:1px solid #2a2a4a;">
+    <h2 style="color:#e94560; margin-bottom:16px">🎯 Top 30 Interview Questions — ZenCampus Answers</h2>
+    <table>
+      <tr><th>#</th><th>Question</th><th>ZenCampus Answer Hint</th><th>Movie Memory</th></tr>
+      <tr><td>1</td><td>What is async/await?</td><td>Student API parallel fetch use case</td><td>Enthiran parallel processing</td></tr>
+      <tr><td>2</td><td>Dependency Injection explain</td><td>IStudentService inject in Controller</td><td>Baasha — one dependency, controlled</td></tr>
+      <tr><td>3</td><td>JWT vs Session</td><td>ZenCampus multi-school JWT claims</td><td>Thuppakki identity</td></tr>
+      <tr><td>4</td><td>SOLID with example</td><td>IFeeCalculator implementations</td><td>Magadheera warrior roles</td></tr>
+      <tr><td>5</td><td>Repository Pattern why?</td><td>IStudentRepository testability</td><td>Dasavathaaram — abstraction</td></tr>
+      <tr><td>6</td><td>Middleware pipeline</td><td>SchoolContext middleware</td><td>Baasha train coaches</td></tr>
+      <tr><td>7</td><td>LINQ IQueryable vs IEnumerable</td><td>Student filter DB vs memory</td><td>Vikram — identity matters</td></tr>
+      <tr><td>8</td><td>EF Core vs Dapper</td><td>ZenCampus uses both — why</td><td>Two brothers — different strengths</td></tr>
+      <tr><td>9</td><td>N+1 problem</td><td>Attendance reporting fix</td><td>Ratsasan — methodical detection</td></tr>
+      <tr><td>10</td><td>Redis caching strategy</td><td>Timetable cache TTL</td><td>Ghilli quick reactions</td></tr>
+      <tr><td>11</td><td>CQRS pattern</td><td>Student read vs write separate</td><td>Thalapathy two roles</td></tr>
+      <tr><td>12</td><td>Clean Architecture</td><td>ZenCampus layer structure</td><td>Vikram Vedha layers</td></tr>
+      <tr><td>13</td><td>Docker vs VM</td><td>ZenCampus containerized</td><td>Kaithi self-contained truck</td></tr>
+      <tr><td>14</td><td>CI/CD pipeline</td><td>GitHub Actions ZenCampus deploy</td><td>Robot 2.0 automatic</td></tr>
+      <tr><td>15</td><td>Azure App Service vs VM</td><td>ZenCampus hosting decision</td><td>Bigil team distribution</td></tr>
+      <tr><td>16</td><td>Clustered vs Non-Clustered Index</td><td>StudentId clustered index</td><td>Ratsasan clue finding</td></tr>
+      <tr><td>17</td><td>Stored Procedure vs ORM</td><td>ZenCampus complex reports</td><td>Different tools, same goal</td></tr>
+      <tr><td>18</td><td>Unit Test with Mock</td><td>Mock IStudentRepository</td><td>Roja — prove everything</td></tr>
+      <tr><td>19</td><td>Exception handling globally</td><td>ZenCampus global handler</td><td>Anniyan punishes exceptions</td></tr>
+      <tr><td>20</td><td>FluentValidation vs DataAnnotations</td><td>Admission form validation</td><td>Sarpatta — follow rules</td></tr>
+      <tr><td>21</td><td>Horizontal vs Vertical scaling</td><td>ZenCampus 1000 schools</td><td>Indian 2 — big picture</td></tr>
+      <tr><td>22</td><td>Microservices vs Monolith</td><td>ZenCampus evolution story</td><td>Big team vs specialists</td></tr>
+      <tr><td>23</td><td>Message Queue use case</td><td>Fee reminder SMS queue</td><td>96 — patient waiting</td></tr>
+      <tr><td>24</td><td>API Rate Limiting</td><td>Per-school API limits</td><td>Sarpatta — rules protect</td></tr>
+      <tr><td>25</td><td>React useState vs useReducer</td><td>Student dashboard state</td><td>Mersal — mode changes</td></tr>
+      <tr><td>26</td><td>CORS issue and fix</td><td>React → .NET API cross-origin</td><td>Communication barrier</td></tr>
+      <tr><td>27</td><td>Refresh Token flow</td><td>ZenCampus login token refresh</td><td>Thuppakki undercover renewal</td></tr>
+      <tr><td>28</td><td>API Versioning strategies</td><td>v1 vs v2 student API</td><td>Kaaka Muttai — evolving</td></tr>
+      <tr><td>29</td><td>OpenAI integration</td><td>ZenCampus AI chatbot concept</td><td>Enthiran learning from data</td></tr>
+      <tr><td>30</td><td>Tell about your biggest challenge</td><td>Multi-school tenant isolation</td><td>Sivaji — planned, won</td></tr>
+    </table>
+  </div>
+
+  <!-- DAILY ROUTINE -->
+  <div style="background:#13132a; border-radius:12px; padding:24px; margin:30px 0; border:1px solid #2a2a4a;">
+    <h2 style="color:#e94560; margin-bottom:16px">📅 Daily Routine — 2.5 Hours Plan</h2>
+    <div class="day-grid">
+      <div style="background:#1a1a35; border-radius:8px; padding:16px;">
+        <div style="color:#74b9ff; font-weight:bold; margin-bottom:8px">🌅 Morning (45 min)</div>
+        <ul class="checklist">
+          <li>Yesterday revision — 10 min</li>
+          <li>Today topic read — 20 min</li>
+          <li>Keywords note — 15 min</li>
+        </ul>
+      </div>
+      <div style="background:#1a1a35; border-radius:8px; padding:16px;">
+        <div style="color:#74b9ff; font-weight:bold; margin-bottom:8px">🌞 Afternoon (60 min)</div>
+        <ul class="checklist">
+          <li>Hands-on code — 40 min</li>
+          <li>ZenCampus apply — 20 min</li>
+        </ul>
+      </div>
+      <div style="background:#1a1a35; border-radius:8px; padding:16px;">
+        <div style="color:#74b9ff; font-weight:bold; margin-bottom:8px">🌙 Evening (45 min)</div>
+        <ul class="checklist">
+          <li>Interview Q practice — 20 min</li>
+          <li>Tamil movie memory link — 5 min</li>
+          <li>Tomorrow preview — 10 min</li>
+          <li>GitHub push code — 10 min</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEYWORDS QUICK REF -->
+  <div style="background:#13132a; border-radius:12px; padding:24px; margin:30px 0; border:1px solid #2a2a4a;">
+    <h2 style="color:#e94560; margin-bottom:16px">⚡ Tanglish Keywords — Exam Day Flashcard</h2>
+    <p style="color:#a0a0c0; margin-bottom:12px">Itha phone-la screenshot edutthu vachu ko — interview-ku poga 1 hour before paarunga!</p>
+
+    <h3>C# Advanced</h3>
+    <div class="keywords" style="margin:8px 0">
+      <span class="kw">LINQ = Data filter panna</span>
+      <span class="kw">async/await = Parallel wait panna</span>
+      <span class="kw">delegate = Method pointer</span>
+      <span class="kw">Func = Return value delegate</span>
+      <span class="kw">Action = No return delegate</span>
+      <span class="kw">IQueryable = DB-la filter</span>
+      <span class="kw">IEnumerable = Memory-la filter</span>
+    </div>
+
+    <h3>SQL</h3>
+    <div class="keywords" style="margin:8px 0">
+      <span class="kw">Clustered Index = Physical sort</span>
+      <span class="kw">CTE = Temp named query</span>
+      <span class="kw">Window Fn = Group-a paarunga row miss aagaadu</span>
+      <span class="kw">N+1 = Loop-la DB call = Bad</span>
+      <span class="kw">Execution Plan = Query speed check</span>
+    </div>
+
+    <h3>ASP.NET Core</h3>
+    <div class="keywords" style="margin:8px 0">
+      <span class="kw">Middleware = Request interceptor</span>
+      <span class="kw">Scoped = Per request</span>
+      <span class="kw">Singleton = App lifetime</span>
+      <span class="kw">JWT = Encrypted identity</span>
+      <span class="kw">Claims = User properties in token</span>
+      <span class="kw">ProblemDetails = Standard error format</span>
+    </div>
+
+    <h3>Patterns</h3>
+    <div class="keywords" style="margin:8px 0">
+      <span class="kw">SOLID-S = One job only</span>
+      <span class="kw">SOLID-O = Add no modify</span>
+      <span class="kw">Repository = DB abstraction</span>
+      <span class="kw">CQRS = Read write separate</span>
+      <span class="kw">Strategy = Swappable algorithm</span>
+      <span class="kw">Factory = Object creator</span>
+    </div>
+
+    <h3>Cloud + DevOps</h3>
+    <div class="keywords" style="margin:8px 0">
+      <span class="kw">Docker = Containerize app</span>
+      <span class="kw">Azure App Service = Managed hosting</span>
+      <span class="kw">Key Vault = Secrets store</span>
+      <span class="kw">CI/CD = Auto build deploy</span>
+      <span class="kw">Redis = Memory cache</span>
+      <span class="kw">Hangfire = Background jobs</span>
+    </div>
+
+    <h3>System Design</h3>
+    <div class="keywords" style="margin:8px 0">
+      <span class="kw">Load Balancer = Traffic split</span>
+      <span class="kw">Horizontal Scale = More servers</span>
+      <span class="kw">CDN = Fast static files</span>
+      <span class="kw">Message Queue = Async decoupling</span>
+      <span class="kw">Read Replica = Report DB</span>
+      <span class="kw">API Gateway = Single entry</span>
+    </div>
+  </div>
+
+  <!-- PROGRESS TRACKER -->
+  <div style="background:#13132a; border-radius:12px; padding:24px; margin:30px 0; border:1px solid #2a2a4a;">
+    <h2 style="color:#e94560; margin-bottom:16px">📊 60-Day Progress Tracker</h2>
+    <table>
+      <tr><th>Phase</th><th>Days</th><th>Topic</th><th>Status</th><th>Interview Weight</th></tr>
+      <tr><td>1</td><td>1-12</td><td>Advanced C# + SQL</td><td>☐ Not Started</td><td>⭐⭐⭐⭐</td></tr>
+      <tr><td>2</td><td>13-25</td><td>ASP.NET Core + Web API</td><td>☐ Not Started</td><td>⭐⭐⭐⭐⭐</td></tr>
+      <tr><td>3</td><td>26-38</td><td>Enterprise Patterns</td><td>☐ Not Started</td><td>⭐⭐⭐⭐⭐</td></tr>
+      <tr><td>4</td><td>39-50</td><td>Docker + Azure + DevOps</td><td>☐ Not Started</td><td>⭐⭐⭐⭐⭐</td></tr>
+      <tr><td>5</td><td>51-58</td><td>React + System Design</td><td>☐ Not Started</td><td>⭐⭐⭐⭐</td></tr>
+      <tr><td>6</td><td>59-60</td><td>AI + Final Prep</td><td>☐ Not Started</td><td>⭐⭐⭐</td></tr>
+    </table>
+    <p style="color:#a0a0c0; margin-top:12px; font-size:0.85em">☐ Not Started → ⏳ In Progress → ✅ Complete — update panni track pannu!</p>
+  </div>
+
+  <!-- MOTIVATIONAL -->
+  <div style="background:linear-gradient(135deg,#1a0f2e,#0d1b2a); border-radius:12px; padding:30px; margin:30px 0; text-align:center; border:1px solid #e94560;">
+    <div style="font-size:2em; margin-bottom:12px">🎬</div>
+    <h2 style="color:#f39c12; margin-bottom:12px">Sivaji The Boss Final Dialogue (Modified)</h2>
+    <p style="color:#e0e0e0; font-size:1.1em; font-style:italic; max-width:600px; margin:0 auto">
+      "Interview-la kekuvanga — 'What's your biggest project?' <br>
+      Nee soluva — 'Sir, ZenCampus — 50,000 students, multi-school, .NET 8, Azure, Docker, CQRS, JWT, Redis, AI integration...' <br>
+      Avangaluku offer kudukkaamal option-e illai!"
+    </p>
+    <div style="margin-top:20px; color:#a0a0c0">
+      <strong class="highlight">60 days × 2.5 hours = 150 hours of focused learning</strong><br>
+      Real project examples + Tamil movie memory = Interview ready!
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>ZenCampus 60-Day Interview Plan | Basha | basha@raxgbc.co.in | Target: 21-Aug-2026</p>
+  <p style="margin-top:4px; font-size:0.8em">🎬 "Kadaisi varai fight — ithane formula!" — Every Tamil movie + Every interview!</p>
+</footer>
+
+</body>
+</html>

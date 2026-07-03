@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenCampus TypeScript Complete Guide - 20 Concepts + 50 Interview Q&A</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --accent:#3b82f6; --text:#e2e8f0; --muted:#94a3b8; --code:#0b1220; --green:#22c55e;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI',Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  header{ background:linear-gradient(135deg,#1e40af,#0f172a); padding:36px 20px; text-align:center; border-bottom:3px solid var(--accent); }
+  header h1{ margin:0 0 8px; font-size:1.9rem; color:#fff; }
+  header p{ margin:0; color:var(--muted); }
+  .tabs{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; background:#0b1220; padding:14px; position:sticky; top:0; z-index:20; border-bottom:1px solid #334155; }
+  .tab-btn{ padding:10px 20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--muted); cursor:pointer; font-weight:600; font-size:0.9rem; }
+  .tab-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .container{ max-width:920px; margin:0 auto; padding:30px 20px 80px; }
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
+
+  .search-box{ width:100%; padding:12px 16px; margin-bottom:20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--text); font-size:1rem; }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .filter-btn{ padding:6px 14px; border-radius:20px; border:1px solid #334155; background:transparent; color:var(--muted); cursor:pointer; font-size:0.85rem; }
+  .filter-btn.active, .filter-btn:hover{ background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  .day-block{ margin-bottom:36px; }
+  .day-title{ color:var(--accent); font-size:1.3rem; margin-bottom:14px; border-left:4px solid var(--accent); padding-left:10px; }
+
+  .qa{ background:var(--card); border-radius:10px; margin-bottom:14px; overflow:hidden; border:1px solid #334155; scroll-margin-top:140px; }
+  .q{ padding:16px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; gap:12px; }
+  .q:hover{ background:#1e2a4a; }
+  .q .num{ color:var(--accent); margin-right:8px; }
+  .q .tag{ font-size:0.7rem; font-weight:400; padding:2px 8px; border-radius:10px; background:#0b1220; color:var(--accent); white-space:nowrap; }
+  .a{ max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 18px; color:var(--muted); border-top:1px solid transparent; }
+  .qa.open .a{ max-height:1300px; padding:0 18px 18px; border-top:1px solid #334155; }
+  .a code, .a pre{ background:var(--code); color:#93c5fd; padding:2px 6px; border-radius:4px; font-family:Consolas,Monaco,monospace; font-size:0.86rem; }
+  .a pre{ display:block; padding:12px; overflow-x:auto; white-space:pre-wrap; margin:10px 0; }
+  .movie-ref{ background:#3b1e5e; color:#e9d5ff; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .zen-ref{ background:#0e3b2e; color:#bbf7d0; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .toggle-icon{ transition:transform .25s; color:var(--accent); font-size:1.1rem; }
+  .qa.open .toggle-icon{ transform:rotate(45deg); }
+  .count{ color:var(--accent); font-weight:600; }
+
+  .checklist{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media(max-width:600px){ .checklist{ grid-template-columns:1fr; } }
+  .check-item{ background:var(--card); border:1px solid #334155; border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .check-item:hover{ border-color:var(--accent); }
+  .check-item .badge{ color:var(--green); font-size:1.1rem; }
+  .check-item .num{ color:var(--muted); font-size:0.8rem; min-width:20px; }
+
+  footer{ text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔷 ZenCampus TypeScript Complete Guide</h1>
+  <p>20 Core Concepts (5-Day Plan) + 50 Interview Q&A — All-in-One</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="guide">📘 5-Day Guide</button>
+  <button class="tab-btn" data-tab="interview">🎯 Interview Q&A</button>
+  <button class="tab-btn" data-tab="coverage">✅ Topic Coverage</button>
+</div>
+
+<div class="container">
+
+  <div class="tab-content active" id="tab-guide">
+    <div id="guideList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-interview">
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search a question (e.g. generics, interface, type guard)...">
+    <div class="filters" id="filters"></div>
+    <p style="color:var(--muted); font-size:0.85rem;">Showing <span class="count" id="visibleCount">50</span> / 50 questions</p>
+    <div id="qaList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-coverage">
+    <p style="color:var(--muted);">All 20 core TypeScript concepts every ZenCampus frontend/backend TS dev should know. Click any item to jump to it.</p>
+    <div class="checklist" id="checklist"></div>
+  </div>
+
+</div>
+
+<footer>Built for ZenCampus TypeScript learning • 2026-07-02</footer>
+
+<script>
+// ============ 20 CONCEPTS ACROSS 5 DAYS (4 topics/day) ============
+const guideDays = [
+{
+  day:1, title:"Day 1 — TypeScript Fundamentals (Why TS, Basic Types, Inference, Interfaces)",
+  topics:[
+    { name:"1. What is TypeScript &amp; Why Use It",
+      movie:"🎬 Vikram — before the mission, Amar/Kesav wears an armor/mask that catches mistakes before they become fatal. TypeScript is that armor for JavaScript — it catches type mistakes at compile time, before they crash in production.",
+      explain:"TypeScript is a superset of JavaScript that adds static typing. It compiles ('transpiles') down to plain JS, so it runs everywhere JS runs, but the TS compiler (<code>tsc</code>) catches type errors during development instead of at runtime.",
+      zen:"If ZenCampus's frontend JS were migrated to TS, a typo like <code>student.nmae</code> (instead of <code>name</code>) would be caught immediately by the editor/compiler, instead of silently showing 'undefined' in the fee/attendance report only in production.",
+      code:"// app.js (plain JS) - bug only found at runtime\nconsole.log(student.nmae); // undefined, no warning\n\n// app.ts (TypeScript) - caught immediately\ninterface Student { name: string; }\nconst student: Student = { name: 'Arjun' };\nconsole.log(student.nmae); // ERROR: Property 'nmae' does not exist" },
+    { name:"2. Basic Types (string, number, boolean, array, tuple)",
+      movie:"🎬 Anniyan — each of Ambi's personalities has a clearly defined, fixed identity (cop, vigilante, gentle son) — no personality can suddenly become a different one mid-scene. TS basic types work the same way: once a variable is typed, it can't suddenly hold a different kind of value.",
+      explain:"Core primitive types: <code>string, number, boolean</code>. Collections: <code>array</code> (<code>number[]</code> or <code>Array&lt;number&gt;</code>) and <code>tuple</code> (a fixed-length array with specific types per position, e.g. <code>[string, number]</code>).",
+      zen:"A fee record could be typed as a tuple <code>[string, number]</code> representing <code>[studentName, dueAmount]</code>, or more readably as an array of typed objects for the Bill module's due-list.",
+      code:"let studentName: string = 'Arjun';\nlet age: number = 20;\nlet feesPaid: boolean = true;\nlet marks: number[] = [78, 85, 90];\nlet feeRecord: [string, number] = ['Arjun', 5000]; // tuple" },
+    { name:"3. Type Inference",
+      movie:"🎬 Master — JD can size up a student's character just by observing them, without needing an explicit introduction every time. TypeScript does the same — it INFERS a variable's type from its initial value, without you writing the type explicitly every time.",
+      explain:"When you assign a value without an explicit type annotation, TS automatically infers the most specific type from that value and enforces it from then on. Explicit annotations are still recommended for function parameters and return types (which TS cannot infer from nothing).",
+      zen:"<code>let totalFee = 50000;</code> is automatically inferred as <code>number</code> — assigning <code>totalFee = 'unpaid'</code> later would immediately throw a compile error, catching a whole class of ZenCampus bugs before they ship.",
+      code:"let totalFee = 50000;        // inferred as: number\ntotalFee = 'unpaid';          // ERROR: Type 'string' is not assignable to type 'number'\n\nconst students = ['Arjun', 'Divya']; // inferred as: string[]" },
+    { name:"4. Interfaces",
+      movie:"🎬 Jai Bhim — Chandru insists every piece of testimony must follow a strict, verifiable structure before he accepts it as evidence. An interface is that structural contract — it defines exactly what SHAPE an object must have to be considered valid.",
+      explain:"An <code>interface</code> defines the expected shape (property names + types) of an object. Any object matching that shape satisfies the interface, even without explicitly declaring it (structural typing, aka 'duck typing').",
+      zen:"Defining an interface <code>Student</code> that mirrors the backend C# <code>Student</code> model ensures the frontend TS code always expects the exact same fields the ASP.NET API actually returns.",
+      code:"interface Student {\n  id: number;\n  name: string;\n  className: string;\n  feesPaid: boolean;\n}\n\nfunction printStudent(s: Student) {\n  console.log(`${s.name} - ${s.className}`);\n}" }
+  ]
+},
+{
+  day:2, title:"Day 2 — Types Deep Dive (Type Aliases, Unions, Literals, Enums)",
+  topics:[
+    { name:"5. Type Aliases (type vs interface)",
+      movie:"🎬 Baasha — Manikam and Baasha are two NAMES for describing the same underlying person from different angles. <code>type</code> and <code>interface</code> are two different syntaxes for describing shapes — often interchangeable, but each has unique strengths.",
+      explain:"<code>type</code> can alias ANY type — primitives, unions, tuples, function signatures — not just object shapes. <code>interface</code> is limited to object/class shapes but supports declaration merging (re-opening the same interface to add more fields) and is generally preferred for public API shapes.",
+      zen:"Use <code>type FeeStatus = 'Paid' | 'Due' | 'Overdue';</code> (a union, which only <code>type</code> can express directly) alongside <code>interface Student {...}</code> for object shapes — both together in the same ZenCampus codebase.",
+      code:"type FeeStatus = 'Paid' | 'Due' | 'Overdue'; // type alias for a union\ninterface Student {                            // interface for an object shape\n  name: string;\n  status: FeeStatus;\n}" },
+    { name:"6. Union &amp; Intersection Types",
+      movie:"🎬 Vikram Vedha — sometimes Vikram is EITHER chasing a lead OR resting (union — one state at a time), but at the climax he embodies traits of BOTH cop and outlaw simultaneously (intersection — all traits combined at once).",
+      explain:"Union (<code>A | B</code>) means a value can be EITHER type A OR type B. Intersection (<code>A &amp; B</code>) means a value must satisfy BOTH type A AND type B combined into one.",
+      zen:"An API response ID field that could be a number or a string from different legacy endpoints: <code>type StudentId = number | string;</code>. Combining a base <code>Person</code> shape with `StaffDetails` via intersection for the Staff module.",
+      code:"type StudentId = number | string; // union\n\ninterface Person { name: string; }\ninterface StaffDetails { department: string; salary: number; }\ntype Staff = Person &amp; StaffDetails; // intersection - must have ALL fields\n\nconst staff: Staff = { name: 'Kumar', department: 'Admin', salary: 40000 };" },
+    { name:"7. Literal Types",
+      movie:"🎬 Sarkar — Vijay's character only accepts a fixed, exact set of valid votes/outcomes, nothing outside that specific list is acceptable. Literal types restrict a variable to one EXACT value (or a fixed set of exact values) rather than a broad type like `string`.",
+      explain:"A literal type narrows a type down to specific exact values, e.g. <code>'Present' | 'Absent' | 'Leave'</code> instead of the much broader <code>string</code> — the compiler then rejects any other value at compile time.",
+      zen:"The StudentAttendance module's status field is safest typed as a literal union <code>'Present' | 'Absent' | 'Leave'</code> instead of plain <code>string</code>, preventing typos like <code>'Presnt'</code> from ever compiling.",
+      code:"type AttendanceStatus = 'Present' | 'Absent' | 'Leave';\n\nfunction markAttendance(status: AttendanceStatus) { /* ... */ }\n\nmarkAttendance('Present'); // OK\nmarkAttendance('Presnt');  // ERROR: not assignable" },
+    { name:"8. Enums",
+      movie:"🎬 Indian (1996) — Senapathy assigns each of his 'soldiers' a fixed rank/role in a clearly numbered hierarchy. An enum defines a fixed, named set of related constant values, often backed by numbers internally.",
+      explain:"<code>enum</code> creates a set of named constants. Numeric enums auto-increment from 0 by default; string enums require explicit string values for each member (often clearer for debugging/logging).",
+      zen:"A <code>enum RoomType { AC = 'AC', NonAC = 'NonAC' }</code> for the Hostel module keeps room-type values consistent everywhere instead of scattering raw string literals across the codebase.",
+      code:"enum RoomType {\n  AC = 'AC',\n  NonAC = 'NonAC'\n}\n\nfunction allocateRoom(type: RoomType) { /* ... */ }\nallocateRoom(RoomType.AC);" }
+  ]
+},
+{
+  day:3, title:"Day 3 — Functions &amp; OOP (Parameters, Classes, Access Modifiers, Generics)",
+  topics:[
+    { name:"9. Functions: Optional, Default &amp; Rest Parameters",
+      movie:"🎬 96 — some memories (parameters) are essential and always present, others are optional recollections that may or may not surface, and some come as a whole flood of many at once. TS functions support exactly these three parameter styles.",
+      explain:"Optional params use <code>?</code> (<code>name?: string</code>) and may be <code>undefined</code>. Default params (<code>name: string = 'Guest'</code>) auto-fill when omitted. Rest params (<code>...args: number[]</code>) collect any number of extra arguments into an array.",
+      zen:"A `calculateFee(base: number, discount: number = 0, ...extraCharges: number[])` function for the Bill module — discount defaults to 0, and any number of extra charges can be passed in.",
+      code:"function calculateFee(base: number, discount: number = 0, ...extraCharges: number[]): number {\n  const extras = extraCharges.reduce((sum, c) => sum + c, 0);\n  return base - discount + extras;\n}\ncalculateFee(5000);              // discount=0, no extras\ncalculateFee(5000, 500, 100, 50); // discount + 2 extra charges" },
+    { name:"10. Classes &amp; Access Modifiers (public, private, protected)",
+      movie:"🎬 Vaaranam Aayiram — some of Krishna's memories are shared openly with everyone (public), some are known only within his family circle (protected), and some he keeps entirely to himself (private).",
+      explain:"<code>public</code> (default) — accessible from anywhere. <code>private</code> — accessible only within the same class. <code>protected</code> — accessible within the class AND its subclasses. TS enforces these at compile time (unlike plain JS's <code>#private</code> which is enforced at runtime).",
+      zen:"A `Student` class could keep an internal `_attendanceLog` as `private`, exposing only a `getAttendancePercent()` public method — preventing other ZenCampus code from directly mutating the raw log.",
+      code:"class Student {\n  public name: string;\n  private attendanceLog: string[] = [];\n\n  constructor(name: string) { this.name = name; }\n\n  public markPresent(date: string) {\n    this.attendanceLog.push(date);\n  }\n  public getAttendanceCount(): number {\n    return this.attendanceLog.length;\n  }\n}" },
+    { name:"11. Interfaces vs Abstract Classes",
+      movie:"🎬 Enthiran (Robot) — the blueprint schematic (interface, no actual metal) vs. an actual half-built Chitti prototype with SOME parts already functional (abstract class, partial implementation).",
+      explain:"An <code>interface</code> defines ONLY a shape/contract — zero implementation. An <code>abstract class</code> can provide shared implementation for SOME methods while forcing subclasses to implement others (marked <code>abstract</code>), and can hold state (fields) — interfaces cannot.",
+      zen:"An `abstract class ReportGenerator` could implement a shared `formatCurrency()` method used by both `FeeReportGenerator` and `AttendanceReportGenerator` subclasses, while forcing each to implement its own abstract `generate()` method.",
+      code:"abstract class ReportGenerator {\n  formatCurrency(amount: number): string { return `₹${amount}`; }\n  abstract generate(): string;\n}\n\nclass FeeReportGenerator extends ReportGenerator {\n  generate(): string { return this.formatCurrency(5000); }\n}" },
+    { name:"12. Generics",
+      movie:"🎬 Mersal — Vijay's 'Maaran' character adapts the same core skillset to work for whichever specific role the story needs at that moment. Generics let a function/class work with ANY type while still preserving type safety for that specific call.",
+      explain:"Generics (<code>&lt;T&gt;</code>) let you write reusable functions/classes that work with multiple types without losing type-checking — unlike <code>any</code>, which throws away type safety entirely.",
+      zen:"A generic `fetchApi&lt;T&gt;(url: string): Promise&lt;T&gt;` wrapper used across ZenCampus — calling `fetchApi&lt;Student[]&gt;('/api/Student/GetList')` returns a properly typed array instead of `any`.",
+      code:"async function fetchApi&lt;T&gt;(url: string): Promise&lt;T&gt; {\n  const res = await fetch(url);\n  return res.json() as Promise&lt;T&gt;;\n}\n\nconst students = await fetchApi&lt;Student[]&gt;('/api/Student/GetList');\nstudents[0].name; // fully typed, autocomplete works" }
+  ]
+},
+{
+  day:4, title:"Day 4 — Type Safety (Assertions, Narrowing, Guards, Any/Unknown/Never, Utility Types)",
+  topics:[
+    { name:"13. Type Assertions &amp; Type Narrowing",
+      movie:"🎬 Thani Oruvan — Mithran narrows down a huge list of suspects step by step through evidence until only one possibility remains. Type narrowing is the compiler doing the exact same thing — narrowing a broad type down to a specific one through checks.",
+      explain:"Type assertion (<code>value as Type</code>) tells the compiler 'trust me, I know the real type' without a runtime check — use sparingly, only when you have external certainty (e.g. a DOM query). Type narrowing happens automatically via <code>if</code> checks (<code>typeof</code>, <code>instanceof</code>, truthiness) that the compiler tracks through the code flow.",
+      zen:"`document.getElementById('feeInput') as HTMLInputElement` asserts the element type so `.value` is accessible with autocomplete, since `getElementById` normally returns the generic `HTMLElement | null`.",
+      code:"const input = document.getElementById('feeInput') as HTMLInputElement;\ninput.value = '5000'; // .value only exists on HTMLInputElement\n\nfunction printId(id: number | string) {\n  if (typeof id === 'number') {\n    console.log(id.toFixed(2)); // narrowed to number here\n  } else {\n    console.log(id.toUpperCase()); // narrowed to string here\n  }\n}" },
+    { name:"14. Type Guards (typeof, instanceof, custom)",
+      movie:"🎬 Ratsasan — Arun Kumar uses specific, reliable checks (fingerprints, timelines) to confirm exactly who he's dealing with before acting. Type guards are those reliable checks that let TS confirm exactly which type it's dealing with at a given point.",
+      explain:"Built-in guards: <code>typeof x === 'string'</code> (for primitives), <code>x instanceof ClassName</code> (for class instances), <code>'prop' in obj</code> (for checking a property exists). Custom type guards are functions returning a special <code>x is Type</code> predicate.",
+      zen:"A custom guard `isStaff(person): person is Staff` lets ZenCampus code safely branch between rendering a Student vs Staff profile card from a mixed `Person[]` list, with full type safety in each branch.",
+      code:"interface Staff { department: string; }\ninterface Student { className: string; }\n\nfunction isStaff(p: Staff | Student): p is Staff {\n  return (p as Staff).department !== undefined;\n}\n\nfunction render(p: Staff | Student) {\n  if (isStaff(p)) {\n    console.log(p.department); // narrowed to Staff\n  } else {\n    console.log(p.className);  // narrowed to Student\n  }\n}" },
+    { name:"15. any vs unknown vs never vs void",
+      movie:"🎬 Vikram — the 'any' identity is a total blank slate with no rules (dangerous, anything goes); 'unknown' is a masked identity you must verify before trusting; 'never' is a state the story guarantees can NEVER be reached; 'void' is simply 'nothing happens here'.",
+      explain:"<code>any</code> disables type checking entirely (avoid it — defeats the purpose of TS). <code>unknown</code> is type-safe 'any' — you MUST narrow it before using it. <code>never</code> represents a value that can never occur (e.g. a function that always throws, or an exhaustive switch's unreachable default). <code>void</code> means a function returns nothing meaningful.",
+      zen:"An API error handler function can be typed to return `never` if it always throws, letting the compiler know execution never continues past that call — useful for exhaustive fee-status switch statements in ZenCampus.",
+      code:"function throwError(msg: string): never {\n  throw new Error(msg);\n}\n\nfunction logMessage(msg: string): void {\n  console.log(msg); // returns nothing\n}\n\nlet apiResponse: unknown = await fetchRaw();\nif (typeof apiResponse === 'object' &amp;&amp; apiResponse !== null) {\n  // safe to use only after narrowing\n}" },
+    { name:"16. Readonly &amp; Utility Types (Partial, Pick, Omit, Record)",
+      movie:"🎬 Indian (1996) — Senapathy's core principles are fixed and unchangeable (readonly), while his son Chandru can be described using only SOME of his father's traits (Partial/Pick) or by explicitly leaving certain traits out (Omit).",
+      explain:"<code>readonly</code> prevents reassignment of a property after creation. Built-in utility types transform existing types: <code>Partial&lt;T&gt;</code> (all props optional), <code>Pick&lt;T, K&gt;</code> (select specific props), <code>Omit&lt;T, K&gt;</code> (exclude specific props), <code>Record&lt;K, V&gt;</code> (build an object type with keys K and values V).",
+      zen:"An 'update student' form only needs SOME fields changed — typed as `Partial&lt;Student&gt;` — while a summary card view only needs `Pick&lt;Student, 'name' | 'className'&gt;`, both derived from one source `Student` interface instead of duplicating types.",
+      code:"interface Student { id: number; name: string; className: string; feesPaid: boolean; }\n\ntype StudentUpdate = Partial&lt;Student&gt;;           // all optional, for PATCH requests\ntype StudentSummary = Pick&lt;Student, 'name' | 'className'&gt;; // only 2 fields\ntype StudentNoId = Omit&lt;Student, 'id'&gt;;          // everything except id\ntype FeeMap = Record&lt;string, number&gt;;             // { [studentName]: dueAmount }" }
+  ]
+},
+{
+  day:5, title:"Day 5 — Advanced TypeScript (Generic Constraints, Mapped/Conditional Types, Modules, Decorators)",
+  topics:[
+    { name:"17. Generic Constraints",
+      movie:"🎬 Master — JD's method works for ANY student, but only those who meet a minimum bar (attendance/willingness) — a generic with a boundary condition. Generic constraints restrict a generic type parameter to only types that satisfy a certain shape.",
+      explain:"<code>&lt;T extends SomeShape&gt;</code> restricts T to only types that have at least the properties of SomeShape, letting you safely access those properties inside the generic function while still supporting any matching type.",
+      zen:"A generic `sortByField&lt;T extends { id: number }&gt;(items: T[], field: keyof T)` utility works for Students, Staff, or HostelRooms — as long as each has an `id` field — reused across multiple ZenCampus report modules.",
+      code:"interface HasId { id: number; }\n\nfunction findById&lt;T extends HasId&gt;(items: T[], id: number): T | undefined {\n  return items.find(item =&gt; item.id === id);\n}\n\nfindById&lt;Student&gt;(students, 101); // works because Student has 'id'" },
+    { name:"18. Mapped &amp; Conditional Types",
+      movie:"🎬 Vikram Vedha — one story structure (Vikram's version) is systematically retold in a transformed, mirrored form (Vedha's version) — the same underlying 'shape', reinterpreted. Mapped types do exactly this — take an existing type's shape and systematically transform every property.",
+      explain:"Mapped types (<code>{ [K in keyof T]: NewType }</code>) transform every property of an existing type the same way — this is literally how <code>Partial</code>/<code>Readonly</code> are implemented internally. Conditional types (<code>T extends U ? X : Y</code>) choose a resulting type based on a type-level condition.",
+      zen:"A custom mapped type `type ReadonlyStudent = { readonly [K in keyof Student]: Student[K] }` locks every field of a Student object after it's loaded from the API, preventing accidental mutation in display-only report views.",
+      code:"type ReadonlyVersion&lt;T&gt; = { readonly [K in keyof T]: T[K] };\ntype ReadonlyStudent = ReadonlyVersion&lt;Student&gt;;\n\ntype IsString&lt;T&gt; = T extends string ? true : false;\ntype A = IsString&lt;'hello'&gt;; // true\ntype B = IsString&lt;42&gt;;      // false" },
+    { name:"19. Modules (import/export in TS)",
+      movie:"🎬 Jigarthanda — Karthik organizes his raw footage into separate reels, each with a clear label, and pulls in only the specific reels he needs for the final cut. TS modules let you split code across files and import only what's needed.",
+      explain:"Same ES module syntax as JS (<code>export</code>/<code>import</code>), but TS also allows exporting/importing TYPES (<code>export interface X</code>, <code>import type { X }</code>), and can resolve types across `.ts`/`.d.ts` declaration files for JS libraries that don't ship their own types.",
+      zen:"A `models/Student.ts` file exports the `Student` interface, `services/studentApi.ts` imports it and exports typed fetch functions, and `pages/studentPage.ts` imports both — a clean, typed layering across the ZenCampus frontend.",
+      code:"// models/Student.ts\nexport interface Student { id: number; name: string; }\n\n// services/studentApi.ts\nimport type { Student } from '../models/Student';\nexport async function getStudents(): Promise&lt;Student[]&gt; {\n  return fetch('/api/Student/GetList').then(r =&gt; r.json());\n}" },
+    { name:"20. Decorators",
+      movie:"🎬 Baahubali — a warrior earns special titles/markings (decorators) that ATTACH extra meaning and behavior to who they already are, without changing their core identity. Decorators attach extra metadata/behavior to a class or its members without changing the class's own code.",
+      explain:"Decorators (<code>@decoratorName</code>) are special functions that can annotate and modify classes, methods, properties, or parameters at design time — heavily used in frameworks like Angular (<code>@Component</code>) and NestJS (<code>@Controller</code>) for declarative metadata. Requires <code>experimentalDecorators</code> (or is now stabilizing in modern TS/JS).",
+      zen:"If ZenCampus adopted a framework like Angular for a module, a `@Component({ selector: 'fee-summary' })` decorator would declaratively wire up a component's template and metadata instead of manual imperative setup.",
+      code:"function LogMethod(target: any, propertyKey: string, descriptor: PropertyDescriptor) {\n  const original = descriptor.value;\n  descriptor.value = function (...args: any[]) {\n    console.log(`Calling ${propertyKey}`);\n    return original.apply(this, args);\n  };\n}\n\nclass BillService {\n  @LogMethod\n  calculateFee(amount: number) { return amount * 1.18; }\n}" }
+  ]
+}
+];
+
+// ============ 50 INTERVIEW QUESTIONS ============
+const questions = [
+  {level:"Basic", q:"What is TypeScript and how is it different from JavaScript?", a:"TypeScript is a statically-typed superset of JavaScript that compiles to plain JS. It adds type annotations, interfaces, generics, and compile-time error checking on top of everything JavaScript already supports."},
+  {level:"Basic", q:"What are the basic types in TypeScript?", a:"<code>string, number, boolean, null, undefined, any, unknown, void, never, array (T[]), tuple ([T, U]), object</code>, and enums."},
+  {level:"Basic", q:"What is type inference in TypeScript?", a:"When you assign a value without an explicit type, TS automatically infers the most specific type from that value and enforces it going forward, without you writing an annotation."},
+  {level:"Basic", q:"What is the difference between interface and type in TypeScript?", a:"Both describe shapes and are often interchangeable. <code>interface</code> supports declaration merging (reopening to add fields) and is generally used for object/class contracts. <code>type</code> can alias any type including unions, tuples, and primitives, but cannot be re-opened once declared."},
+  {level:"Basic", q:"What is an optional property and how do you declare one?", a:"A property that may or may not be present, declared with <code>?</code>: <code>interface Student { name: string; email?: string; }</code>. Its type becomes <code>string | undefined</code>."},
+  {level:"Basic", q:"What is the any type and why should it be avoided?", a:"<code>any</code> disables type checking for that value entirely, allowing any operation without compiler errors. Overusing it defeats the purpose of TypeScript and reintroduces the exact bugs TS is meant to prevent."},
+  {level:"Basic", q:"What is the difference between null and undefined in TypeScript, and what is strictNullChecks?", a:"<code>undefined</code> means a variable was declared but never assigned; <code>null</code> is an explicit 'no value'. With <code>strictNullChecks</code> enabled (recommended), neither is assignable to other types unless explicitly included in a union, catching a huge class of runtime null-reference bugs at compile time."},
+  {level:"Basic", q:"How do you type a function's parameters and return value?", a:"<pre>function add(a: number, b: number): number {\n  return a + b;\n}</pre> Parameters are annotated after each name; the return type is annotated after the closing parenthesis."},
+  {level:"Basic", q:"What is an enum in TypeScript?", a:"A way to define a set of named constants. Numeric enums auto-increment from 0; string enums require explicit string values per member, which is usually clearer for debugging."},
+  {level:"Basic", q:"What is a tuple in TypeScript?", a:"A fixed-length array where each position has a specific, known type, e.g. <code>[string, number]</code> — unlike a regular array where all elements share one type."},
+  {level:"Basic", q:"How do you configure TypeScript for a project?", a:"Via a <code>tsconfig.json</code> file at the project root, which controls compiler options like target JS version, strictness flags (<code>strict: true</code>), module system, and output directory."},
+  {level:"Intermediate", q:"What is a union type and when would you use one?", a:"A union (<code>A | B</code>) means a value can be one of several specified types. Useful when a field can legitimately hold different valid types, e.g. an ID that may come back as either a number or a string from different APIs."},
+  {level:"Intermediate", q:"What is an intersection type?", a:"An intersection (<code>A &amp; B</code>) combines multiple types into one that must satisfy ALL of them simultaneously — useful for composing smaller interfaces into a larger combined shape."},
+  {level:"Intermediate", q:"What are literal types?", a:"Types that restrict a value to one or more EXACT values rather than a broad primitive type, e.g. <code>type Status = 'Paid' | 'Due' | 'Overdue'</code> instead of plain <code>string</code>."},
+  {level:"Intermediate", q:"Explain access modifiers: public, private, and protected.", a:"<code>public</code> (default) is accessible anywhere. <code>private</code> is accessible only within the declaring class. <code>protected</code> is accessible within the declaring class and any subclasses. All enforced at compile time by the TS type checker."},
+  {level:"Intermediate", q:"What is a generic in TypeScript and why use one instead of any?", a:"A generic (<code>&lt;T&gt;</code>) lets a function/class/interface work with multiple types while preserving type safety for that specific usage — unlike <code>any</code>, which discards type information entirely and provides no compiler safety."},
+  {level:"Intermediate", q:"What is type narrowing? Give an example.", a:"The compiler automatically refines a broader type to a more specific one based on runtime checks in the code flow (typeof, instanceof, truthiness, discriminated unions). <pre>function log(x: string | number) {\n  if (typeof x === 'string') x.toUpperCase(); // narrowed to string here\n}</pre>"},
+  {level:"Intermediate", q:"What is a type assertion and when is it appropriate to use?", a:"<code>value as Type</code> tells the compiler to trust your claim about a value's type without a runtime check. Appropriate when you have external certainty TS can't infer (e.g. the result of <code>document.getElementById</code>), but should not be used to silence legitimate type errors."},
+  {level:"Intermediate", q:"What is a custom type guard?", a:"A function with a return type of <code>paramName is SomeType</code>, which the compiler uses to narrow a union type in any code branch where that function returns true."},
+  {level:"Intermediate", q:"Explain the difference between unknown and any.", a:"<code>any</code> allows any operation with zero checking. <code>unknown</code> is the type-safe counterpart — you can assign anything to it, but you MUST narrow it (via a type check) before performing any operation on it, forcing safer code."},
+  {level:"Intermediate", q:"What is the never type used for?", a:"Represents a value that can never occur — used for functions that always throw or never return, and to make the compiler verify a switch statement is exhaustive (the unreachable default branch is typed as never)."},
+  {level:"Intermediate", q:"What are utility types like Partial, Pick, Omit, and Record?", a:"Built-in generic helpers that transform existing types: <code>Partial&lt;T&gt;</code> makes all properties optional, <code>Pick&lt;T,K&gt;</code> selects specific properties, <code>Omit&lt;T,K&gt;</code> excludes specific properties, <code>Record&lt;K,V&gt;</code> builds an object type with keys K and values V."},
+  {level:"Intermediate", q:"What is the readonly modifier?", a:"Marks a property as unassignable after its initial value is set (at the type level, compile-time only — it has no effect at runtime, unlike <code>Object.freeze</code>)."},
+  {level:"Intermediate", q:"What is a discriminated union?", a:"A union of object types that share a common literal property (the 'discriminant', e.g. <code>type: 'circle' | 'square'</code>) which TS uses to narrow the exact shape inside a switch/if, giving full type safety per branch."},
+  {level:"Intermediate", q:"What is the difference between abstract classes and interfaces?", a:"An interface defines only a shape/contract with zero implementation. An abstract class can hold state (fields) and implement some methods concretely while forcing subclasses to implement others marked abstract."},
+  {level:"Advanced", q:"What are mapped types?", a:"Types that transform every property of an existing type the same way using <code>{ [K in keyof T]: NewType }</code> syntax — this is how built-ins like <code>Partial</code> and <code>Readonly</code> are implemented internally."},
+  {level:"Advanced", q:"What are conditional types?", a:"Types that select a result based on a type-level condition: <code>T extends U ? X : Y</code>. Combined with <code>infer</code>, they can extract nested types, e.g. unwrapping a Promise's resolved type."},
+  {level:"Advanced", q:"What does the infer keyword do in a conditional type?", a:"Used inside a conditional type to extract and name a sub-type for reuse, e.g. <pre>type Unwrap&lt;T&gt; = T extends Promise&lt;infer U&gt; ? U : T;</pre> which extracts the resolved value type from a Promise."},
+  {level:"Advanced", q:"What is declaration merging?", a:"TypeScript's ability to combine multiple declarations of the same name (most commonly two <code>interface</code> blocks with the same name) into a single merged definition — useful for extending third-party library types."},
+  {level:"Advanced", q:"What are ambient declarations (.d.ts files) used for?", a:"Type-only files that describe the shape of existing JavaScript code (e.g. an untyped npm library) without providing an implementation, letting TS type-check code that calls into plain JS."},
+  {level:"Advanced", q:"What is the difference between structural typing and nominal typing, and which does TypeScript use?", a:"Structural typing (which TS uses) considers two types compatible if they have the same SHAPE, regardless of name. Nominal typing (like in Java/C#) considers types compatible only if they share the same declared name/type identity."},
+  {level:"Advanced", q:"What is a generic constraint and how do you write one?", a:"Restricts a generic type parameter to types matching a certain shape using <code>extends</code>: <code>function findById&lt;T extends { id: number }&gt;(items: T[], id: number)</code> — this allows safely accessing <code>.id</code> inside the function for any matching T."},
+  {level:"Advanced", q:"What is the keyof operator?", a:"Produces a union of all property names (as string literal types) of a given type: <code>keyof Student</code> results in <code>'id' | 'name' | 'className' | 'feesPaid'</code>. Commonly combined with generics for type-safe property access functions."},
+  {level:"Advanced", q:"What is the difference between function overloading in TypeScript and default/optional parameters?", a:"Overloading declares multiple distinct call signatures for the same function name, each returning potentially different, precisely-typed results based on the arguments passed. Optional/default parameters describe ONE flexible signature. Overloading is used when the parameter/return relationship genuinely changes shape, not just presence."},
+  {level:"Advanced", q:"What are decorators in TypeScript and where are they commonly used?", a:"Functions that attach metadata or modify behavior of classes/methods/properties declaratively via <code>@decoratorName</code> syntax, without changing the class's own source. Heavily used in frameworks like Angular (<code>@Component</code>, <code>@Injectable</code>) and NestJS (<code>@Controller</code>, <code>@Get</code>)."},
+  {level:"Advanced", q:"What is the difference between strict mode compiler flags like strictNullChecks and noImplicitAny?", a:"<code>strictNullChecks</code> prevents <code>null</code>/<code>undefined</code> from being assignable to other types unless explicitly unioned in. <code>noImplicitAny</code> forces every value the compiler can't infer to have an explicit type annotation instead of silently falling back to <code>any</code>. Both are bundled together under the single <code>strict: true</code> flag."},
+  {level:"Advanced", q:"What is type erasure and what does it mean for runtime behavior?", a:"TypeScript's type system exists ONLY at compile time — all type annotations are stripped ('erased') during compilation to plain JavaScript. This means you cannot check a generic type parameter at runtime (e.g. <code>if (x instanceof T)</code> doesn't work for a generic T), since no type information survives into the compiled JS."},
+  {level:"Advanced", q:"How would you type a fetch wrapper so API responses are automatically type-safe across a project like ZenCampus?", a:"Write a generic function <code>async function apiGet&lt;T&gt;(url: string): Promise&lt;T&gt;</code> that performs the fetch and casts the JSON result to T. Callers then specify the exact shape they expect: <code>await apiGet&lt;Student[]&gt;('/api/Student/GetList')</code>, giving full autocomplete and compile-time safety on the returned data without repeating fetch/error-handling boilerplate."},
+  {level:"Advanced", q:"What is the difference between an interface extending another interface and a type using an intersection?", a:"<code>interface B extends A {}</code> is TypeScript's native inheritance-like mechanism for object shapes, offering clearer error messages and supporting declaration merging. <code>type B = A &amp; { ... }</code> achieves a similar combined shape via intersection, but doesn't merge declarations and can produce less readable errors with deeply nested intersections."},
+  {level:"Advanced", q:"What is a template literal type?", a:"A type-level string built using template literal syntax with embedded types, e.g. <code>type EventName = `on${'Save' | 'Delete'}`</code> resolves to the union <code>'onSave' | 'onDelete'</code> — useful for enforcing consistent naming patterns like event handler prop names at the type level."}
+];
+
+// ============ COVERAGE CHECKLIST ============
+const coverageTopics = guideDays.flatMap(day => day.topics.map(t => ({ name: t.name, day: day.day })));
+
+// ============ RENDER: TABS ============
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ============ RENDER: GUIDE ============
+const guideListEl = document.getElementById('guideList');
+guideListEl.innerHTML = guideDays.map(day => `
+  <div class="day-block" id="day-${day.day}">
+    <h2 class="day-title">${day.title}</h2>
+    ${day.topics.map((t) => `
+      <div class="qa" id="topic-${t.name.split('.')[0].trim()}">
+        <div class="q">
+          <span>${t.name}</span>
+          <span class="toggle-icon">+</span>
+        </div>
+        <div class="a">
+          <div class="movie-ref">${t.movie}</div>
+          <p>${t.explain}</p>
+          <pre>${t.code}</pre>
+          <div class="zen-ref"><strong>ZenCampus use case:</strong> ${t.zen}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+`).join('');
+guideListEl.querySelectorAll('.q').forEach(qEl=>{
+  qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+});
+
+// ============ RENDER: INTERVIEW Q&A ============
+const listEl = document.getElementById('qaList');
+const filtersEl = document.getElementById('filters');
+const searchBox = document.getElementById('searchBox');
+const visibleCountEl = document.getElementById('visibleCount');
+const levels = ["All", "Basic", "Intermediate", "Advanced"];
+let activeLevel = "All";
+
+function renderFilters(){
+  filtersEl.innerHTML = levels.map(lvl =>
+    `<button class="filter-btn ${lvl===activeLevel?'active':''}" data-level="${lvl}">${lvl}</button>`
+  ).join('');
+  filtersEl.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeLevel = btn.dataset.level;
+      renderFilters();
+      renderQAList();
+    });
+  });
+}
+
+function renderQAList(){
+  const searchTerm = searchBox.value.trim().toLowerCase();
+  const filtered = questions
+    .map((item, idx)=>({...item, idx}))
+    .filter(item => activeLevel==="All" || item.level===activeLevel)
+    .filter(item => !searchTerm || item.q.toLowerCase().includes(searchTerm) || item.a.toLowerCase().includes(searchTerm));
+
+  visibleCountEl.textContent = filtered.length;
+
+  listEl.innerHTML = filtered.map(item => `
+    <div class="qa" data-idx="${item.idx}">
+      <div class="q">
+        <span><span class="num">Q${item.idx+1}.</span>${item.q}</span>
+        <span style="display:flex; align-items:center; gap:10px;">
+          <span class="tag">${item.level}</span>
+          <span class="toggle-icon">+</span>
+        </span>
+      </div>
+      <div class="a">${item.a}</div>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.q').forEach(qEl=>{
+    qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+  });
+}
+searchBox.addEventListener('input', renderQAList);
+renderFilters();
+renderQAList();
+
+// ============ RENDER: COVERAGE CHECKLIST ============
+const checklistEl = document.getElementById('checklist');
+checklistEl.innerHTML = coverageTopics.map((t) => `
+  <div class="check-item" data-target="topic-${t.name.split('.')[0].trim()}" data-day="${t.day}">
+    <span class="badge">✅</span>
+    <span class="num">${t.name.split('.')[0]}</span>
+    <span>${t.name.split('. ')[1].replace(/&amp;/g,'&')} <em style="color:var(--muted); font-size:0.8rem;">(Day ${t.day})</em></span>
+  </div>
+`).join('');
+checklistEl.querySelectorAll('.check-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelector('.tab-btn[data-tab="guide"]').click();
+    setTimeout(()=>{
+      const target = document.getElementById(item.dataset.target);
+      if(target){
+        target.classList.add('open');
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }, 50);
+  });
+});
+</script>
+
+</body>
+</html>

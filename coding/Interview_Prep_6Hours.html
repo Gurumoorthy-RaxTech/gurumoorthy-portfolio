@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Interview Prep – Gurumoorthy M</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Calibri,sans-serif;background:#0f1117;color:#e0e0e0;font-size:14px}
+.topbar{position:sticky;top:0;z-index:100;background:#1a1d27;border-bottom:2px solid #2E75B6;padding:10px 20px;display:flex;justify-content:space-between;align-items:center}
+.topbar h1{font-size:16px;color:#2E75B6}
+#timer{font-size:20px;font-weight:700;color:#f59e0b;font-family:monospace}
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 20px;background:#13151f;border-bottom:1px solid #222}
+.nav a{padding:5px 12px;border-radius:20px;font-size:12px;text-decoration:none;font-weight:600;border:1px solid #333;color:#aaa;transition:all .2s}
+.nav a:hover,.nav a.active{background:#2E75B6;color:#fff;border-color:#2E75B6}
+.container{max-width:1000px;margin:0 auto;padding:20px}
+.section{margin-bottom:30px}
+.section-title{background:linear-gradient(90deg,#1F3864,#1a1d27);border-left:4px solid #2E75B6;padding:10px 16px;font-size:15px;font-weight:700;color:#60a5fa;margin-bottom:12px;border-radius:0 6px 6px 0}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:8px;vertical-align:middle}
+.badge.high{background:#dc2626;color:#fff}
+.badge.med{background:#d97706;color:#fff}
+.badge.low{background:#16a34a;color:#fff}
+.qa{background:#1a1d27;border:1px solid #2a2d3a;border-radius:8px;margin-bottom:10px;overflow:hidden}
+.q{padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.q:hover{background:#20253a}
+.q-text{font-weight:600;color:#e2e8f0;font-size:13.5px;line-height:1.4}
+.q-num{color:#2E75B6;font-weight:700;min-width:28px;font-size:13px}
+.arrow{color:#555;transition:transform .2s;font-size:12px;margin-top:2px}
+.ans{display:none;padding:14px 16px;background:#111420;border-top:1px solid #2a2d3a}
+.ans.open{display:block}
+.ans p{line-height:1.7;color:#cbd5e1;margin-bottom:8px}
+.ans ul{margin-left:20px;margin-bottom:8px}
+.ans ul li{line-height:1.7;color:#cbd5e1;margin-bottom:3px}
+.ans ul li::marker{color:#2E75B6}
+pre{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;overflow-x:auto;font-size:12px;line-height:1.6;margin:8px 0;color:#e6edf3}
+.key{color:#f59e0b;font-weight:700}
+.tip{background:#1e3a2f;border-left:3px solid #22c55e;padding:8px 12px;border-radius:0 4px 4px 0;margin-top:8px;font-size:12.5px;color:#86efac}
+.warn{background:#3a1e1e;border-left:3px solid #ef4444;padding:8px 12px;border-radius:0 4px 4px 0;margin-top:8px;font-size:12.5px;color:#fca5a5}
+.progress-wrap{padding:8px 20px;background:#13151f}
+.progress-bar{height:4px;background:#1e293b;border-radius:2px}
+.progress-fill{height:4px;background:linear-gradient(90deg,#2E75B6,#22c55e);border-radius:2px;transition:width .3s}
+.stats{display:flex;gap:16px;font-size:12px;color:#64748b;padding:4px 0}
+h3{color:#93c5fd;font-size:13px;margin:10px 0 4px}
+code{background:#1e2535;padding:1px 5px;border-radius:3px;font-family:monospace;color:#f472b6;font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>🎯 Interview Prep – Gurumoorthy M &nbsp;|&nbsp; .NET Senior Developer</h1>
+  <div>
+    <span style="font-size:12px;color:#64748b;margin-right:10px">6-Hour Countdown</span>
+    <span id="timer">06:00:00</span>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="stats">
+    <span id="answered-count">0 answered</span>
+    <span>|</span>
+    <span id="total-count">0 total</span>
+    <span>|</span>
+    <span style="color:#f59e0b">🔴 Must Know &nbsp; 🟡 Good to Know &nbsp; 🟢 Bonus</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+</div>
+
+<div class="nav">
+  <a href="#csharp">C# Advanced</a>
+  <a href="#aspnet">ASP.NET Core</a>
+  <a href="#microservices">Microservices</a>
+  <a href="#dapper-ef">Dapper & EF Core</a>
+  <a href="#sql">SQL Server</a>
+  <a href="#docker">Docker</a>
+  <a href="#jwt">JWT & Security</a>
+  <a href="#mongodb">MongoDB</a>
+  <a href="#sysdesign">System Design</a>
+  <a href="#behavioral">HR / Behavioral</a>
+</div>
+
+<div class="container">
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- 1. C# ADVANCED -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section" id="csharp">
+<div class="section-title">🔷 C# Advanced <span class="badge high">Must Know</span></div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q1</span><span class="q-text">What is the difference between async/await and Task.Run()? When to use which?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p><span class="key">async/await</span> is for I/O-bound operations (DB calls, HTTP calls, file reads). It does NOT create a new thread — it releases the thread while waiting.</p>
+<p><span class="key">Task.Run()</span> is for CPU-bound operations. It uses a ThreadPool thread to do heavy computation.</p>
+<pre>// I/O bound - use async/await (no new thread)
+public async Task&lt;string&gt; GetDataAsync()
+{
+    var result = await _httpClient.GetStringAsync(url); // thread released while waiting
+    return result;
+}
+
+// CPU bound - use Task.Run
+public async Task ProcessImageAsync(byte[] data)
+{
+    var result = await Task.Run(() => HeavyImageProcessing(data)); // runs on ThreadPool
+    return result;
+}</pre>
+<div class="tip">💡 In your OTP system — GetAsync for SMS API call = async/await. Never use Task.Run for DB calls in Web API.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q2</span><span class="q-text">Explain SOLID principles with real examples from your project.</span><span class="arrow">▼</span></div>
+<div class="ans">
+<h3>S – Single Responsibility</h3>
+<p>One class, one job. Your <code>OtpService</code> only handles OTP logic. SMS sending is in <code>SmsGatewayService</code>.</p>
+<h3>O – Open/Closed</h3>
+<p>Open for extension, closed for modification. Add new report format (Excel/PDF) by creating new class, not editing existing.</p>
+<h3>L – Liskov Substitution</h3>
+<p>Subclass must be replaceable with base class. <code>IPaymentGateway</code> → <code>RazorpayGateway</code> or <code>StripeGateway</code> — both work interchangeably.</p>
+<h3>I – Interface Segregation</h3>
+<p>Don't force classes to implement unused methods. Split <code>IStudentService</code> into <code>IStudentRead</code> and <code>IStudentWrite</code>.</p>
+<h3>D – Dependency Inversion</h3>
+<p>Depend on abstractions. Controller gets <code>IStudentService</code> injected, not <code>StudentService</code> directly.</p>
+<pre>// DI example from your ZenCampus project
+public class StudentController : Controller
+{
+    private readonly IStudentService _studentService; // abstraction, not concrete class
+
+    public StudentController(IStudentService studentService)
+        => _studentService = studentService;
+}</pre>
+<div class="tip">💡 Interviewer will always ask "give me a project example" — use ZenCampus / SmartSchool.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q3</span><span class="q-text">What is Dependency Injection? Types? How does .NET Core DI work?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>DI is providing a class its dependencies from outside instead of creating them inside. .NET Core has built-in DI container.</p>
+<h3>3 Lifetimes:</h3>
+<ul>
+<li><span class="key">Transient</span> – New instance every time. Use for lightweight, stateless services.</li>
+<li><span class="key">Scoped</span> – One instance per HTTP request. Use for DbContext, services that need request data.</li>
+<li><span class="key">Singleton</span> – One instance for app lifetime. Use for caching, configuration.</li>
+</ul>
+<pre>// Program.cs / Startup.cs
+builder.Services.AddTransient&lt;IEmailService, EmailService&gt;();
+builder.Services.AddScoped&lt;IStudentService, StudentService&gt;();
+builder.Services.AddSingleton&lt;ICacheService, MemoryCacheService&gt;();</pre>
+<div class="warn">⚠️ Never inject Scoped service into Singleton — causes "captive dependency" bug. Singleton lives longer, Scoped is request-level.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q4</span><span class="q-text">What are delegates, Func, Action, and Predicate in C#?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>Delegate = type-safe function pointer. <code>Func</code>, <code>Action</code>, <code>Predicate</code> are built-in generic delegates.</p>
+<pre>// Func - has return value (last type = return type)
+Func&lt;int, int, int&gt; add = (a, b) => a + b;
+int result = add(3, 4); // 7
+
+// Action - no return value (void)
+Action&lt;string&gt; log = msg => Console.WriteLine(msg);
+log("Student saved");
+
+// Predicate - returns bool
+Predicate&lt;Student&gt; isActive = s => s.IsActive == true;
+bool check = isActive(student); // true/false
+
+// Real use in LINQ
+var activeStudents = students.Where(s => s.IsActive).ToList();</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q5</span><span class="q-text">Explain IEnumerable vs IQueryable. Which did you use with Dapper?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<ul>
+<li><span class="key">IEnumerable</span> – Executes query in memory. Filters happen in C# after all data is loaded from DB.</li>
+<li><span class="key">IQueryable</span> – Builds SQL query, filters happen in database. Used with EF Core.</li>
+</ul>
+<pre>// IEnumerable - BAD for large data (loads everything then filters)
+IEnumerable&lt;Student&gt; students = dbContext.Students.ToList();
+var active = students.Where(s => s.IsActive); // C# filter
+
+// IQueryable - GOOD (filter in SQL)
+IQueryable&lt;Student&gt; query = dbContext.Students;
+var active = query.Where(s => s.IsActive).ToList(); // WHERE IsActive=1 in SQL
+
+// Dapper returns IEnumerable - filtering happens after
+var students = await conn.QueryAsync&lt;Student&gt;(
+    "SELECT * FROM Students WHERE IsActive = 1"); // filter in SQL manually</pre>
+<div class="tip">💡 With Dapper, always write the WHERE clause in SQL — no deferred execution like EF Core.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q6</span><span class="q-text">What is the difference between Value Types and Reference Types? What is boxing/unboxing?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<ul>
+<li><span class="key">Value Types</span>: int, double, bool, struct, enum — stored on Stack. Copy on assignment.</li>
+<li><span class="key">Reference Types</span>: class, string, array, interface — stored on Heap. Reference copy on assignment.</li>
+</ul>
+<pre>// Value type - copy
+int a = 5;
+int b = a;
+b = 10; // a is still 5
+
+// Reference type - same object
+var s1 = new Student { Name = "Guru" };
+var s2 = s1;
+s2.Name = "Basha"; // s1.Name also becomes "Basha"
+
+// Boxing - value type → object (heap allocation, slow)
+int x = 42;
+object obj = x; // boxing
+
+// Unboxing - object → value type
+int y = (int)obj; // unboxing</pre>
+<div class="warn">⚠️ Avoid boxing in loops — performance hit. Use generics (List&lt;int&gt;) instead of ArrayList.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q7</span><span class="q-text">What are extension methods? Give a real example.</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>Add methods to existing types without modifying them. Must be in a static class, first parameter has <code>this</code>.</p>
+<pre>public static class StringExtensions
+{
+    public static bool IsNullOrEmpty(this string value)
+        => string.IsNullOrEmpty(value);
+
+    public static string ToMaskedPhone(this string phone)
+        => phone.Length >= 10
+           ? "XXXXXX" + phone.Substring(phone.Length - 4)
+           : phone;
+}
+
+// Usage
+string phone = "8122448785";
+string masked = phone.ToMaskedPhone(); // "XXXXXX8785" - used in OTP system</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q8</span><span class="q-text">What is the difference between abstract class and interface? When to use which?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<table style="width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:8px">
+<tr style="background:#1e2535"><th style="padding:6px;text-align:left;color:#93c5fd">Abstract Class</th><th style="padding:6px;text-align:left;color:#93c5fd">Interface</th></tr>
+<tr style="border-bottom:1px solid #2a2d3a"><td style="padding:6px">Can have implementation</td><td style="padding:6px">Only contracts (C# 8+ has default impl)</td></tr>
+<tr style="border-bottom:1px solid #2a2d3a"><td style="padding:6px">Single inheritance only</td><td style="padding:6px">Multiple interfaces allowed</td></tr>
+<tr style="border-bottom:1px solid #2a2d3a"><td style="padding:6px">Has constructors, fields</td><td style="padding:6px">No constructors, no fields</td></tr>
+<tr><td style="padding:6px">Use when sharing base logic</td><td style="padding:6px">Use for defining contract/capability</td></tr>
+</table>
+<pre>// Abstract class - shared base logic for all report types
+public abstract class BaseReport
+{
+    public abstract void Generate(); // must override
+    public void SaveToFile(string path) { /* shared logic */ } // shared
+}
+
+// Interface - contract for anything that sends notifications
+public interface INotificationService
+{
+    Task SendAsync(string to, string message);
+}
+// SmsNotification, EmailNotification, PushNotification all implement it</pre>
+</div>
+</div>
+
+</div><!-- end csharp -->
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- 2. ASP.NET CORE -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section" id="aspnet">
+<div class="section-title">🔷 ASP.NET Core / Web API <span class="badge high">Must Know</span></div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q9</span><span class="q-text">What is Middleware in ASP.NET Core? Explain the request pipeline.</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>Middleware = components that handle HTTP request/response in a pipeline. Each middleware can process the request, pass it to next, and process the response.</p>
+<pre>// Request pipeline order matters!
+app.UseExceptionHandler("/error");   // 1. Global error handling
+app.UseHttpsRedirection();           // 2. Force HTTPS
+app.UseAuthentication();             // 3. Who are you? (JWT decode)
+app.UseAuthorization();              // 4. What can you do?
+app.UseRateLimiter();               // 5. Throttle
+app.MapControllers();                // 6. Route to controller
+
+// Custom middleware
+public class RequestLoggingMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public RequestLoggingMiddleware(RequestDelegate next) => _next = next;
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        Console.WriteLine($"Request: {context.Request.Path}");
+        await _next(context); // pass to next middleware
+        Console.WriteLine($"Response: {context.Response.StatusCode}");
+    }
+}</pre>
+<div class="tip">💡 You built centralized logging middleware in your project — this is that exact pattern.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q10</span><span class="q-text">What are Action Filters in ASP.NET Core? How did you use them?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>Filters run code before/after controller actions. Types: Authorization, Resource, Action, Exception, Result filters.</p>
+<pre>// Action Filter - runs before/after action method
+public class ValidateModelFilter : ActionFilterAttribute
+{
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        if (!context.ModelState.IsValid)
+        {
+            context.Result = new BadRequestObjectResult(context.ModelState);
+        }
+    }
+}
+
+// Usage on controller
+[ValidateModelFilter]
+[HttpPost("students")]
+public async Task&lt;IActionResult&gt; CreateStudent([FromBody] StudentDto dto)
+{
+    // model already validated by filter
+    await _studentService.CreateAsync(dto);
+    return Ok();
+}
+
+// Exception filter - centralized error handling
+public class GlobalExceptionFilter : IExceptionFilter
+{
+    public void OnException(ExceptionContext context)
+    {
+        context.Result = new ObjectResult(new { error = context.Exception.Message })
+            { StatusCode = 500 };
+        context.ExceptionHandled = true;
+    }
+}</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q11</span><span class="q-text">Explain IActionResult vs ActionResult&lt;T&gt;. What HTTP status codes do you use?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>// IActionResult - flexible, can return any type
+[HttpGet("{id}")]
+public IActionResult GetStudent(int id)
+{
+    var student = _service.Get(id);
+    if (student == null) return NotFound();    // 404
+    return Ok(student);                        // 200
+}
+
+// ActionResult&lt;T&gt; - type-safe + Swagger shows model
+[HttpGet("{id}")]
+public ActionResult&lt;StudentDto&gt; GetStudent(int id)
+{
+    var student = _service.Get(id);
+    if (student == null) return NotFound();
+    return student; // implicit 200 Ok
+}
+
+// Common status codes to know:
+// 200 Ok, 201 Created, 204 No Content
+// 400 Bad Request, 401 Unauthorized, 403 Forbidden
+// 404 Not Found, 409 Conflict
+// 500 Internal Server Error</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q12</span><span class="q-text">How does model validation work in ASP.NET Core? What attributes do you use?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>public class StudentDto
+{
+    [Required(ErrorMessage = "Name is required")]
+    [StringLength(100, MinimumLength = 2)]
+    public string Name { get; set; }
+
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; }
+
+    [Required]
+    [RegularExpression(@"^\d{10}$", ErrorMessage = "Invalid phone number")]
+    public string Phone { get; set; }
+
+    [Range(1, 12)]
+    public int Grade { get; set; }
+}
+
+// Auto-validated with [ApiController] attribute on controller
+// Returns 400 with ModelState errors automatically</pre>
+<div class="tip">💡 With [ApiController], you don't need to check ModelState.IsValid manually — it auto-returns 400.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q13</span><span class="q-text">What is CORS? How do you configure it in ASP.NET Core?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>CORS (Cross-Origin Resource Sharing) — browser security policy. Blocks requests from different domain/port unless server allows it.</p>
+<pre>// Program.cs
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "https://zencampus.com")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
+app.UseCors("AllowFrontend"); // must be before UseAuthorization
+
+// On specific controller or action
+[EnableCors("AllowFrontend")]
+[HttpGet("students")]
+public IActionResult GetStudents() { ... }</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q14</span><span class="q-text">How do you implement global exception handling in ASP.NET Core?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>You already did this in your project. Three approaches:</p>
+<pre>// Approach 1: UseExceptionHandler middleware (simplest)
+app.UseExceptionHandler(errApp =>
+{
+    errApp.Run(async ctx =>
+    {
+        var ex = ctx.Features.Get&lt;IExceptionHandlerFeature&gt;()?.Error;
+        ctx.Response.StatusCode = 500;
+        ctx.Response.ContentType = "application/json";
+        await ctx.Response.WriteAsJsonAsync(new
+        {
+            error = ex?.Message,
+            traceId = ctx.TraceIdentifier
+        });
+    });
+});
+
+// Approach 2: IExceptionFilter (what you likely used)
+public class GlobalExceptionFilter : IExceptionFilter
+{
+    private readonly ILogger _logger;
+    public GlobalExceptionFilter(ILogger&lt;GlobalExceptionFilter&gt; logger)
+        => _logger = logger;
+
+    public void OnException(ExceptionContext context)
+    {
+        _logger.LogError(context.Exception, "Unhandled exception");
+        context.Result = new ObjectResult(new { error = "Internal error" })
+            { StatusCode = 500 };
+        context.ExceptionHandled = true;
+    }
+}</pre>
+</div>
+</div>
+
+</div><!-- end aspnet -->
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- 3. MICROSERVICES -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section" id="microservices">
+<div class="section-title">🔷 Microservices & Ocelot API Gateway <span class="badge high">Must Know</span></div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q15</span><span class="q-text">What is microservices architecture? How is it different from monolithic?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<table style="width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:8px">
+<tr style="background:#1e2535"><th style="padding:6px;text-align:left;color:#93c5fd">Monolithic</th><th style="padding:6px;text-align:left;color:#93c5fd">Microservices</th></tr>
+<tr style="border-bottom:1px solid #2a2d3a"><td style="padding:6px">Single deployable unit</td><td style="padding:6px">Each service deployed independently</td></tr>
+<tr style="border-bottom:1px solid #2a2d3a"><td style="padding:6px">One DB for everything</td><td style="padding:6px">Each service owns its DB</td></tr>
+<tr style="border-bottom:1px solid #2a2d3a"><td style="padding:6px">Scale whole app</td><td style="padding:6px">Scale only the service that needs it</td></tr>
+<tr><td style="padding:6px">One tech stack</td><td style="padding:6px">Each service can use different tech</td></tr>
+</table>
+<p>In your SmartSchool: StudentService, AttendanceService, BillingService, PaymentService each run as separate APIs. One service failure doesn't bring down others.</p>
+<div class="tip">💡 Answer: "In ZenCampus, we have StudentService on port 5001, BillingService on 5002, each with its own DB schema, deployed as separate Docker containers."</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q16</span><span class="q-text">What is Ocelot API Gateway? How did you configure routing?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>Ocelot is an API Gateway for .NET — single entry point that routes requests to downstream microservices. Also handles auth, rate limiting, load balancing.</p>
+<pre>// ocelot.json
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/students/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "studentservice", "Port": 5001 }
+      ],
+      "UpstreamPathTemplate": "/students/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "Limit": 100
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://api.zencampus.com"
+  }
+}
+
+// Program.cs
+builder.Services.AddOcelot();
+app.UseOcelot().Wait();</pre>
+<div class="tip">💡 Client calls https://api.zencampus.com/students/1 → Ocelot routes to http://studentservice:5001/api/students/1</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q17</span><span class="q-text">How do microservices communicate? What is the difference between sync and async communication?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<h3>Synchronous (HTTP/REST)</h3>
+<p>Service A calls Service B and waits for response. Simple but creates tight coupling and cascading failures.</p>
+<pre>// StudentService calling BillingService via HttpClient
+var response = await _httpClient.GetAsync($"http://billingservice/api/bills/{studentId}");
+var bill = await response.Content.ReadFromJsonAsync&lt;BillDto&gt;();</pre>
+<h3>Asynchronous (Message Queue – RabbitMQ)</h3>
+<p>Service A publishes a message to queue. Service B picks it up whenever ready. No direct dependency.</p>
+<pre>// Publisher (StudentService)
+_messageBus.Publish(new StudentEnrolledEvent { StudentId = 123, Course = "Math" });
+
+// Subscriber (BillingService) - listens independently
+_messageBus.Subscribe&lt;StudentEnrolledEvent&gt;(async evt => {
+    await CreateInitialBill(evt.StudentId);
+});</pre>
+<div class="tip">💡 In your project you used synchronous HTTP. For your roadmap Month 6, you'll add RabbitMQ for async.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q18</span><span class="q-text">What is service discovery? How does Ocelot do load balancing?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>Service discovery = how services find each other. Ocelot supports static config (IP:Port) or dynamic (Consul/Eureka).</p>
+<pre>// Load balancing in ocelot.json
+{
+  "DownstreamHostAndPorts": [
+    { "Host": "studentservice1", "Port": 5001 },
+    { "Host": "studentservice2", "Port": 5001 },
+    { "Host": "studentservice3", "Port": 5001 }
+  ],
+  "LoadBalancerOptions": {
+    "Type": "RoundRobin"  // LeastConnection, NoLoadBalancer, CookieStickySessions
+  }
+}</pre>
+<p>Types: <span class="key">RoundRobin</span> (rotate), <span class="key">LeastConnection</span> (least busy), <span class="key">CookieStickySessions</span> (same user → same server)</p>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q19</span><span class="q-text">What is the Circuit Breaker pattern? Why is it important in microservices?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>When a downstream service fails repeatedly, Circuit Breaker stops calling it for a period (like a electrical breaker). Prevents cascading failures.</p>
+<pre>// States: Closed (normal) → Open (failing, stop calls) → Half-Open (try one request)
+
+// Using Polly library
+var retryPolicy = Policy
+    .Handle&lt;HttpRequestException&gt;()
+    .WaitAndRetryAsync(3, retryAttempt =>
+        TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))); // 2s, 4s, 8s
+
+var circuitBreaker = Policy
+    .Handle&lt;HttpRequestException&gt;()
+    .CircuitBreakerAsync(
+        exceptionsAllowedBeforeBreaking: 5,
+        durationOfBreak: TimeSpan.FromSeconds(30)
+    );
+
+// Wrap policies
+var combined = Policy.WrapAsync(retryPolicy, circuitBreaker);
+var result = await combined.ExecuteAsync(() => _httpClient.GetAsync(url));</pre>
+<div class="tip">💡 Even if you haven't implemented Polly, knowing the concept is enough. Say "we used retry logic in Ocelot."</div>
+</div>
+</div>
+
+</div><!-- end microservices -->
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- 4. DAPPER & EF CORE -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section" id="dapper-ef">
+<div class="section-title">🔷 Dapper & Entity Framework Core <span class="badge high">Must Know</span></div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q20</span><span class="q-text">Dapper vs Entity Framework Core — when to use which?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<table style="width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:8px">
+<tr style="background:#1e2535"><th style="padding:6px;text-align:left;color:#93c5fd">Dapper</th><th style="padding:6px;text-align:left;color:#93c5fd">EF Core</th></tr>
+<tr style="border-bottom:1px solid #2a2d3a"><td style="padding:6px">Micro ORM, write raw SQL</td><td style="padding:6px">Full ORM, LINQ to SQL</td></tr>
+<tr style="border-bottom:1px solid #2a2d3a"><td style="padding:6px">Faster (less overhead)</td><td style="padding:6px">Slightly slower but productive</td></tr>
+<tr style="border-bottom:1px solid #2a2d3a"><td style="padding:6px">More control over SQL</td><td style="padding:6px">Less SQL knowledge needed</td></tr>
+<tr><td style="padding:6px">Best for complex queries, reports</td><td style="padding:6px">Best for CRUD, relationships</td></tr>
+</table>
+<pre>// Dapper - you write SQL (from your OTP project)
+using var conn = new SqlConnection(_connString);
+var students = await conn.QueryAsync&lt;Student&gt;(
+    "SELECT * FROM Students WHERE ClassId = @ClassId AND IsActive = 1",
+    new { ClassId = 5 });
+
+// With stored procedure
+var result = await conn.ExecuteScalarAsync&lt;int&gt;(
+    "sp_ValidateOtp",
+    new { Phone = "8122448785", Otp = "123456" },
+    commandType: CommandType.StoredProcedure);
+
+// EF Core - LINQ
+var students = await _context.Students
+    .Where(s => s.ClassId == 5 && s.IsActive)
+    .Include(s => s.Class)
+    .ToListAsync();</pre>
+<div class="tip">💡 Your answer: "In ZenCampus we used Dapper for complex reporting queries and stored procedures. EF Core for simple CRUD operations."</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q21</span><span class="q-text">How do you handle transactions in Dapper?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>// Payment scenario - debit + create bill must both succeed or both fail
+public async Task ProcessPaymentAsync(PaymentDto payment)
+{
+    using var conn = new SqlConnection(_connString);
+    conn.Open();
+    using var transaction = conn.BeginTransaction();
+
+    try
+    {
+        // Step 1: Create payment record
+        await conn.ExecuteAsync(
+            "INSERT INTO Payments (StudentId, Amount, Date) VALUES (@StudentId, @Amount, @Date)",
+            payment, transaction);
+
+        // Step 2: Update bill status
+        await conn.ExecuteAsync(
+            "UPDATE Bills SET Status = 'Paid' WHERE StudentId = @StudentId",
+            new { payment.StudentId }, transaction);
+
+        transaction.Commit(); // both succeed
+    }
+    catch
+    {
+        transaction.Rollback(); // either fails → both rollback
+        throw;
+    }
+}</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q22</span><span class="q-text">What is N+1 problem in EF Core? How do you fix it?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>N+1 = 1 query to get N students, then N queries to get each student's class = N+1 total queries. Very bad for performance.</p>
+<pre>// N+1 PROBLEM - DON'T DO THIS
+var students = await _context.Students.ToListAsync(); // 1 query
+foreach (var s in students)
+{
+    var className = s.Class.Name; // EF loads Class for each student = N queries!
+}
+
+// FIX 1: Eager Loading with Include
+var students = await _context.Students
+    .Include(s => s.Class)  // single JOIN query
+    .ToListAsync();
+
+// FIX 2: Projection - select only what you need
+var students = await _context.Students
+    .Select(s => new StudentDto
+    {
+        Name = s.Name,
+        ClassName = s.Class.Name  // EF generates JOIN
+    })
+    .ToListAsync();</pre>
+<div class="tip">💡 With Dapper, N+1 doesn't happen automatically — you write the JOIN yourself. That's one advantage.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q23</span><span class="q-text">What are EF Core migrations? How do you run them?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>// Create migration when model changes
+dotnet ef migrations add AddStudentGradeColumn
+
+// Apply to database
+dotnet ef database update
+
+// Rollback
+dotnet ef database update PreviousMigrationName
+
+// In code (for production/Docker startup)
+using var scope = app.Services.CreateScope();
+var db = scope.ServiceProvider.GetRequiredService&lt;AppDbContext&gt;();
+db.Database.Migrate(); // applies pending migrations on startup</pre>
+<div class="warn">⚠️ Never delete migration files that are already applied to production DB. Always create a new migration to reverse.</div>
+</div>
+</div>
+
+</div><!-- end dapper-ef -->
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- 5. SQL SERVER -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section" id="sql">
+<div class="section-title">🔷 SQL Server & Query Optimization <span class="badge high">Must Know</span></div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q24</span><span class="q-text">How did you achieve 40% query optimization? What techniques did you use?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>This is on your resume — be ready to explain exactly how!</p>
+<h3>Techniques used:</h3>
+<ul>
+<li><span class="key">Indexing</span> – Added non-clustered indexes on WHERE clause columns (StudentId, ClassId, Date)</li>
+<li><span class="key">Stored Procedures</span> – Precompiled execution plans, less network overhead</li>
+<li><span class="key">Avoid SELECT *</span> – Select only needed columns</li>
+<li><span class="key">Pagination</span> – OFFSET/FETCH instead of loading all rows</li>
+<li><span class="key">Query plan analysis</span> – Used SET STATISTICS IO ON to find bottlenecks</li>
+</ul>
+<pre>-- Before (slow): SELECT * with no index
+SELECT * FROM Attendance WHERE StudentId = 1001
+
+-- After (fast): Specific columns + index on StudentId
+CREATE NONCLUSTERED INDEX IX_Attendance_StudentId
+ON Attendance(StudentId) INCLUDE (Date, Status, SubjectId)
+
+SELECT Date, Status, SubjectId
+FROM Attendance
+WHERE StudentId = 1001 AND Date >= '2025-01-01'
+
+-- Pagination example
+SELECT StudentId, Name, Email
+FROM Students
+ORDER BY Name
+OFFSET 0 ROWS FETCH NEXT 20 ROWS ONLY</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q25</span><span class="q-text">What is the difference between Clustered and Non-Clustered index?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<ul>
+<li><span class="key">Clustered Index</span> – Determines physical order of data in table. Only ONE per table. Usually the Primary Key.</li>
+<li><span class="key">Non-Clustered Index</span> – Separate structure with pointers to data rows. Can have MANY per table. Used for frequently searched columns.</li>
+</ul>
+<pre>-- Clustered index (auto-created with PK)
+CREATE TABLE Students (
+    StudentId INT PRIMARY KEY,  -- clustered index auto-created
+    Name NVARCHAR(100),
+    ClassId INT
+)
+
+-- Non-clustered index for search columns
+CREATE NONCLUSTERED INDEX IX_Students_ClassId ON Students(ClassId)
+CREATE NONCLUSTERED INDEX IX_Students_Name ON Students(Name)
+
+-- INCLUDE columns to avoid key lookup (covering index)
+CREATE NONCLUSTERED INDEX IX_Students_ClassId_Covering
+ON Students(ClassId)
+INCLUDE (Name, Email, Phone)  -- query can be satisfied from index alone</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q26</span><span class="q-text">What are SQL transactions? Explain ACID properties.</span><span class="arrow">▼</span></div>
+<div class="ans">
+<ul>
+<li><span class="key">A – Atomicity</span>: All or nothing. Payment debit + bill update = both succeed or both rollback.</li>
+<li><span class="key">C – Consistency</span>: DB stays in valid state. Balance can't go negative.</li>
+<li><span class="key">I – Isolation</span>: Concurrent transactions don't interfere. Dirty read prevention.</li>
+<li><span class="key">D – Durability</span>: Committed data survives crashes. Written to disk.</li>
+</ul>
+<pre>BEGIN TRANSACTION
+    UPDATE Accounts SET Balance = Balance - 5000 WHERE AccountId = 1
+    UPDATE Accounts SET Balance = Balance + 5000 WHERE AccountId = 2
+
+    IF @@ERROR &lt;&gt; 0
+        ROLLBACK TRANSACTION
+    ELSE
+        COMMIT TRANSACTION</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q27</span><span class="q-text">What is a stored procedure? Advantages over inline SQL?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<ul>
+<li>Precompiled → faster execution (cached execution plan)</li>
+<li>Reduces network traffic (send proc name, not full SQL)</li>
+<li>Security — grant EXECUTE permission, not table access</li>
+<li>Prevents SQL injection by design</li>
+<li>Centralized business logic in DB</li>
+</ul>
+<pre>-- Stored procedure from your OTP project
+CREATE PROCEDURE sp_ValidateAndExpireOtp
+    @Phone NVARCHAR(15),
+    @Otp   NVARCHAR(6),
+    @Result INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS(
+        SELECT 1 FROM OtpLog
+        WHERE Phone = @Phone AND Otp = @Otp
+        AND ExpiresAt > GETDATE() AND IsUsed = 0
+    )
+    BEGIN
+        UPDATE OtpLog SET IsUsed = 1 WHERE Phone = @Phone AND Otp = @Otp
+        SET @Result = 1 -- success
+    END
+    ELSE
+        SET @Result = 0 -- invalid/expired
+END</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q28</span><span class="q-text">Explain SQL JOINs with examples.</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>-- INNER JOIN - matching rows in both tables
+SELECT s.Name, c.ClassName
+FROM Students s
+INNER JOIN Classes c ON s.ClassId = c.ClassId
+
+-- LEFT JOIN - all students, even those without class
+SELECT s.Name, c.ClassName
+FROM Students s
+LEFT JOIN Classes c ON s.ClassId = c.ClassId
+
+-- RIGHT JOIN - all classes, even empty ones
+SELECT s.Name, c.ClassName
+FROM Students s
+RIGHT JOIN Classes c ON s.ClassId = c.ClassId
+
+-- Real example from your project
+SELECT s.Name, s.Phone,
+       b.TotalAmount, b.PaidAmount,
+       (b.TotalAmount - b.PaidAmount) AS DueAmount
+FROM Students s
+INNER JOIN Bills b ON s.StudentId = b.StudentId
+INNER JOIN Classes c ON s.ClassId = c.ClassId
+WHERE c.AcademicYear = '2025-26'
+AND b.Status = 'Pending'</pre>
+</div>
+</div>
+
+</div><!-- end sql -->
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- 6. DOCKER -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section" id="docker">
+<div class="section-title">🔷 Docker & Containerization <span class="badge med">Good to Know</span></div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q29</span><span class="q-text">What is Docker? Difference between Docker Image and Docker Container?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<ul>
+<li><span class="key">Docker Image</span> – Blueprint/template. Read-only. Built from Dockerfile.</li>
+<li><span class="key">Docker Container</span> – Running instance of an image. Like object vs class.</li>
+<li><span class="key">Docker Hub</span> – Public registry to store/share images.</li>
+</ul>
+<pre># Dockerfile for your ASP.NET Core service
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["StudentService.csproj", "."]
+RUN dotnet restore
+COPY . .
+RUN dotnet build -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "StudentService.dll"]</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q30</span><span class="q-text">Explain Docker Compose. How did you use it in your project?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>Docker Compose = define and run multi-container apps with one YAML file. You containerized all SmartSchool microservices.</p>
+<pre># docker-compose.yml for SmartSchool ERP
+version: '3.8'
+services:
+  gateway:
+    build: ./Gateway
+    ports: ["5000:80"]
+    depends_on: [studentservice, billingservice]
+
+  studentservice:
+    build: ./StudentService
+    ports: ["5001:80"]
+    environment:
+      - ConnectionStrings__Default=Server=sqlserver;Database=StudentDB;...
+    depends_on: [sqlserver]
+
+  billingservice:
+    build: ./BillingService
+    ports: ["5002:80"]
+    depends_on: [sqlserver]
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - SA_PASSWORD=YourPassword123!
+      - ACCEPT_EULA=Y
+    volumes:
+      - sqldata:/var/opt/mssql
+
+volumes:
+  sqldata:</pre>
+<pre># Start all services
+docker-compose up -d
+
+# Stop all
+docker-compose down
+
+# View logs
+docker-compose logs -f studentservice</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q31</span><span class="q-text">What are Docker volumes? Why are they needed?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>Containers are stateless — when container stops, all data inside is lost. Volumes persist data on the host machine.</p>
+<pre># Mount volume for SQL Server data
+volumes:
+  - sqldata:/var/opt/mssql  # named volume
+
+# Mount for file uploads
+  - ./uploads:/app/wwwroot/uploads  # bind mount
+
+# Common Docker commands
+docker ps                    # list running containers
+docker images                # list images
+docker logs container-name   # view logs
+docker exec -it container-name bash  # enter container shell
+docker build -t myapp:v1 .   # build image</pre>
+</div>
+</div>
+
+</div><!-- end docker -->
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- 7. JWT & SECURITY -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section" id="jwt">
+<div class="section-title">🔷 JWT Authentication & Security <span class="badge high">Must Know</span></div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q32</span><span class="q-text">How does JWT authentication work? Explain the token structure.</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>JWT (JSON Web Token) = encoded string with 3 parts separated by dots.</p>
+<pre>// Structure: Header.Payload.Signature
+// eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIxMjMifQ.abc123
+
+// Header - algorithm type
+{ "alg": "HS256", "typ": "JWT" }
+
+// Payload - claims (user info)
+{
+  "sub": "1001",          // subject (userId)
+  "name": "Gurumoorthy",
+  "role": "Admin",
+  "exp": 1720000000       // expiry timestamp
+}
+
+// Signature - Header + Payload encoded with secret key
+HMACSHA256(base64(header) + "." + base64(payload), secretKey)</pre>
+<pre>// ASP.NET Core JWT setup
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "zencampus.com",
+            ValidAudience = "zencampus-users",
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"]))
+        };
+    });</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q33</span><span class="q-text">What is RBAC? How did you implement role-based authorization?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>// Generate token with roles
+var claims = new List&lt;Claim&gt;
+{
+    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+    new Claim(ClaimTypes.Name, user.Name),
+    new Claim(ClaimTypes.Role, user.Role), // "Admin", "Teacher", "Parent"
+    new Claim("SchoolId", user.SchoolId.ToString())
+};
+
+var token = new JwtSecurityToken(
+    issuer: "zencampus.com",
+    audience: "users",
+    claims: claims,
+    expires: DateTime.UtcNow.AddHours(8),
+    signingCredentials: creds
+);
+
+// Authorize by role on controllers
+[Authorize(Roles = "Admin")]
+[HttpDelete("students/{id}")]
+public async Task&lt;IActionResult&gt; DeleteStudent(int id) { ... }
+
+[Authorize(Roles = "Admin,Teacher")]
+[HttpGet("students")]
+public async Task&lt;IActionResult&gt; GetStudents() { ... }
+
+[Authorize] // any logged in user
+[HttpGet("profile")]
+public IActionResult GetProfile() { ... }
+
+[AllowAnonymous] // no auth needed
+[HttpPost("login")]
+public IActionResult Login(LoginDto dto) { ... }</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q34</span><span class="q-text">What is SQL Injection? How do you prevent it?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>// SQL INJECTION - NEVER DO THIS
+string query = "SELECT * FROM Users WHERE Username = '" + username + "'";
+// Attacker enters: admin' OR '1'='1  → bypasses login!
+
+// PREVENTION 1: Parameterized queries (Dapper)
+var user = await conn.QueryFirstOrDefaultAsync&lt;User&gt;(
+    "SELECT * FROM Users WHERE Username = @Username AND Password = @Password",
+    new { Username = username, Password = hashedPassword }); // safe!
+
+// PREVENTION 2: Stored procedures
+await conn.ExecuteAsync("sp_AuthenticateUser",
+    new { Username = username },
+    commandType: CommandType.StoredProcedure);
+
+// PREVENTION 3: EF Core (auto-parameterized)
+var user = await _context.Users
+    .FirstOrDefaultAsync(u => u.Username == username); // EF generates parameterized SQL</pre>
+<div class="tip">💡 Your resume says "SQL Injection Prevention" — be ready to explain parameterized queries with Dapper example.</div>
+</div>
+</div>
+
+</div><!-- end jwt -->
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- 8. MONGODB -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section" id="mongodb">
+<div class="section-title">🔷 MongoDB <span class="badge med">Good to Know</span></div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q35</span><span class="q-text">Why did you use MongoDB alongside SQL Server in your project?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>MongoDB is used when data is unstructured, schema changes often, or when high-volume document storage is needed.</p>
+<p>In SmartSchool: SQL Server for structured data (students, bills, payments). MongoDB for:</p>
+<ul>
+<li>Activity/audit logs — schema can vary by action type</li>
+<li>Student document uploads — flexible metadata</li>
+<li>Real-time analytics events</li>
+<li>Configuration data that changes shape frequently</li>
+</ul>
+<pre>// MongoDB in .NET Core
+public class AuditLog
+{
+    public ObjectId Id { get; set; }
+    public string UserId { get; set; }
+    public string Action { get; set; }
+    public object Data { get; set; }  // flexible - any structure
+    public DateTime CreatedAt { get; set; }
+}
+
+// Repository
+var collection = _mongoDb.GetCollection&lt;AuditLog&gt;("audit_logs");
+
+// Insert
+await collection.InsertOneAsync(new AuditLog
+{
+    UserId = "1001",
+    Action = "StudentAdmission",
+    Data = new { StudentId = 5, Name = "Ravi" }
+});
+
+// Query
+var logs = await collection
+    .Find(x => x.UserId == "1001" && x.CreatedAt >= DateTime.UtcNow.AddDays(-7))
+    .SortByDescending(x => x.CreatedAt)
+    .ToListAsync();</pre>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q36</span><span class="q-text">SQL vs NoSQL — when to choose which?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<table style="width:100%;border-collapse:collapse;font-size:12.5px">
+<tr style="background:#1e2535"><th style="padding:6px;text-align:left;color:#93c5fd">SQL (SQL Server)</th><th style="padding:6px;text-align:left;color:#93c5fd">NoSQL (MongoDB)</th></tr>
+<tr style="border-bottom:1px solid #2a2d3a"><td style="padding:6px">Fixed schema, structured data</td><td style="padding:6px">Flexible schema, documents</td></tr>
+<tr style="border-bottom:1px solid #2a2d3a"><td style="padding:6px">Strong ACID transactions</td><td style="padding:6px">Eventual consistency (by default)</td></tr>
+<tr style="border-bottom:1px solid #2a2d3a"><td style="padding:6px">Complex joins/relations</td><td style="padding:6px">Embedded documents (no joins)</td></tr>
+<tr><td style="padding:6px">Financial, ERP core data</td><td style="padding:6px">Logs, catalogs, real-time feeds</td></tr>
+</table>
+</div>
+</div>
+
+</div><!-- end mongodb -->
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- 9. SYSTEM DESIGN -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section" id="sysdesign">
+<div class="section-title">🔷 System Design <span class="badge med">Good to Know</span></div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q37</span><span class="q-text">Design a URL shortener (like bit.ly). How would you build it?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<h3>Requirements</h3>
+<ul><li>Short URL → Long URL redirect</li><li>Custom alias support</li><li>Click analytics</li></ul>
+<h3>Database Schema</h3>
+<pre>CREATE TABLE UrlMappings (
+    Id        BIGINT PRIMARY KEY IDENTITY,
+    ShortCode NVARCHAR(10) UNIQUE NOT NULL,
+    LongUrl   NVARCHAR(2048) NOT NULL,
+    UserId    INT,
+    Clicks    BIGINT DEFAULT 0,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    ExpiresAt DATETIME NULL
+)</pre>
+<h3>Short Code Generation</h3>
+<pre>// Base62 encode the DB Id
+private static readonly string Chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+public string Encode(long id)
+{
+    var result = "";
+    while (id > 0)
+    {
+        result = Chars[(int)(id % 62)] + result;
+        id /= 62;
+    }
+    return result.PadLeft(6, '0'); // "abc123"
+}</pre>
+<h3>API Design</h3>
+<pre>POST /api/shorten  → { longUrl } → returns { shortUrl: "zurl.in/abc123" }
+GET  /{shortCode}  → 301 redirect to long URL
+GET  /api/stats/{shortCode} → click analytics</pre>
+<div class="tip">💡 Add Redis cache: shortCode → longUrl (TTL 1 hour). Avoids DB hit on every redirect.</div>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q38</span><span class="q-text">Design the OTP authentication system you built. Walk through the architecture.</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p>This is YOUR project — answer confidently!</p>
+<pre>// Flow:
+// 1. User requests access → API generates 6-digit OTP
+// 2. Store OTP in DB with 3-min expiry
+// 3. Send via SMS gateway (3rd party API)
+// 4. User enters OTP → API validates → generates JWT → access granted
+
+// OTP Table
+CREATE TABLE OtpLog (
+    Id        INT PRIMARY KEY IDENTITY,
+    Phone     NVARCHAR(15) NOT NULL,
+    Otp       NVARCHAR(6) NOT NULL,
+    ExpiresAt DATETIME NOT NULL,
+    IsUsed    BIT DEFAULT 0,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    AttemptCount INT DEFAULT 0
+)
+
+// Generate OTP
+public async Task&lt;string&gt; GenerateOtpAsync(string phone)
+{
+    var otp = new Random().Next(100000, 999999).ToString();
+
+    await _conn.ExecuteAsync(
+        "INSERT INTO OtpLog (Phone, Otp, ExpiresAt) VALUES (@Phone, @Otp, @Exp)",
+        new { Phone = phone, Otp = otp, Exp = DateTime.UtcNow.AddMinutes(3) });
+
+    await _smsService.SendAsync(phone, $"Your OTP is {otp}. Valid for 3 minutes.");
+    return "OTP sent";
+}
+
+// Validate OTP - 50% faster with Dapper + index on Phone+Otp
+public async Task&lt;bool&gt; ValidateOtpAsync(string phone, string otp)
+{
+    var result = await _conn.ExecuteScalarAsync&lt;int&gt;(
+        "sp_ValidateAndExpireOtp",
+        new { Phone = phone, Otp = otp },
+        commandType: CommandType.StoredProcedure);
+    return result == 1;
+}</pre>
+<h3>Security considerations you can mention:</h3>
+<ul>
+<li>Rate limit OTP requests (max 3 per hour per phone)</li>
+<li>Max 3 wrong attempts → lock</li>
+<li>OTP expires in 3 minutes</li>
+<li>Audit log all attempts</li>
+<li>TLS for all API calls</li>
+</ul>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q39</span><span class="q-text">How would you design a notification system that sends SMS, Email, and Push?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<pre>// Strategy pattern - easily add new channels
+public interface INotificationChannel
+{
+    Task SendAsync(string to, string message, string subject = null);
+}
+
+public class SmsChannel : INotificationChannel
+{
+    public async Task SendAsync(string to, string message, string subject = null)
+        => await _smsGateway.SendSmsAsync(to, message);
+}
+
+public class EmailChannel : INotificationChannel
+{
+    public async Task SendAsync(string to, string message, string subject = null)
+        => await _emailService.SendEmailAsync(to, subject, message);
+}
+
+// Notification service
+public class NotificationService
+{
+    private readonly Dictionary&lt;string, INotificationChannel&gt; _channels;
+
+    public async Task SendAsync(NotificationRequest req)
+    {
+        var tasks = req.Channels
+            .Where(c => _channels.ContainsKey(c))
+            .Select(c => _channels[c].SendAsync(req.To, req.Message, req.Subject));
+
+        await Task.WhenAll(tasks); // send to all channels in parallel
+    }
+}
+
+// Usage
+await _notificationService.SendAsync(new NotificationRequest
+{
+    To = "8122448785",
+    Message = "Fee due: Rs.5000 by 30-Jun-2026",
+    Channels = new[] { "SMS", "Email" }
+});</pre>
+</div>
+</div>
+
+</div><!-- end sysdesign -->
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- 10. HR / BEHAVIORAL -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section" id="behavioral">
+<div class="section-title">🔷 HR & Behavioral Questions <span class="badge med">Good to Know</span></div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q40</span><span class="q-text">Tell me about yourself.</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p style="background:#1e2535;padding:12px;border-radius:6px;line-height:1.8;border-left:3px solid #2E75B6">
+"I'm Gurumoorthy, a .NET Developer with 3 years and 5 months of experience at RAX Tech International in Chennai. I specialize in ASP.NET Core Web API, microservices with Ocelot API Gateway, Dapper, SQL Server, and Docker.<br><br>
+My most significant project is SmartSchool-Web — a school ERP platform where I architected the entire microservices ecosystem, improved query performance by 40%, and containerized all services with Docker Compose.<br><br>
+I also built a bank locker OTP authentication system using TCP sockets and SMS gateway integration with zero security incidents post-deployment.<br><br>
+Currently I'm following a structured 180-day roadmap to upgrade my skills — I'm in Month 1 focusing on advanced C# patterns, and by December I'll have added Azure, React, and AI integration to my stack. I'm targeting a Senior Full Stack Cloud Developer role where I can bring both strong backend depth and modern cloud skills."
+</p>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q41</span><span class="q-text">What is your biggest technical achievement?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p style="background:#1e2535;padding:12px;border-radius:6px;line-height:1.8;border-left:3px solid #2E75B6">
+"My biggest achievement was architecting the full microservices ecosystem for SmartSchool-Web. When I joined the project, it was a monolithic application with performance issues. I redesigned it into separate microservices — StudentService, BillingService, AttendanceService, PaymentService — each with independent deployment via Docker containers and a centralized Ocelot API Gateway.<br><br>
+The result: 40% improvement in query performance through Dapper optimization and proper indexing, 35% reduction in production incident resolution time through centralized logging middleware, and the ability to scale individual services independently during peak admission seasons."
+</p>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q42</span><span class="q-text">Where do you see yourself in 2 years?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p style="background:#1e2535;padding:12px;border-radius:6px;line-height:1.8;border-left:3px solid #2E75B6">
+"In 2 years, I see myself as a Senior Full Stack Cloud Developer or Tech Lead. I'm already following a structured plan — by December 2026 I'll have added Azure cloud deployment, React frontend, Redis caching, and OpenAI integration to my existing microservices expertise. I want to take ownership of entire product features end-to-end, mentor junior developers, and contribute to system design decisions. This role is exactly aligned with that growth path."
+</p>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q43</span><span class="q-text">Describe a time you solved a difficult production bug.</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p style="background:#1e2535;padding:12px;border-radius:6px;line-height:1.8;border-left:3px solid #2E75B6">
+"During the fee collection season, our BillingService started timing out for schools with 1000+ students. I used SQL Server's execution plan analyzer and found that the attendance summary query was doing a full table scan on 2 million rows. The query had no index on the (StudentId, Date) combination.<br><br>
+I added a composite non-clustered index with INCLUDE for the needed columns, and the query went from 8 seconds to 0.4 seconds. I also added pagination to the API — OFFSET/FETCH instead of loading all records at once. Total result: 40% improvement in response time. After that, I set up query monitoring middleware to catch slow queries before they hit production."
+</p>
+</div>
+</div>
+
+<div class="qa">
+<div class="q" onclick="toggle(this)"><span class="q-num">Q44</span><span class="q-text">Why are you looking for a new opportunity? / Why should we hire you?</span><span class="arrow">▼</span></div>
+<div class="ans">
+<p style="background:#1e2535;padding:12px;border-radius:6px;line-height:1.8;border-left:3px solid #2E75B6">
+<strong>Why leaving:</strong> "I've had great growth at RAX Tech — I went from building basic APIs to architecting full microservices systems. Now I'm ready for the next challenge. I want to work with cloud-native systems at scale, add Azure and AI integration to my work, and grow into a senior/lead role."<br><br>
+<strong>Why hire me:</strong> "I bring 3.5 years of hands-on microservices experience, not just theory. I've proven I can reduce query time by 40%, architect multi-service systems, and deliver zero-downtime features. I'm also actively investing in my own growth — following a 180-day roadmap to become a full stack cloud developer. I'm the candidate who delivers today and grows with your team."
+</p>
+</div>
+</div>
+
+</div><!-- end behavioral -->
+
+<!-- QUICK REFERENCE -->
+<div class="section" style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:8px;padding:16px;margin-top:20px">
+<div style="color:#f59e0b;font-weight:700;font-size:14px;margin-bottom:12px">⚡ 6-Hour Study Plan</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12.5px">
+  <div style="background:#111420;padding:10px;border-radius:6px;border-left:3px solid #ef4444">
+    <div style="color:#ef4444;font-weight:700">Hour 1-2: C# + ASP.NET Core</div>
+    <div style="color:#94a3b8;margin-top:4px">Q1-Q14 · async/await, DI, Middleware, Filters, JWT</div>
+  </div>
+  <div style="background:#111420;padding:10px;border-radius:6px;border-left:3px solid #f97316">
+    <div style="color:#f97316;font-weight:700">Hour 2-3: Microservices + Dapper/EF</div>
+    <div style="color:#94a3b8;margin-top:4px">Q15-Q23 · Ocelot, Circuit Breaker, Transactions</div>
+  </div>
+  <div style="background:#111420;padding:10px;border-radius:6px;border-left:3px solid #eab308">
+    <div style="color:#eab308;font-weight:700">Hour 3-4: SQL + Docker</div>
+    <div style="color:#94a3b8;margin-top:4px">Q24-Q31 · Indexing, ACID, Docker Compose</div>
+  </div>
+  <div style="background:#111420;padding:10px;border-radius:6px;border-left:3px solid #22c55e">
+    <div style="color:#22c55e;font-weight:700">Hour 4-5: System Design + Security</div>
+    <div style="color:#94a3b8;margin-top:4px">Q32-Q39 · JWT, RBAC, URL Shortener, OTP Design</div>
+  </div>
+  <div style="background:#111420;padding:10px;border-radius:6px;border-left:3px solid #2E75B6;grid-column:1/-1">
+    <div style="color:#2E75B6;font-weight:700">Hour 5-6: HR Answers + Full Revision</div>
+    <div style="color:#94a3b8;margin-top:4px">Q40-Q44 · Rehearse "Tell me about yourself" 5 times out loud · Review all RED badge questions</div>
+  </div>
+</div>
+</div>
+
+</div><!-- end container -->
+
+<script>
+// Timer
+let total = 6 * 60 * 60;
+function updateTimer() {
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  document.getElementById('timer').textContent =
+    String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  if (total > 0) { total--; setTimeout(updateTimer, 1000); }
+  else document.getElementById('timer').style.color = '#ef4444';
+}
+updateTimer();
+
+// Toggle Q&A
+function toggle(el) {
+  const ans = el.nextElementSibling;
+  const arrow = el.querySelector('.arrow');
+  const isOpen = ans.classList.contains('open');
+  ans.classList.toggle('open');
+  arrow.textContent = isOpen ? '▼' : '▲';
+  if (!isOpen) el.parentElement.dataset.answered = '1';
+  updateProgress();
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.qa');
+  const done = document.querySelectorAll('.qa[data-answered="1"]').length;
+  document.getElementById('answered-count').textContent = done + ' answered';
+  document.getElementById('total-count').textContent = all.length + ' total';
+  document.getElementById('prog').style.width = (done / all.length * 100) + '%';
+}
+document.getElementById('total-count').textContent = document.querySelectorAll('.qa').length + ' total';
+
+// Nav active state
+window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('.section[id]');
+  sections.forEach(sec => {
+    const rect = sec.getBoundingClientRect();
+    if (rect.top <= 120 && rect.bottom >= 120) {
+      document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+      const link = document.querySelector(`.nav a[href="#${sec.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+});
+</script>
+</body>
+</html>

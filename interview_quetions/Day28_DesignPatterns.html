@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 28 — Design Patterns | ZenCampus .NET Interview Prep</title>
+<style>
+  :root{--accent:#db2777;--accent-dim:#be185d;--accent-subtle:rgba(219,39,119,0.08);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;transition:width .2s;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(219,39,119,.1) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.1rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  p{margin-bottom:.6rem;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.3rem;margin-bottom:1rem;}
+  .card-danger{border-left:4px solid var(--danger);background:rgba(239,68,68,.05);}
+  .card-good{border-left:4px solid var(--good);background:rgba(34,197,94,.05);}
+  .card-warn{border-left:4px solid var(--warn);background:rgba(245,158,11,.05);}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}.ok{color:var(--good);font-weight:700;}.err{color:var(--danger);font-weight:700;}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .movie{background:linear-gradient(135deg,rgba(219,39,119,.12),rgba(219,39,119,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sq{font-weight:700;font-size:.92rem;}
+  .st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);}
+  .rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}
+  .qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}
+  .cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">DAY 28-30</span>
+  <a href="#repo">Repository</a><a href="#uow">Unit of Work</a><a href="#factory">Factory</a>
+  <a href="#strategy">Strategy</a><a href="#decorator">Decorator</a><a href="#scenarios">Interview Q</a>
+  <a href="#quiz">Quiz</a><a href="#checklist">Checklist</a>
+</nav>
+<div class="hero">
+  <h1>Design Patterns Deep Dive</h1>
+  <p>Repository · Unit of Work · Factory · Strategy · Decorator · Observer</p>
+  <div class="tags">
+    <span class="tag">GoF Patterns</span><span class="tag">ZenCampus Architecture</span>
+    <span class="tag">Senior Level</span><span class="tag">Day 28–30 / 60</span>
+    <span class="tag" style="background:rgba(219,39,119,.2);border-color:#db2777;color:#db2777;">Hot Magenta #db2777</span>
+  </div>
+</div>
+<main>
+
+<section id="repo">
+  <h2>🗃️ Repository Pattern — DB Abstraction Layer</h2>
+  <p>ZenCampus-la Controller directly _db access pannaa — untestable, tightly coupled. Repository = DB-ku oru clean interface.</p>
+  <pre><code><span class="cm">// Interface — Domain/Application layer-la define</span>
+<span class="kw">public interface</span> <span class="cl">IStudentRepository</span>
+{
+    <span class="cl">Task</span>&lt;<span class="cl">Student</span>?&gt; GetByIdAsync(<span class="kw">int</span> id, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>);
+    <span class="cl">Task</span>&lt;<span class="cl">PagedList</span>&lt;<span class="cl">Student</span>&gt;&gt; GetPagedAsync(<span class="kw">int</span> schoolId, <span class="kw">int</span> page, <span class="kw">int</span> size, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>);
+    <span class="cl">Task</span>&lt;<span class="kw">int</span>&gt; AddAsync(<span class="cl">Student</span> student, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>);
+    <span class="cl">Task</span> UpdateAsync(<span class="cl">Student</span> student, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>);
+    <span class="cl">Task</span> DeleteAsync(<span class="kw">int</span> id, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>);
+    <span class="cl">Task</span>&lt;<span class="kw">bool</span>&gt; ExistsAsync(<span class="kw">int</span> schoolId, <span class="kw">string</span> admissionNumber, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>);
+}
+
+<span class="cm">// EF Core Implementation — Infrastructure layer</span>
+<span class="kw">public class</span> <span class="cl">EfStudentRepository</span>(<span class="cl">ZenCampusDbContext</span> _db) : <span class="cl">IStudentRepository</span>
+{
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">Student</span>?&gt; GetByIdAsync(<span class="kw">int</span> id, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>)
+        =&gt; <span class="kw">await</span> _db.Students.AsNoTracking().FirstOrDefaultAsync(s =&gt; s.Id == id, ct);
+
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="kw">int</span>&gt; AddAsync(<span class="cl">Student</span> student, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>)
+    {
+        _db.Students.Add(student);
+        <span class="kw">await</span> _db.SaveChangesAsync(ct);
+        <span class="kw">return</span> student.Id;
+    }
+}
+
+<span class="cm">// DI Registration</span>
+builder.Services.AddScoped&lt;<span class="cl">IStudentRepository</span>, <span class="cl">EfStudentRepository</span>&gt;();</code></pre>
+
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Kaaka Muttai (2015) — Two Brothers, Perfect Teamwork</div>
+    <div class="mb">Two brothers ellaam share pannuvanga — oru interface, irandu implementations (EF + Dapper). Repository pattern: Controller doesn't care how data fetched — EF-aa, Dapper-aa, any DB-aa — interface-la oru maadhiri behave pannuvanga!</div></div>
+  </div>
+</section>
+
+<section id="uow">
+  <h2>🔄 Unit of Work — Atomic Transactions</h2>
+  <pre><code><span class="cm">// Unit of Work — multiple repository operations in one transaction</span>
+<span class="kw">public interface</span> <span class="cl">IUnitOfWork</span> : <span class="cl">IAsyncDisposable</span>
+{
+    <span class="cl">IStudentRepository</span>    Students    { <span class="kw">get</span>; }
+    <span class="cl">IFeeRepository</span>        Fees        { <span class="kw">get</span>; }
+    <span class="cl">IAttendanceRepository</span> Attendance  { <span class="kw">get</span>; }
+    <span class="cl">Task</span>&lt;<span class="kw">int</span>&gt; CommitAsync(<span class="cl">CancellationToken</span> ct = <span class="kw">default</span>);
+}
+
+<span class="kw">public class</span> <span class="cl">EfUnitOfWork</span>(<span class="cl">ZenCampusDbContext</span> db) : <span class="cl">IUnitOfWork</span>
+{
+    <span class="kw">public</span> <span class="cl">IStudentRepository</span>    Students   =&gt; <span class="kw">new</span> <span class="cl">EfStudentRepository</span>(db);
+    <span class="kw">public</span> <span class="cl">IFeeRepository</span>        Fees       =&gt; <span class="kw">new</span> <span class="cl">EfFeeRepository</span>(db);
+    <span class="kw">public</span> <span class="cl">IAttendanceRepository</span> Attendance =&gt; <span class="kw">new</span> <span class="cl">EfAttendanceRepository</span>(db);
+    <span class="kw">public</span> <span class="cl">Task</span>&lt;<span class="kw">int</span>&gt; CommitAsync(<span class="cl">CancellationToken</span> ct) =&gt; db.SaveChangesAsync(ct);
+    <span class="kw">public</span> <span class="cl">ValueTask</span> DisposeAsync() =&gt; db.DisposeAsync();
+}
+
+<span class="cm">// Usage — Admission creates Student + FeeRecord atomically</span>
+<span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="kw">int</span>&gt; AdmitStudentAsync(<span class="cl">AdmitStudentDto</span> dto, <span class="cl">CancellationToken</span> ct)
+{
+    <span class="kw">var</span> student = <span class="cl">Student</span>.Create(dto);
+    <span class="kw">await</span> _uow.Students.AddAsync(student, ct);
+    <span class="kw">var</span> fee = <span class="cl">FeeRecord</span>.CreateAdmission(student.Id, dto.AdmissionFee);
+    <span class="kw">await</span> _uow.Fees.AddAsync(fee, ct);
+    <span class="kw">await</span> _uow.CommitAsync(ct);  <span class="cm">// ONE SaveChanges = ONE transaction</span>
+    <span class="kw">return</span> student.Id;
+}</code></pre>
+</section>
+
+<section id="factory">
+  <h2>🏭 Factory Pattern — Object Creation Without new()</h2>
+  <pre><code><span class="cm">// Abstract Factory — create report generators by type</span>
+<span class="kw">public interface</span> <span class="cl">IReport</span>
+{
+    <span class="cl">Task</span>&lt;<span class="kw">byte</span>[]&gt; GenerateAsync(<span class="kw">int</span> schoolId, <span class="cl">CancellationToken</span> ct);
+}
+
+<span class="kw">public interface</span> <span class="cl">IReportFactory</span>
+{
+    <span class="cl">IReport</span> Create(<span class="kw">string</span> reportType);
+}
+
+<span class="kw">public class</span> <span class="cl">ReportFactory</span>(<span class="cl">IServiceProvider</span> _sp) : <span class="cl">IReportFactory</span>
+{
+    <span class="kw">public</span> <span class="cl">IReport</span> Create(<span class="kw">string</span> reportType) =&gt; reportType <span class="kw">switch</span>
+    {
+        <span class="str">"attendance"</span>  =&gt; _sp.GetRequiredService&lt;<span class="cl">AttendanceReport</span>&gt;(),
+        <span class="str">"fee"</span>         =&gt; _sp.GetRequiredService&lt;<span class="cl">FeeReport</span>&gt;(),
+        <span class="str">"marksheet"</span>   =&gt; _sp.GetRequiredService&lt;<span class="cl">MarksheetReport</span>&gt;(),
+        <span class="str">"tc"</span>          =&gt; _sp.GetRequiredService&lt;<span class="cl">TransferCertificateReport</span>&gt;(),
+        _ =&gt; <span class="kw">throw new</span> <span class="cl">ArgumentException</span>(<span class="str">$"Unknown report type: {reportType}"</span>)
+    };
+}
+
+<span class="cm">// Usage</span>
+<span class="kw">var</span> report = _reportFactory.Create(dto.ReportType);
+<span class="kw">var</span> pdf    = <span class="kw">await</span> report.GenerateAsync(schoolId, ct);</code></pre>
+
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">Dasavathaaram (2008) — Factory Creates Right Avatar</div>
+    <div class="mb">Kamal Haasan enna role venumnu situation decide pannudu — Factory same: report type string-ku correct implementation return pannudu. Caller doesn't know which class — factory decides!</div></div>
+  </div>
+</section>
+
+<section id="strategy">
+  <h2>♟️ Strategy Pattern — Swappable Algorithms</h2>
+  <pre><code><span class="cm">// Fee calculation varies by student category</span>
+<span class="kw">public interface</span> <span class="cl">IFeeCalculator</span>
+{
+    <span class="kw">decimal</span> Calculate(<span class="cl">Student</span> student, <span class="cl">FeeCategory</span> category);
+}
+
+<span class="kw">public class</span> <span class="cl">GeneralFeeCalculator</span> : <span class="cl">IFeeCalculator</span>
+{
+    <span class="kw">public decimal</span> Calculate(<span class="cl">Student</span> s, <span class="cl">FeeCategory</span> c) =&gt; c.BaseAmount;
+}
+
+<span class="kw">public class</span> <span class="cl">ScStFeeCalculator</span> : <span class="cl">IFeeCalculator</span>
+{
+    <span class="kw">public decimal</span> Calculate(<span class="cl">Student</span> s, <span class="cl">FeeCategory</span> c) =&gt; c.BaseAmount * <span class="num">0.5m</span>; <span class="cm">// 50% concession</span>
+}
+
+<span class="kw">public class</span> <span class="cl">StaffChildFeeCalculator</span> : <span class="cl">IFeeCalculator</span>
+{
+    <span class="kw">public decimal</span> Calculate(<span class="cl">Student</span> s, <span class="cl">FeeCategory</span> c) =&gt; <span class="num">0</span>; <span class="cm">// free</span>
+}
+
+<span class="cm">// Keyed DI (.NET 8) — inject by category</span>
+builder.Services.AddKeyedScoped&lt;<span class="cl">IFeeCalculator</span>, <span class="cl">GeneralFeeCalculator</span>&gt;(<span class="str">"General"</span>);
+builder.Services.AddKeyedScoped&lt;<span class="cl">IFeeCalculator</span>, <span class="cl">ScStFeeCalculator</span>&gt;(<span class="str">"SC/ST"</span>);
+builder.Services.AddKeyedScoped&lt;<span class="cl">IFeeCalculator</span>, <span class="cl">StaffChildFeeCalculator</span>&gt;(<span class="str">"StaffChild"</span>);
+
+<span class="cm">// FeeService — strategy resolved at runtime</span>
+<span class="kw">public class</span> <span class="cl">FeeService</span>(<span class="cl">IServiceProvider</span> _sp)
+{
+    <span class="kw">public decimal</span> CalculateFee(<span class="cl">Student</span> student, <span class="cl">FeeCategory</span> cat)
+    {
+        <span class="kw">var</span> calc = _sp.GetRequiredKeyedService&lt;<span class="cl">IFeeCalculator</span>&gt;(student.Category);
+        <span class="kw">return</span> calc.Calculate(student, cat);
+    }
+}</code></pre>
+</section>
+
+<section id="decorator">
+  <h2>🎭 Decorator Pattern — Add Behaviour Without Modifying</h2>
+  <pre><code><span class="cm">// Add caching to StudentRepository without touching EfStudentRepository</span>
+<span class="kw">public class</span> <span class="cl">CachedStudentRepository</span>(<span class="cl">IStudentRepository</span> _inner,
+                                      <span class="cl">IDistributedCache</span> _cache,
+                                      <span class="cl">ILogger</span>&lt;<span class="cl">CachedStudentRepository</span>&gt; _log)
+    : <span class="cl">IStudentRepository</span>
+{
+    <span class="kw">public async</span> <span class="cl">Task</span>&lt;<span class="cl">Student</span>?&gt; GetByIdAsync(<span class="kw">int</span> id, <span class="cl">CancellationToken</span> ct = <span class="kw">default</span>)
+    {
+        <span class="kw">var</span> key    = <span class="str">$"student:{id}"</span>;
+        <span class="kw">var</span> cached = <span class="kw">await</span> _cache.GetStringAsync(key, ct);
+        <span class="kw">if</span> (cached <span class="kw">is not null</span>)
+            <span class="kw">return</span> <span class="cl">JsonSerializer</span>.Deserialize&lt;<span class="cl">Student</span>&gt;(cached);
+
+        <span class="kw">var</span> student = <span class="kw">await</span> _inner.GetByIdAsync(id, ct);  <span class="cm">// delegate to real repo</span>
+        <span class="kw">if</span> (student <span class="kw">is not null</span>)
+            <span class="kw">await</span> _cache.SetStringAsync(key, <span class="cl">JsonSerializer</span>.Serialize(student),
+                <span class="kw">new</span>() { AbsoluteExpirationRelativeToNow = <span class="cl">TimeSpan</span>.FromMinutes(<span class="num">10</span>) }, ct);
+        <span class="kw">return</span> student;
+    }
+    <span class="cm">// All other methods delegate to _inner unchanged</span>
+    <span class="kw">public</span> <span class="cl">Task</span>&lt;<span class="cl">PagedList</span>&lt;<span class="cl">Student</span>&gt;&gt; GetPagedAsync(<span class="kw">int</span> s, <span class="kw">int</span> p, <span class="kw">int</span> sz, <span class="cl">CancellationToken</span> ct)
+        =&gt; _inner.GetPagedAsync(s, p, sz, ct);
+    <span class="kw">public</span> <span class="cl">Task</span>&lt;<span class="kw">int</span>&gt; AddAsync(<span class="cl">Student</span> student, <span class="cl">CancellationToken</span> ct) =&gt; _inner.AddAsync(student, ct);
+    <span class="kw">public</span> <span class="cl">Task</span> UpdateAsync(<span class="cl">Student</span> s, <span class="cl">CancellationToken</span> ct) =&gt; _inner.UpdateAsync(s, ct);
+    <span class="kw">public</span> <span class="cl">Task</span> DeleteAsync(<span class="kw">int</span> id, <span class="cl">CancellationToken</span> ct) =&gt; _inner.DeleteAsync(id, ct);
+    <span class="kw">public</span> <span class="cl">Task</span>&lt;<span class="kw">bool</span>&gt; ExistsAsync(<span class="kw">int</span> sid, <span class="kw">string</span> an, <span class="cl">CancellationToken</span> ct) =&gt; _inner.ExistsAsync(sid, an, ct);
+}
+
+<span class="cm">// Registration — wrap EfStudentRepository with caching decorator</span>
+builder.Services.AddScoped&lt;<span class="cl">EfStudentRepository</span>&gt;();
+builder.Services.AddScoped&lt;<span class="cl">IStudentRepository</span>&gt;(sp =&gt;
+    <span class="kw">new</span> <span class="cl">CachedStudentRepository</span>(
+        sp.GetRequiredService&lt;<span class="cl">EfStudentRepository</span>&gt;(),
+        sp.GetRequiredService&lt;<span class="cl">IDistributedCache</span>&gt;(),
+        sp.GetRequiredService&lt;<span class="cl">ILogger</span>&lt;<span class="cl">CachedStudentRepository</span>&gt;&gt;()));</code></pre>
+
+  <div class="movie">
+    <div class="mi">🎬</div>
+    <div><div class="mt">96 (2018) — Same Feelings, Enhanced with Time</div>
+    <div class="mb">Ram and Janu-oda memories time-la enhanced aana — feelings same but depth added. Decorator same: EfStudentRepository (base) + CachedStudentRepository (wrapper) = same interface, new caching behaviour added without touching original code!</div></div>
+  </div>
+
+  <h3>Pattern Comparison</h3>
+  <table>
+    <tr><th>Pattern</th><th>Problem Solved</th><th>ZenCampus Use</th></tr>
+    <tr><td>Repository</td><td>DB access abstraction</td><td>IStudentRepository, IFeeRepository</td></tr>
+    <tr><td>Unit of Work</td><td>Atomic multi-repo transactions</td><td>Admission = Student + Fee in one TX</td></tr>
+    <tr><td>Factory</td><td>Object creation without new()</td><td>ReportFactory.Create("attendance")</td></tr>
+    <tr><td>Strategy</td><td>Swappable algorithms</td><td>IFeeCalculator per student category</td></tr>
+    <tr><td>Decorator</td><td>Add behaviour without modifying</td><td>CachedStudentRepository wraps EF repo</td></tr>
+  </table>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is the Repository pattern and how does it help with testing?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Repository abstracts data access behind an interface. In ZenCampus: IStudentRepository hides whether data comes from EF Core, Dapper, or even a mock. In unit tests, we <code>new Mock&lt;IStudentRepository&gt;()</code> and setup expectations — no DB needed. Controller and service logic tested in isolation.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Difference between Repository pattern and Unit of Work? When do you need both?</span><span class="st">Architecture</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Repository = abstraction for one entity type (IStudentRepository handles Students). Unit of Work = orchestrates multiple repositories in one transaction. You need UoW when one business operation touches multiple tables — ZenCampus student admission creates Student + FeeRecord + AttendanceProfile atomically. Repository alone would do 3 SaveChanges = 3 separate transactions.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">Give a real example of the Strategy pattern in your project.</span><span class="st">Experience</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>ZenCampus-la fee calculation varies by student category: General (full fee), SC/ST (50% concession), StaffChild (free). IFeeCalculator interface with three implementations. When calculating fee, strategy resolved at runtime based on student.Category. Adding a new category = new class implementing IFeeCalculator — existing code untouched (Open/Closed Principle).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">How is the Decorator pattern different from Inheritance for adding behaviour?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Inheritance is compile-time, static. Decorator is runtime, composable. With inheritance, CachedStudentRepository extends EfStudentRepository — tightly coupled. With Decorator, CachedStudentRepository holds IStudentRepository — can wrap ANY implementation (EF, Dapper, Mock). Multiple decorators can chain: Cached + Logged + Timed, all wrapping same core. Decorator = composition over inheritance.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">When would you use Factory pattern vs DI container for object creation?</span><span class="st">Design Decision</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>DI container: when the type is known at compile time (register once, inject always same type). Factory: when the type is determined at runtime (user selects "attendance" or "fee" report — can't register all variants under same interface with DI without keyed services). Factory encapsulates the selection logic.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">What is the Observer pattern? Does ZenCampus use it?</span><span class="st">Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Observer = publish-subscribe. When event occurs, all subscribed handlers notified. ZenCampus: StudentAdmitted event → triggers (1) SendWelcomeSms, (2) CreateInitialFeeRecord, (3) SendEmailToParent — all as separate handlers. In .NET: INotificationHandler in MediatR, domain events, C# events/delegates.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">What's wrong with having a Singleton DbContext in .NET?</span><span class="st">Production Bug</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>DbContext is NOT thread-safe. Singleton = shared across ALL requests simultaneously = concurrent access = race conditions = corrupted data. DbContext also holds tracked entities — a student updated in one request would bleed into another. Always Scoped (per-request). Worker services needing DbContext: inject IServiceScopeFactory, create a scope per operation.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">Can Repository pattern leak EF Core details? How do you prevent it?</span><span class="st">Architecture</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Yes — if repository returns IQueryable, callers can chain LINQ operators that EF translates. This leaks EF knowledge beyond infrastructure layer. Prevention: return concrete types (List, PagedList, single entities) — never IQueryable from the repository interface. Let the repository fully own the query composition.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">How do you register a Decorator in ASP.NET Core DI without Scrutor?</span><span class="st">Code</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc">
+  <pre style="font-size:.78rem"><code>builder.Services.AddScoped&lt;EfStudentRepository&gt;();
+builder.Services.AddScoped&lt;IStudentRepository&gt;(sp =&gt;
+    new CachedStudentRepository(
+        sp.GetRequiredService&lt;EfStudentRepository&gt;(),
+        sp.GetRequiredService&lt;IDistributedCache&gt;()));</code></pre>
+  <p>With Scrutor NuGet: <code>services.Decorate&lt;IStudentRepository, CachedStudentRepository&gt;()</code> — cleaner.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">How does the Factory pattern support Open/Closed Principle?</span><span class="st">SOLID Connection</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Factory encapsulates the switch/if-else for type selection. When adding a new report type: create new class implementing IReport, add one entry in factory switch. All existing code (calling code, other reports) remains unchanged. Factory is the single point that changes — and only by addition, not modification. Classic OCP.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. CachedStudentRepository wraps EfStudentRepository — which pattern is this?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Proxy controls access. Decorator adds behavior to existing interface — this is Decorator.')">Proxy Pattern</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Decorator wraps same interface, adds caching behavior without modifying EfStudentRepository.')">Decorator Pattern</button>
+    <button class="qb" onclick="ans(this,'wrong','Adapter converts one interface to another. Both repos implement same interface here.')">Adapter Pattern</button>
+    <button class="qb" onclick="ans(this,'wrong','Strategy swaps algorithms, not adds behavior to existing implementation.')">Strategy Pattern</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. Unit of Work calls SaveChanges — how many SQL transactions does it create?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','One per repository would be multiple separate transactions.')">One per repository operation</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! UoW batches all changes into ONE SaveChangesAsync call = ONE database transaction.')">One transaction for all operations</button>
+    <button class="qb" onclick="ans(this,'wrong','UoW does not create transactions per entity type.')">One per entity type</button>
+    <button class="qb" onclick="ans(this,'wrong','UoW exists to create exactly ONE transaction — not zero.')">Zero — UoW uses stored procedures</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. IFeeCalculator has 3 implementations (General, SC/ST, StaffChild). Adding a 4th for Sports Quota — what do you modify?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Existing implementations should never need change — Open/Closed Principle.')">Modify all 3 existing implementations</button>
+    <button class="qb" onclick="ans(this,'wrong','IFeeCalculator interface should NOT change — it is stable.')">Modify IFeeCalculator interface</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Create SportsQuotaFeeCalculator + add one entry in factory/DI. Zero existing code modified.')">Add new class + register in DI — nothing else changes</button>
+    <button class="qb" onclick="ans(this,'wrong','FeeService selects strategy at runtime — it should not contain fee logic itself.')">Add if-else in FeeService</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. What does ReportFactory.Create("attendance") return when no matching case exists?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','null return would cause NullReferenceException downstream — bad practice.')">null</button>
+    <button class="qb" onclick="ans(this,'wrong','Default constructor is not the right pattern for factory error handling.')">new DefaultReport()</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Throw ArgumentException with the unknown type — fast fail with clear message. Never return null from factory.')">throw ArgumentException with the unknown type</button>
+    <button class="qb" onclick="ans(this,'wrong','KeyNotFoundException is for dictionary lookups, not factory pattern.')">throw KeyNotFoundException</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section id="checklist">
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can implement IStudentRepository with EF Core</li>
+    <li onclick="ck(this)"><input type="checkbox">I understand Unit of Work and atomic transactions</li>
+    <li onclick="ck(this)"><input type="checkbox">I can implement Factory pattern with switch expression</li>
+    <li onclick="ck(this)"><input type="checkbox">I can implement Strategy pattern with keyed DI</li>
+    <li onclick="ck(this)"><input type="checkbox">I can write a Decorator that wraps a repository</li>
+    <li onclick="ck(this)"><input type="checkbox">I know why Singleton DbContext is dangerous</li>
+    <li onclick="ck(this)"><input type="checkbox">I can explain Decorator vs Inheritance</li>
+    <li onclick="ck(this)"><input type="checkbox">I can connect Factory pattern to Open/Closed Principle</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Day 28–30 Complete ✓ — Design Patterns</p>
+  <p>Accent: Hot Magenta #db2777 · Next: Day 31 — CQRS + MediatR Pattern</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 15 – Azure Cloud | ZenCampus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#00102a,#0d0d1a,#00102a);padding:36px 20px;text-align:center;border-bottom:3px solid #0078d4}
+header h1{font-size:2em;color:#60b4ff;text-shadow:0 0 20px #0078d455}
+header p{color:#50a0e8;margin-top:6px}
+.badge{display:inline-block;background:#0078d422;border:1px solid #0078d455;color:#60b4ff;padding:3px 12px;border-radius:20px;font-size:0.78em;margin:3px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#60b4ff;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#0078d4;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.84em;line-height:1.65;margin:10px 0}
+.kw{color:#569cd6}.tp{color:#4ec9b0}.st{color:#ce9178}.nm{color:#b5cea8}.cm{color:#6a9955}.pr{color:#9cdcfe}.mt{color:#dcdcaa}.at{color:#c586c0}.az{color:#60b4ff}
+code{background:#1a1a2e;color:#0078d4;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+.movie{background:#00051a;border-left:4px solid #0078d4;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.movie .film{color:#f39c12;font-weight:bold;font-size:0.85em}
+.movie p{color:#60b4ff;font-size:0.9em;margin-top:4px}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.danger{background:#1f0a0a;border-left:4px solid #e74c3c;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.danger .d-label{color:#e74c3c;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.danger p{color:#f1948a;font-size:0.9em}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:700px){.comparison,.two-col{grid-template-columns:1fr}}
+.bad-box{background:#1f0a0a;border:1px solid #e74c3c44;border-radius:8px;padding:14px}
+.good-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:8px;padding:14px}
+.box-label{font-size:0.78em;font-weight:bold;margin-bottom:8px}
+.bad-box .box-label{color:#e74c3c}.good-box .box-label{color:#2ecc71}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.87em}
+th{background:#00102a;color:#60b4ff;padding:10px 12px;text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #1e1e3a;color:#c0c0d0}
+tr:hover td{background:#0a0a2a}
+.green{color:#2ecc71}.red{color:#e74c3c}.yellow{color:#f39c12}.blue{color:#60b4ff}
+.scenario-card{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:20px;margin:16px 0}
+.scenario-card.hot{border-color:#0078d455;background:#00051a}
+.scenario-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.s-num{background:#0078d4;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.s-num.warn{background:#f97316;color:#fff}
+.scenario-title{font-weight:bold;color:#fff;font-size:1em}
+.diff{font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.easy{background:#1a4a1a;color:#2ecc71}.medium{background:#4a3a0a;color:#f39c12}.hard{background:#4a0a0a;color:#e74c3c}.senior{background:#00102a;color:#60b4ff}
+.real{background:#00102a;color:#60b4ff;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold}
+.hot-badge{background:#1a0800;color:#f97316;font-size:0.72em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #f9731655}
+.scenario-q{color:#c0c8e0;font-size:0.93em;background:#1a1a2e;padding:12px 14px;border-radius:6px;margin:8px 0;line-height:1.7}
+.reveal-btn{background:#00051a;border:1px solid #0078d4;color:#60b4ff;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-top:10px;transition:background 0.2s}
+.reveal-btn:hover{background:#0078d4;color:#fff}
+.reveal-btn.warn-btn{border-color:#f97316;color:#fb923c}
+.reveal-btn.warn-btn:hover{background:#f97316;color:#fff}
+.answer{display:none;background:#0a0a1f;border-radius:6px;padding:14px;margin-top:10px;border:1px solid #1e1e3a}
+.answer.shown{display:block}
+.answer .a-label{color:#60b4ff;font-size:0.8em;font-weight:bold;margin-bottom:8px}
+.answer .a-label.warn{color:#f97316}
+.gold-box{background:#1a1000;border:1px solid #f39c12;border-radius:6px;padding:10px 14px;margin-top:8px;color:#f0dc82;font-size:0.85em}
+.gold-label{color:#f39c12;font-weight:bold;font-size:0.78em}
+.quiz-opt{background:#1a1a35;border:1px solid #2a2a5a;border-radius:6px;padding:10px 14px;margin:6px 0;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.quiz-opt:hover{border-color:#0078d4;color:#60b4ff}
+.quiz-opt.correct{background:#0a2a0a;border-color:#2ecc71;color:#2ecc71}
+.quiz-opt.wrong{background:#2a0a0a;border-color:#e74c3c;color:#e74c3c}
+.quiz-fb{display:none;margin-top:8px;font-size:0.85em;padding:8px 12px;border-radius:6px}
+.quiz-fb.shown{display:block}
+.quiz-fb.ok{background:#0a2a0a;color:#2ecc71;border-left:3px solid #2ecc71}
+.quiz-fb.nope{background:#2a0a0a;color:#f1948a;border-left:3px solid #e74c3c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check-list{list-style:none;margin:10px 0}
+.check-list li{padding:5px 0;font-size:0.9em;color:#c0c0d0}
+.check-list li::before{content:"☐ ";color:#0078d4}
+.sticky-nav{background:#0d0d1a;border-bottom:1px solid #1e1e3a;padding:10px 20px;position:sticky;top:0;z-index:100;display:flex;gap:10px;flex-wrap:wrap}
+.sticky-nav a{color:#60b4ff;text-decoration:none;font-size:0.82em;padding:4px 10px;border-radius:4px;border:1px solid #1e1e3a}
+.sticky-nav a:hover{background:#00051a}
+.progress-wrap{background:#1a1a2e;border-radius:20px;height:8px;margin:6px 0}
+.progress-fill{border-radius:20px;height:8px;background:linear-gradient(90deg,#0078d4,#60b4ff)}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px}
+p{margin:6px 0}
+h3{color:#50a0e8;margin:16px 0 8px;font-size:1em}
+.arch-box{background:#0a0a1a;border:1px solid #1a2a3a;border-radius:10px;padding:16px;margin:14px 0;font-family:'Consolas',monospace;font-size:0.82em;color:#60b4ff;line-height:1.9}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+@media(max-width:700px){.svc-grid{grid-template-columns:1fr 1fr}}
+.svc-card{background:#00051a;border:1px solid #0078d433;border-radius:8px;padding:12px;text-align:center}
+.svc-icon{font-size:1.6em;margin-bottom:4px}
+.svc-name{color:#60b4ff;font-weight:bold;font-size:0.85em}
+.svc-desc{color:#888;font-size:0.75em;margin-top:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#60b4ff;font-size:0.85em;margin-bottom:6px">📅 Day 15 of 60 | Phase 1: Cloud Fundamentals</div>
+  <h1>☁️ Azure Cloud — ZenCampus Production Architecture</h1>
+  <p>App Service · Key Vault · Blob Storage · Service Bus · Application Insights · AKS · CI/CD</p>
+  <div style="margin-top:12px">
+    <span class="badge">Key Vault</span><span class="badge">Managed Identity</span><span class="badge">Blob Storage</span>
+    <span class="badge">Service Bus</span><span class="badge">App Insights</span><span class="badge">AKS</span>
+    <span class="badge">GitHub Actions</span><span class="badge">Deployment Slots</span><span class="badge">CDN</span>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <a href="#overview">🗺️ Overview</a>
+  <a href="#keyvault">🔐 Key Vault</a>
+  <a href="#blob">📦 Blob</a>
+  <a href="#servicebus">🚌 Service Bus</a>
+  <a href="#insights">📊 App Insights</a>
+  <a href="#appservice">🌐 App Service</a>
+  <a href="#cicd">🔄 CI/CD</a>
+  <a href="#scenarios">🎯 Scenarios</a>
+  <a href="#quiz">🧠 Quiz</a>
+</nav>
+
+<div class="container">
+
+<!-- SECTION 1: OVERVIEW -->
+<div class="section" id="overview">
+  <div class="section-title"><span class="num">1</span> ZenCampus Azure Architecture — Big Picture</div>
+
+  <div class="movie">
+    <span class="film">🎬 Dasavathaaram — 10 roles, one actor. Azure = 10 services, one platform. Key Vault = Dasavathara secret keeper. Service Bus = messenger between avatars. App Insights = omniscient observer!</span>
+    <p>ZenCampus runs on Azure. 50,000 students, 200 schools, 24/7 uptime. Not one big server — managed cloud services. Break apart responsibilites: Key Vault holds secrets, Blob stores files, Service Bus sends events, App Insights watches everything. Pay per use, scale automatically.</p>
+  </div>
+
+  <div class="arch-box">
+ZenCampus Azure Production Architecture:
+
+Internet → Azure Front Door (CDN + WAF + Global LB)
+              ↓
+         Azure API Management (rate limit, auth, versioning)
+              ↓
+    ┌─────────────────────────────────────┐
+    │  Azure Kubernetes Service (AKS)     │
+    │  StudentService  FeeService  ...    │
+    └─────────────────────────────────────┘
+         ↓           ↓           ↓
+  Azure SQL DB   Azure Cache   Azure Service Bus
+  (managed SQL)  for Redis     (messaging)
+         ↓
+  Azure Blob Storage           Azure Key Vault
+  (photos, PDFs, receipts)     (all secrets)
+         ↓
+  Azure Application Insights   GitHub Actions
+  (monitoring, traces, alerts) (CI/CD pipeline)
+  </div>
+
+  <div class="svc-grid">
+    <div class="svc-card"><div class="svc-icon">🔐</div><div class="svc-name">Key Vault</div><div class="svc-desc">Secrets, certs, keys</div></div>
+    <div class="svc-card"><div class="svc-icon">📦</div><div class="svc-name">Blob Storage</div><div class="svc-desc">Files, photos, PDFs</div></div>
+    <div class="svc-card"><div class="svc-icon">🚌</div><div class="svc-name">Service Bus</div><div class="svc-desc">Event messaging</div></div>
+    <div class="svc-card"><div class="svc-icon">📊</div><div class="svc-name">App Insights</div><div class="svc-desc">Monitoring, traces</div></div>
+    <div class="svc-card"><div class="svc-icon">☸️</div><div class="svc-name">AKS</div><div class="svc-desc">Microservices</div></div>
+    <div class="svc-card"><div class="svc-icon">🛢️</div><div class="svc-name">Azure SQL</div><div class="svc-desc">Managed SQL Server</div></div>
+    <div class="svc-card"><div class="svc-icon">⚡</div><div class="svc-name">Redis Cache</div><div class="svc-desc">Managed Redis</div></div>
+    <div class="svc-card"><div class="svc-icon">🌐</div><div class="svc-name">App Service</div><div class="svc-desc">PaaS web hosting</div></div>
+    <div class="svc-card"><div class="svc-icon">🔄</div><div class="svc-name">GitHub Actions</div><div class="svc-desc">CI/CD pipeline</div></div>
+  </div>
+</div>
+
+<!-- SECTION 2: KEY VAULT + MANAGED IDENTITY -->
+<div class="section" id="keyvault">
+  <div class="section-title"><span class="num">2</span> Key Vault + Managed Identity — Zero Credential Code</div>
+
+  <div class="danger">
+    <div class="d-label">⛔ Real Incident — Never put secrets in code/config!</div>
+    <p>Developer committed appsettings.json with real DB connection string to GitHub. GitHub secret scanner caught it — but 6 minutes exposed. Azure SQL firewall blocked external access (lucky). Key Vault + Managed Identity = credentials never exist in code OR config files.</p>
+  </div>
+
+  <div class="movie">
+    <span class="film">🎬 Dasavathaaram — Govind keeps the vial safe through 800 years. Key Vault = same. Secrets locked, only Managed Identity (the rightful owner) can access. No password needed — Azure handles the authentication!</span>
+    <p>Managed Identity = Azure gives the app an identity (like a service account). AKS pod says "I am ZenCampus StudentService" — Azure verifies via its own systems — Key Vault grants access. Zero passwords. Zero rotation headaches. Zero leaked secrets.</p>
+  </div>
+
+  <pre><span class="cm">// Program.cs — Key Vault with Managed Identity (no credentials!)</span>
+<span class="kw">using</span> Azure.Extensions.AspNetCore.Configuration.Secrets;
+<span class="kw">using</span> Azure.Identity;
+
+<span class="pr">builder</span>.<span class="pr">Configuration</span>.<span class="mt">AddAzureKeyVault</span>(
+    <span class="kw">new</span> <span class="tp">Uri</span>(<span class="st">"https://zencampus-kv.vault.azure.net/"</span>),
+    <span class="kw">new</span> <span class="tp">DefaultAzureCredential</span>()); <span class="cm">// Managed Identity in Azure, local dev uses your az login!</span>
+
+<span class="cm">// Key Vault secret names (dashes → double underscore in .NET config)
+// Secret: "ConnectionStrings--ZenCampus" → ConnectionStrings:ZenCampus
+// Secret: "Jwt--Secret"                 → Jwt:Secret
+// Secret: "Sms--ApiKey"                 → Sms:ApiKey
+// Secret: "Redis--Password"             → Redis:Password</span>
+
+<span class="cm">// Reads EXACTLY like appsettings.json — code doesn't change!</span>
+<span class="kw">var</span> <span class="pr">connStr</span> = <span class="pr">builder</span>.<span class="pr">Configuration</span>.<span class="mt">GetConnectionString</span>(<span class="st">"ZenCampus"</span>); <span class="cm">// from Key Vault!</span>
+<span class="kw">var</span> <span class="pr">jwtSecret</span> = <span class="pr">builder</span>.<span class="pr">Configuration</span>[<span class="st">"Jwt:Secret"</span>];               <span class="cm">// from Key Vault!</span></pre>
+
+  <pre><span class="cm">// DefaultAzureCredential — tries in order:
+// 1. EnvironmentCredential (CI/CD with service principal)
+// 2. WorkloadIdentityCredential (AKS pod identity)
+// 3. ManagedIdentityCredential (App Service, AKS node pool)
+// 4. VisualStudioCredential (local dev in VS)
+// 5. AzureCliCredential (local dev — 'az login' already done)
+// Same code, works everywhere!</span>
+
+<span class="cm">// Blob Storage with Managed Identity — no connection string!</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddSingleton</span>(<span class="kw">new</span> <span class="tp">BlobServiceClient</span>(
+    <span class="kw">new</span> <span class="tp">Uri</span>(<span class="st">"https://zencampusstorage.blob.core.windows.net"</span>),
+    <span class="kw">new</span> <span class="tp">DefaultAzureCredential</span>())); <span class="cm">// no connection string!</span>
+
+<span class="cm">// Azure Service Bus with Managed Identity</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddSingleton</span>(<span class="kw">new</span> <span class="tp">ServiceBusClient</span>(
+    <span class="st">"zencampus.servicebus.windows.net"</span>,
+    <span class="kw">new</span> <span class="tp">DefaultAzureCredential</span>()));</pre>
+
+  <pre><span class="cm"># AKS — enable Workload Identity (pod-level identity, not node-level)</span>
+az aks update -g zencampus-rg -n zencampus-aks --enable-oidc-issuer --enable-workload-identity
+az identity create -n student-service-identity -g zencampus-rg
+
+<span class="cm"># Grant Key Vault access to this identity</span>
+az keyvault set-policy -n zencampus-kv \
+    --object-id $(az identity show -n student-service-identity --query principalId -o tsv) \
+    --secret-permissions get list
+
+<span class="cm"># Annotate k8s ServiceAccount → links to Azure Managed Identity</span>
+kubectl annotate serviceaccount student-service \
+    azure.workload.identity/client-id=$(az identity show -n student-service-identity --query clientId -o tsv)</pre>
+</div>
+
+<!-- SECTION 3: BLOB STORAGE -->
+<div class="section" id="blob">
+  <div class="section-title"><span class="num">3</span> Azure Blob Storage — Student Photos, PDFs, Receipts</div>
+
+  <div class="movie">
+    <span class="film">🎬 Mersal — Hospital stores records of every patient safely. Blob Storage = same. Student photos, fee receipts, report cards — stored safely, retrieved with SAS token (limited-time access).</span>
+    <p>ZenCampus stores: student photos (200KB avg × 50,000 = 10GB), fee receipt PDFs (monthly), report cards, attendance export Excel files. Azure Blob = cheap, durable, CDN-ready. SAS token = give parent 1-hour download link for their child's receipt only. No direct storage access!</p>
+  </div>
+
+  <pre><span class="cm">// BlobStorageService — ZenCampus implementation</span>
+<span class="kw">public class</span> <span class="tp">AzureBlobService</span> : <span class="tp">IBlobService</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">BlobServiceClient</span> <span class="pr">_client</span>;
+
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="mt">UploadStudentPhotoAsync</span>(
+        <span class="kw">int</span> <span class="pr">studentId</span>, <span class="tp">Stream</span> <span class="pr">photo</span>, <span class="kw">string</span> <span class="pr">contentType</span>)
+    {
+        <span class="kw">var</span> <span class="pr">container</span> = <span class="pr">_client</span>.<span class="mt">GetBlobContainerClient</span>(<span class="st">"student-photos"</span>);
+        <span class="kw">await</span> <span class="pr">container</span>.<span class="mt">CreateIfNotExistsAsync</span>(<span class="tp">PublicAccessType</span>.<span class="pr">None</span>); <span class="cm">// private!</span>
+
+        <span class="kw">var</span> <span class="pr">blobName</span> = <span class="st">$"school/{_currentUser.SchoolId}/students/{studentId}/photo.jpg"</span>;
+        <span class="kw">var</span> <span class="pr">blob</span>     = <span class="pr">container</span>.<span class="mt">GetBlobClient</span>(<span class="pr">blobName</span>);
+
+        <span class="kw">await</span> <span class="pr">blob</span>.<span class="mt">UploadAsync</span>(<span class="pr">photo</span>, <span class="kw">new</span> <span class="tp">BlobUploadOptions</span>
+        {
+            <span class="pr">HttpHeaders</span> = <span class="kw">new</span> <span class="tp">BlobHttpHeaders</span> { <span class="pr">ContentType</span> = <span class="pr">contentType</span> },
+            <span class="pr">Metadata</span>    = <span class="kw">new</span> <span class="tp">Dictionary</span>&lt;<span class="kw">string</span>, <span class="kw">string</span>&gt;
+                          { [<span class="st">"studentId"</span>] = <span class="pr">studentId</span>.<span class="mt">ToString</span>() }
+        });
+
+        <span class="kw">return</span> <span class="pr">blobName</span>; <span class="cm">// store path in DB, not full URL</span>
+    }
+
+    <span class="cm">// SAS token — time-limited, operation-limited URL for secure download</span>
+    <span class="kw">public</span> <span class="tp">Uri</span> <span class="mt">GeneratePhotoSasUrl</span>(<span class="kw">string</span> <span class="pr">blobName</span>, <span class="tp">TimeSpan</span> <span class="pr">expiry</span>)
+    {
+        <span class="kw">var</span> <span class="pr">container</span> = <span class="pr">_client</span>.<span class="mt">GetBlobContainerClient</span>(<span class="st">"student-photos"</span>);
+        <span class="kw">var</span> <span class="pr">blob</span>      = <span class="pr">container</span>.<span class="mt">GetBlobClient</span>(<span class="pr">blobName</span>);
+
+        <span class="kw">return</span> <span class="pr">blob</span>.<span class="mt">GenerateSasUri</span>(<span class="kw">new</span> <span class="tp">BlobSasBuilder</span>
+        {
+            <span class="pr">BlobContainerName</span> = <span class="st">"student-photos"</span>,
+            <span class="pr">BlobName</span>          = <span class="pr">blobName</span>,
+            <span class="pr">Resource</span>          = <span class="st">"b"</span>,                     <span class="cm">// blob (not container)</span>
+            <span class="pr">ExpiresOn</span>         = <span class="tp">DateTimeOffset</span>.<span class="pr">UtcNow</span> + <span class="pr">expiry</span>,
+            <span class="pr">Permissions</span>       = <span class="tp">BlobSasPermissions</span>.<span class="pr">Read</span>  <span class="cm">// read only!</span>
+        });
+        <span class="cm">// Returns: https://zencampusstorage.blob.core.windows.net/student-photos/...?sv=...&se=...&sig=...
+        // Valid for 'expiry' only, read-only. Parent can download receipt, not modify!</span>
+    }
+
+    <span class="cm">// Upload fee receipt PDF (generated by Hangfire background job)</span>
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="kw">string</span>&gt; <span class="mt">UploadReceiptAsync</span>(<span class="kw">int</span> <span class="pr">receiptId</span>, <span class="kw">byte</span>[] <span class="pr">pdf</span>)
+    {
+        <span class="kw">var</span> <span class="pr">blobName</span>  = <span class="st">$"receipts/{DateTime.UtcNow:yyyy/MM}/{receiptId}.pdf"</span>;
+        <span class="kw">var</span> <span class="pr">container</span> = <span class="pr">_client</span>.<span class="mt">GetBlobContainerClient</span>(<span class="st">"fee-receipts"</span>);
+        <span class="kw">var</span> <span class="pr">blob</span>      = <span class="pr">container</span>.<span class="mt">GetBlobClient</span>(<span class="pr">blobName</span>);
+        <span class="kw">await</span> <span class="pr">blob</span>.<span class="mt">UploadAsync</span>(<span class="kw">new</span> <span class="tp">BinaryData</span>(<span class="pr">pdf</span>), overwrite: <span class="kw">true</span>);
+        <span class="kw">return</span> <span class="pr">blobName</span>;
+    }
+}</pre>
+
+  <table>
+    <tr><th>Container</th><th>Access</th><th>Content</th><th>TTL Strategy</th></tr>
+    <tr><td class="blue">student-photos</td><td class="red">Private</td><td>Student profile photos</td><td>SAS token — 1 hour for parent app</td></tr>
+    <tr><td class="blue">fee-receipts</td><td class="red">Private</td><td>Receipt PDFs</td><td>SAS token — 24 hours for download</td></tr>
+    <tr><td class="blue">report-exports</td><td class="red">Private</td><td>Excel/PDF reports</td><td>SAS token — 1 hour, admin only</td></tr>
+    <tr><td class="blue">static-assets</td><td class="green">Public (CDN)</td><td>CSS, JS, images</td><td>CDN cached — long expiry</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 4: SERVICE BUS -->
+<div class="section" id="servicebus">
+  <div class="section-title"><span class="num">4</span> Azure Service Bus — Reliable Event Messaging</div>
+
+  <pre><span class="cm">// NuGet: Azure.Messaging.ServiceBus</span>
+<span class="cm">// Topics = pub/sub (multiple subscribers). Queues = point-to-point.</span>
+
+<span class="cm">// Publisher — FeeService (after fee collected)</span>
+<span class="kw">public class</span> <span class="tp">AzureServiceBusPublisher</span>
+{
+    <span class="kw">private readonly</span> <span class="tp">ServiceBusClient</span> <span class="pr">_client</span>;
+
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">PublishFeePaidAsync</span>(<span class="tp">FeePaidEvent</span> <span class="pr">evt</span>)
+    {
+        <span class="kw">await using var</span> <span class="pr">sender</span>   = <span class="pr">_client</span>.<span class="mt">CreateSender</span>(<span class="st">"fee-events"</span>); <span class="cm">// topic name</span>
+        <span class="kw">var</span> <span class="pr">message</span>                = <span class="kw">new</span> <span class="tp">ServiceBusMessage</span>(
+            <span class="tp">BinaryData</span>.<span class="mt">FromObjectAsJson</span>(<span class="pr">evt</span>))
+        {
+            <span class="pr">MessageId</span>            = <span class="pr">evt</span>.<span class="pr">EventId</span>.<span class="mt">ToString</span>(), <span class="cm">// dedup key!</span>
+            <span class="pr">Subject</span>              = <span class="st">"fee.paid"</span>,
+            <span class="pr">CorrelationId</span>        = <span class="pr">evt</span>.<span class="pr">ReceiptNo</span>,
+            <span class="pr">TimeToLive</span>           = <span class="tp">TimeSpan</span>.<span class="mt">FromDays</span>(<span class="nm">7</span>),    <span class="cm">// auto-expire after 7 days</span>
+            <span class="pr">ApplicationProperties</span> = { [<span class="st">"SchoolId"</span>] = <span class="pr">evt</span>.<span class="pr">SchoolId</span> }
+        };
+        <span class="kw">await</span> <span class="pr">sender</span>.<span class="mt">SendMessageAsync</span>(<span class="pr">message</span>);
+    }
+}
+
+<span class="cm">// Subscriber — NotificationService (processes fee events)</span>
+<span class="kw">public class</span> <span class="tp">FeePaidProcessor</span> : <span class="tp">BackgroundService</span>
+{
+    <span class="kw">protected override async</span> <span class="tp">Task</span> <span class="mt">ExecuteAsync</span>(<span class="tp">CancellationToken</span> <span class="pr">ct</span>)
+    {
+        <span class="kw">await using var</span> <span class="pr">processor</span> = <span class="pr">_client</span>.<span class="mt">CreateProcessor</span>(
+            <span class="pr">topicName</span>:        <span class="st">"fee-events"</span>,
+            <span class="pr">subscriptionName</span>: <span class="st">"notification-service"</span>,
+            <span class="kw">new</span> <span class="tp">ServiceBusProcessorOptions</span>
+            {
+                <span class="pr">MaxConcurrentCalls</span>       = <span class="nm">5</span>,     <span class="cm">// 5 messages in parallel</span>
+                <span class="pr">AutoCompleteMessages</span>     = <span class="kw">false</span>, <span class="cm">// manual ACK — control retry!</span>
+                <span class="pr">MaxAutoLockRenewalDuration</span> = <span class="tp">TimeSpan</span>.<span class="mt">FromMinutes</span>(<span class="nm">5</span>)
+            });
+
+        <span class="pr">processor</span>.<span class="pr">ProcessMessageAsync</span> += <span class="kw">async</span> <span class="pr">args</span> =>
+        {
+            <span class="kw">var</span> <span class="pr">evt</span> = <span class="pr">args</span>.<span class="pr">Message</span>.<span class="mt">Body</span>.<span class="mt">ToObjectFromJson</span>&lt;<span class="tp">FeePaidEvent</span>&gt;();
+
+            <span class="kw">try</span>
+            {
+                <span class="kw">await</span> <span class="pr">_sms</span>.<span class="mt">SendReceiptAsync</span>(<span class="pr">evt</span>.<span class="pr">ParentPhone</span>, <span class="pr">evt</span>.<span class="pr">ReceiptNo</span>);
+                <span class="kw">await</span> <span class="pr">args</span>.<span class="mt">CompleteMessageAsync</span>(<span class="pr">args</span>.<span class="pr">Message</span>); <span class="cm">// ACK — remove from queue</span>
+            }
+            <span class="kw">catch</span> (<span class="tp">Exception</span> <span class="pr">ex</span>)
+            {
+                <span class="pr">_log</span>.<span class="mt">LogError</span>(<span class="pr">ex</span>, <span class="st">"SMS failed for {Receipt}"</span>, <span class="pr">evt</span>.<span class="pr">ReceiptNo</span>);
+
+                <span class="cm">// Abandon — message goes back to queue for retry</span>
+                <span class="kw">if</span> (<span class="pr">args</span>.<span class="pr">Message</span>.<span class="pr">DeliveryCount</span> >= <span class="nm">5</span>)
+                    <span class="kw">await</span> <span class="pr">args</span>.<span class="mt">DeadLetterMessageAsync</span>(<span class="pr">args</span>.<span class="pr">Message</span>,
+                        <span class="st">"MaxRetriesExceeded"</span>, <span class="pr">ex</span>.<span class="pr">Message</span>); <span class="cm">// → dead letter queue</span>
+                <span class="kw">else</span>
+                    <span class="kw">await</span> <span class="pr">args</span>.<span class="mt">AbandonMessageAsync</span>(<span class="pr">args</span>.<span class="pr">Message</span>); <span class="cm">// retry later</span>
+            }
+        };
+
+        <span class="pr">processor</span>.<span class="pr">ProcessErrorAsync</span> += <span class="pr">args</span> =>
+        {
+            <span class="pr">_log</span>.<span class="mt">LogError</span>(<span class="pr">args</span>.<span class="pr">Exception</span>, <span class="st">"Service Bus error"</span>);
+            <span class="kw">return</span> <span class="tp">Task</span>.<span class="pr">CompletedTask</span>;
+        };
+
+        <span class="kw">await</span> <span class="pr">processor</span>.<span class="mt">StartProcessingAsync</span>(<span class="pr">ct</span>);
+        <span class="kw">await</span> <span class="tp">Task</span>.<span class="mt">Delay</span>(<span class="tp">Timeout</span>.<span class="pr">Infinite</span>, <span class="pr">ct</span>);
+        <span class="kw">await</span> <span class="pr">processor</span>.<span class="mt">StopProcessingAsync</span>();
+    }
+}</pre>
+
+  <div class="tip">
+    <div class="t-label">💡 Service Bus: Queue vs Topic</div>
+    <p><strong>Queue</strong> — point-to-point. One sender, one receiver. fee-receipt-pdf-queue → only PDFWorker processes it.<br>
+    <strong>Topic + Subscription</strong> — pub/sub. One sender, MULTIPLE receivers. fee-events topic → NotificationService subscription (SMS) + FeeAuditService subscription (audit log) + DashboardService (invalidate cache). All receive same message independently.</p>
+  </div>
+</div>
+
+<!-- SECTION 5: APPLICATION INSIGHTS -->
+<div class="section" id="insights">
+  <div class="section-title"><span class="num">5</span> Application Insights — Monitor ZenCampus in Production</div>
+
+  <div class="movie">
+    <span class="film">🎬 Vikram Vedha — Vikram investigates every move. App Insights = same. Every request, every exception, every slow query — recorded, correlated, visualized. "Which school caused the spike?" — App Insights tells you!</span>
+    <p>500ms fee API suddenly becomes 4 seconds on 1st of month for School 42 only. App Insights: filter by CustomDimension schoolId=42 → distributed trace → SQL query in FeeService: missing index on SchoolId+Month. One query killing 200 requests/sec!</p>
+  </div>
+
+  <pre><span class="cm">// NuGet: Microsoft.ApplicationInsights.AspNetCore</span>
+
+<span class="cm">// Program.cs</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddApplicationInsightsTelemetry</span>(<span class="pr">builder</span>.<span class="pr">Configuration</span>[<span class="st">"ApplicationInsights:ConnectionString"</span>]);
+
+<span class="cm">// Custom properties on every request — critical for multi-tenant debugging!</span>
+<span class="kw">public class</span> <span class="tp">TelemetryEnrichmentMiddleware</span>(<span class="tp">RequestDelegate</span> <span class="pr">next</span>, <span class="tp">TelemetryClient</span> <span class="pr">telemetry</span>)
+{
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="mt">InvokeAsync</span>(<span class="tp">HttpContext</span> <span class="pr">ctx</span>)
+    {
+        <span class="kw">var</span> <span class="pr">schoolId</span> = <span class="pr">ctx</span>.<span class="pr">User</span>.<span class="mt">FindFirst</span>(<span class="st">"schoolId"</span>)?.<span class="pr">Value</span>;
+        <span class="kw">var</span> <span class="pr">role</span>     = <span class="pr">ctx</span>.<span class="pr">User</span>.<span class="mt">FindFirst</span>(<span class="tp">ClaimTypes</span>.<span class="pr">Role</span>)?.<span class="pr">Value</span>;
+
+        <span class="cm">// Attach schoolId to EVERY telemetry item in this request</span>
+        <span class="kw">using var</span> <span class="pr">op</span> = <span class="pr">telemetry</span>.<span class="mt">StartOperation</span>&lt;<span class="tp">RequestTelemetry</span>&gt;(<span class="st">"Request"</span>);
+        <span class="pr">op</span>.<span class="pr">Telemetry</span>.<span class="pr">Properties</span>[<span class="st">"SchoolId"</span>] = <span class="pr">schoolId</span>;
+        <span class="pr">op</span>.<span class="pr">Telemetry</span>.<span class="pr">Properties</span>[<span class="st">"Role"</span>]     = <span class="pr">role</span>;
+
+        <span class="kw">await</span> <span class="mt">next</span>(<span class="pr">ctx</span>);
+    }
+}
+
+<span class="cm">// Track custom events — fee collection business metric</span>
+<span class="pr">_telemetry</span>.<span class="mt">TrackEvent</span>(<span class="st">"FeeCollected"</span>, <span class="kw">new</span> <span class="tp">Dictionary</span>&lt;<span class="kw">string</span>, <span class="kw">string</span>&gt;
+{
+    [<span class="st">"SchoolId"</span>]    = <span class="pr">schoolId</span>.<span class="mt">ToString</span>(),
+    [<span class="st">"FeeType"</span>]     = <span class="pr">feeType</span>,
+    [<span class="st">"PaymentMode"</span>] = <span class="st">"UPI"</span>
+}, <span class="kw">new</span> <span class="tp">Dictionary</span>&lt;<span class="kw">string</span>, <span class="kw">double</span>&gt;
+{
+    [<span class="st">"Amount"</span>]      = (<span class="kw">double</span>)<span class="pr">amount</span>
+});
+
+<span class="cm">// Track dependency — manual tracking for SMS gateway</span>
+<span class="kw">var</span> <span class="pr">dep</span>  = <span class="kw">new</span> <span class="tp">DependencyTelemetry</span>(<span class="st">"HTTP"</span>, <span class="st">"sms-gateway"</span>, <span class="st">"SendSms"</span>, <span class="kw">null</span>);
+<span class="kw">var</span> <span class="pr">sw</span>   = <span class="tp">Stopwatch</span>.<span class="mt">StartNew</span>();
+<span class="kw">try</span> { <span class="kw">await</span> <span class="pr">_smsGateway</span>.<span class="mt">SendAsync</span>(<span class="pr">phone</span>, <span class="pr">msg</span>); <span class="pr">dep</span>.<span class="pr">Success</span> = <span class="kw">true</span>; }
+<span class="kw">catch</span> { <span class="pr">dep</span>.<span class="pr">Success</span> = <span class="kw">false</span>; <span class="kw">throw</span>; }
+<span class="kw">finally</span> { <span class="pr">sw</span>.<span class="mt">Stop</span>(); <span class="pr">dep</span>.<span class="pr">Duration</span> = <span class="pr">sw</span>.<span class="pr">Elapsed</span>; <span class="pr">_telemetry</span>.<span class="mt">TrackDependency</span>(<span class="pr">dep</span>); }</pre>
+
+  <pre><span class="cm">// KQL queries in App Insights — find problems fast</span>
+
+<span class="cm">// Top slow API endpoints</span>
+requests
+| where timestamp > ago(1h)
+| where duration > 1000   <span class="cm">// > 1 second</span>
+| summarize avg(duration), count() by name, tostring(customDimensions.SchoolId)
+| order by avg_duration desc
+
+<span class="cm">// Error rate by school</span>
+requests
+| where timestamp > ago(24h)
+| summarize total=count(), failures=countif(success==false) by tostring(customDimensions.SchoolId)
+| extend errorRate = failures*100.0/total
+| order by errorRate desc
+
+<span class="cm">// Fee collection business metric</span>
+customEvents
+| where name == "FeeCollected"
+| where timestamp > ago(7d)
+| summarize totalAmount=sum(todouble(customMeasurements.Amount)), count=count() by bin(timestamp, 1h)
+| render timechart</span></pre>
+</div>
+
+<!-- SECTION 6: APP SERVICE + SLOTS -->
+<div class="section" id="appservice">
+  <div class="section-title"><span class="num">6</span> Azure App Service — PaaS Hosting + Deployment Slots</div>
+
+  <pre><span class="cm"># Azure App Service — managed hosting (no k8s needed for simpler apps)
+# ZenCampus Web (MVC): App Service Plan B2 (2 cores, 3.5GB)
+# Auto-scale: CPU > 70% → add instance (max 5)</span>
+
+<span class="cm"># Deployment slots — blue/green zero-downtime deploy</span>
+az webapp deployment slot create \
+    --name zencampus-web \
+    --resource-group zencampus-rg \
+    --slot staging                    <span class="cm"># creates zencampus-web-staging.azurewebsites.net</span>
+
+<span class="cm"># Deploy to staging slot first (not production!)</span>
+az webapp deploy \
+    --name zencampus-web \
+    --resource-group zencampus-rg \
+    --slot staging \
+    --src-path ./publish.zip
+
+<span class="cm"># Smoke test staging slot manually
+# If OK → swap slots (staging becomes production instantly!)</span>
+az webapp deployment slot swap \
+    --name zencampus-web \
+    --resource-group zencampus-rg \
+    --slot staging \
+    --target-slot production           <span class="cm"># atomic swap! zero downtime</span>
+<span class="cm"># Swap failed? Swap back! Previous version still in staging slot.</span>
+
+<span class="cm"># Slot settings (don't swap with slot):</span>
+az webapp config appsettings set \
+    --name zencampus-web \
+    --resource-group zencampus-rg \
+    --slot staging \
+    --slot-settings ASPNETCORE_ENVIRONMENT=Staging \
+    --settings "ApplicationInsights:ConnectionString=@Microsoft.KeyVault(...)"</pre>
+</div>
+
+<!-- SECTION 7: CI/CD -->
+<div class="section" id="cicd">
+  <div class="section-title"><span class="num">7</span> GitHub Actions → Azure CI/CD Pipeline</div>
+
+  <pre><span class="cm"># .github/workflows/deploy.yml — ZenCampus CI/CD pipeline</span>
+<span class="az">name</span>: ZenCampus CI/CD
+
+<span class="az">on</span>:
+  <span class="az">push</span>:
+    <span class="az">branches</span>: [main]
+  <span class="az">pull_request</span>:
+    <span class="az">branches</span>: [main]
+
+<span class="az">env</span>:
+  REGISTRY:   zencampusacr.azurecr.io
+  IMAGE_NAME: student-service
+  AKS_CLUSTER: zencampus-aks
+  RESOURCE_GROUP: zencampus-rg
+
+<span class="az">jobs</span>:
+  <span class="az">test</span>:
+    <span class="az">runs-on</span>: ubuntu-latest
+    <span class="az">steps</span>:
+    - <span class="az">uses</span>: actions/checkout@v4
+    - <span class="az">uses</span>: actions/setup-dotnet@v4
+      <span class="az">with</span>: { dotnet-version: '8.0.x' }
+    - <span class="az">run</span>: dotnet restore
+    - <span class="az">run</span>: dotnet build --no-restore
+    - <span class="az">run</span>: dotnet test --no-build --collect:"XPlat Code Coverage"
+    - <span class="az">uses</span>: codecov/codecov-action@v3   <span class="cm"># fail if coverage drops below 80%</span>
+
+  <span class="az">build-push</span>:
+    <span class="az">needs</span>: test
+    <span class="az">runs-on</span>: ubuntu-latest
+    <span class="az">if</span>: github.ref == 'refs/heads/main'
+    <span class="az">outputs</span>:
+      image-tag: ${{ steps.meta.outputs.version }}
+    <span class="az">steps</span>:
+    - <span class="az">uses</span>: actions/checkout@v4
+
+    <span class="cm"># Login to Azure Container Registry via OIDC (no stored credentials!)</span>
+    - <span class="az">uses</span>: azure/login@v2
+      <span class="az">with</span>:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - <span class="az">run</span>: az acr login --name zencampusacr
+
+    <span class="cm"># Build and push with git SHA tag</span>
+    - <span class="az">name</span>: Build and push
+      <span class="az">run</span>: |
+        IMAGE_TAG=sha-${{ github.sha }}
+        docker build -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
+        docker build -t $REGISTRY/$IMAGE_NAME:latest .
+        docker push $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+        echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  <span class="az">deploy</span>:
+    <span class="az">needs</span>: build-push
+    <span class="az">runs-on</span>: ubuntu-latest
+    <span class="az">environment</span>: production          <span class="cm"># requires manual approval!</span>
+    <span class="az">steps</span>:
+    - <span class="az">uses</span>: azure/login@v2
+      <span class="az">with</span>: { client-id: ..., tenant-id: ..., subscription-id: ... }
+
+    - <span class="az">uses</span>: azure/aks-set-context@v3
+      <span class="az">with</span>:
+        cluster-name: ${{ env.AKS_CLUSTER }}
+        resource-group: ${{ env.RESOURCE_GROUP }}
+
+    <span class="cm"># Rolling update — just change the image tag</span>
+    - <span class="az">run</span>: |
+        kubectl set image deployment/student-service \
+            student-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.build-push.outputs.image-tag }} \
+            -n zencampus
+        kubectl rollout status deployment/student-service -n zencampus --timeout=5m</pre>
+</div>
+
+<!-- SCENARIOS -->
+<div class="section" id="scenarios">
+  <div class="section-title"><span class="num">8</span> 🎯 Scenarios — Interview + Production + Critical</div>
+
+  <!-- S1 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num warn">1</div>
+      <div><div class="scenario-title">JWT secret leaked to GitHub — production incident! <span class="hot-badge">🔥 Critical</span> <span class="diff hard">Hard</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "Developer committed appsettings.Production.json with JwtSecret='zencampus-prod-secret-2024' to GitHub (public repo). Exposed for 8 minutes before removed. What do you do right now and how to prevent?"</div>
+    <button class="reveal-btn warn-btn" onclick="toggle(this)">🔥 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label warn">✅ INCIDENT RESPONSE + PREVENTION</div>
+      <pre><span class="cm">### IMMEDIATE RESPONSE (next 10 minutes) ###
+
+# Step 1: Rotate JWT secret in Key Vault IMMEDIATELY
+az keyvault secret set \
+    --vault-name zencampus-kv \
+    --name "Jwt--Secret" \
+    --value "$(openssl rand -base64 64)"
+
+# Step 2: Force restart all services (pick up new secret from Key Vault)
+kubectl rollout restart deployment -n zencampus
+
+# Step 3: Invalidate ALL active sessions
+# All old JWT tokens signed with old secret are now invalid!
+# Users must re-login — acceptable for security incident
+
+# Step 4: Check Azure AD sign-in logs for suspicious activity
+# (someone may have used the 8-minute window)
+az monitor activity-log list --start-time 2026-06-23T10:00:00Z
+
+# Step 5: Remove from git history (doesn't help for public repos — already cached)
+git filter-branch --force --index-filter \
+    "git rm --cached --ignore-unmatch appsettings.Production.json"
+
+### PREVENTION ###</span>
+
+<span class="cm">// Never have production secrets in appsettings files!</span>
+<span class="cm">// appsettings.Production.json should NOT exist in repo</span>
+
+<span class="cm">// .gitignore</span>
+appsettings.Production.json
+appsettings.*.json
+*.env
+secrets.json
+
+<span class="cm">// Key Vault integration — secret exists ONLY in Azure:</span>
+<span class="pr">builder</span>.<span class="pr">Configuration</span>.<span class="mt">AddAzureKeyVault</span>(
+    <span class="kw">new</span> <span class="tp">Uri</span>(<span class="st">"https://zencampus-kv.vault.azure.net/"</span>),
+    <span class="kw">new</span> <span class="tp">DefaultAzureCredential</span>());
+<span class="cm">// Even if config files leaked, no secrets in them!</span>
+
+<span class="cm"># GitHub secret scanning — enable in repo settings
+# Blocks push if known secret patterns detected (JWT, Azure SB, AWS keys)</span></pre>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">2</div>
+      <div><div class="scenario-title">Student photo download — signed URL security <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Parents need to download their child's report card PDF from ZenCampus. How do you securely serve files from Azure Blob Storage? Parent A should not access Parent B's child's report.'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ SAS TOKEN — TIME-LIMITED SECURE URL</div>
+      <pre><span class="cm">// API endpoint — validates parent owns this student</span>
+[<span class="at">HttpGet</span>(<span class="st">"students/{studentId}/report-card"</span>)]
+[<span class="at">Authorize</span>(<span class="pr">Roles</span> = <span class="st">"Parent"</span>)]
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="mt">GetReportCard</span>(<span class="kw">int</span> <span class="pr">studentId</span>)
+{
+    <span class="kw">var</span> <span class="pr">parentId</span> = <span class="kw">int</span>.<span class="mt">Parse</span>(<span class="tp">User</span>.<span class="mt">FindFirst</span>(<span class="tp">ClaimTypes</span>.<span class="pr">NameIdentifier</span>)!.<span class="pr">Value</span>);
+
+    <span class="cm">// Verify: this parent is linked to this student!</span>
+    <span class="kw">var</span> <span class="pr">isParent</span> = <span class="kw">await</span> <span class="pr">_studentRepo</span>.<span class="mt">IsParentOfStudentAsync</span>(<span class="pr">parentId</span>, <span class="pr">studentId</span>);
+    <span class="kw">if</span> (!<span class="pr">isParent</span>) <span class="kw">return</span> <span class="mt">Forbid</span>();  <span class="cm">// 403 — not your child!</span>
+
+    <span class="kw">var</span> <span class="pr">blobPath</span> = <span class="kw">await</span> <span class="pr">_studentRepo</span>.<span class="mt">GetReportCardPathAsync</span>(<span class="pr">studentId</span>);
+    <span class="kw">if</span> (<span class="pr">blobPath</span> <span class="kw">is null</span>) <span class="kw">return</span> <span class="mt">NotFound</span>();
+
+    <span class="cm">// Generate SAS URL — 1 hour, read-only, this blob only</span>
+    <span class="kw">var</span> <span class="pr">sasUrl</span> = <span class="pr">_blobService</span>.<span class="mt">GeneratePhotoSasUrl</span>(<span class="pr">blobPath</span>, <span class="tp">TimeSpan</span>.<span class="mt">FromHours</span>(<span class="nm">1</span>));
+
+    <span class="kw">return</span> <span class="mt">Ok</span>(<span class="kw">new</span> { <span class="pr">DownloadUrl</span> = <span class="pr">sasUrl</span>.<span class="mt">ToString</span>(), <span class="pr">ExpiresIn</span> = <span class="st">"1 hour"</span> });
+    <span class="cm">// Parent app: redirect browser to SAS URL → download from Azure directly
+    // Server not involved in download — CDN handles it!
+    // After 1 hour: URL expired. New request needed. Audit trail maintained.</span>
+}
+<span class="cm">// Security: JWT auth → parent identity. IsParentOfStudent → data access. SAS → time-limited.</span></pre>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">3</div>
+      <div><div class="scenario-title">Service Bus dead letter — SMS not delivered, messages accumulating <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Service Bus dead letter queue has 500 messages. These are fee payment SMS notifications. Parents haven't received receipts. How to investigate and reprocess?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ DEAD LETTER — INVESTIGATE + REPROCESS</div>
+      <pre><span class="cm">// Step 1: Read dead letter messages (don't delete — investigate first!)</span>
+<span class="kw">await using var</span> <span class="pr">dlqReceiver</span> = <span class="pr">_client</span>.<span class="mt">CreateReceiver</span>(
+    <span class="st">"fee-events"</span>,
+    <span class="st">"notification-service"</span>,
+    <span class="kw">new</span> <span class="tp">ServiceBusReceiverOptions</span>
+    {
+        <span class="pr">SubQueue</span> = <span class="tp">SubQueue</span>.<span class="pr">DeadLetter</span>   <span class="cm">// read from DLQ!</span>
+    });
+
+<span class="kw">var</span> <span class="pr">dlqMessages</span> = <span class="kw">await</span> <span class="pr">dlqReceiver</span>.<span class="mt">PeekMessagesAsync</span>(<span class="nm">10</span>);
+<span class="kw">foreach</span> (<span class="kw">var</span> <span class="pr">msg</span> <span class="kw">in</span> <span class="pr">dlqMessages</span>)
+{
+    <span class="pr">_log</span>.<span class="mt">LogInformation</span>(
+        <span class="st">"DLQ: {Reason} — {Body}"</span>,
+        <span class="pr">msg</span>.<span class="pr">DeadLetterReason</span>,     <span class="cm">// "MaxRetriesExceeded" or "SmsGatewayDown"</span>
+        <span class="pr">msg</span>.<span class="pr">Body</span>.<span class="mt">ToString</span>());
+}
+<span class="cm">// Root cause: SMS gateway had 503 for 2 hours.
+// All messages hit retry limit (5) → dead letter</span>
+
+<span class="cm">// Step 2: Fix root cause (SMS gateway recovered)</span>
+<span class="cm">// Step 3: Reprocess DLQ — resend to original topic</span>
+<span class="kw">await using var</span> <span class="pr">sender</span> = <span class="pr">_client</span>.<span class="mt">CreateSender</span>(<span class="st">"fee-events"</span>);
+<span class="kw">var</span> <span class="pr">msg</span> = <span class="kw">await</span> <span class="pr">dlqReceiver</span>.<span class="mt">ReceiveMessageAsync</span>();
+
+<span class="kw">while</span> (<span class="pr">msg</span> != <span class="kw">null</span>)
+{
+    <span class="cm">// Repost to main topic</span>
+    <span class="kw">await</span> <span class="pr">sender</span>.<span class="mt">SendMessageAsync</span>(<span class="kw">new</span> <span class="tp">ServiceBusMessage</span>(<span class="pr">msg</span>.<span class="pr">Body</span>));
+    <span class="kw">await</span> <span class="pr">dlqReceiver</span>.<span class="mt">CompleteMessageAsync</span>(<span class="pr">msg</span>); <span class="cm">// remove from DLQ</span>
+    <span class="pr">msg</span> = <span class="kw">await</span> <span class="pr">dlqReceiver</span>.<span class="mt">ReceiveMessageAsync</span>();
+}
+<span class="cm">// All 500 messages reprocessed → 500 parents get SMS!</span></pre>
+      <div class="gold-box"><div class="gold-label">⭐ Prevention</div><p>"Set up Azure Monitor alert: DLQ count > 10 → notify team. Check DLQ every 15 min via Hangfire job. Never let DLQ silently accumulate — parents pay fees but don't get receipt = support tickets!"</p></div>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num warn">4</div>
+      <div><div class="scenario-title">Managed Identity — "no connection string" in code <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'How do you connect ZenCampus to Azure SQL, Blob Storage, and Service Bus WITHOUT storing connection strings anywhere in code or config?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ MANAGED IDENTITY — PASSWORDLESS AUTHENTICATION</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong>Concept:</strong> Azure gives each service (App Service, AKS pod, VM) an identity — like a service account, but managed by Azure. Other Azure services grant permissions to this identity. No passwords. No rotation. No storage.</p>
+      </div>
+      <pre><span class="cm">// Azure SQL — Managed Identity connection (no password!)</span>
+<span class="kw">var</span> <span class="pr">connStr</span> = <span class="st">"Server=zencampus.database.windows.net;Database=ZenCampusDB;Authentication=Active Directory Default;"</span>;
+<span class="cm">// "Active Directory Default" = Managed Identity / az login — no password!</span>
+
+<span class="cm">// EF Core</span>
+<span class="pr">builder</span>.<span class="pr">Services</span>.<span class="mt">AddDbContext</span>&lt;<span class="tp">ZenCampusDbContext</span>&gt;(<span class="pr">opts</span> =>
+    <span class="pr">opts</span>.<span class="mt">UseSqlServer</span>(<span class="pr">connStr</span>)); <span class="cm">// MI handles auth automatically</span>
+
+<span class="cm">// Blob Storage — MI (no connection string!)</span>
+<span class="kw">new</span> <span class="tp">BlobServiceClient</span>(
+    <span class="kw">new</span> <span class="tp">Uri</span>(<span class="st">"https://zencampusstorage.blob.core.windows.net"</span>),
+    <span class="kw">new</span> <span class="tp">DefaultAzureCredential</span>());
+
+<span class="cm">// Service Bus — MI
+new ServiceBusClient("zencampus.servicebus.windows.net", new DefaultAzureCredential());
+
+// Required Azure RBAC:
+// AKS pod identity → "Storage Blob Data Contributor" on storage account
+// AKS pod identity → "Azure Service Bus Data Sender" on namespace
+// AKS pod identity → "Azure SQL DB Contributor" on database
+// Az CLI: az role assignment create --assignee <MI-object-id> --role "..."
+
+// Zero credentials stored anywhere. Rotation = automatic by Azure. </span></pre>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">5</div>
+      <div><div class="scenario-title">App Insights — find which school is causing 4s response time <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'ZenCampus fee API — P95 response time 4.2 seconds. Average is 380ms. Something is wrong but only affects some users. How do you find which school and what's causing it?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ APP INSIGHTS KQL INVESTIGATION</div>
+      <pre><span class="cm">// Step 1: Find outlier schoolIds via KQL</span>
+requests
+| where timestamp > ago(1h)
+| where name contains "CollectFee"
+| summarize
+    p95 = percentile(duration, 95),
+    avg = avg(duration),
+    count = count()
+  by schoolId = tostring(customDimensions.SchoolId)
+| where p95 > 2000
+| order by p95 desc
+<span class="cm">// Result: SchoolId=42 → p95: 4200ms. All other schools: 320ms average.</span>
+
+<span class="cm">// Step 2: Find the slow component via distributed trace</span>
+dependencies
+| where timestamp > ago(1h)
+| where customDimensions.SchoolId == "42"
+| where duration > 1000
+| summarize avg_duration=avg(duration), count=count() by name, type
+<span class="cm">// Result:
+// SQL — "SELECT * FROM FeeRecords WHERE SchoolId=42 AND..."  → avg: 3800ms!
+// SQL — other queries → avg: 12ms
+// → SchoolId=42 has 150,000 fee records — missing index on SchoolId+Year!</span>
+
+<span class="cm">// Step 3: Find the exact slow query</span>
+dependencies
+| where timestamp > ago(1h)
+| where type == "SQL"
+| where customDimensions.SchoolId == "42"
+| where duration > 2000
+| project timestamp, name, duration, customDimensions.statement
+| order by duration desc
+<span class="cm">// Shows the SQL statement → confirm missing index → create:
+-- CREATE NONCLUSTERED INDEX IX_FeeRecords_School_Year ON FeeRecords (SchoolId, AcademicYear) INCLUDE (Amount, Status)
+-- School 42: 4200ms → 45ms. All schools: covered!</span></pre>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">6</div>
+      <div><div class="scenario-title">Deployment slot swap — new version broke prod, rollback! <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "App Service deployment slot swap done — new fee calculation logic in production. 15 minutes later, error rate 25%. Students being charged wrong amounts. How to rollback instantly?"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ SLOT SWAP ROLLBACK — 30 SECONDS</div>
+      <pre><span class="cm"># The beauty of slots: swap back! Previous version still in staging slot.</span>
+az webapp deployment slot swap \
+    --name zencampus-web \
+    --resource-group zencampus-rg \
+    --slot staging \
+    --target-slot production
+<span class="cm"># 30 seconds! Traffic back to old version. No rebuild. No redeploy.
+# Slot keeps previous version until next deploy — natural rollback!
+
+# For AKS (kubectl rollout undo):</span>
+kubectl rollout undo deployment/fee-service -n zencampus
+<span class="cm"># Rolls back to previous image (cached on nodes) in ~30 seconds</span>
+
+<span class="cm">## Prevention — staging smoke tests before swap ##</span>
+<span class="cm">// Test staging slot thoroughly before swap
+// 1. Automated integration tests hit staging slot URL
+// 2. Manual QA: collect fee for test student
+// 3. Monitor 10 minutes on staging
+// 4. Only then swap → production</span>
+
+<span class="cm"># Staged rollout: start with 10% traffic to new version</span>
+az webapp traffic-routing set \
+    --name zencampus-web \
+    --resource-group zencampus-rg \
+    --distribution staging=10    <span class="cm"># 10% → staging, 90% → production</span>
+<span class="cm"># Monitor error rate for 10 min → if OK → swap 100%</span></pre>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">7</div>
+      <div><div class="scenario-title">Azure SQL connection pooling + transient retry <span class="diff medium">Medium</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Azure SQL — during month-end peak, you see SqlException: connection pool exhausted. 500 concurrent requests, each opening a connection. How do you fix?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ CONNECTION POOL + EF CORE RETRY</div>
+      <pre><span class="cm">// Connection string — tune pool size</span>
+<span class="st">"Server=zencampus.sql.azure.com;Database=ZenCampusDB;
+ Min Pool Size=5;Max Pool Size=100;Connection Timeout=30;"</span>
+<span class="cm">// Default max pool = 100. 500 requests ÷ 3 AKS pods = 167/pod → exhausted!
+// Fix: increase pool OR reduce connection hold time</span>
+
+<span class="cm">// EF Core — built-in retry for transient Azure SQL errors</span>
+<span class="pr">opts</span>.<span class="mt">UseSqlServer</span>(<span class="pr">connStr</span>, <span class="pr">sql</span> => <span class="pr">sql</span>
+    .<span class="mt">EnableRetryOnFailure</span>(
+        <span class="pr">maxRetryCount</span>:       <span class="nm">5</span>,
+        <span class="pr">maxRetryDelay</span>:       <span class="tp">TimeSpan</span>.<span class="mt">FromSeconds</span>(<span class="nm">30</span>),
+        <span class="pr">errorNumbersToAdd</span>:   <span class="kw">null</span>) <span class="cm">// auto-handles throttling (40613), timeouts (49918)</span>
+    .<span class="mt">CommandTimeout</span>(<span class="nm">30</span>));
+
+<span class="cm">// Don't hold connections — use short-lived DbContext scopes
+// BAD: singleton DbContext, long-running connection</span>
+<span class="cm">// GOOD: scoped DbContext, dispose after each request (default ASP.NET Core behavior)</span>
+
+<span class="cm">// For high-throughput reads: use connection multiplexing with multiple pools
+// Or: Azure SQL Hyperscale — read replicas, auto-scale compute</span>
+
+<span class="cm">// Monitor: Azure SQL Connection Limits in Azure Portal
+// Metric: "Connections: Failed" + "Blocked by Firewall" alerts</span></pre>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">8</div>
+      <div><div class="scenario-title">CI/CD — prevent broken code from reaching production <span class="diff medium">Medium</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Describe your CI/CD pipeline for ZenCampus. How do you ensure broken code never reaches production?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ MULTI-GATE CI/CD PIPELINE</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p><strong>PR gates (before merge):</strong> Unit tests, integration tests, code coverage ≥80%, SonarQube code quality, security scan (SAST), dependency vulnerability check. PR fails any gate → cannot merge to main.</p>
+        <p><strong>Main branch pipeline:</strong> dotnet test → build Docker image → push to ACR with git SHA tag → deploy to staging AKS namespace → run smoke tests against staging → Application Insights: wait 5 min, check error rate. If error rate > 1% → pipeline fails, no production deploy.</p>
+        <p><strong>Production deploy gate:</strong> GitHub Environment "production" requires manual approval from team lead. After approval: kubectl set image on production namespace → rollout status watch. Automatic rollback trigger: if deployment's ready replicas < desired within 5 minutes → kubectl rollout undo.</p>
+        <p><strong>Post-deploy:</strong> App Insights: alert if P95 response > 2x baseline within 30 min. PagerDuty alert → engineer checks. Slot swap rollback if needed.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="scenario-card">
+    <div class="scenario-header">
+      <div class="s-num">9</div>
+      <div><div class="scenario-title">Service Bus vs Hangfire — when to use Azure Service Bus? <span class="diff easy">Easy</span> <span class="real">Real Interview</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'You already have Hangfire for background jobs. Why use Azure Service Bus too? When to use which in ZenCampus?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ CLEAR DECISION FRAMEWORK</div>
+      <table style="font-size:0.83em">
+        <tr><th>Use</th><th>Hangfire</th><th>Azure Service Bus</th></tr>
+        <tr><td>Scope</td><td>Within one app/service</td><td class="green">Cross-service communication</td></tr>
+        <tr><td>Subscribers</td><td>Single consumer</td><td class="green">Multiple independent consumers (pub/sub)</td></tr>
+        <tr><td>Dashboard</td><td class="green">Yes — Hangfire UI</td><td>Azure Portal + Service Bus Explorer</td></tr>
+        <tr><td>Schedule</td><td class="green">Cron + delay</td><td>TTL only</td></tr>
+        <tr><td>DLQ</td><td>Failed jobs tab</td><td class="green">Dead letter queue + resubmit</td></tr>
+        <tr><td>ZenCampus use</td><td>SMS after fee, recurring report, cache warmup</td><td>fee.paid → 3 different services, cross-service events</td></tr>
+      </table>
+      <div class="gold-box"><div class="gold-label">⭐ Simple Rule</div><p>"Same service, background work → Hangfire. Different services, event notification → Service Bus. fee.paid event: FeeService → NotificationService + AuditService + DashboardService = Service Bus topic. SMS sending within NotificationService = Hangfire."</p></div>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="scenario-card hot">
+    <div class="scenario-header">
+      <div class="s-num">10</div>
+      <div><div class="scenario-title">"Azure experience sollu" — Complete interview answer <span class="diff senior">Senior</span></div></div>
+    </div>
+    <div class="scenario-q">📋 <strong>Scenario:</strong> "'Tell me about your Azure cloud experience. What Azure services have you used in ZenCampus?'"</div>
+    <button class="reveal-btn" onclick="toggle(this)">💡 Answer Reveal</button>
+    <div class="answer">
+      <div class="a-label">✅ COMPLETE STRUCTURED ANSWER</div>
+      <div style="background:#0a0a1a;padding:14px;border-radius:8px;color:#c0d0c0;font-size:0.9em;line-height:1.9">
+        <p>"ZenCampus runs entirely on Azure, serving 50,000 students across 200 schools. Here's our stack:"</p>
+        <p><strong>AKS:</strong> Kubernetes cluster hosting 4 microservices. HPA scales FeeService 3→15 pods during month-end. Rolling deployments with readiness probes — zero downtime. GitHub Actions → ACR (git SHA tags) → kubectl set image. Manual approval gate for production."</p>
+        <p><strong>Key Vault + Managed Identity:</strong> Zero credentials in code. All secrets (DB, JWT, SMS API key) in Key Vault. AKS pods use Workload Identity — no connection strings anywhere. AddAzureKeyVault in Program.cs reads like appsettings. After developer leaked DB string to GitHub (8-min exposure), we moved everything to Key Vault immediately."</p>
+        <p><strong>Blob Storage:</strong> 10GB student photos + fee receipt PDFs. Private containers, SAS tokens for secure 1-hour download links. Parents download their child's report via SAS — can't access others'."</p>
+        <p><strong>Service Bus:</strong> Topics for fee.paid event — NotificationService (SMS), AuditService (compliance), DashboardService (cache invalidate) all subscribe independently. Dead letter monitoring → Hangfire job checks DLQ every 15 min."</p>
+        <p><strong>Application Insights:</strong> Custom dimension SchoolId on every request. Found School 42 causing 4.2s p95 via KQL — missing SQL index. Fixed → 45ms. KQL dashboards for fee collection business metrics."</p>
+        <p><strong>Azure SQL:</strong> EF Core with EnableRetryOnFailure for transient errors. Connection pool tuned. Managed Identity auth — no password."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="section-title"><span class="num">9</span> ⚡ Quick Quiz</div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q1: DefaultAzureCredential — local development-la எப்படி authenticate ஆகும்?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Reads from appsettings.json credentials section</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Uses 'az login' session (AzureCliCredential) or Visual Studio logged-in account</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Prompts for username and password</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Falls back to anonymous access</div>
+    <div class="quiz-fb ok">✅ DefaultAzureCredential tries multiple methods in order. Locally: VisualStudioCredential (VS logged-in account) or AzureCliCredential (az login). In AKS: WorkloadIdentityCredential. In App Service: ManagedIdentityCredential. Same code works everywhere! No credentials hardcoded.</div>
+    <div class="quiz-fb nope">❌ DefaultAzureCredential tries multiple auth methods in sequence. Locally = AzureCliCredential (uses 'az login' session) or VisualStudioCredential. In AKS = WorkloadIdentityCredential. Same code — different environments authenticate differently, zero credentials in code!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q2: Azure Blob Storage SAS token — main purpose?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Encrypt the blob content</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Grant time-limited, operation-limited access to a specific blob without exposing storage account keys</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Speed up blob downloads via CDN</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Compress blobs automatically</div>
+    <div class="quiz-fb ok">✅ SAS = Shared Access Signature. Time-limited (expires in 1 hour), operation-limited (read only, not write/delete), resource-limited (this blob, not entire container). Parent gets download link for their child's receipt — link expires, they can't access other blobs, and storage keys are never exposed!</div>
+    <div class="quiz-fb nope">❌ SAS = Shared Access Signature — a signed URL with built-in permissions and expiry. No storage key needed by the caller. Parent's download link: expires in 1 hour (ExpiresOn), read-only (BlobSasPermissions.Read), this blob only (BlobName set). Security in depth!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q3: Service Bus message delivery count 5 reached — message goes where?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Message is permanently deleted</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">B) Automatically moved to Dead Letter Queue (DLQ)</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">C) Resets delivery count and starts again</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Sent back to the original publisher</div>
+    <div class="quiz-fb ok">✅ After MaxDeliveryCount (default 10, can set lower) retries → message auto-moved to Dead Letter Queue. DLQ = separate queue, messages stay there until explicitly processed or expire. Monitor DLQ! Zero DLQ messages = healthy system. 500 DLQ = 500 parents waiting for SMS!</div>
+    <div class="quiz-fb nope">❌ Dead Letter Queue (DLQ)! After max delivery count reached, Service Bus automatically moves message to DLQ. Message stays there indefinitely (or until TTL). You can read/reprocess from DLQ. Alert on DLQ count > 0 — means messages are failing to process!</div>
+  </div>
+
+  <div style="margin:18px 0">
+    <p style="color:#fff;font-weight:bold;margin-bottom:10px">Q4: Application Insights-la custom dimension add பண்ணணும் — why?</p>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">A) Required for Application Insights to work</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">B) Improves query performance in KQL</div>
+    <div class="quiz-opt" onclick="ans(this,'correct')">C) Enables filtering telemetry by business dimensions (SchoolId, Role) — find which school/user caused an error</div>
+    <div class="quiz-opt" onclick="ans(this,'wrong')">D) Reduces telemetry storage costs</div>
+    <div class="quiz-fb ok">✅ Multi-tenant app — without SchoolId in telemetry, you see "API is slow" but not "API is slow for School 42 only." Custom dimensions = business context on every trace. Filter by SchoolId → find it's only one school's data causing slowness → targeted fix. Priceless for production debugging!</div>
+    <div class="quiz-fb nope">❌ Custom dimensions = business context on telemetry! Without it: "fee API is slow" → check everything. With SchoolId custom dimension: "fee API slow" → filter by SchoolId → School 42 p95=4200ms, others 320ms → targeted fix. Multi-tenant app MUST add tenant identifier to every telemetry item!</div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section">
+  <div class="section-title"><span class="num">10</span> ✅ Day 15 Checklist</div>
+  <div class="two-col">
+    <div>
+      <h3>📚 Theory</h3>
+      <ul class="check-list">
+        <li>Key Vault + DefaultAzureCredential — passwordless</li>
+        <li>Managed Identity — no credentials in code</li>
+        <li>Blob Storage — containers, SAS tokens</li>
+        <li>Service Bus — Topic vs Queue, DLQ</li>
+        <li>AutoCompleteMessages=false — manual ACK</li>
+        <li>Application Insights — custom dimensions, KQL</li>
+        <li>App Service slots — blue/green deploy</li>
+        <li>GitHub Actions — OIDC auth to Azure (no secrets)</li>
+        <li>Azure SQL — EnableRetryOnFailure, connection pool</li>
+        <li>CDN for static assets + Blob public access</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 Interview Keywords</h3>
+      <ul class="check-list">
+        <li>"Managed Identity — zero credentials in code"</li>
+        <li>"Key Vault leaked secret → rotate + restart in 10 min"</li>
+        <li>"SAS token — time-limited, read-only download"</li>
+        <li>"DLQ monitoring — alert on count > 0"</li>
+        <li>"App Insights + SchoolId custom dimension"</li>
+        <li>"KQL found School 42 → missing index → fixed"</li>
+        <li>"Slot swap rollback — 30 seconds"</li>
+        <li>"GitHub Actions → ACR → AKS with manual approval"</li>
+        <li>"Service Bus topic → 3 subscribers, one event"</li>
+        <li>"EnableRetryOnFailure — transient Azure SQL errors"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#00102a,#0a0a1a);border-radius:10px;padding:20px;margin-top:20px;text-align:center">
+    <div style="font-size:1.4em;margin-bottom:8px">☁️ Day 15 Motivation</div>
+    <p style="color:#60b4ff;font-style:italic">"Dasavathaaram-la Govind keeps vial safe through 800 years — Key Vault = same! Managed Identity = no password, Azure verifies identity. Vikram Vedha-la Vikram investigates every move — App Insights KQL solves production mysteries. <strong>Interview-la 'Managed Identity use பண்ணேன் — zero credentials in code, Key Vault integration, App Insights KQL-la School 42 slow query find பண்ணேன்' சொன்னா — Cloud-native developer confirmed!</strong>"</p>
+    <div style="margin-top:12px;color:#a0a0c0">Day 15/60 ✅ | Tomorrow: Day 16 — Unit Testing + Integration Testing (xUnit, Moq, TestContainers, FluentAssertions)</div>
+    <div class="progress-wrap" style="max-width:400px;margin:12px auto 4px">
+      <div class="progress-fill" style="width:25%"></div>
+    </div>
+    <div style="color:#555;font-size:0.8em">15 of 60 days (25%) — Azure Cloud mastered! Quarter-way through the roadmap!</div>
+  </div>
+</div>
+
+</div>
+<footer>
+  <p>Day 15 – Azure Cloud | ZenCampus Interview Prep | basha@raxgbc.co.in</p>
+  <p style="margin-top:4px;font-size:0.8em">☁️ "Key Vault + Managed Identity = zero credentials. Blob + SAS = secure file access. Service Bus + DLQ = reliable messaging. App Insights + KQL = production mystery solver. Slot swap = 30s rollback!"</p>
+</footer>
+<script>
+function toggle(btn){var a=btn.nextElementSibling;if(a.classList.contains('shown')){a.classList.remove('shown');btn.textContent=btn.classList.contains('warn-btn')?'🔥 Answer Reveal':'💡 Answer Reveal';}else{a.classList.add('shown');btn.textContent='🔼 Hide Answer';}}
+function ans(el,type){var p=el.parentElement;p.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.onclick=null;});p.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('shown'));el.classList.add(type);var fb=p.querySelector('.quiz-fb.'+(type==='correct'?'ok':'nope'));if(fb)fb.classList.add('shown');}
+</script>
+</body>
+</html>

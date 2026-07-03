@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenCampus Angular Complete Guide - 20 Concepts + 50 Interview Q&A</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --accent:#f43f5e; --text:#e2e8f0; --muted:#94a3b8; --code:#0b1220; --green:#22c55e;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI',Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  header{ background:linear-gradient(135deg,#9f1239,#0f172a); padding:36px 20px; text-align:center; border-bottom:3px solid var(--accent); }
+  header h1{ margin:0 0 8px; font-size:1.9rem; color:#fff; }
+  header p{ margin:0; color:var(--muted); }
+  .tabs{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; background:#0b1220; padding:14px; position:sticky; top:0; z-index:20; border-bottom:1px solid #334155; }
+  .tab-btn{ padding:10px 20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--muted); cursor:pointer; font-weight:600; font-size:0.9rem; }
+  .tab-btn.active{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+  .container{ max-width:920px; margin:0 auto; padding:30px 20px 80px; }
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
+
+  .search-box{ width:100%; padding:12px 16px; margin-bottom:20px; border-radius:8px; border:1px solid #334155; background:var(--card); color:var(--text); font-size:1rem; }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .filter-btn{ padding:6px 14px; border-radius:20px; border:1px solid #334155; background:transparent; color:var(--muted); cursor:pointer; font-size:0.85rem; }
+  .filter-btn.active, .filter-btn:hover{ background:var(--accent); color:#0f172a; border-color:var(--accent); }
+
+  .day-block{ margin-bottom:36px; }
+  .day-title{ color:var(--accent); font-size:1.3rem; margin-bottom:14px; border-left:4px solid var(--accent); padding-left:10px; }
+
+  .qa{ background:var(--card); border-radius:10px; margin-bottom:14px; overflow:hidden; border:1px solid #334155; scroll-margin-top:140px; }
+  .q{ padding:16px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; gap:12px; }
+  .q:hover{ background:#3a1522; }
+  .q .num{ color:var(--accent); margin-right:8px; }
+  .q .tag{ font-size:0.7rem; font-weight:400; padding:2px 8px; border-radius:10px; background:#0b1220; color:var(--accent); white-space:nowrap; }
+  .a{ max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 18px; color:var(--muted); border-top:1px solid transparent; }
+  .qa.open .a{ max-height:1300px; padding:0 18px 18px; border-top:1px solid #334155; }
+  .a code, .a pre{ background:var(--code); color:#fda4af; padding:2px 6px; border-radius:4px; font-family:Consolas,Monaco,monospace; font-size:0.86rem; }
+  .a pre{ display:block; padding:12px; overflow-x:auto; white-space:pre-wrap; margin:10px 0; }
+  .movie-ref{ background:#3b1e5e; color:#e9d5ff; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .zen-ref{ background:#0e3b2e; color:#bbf7d0; padding:10px 12px; border-radius:8px; margin:8px 0; font-size:0.9rem; }
+  .toggle-icon{ transition:transform .25s; color:var(--accent); font-size:1.1rem; }
+  .qa.open .toggle-icon{ transform:rotate(45deg); }
+  .count{ color:var(--accent); font-weight:600; }
+
+  .checklist{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media(max-width:600px){ .checklist{ grid-template-columns:1fr; } }
+  .check-item{ background:var(--card); border:1px solid #334155; border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .check-item:hover{ border-color:var(--accent); }
+  .check-item .badge{ color:var(--green); font-size:1.1rem; }
+  .check-item .num{ color:var(--muted); font-size:0.8rem; min-width:20px; }
+
+  footer{ text-align:center; padding:20px; color:var(--muted); font-size:0.85rem; }
+
+  @media print{
+    .tabs{ display:none; }
+    .tab-content{ display:block !important; }
+    .a{ max-height:none !important; padding:0 18px 18px !important; border-top:1px solid #334155 !important; }
+    .toggle-icon{ display:none; }
+    body{ background:#fff; color:#111; }
+    .qa, .card, header{ break-inside:avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🅰️ ZenCampus Angular Complete Guide</h1>
+  <p>20 Core Concepts (5-Day Plan) + 50 Interview Q&A — All-in-One</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="guide">📘 5-Day Guide</button>
+  <button class="tab-btn" data-tab="interview">🎯 Interview Q&A</button>
+  <button class="tab-btn" data-tab="coverage">✅ Topic Coverage</button>
+</div>
+
+<div class="container">
+
+  <div class="tab-content active" id="tab-guide">
+    <p style="color:var(--muted); font-size:0.85rem;">Tip: To save this whole guide as a PDF, use your browser's Print (Ctrl+P) and choose "Save as PDF" — the print layout auto-expands every section.</p>
+    <div id="guideList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-interview">
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search a question (e.g. signals, RxJS, dependency injection)...">
+    <div class="filters" id="filters"></div>
+    <p style="color:var(--muted); font-size:0.85rem;">Showing <span class="count" id="visibleCount">50</span> / 50 questions</p>
+    <div id="qaList"></div>
+  </div>
+
+  <div class="tab-content" id="tab-coverage">
+    <p style="color:var(--muted);">All 20 core Angular concepts every ZenCampus frontend dev should know. Click any item to jump to it.</p>
+    <div class="checklist" id="checklist"></div>
+  </div>
+
+</div>
+
+<footer>Built for ZenCampus Angular learning • 2026-07-03</footer>
+
+<script>
+// ============ 20 CONCEPTS ACROSS 5 DAYS (4 topics/day) ============
+const guideDays = [
+{
+  day:1, title:"Day 1 — Angular Fundamentals (Architecture, Components, Binding, Directives)",
+  topics:[
+    { name:"1. What is Angular &amp; Architecture Overview",
+      movie:"🎬 Baahubali — a colossal, disciplined empire built on strict structure (kingdom, army, hierarchy) rather than loose chaos. Angular is a complete, opinionated framework from Google with a strict, defined structure — modules, components, services, TypeScript — unlike a flexible standalone library.",
+      explain:"Angular is a full-fledged, TypeScript-based front-end framework maintained by Google for building single-page applications (SPAs). Unlike React (a UI library), Angular ships batteries-included: routing, forms, an HTTP client, dependency injection, and a strict CLI-driven project structure out of the box.",
+      zen:"A ZenCampus Angular rewrite of the Fee module organizes itself into feature components/services with a fixed structure fixed by Angular's CLI conventions — component, template, service, and route — rather than one team inventing its own folder layout.",
+      code:"ng new zencampus-app\nng generate component fee-summary\n// Angular CLI scaffolds component, template, styles, and spec file together" },
+    { name:"2. Components &amp; Templates",
+      movie:"🎬 Vikram — each character has a defined identity, script, and appearance. An Angular component similarly bundles a defined class (logic), template (view), and styles into one cohesive unit.",
+      explain:"A Component is a TypeScript class decorated with <code>@Component</code>, specifying a <code>template</code> (HTML), <code>styles</code> (CSS), and a <code>selector</code> (custom tag name) used to instantiate it elsewhere in the app.",
+      zen:"A <code>&lt;app-student-card [student]=\"s\"&gt;&lt;/app-student-card&gt;</code> component encapsulates one student's photo, name, and fee-status badge — reused across the dashboard, hostel allocation, and exam eligibility pages.",
+      code:"@Component({\n  selector: 'app-student-card',\n  template: `&lt;div class=\"card\"&gt;{{ student.name }}&lt;/div&gt;`,\n})\nexport class StudentCardComponent {\n  @Input() student!: Student;\n}" },
+    { name:"3. Data Binding (Interpolation, Property, Event, Two-Way)",
+      movie:"🎬 96 — Ram and Jaanu's connection flows in both directions; what one feels, the other senses immediately. Angular's <code>[(ngModel)]</code> two-way binding works the same way: change the input, the model updates; change the model, the input updates.",
+      explain:"Angular offers four binding types: interpolation <code>{{ value }}</code> (component → view), property binding <code>[prop]=\"value\"</code> (component → view), event binding <code>(event)=\"handler()\"</code> (view → component), and two-way binding <code>[(ngModel)]=\"value\"</code> (both directions at once).",
+      zen:"The Fee-payment amount input in a ZenCampus Angular form uses <code>[(ngModel)]=\"paymentAmount\"</code> so typing updates the component's property instantly, while the Submit button's disabled state is driven the other way via <code>[disabled]=\"paymentAmount &lt;= 0\"</code>.",
+      code:"&lt;input [(ngModel)]=\"paymentAmount\" /&gt;\n&lt;p&gt;Amount: {{ paymentAmount }}&lt;/p&gt;\n&lt;button [disabled]=\"paymentAmount &lt;= 0\" (click)=\"submitPayment()\"&gt;Pay&lt;/button&gt;" },
+    { name:"4. Directives (Structural vs Attribute)",
+      movie:"🎬 Vikram Vedha — the story literally restructures which scenes appear depending on whose perspective is being followed. Structural directives (<code>*ngIf</code>, <code>*ngFor</code>) restructure the DOM itself, adding/removing whole elements, while attribute directives (<code>ngClass</code>, <code>ngStyle</code>) only change an existing element's appearance.",
+      explain:"Structural directives (prefixed with <code>*</code>) add or remove DOM elements — <code>*ngIf</code> conditionally renders, <code>*ngFor</code> repeats a template per array item. Attribute directives like <code>[ngClass]</code> and <code>[ngStyle]</code> modify an existing element's classes/styles without removing it from the DOM.",
+      zen:"The Hostel room list uses <code>*ngFor=\"let room of rooms; trackBy: trackByRoomId\"</code> to render room cards, and <code>[ngClass]=\"{ full: room.occupied === room.capacity }\"</code> to highlight full rooms in red without touching the DOM structure.",
+      code:"&lt;div *ngFor=\"let room of rooms; trackBy: trackByRoomId\" [ngClass]=\"{ full: room.occupied === room.capacity }\"&gt;\n  {{ room.name }}\n&lt;/div&gt;\n&lt;p *ngIf=\"rooms.length === 0\"&gt;No rooms found.&lt;/p&gt;" }
+  ]
+},
+{
+  day:2, title:"Day 2 — Modules, Services, Dependency Injection, Routing",
+  topics:[
+    { name:"5. NgModules",
+      movie:"🎬 Indian (1996) — Senapathy organizes many followers and units under one coordinated command. An NgModule groups related components/directives/pipes/services under one cohesive unit, declaring what's available and to whom.",
+      explain:"<code>@NgModule({ declarations, imports, providers, bootstrap })</code> groups a set of components/directives/pipes together, declares their dependencies, and can export them for other modules to use. (Standalone components in modern Angular reduce the need for NgModules, but they still matter for root/app-level bootstrap and legacy code.)",
+      zen:"A <code>BillModule</code> in ZenCampus groups <code>FeeSummaryComponent</code>, <code>PaymentFormComponent</code>, and <code>BillService</code> together, imported once into the main routing module instead of registering each piece individually.",
+      code:"@NgModule({\n  declarations: [FeeSummaryComponent, PaymentFormComponent],\n  imports: [CommonModule, FormsModule],\n  providers: [BillService],\n})\nexport class BillModule {}" },
+    { name:"6. Services &amp; Dependency Injection",
+      movie:"🎬 Thani Oruvan — Mithran doesn't personally hunt down every clue; he relies on a trusted support team, supplied wherever needed. Angular services are injected wherever needed via DI, rather than each component recreating the same logic itself.",
+      explain:"A Service is a plain TS class decorated with <code>@Injectable({ providedIn: 'root' })</code>, holding shared logic/state (e.g. API calls). Angular's Dependency Injection system automatically supplies an instance to any component/service that requests it through its constructor.",
+      zen:"A single <code>StudentService</code> handles all HTTP calls to the Student API; it's injected into <code>StudentListComponent</code>, <code>StudentDetailsComponent</code>, and <code>AttendanceComponent</code> — each just declares it in its constructor, no manual instantiation anywhere.",
+      code:"@Injectable({ providedIn: 'root' })\nexport class StudentService {\n  constructor(private http: HttpClient) {}\n  getStudents() { return this.http.get&lt;Student[]&gt;('/api/students'); }\n}\n\nclass StudentListComponent {\n  constructor(private studentService: StudentService) {} // DI injects it\n}" },
+    { name:"7. Angular Routing",
+      movie:"🎬 Kaithi — Dilli moves purposefully from one location to the next within a single continuous night, never restarting from scratch. Angular Router swaps components based on the URL path within a single-page app, without a full reload.",
+      explain:"<code>RouterModule.forRoot(routes)</code> maps URL paths to components. <code>&lt;a routerLink=\"/students/5\"&gt;</code> navigates without a reload, <code>&lt;router-outlet&gt;</code> renders the matched component, and <code>ActivatedRoute</code> reads URL params (like an id) inside the target component.",
+      zen:"ZenCampus's Angular Student module routes <code>/students/:id</code> to <code>StudentDetailsComponent</code>, reading <code>route.snapshot.paramMap.get('id')</code> to fetch that specific student instead of a full server round-trip for every profile view.",
+      code:"const routes: Routes = [\n  { path: 'students/:id', component: StudentDetailsComponent },\n];\n\n// Inside StudentDetailsComponent\nconstructor(private route: ActivatedRoute) {\n  const id = this.route.snapshot.paramMap.get('id');\n}" },
+    { name:"8. Route Guards",
+      movie:"🎬 Jai Bhim — Chandru enforces due process; nobody proceeds without meeting a defined bar of scrutiny. Route guards enforce a defined condition (login check, role check) before a route is allowed to activate.",
+      explain:"A guard (<code>CanActivate</code>, <code>CanDeactivate</code>, etc.) is a class implementing a guard interface (or a plain function since Angular 15+), returning true/false/UrlTree to allow, block, or redirect navigation — registered per-route via <code>canActivate: [roleGuard]</code>.",
+      zen:"A <code>roleGuard</code> on ZenCampus's Bill routes blocks any staff account without the 'Accounts' role from navigating to <code>/bill/payment</code>, redirecting them to an 'Access Denied' page instead.",
+      code:"export const roleGuard: CanActivateFn = (route) =&gt; {\n  const auth = inject(AuthService);\n  return auth.hasRole('Accounts') ? true : inject(Router).parseUrl('/access-denied');\n};\n\nconst routes: Routes = [\n  { path: 'bill/payment', component: PaymentComponent, canActivate: [roleGuard] },\n];" }
+  ]
+},
+{
+  day:3, title:"Day 3 — Forms, HTTP, RxJS Observables",
+  topics:[
+    { name:"9. Template-Driven Forms",
+      movie:"🎬 Sarkar — every vote is tracked centrally against a clear checklist. Template-driven forms build the form structure directly in the HTML template using directives, with Angular tracking each field's state behind the scenes.",
+      explain:"Uses <code>FormsModule</code> with <code>ngModel</code> plus a template reference variable (<code>#form=\"ngForm\"</code>) to build forms mostly in HTML. Good for simple forms; validation is expressed via HTML attributes (<code>required</code>, <code>minlength</code>) and Angular's built-in validation directives.",
+      zen:"A quick 'Add Visitor' form in the DVR/Gatepass module uses template-driven forms with <code>#visitorForm=\"ngForm\"</code> and <code>required</code>/<code>pattern</code> attributes directly on inputs — fast to build for a simple 3-field form.",
+      code:"&lt;form #visitorForm=\"ngForm\" (ngSubmit)=\"addVisitor(visitorForm.value)\"&gt;\n  &lt;input name=\"name\" ngModel required /&gt;\n  &lt;button [disabled]=\"visitorForm.invalid\"&gt;Add&lt;/button&gt;\n&lt;/form&gt;" },
+    { name:"10. Reactive Forms",
+      movie:"🎬 Ratsasan — Arun Kumar builds a structured, verified case model before acting, rather than improvising live. Reactive forms build the entire form model explicitly in the component class — a single source of truth — rather than letting the template infer it.",
+      explain:"Uses <code>ReactiveFormsModule</code> with <code>FormGroup</code>/<code>FormControl</code>/<code>FormBuilder</code> defined in the component class. Offers stronger typed validation control, dynamic fields, and easier unit testing than template-driven forms — the recommended approach for complex forms.",
+      zen:"The Student Admission form in ZenCampus's Angular rewrite is a <code>FormGroup</code> with controls for name/email/phone, each with <code>Validators.required</code>/<code>Validators.email</code>, and the Submit button binds to <code>admissionForm.invalid</code>.",
+      code:"admissionForm = this.fb.group({\n  name: ['', Validators.required],\n  email: ['', [Validators.required, Validators.email]],\n});\nconstructor(private fb: FormBuilder) {}\n\n&lt;form [formGroup]=\"admissionForm\" (ngSubmit)=\"onSubmit()\"&gt;\n  &lt;input formControlName=\"name\" /&gt;\n  &lt;button [disabled]=\"admissionForm.invalid\"&gt;Submit&lt;/button&gt;\n&lt;/form&gt;" },
+    { name:"11. HttpClient &amp; API Calls",
+      movie:"🎬 Master — JD interacts directly and predictably with the system he's investigating: request in, response out. Angular's HttpClient sends a defined request and returns an Observable of the typed response.",
+      explain:"Angular's <code>HttpClient</code> (from <code>@angular/common/http</code>) provides typed <code>.get&lt;T&gt;()</code>/<code>.post&lt;T&gt;()</code> methods returning RxJS Observables, integrates with interceptors (for auth headers, error handling), and requires <code>provideHttpClient()</code> (or <code>HttpClientModule</code>) to be registered.",
+      zen:"<code>BillService.getFeeDetails(id)</code> calls <code>this.http.get&lt;FeeDetails&gt;(...)</code>, and an HTTP interceptor automatically attaches the staff JWT token to every outgoing ZenCampus API call.",
+      code:"@Injectable({ providedIn: 'root' })\nexport class BillService {\n  constructor(private http: HttpClient) {}\n  getFeeDetails(id: number): Observable&lt;FeeDetails&gt; {\n    return this.http.get&lt;FeeDetails&gt;(`/api/Bill/GetFeeDetails?id=${id}`);\n  }\n}" },
+    { name:"12. RxJS Observables &amp; Operators",
+      movie:"🎬 Vaaranam Aayiram — Krishna's memories arrive as a continuous stream of distinct moments over time, not all at once. An Observable represents a stream of values arriving over time, which you subscribe to and transform with operators.",
+      explain:"Observables (from RxJS) emit zero-to-many values over time. <code>.subscribe()</code> consumes them; the <code>async</code> pipe subscribes/unsubscribes automatically in templates. Operators like <code>map</code>, <code>filter</code>, <code>switchMap</code>, <code>debounceTime</code> transform/compose streams inside a <code>.pipe()</code> call.",
+      zen:"A live search box for students debounces keystrokes with <code>searchTerm$.pipe(debounceTime(300), switchMap(term =&gt; studentService.search(term)))</code>, automatically cancelling any in-flight previous search when a new term is typed.",
+      code:"this.results$ = this.searchTerm$.pipe(\n  debounceTime(300),\n  distinctUntilChanged(),\n  switchMap(term =&gt; this.studentService.search(term))\n);\n// Template: &lt;div *ngFor=\"let s of results$ | async\"&gt;{{ s.name }}&lt;/div&gt;" }
+  ]
+},
+{
+  day:4, title:"Day 4 — Lifecycle Hooks, Pipes, Component Communication, Change Detection",
+  topics:[
+    { name:"13. Lifecycle Hooks",
+      movie:"🎬 Soorarai Pottru — Maara's journey has clear phases: takeoff prep, in-flight, and eventual wind-down, each with defined actions. Angular components go through a defined sequence of lifecycle hooks from creation to destruction.",
+      explain:"Key hooks: <code>ngOnChanges</code> (on <code>@Input</code> change), <code>ngOnInit</code> (once, after the first data-bound properties are set — the place to fetch initial data), <code>ngAfterViewInit</code> (after the view/children render), <code>ngOnDestroy</code> (cleanup — unsubscribe, clear timers, before the component is removed).",
+      zen:"A live DVR feed component starts polling in <code>ngOnInit()</code> and clears the interval in <code>ngOnDestroy()</code>, preventing orphaned timers when a staff member navigates away from the camera view.",
+      code:"export class DvrFeedComponent implements OnInit, OnDestroy {\n  private intervalId: any;\n  ngOnInit() { this.intervalId = setInterval(() =&gt; this.refreshFeed(), 5000); }\n  ngOnDestroy() { clearInterval(this.intervalId); }\n}" },
+    { name:"14. Pipes (Built-in &amp; Custom)",
+      movie:"🎬 Anniyan — the same underlying data (Ambi) is transformed and presented in three very different ways, without changing the source. Pipes transform a bound value's DISPLAY only, leaving the underlying component data untouched.",
+      explain:"Pipes transform a value directly inside a template: <code>{{ value | pipeName:args }}</code>. Built-in ones include <code>date</code>, <code>currency</code>, <code>uppercase</code>, <code>async</code>. Custom pipes implement <code>PipeTransform</code> and are decorated with <code>@Pipe({ name: '...' })</code>.",
+      zen:"<code>{{ student.dueAmount | currency:'INR' }}</code> formats a raw number as ₹5,000.00 in the Fee table, and a custom <code>feeStatus</code> pipe converts a boolean <code>feesPaid</code> into the text 'Paid'/'Due' directly in the template.",
+      code:"@Pipe({ name: 'feeStatus' })\nexport class FeeStatusPipe implements PipeTransform {\n  transform(paid: boolean): string { return paid ? 'Paid' : 'Due'; }\n}\n// Template: &lt;span&gt;{{ student.feesPaid | feeStatus }}&lt;/span&gt;" },
+    { name:"15. Component Communication (@Input, @Output, @ViewChild)",
+      movie:"🎬 Mersal — three storylines communicate and influence one another, feeding into and receiving from a shared narrative. <code>@Input</code> passes data DOWN parent → child, <code>@Output</code> emits events UP child → parent, and <code>@ViewChild</code> lets a parent directly reach into a child.",
+      explain:"<code>@Input()</code> binds a property so a parent can pass data in via <code>[prop]=\"value\"</code>. <code>@Output()</code> exposes an <code>EventEmitter</code> so a child can emit events the parent listens to via <code>(event)=\"handler($event)\"</code>. <code>@ViewChild()</code> gives a parent a direct reference to a child component/element instance.",
+      zen:"A <code>FeeRowComponent</code> (child) receives <code>@Input() student</code> from the parent <code>FeeTableComponent</code>, and emits <code>@Output() markPaid</code> when its 'Mark Paid' button is clicked, which the parent listens to via <code>(markPaid)=\"onMarkPaid($event)\"</code>.",
+      code:"// Child\n@Input() student!: Student;\n@Output() markPaid = new EventEmitter&lt;number&gt;();\nonClick() { this.markPaid.emit(this.student.id); }\n\n// Parent template\n&lt;app-fee-row [student]=\"s\" (markPaid)=\"onMarkPaid($event)\"&gt;&lt;/app-fee-row&gt;" },
+    { name:"16. Change Detection &amp; Zone.js",
+      movie:"🎬 Enthiran (Robot) — Chitti continuously monitors its surroundings and reacts the instant something changes, without being told explicitly each time. Angular's change detection (via Zone.js) automatically re-checks and updates the view whenever an async event happens, without manually triggering a re-render.",
+      explain:"Zone.js patches async APIs (<code>setTimeout</code>, HTTP, DOM events) so Angular knows when to run change detection and re-check bindings across the component tree. <code>ChangeDetectionStrategy.OnPush</code> restricts a component to re-check only when its <code>@Input</code> reference changes or an event fires inside it — a key manual performance optimization for large lists.",
+      zen:"Wrapping <code>FeeRowComponent</code> with <code>ChangeDetectionStrategy.OnPush</code> means typing in an unrelated search box doesn't force all 5000 unchanged fee rows to be re-checked — only rows whose actual <code>@Input</code> reference changed get re-rendered.",
+      code:"@Component({\n  selector: 'app-fee-row',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  template: `...`,\n})\nexport class FeeRowComponent {\n  @Input() student!: Student;\n}" }
+  ]
+},
+{
+  day:5, title:"Day 5 — Standalone Components, Signals, Lazy Loading, State Management",
+  topics:[
+    { name:"17. Standalone Components",
+      movie:"🎬 Petta — Kaali operates independently, effective without needing to be attached to a large established gang to get things done. Standalone components declare their own imports directly and don't need to be registered inside an NgModule.",
+      explain:"Since Angular 14 (the default since v17), a component can be <code>@Component({ standalone: true, imports: [...] })</code>, directly importing what it needs (<code>CommonModule</code>, other components) without an enclosing NgModule — simplifying the mental model and enabling more granular lazy loading.",
+      zen:"<code>FeeSummaryComponent</code> in a modern ZenCampus Angular rewrite is standalone, directly importing <code>CommonModule</code> and <code>CurrencyPipe</code> itself, and is lazy-loaded straight from a route without needing a wrapping <code>BillModule</code>.",
+      code:"@Component({\n  selector: 'app-fee-summary',\n  standalone: true,\n  imports: [CommonModule, CurrencyPipe],\n  template: `&lt;p&gt;Total: {{ total | currency }}&lt;/p&gt;`,\n})\nexport class FeeSummaryComponent {}" },
+    { name:"18. Signals (Modern Angular Reactivity)",
+      movie:"🎬 Jailer — Muthuvel Pandian's presence alone instantly ripples through everyone around him the moment something changes, no separate announcement needed. Signals work the same way: updating a signal's value automatically and efficiently propagates to every place that reads it.",
+      explain:"<code>signal(initialValue)</code> creates a reactive value read via <code>signal()</code> and updated via <code>.set()</code>/<code>.update()</code>. <code>computed(() =&gt; ...)</code> derives a value that auto-recalculates when its dependency signals change — a modern alternative/complement to Zone.js-based change detection.",
+      zen:"A <code>paymentAmount = signal(0)</code> in the Fee Payment form drives <code>finalAmount = computed(() =&gt; paymentAmount() - discount())</code>, which automatically stays in sync any time either signal changes, without manual change-detection wiring.",
+      code:"paymentAmount = signal(0);\ndiscount = signal(0);\nfinalAmount = computed(() =&gt; this.paymentAmount() - this.discount());\n\nsetAmount(v: number) { this.paymentAmount.set(v); }\n// Template: &lt;p&gt;Final: {{ finalAmount() }}&lt;/p&gt;" },
+    { name:"19. Lazy Loading &amp; Performance",
+      movie:"🎬 Kaala — Kaala's territory (Dharavi) is only fully mobilized when a specific area actually needs it, not all at once uniformly. Lazy loading only loads a route's JS bundle when the user actually navigates there, not upfront.",
+      explain:"<code>loadComponent: () =&gt; import('./fee/fee.component').then(m =&gt; m.FeeComponent)</code> inside a route config splits that feature into its own JS chunk, downloaded only when the user navigates to it — dramatically shrinking the initial bundle size for large apps.",
+      zen:"ZenCampus's Angular app lazy-loads the Hostel, DVR, and Exam modules — a staff member who only ever uses Attendance and Fees never downloads the DVR module's JS bundle at all, keeping the initial page load fast.",
+      code:"const routes: Routes = [\n  {\n    path: 'hostel',\n    loadComponent: () =&gt; import('./hostel/hostel.component').then(m =&gt; m.HostelComponent),\n  },\n];" },
+    { name:"20. State Management (Services vs NgRx) &amp; Angular vs React",
+      movie:"🎬 Ponniyin Selvan — a large kingdom's affairs are best kept coordinated through one clear, central council rather than scattered informal decisions everywhere. Centralized state management (a shared service, or NgRx for very large apps) keeps app-wide state coordinated the same way.",
+      explain:"For most apps, a shared <code>@Injectable</code> service holding a <code>BehaviorSubject</code> (or signal) is enough state management. NgRx (a Redux-style library) adds a formal store/actions/reducers/effects pattern for very large apps with complex, widely-shared state. Compared to React: Angular is an opinionated full framework (DI, RxJS, CLI, forms, HTTP built-in) vs React being a focused UI library requiring you to pick your own router/state/HTTP libraries.",
+      zen:"ZenCampus's logged-in staff user info lives in a simple <code>AuthService</code> with a <code>currentUser$ = new BehaviorSubject&lt;User|null&gt;(null)</code> — sufficient for the app's size; a switch to NgRx would only be worth the added complexity if global state grew significantly across many independent modules.",
+      code:"@Injectable({ providedIn: 'root' })\nexport class AuthService {\n  private currentUserSubject = new BehaviorSubject&lt;User | null&gt;(null);\n  currentUser$ = this.currentUserSubject.asObservable();\n  setUser(u: User) { this.currentUserSubject.next(u); }\n}" }
+  ]
+}
+];
+
+// ============ 50 INTERVIEW QUESTIONS ============
+const questions = [
+  {level:"Basic", q:"What is Angular?", a:"A TypeScript-based, open-source front-end framework maintained by Google for building single-page applications, providing built-in routing, forms, an HTTP client, and dependency injection out of the box."},
+  {level:"Basic", q:"What is the difference between Angular and AngularJS?", a:"AngularJS (1.x) was the original JavaScript-based MVC framework. Angular (2+) is a complete rewrite using TypeScript, a component-based architecture, and a different design — the two are not code-compatible."},
+  {level:"Basic", q:"What is a component in Angular?", a:"A TypeScript class decorated with <code>@Component</code>, defining a selector, template, and styles, encapsulating one self-contained piece of UI."},
+  {level:"Basic", q:"What is an NgModule?", a:"A container (<code>@NgModule</code>) that groups related components, directives, pipes, and services together, declaring what is available and importable elsewhere in the app."},
+  {level:"Basic", q:"What types of data binding does Angular support?", a:"Interpolation <code>{{ }}</code>, property binding <code>[prop]</code>, event binding <code>(event)</code>, and two-way binding <code>[(ngModel)]</code> — connecting component data to the template in different directions."},
+  {level:"Basic", q:"What is the difference between interpolation and property binding?", a:"Interpolation <code>{{ }}</code> outputs a value as text content. Property binding <code>[prop]=\"value\"</code> sets a DOM property directly, and is required for non-string values like booleans or objects."},
+  {level:"Basic", q:"What are directives in Angular?", a:"Instructions attached to DOM elements. Structural directives (<code>*ngIf</code>, <code>*ngFor</code>) change DOM structure by adding/removing elements; attribute directives (<code>ngClass</code>, <code>ngStyle</code>) change the appearance/behavior of an existing element."},
+  {level:"Basic", q:"What is *ngFor and why does trackBy matter for large lists?", a:"<code>*ngFor</code> repeats a template once per array item. <code>trackBy</code> tells Angular how to identify each item by a stable key (not just its index), so Angular avoids destroying/recreating unchanged DOM nodes on updates."},
+  {level:"Basic", q:"What is a Service in Angular?", a:"A plain class holding shared logic or state, decorated with <code>@Injectable</code>, provided to components via Dependency Injection instead of being manually instantiated by each consumer."},
+  {level:"Basic", q:"What is Dependency Injection (DI) in Angular?", a:"A design pattern where a class declares its dependencies as constructor parameters, and Angular's injector automatically supplies matching instances, rather than the class creating them itself."},
+  {level:"Basic", q:"What is the Angular CLI used for?", a:"A command-line tool (<code>ng new</code>, <code>ng generate</code>, <code>ng build</code>, <code>ng serve</code>) that scaffolds projects/components with a consistent structure and handles building, bundling, and testing."},
+  {level:"Basic", q:"What is a template reference variable?", a:"A variable declared in a template with <code>#</code> (e.g. <code>#myInput</code>) that gives direct access to a DOM element or directive instance elsewhere in the same template."},
+  {level:"Basic", q:"What is the difference between a Component and a Directive?", a:"A Component is a directive WITH its own template/view. A plain Directive changes the behavior or appearance of an existing element without providing a view of its own."},
+  {level:"Intermediate", q:"What are @Input() and @Output()?", a:"<code>@Input()</code> lets a parent pass data down into a child's property. <code>@Output()</code>, paired with an <code>EventEmitter</code>, lets a child emit custom events that a parent listens to."},
+  {level:"Intermediate", q:"What is the difference between template-driven and reactive forms?", a:"Template-driven forms build structure in HTML using <code>ngModel</code> with implicit tracking. Reactive forms define the entire form model explicitly in the component class via <code>FormGroup</code>/<code>FormControl</code>, offering more control and easier testability."},
+  {level:"Intermediate", q:"Name the main Angular lifecycle hooks in order.", a:"<code>ngOnChanges</code> → <code>ngOnInit</code> → <code>ngDoCheck</code> → <code>ngAfterContentInit</code> → <code>ngAfterContentChecked</code> → <code>ngAfterViewInit</code> → <code>ngAfterViewChecked</code> → <code>ngOnDestroy</code>, covering creation through destruction."},
+  {level:"Intermediate", q:"What's the difference between the constructor and ngOnInit?", a:"The constructor is for basic class initialization/DI only. <code>ngOnInit</code> runs after Angular has set the component's initial <code>@Input</code>-bound properties, making it the correct place for initial data fetching or setup logic."},
+  {level:"Intermediate", q:"What is an Observable and how does it differ from a Promise?", a:"An Observable (RxJS) can emit multiple values over time and is lazy/cancellable (it doesn't execute until subscribed). A Promise resolves exactly once, executes immediately once created, and isn't cancellable."},
+  {level:"Intermediate", q:"What is the async pipe and why is it preferred for Observables in templates?", a:"<code>| async</code> subscribes to an Observable directly inside the template and automatically unsubscribes when the component is destroyed, preventing memory leaks from manual, easily-forgotten unsubscribe calls."},
+  {level:"Intermediate", q:"What does the RxJS switchMap operator do?", a:"Maps each emitted value to a new inner Observable, automatically cancelling any still-pending previous inner Observable — ideal for search-as-you-type, where only the latest request's result matters."},
+  {level:"Intermediate", q:"How do you make a GET request with HttpClient?", a:"<code>this.http.get&lt;T&gt;(url)</code> returns a typed <code>Observable&lt;T&gt;</code>, which you subscribe to directly or consume via the <code>async</code> pipe in a template."},
+  {level:"Intermediate", q:"What is an HTTP Interceptor?", a:"A class implementing <code>HttpInterceptor</code> that can inspect or modify every outgoing request or incoming response globally — e.g. attaching an auth token, or handling 401 errors centrally — before it reaches its destination."},
+  {level:"Intermediate", q:"What does <router-outlet> do?", a:"It's the placeholder in a template where the router renders whichever component matches the currently active route."},
+  {level:"Intermediate", q:"What is the difference between routerLink and a plain href?", a:"<code>routerLink</code> triggers Angular's client-side router with no full page reload, preserving app state. A plain <code>href</code> causes a full browser navigation and page reload."},
+  {level:"Intermediate", q:"What is a Route Guard, and name a few types.", a:"A class/function controlling whether navigation is allowed: <code>CanActivate</code> (enter a route), <code>CanDeactivate</code> (leave a route, e.g. an unsaved-changes warning), and <code>Resolve</code> (pre-fetch data before a route activates)."},
+  {level:"Intermediate", q:"What is the DI injector hierarchy in Angular?", a:"Services can be provided at the root level (an app-wide singleton via <code>providedIn: 'root'</code>), a module level, or a component level (a fresh instance per component instance). Angular resolves the closest matching provider walking up the injector tree."},
+  {level:"Intermediate", q:"How do you create a custom pipe?", a:"Implement <code>PipeTransform</code>'s <code>transform()</code> method in a class decorated with <code>@Pipe({ name: '...' })</code>, then use it in a template as <code>{{ value | pipeName }}</code>."},
+  {level:"Intermediate", q:"What is the difference between a pure and an impure pipe?", a:"A pure pipe (the default) only re-runs when its input reference changes. An impure pipe (<code>pure: false</code>) re-runs on every change detection cycle regardless — more flexible but far more expensive for large data."},
+  {level:"Intermediate", q:"What is @ViewChild used for?", a:"Gets a direct reference to a child component, directive, or DOM element from within the parent component class, typically accessed safely after <code>ngAfterViewInit</code>."},
+  {level:"Intermediate", q:"What is content projection (ng-content)?", a:"Lets a component render whatever markup is nested inside its tags at the location of <code>&lt;ng-content&gt;</code>, similar to React's <code>children</code> prop, enabling flexible wrapper components."},
+  {level:"Intermediate", q:"What is the difference between a BehaviorSubject and a plain Subject?", a:"A <code>BehaviorSubject</code> requires an initial value and always emits its current/latest value immediately to new subscribers. A plain <code>Subject</code> has no initial value and only emits to subscribers active at the time of emission."},
+  {level:"Intermediate", q:"What is lazy loading in Angular and why use it?", a:"Splitting feature routes into separate JS bundles loaded only when the user navigates to them, reducing the initial bundle size and improving first-load performance for large apps."},
+  {level:"Advanced", q:"How does Angular's change detection work, and how does Zone.js fit in?", a:"Angular re-checks component bindings after any async event; Zone.js patches <code>setTimeout</code>/HTTP/DOM events to notify Angular when this should happen. Every check walks the component tree top-down by default, updating any bindings whose values changed."},
+  {level:"Advanced", q:"What is ChangeDetectionStrategy.OnPush and when should you use it?", a:"Restricts a component to re-check only when an <code>@Input</code>'s REFERENCE changes, an event fires inside it, or an Observable/Signal it uses emits — a key optimization for large lists of otherwise-unchanged rows."},
+  {level:"Advanced", q:"What are Angular Signals and how do they differ from Zone.js-based detection?", a:"Signals (<code>signal()</code>, <code>computed()</code>, <code>effect()</code>) are fine-grained reactive primitives that track exactly which values changed and update only the DOM bindings that depend on them, moving Angular toward a model that can run with reduced or zoneless change detection."},
+  {level:"Advanced", q:"What's the difference between a standalone component and an NgModule-based component?", a:"A standalone component declares its own imports directly and doesn't need to be registered in an NgModule's declarations array, simplifying setup and enabling more granular code-splitting. An NgModule-based component must be declared within exactly one NgModule."},
+  {level:"Advanced", q:"What is a Resolver in Angular Routing?", a:"A service implementing <code>Resolve&lt;T&gt;</code> that pre-fetches data BEFORE a route activates, so the target component receives ready data via <code>ActivatedRoute</code> instead of showing a loading state after landing."},
+  {level:"Advanced", q:"How does Angular DI resolve hierarchical or multi-provider conflicts?", a:"Angular walks the injector tree outward/upward from the requesting component (component → module → root), using the closest provider found. <code>multi: true</code> providers instead collect ALL matching providers into an array rather than picking one."},
+  {level:"Advanced", q:"What's the difference between providedIn: 'root' and providing a service in a component's providers array?", a:"'root' creates a single app-wide singleton shared everywhere. Providing it in a component's own providers array creates a NEW instance scoped to that component (and destroyed with it) — useful when each instance needs isolated state."},
+  {level:"Advanced", q:"What's the memory-leak risk with Observables, and how do you prevent it?", a:"Manually calling <code>.subscribe()</code> without unsubscribing keeps the subscription (and its closure/component reference) alive after the component is destroyed. Prevented via the <code>async</code> pipe, <code>takeUntil(this.destroy$)</code> before subscribing, or Angular's <code>takeUntilDestroyed()</code> operator."},
+  {level:"Advanced", q:"How does ngOnChanges differ from a Signal-based computed()?", a:"<code>ngOnChanges</code> fires on every <code>@Input</code> change as part of Zone-driven change detection, requiring manual comparison logic. <code>computed()</code> automatically and efficiently re-derives only when its specific tracked signal dependencies change, with no extra boilerplate."},
+  {level:"Advanced", q:"What is Ahead-of-Time (AOT) compilation and why does Angular use it in production?", a:"AOT compiles templates to JS at BUILD time (rather than in the browser at runtime like JIT), producing smaller bundles, faster rendering, and earlier detection of template errors."},
+  {level:"Advanced", q:"What is tree-shaking, and how does providedIn: 'root' support it?", a:"Tree-shaking removes unused code from the final bundle. <code>providedIn: 'root'</code> lets Angular's build tooling exclude a service entirely if nothing in the app actually injects it, unlike manually registering it in an NgModule's providers array."},
+  {level:"Advanced", q:"What's the difference between FormGroup and FormArray?", a:"<code>FormGroup</code> groups a fixed, named set of controls (e.g. name, email). <code>FormArray</code> holds a dynamic, ORDERED list of controls/groups (e.g. an arbitrary number of 'additional family members' rows) that can grow or shrink at runtime."},
+  {level:"Advanced", q:"How would you handle global HTTP error handling (e.g. 401) across a large Angular app?", a:"A single HttpInterceptor catches errors globally via <code>catchError</code>, redirecting to login on 401 or showing a toast on 500 — centralizing error handling instead of repeating try/catch in every service call."},
+  {level:"Advanced", q:"What is the purpose of ng-template and ng-container?", a:"<code>ng-template</code> defines markup that isn't rendered until explicitly used (e.g. by <code>*ngIf...else</code>). <code>ng-container</code> is a non-rendering grouping wrapper (no extra DOM element) used to apply a structural directive without adding an unnecessary wrapping <code>&lt;div&gt;</code>."},
+  {level:"Advanced", q:"What's the difference between zone-based and zoneless change detection?", a:"Zone-based detection re-checks the whole component tree reactively on ANY async event, even unrelated ones. Zoneless mode (enabled via signals + explicit notifications) skips Zone.js entirely, relying on Signals to notify Angular precisely which components need re-checking — reducing unnecessary checks in large apps."},
+  {level:"Advanced", q:"How would you optimize an Angular page rendering a 5000-row student table, similar to ZenCampus's fee/attendance reports?", a:"Combine: virtual scrolling (Angular CDK's <code>cdk-virtual-scroll-viewport</code>, rendering only visible rows), <code>trackBy</code> on <code>*ngFor</code>, <code>ChangeDetectionStrategy.OnPush</code> on row components, debounced search filtering, and moving heavy calculations into <code>computed()</code>/memoized selectors instead of recalculating in the template on every check."},
+  {level:"Advanced", q:"How does Angular's architecture compare to React's, and when would you pick one for a project like ZenCampus?", a:"Angular is an opinionated, all-in-one framework (DI, router, forms, HTTP, RxJS, strict CLI structure) — better for large enterprise teams wanting consistency and fewer library decisions. React is a focused UI library requiring you to choose your own router/state/HTTP tooling — more flexible, but demanding more architectural decisions upfront; often a better fit for smaller teams wanting lighter, more customizable tooling."}
+];
+
+// ============ COVERAGE CHECKLIST ============
+const coverageTopics = guideDays.flatMap(day => day.topics.map(t => ({ name: t.name, day: day.day })));
+
+// ============ RENDER: TABS ============
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ============ RENDER: GUIDE ============
+const guideListEl = document.getElementById('guideList');
+guideListEl.innerHTML = guideDays.map(day => `
+  <div class="day-block" id="day-${day.day}">
+    <h2 class="day-title">${day.title}</h2>
+    ${day.topics.map((t) => `
+      <div class="qa" id="topic-${t.name.split('.')[0].trim()}">
+        <div class="q">
+          <span>${t.name}</span>
+          <span class="toggle-icon">+</span>
+        </div>
+        <div class="a">
+          <div class="movie-ref">${t.movie}</div>
+          <p>${t.explain}</p>
+          <pre>${t.code}</pre>
+          <div class="zen-ref"><strong>ZenCampus use case:</strong> ${t.zen}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+`).join('');
+guideListEl.querySelectorAll('.q').forEach(qEl=>{
+  qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+});
+
+// ============ RENDER: INTERVIEW Q&A ============
+const listEl = document.getElementById('qaList');
+const filtersEl = document.getElementById('filters');
+const searchBox = document.getElementById('searchBox');
+const visibleCountEl = document.getElementById('visibleCount');
+const levels = ["All", "Basic", "Intermediate", "Advanced"];
+let activeLevel = "All";
+
+function renderFilters(){
+  filtersEl.innerHTML = levels.map(lvl =>
+    `<button class="filter-btn ${lvl===activeLevel?'active':''}" data-level="${lvl}">${lvl}</button>`
+  ).join('');
+  filtersEl.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeLevel = btn.dataset.level;
+      renderFilters();
+      renderQAList();
+    });
+  });
+}
+
+function renderQAList(){
+  const searchTerm = searchBox.value.trim().toLowerCase();
+  const filtered = questions
+    .map((item, idx)=>({...item, idx}))
+    .filter(item => activeLevel==="All" || item.level===activeLevel)
+    .filter(item => !searchTerm || item.q.toLowerCase().includes(searchTerm) || item.a.toLowerCase().includes(searchTerm));
+
+  visibleCountEl.textContent = filtered.length;
+
+  listEl.innerHTML = filtered.map(item => `
+    <div class="qa" data-idx="${item.idx}">
+      <div class="q">
+        <span><span class="num">Q${item.idx+1}.</span>${item.q}</span>
+        <span style="display:flex; align-items:center; gap:10px;">
+          <span class="tag">${item.level}</span>
+          <span class="toggle-icon">+</span>
+        </span>
+      </div>
+      <div class="a">${item.a}</div>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.q').forEach(qEl=>{
+    qEl.addEventListener('click', ()=> qEl.parentElement.classList.toggle('open'));
+  });
+}
+searchBox.addEventListener('input', renderQAList);
+renderFilters();
+renderQAList();
+
+// ============ RENDER: COVERAGE CHECKLIST ============
+const checklistEl = document.getElementById('checklist');
+checklistEl.innerHTML = coverageTopics.map((t) => `
+  <div class="check-item" data-target="topic-${t.name.split('.')[0].trim()}" data-day="${t.day}">
+    <span class="badge">✅</span>
+    <span class="num">${t.name.split('.')[0]}</span>
+    <span>${t.name.split('. ')[1].replace(/&amp;/g,'&')} <em style="color:var(--muted); font-size:0.8rem;">(Day ${t.day})</em></span>
+  </div>
+`).join('');
+checklistEl.querySelectorAll('.check-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelector('.tab-btn[data-tab="guide"]').click();
+    setTimeout(()=>{
+      const target = document.getElementById(item.dataset.target);
+      if(target){
+        target.classList.add('open');
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }, 50);
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disprz Coding Round — Full Prep</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; }
+
+  header {
+    background: linear-gradient(135deg, #1e3a5f, #0d47a1);
+    padding: 30px 40px;
+    text-align: center;
+    border-bottom: 3px solid #3b82f6;
+  }
+  header h1 { font-size: 2rem; color: #fff; }
+  header p { color: #93c5fd; margin-top: 6px; font-size: 1rem; }
+  .badge { display: inline-block; background: #ef4444; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; margin-top: 10px; }
+
+  nav {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    padding: 16px 40px; background: #1e293b;
+    border-bottom: 1px solid #334155;
+    position: sticky; top: 0; z-index: 100;
+  }
+  nav a {
+    color: #93c5fd; text-decoration: none; padding: 6px 14px;
+    border-radius: 20px; font-size: 0.85rem; border: 1px solid #334155;
+    transition: all 0.2s;
+  }
+  nav a:hover { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+
+  .section-title {
+    font-size: 1.4rem; font-weight: 700; color: #60a5fa;
+    border-left: 4px solid #3b82f6; padding-left: 14px;
+    margin: 40px 0 20px;
+  }
+  .section-title span { font-size: 0.9rem; color: #94a3b8; font-weight: 400; margin-left: 10px; }
+
+  .problem-card {
+    background: #1e293b; border: 1px solid #334155;
+    border-radius: 12px; margin-bottom: 24px; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .problem-card:hover { border-color: #3b82f6; }
+
+  .card-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px; background: #0f172a;
+    border-bottom: 1px solid #334155;
+  }
+  .problem-num {
+    background: #3b82f6; color: #fff; font-weight: 700;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; flex-shrink: 0;
+  }
+  .card-header h3 { font-size: 1rem; color: #e2e8f0; flex: 1; }
+  .difficulty {
+    padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+  }
+  .easy { background: #064e3b; color: #34d399; border: 1px solid #34d399; }
+  .medium { background: #451a03; color: #fb923c; border: 1px solid #fb923c; }
+  .hard { background: #4c0519; color: #f87171; border: 1px solid #f87171; }
+
+  .card-body { padding: 18px 20px; }
+  .card-body p { color: #cbd5e1; line-height: 1.7; margin-bottom: 12px; }
+
+  .topic-tag {
+    display: inline-block; background: #1e3a5f; color: #60a5fa;
+    padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-right: 6px; margin-bottom: 8px;
+  }
+
+  pre {
+    background: #0f172a; border: 1px solid #334155; border-radius: 8px;
+    padding: 16px; overflow-x: auto; font-size: 0.85rem; line-height: 1.6;
+    margin: 12px 0; font-family: 'Cascadia Code', 'Consolas', monospace;
+  }
+  .keyword { color: #60a5fa; }
+  .string { color: #86efac; }
+  .comment { color: #475569; font-style: italic; }
+  .type { color: #f0abfc; }
+  .number { color: #fb923c; }
+  .method { color: #fde68a; }
+
+  .hint-box {
+    background: #1a2744; border: 1px solid #1d4ed8; border-radius: 8px;
+    padding: 12px 16px; margin-top: 12px;
+  }
+  .hint-box strong { color: #60a5fa; }
+  .hint-box p { color: #93c5fd; font-size: 0.875rem; margin: 0; }
+
+  .answer-box {
+    background: #0f2d1a; border: 1px solid #166534; border-radius: 8px;
+    padding: 12px 16px; margin-top: 12px;
+  }
+  .answer-box strong { color: #4ade80; }
+
+  details summary {
+    cursor: pointer; color: #fbbf24; font-weight: 600;
+    padding: 10px 0; user-select: none; font-size: 0.9rem;
+  }
+  details summary:hover { color: #f59e0b; }
+  details[open] summary { margin-bottom: 10px; }
+
+  .expected {
+    background: #0f172a; border-left: 3px solid #4ade80;
+    padding: 10px 14px; border-radius: 4px; font-family: monospace; font-size: 0.85rem;
+    color: #86efac; margin-top: 8px;
+  }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.85rem;
+  }
+  th { background: #1e3a5f; color: #93c5fd; padding: 10px 14px; text-align: left; }
+  td { padding: 8px 14px; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
+  tr:nth-child(even) td { background: #0f1a2e; }
+
+  .tip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+  .tip-card {
+    background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px;
+  }
+  .tip-card h4 { color: #60a5fa; margin-bottom: 8px; font-size: 0.95rem; }
+  .tip-card ul { padding-left: 18px; }
+  .tip-card li { color: #cbd5e1; font-size: 0.875rem; margin-bottom: 6px; line-height: 1.5; }
+
+  .timer-banner {
+    background: linear-gradient(135deg, #7c2d12, #9a3412);
+    border: 1px solid #ea580c; border-radius: 10px;
+    padding: 16px 20px; margin-bottom: 30px; text-align: center;
+  }
+  .timer-banner h2 { color: #fed7aa; font-size: 1.1rem; }
+  .timer-banner p { color: #fdba74; font-size: 0.875rem; margin-top: 6px; }
+
+  .progress-bar {
+    display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0;
+  }
+  .progress-item {
+    flex: 1; min-width: 120px; background: #1e293b; border: 1px solid #334155;
+    border-radius: 8px; padding: 12px; text-align: center;
+  }
+  .progress-item .count { font-size: 1.5rem; font-weight: 700; color: #60a5fa; }
+  .progress-item .label { font-size: 0.75rem; color: #64748b; margin-top: 4px; }
+
+  footer {
+    text-align: center; padding: 30px; color: #475569; font-size: 0.85rem;
+    border-top: 1px solid #1e293b; margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Disprz Coding Round — Complete Prep</h1>
+  <p>ASE Role · .NET · C# · SQL · Web API · OOP</p>
+  <div class="badge">🗓 Exam: Tomorrow 7:00 PM</div>
+</header>
+
+<nav>
+  <a href="#overview">Overview</a>
+  <a href="#csharp">C# & LINQ</a>
+  <a href="#oop">OOP Concepts</a>
+  <a href="#sql">SQL Queries</a>
+  <a href="#webapi">Web API</a>
+  <a href="#algo">Algorithms</a>
+  <a href="#concepts">Quick Concepts</a>
+  <a href="#tips">Exam Tips</a>
+</nav>
+
+<div class="container">
+
+  <!-- Timer Banner -->
+  <div class="timer-banner">
+    <h2>⏰ One Day to Go — Focus on the Highest-Impact Topics</h2>
+    <p>C# LINQ → SQL Joins → OOP Principles → Web API Basics → Algorithm Problems</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="progress-bar">
+    <div class="progress-item"><div class="count">5</div><div class="label">C# / LINQ Problems</div></div>
+    <div class="progress-item"><div class="count">4</div><div class="label">OOP Problems</div></div>
+    <div class="progress-item"><div class="count">6</div><div class="label">SQL Problems</div></div>
+    <div class="progress-item"><div class="count">3</div><div class="label">Web API Problems</div></div>
+    <div class="progress-item"><div class="count">5</div><div class="label">Algorithm Problems</div></div>
+  </div>
+
+  <!-- ===== OVERVIEW ===== -->
+  <div id="overview" class="section-title">📋 What to Expect <span>Based on ASE JD Analysis</span></div>
+
+  <table>
+    <tr><th>Topic</th><th>Weight</th><th>What They Test</th></tr>
+    <tr><td>C# Fundamentals</td><td>⭐⭐⭐⭐⭐</td><td>LINQ, Collections, Async/Await, Generics</td></tr>
+    <tr><td>OOP Design</td><td>⭐⭐⭐⭐⭐</td><td>SOLID, Inheritance, Interfaces, Abstract</td></tr>
+    <tr><td>SQL</td><td>⭐⭐⭐⭐</td><td>Joins, GROUP BY, Subquery, Window Functions</td></tr>
+    <tr><td>Web API</td><td>⭐⭐⭐</td><td>REST principles, HTTP verbs, Status codes</td></tr>
+    <tr><td>Algorithms</td><td>⭐⭐⭐</td><td>String manipulation, Array problems, Recursion</td></tr>
+    <tr><td>Unit Testing</td><td>⭐⭐</td><td>xUnit/NUnit basics, Arrange-Act-Assert</td></tr>
+  </table>
+
+  <!-- ===== C# & LINQ ===== -->
+  <div id="csharp" class="section-title">💻 C# & LINQ Problems</div>
+
+  <!-- Problem 1 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">1</div>
+      <h3>Student Grade Analyzer</h3>
+      <span class="difficulty easy">Easy</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">LINQ</span><span class="topic-tag">GroupBy</span><span class="topic-tag">Filter</span>
+      <p>Filter students who scored above 60, group by Department, find average score per department, return sorted by average score descending.</p>
+      <pre><span class="keyword">public class</span> <span class="type">Student</span>
+{
+    <span class="keyword">public int</span> Id { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public string</span> Department { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public int</span> Score { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}
+
+List&lt;<span class="type">Student</span>&gt; students = <span class="keyword">new</span> List&lt;<span class="type">Student</span>&gt;
+{
+    <span class="keyword">new</span> <span class="type">Student</span> { Id=<span class="number">1</span>, Name=<span class="string">"Basha"</span>,  Department=<span class="string">"CSE"</span>, Score=<span class="number">85</span> },
+    <span class="keyword">new</span> <span class="type">Student</span> { Id=<span class="number">2</span>, Name=<span class="string">"Ravi"</span>,   Department=<span class="string">"ECE"</span>, Score=<span class="number">55</span> },
+    <span class="keyword">new</span> <span class="type">Student</span> { Id=<span class="number">3</span>, Name=<span class="string">"Priya"</span>,  Department=<span class="string">"CSE"</span>, Score=<span class="number">72</span> },
+    <span class="keyword">new</span> <span class="type">Student</span> { Id=<span class="number">4</span>, Name=<span class="string">"Kumar"</span>,  Department=<span class="string">"ECE"</span>, Score=<span class="number">90</span> },
+    <span class="keyword">new</span> <span class="type">Student</span> { Id=<span class="number">5</span>, Name=<span class="string">"Meena"</span>,  Department=<span class="string">"IT"</span>,  Score=<span class="number">45</span> },
+    <span class="keyword">new</span> <span class="type">Student</span> { Id=<span class="number">6</span>, Name=<span class="string">"Arjun"</span>,  Department=<span class="string">"IT"</span>,  Score=<span class="number">78</span> },
+    <span class="keyword">new</span> <span class="type">Student</span> { Id=<span class="number">7</span>, Name=<span class="string">"Divya"</span>,  Department=<span class="string">"CSE"</span>, Score=<span class="number">65</span> },
+};
+
+<span class="comment">// YOUR CODE HERE</span>
+<span class="keyword">var</span> result = students
+    <span class="comment">// Step 1: Filter score > 60</span>
+    <span class="comment">// Step 2: Group by Department</span>
+    <span class="comment">// Step 3: Select dept name + avg score</span>
+    <span class="comment">// Step 4: Order by avg descending</span>
+    ;</pre>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">var</span> result = students
+    .<span class="method">Where</span>(s => s.Score > <span class="number">60</span>)
+    .<span class="method">GroupBy</span>(s => s.Department)
+    .<span class="method">Select</span>(g => <span class="keyword">new</span> {
+        Department = g.Key,
+        AverageScore = g.<span class="method">Average</span>(s => s.Score)
+    })
+    .<span class="method">OrderByDescending</span>(x => x.AverageScore);
+
+<span class="keyword">foreach</span> (<span class="keyword">var</span> item <span class="keyword">in</span> result)
+    Console.<span class="method">WriteLine</span>(<span class="string">$"{item.Department} → Avg: {item.AverageScore:F1}"</span>);</pre>
+        </div>
+        <div class="expected">
+ECE → Avg: 90.0
+IT  → Avg: 78.0
+CSE → Avg: 74.0
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Problem 2 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">2</div>
+      <h3>Duplicate Finder in List</h3>
+      <span class="difficulty easy">Easy</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">LINQ</span><span class="topic-tag">GroupBy</span><span class="topic-tag">Dictionary</span>
+      <p>Find all duplicate names in a list. Return only the names that appear more than once.</p>
+      <pre>List&lt;<span class="keyword">string</span>&gt; names = <span class="keyword">new</span> List&lt;<span class="keyword">string</span>&gt;
+{
+    <span class="string">"Basha"</span>, <span class="string">"Ravi"</span>, <span class="string">"Priya"</span>, <span class="string">"Basha"</span>, <span class="string">"Kumar"</span>, <span class="string">"Ravi"</span>, <span class="string">"Meena"</span>
+};
+
+<span class="comment">// Expected: ["Basha", "Ravi"]</span>
+<span class="comment">// YOUR CODE HERE</span></pre>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="comment">// Method 1: LINQ</span>
+<span class="keyword">var</span> duplicates = names
+    .<span class="method">GroupBy</span>(n => n)
+    .<span class="method">Where</span>(g => g.<span class="method">Count</span>() > <span class="number">1</span>)
+    .<span class="method">Select</span>(g => g.Key)
+    .<span class="method">ToList</span>();
+
+<span class="comment">// Method 2: HashSet</span>
+<span class="keyword">var</span> seen = <span class="keyword">new</span> HashSet&lt;<span class="keyword">string</span>&gt;();
+<span class="keyword">var</span> duplicates2 = names.<span class="method">Where</span>(n => !seen.<span class="method">Add</span>(n)).<span class="method">Distinct</span>().<span class="method">ToList</span>();</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Problem 3 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">3</div>
+      <h3>Order Summary with LINQ Join</h3>
+      <span class="difficulty medium">Medium</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">LINQ Join</span><span class="topic-tag">Select</span><span class="topic-tag">Anonymous Type</span>
+      <p>Join Orders and Customers list in memory. Return order ID, customer name, and total amount for orders above ₹500.</p>
+      <pre><span class="keyword">public class</span> <span class="type">Customer</span> { <span class="keyword">public int</span> Id; <span class="keyword">public string</span> Name; }
+<span class="keyword">public class</span> <span class="type">Order</span>    { <span class="keyword">public int</span> Id; <span class="keyword">public int</span> CustomerId; <span class="keyword">public decimal</span> Amount; }
+
+<span class="keyword">var</span> customers = <span class="keyword">new</span> List&lt;<span class="type">Customer</span>&gt; {
+    <span class="keyword">new</span> <span class="type">Customer</span> { Id=<span class="number">1</span>, Name=<span class="string">"Basha"</span>  },
+    <span class="keyword">new</span> <span class="type">Customer</span> { Id=<span class="number">2</span>, Name=<span class="string">"Priya"</span>  },
+    <span class="keyword">new</span> <span class="type">Customer</span> { Id=<span class="number">3</span>, Name=<span class="string">"Kumar"</span>  },
+};
+<span class="keyword">var</span> orders = <span class="keyword">new</span> List&lt;<span class="type">Order</span>&gt; {
+    <span class="keyword">new</span> <span class="type">Order</span> { Id=<span class="number">101</span>, CustomerId=<span class="number">1</span>, Amount=<span class="number">750</span>  },
+    <span class="keyword">new</span> <span class="type">Order</span> { Id=<span class="number">102</span>, CustomerId=<span class="number">2</span>, Amount=<span class="number">300</span>  },
+    <span class="keyword">new</span> <span class="type">Order</span> { Id=<span class="number">103</span>, CustomerId=<span class="number">1</span>, Amount=<span class="number">950</span>  },
+    <span class="keyword">new</span> <span class="type">Order</span> { Id=<span class="number">104</span>, CustomerId=<span class="number">3</span>, Amount=<span class="number">600</span>  },
+};
+
+<span class="comment">// Join + filter Amount > 500 + return OrderId, CustomerName, Amount</span>
+<span class="comment">// YOUR CODE HERE</span></pre>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">var</span> result = <span class="keyword">from</span> o <span class="keyword">in</span> orders
+             <span class="keyword">join</span> c <span class="keyword">in</span> customers <span class="keyword">on</span> o.CustomerId <span class="keyword">equals</span> c.Id
+             <span class="keyword">where</span> o.Amount > <span class="number">500</span>
+             <span class="keyword">select new</span> { o.Id, c.Name, o.Amount };
+
+<span class="comment">// Method syntax equivalent:</span>
+<span class="keyword">var</span> result2 = orders
+    .<span class="method">Join</span>(customers, o => o.CustomerId, c => c.Id,
+          (o, c) => <span class="keyword">new</span> { o.Id, c.Name, o.Amount })
+    .<span class="method">Where</span>(x => x.Amount > <span class="number">500</span>);</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Problem 4 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">4</div>
+      <h3>Async Product Loader</h3>
+      <span class="difficulty medium">Medium</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">async/await</span><span class="topic-tag">Task</span><span class="topic-tag">HttpClient</span>
+      <p>Write an async method that fetches a product by ID from a service. If product is null, throw NotFoundException. Return product name in uppercase.</p>
+      <pre><span class="keyword">public interface</span> <span class="type">IProductService</span>
+{
+    Task&lt;<span class="type">Product</span>&gt; <span class="method">GetByIdAsync</span>(<span class="keyword">int</span> id);
+}
+
+<span class="keyword">public class</span> <span class="type">Product</span>
+{
+    <span class="keyword">public int</span> Id { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public string</span> Name { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public decimal</span> Price { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+}
+
+<span class="comment">// Write GetProductNameAsync(int id) — async, handles null</span></pre>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">public async</span> Task&lt;<span class="keyword">string</span>&gt; <span class="method">GetProductNameAsync</span>(<span class="keyword">int</span> id)
+{
+    <span class="keyword">var</span> product = <span class="keyword">await</span> _productService.<span class="method">GetByIdAsync</span>(id);
+
+    <span class="keyword">if</span> (product == <span class="keyword">null</span>)
+        <span class="keyword">throw new</span> <span class="type">KeyNotFoundException</span>(<span class="string">$"Product {id} not found"</span>);
+
+    <span class="keyword">return</span> product.Name.<span class="method">ToUpper</span>();
+}
+
+<span class="comment">// Key points:
+// - async keyword on method
+// - await on the service call
+// - Task&lt;string&gt; as return type (not string)
+// - Null check before use</span></pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Problem 5 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">5</div>
+      <h3>Generic Repository Pattern</h3>
+      <span class="difficulty medium">Medium</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">Generics</span><span class="topic-tag">Interface</span><span class="topic-tag">Repository Pattern</span>
+      <p>Create a generic IRepository&lt;T&gt; interface with GetById, GetAll, Add, Update, Delete methods. Then implement it for a Student entity.</p>
+      <pre><span class="comment">// Define the interface and implement for Student
+// YOUR CODE HERE</span></pre>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">public interface</span> <span class="type">IRepository</span>&lt;T&gt; <span class="keyword">where</span> T : <span class="keyword">class</span>
+{
+    Task&lt;T&gt; <span class="method">GetByIdAsync</span>(<span class="keyword">int</span> id);
+    Task&lt;IEnumerable&lt;T&gt;&gt; <span class="method">GetAllAsync</span>();
+    Task <span class="method">AddAsync</span>(T entity);
+    Task <span class="method">UpdateAsync</span>(T entity);
+    Task <span class="method">DeleteAsync</span>(<span class="keyword">int</span> id);
+}
+
+<span class="keyword">public class</span> <span class="type">StudentRepository</span> : <span class="type">IRepository</span>&lt;<span class="type">Student</span>&gt;
+{
+    <span class="keyword">private readonly</span> <span class="type">AppDbContext</span> _context;
+
+    <span class="keyword">public</span> <span class="method">StudentRepository</span>(<span class="type">AppDbContext</span> context) => _context = context;
+
+    <span class="keyword">public async</span> Task&lt;<span class="type">Student</span>&gt; <span class="method">GetByIdAsync</span>(<span class="keyword">int</span> id) =>
+        <span class="keyword">await</span> _context.Students.<span class="method">FindAsync</span>(id);
+
+    <span class="keyword">public async</span> Task&lt;IEnumerable&lt;<span class="type">Student</span>&gt;&gt; <span class="method">GetAllAsync</span>() =>
+        <span class="keyword">await</span> _context.Students.<span class="method">ToListAsync</span>();
+
+    <span class="keyword">public async</span> Task <span class="method">AddAsync</span>(<span class="type">Student</span> s)
+    {
+        <span class="keyword">await</span> _context.Students.<span class="method">AddAsync</span>(s);
+        <span class="keyword">await</span> _context.<span class="method">SaveChangesAsync</span>();
+    }
+
+    <span class="keyword">public async</span> Task <span class="method">UpdateAsync</span>(<span class="type">Student</span> s)
+    {
+        _context.Students.<span class="method">Update</span>(s);
+        <span class="keyword">await</span> _context.<span class="method">SaveChangesAsync</span>();
+    }
+
+    <span class="keyword">public async</span> Task <span class="method">DeleteAsync</span>(<span class="keyword">int</span> id)
+    {
+        <span class="keyword">var</span> s = <span class="keyword">await</span> _context.Students.<span class="method">FindAsync</span>(id);
+        <span class="keyword">if</span> (s != <span class="keyword">null</span>) { _context.Students.<span class="method">Remove</span>(s); <span class="keyword">await</span> _context.<span class="method">SaveChangesAsync</span>(); }
+    }
+}</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ===== OOP ===== -->
+  <div id="oop" class="section-title">🏛 OOP Design Problems</div>
+
+  <!-- OOP 1 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">1</div>
+      <h3>Shape Area Calculator (Polymorphism)</h3>
+      <span class="difficulty easy">Easy</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">Inheritance</span><span class="topic-tag">Abstract</span><span class="topic-tag">Polymorphism</span>
+      <p>Create an abstract Shape class with an abstract CalculateArea() method. Implement Circle, Rectangle, and Triangle. Print areas using a common method.</p>
+      <pre><span class="comment">// Design using abstract class and override
+// Circle: π × r²
+// Rectangle: width × height
+// Triangle: 0.5 × base × height
+// YOUR CODE HERE</span></pre>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">public abstract class</span> <span class="type">Shape</span>
+{
+    <span class="keyword">public abstract double</span> <span class="method">CalculateArea</span>();
+    <span class="keyword">public virtual void</span> <span class="method">PrintArea</span>() =>
+        Console.<span class="method">WriteLine</span>(<span class="string">$"{GetType().Name}: Area = {CalculateArea():F2}"</span>);
+}
+
+<span class="keyword">public class</span> <span class="type">Circle</span> : <span class="type">Shape</span>
+{
+    <span class="keyword">private double</span> _radius;
+    <span class="keyword">public</span> <span class="method">Circle</span>(<span class="keyword">double</span> r) => _radius = r;
+    <span class="keyword">public override double</span> <span class="method">CalculateArea</span>() => Math.PI * _radius * _radius;
+}
+
+<span class="keyword">public class</span> <span class="type">Rectangle</span> : <span class="type">Shape</span>
+{
+    <span class="keyword">private double</span> _w, _h;
+    <span class="keyword">public</span> <span class="method">Rectangle</span>(<span class="keyword">double</span> w, <span class="keyword">double</span> h) { _w = w; _h = h; }
+    <span class="keyword">public override double</span> <span class="method">CalculateArea</span>() => _w * _h;
+}
+
+<span class="keyword">public class</span> <span class="type">Triangle</span> : <span class="type">Shape</span>
+{
+    <span class="keyword">private double</span> _b, _h;
+    <span class="keyword">public</span> <span class="method">Triangle</span>(<span class="keyword">double</span> b, <span class="keyword">double</span> h) { _b = b; _h = h; }
+    <span class="keyword">public override double</span> <span class="method">CalculateArea</span>() => <span class="number">0.5</span> * _b * _h;
+}
+
+<span class="comment">// Usage — polymorphism in action</span>
+List&lt;<span class="type">Shape</span>&gt; shapes = <span class="keyword">new</span> List&lt;<span class="type">Shape</span>&gt;
+{
+    <span class="keyword">new</span> <span class="type">Circle</span>(<span class="number">5</span>), <span class="keyword">new</span> <span class="type">Rectangle</span>(<span class="number">4</span>, <span class="number">6</span>), <span class="keyword">new</span> <span class="type">Triangle</span>(<span class="number">3</span>, <span class="number">8</span>)
+};
+shapes.<span class="method">ForEach</span>(s => s.<span class="method">PrintArea</span>());</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- OOP 2 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">2</div>
+      <h3>Abstract vs Interface — Explain + Code</h3>
+      <span class="difficulty easy">Easy</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">Abstract</span><span class="topic-tag">Interface</span><span class="topic-tag">Theory</span>
+      <p>This is a frequently asked interview/theory question. Know the difference clearly.</p>
+      <table>
+        <tr><th>Feature</th><th>Abstract Class</th><th>Interface</th></tr>
+        <tr><td>Instantiate?</td><td>❌ No</td><td>❌ No</td></tr>
+        <tr><td>Constructor</td><td>✅ Yes</td><td>❌ No</td></tr>
+        <tr><td>Multiple inheritance</td><td>❌ No (single)</td><td>✅ Yes</td></tr>
+        <tr><td>Access modifiers</td><td>✅ Yes</td><td>Public only (default)</td></tr>
+        <tr><td>Default implementation</td><td>✅ Yes</td><td>✅ C# 8+ (default methods)</td></tr>
+        <tr><td>Fields/variables</td><td>✅ Yes</td><td>❌ No (only properties)</td></tr>
+        <tr><td>Use when</td><td>Shared base behavior</td><td>Define a contract/capability</td></tr>
+      </table>
+      <div class="hint-box">
+        <strong>💡 Rule of Thumb:</strong>
+        <p>Use <strong>abstract class</strong> when classes share common behavior (IS-A relationship). Use <strong>interface</strong> when you want to define what a class CAN DO regardless of hierarchy (HAS-A capability).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- OOP 3 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">3</div>
+      <h3>SOLID Principles — Quick Code Demo</h3>
+      <span class="difficulty medium">Medium</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">SOLID</span><span class="topic-tag">SRP</span><span class="topic-tag">DIP</span>
+      <p>Demonstrate Single Responsibility Principle (SRP) and Dependency Inversion Principle (DIP) with a real example.</p>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="comment">// ❌ BAD — violates SRP (one class doing too much)</span>
+<span class="keyword">public class</span> <span class="type">StudentManager</span>
+{
+    <span class="keyword">public void</span> <span class="method">SaveToDatabase</span>(<span class="type">Student</span> s) { <span class="comment">/* DB logic */</span> }
+    <span class="keyword">public void</span> <span class="method">SendEmail</span>(<span class="type">Student</span> s) { <span class="comment">/* Email logic */</span> }
+    <span class="keyword">public void</span> <span class="method">GenerateReport</span>(<span class="type">Student</span> s) { <span class="comment">/* Report logic */</span> }
+}
+
+<span class="comment">// ✅ GOOD — SRP + DIP applied</span>
+<span class="keyword">public interface</span> <span class="type">IStudentRepository</span> { Task <span class="method">SaveAsync</span>(<span class="type">Student</span> s); }
+<span class="keyword">public interface</span> <span class="type">IEmailService</span>     { Task <span class="method">SendAsync</span>(<span class="type">Student</span> s); }
+<span class="keyword">public interface</span> <span class="type">IReportService</span>     { <span class="type">Report</span> <span class="method">Generate</span>(<span class="type">Student</span> s);  }
+
+<span class="keyword">public class</span> <span class="type">StudentService</span>  <span class="comment">// depends on abstractions, not concretions (DIP)</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">IStudentRepository</span> _repo;
+    <span class="keyword">private readonly</span> <span class="type">IEmailService</span> _email;
+
+    <span class="keyword">public</span> <span class="method">StudentService</span>(<span class="type">IStudentRepository</span> repo, <span class="type">IEmailService</span> email)
+    {
+        _repo = repo; _email = email;
+    }
+
+    <span class="keyword">public async</span> Task <span class="method">RegisterAsync</span>(<span class="type">Student</span> s)
+    {
+        <span class="keyword">await</span> _repo.<span class="method">SaveAsync</span>(s);
+        <span class="keyword">await</span> _email.<span class="method">SendAsync</span>(s);
+    }
+}
+
+<span class="comment">// SOLID Summary:
+// S — Single Responsibility: one class, one job
+// O — Open/Closed: open for extension, closed for modification
+// L — Liskov Substitution: derived class usable as base class
+// I — Interface Segregation: small focused interfaces
+// D — Dependency Inversion: depend on abstractions, not concretions</span></pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- OOP 4 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">4</div>
+      <h3>Design: Notification System</h3>
+      <span class="difficulty medium">Medium</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">Design</span><span class="topic-tag">Strategy Pattern</span><span class="topic-tag">OOP</span>
+      <p>Design a notification system that can send messages via Email, SMS, or Push. The channel can be switched at runtime without changing calling code.</p>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="comment">// Strategy Pattern</span>
+<span class="keyword">public interface</span> <span class="type">INotificationChannel</span>
+{
+    Task <span class="method">SendAsync</span>(<span class="keyword">string</span> recipient, <span class="keyword">string</span> message);
+}
+
+<span class="keyword">public class</span> <span class="type">EmailChannel</span> : <span class="type">INotificationChannel</span>
+{
+    <span class="keyword">public async</span> Task <span class="method">SendAsync</span>(<span class="keyword">string</span> to, <span class="keyword">string</span> msg) =>
+        Console.<span class="method">WriteLine</span>(<span class="string">$"EMAIL to {to}: {msg}"</span>);
+}
+
+<span class="keyword">public class</span> <span class="type">SmsChannel</span> : <span class="type">INotificationChannel</span>
+{
+    <span class="keyword">public async</span> Task <span class="method">SendAsync</span>(<span class="keyword">string</span> to, <span class="keyword">string</span> msg) =>
+        Console.<span class="method">WriteLine</span>(<span class="string">$"SMS to {to}: {msg}"</span>);
+}
+
+<span class="keyword">public class</span> <span class="type">NotificationService</span>
+{
+    <span class="keyword">private</span> <span class="type">INotificationChannel</span> _channel;
+
+    <span class="keyword">public void</span> <span class="method">SetChannel</span>(<span class="type">INotificationChannel</span> channel) => _channel = channel;
+
+    <span class="keyword">public</span> Task <span class="method">NotifyAsync</span>(<span class="keyword">string</span> recipient, <span class="keyword">string</span> message) =>
+        _channel.<span class="method">SendAsync</span>(recipient, message);
+}
+
+<span class="comment">// Usage</span>
+<span class="keyword">var</span> svc = <span class="keyword">new</span> <span class="type">NotificationService</span>();
+svc.<span class="method">SetChannel</span>(<span class="keyword">new</span> <span class="type">EmailChannel</span>());
+<span class="keyword">await</span> svc.<span class="method">NotifyAsync</span>(<span class="string">"basha@test.com"</span>, <span class="string">"Welcome!"</span>);</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ===== SQL ===== -->
+  <div id="sql" class="section-title">🗄 SQL Problems</div>
+
+  <!-- SQL 1 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">1</div>
+      <h3>Department Employee Count</h3>
+      <span class="difficulty easy">Easy</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">JOIN</span><span class="topic-tag">GROUP BY</span><span class="topic-tag">HAVING</span>
+      <p>Find departments that have more than 2 employees. Show department name and employee count.</p>
+      <pre><span class="comment">-- Tables:</span>
+<span class="comment">-- Department(Id, Name)</span>
+<span class="comment">-- Employee(Id, Name, DeptId, Salary)</span>
+
+<span class="comment">-- YOUR QUERY HERE</span></pre>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">SELECT</span> d.Name <span class="keyword">AS</span> Department, <span class="keyword">COUNT</span>(e.Id) <span class="keyword">AS</span> EmployeeCount
+<span class="keyword">FROM</span> Department d
+<span class="keyword">INNER JOIN</span> Employee e <span class="keyword">ON</span> e.DeptId = d.Id
+<span class="keyword">GROUP BY</span> d.Id, d.Name
+<span class="keyword">HAVING COUNT</span>(e.Id) > <span class="number">2</span>
+<span class="keyword">ORDER BY</span> EmployeeCount <span class="keyword">DESC</span>;</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- SQL 2 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">2</div>
+      <h3>Second Highest Salary</h3>
+      <span class="difficulty easy">Easy</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">Subquery</span><span class="topic-tag">MAX</span>
+      <p>Find the second highest salary from the Employee table. Handle the case where only one distinct salary exists.</p>
+      <pre><span class="comment">-- Employee(Id, Name, Salary)
+-- YOUR QUERY HERE</span></pre>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="comment">-- Method 1: Subquery</span>
+<span class="keyword">SELECT MAX</span>(Salary) <span class="keyword">AS</span> SecondHighest
+<span class="keyword">FROM</span> Employee
+<span class="keyword">WHERE</span> Salary < (<span class="keyword">SELECT MAX</span>(Salary) <span class="keyword">FROM</span> Employee);
+
+<span class="comment">-- Method 2: DENSE_RANK (better — handles ties)</span>
+<span class="keyword">SELECT</span> Salary <span class="keyword">AS</span> SecondHighest
+<span class="keyword">FROM</span> (
+    <span class="keyword">SELECT</span> Salary, <span class="keyword">DENSE_RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> Salary <span class="keyword">DESC</span>) <span class="keyword">AS</span> Rnk
+    <span class="keyword">FROM</span> Employee
+) ranked
+<span class="keyword">WHERE</span> Rnk = <span class="number">2</span>;</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- SQL 3 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">3</div>
+      <h3>Top Earner Per Department</h3>
+      <span class="difficulty medium">Medium</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">Window Function</span><span class="topic-tag">ROW_NUMBER</span><span class="topic-tag">PARTITION BY</span>
+      <p>Find the highest-paid employee in each department. Show employee name, department, and salary.</p>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">SELECT</span> Name, Department, Salary
+<span class="keyword">FROM</span> (
+    <span class="keyword">SELECT</span>
+        e.Name,
+        d.Name <span class="keyword">AS</span> Department,
+        e.Salary,
+        <span class="keyword">ROW_NUMBER</span>() <span class="keyword">OVER</span> (
+            <span class="keyword">PARTITION BY</span> e.DeptId
+            <span class="keyword">ORDER BY</span> e.Salary <span class="keyword">DESC</span>
+        ) <span class="keyword">AS</span> Rnk
+    <span class="keyword">FROM</span> Employee e
+    <span class="keyword">JOIN</span> Department d <span class="keyword">ON</span> d.Id = e.DeptId
+) ranked
+<span class="keyword">WHERE</span> Rnk = <span class="number">1</span>;</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- SQL 4 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">4</div>
+      <h3>Students Without Fees Paid</h3>
+      <span class="difficulty medium">Medium</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">LEFT JOIN</span><span class="topic-tag">NULL check</span><span class="topic-tag">NOT EXISTS</span>
+      <p>Find students who have NOT paid their fees. Fee payment is in a separate FeePayment table.</p>
+      <pre><span class="comment">-- Student(Id, Name, Class)
+-- FeePayment(Id, StudentId, PaidDate, Amount)</span></pre>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="comment">-- Method 1: LEFT JOIN + NULL</span>
+<span class="keyword">SELECT</span> s.Id, s.Name, s.Class
+<span class="keyword">FROM</span> Student s
+<span class="keyword">LEFT JOIN</span> FeePayment fp <span class="keyword">ON</span> fp.StudentId = s.Id
+<span class="keyword">WHERE</span> fp.Id <span class="keyword">IS NULL</span>;
+
+<span class="comment">-- Method 2: NOT EXISTS (better performance)</span>
+<span class="keyword">SELECT</span> s.Id, s.Name, s.Class
+<span class="keyword">FROM</span> Student s
+<span class="keyword">WHERE NOT EXISTS</span> (
+    <span class="keyword">SELECT</span> <span class="number">1</span> <span class="keyword">FROM</span> FeePayment fp
+    <span class="keyword">WHERE</span> fp.StudentId = s.Id
+);</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- SQL 5 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">5</div>
+      <h3>Monthly Revenue Summary</h3>
+      <span class="difficulty medium">Medium</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">Date Functions</span><span class="topic-tag">GROUP BY</span><span class="topic-tag">SUM</span>
+      <p>From an Orders table, find total revenue grouped by month and year, show only months with revenue above 10000. Sort by year and month.</p>
+      <pre><span class="comment">-- Orders(Id, OrderDate, Amount, CustomerId)</span></pre>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">SELECT</span>
+    <span class="keyword">YEAR</span>(OrderDate) <span class="keyword">AS</span> Year,
+    <span class="keyword">MONTH</span>(OrderDate) <span class="keyword">AS</span> Month,
+    <span class="keyword">SUM</span>(Amount) <span class="keyword">AS</span> TotalRevenue
+<span class="keyword">FROM</span> Orders
+<span class="keyword">GROUP BY</span> <span class="keyword">YEAR</span>(OrderDate), <span class="keyword">MONTH</span>(OrderDate)
+<span class="keyword">HAVING SUM</span>(Amount) > <span class="number">10000</span>
+<span class="keyword">ORDER BY</span> Year, Month;</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- SQL 6 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">6</div>
+      <h3>Delete Duplicate Records</h3>
+      <span class="difficulty hard">Hard</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">CTE</span><span class="topic-tag">ROW_NUMBER</span><span class="topic-tag">DELETE</span>
+      <p>An Employee table has duplicate records (same Name + DeptId). Keep only the record with the lowest ID. Delete the rest.</p>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">WITH</span> CTE <span class="keyword">AS</span> (
+    <span class="keyword">SELECT</span> Id,
+           <span class="keyword">ROW_NUMBER</span>() <span class="keyword">OVER</span> (
+               <span class="keyword">PARTITION BY</span> Name, DeptId
+               <span class="keyword">ORDER BY</span> Id
+           ) <span class="keyword">AS</span> RowNum
+    <span class="keyword">FROM</span> Employee
+)
+<span class="keyword">DELETE FROM</span> CTE <span class="keyword">WHERE</span> RowNum > <span class="number">1</span>;
+
+<span class="comment">-- This keeps the first occurrence (lowest Id) and removes duplicates</span></pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ===== WEB API ===== -->
+  <div id="webapi" class="section-title">🌐 Web API Problems</div>
+
+  <!-- API 1 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">1</div>
+      <h3>Build a Student CRUD API</h3>
+      <span class="difficulty medium">Medium</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">ASP.NET Web API</span><span class="topic-tag">REST</span><span class="topic-tag">HTTP Verbs</span>
+      <p>Create a complete REST API controller for Student with GET all, GET by ID, POST, PUT, DELETE. Include proper HTTP status codes.</p>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre>[<span class="type">ApiController</span>]
+[<span class="type">Route</span>(<span class="string">"api/[controller]"</span>)]
+<span class="keyword">public class</span> <span class="type">StudentsController</span> : <span class="type">ControllerBase</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">IStudentService</span> _service;
+    <span class="keyword">public</span> <span class="method">StudentsController</span>(<span class="type">IStudentService</span> service) => _service = service;
+
+    [<span class="type">HttpGet</span>]
+    <span class="keyword">public async</span> Task&lt;<span class="type">IActionResult</span>&gt; <span class="method">GetAll</span>()
+    {
+        <span class="keyword">var</span> students = <span class="keyword">await</span> _service.<span class="method">GetAllAsync</span>();
+        <span class="keyword">return</span> <span class="method">Ok</span>(students); <span class="comment">// 200</span>
+    }
+
+    [<span class="type">HttpGet</span>(<span class="string">"{id}"</span>)]
+    <span class="keyword">public async</span> Task&lt;<span class="type">IActionResult</span>&gt; <span class="method">GetById</span>(<span class="keyword">int</span> id)
+    {
+        <span class="keyword">var</span> student = <span class="keyword">await</span> _service.<span class="method">GetByIdAsync</span>(id);
+        <span class="keyword">if</span> (student == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="method">NotFound</span>(); <span class="comment">// 404</span>
+        <span class="keyword">return</span> <span class="method">Ok</span>(student); <span class="comment">// 200</span>
+    }
+
+    [<span class="type">HttpPost</span>]
+    <span class="keyword">public async</span> Task&lt;<span class="type">IActionResult</span>&gt; <span class="method">Create</span>([<span class="type">FromBody</span>] <span class="type">Student</span> student)
+    {
+        <span class="keyword">if</span> (!ModelState.IsValid) <span class="keyword">return</span> <span class="method">BadRequest</span>(ModelState); <span class="comment">// 400</span>
+        <span class="keyword">var</span> created = <span class="keyword">await</span> _service.<span class="method">CreateAsync</span>(student);
+        <span class="keyword">return</span> <span class="method">CreatedAtAction</span>(<span class="keyword">nameof</span>(GetById), <span class="keyword">new</span> { id = created.Id }, created); <span class="comment">// 201</span>
+    }
+
+    [<span class="type">HttpPut</span>(<span class="string">"{id}"</span>)]
+    <span class="keyword">public async</span> Task&lt;<span class="type">IActionResult</span>&gt; <span class="method">Update</span>(<span class="keyword">int</span> id, [<span class="type">FromBody</span>] <span class="type">Student</span> student)
+    {
+        <span class="keyword">if</span> (id != student.Id) <span class="keyword">return</span> <span class="method">BadRequest</span>(); <span class="comment">// 400</span>
+        <span class="keyword">await</span> _service.<span class="method">UpdateAsync</span>(student);
+        <span class="keyword">return</span> <span class="method">NoContent</span>(); <span class="comment">// 204</span>
+    }
+
+    [<span class="type">HttpDelete</span>(<span class="string">"{id}"</span>)]
+    <span class="keyword">public async</span> Task&lt;<span class="type">IActionResult</span>&gt; <span class="method">Delete</span>(<span class="keyword">int</span> id)
+    {
+        <span class="keyword">await</span> _service.<span class="method">DeleteAsync</span>(id);
+        <span class="keyword">return</span> <span class="method">NoContent</span>(); <span class="comment">// 204</span>
+    }
+}</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- API 2 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">2</div>
+      <h3>HTTP Status Codes — Must Know</h3>
+      <span class="difficulty easy">Easy</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">HTTP</span><span class="topic-tag">REST</span>
+      <table>
+        <tr><th>Code</th><th>Name</th><th>When to use</th></tr>
+        <tr><td>200</td><td>OK</td><td>GET success, PUT/DELETE success with body</td></tr>
+        <tr><td>201</td><td>Created</td><td>POST — new resource created</td></tr>
+        <tr><td>204</td><td>No Content</td><td>PUT/DELETE success, no body to return</td></tr>
+        <tr><td>400</td><td>Bad Request</td><td>Validation error, invalid input</td></tr>
+        <tr><td>401</td><td>Unauthorized</td><td>Not authenticated (no/invalid token)</td></tr>
+        <tr><td>403</td><td>Forbidden</td><td>Authenticated but no permission</td></tr>
+        <tr><td>404</td><td>Not Found</td><td>Resource doesn't exist</td></tr>
+        <tr><td>409</td><td>Conflict</td><td>Duplicate resource, version conflict</td></tr>
+        <tr><td>500</td><td>Internal Server Error</td><td>Unhandled exception on server</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- API 3 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">3</div>
+      <h3>Middleware — Exception Handling</h3>
+      <span class="difficulty medium">Medium</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">Middleware</span><span class="topic-tag">Exception</span><span class="topic-tag">Pipeline</span>
+      <p>Write a global exception handling middleware for ASP.NET Core Web API that returns JSON error responses.</p>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">public class</span> <span class="type">ExceptionMiddleware</span>
+{
+    <span class="keyword">private readonly</span> <span class="type">RequestDelegate</span> _next;
+
+    <span class="keyword">public</span> <span class="method">ExceptionMiddleware</span>(<span class="type">RequestDelegate</span> next) => _next = next;
+
+    <span class="keyword">public async</span> Task <span class="method">InvokeAsync</span>(<span class="type">HttpContext</span> context)
+    {
+        <span class="keyword">try</span>
+        {
+            <span class="keyword">await</span> <span class="method">_next</span>(context);
+        }
+        <span class="keyword">catch</span> (<span class="type">KeyNotFoundException</span> ex)
+        {
+            context.Response.StatusCode = <span class="number">404</span>;
+            <span class="keyword">await</span> context.Response.<span class="method">WriteAsJsonAsync</span>(<span class="keyword">new</span> { error = ex.Message });
+        }
+        <span class="keyword">catch</span> (<span class="type">Exception</span> ex)
+        {
+            context.Response.StatusCode = <span class="number">500</span>;
+            <span class="keyword">await</span> context.Response.<span class="method">WriteAsJsonAsync</span>(<span class="keyword">new</span> { error = <span class="string">"Internal server error"</span> });
+        }
+    }
+}
+
+<span class="comment">// Register in Program.cs</span>
+app.<span class="method">UseMiddleware</span>&lt;<span class="type">ExceptionMiddleware</span>&gt;();</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ===== ALGORITHMS ===== -->
+  <div id="algo" class="section-title">🧠 Algorithm Problems</div>
+
+  <!-- Algo 1 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">1</div>
+      <h3>Reverse a String (Without Built-in)</h3>
+      <span class="difficulty easy">Easy</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">String</span><span class="topic-tag">Array</span>
+      <p>Reverse a string without using string.Reverse(). Input: "Hello" → Output: "olleH"</p>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">public string</span> <span class="method">Reverse</span>(<span class="keyword">string</span> s)
+{
+    <span class="keyword">char</span>[] chars = s.<span class="method">ToCharArray</span>();
+    <span class="keyword">int</span> left = <span class="number">0</span>, right = chars.Length - <span class="number">1</span>;
+    <span class="keyword">while</span> (left < right)
+    {
+        (chars[left], chars[right]) = (chars[right], chars[left]);
+        left++; right--;
+    }
+    <span class="keyword">return new string</span>(chars);
+}
+
+<span class="comment">// Time: O(n) | Space: O(n)</span></pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Algo 2 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">2</div>
+      <h3>Check Palindrome</h3>
+      <span class="difficulty easy">Easy</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">String</span><span class="topic-tag">Two Pointer</span>
+      <p>Check if a string is a palindrome (ignore case and spaces). "Race Car" → true, "Hello" → false</p>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">public bool</span> <span class="method">IsPalindrome</span>(<span class="keyword">string</span> s)
+{
+    s = <span class="keyword">new string</span>(s.<span class="method">ToLower</span>()
+                     .<span class="method">Where</span>(char.IsLetterOrDigit)
+                     .<span class="method">ToArray</span>());
+    <span class="keyword">int</span> left = <span class="number">0</span>, right = s.Length - <span class="number">1</span>;
+    <span class="keyword">while</span> (left < right)
+    {
+        <span class="keyword">if</span> (s[left] != s[right]) <span class="keyword">return false</span>;
+        left++; right--;
+    }
+    <span class="keyword">return true</span>;
+}
+
+<span class="comment">// "Race Car" → cleaned → "racecar" → true</span></pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Algo 3 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">3</div>
+      <h3>Find Missing Number in 1..N</h3>
+      <span class="difficulty easy">Easy</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">Math</span><span class="topic-tag">Array</span>
+      <p>Array contains 1 to N with one number missing. Find the missing number. Input: [1,2,4,5] N=5 → Output: 3</p>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">public int</span> <span class="method">FindMissing</span>(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> n)
+{
+    <span class="comment">// Sum formula: n*(n+1)/2</span>
+    <span class="keyword">int</span> expected = n * (n + <span class="number">1</span>) / <span class="number">2</span>;
+    <span class="keyword">int</span> actual = nums.<span class="method">Sum</span>();
+    <span class="keyword">return</span> expected - actual;
+}
+
+<span class="comment">// Time: O(n) | Space: O(1) — optimal!</span></pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Algo 4 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">4</div>
+      <h3>FizzBuzz (Classic)</h3>
+      <span class="difficulty easy">Easy</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">Logic</span><span class="topic-tag">Modulo</span>
+      <p>Print 1 to 100. For multiples of 3 print "Fizz", multiples of 5 print "Buzz", multiples of both print "FizzBuzz".</p>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i <= <span class="number">100</span>; i++)
+{
+    <span class="keyword">if</span>      (i % <span class="number">15</span> == <span class="number">0</span>) Console.<span class="method">WriteLine</span>(<span class="string">"FizzBuzz"</span>);
+    <span class="keyword">else if</span> (i % <span class="number">3</span>  == <span class="number">0</span>) Console.<span class="method">WriteLine</span>(<span class="string">"Fizz"</span>);
+    <span class="keyword">else if</span> (i % <span class="number">5</span>  == <span class="number">0</span>) Console.<span class="method">WriteLine</span>(<span class="string">"Buzz"</span>);
+    <span class="keyword">else</span>                  Console.<span class="method">WriteLine</span>(i);
+}
+
+<span class="comment">// Key: check 15 FIRST (both conditions), not 3 or 5 first!</span></pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Algo 5 -->
+  <div class="problem-card">
+    <div class="card-header">
+      <div class="problem-num">5</div>
+      <h3>Fibonacci — Iterative & Recursive</h3>
+      <span class="difficulty medium">Medium</span>
+    </div>
+    <div class="card-body">
+      <span class="topic-tag">Recursion</span><span class="topic-tag">Dynamic Programming</span>
+      <p>Return the Nth Fibonacci number. Then explain why iterative is better than naive recursion.</p>
+      <details>
+        <summary>👁 Show Answer</summary>
+        <div class="answer-box">
+          <pre><span class="comment">// Recursive — O(2^n) time, NOT recommended for large N</span>
+<span class="keyword">public int</span> <span class="method">FibRecursive</span>(<span class="keyword">int</span> n)
+{
+    <span class="keyword">if</span> (n <= <span class="number">1</span>) <span class="keyword">return</span> n;
+    <span class="keyword">return</span> <span class="method">FibRecursive</span>(n - <span class="number">1</span>) + <span class="method">FibRecursive</span>(n - <span class="number">2</span>);
+}
+
+<span class="comment">// Iterative — O(n) time, O(1) space — PREFERRED</span>
+<span class="keyword">public int</span> <span class="method">FibIterative</span>(<span class="keyword">int</span> n)
+{
+    <span class="keyword">if</span> (n <= <span class="number">1</span>) <span class="keyword">return</span> n;
+    <span class="keyword">int</span> a = <span class="number">0</span>, b = <span class="number">1</span>;
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i <= n; i++)
+    {
+        <span class="keyword">int</span> temp = a + b;
+        a = b;
+        b = temp;
+    }
+    <span class="keyword">return</span> b;
+}
+
+<span class="comment">// Memo (best of both worlds) — O(n) time + space</span>
+<span class="keyword">private</span> Dictionary&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; _memo = <span class="keyword">new</span>();
+<span class="keyword">public int</span> <span class="method">FibMemo</span>(<span class="keyword">int</span> n)
+{
+    <span class="keyword">if</span> (n <= <span class="number">1</span>) <span class="keyword">return</span> n;
+    <span class="keyword">if</span> (_memo.<span class="method">ContainsKey</span>(n)) <span class="keyword">return</span> _memo[n];
+    _memo[n] = <span class="method">FibMemo</span>(n-<span class="number">1</span>) + <span class="method">FibMemo</span>(n-<span class="number">2</span>);
+    <span class="keyword">return</span> _memo[n];
+}</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ===== CONCEPTS ===== -->
+  <div id="concepts" class="section-title">📚 Quick Concept Reference</div>
+
+  <div class="tip-grid">
+    <div class="tip-card">
+      <h4>🔑 C# Keywords to Know</h4>
+      <ul>
+        <li><strong>sealed</strong> — prevents class inheritance</li>
+        <li><strong>virtual/override</strong> — enable polymorphism</li>
+        <li><strong>readonly vs const</strong> — const is compile-time, readonly is runtime</li>
+        <li><strong>ref vs out</strong> — ref: initialized before pass; out: assigned inside</li>
+        <li><strong>IEnumerable vs IList</strong> — IEnumerable: read-only forward; IList: indexable</li>
+        <li><strong>IQueryable</strong> — deferred, builds SQL; IEnumerable brings data to memory</li>
+      </ul>
+    </div>
+    <div class="tip-card">
+      <h4>⚡ LINQ Quick Reference</h4>
+      <ul>
+        <li><strong>Where()</strong> — filter</li>
+        <li><strong>Select()</strong> — project/transform</li>
+        <li><strong>GroupBy()</strong> — group elements</li>
+        <li><strong>OrderBy() / ThenBy()</strong> — sort</li>
+        <li><strong>Join()</strong> — inner join two collections</li>
+        <li><strong>Any() / All()</strong> — boolean check</li>
+        <li><strong>First() vs FirstOrDefault()</strong> — throws vs returns null</li>
+        <li><strong>Distinct()</strong> — remove duplicates</li>
+        <li><strong>Take(n) / Skip(n)</strong> — pagination</li>
+      </ul>
+    </div>
+    <div class="tip-card">
+      <h4>🌐 REST Principles</h4>
+      <ul>
+        <li><strong>Stateless</strong> — each request self-contained</li>
+        <li><strong>Uniform Interface</strong> — standard HTTP verbs</li>
+        <li><strong>GET</strong> — safe, idempotent, no body</li>
+        <li><strong>POST</strong> — create, not idempotent</li>
+        <li><strong>PUT</strong> — full update, idempotent</li>
+        <li><strong>PATCH</strong> — partial update</li>
+        <li><strong>DELETE</strong> — remove, idempotent</li>
+      </ul>
+    </div>
+    <div class="tip-card">
+      <h4>🗄 SQL Cheatsheet</h4>
+      <ul>
+        <li><strong>WHERE</strong> — filter before GROUP BY</li>
+        <li><strong>HAVING</strong> — filter after GROUP BY</li>
+        <li><strong>INNER JOIN</strong> — matching rows only</li>
+        <li><strong>LEFT JOIN</strong> — all left + matched right</li>
+        <li><strong>ROW_NUMBER()</strong> — unique rank per partition</li>
+        <li><strong>DENSE_RANK()</strong> — rank with no gaps on ties</li>
+        <li><strong>CTE (WITH clause)</strong> — named temp result set</li>
+      </ul>
+    </div>
+    <div class="tip-card">
+      <h4>🏗 Design Patterns Used in .NET</h4>
+      <ul>
+        <li><strong>Repository</strong> — abstracts data access</li>
+        <li><strong>Unit of Work</strong> — groups operations into one transaction</li>
+        <li><strong>Strategy</strong> — swap algorithm/behavior at runtime</li>
+        <li><strong>Factory</strong> — creates objects without specifying exact class</li>
+        <li><strong>Singleton</strong> — one instance per app lifetime</li>
+        <li><strong>Observer</strong> — event/notification system</li>
+      </ul>
+    </div>
+    <div class="tip-card">
+      <h4>🔒 DI Lifetimes in ASP.NET Core</h4>
+      <ul>
+        <li><strong>Transient</strong> — new instance each injection</li>
+        <li><strong>Scoped</strong> — one per HTTP request</li>
+        <li><strong>Singleton</strong> — one per app lifetime</li>
+        <li>AddTransient → short-lived services</li>
+        <li>AddScoped → DbContext, per-request services</li>
+        <li>AddSingleton → config, cache, shared state</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== TIPS ===== -->
+  <div id="tips" class="section-title">✅ Exam Day Tips</div>
+
+  <div class="problem-card">
+    <div class="card-body">
+      <div class="tip-grid">
+        <div class="tip-card">
+          <h4>⏰ Time Management</h4>
+          <ul>
+            <li>Read ALL questions first (2 min)</li>
+            <li>Solve easy ones first</li>
+            <li>Don't spend >15 min on one problem</li>
+            <li>Leave hard ones for last</li>
+            <li>Write partial solution > blank answer</li>
+          </ul>
+        </div>
+        <div class="tip-card">
+          <h4>💻 Coding Approach</h4>
+          <ul>
+            <li>Write method signature + comments first</li>
+            <li>Handle null/empty edge cases</li>
+            <li>Start brute force, then optimize</li>
+            <li>Add meaningful variable names</li>
+            <li>Test with sample data mentally</li>
+          </ul>
+        </div>
+        <div class="tip-card">
+          <h4>🎯 Your Strengths (Mention These!)</h4>
+          <ul>
+            <li>3.5 years ASP.NET MVC real experience</li>
+            <li>ERP domain knowledge (billing, student mgmt)</li>
+            <li>Multi-service/API integration experience</li>
+            <li>SQL database design experience</li>
+            <li>Production bug-fixing experience</li>
+          </ul>
+        </div>
+        <div class="tip-card">
+          <h4>🚀 Before the Test</h4>
+          <ul>
+            <li>Open dotnetfiddle.net for quick C# testing</li>
+            <li>Open sqlfiddle.com for SQL testing</li>
+            <li>Eat well, drink water before 7 PM</li>
+            <li>Keep this file open for reference</li>
+            <li>Stay calm — you have real experience!</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="hint-box" style="margin-top: 20px;">
+        <strong>🏆 Final Confidence Boost:</strong>
+        <p>You already build production .NET applications daily. The coding round tests what you already do at work — controllers, services, LINQ, SQL. Trust your experience. <strong>All the best for 7 PM tonight!</strong></p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>Disprz ASE Coding Round Prep · Prepared by Claude AI · Practice at <strong>dotnetfiddle.net</strong> &amp; <strong>sqlfiddle.com</strong></p>
+  <p style="margin-top: 6px; color: #334155;">All the best! — Tomorrow 7:00 PM 🎯</p>
+</footer>
+
+</body>
+</html>
