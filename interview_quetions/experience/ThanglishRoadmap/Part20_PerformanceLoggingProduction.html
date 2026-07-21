@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 20: Performance, Logging & Production Issues — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox table{width:100%;border-collapse:collapse;font-size:0.85em}
+.cheatbox th,.cheatbox td{padding:6px 10px;border-bottom:1px solid #2a2a5a;text-align:left;color:#e0e0e0}
+.cheatbox th{color:#fbbf24;font-size:0.78em;text-transform:uppercase}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+.resume-block{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:18px 20px;margin:14px 0}
+.resume-block .rtitle{color:#fff;font-weight:700;font-size:1em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.resume-block .rquote{background:#1a1a2e;border-left:3px solid #6b7280;padding:8px 12px;border-radius:0 6px 6px 0;font-size:0.85em;color:#9ca3af;font-style:italic;margin-bottom:10px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 20: Performance, Logging & Production Issues</h1>
+  <p>~25 Q&amp;A — Thanglish explanation + English answer script + follow-up questions</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+  <a href="Part18_MongoDB_NoSQL.html">1️⃣8️⃣ MongoDB &amp; NoSQL</a>
+  <a href="Part19_TCPSocket_SMS_OTP.html">1️⃣9️⃣ TCP Socket &amp; SMS OTP</a>
+  <a href="Part20_PerformanceLoggingProduction.html" class="active">2️⃣0️⃣ Perf/Logging/Prod</a>
+  <a href="Part21_Infosys_Prep_Guide.html">🎯 Infosys Prep Guide</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhu namma resume-la irukka "35% incident resolution time cut" and "40% query performance improvement" — idhu rendukkume neenga solla poura real story idhu thaan. Ovvoru item-um oru production scenario — Thanglish la first puriinjuko enna problem, en adhu problem nu, appuram "🗣️ Interview la eppadi sollanum" box padichu andha exact spoken tone ah practice pannunga. 20A la performance/query tuning stories, 20B la logging &amp; observability design decisions, 20C la real incident stories — interviewer "tell me about a time" nu kekkumbodhu, idhu la irukka concrete example vachu confident ah answer pannunga. Follow-up Qs kuda ready ah irukkanum, oru answer sonna udane "adhu eppadi identify pannirukeenga" nu thaan next kekkuvanga.</p>
+</div>
+
+<div class="toc">
+  <h2>Sections</h2>
+  <div class="toc-grid">
+    <a href="#20A">20A. Performance &amp; Query Tuning (Q1–Q9)</a>
+    <a href="#20B">20B. Logging, Exception Handling &amp; Observability (Q10–Q17)</a>
+    <a href="#20C">20C. Production Incident Stories (Q18–Q25)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 20 Quick-Recall Cheat Sheet</h2>
+  <table>
+    <tr><th>#</th><th>Concept</th><th>Punchy fact</th></tr>
+    <tr><td>1</td><td>In-memory vs Distributed Cache</td><td>IMemoryCache = per-instance, fast, lost on restart | Redis = shared across instances, survives restart — use for session/consistent data</td></tr>
+    <tr><td>2</td><td>Cache Invalidation</td><td>Clear the cache key explicitly on write, don't rely only on time-based expiry — stale cache fails silently</td></tr>
+    <tr><td>3</td><td>Memory Leak Diagnosis</td><td>Memory climbs and never drops even when idle → take a heap dump, find what's holding references</td></tr>
+    <tr><td>4</td><td>CPU Pegging</td><td>Measure before guessing "it's the DB" — often C# looping/aggregating in memory instead of pushing to SQL</td></tr>
+    <tr><td>5</td><td>Slow Endpoint Under Load</td><td>Fine at low traffic but slow under load = contention (pool/lock/thread), not a query problem</td></tr>
+    <tr><td>6</td><td>DB Connection Pool Exhaustion</td><td>"Timeout expired" bursts = connections held too long, not too few connections — fix with proper using blocks</td></tr>
+    <tr><td>7</td><td>Thread Pool Starvation / Async Deadlock</td><td>CPU looks idle but requests queue → check thread/queue count, not CPU; fix is proper await, not .Result</td></tr>
+    <tr><td>8</td><td>N+1 Query Problem</td><td>One query per loop iteration instead of one batched WHERE IN query</td></tr>
+    <tr><td>9</td><td>Capacity Planning (1000+ users)</td><td>Size for peak-window concurrency (morning rush), not daily average</td></tr>
+    <tr><td>10</td><td>Centralized Exception Middleware</td><td>One place catches everything, logs full context, returns consistent JSON error — no raw exceptions to client</td></tr>
+    <tr><td>11</td><td>Structured Logging</td><td>Log key-value fields (CorrelationId, ServiceName) not sentences — filterable and queryable</td></tr>
+    <tr><td>12</td><td>Correlation IDs</td><td>One GUID stamped at the gateway, flows through every downstream call — search once, get the whole chain</td></tr>
+    <tr><td>13</td><td>Monitoring &amp; Alerting</td><td>Layer it: infra + app + business metrics; alert only on meaningful thresholds or team tunes it out</td></tr>
+    <tr><td>14</td><td>Graceful Degradation</td><td>Core flow (payment/OTP) must succeed even if a non-critical dependency (SMS/notification) is down</td></tr>
+    <tr><td>15</td><td>Rate Limiting</td><td>Configure per-route limits at the Ocelot gateway — protects every service without each one reinventing it</td></tr>
+    <tr><td>16</td><td>Health Check Endpoints</td><td>/health checks real dependencies (DB), not just "process is alive" — gateway stops routing to unhealthy instances</td></tr>
+    <tr><td>17</td><td>Log Retention &amp; PII Redaction</td><td>Never log sensitive fields in plain text; decide this at design time, age out old logs</td></tr>
+    <tr><td>18</td><td>2 AM Outage</td><td>Scope first, stabilize (rollback) first, root-cause with a clear head the next day</td></tr>
+    <tr><td>19</td><td>Intermittent Bug</td><td>Can't reproduce on demand → add logging, narrow conditions over multiple occurrences, don't trust the first guess</td></tr>
+    <tr><td>20</td><td>Load Testing</td><td>Simulate realistic peak-window concurrency before release, not just 1-2 manual clicks</td></tr>
+    <tr><td>21</td><td>Data Corruption</td><td>Find blast radius, fix root cause AND separately clean up already-bad data — code fix alone doesn't retro-fix records</td></tr>
+    <tr><td>22</td><td>Rollback Bad Deployment</td><td>Roll back to known-good first, investigate after — never hotfix live under pressure</td></tr>
+    <tr><td>23</td><td>35% Resolution Time</td><td>Middleware + structured logs + correlation ID collapsed "find the bug" from 30 min to a couple minutes</td></tr>
+    <tr><td>24</td><td>Postmortem Process</td><td>Document what didn't work too, not just the clean answer — turns into proactive follow-ups</td></tr>
+    <tr><td>25</td><td>Cascading Failure</td><td>Missing timeout on a sync call lets one slow dependency take down unrelated services — add timeouts + fire-and-forget</td></tr>
+  </table>
+</div>
+
+<!-- 20A -->
+<div class="section" id="20A">
+  <div class="section-title"><span class="num">20A</span> Performance &amp; Query Tuning</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. In-memory Cache vs Distributed Cache</div>
+    <div class="tng"><code>IMemoryCache</code> use pannina, data process oda memory kulla thaan store aagum — semaya fast, aana adhu andha oru instance ku mattum theriyum, restart aana poidum. Redis madhiri distributed cache na, app velila irukkum, so multiple instances ellame same cache ah share pannalam, restart aanalum survive aagum. Single instance service ku, or fee structure/dropdown madhiri rarely-change reference data ku IMemoryCache pothum. Multiple instance la scale pannumbodhu ella instance-um sync ah irukanum na (session data), Redis thaan sariya varum. Zen Campus la academic year config, fee category lookup, class-section mapping madhiri static-ah irukka data ku IMemoryCache aggressive ah use pannirukom — adhu thaan <b>40% performance improvement</b> la periya part.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I use IMemoryCache for data that's read constantly but rarely changes and doesn't need to be identical across instances — things like fee category lookups, class-section mappings, academic year config. It lives right in the process, so it's basically zero latency. Once you scale out to multiple instances, in-memory caches drift out of sync with each other, so anything that needs to be consistent across instances — like session data — needs a distributed cache like Redis instead. On Zen Campus we haven't needed Redis everywhere yet, but caching those static lookups was a big chunk of the 40% performance improvement I got on that module.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Redis eppo compulsory aagum? — Multiple instance la ஒரே cache state venum na, or restart aana survive aaganum na, Redis thaan option.</div>
+      <div class="fq"><b>Q:</b> In-memory cache stale data problem eppadi solve pannuvinga? — Time-based expiry or explicit invalidation on write — adhu thaan next topic.</div>
+      <div class="fq"><b>Q:</b> Session data ku Redis use pannama vachaal enna aagum? — Load balancer vera instance ku route pannina, andha instance ku andha user session theriyathu — login state poidum.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. Cache Invalidation</div>
+    <div class="tng">Cache-la periya problem data cache pannurathu illa — eppo andha data stale aaguthu nu correct ah kandu pidichu, ella place-lum same time la update/clear pannurathu thaan kashtam. Over-aggressive ah invalidate pannina cache-oda whole point poidum; lazy ah invalidate pannina wrong data user ku kaatuvom, adhuvum exception illama silent ah. Money/attendance madhiri critical data ku idhu romba careful ah handle pannanum, holiday list madhiri data konjam stale aanalum problem illa. Zen Campus la fee category data cache pannitirunthen, admin oru fee amount update pannuraappo, create flow ku mattum invalidation trigger vachirunthen, update flow ku illa — so 10 nimisham receipt la old amount kaatichi. Fix — time-based expiry mela depend aagama, update service method kulla explicit ah andha cache key ah clear pannuren, write nadakkum moment andha next read guaranteed fresh ah varum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Cache invalidation is hard because you have to know exactly when data goes stale and clear every copy at the same moment — too aggressive and you lose the benefit of caching, too lazy and users silently see wrong data with no exception to point at. I care about this most for anything tied to money or attendance. I actually hit this on Zen Campus — I'd cached fee category data but only wired invalidation on the create path, not the update path, so a fee change didn't show up for about ten minutes. I fixed it by explicitly clearing that cache key right inside the update service method instead of relying on time-based expiry, so a write immediately guarantees a fresh next read.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Time-based expiry use pannama explicit invalidation eppadi better? — Write nadakkum exact moment cache clear aagum, expiry window varaikkum wait pannum doubt vera irundha use aagathu.</div>
+      <div class="fq"><b>Q:</b> Idhu eppadi kandu pudichinga bug ah? — Silent ah irunthu, accounts/admin oru number wrong ah kaanumbodhu thaan report pannanaanga, exception onnum throw aagathu.</div>
+      <div class="fq"><b>Q:</b> Distributed environment la cache invalidation innum kashtama-a? — Aama, multiple instance ella pearum clear pannanum, adhukku pub/sub madhiri mechanism (Redis invalidation channel) venum.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. Diagnosing a Memory Leak</div>
+    <div class="tng">Memory leak na, app memory usage hours/days ku steady ah rise aagi, quiet time la kooda thirumba varathu — final ah app pool recycle aaguvaraikkum poidum. Idhu diagnose panna, first memory trend ah watch pannanum, appuram edhu service nu narrow pannitu, memory dump eduthu heap la enna reference hold pannitirukku nu paakanum. Common reason — event handler unsubscribe pannama irukkathu, ever-growing static collection, eviction illatha cache. Zen Campus la bulk PDF export back-to-back run pannumbodhu memory creep aana madhiri thondhichuchu — real leak illa, periya byte array gen2 varaikkum live ah irunthathu adhanaal slow ah collect aachu. Memory stream ah using block end la depend aagama, file write aana udane explicit ah dispose pannitten, appuram normal sawtooth pattern ku thirumba varuthu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A real memory leak shows up as memory climbing steadily and never dropping back down, even during quiet periods, until the app pool eventually recycles or crashes — you diagnose it with a memory dump to see what's actually holding references it shouldn't. I haven't had to pull a full dump on Zen Campus, but I chased something that looked like a leak on our report-generation flow, where memory crept up during back-to-back bulk PDF exports. It turned out the PDF byte arrays were just living long enough to reach gen2 before getting collected. I fixed it by explicitly disposing the memory streams right after the file write instead of trusting the using block at the end of a longer method, and memory went back to a normal sawtooth pattern.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Real leak-um, ippo pesina scenario-um difference enna? — Real leak la memory GC aanalum varathu; idhu la periya object gen2 varaikkum poi late ah collect aana adhu thaan slow ah kaanichuchu.</div>
+      <div class="fq"><b>Q:</b> Memory dump eppadi eduthu analyze pannurom? — Production process oda snapshot eduthu, tool vachu heap la enna type-oda object athigam irukku nu paaklam.</div>
+      <div class="fq"><b>Q:</b> Static collection leak eppadi create aagum? — Item add pannitte poi, remove panna marandhuduchu, andha collection endlessly grow aagum, GC-kooda touch panna mudiyave mudiyathu.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. Diagnosing High CPU in Production</div>
+    <div class="tng">High CPU na, edhavathu code repeatedly athiga velai pannurathu — tight loop, memory kulla inefficient LINQ periya collection mela run pannurathu, alathu background job expected-ku athiga frequent ah fire aagurathu. First edhu process/endpoint CPU spike-oda correlate aaguthu nu check pannitu, andha specific code path ah profile pannanum. Zen Campus la attendance report whole school ku generate pannumbodhu app pool CPU spike aagurathu — first guess SQL query, aana SSMS la andha query fine ah run aachu. Turned out raw attendance rows ellame memory ku eduthu, C# nested loop la grouping/aggregation pannikittirunthom — couple thousand students ku absurd amount of iterations. Aggregation ah stored procedure kulla push pannitten, CPU spike basically poiruthu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>High CPU usually means something's doing repeated work it shouldn't — a tight loop, or LINQ aggregation running in memory instead of being pushed down to SQL. I measure before I guess, because CPU spikes get blamed on the database way too often. On Zen Campus, an attendance report was spiking app pool CPU for a whole school's worth of students. The SQL query itself ran fine in SSMS — the real issue was we were pulling all the raw rows into memory and doing grouping and aggregation in C# with nested loops. I pushed that aggregation into the stored procedure instead, and the CPU spike basically disappeared.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> SQL query thaan first suspect nu solringale, apparam eppadi rule out pannitinga? — SSMS la standalone ah query run panni paathen — fast ah odina apparam application code side thaan problem nu confirm aachu.</div>
+      <div class="fq"><b>Q:</b> C# side aggregation vs SQL side aggregation — eppo edhu better? — Periya dataset ku SQL server itself group/aggregate panna better, network round trip + memory both save aagum.</div>
+      <div class="fq"><b>Q:</b> Idhu production la eppadi kandu pudichinga? — App pool CPU spike monitoring alert + andha specific endpoint call panra time correlate panninen.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. Slow API Endpoint Only Under Load</div>
+    <div class="tng">Load-dependent slowness oda tricky part — namba manual ah test pannumbodhu fine ah irukkum, so production timing data thaan paakanum — request duration logs, DB call ah, external API ah, serialization ah, illna request queue la wait pannurathaa nu breakdown venum. Low traffic la kooda slow na, athu straight inefficiency; load la mattum slow na, contention — connection pool limit, lock contention, thread pool starvation — vera fix venum. Zen Campus attendance-marking endpoint la 8:45-9:15 AM la ella class teacher-um login aagi attendance mark pannumbodhu, response time 1 second-la irundhu 8-10 seconds ku poiruthu. DB call chutta timing log podren, connection pool configure panna vida athiga connections open aagi irunthadu theriyuthu — request queue la wait pannuthu. Pool size increase pannitten, appuram connection ah properly close panniraathan thaan sertu fix aachu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>If it's slow at low traffic too, that's a straightforward inefficiency, but if it's only slow under load, that points at contention — connection pool limits, lock contention, or thread pool starvation — a completely different fix. I look for that time-of-day clustering, like "fine in the morning, terrible at 9 AM." We had exactly that on the attendance-marking endpoint on Zen Campus, between 8:45 and 9:15 when every class teacher logs in at once — response times went from under a second to eight or ten seconds. Timing logs around the DB call showed we were opening more connections than the pool allowed, so requests were queuing for a free connection. I bumped the pool size and made sure connections were being closed promptly instead of held open across the whole request.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Timing logs eppadi add pannirukeenga exact ah? — DB call start/end time ah log pannitu, duration calculate pannitten — adhu clear ah kaatiruthu connection wait time thaan periya chunk nu.</div>
+      <div class="fq"><b>Q:</b> Pool size increase pannrathe permanent fix-a? — Illa, root cause connection properly close pannama vachiruntha, adhuvum fix pannanum — size increase mattum symptom ah temporary hide pannum.</div>
+      <div class="fq"><b>Q:</b> Idhu eppadi reproduce pannirukeenga testing la? — Load test tool vachu concurrent requests simulate pannitten, staging la same pattern kaatichi.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q6">
+    <div class="term">6. Database Connection Pool Exhaustion</div>
+    <div class="tng">Connection pool exhaustion na, pool la irukka connections-ku vida athiga requests DB connection kettu wait pannurathu — konjam neram wait pannitu mudiyaatha bodhu "timeout expired" error varum. Usually reason — genuine ah connection athigam venum illai, edhavathu connection ah venda neram varaikkum hold pannitirukkum — DbConnection properly dispose pannama illatha, unrelated velai pannumbodhu-um transaction connection ah hold pannitirukkum. Zen Campus la raw ADO.NET section la connection method top la open pannitu, validation failure early return path la properly close aagathu — most time fine (GC eventually clean pannum), aana morning peak la minutes kulla pool exhaust aagi ella downstream-um timeout aagi poichu. Fix — every connection usage ah <code>using</code> block kulla properly wrap pannitten, rest of codebase-ellaam same pattern ku audit panninen.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Connection pool exhaustion means more requests want a DB connection than the pool has available, so new requests queue up and eventually time out. The usual cause isn't needing more connections — it's something holding a connection open longer than it should. On Zen Campus, a raw ADO.NET method opened a connection at the top, and an early return on a validation-failure path meant it wasn't reliably closed. It worked fine most of the time because GC eventually cleaned it up, but under morning peak load it exhausted the pool within minutes and everything downstream started timing out. I wrapped every connection usage in proper using blocks and audited the rest of the codebase for the same pattern.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Idhu eppadi identify pannirukeenga first ah? — "Timeout expired, the timeout period elapsed prior to obtaining a connection" error burst ah ella same time la varuvathu thaan clue.</div>
+      <div class="fq"><b>Q:</b> using block vachaal connection eppadi guarantee ah close aagum? — Dispose() automatic ah call aagum scope exit aana udane, exception vandhalum varaadhalum — finally madhiri guaranteed.</div>
+      <div class="fq"><b>Q:</b> Pool size increase pannurathu idhukku fix-a? — Symptom mattum mask aagum, real leak vachiruntha innum periya load la thirumba varum — root fix thaan sariya path.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q7">
+    <div class="term">7. Thread Pool Starvation &amp; Async Deadlocks</div>
+    <div class="tng">Thread pool starvation na, available threads ellame edhavathu wait pannikkittirukku (usually <code>.Result</code> alathu <code>.Wait()</code> madhiri blocking calls async method mela) — so pudhu requests thread kettu queue la nikkum, CPU edhum busy ah illamalum. Deadlock na innum specific — synchronous ah wait panra thread, same context venum async call ku wait panren nu irundha, rendum oru periya other ah wait panni forever nikkum. Confuse aagra part — CPU graph calm ah irukkum, so "server fine" nu first thonum, thread count/queue length thaan andha real signal. Zen Campus la refactor pannumbodhu legacy code oru async Dapper call ku <code>.Result</code> call pannitirunthu, dev la 1-2 requests ku fine ah irunthadu. Real load la requests pile up aagi timeout aachu, CPU low ah thaan irunthadu adhu thaan confuse pannirichu — thread pool queue length check pannina udane clear aachu, proper await ku maathinen udane fix aachu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Thread pool starvation happens when threads are stuck on blocking calls like .Result or .Wait() on async methods, so new requests can't get a thread even though the CPU looks idle. I hit a version of this on Zen Campus — some ported legacy code called .Result on an async Dapper call instead of awaiting it, which worked fine with one or two requests in dev. Under real load, requests piled up and timed out, but CPU stayed low the whole time, which threw me off initially since I was looking at the wrong metric. Once I checked thread pool queue length instead of CPU, it was obvious, and switching to a proper await fixed it immediately.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> CPU normal ah irukkumna enna metric first check pannanum? — Thread pool queue length / active thread count — CPU alathu, thread availability thaan idhu ah suspect pannanum.</div>
+      <div class="fq"><b>Q:</b> .Result use pannurathu eppo problematic aagum? — ASP.NET Core request context la, blocking call sync context ku wait panna thread deadlock aaga chance irukku, high concurrency-la especially.</div>
+      <div class="fq"><b>Q:</b> Fix pannita apparam eppadi verify pannirukeenga? — Load test thirumba run pannitten, thread queue length normal ah irunthadu, response time consistent ah kammiyaaguruthu.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q8">
+    <div class="term">8. N+1 Query Problem</div>
+    <div class="tng">N+1 problem na, oru list edukka oru query aduthu, appuram andha list mela loop pannitu ovvoru record ku separate ah related data fetch pannurathu — 100 records na 101 round trips aagum, oru joined/batched query ku pathila. Profile pannurathukku query logging on pannitu alathu SQL Profiler vachu, oru page load/API call ethanai query fire pannurom nu paaklam. Zen Campus la student roster screen la — ovvoru student ku attendance status fetch panna separate Dapper call pannitirunthom, 40 students na 41 queries — small section ku fine, periya class ku laggy. <code>WHERE IN</code> vachu ella student ID-kkum ore query la attendance fetch pannitu, memory la map pannna maathinen — adhu thaan resume la irukka 40% query-time improvement oda periya part.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>An N+1 problem is running one query for a list, then firing a separate query per record for related data instead of one batched query — so a hundred records becomes a hundred-and-one round trips. This hit us on the student roster screen on Zen Campus — for each student, we were making a separate call to fetch their latest attendance status, so a class of forty kids meant forty-one queries. I rewrote it into a single query using a WHERE IN on the student IDs and mapped the results back in memory. That's part of what fed into the 40% query-time improvement on my resume — once I started looking, N+1 patterns were hiding in a few other list-heavy screens too.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Idhu eppadi kandu pudichinga first ah? — Periya class open panna page noticeably laggy ah irunthadu, list size ku proportional-ku vida athigama slow ah — adhu thaan clue.</div>
+      <div class="fq"><b>Q:</b> WHERE IN approach scale aagumaa periya list ku? — Reasonable batch size varaikkum fine, romba periya na chunk pannitu multiple batched queries pannalam.</div>
+      <div class="fq"><b>Q:</b> Dapper la idhu eppadi query panreenga exactly? — Student IDs oda list ah parameter ah pass pannitu, single SQL query la <code>WHERE StudentId IN @Ids</code> madhiri fetch pannitu, Dictionary ah map pannitten.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q9">
+    <div class="term">9. Capacity Planning for 1,000+ Concurrent Users</div>
+    <div class="tng">Capacity planning panna, flat number vachi start pannama, actual usage pattern-la irundhu start pannanum — school ERP ku concurrency whole day evenly spread aagathu, morning attendance alathu fee due date madhiri specific windows la cluster aagum. So average traffic ku vida, andha peak window ku size pannanum, DB connections/thread pool/cache edhu actual bottleneck nu kandu pidiyanum. Zen Campus la Ocelot gateway vachu microservices architecture design pannnom — attendance, billing madhiri services ah independent ah scale panna mudiyum madhiri, rendum completely vera load pattern kaatrathanaal. 1000+ concurrent user figure periya client schools ah look pannitu, ella teacher/konjam parents ore 15 nimisham window la active ah irundha enna aagum nu estimate pannitu vandhathu, appuram connection pool sizing + caching andha peak ah handle panna verify panninom, quiet afternoon test mattum pannama.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I'd size for peak concurrent load in the windows that actually cluster hard — like morning attendance or fee due dates — not average traffic across the day, because that's where you'll actually get blindsided. On Zen Campus, we designed the microservices architecture with Ocelot as the gateway partly for this reason, so we could scale attendance or billing independently since they see very different load patterns. The 1,000+ concurrent users number came from looking at our bigger client schools and estimating what happens when every teacher and a chunk of parents are active in the same fifteen-minute window, then making sure connection pool sizing and caching could hold up under that peak, not just a quiet afternoon test.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Average traffic vachu plan pannina enna problem varum? — Andha school actually complain panra exact peak moment la thaan system fail aagum — average la fine ah kaanichalum use illa.</div>
+      <div class="fq"><b>Q:</b> Ocelot gateway capacity planning ku eppadi help pannuthu? — Ovvoru service ah independent ah scale panna vidurathanaal, attendance peak time la billing ah touch pannama andha service mattum scale pannalam.</div>
+      <div class="fq"><b>Q:</b> 1000+ number eppadi arrive pannirukeenga? — Bigger client school teacher + parent count vachu, ella pearum same 15 nimisham window la active nu worst-case estimate pannitom.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 20B -->
+<div class="section" id="20B">
+  <div class="section-title"><span class="num">20B</span> Logging, Exception Handling &amp; Observability</div>
+
+  <div class="item" id="q10">
+    <div class="term">10. Centralized Exception-Handling Middleware</div>
+    <div class="tng">Idhu oru middleware — pipeline early la sit pannitu, downstream ella controller-um try-catch kulla wrap pannum madhiri — so ovvoru controller separate ah error handle pannama, exception ella ore place ku bubble up aagum. Andha place la stack trace, request path, correlation ID, user info full context ah log pannitu, consistent JSON error shape ku map pannitu client ku anuppurom — client ku raw .NET exception alathu body illama 500 varathu. Idhukku munnadi, ovvoru team member vera vera way la try-catch pannaanga — konjam per log pannaanga, konjam stack trace straight ah response la leak pannaanga (security problem kooda). Zen Campus la idhu build pannirukken thaan naan proud ah irukka item — <b>35% incident resolution time cut</b> idhu oda directly related, exception vandhalum correlation ID + clean stack trace already right service ku tag aagi varum, logs search pannna mattum pothum ippo.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>This is one piece of middleware sitting early in the pipeline that wraps everything downstream, so instead of every controller having its own scattered error handling, exceptions bubble up to one place. It logs the exception with full context — stack trace, request path, correlation ID — and maps it to a consistent JSON error shape before it goes back to the client, so nobody ever sees a raw exception or a bare 500. Before this on Zen Campus, every team member handled errors differently, some leaking stack traces straight into responses. After I built this middleware, every error came in tagged to the right service with a correlation ID, and it's directly tied to that 35% cut in incident resolution time.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Idhu security angle-la eppadi help pannuthu? — Raw exception message/stack trace client ku pogathu, so internal implementation details leak aagathu.</div>
+      <div class="fq"><b>Q:</b> Ella exception-um same way ah handle pannuvingala? — Illa, custom business exceptions (like OtpExpiredException) ku specific status code/message map pannurom, unknown exception ku generic safe message.</div>
+      <div class="fq"><b>Q:</b> Idhu eppadi test pannirukeenga? — Deliberate ah different exception types throw pannitu, response shape consistent ah varuthaa nu verify pannnen.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q11">
+    <div class="term">11. Structured Logging</div>
+    <div class="tng">Structured logging na, plain sentence ku pathila key-value fields ah log pannurathu — "user 4521 logged in from 10.0.0.5" nu string pathila, <code>UserId=4521</code>, <code>Ip=10.0.0.5</code>, <code>Module=Auth</code> nu separate properties ah log pannurom. Idhu query, filter, aggregate panna easy ah varum, grep pannama. Thousands of lines per day, multiple services na, plain text la "show me every failed login for this student ID last hour" nu kekka ugly regex venum — structured log field mela mattum filter pannalam. Zen Campus la exception middleware + service logging ah structured format ku maathinen — <code>CorrelationId</code>, <code>ServiceName</code>, <code>Endpoint</code>, <code>UserRole</code> separate fields ah — adhu thaan issue ah fast ah trace panna mudinjadhu, ServiceName=BillingService and CorrelationId=X nu filter pannitu, request full story seconds la kidaikkum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Structured logging means logging key-value fields instead of a plain sentence, so I can filter and aggregate on individual properties later instead of grepping through text. On Zen Campus I moved the exception middleware and service-level logging to a structured format — CorrelationId, ServiceName, Endpoint, UserRole as separate fields. That's genuinely what made tracing fast — I could filter by ServiceName equals BillingService and CorrelationId equals whatever the user reported, and get the whole request's story in seconds instead of scrolling through plain text.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Plain text logging vachiruntha enna problem varum? — Regex vachu search pannanum, query/filter/aggregate panna kashtam, especially multiple services la thousands of lines irundha.</div>
+      <div class="fq"><b>Q:</b> Ella field-um log pannalama, PII irundhu? — Illa, phone number/payment details madhiri sensitive field mask pannanum alathu log pannama vidanum — adhu vera topic.</div>
+      <div class="fq"><b>Q:</b> Structured log store panna edhu approach use pannirukeenga? — Log ah key-value format la store pannitu, ServiceName/CorrelationId madhiri fields mela filter pannurom.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. Correlation IDs Across Microservices</div>
+    <div class="tng">Correlation ID na, oru unique value (usually GUID) — request entry point la (API Gateway) generate pannitu, ovvoru downstream call kooda header/context la pass pannurom. Andha request ah touch panra ovvoru service, same ID vachu log pannum. Illna, request gateway → student service → billing service poi billing la fail aana, three vera log source la timestamp compare panni guess pannanum. ID irundha, ore search la whole chain order ah kidaikkum. Zen Campus la Ocelot gateway entry la correlation ID stamp pannitu, headers vazhi downstream services ku flow aagum madhiri set pannirukken. Oru parent fee payment "disappeared" nu complain pannaar, support ticket la correlation ID vachu paathen — payment service success aachu, aana notification service confirm panna munnadi timeout aachu, adhanaal UI la broken madhiri kaatichi, actual ah money poichu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A correlation ID is a unique GUID generated at the entry point, like the API Gateway, and passed through every downstream call so every service that touches a request logs with the same ID. Without it, you're stuck comparing timestamps across separate log sources. On Zen Campus, Ocelot stamps a correlation ID on the way in, and it flows through headers into whichever service handles it. One case — a parent said a fee payment "disappeared" — I pulled up the correlation ID from the support ticket and could see the payment service actually succeeded, but the notification service timed out before confirming back, so it looked broken on the UI even though the money went through fine.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Correlation ID single service la kooda useful-a? — Aama, concurrent requests same endpoint ku hit aagumbodhu, logs la vera vera request ah separate panna help aagum.</div>
+      <div class="fq"><b>Q:</b> Correlation ID eppadi propagate pannuvingale services-ku idhaiyile? — HTTP header (like X-Correlation-Id) la vachu pass pannurom, ovvoru service andha header ah padichu andha context oda log pannum.</div>
+      <div class="fq"><b>Q:</b> Idhe ID missing na enna aagum? — Andha request ku fallback ah oru new ID generate pannalam, aana ideal ah gateway level la ella request-kkum compulsory ah assign pannanum.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. Monitoring &amp; Alerting Setup</div>
+    <div class="tng">Monitoring ah layers ah nenachikanum — infrastructure level (CPU, memory, disk), application level (error rates, response time per endpoint, queue depth), business level ("payments actually going through-aa" nu, "payment service up-aa" nu mattum illa). Alerts thresholds vachu meaningful ah irukanum, ellathukkum alert vacha team ignore panna start pannum. Zen Campus la early monitoring na support tickets vandhu thaan theriyum — adhu monitoring alla, late ah kandu pidikkarathu. Centralized logging aana apparam log-based alert set pannitten — exception count oru service ku 5-min window la threshold cross pannina notify aagum madhiri — adhu konjam issues full-blown ticket aagratukku munnadi kandu pidikka help pannichu. Grafana dashboard illama, structured searchable logs + basic threshold alert thaan — zero visibility-la irundhu periya jump, adhu <b>35% resolution-time number</b>-oda periya part.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I'd think about monitoring in layers — infrastructure metrics, application-level error rates and response times, and business-level checks like "are payments actually going through," not just "is the service up." Alerts need to be tied to thresholds that matter, or the team tunes them out. On Zen Campus, early on our "monitoring" was really just support tickets coming in, which is finding out late. Once centralized logging was in place, I set up log-based alerts — if exception count for a service crossed a threshold in a five-minute window, someone got notified — and that caught a couple of issues before they became full-blown tickets, which was a big part of that 35% resolution-time improvement.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Ella metric-kkum alert vachiruntha enna problem? — Team alert ah ignore panna start pannum, real outage angadha kooda miss panna chance irukku — so meaningful threshold mattum vachanum.</div>
+      <div class="fq"><b>Q:</b> Business-level monitoring nu example sollunga? — "Payment service is up" nu illama "payments are actually completing successfully" nu track pannurathu — service healthy ah irundhalum business flow break aagalam.</div>
+      <div class="fq"><b>Q:</b> Grafana madhiri dashboard illama alert eppadi set pannirukeenga? — Structured logs mela simple threshold-based query — exception count X ekkatha within Y minutes nu — adhu mattum vachu basic alert setup pannirukken.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q14">
+    <div class="term">14. Graceful Degradation</div>
+    <div class="tng">Graceful degradation na, oru part fail aana, rest of the system continue ah work pannanum — reduced functionality-la aagalaam, aana whole system poga koodathu. SMS gateway alathu reporting service madhiri non-critical dependency down-aa irundha, payment/attendance madhiri core flow succeed aaganum, andha extra piece illama. Tight coupling na, oru flaky dependency completely unrelated athavum important piece ah kooda taken down pannalam. OTP bank locker system la idhu directly apply pannnen — SMS gateway occasionally delay/hiccup aagum, original flow OTP generation ah SMS delivery confirmation kooda tightly couple aagi irunthathu. OTP generation + audit trail write independent ah succeed aagra madhiri restructure pannnen — slow SMS provider OTP lifecycle ah block/fail pannathu, delivery status separate ah track+retry aagum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Graceful degradation means when part of the system fails, the rest keeps working, maybe with reduced functionality, instead of everything going down together. On the OTP bank locker system, the SMS gateway occasionally had delays, and originally OTP generation was too tightly coupled to delivery confirmation. I restructured it so OTP generation and the audit trail write succeed independently of SMS status, so even a slow or flaky SMS provider wouldn't block or fail the core OTP flow — delivery just gets its own status, tracked and retried separately.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Idhe pattern vera edho project la use pannirukeengala? — Cascading failure story la notification service ah fire-and-forget-ish ah maathinen — billing core flow ah adhu block pannama.</div>
+      <div class="fq"><b>Q:</b> Graceful degradation vs circuit breaker — same-a? — Related concept, circuit breaker oru failing dependency ah repeatedly call pannama stop pannurathu; graceful degradation broader ah core flow ah non-critical piece failure-la irundhu protect pannurathu.</div>
+      <div class="fq"><b>Q:</b> Eppadi decide pannuvinga edhu core, edhu nice-to-have nu? — Core transaction (payment, OTP generation) — never block; notification/report madhiri side piece — fail aanalum core affect aagaathu madhiri design pannanum.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q15">
+    <div class="term">15. Rate Limiting at the Gateway</div>
+    <div class="tng">Ocelot gateway-oda built-in rate limiting use pannnom — per route requests-per-second threshold configure pannitu, oru client aggressive ah hit pannina 429 kuduthu throttle pannum, backend services ku traffic slam pannathu. Idhu illama, oru misbehaving client (buggy frontend retry loop alathu intentional abuse) whole capacity eduthukkum, others ku experience degrade aagum. Gateway level la panna, ovvoru service separate ah reinvent panna venam. Zen Campus la Ocelot vachu login, OTP-related endpoints ku rate limit configure pannirukken — retry-happy frontend bug alathu brute-force attempt ah stop pannum. Gateway la oru threshold set pannurathu ovvoru service thaniyeh defend pannrathai vida romba easy — cheap insurance.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>We used Ocelot's built-in rate limiting at the gateway level, configuring requests-per-second thresholds per route, so a client hitting an endpoint too aggressively gets throttled with a 429 instead of slamming straight into the backend. Without it, one misbehaving client — a buggy retry loop or someone hammering an endpoint intentionally — can degrade the experience for everyone else. On Zen Campus, I configured it specifically on login and OTP-related endpoints, since those are exactly where you want to prevent abuse, not just accidental overload. It's cheap insurance — one threshold at the gateway instead of every service defending itself.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> 429 varum bodhu client side eppadi handle pannanum? — Client retry logic exponential backoff vachu thirumba try pannanum, immediate ah retry pannama.</div>
+      <div class="fq"><b>Q:</b> Ella endpoint-kkum same rate limit vachu irukanuma? — Illa, login/OTP madhiri abuse-prone endpoint ku strict-ah, normal read endpoint ku loose-ah — per route configure pannalam.</div>
+      <div class="fq"><b>Q:</b> Gateway level rate limiting vs individual service rate limiting — eppo edhu venum? — Gateway level basic protection ku pothumana, service-specific business rule (like OTP resend limit) na andha service kulla separate logic venum.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q16">
+    <div class="term">16. Health Check Endpoints</div>
+    <div class="tng">Health check endpoint na <code>/health</code> madhiri lightweight route — service and its critical dependencies (DB connection) actually up ah nu report pannum, process running-aa nu mattum illa. Load balancer/gateway idha poll pannitu, unhealthy instance ku traffic route pannama stop pannalam. Process alive ah irundhalum, DB reach panna mudiyama irundha adhu job panna mudiyathu — proper health check illama idhu invisible ah irukkum varaikkum real user request fail aagravaraikkum. Zen Campus la Ocelot pinnadi core services ku health check endpoint set pannirukken — billing service SQL Server ah actually reach pannumaa nu gateway ku theriyum. Oru config change aana apparam billing service DB connection string misconfigure aagi, health check unhealthy nu detect pannichu, real payment requests fail aagra munnadaaghe, user complaint varra munnadaaghe theriyithu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A health check is a lightweight endpoint that reports whether the service and its critical dependencies, like its database, are actually able to serve traffic — not just whether the process is alive. The gateway can poll it and stop routing to an unhealthy instance instead of sending requests that are going to fail. On Zen Campus I set these up on the core services behind Ocelot, so the gateway would know if, say, billing could actually reach SQL Server. It's saved us at least once — a config change broke billing's DB connection string, and the health check caught it as unhealthy before real payment requests started failing, rather than us finding out from a user complaint.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Health check la exactly enna check pannuvinga? — DB connectivity, critical dependency reachability — simple ping query madhiri, full business logic check panna venam.</div>
+      <div class="fq"><b>Q:</b> Health check fail aana Ocelot enna pannum? — Andha instance ku traffic route pannrathu stop pannum, healthy instance ku mattum route pannum (multiple instance irundha).</div>
+      <div class="fq"><b>Q:</b> Health check endpoint itself authenticate pannanuma? — Public ah expose pannrathukku munnadi internal network/gateway mattum access panna madhiri restrict pannrathu nallathu, sensitive info leak aagama.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q17">
+    <div class="term">17. Log Retention &amp; PII Redaction</div>
+    <div class="tng">Retention side la, logs forever keep panna venam — debugging/audit ku useful ah irukka varaikkum mattum vachu, appuram age out pannanum, illna storage + risk mattum accumulate aagum. PII side la, sensitive fields (phone number, address, payment details) plain text la log pannathu thaan rule — mask pannanum alathu log line-la include pannathu. Student/parent data handle panrathanaal idhu genuine ah matter pannum, compliance checkbox mattum illa. Design time la thaan idha decide pannanum, logging statement eludhumbodhy — later scrub pannurathu vida easy. Zen Campus la structured logging build pannumbodhy, full phone number/payment card details debug-level log-la kooda podama irunthen — OTP flow ku, OTP generate aachu status enna nu log pannurom, OTP value alathu full phone number illa, masked version mattum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>For retention, I keep logs long enough to be useful for debugging and audits, then age them out — otherwise you're just accumulating storage and risk. For PII, the rule I follow is don't log sensitive fields in plain text at all — mask them or leave them out entirely. Since we're handling student and parent data, that's genuinely important, not just a compliance checkbox. On Zen Campus, when I built the structured logging, I was deliberate about not logging full phone numbers or payment details even at debug level — for OTP flows especially, we log that an OTP was generated and its status, not the OTP value or the full phone number, just a masked version.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Idha design time la think panna eppadi discipline pannuvinga? — Logging statement eludhumbodhy itself, "idhu sensitive field-a" nu check pannitu, mask/exclude pannurathu habit ah pannikinen.</div>
+      <div class="fq"><b>Q:</b> Masked version nu example sollunga? — Phone number "98765xxxxx" madhiri last digits mattum hide pannrathu, full number never log pannathu.</div>
+      <div class="fq"><b>Q:</b> Log retention period eppadi decide pannuvinga? — Debugging/audit purpose ku enough duration (compliance requirement irundha adhu kooda factor), appuram automatic ah archive/delete pannrathu.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 20C -->
+<div class="section" id="20C">
+  <div class="section-title"><span class="num">20C</span> Production Incident Stories</div>
+
+  <div class="item" id="q18">
+    <div class="term">18. A 2 AM Production Outage</div>
+    <div class="tng">2 AM call vandha, first konjam nimisham thaan periya matter — half asleep-la panic aagi randomly restart panna thonum, aana better move — scope ah first figure pannrathu: oru service mattuma, ella users-maa, recent deploy edhavathu irukka nu. Appuram triage pannrathu — workaround vachaanalum first stabilize pannrathu, proper root cause appuram pannrathu. 2 AM la judgment best ah irukkathu, so logs/alerts fast ah answer ku kondu poga venum — centralized logging exactly idhukku thaan build pannirukken. Zen Campus la 1:40 AM WhatsApp message vandhathu — billing service payment confirmation la 500 throw pannuthu, fee due date next morning. Logs pull pannnen, exception middleware already null reference exception ah recent deploy (payment gateway callback) mela point pannitirunthu. Deep ah investigate pannama, andha specific deploy ah previous known-good version ku rollback pannnen, payments thirumba work aaguthu nu confirm pannitu, actual fix (missing null check) adutha naal clear head-oda proper ah panninen.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>The first few minutes matter more than people think — the instinct is to panic and start restarting things, but the better move is to figure out scope first, then triage to a stable state, and do proper root cause after, not during. I got a WhatsApp from a lead around 1:40 AM once because billing on Zen Campus was throwing 500s on payment confirmation, right before a fee due date. The exception middleware had already logged a clean stack trace pointing at a null reference in a recent deploy touching the payment gateway callback. Instead of digging deeper at 2 AM, I rolled that deployment back to the previous known-good version, confirmed payments were going through again, and fixed the actual missing null check properly the next morning with a clear head.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Rollback pannumbodhu data loss risk irukkaatha? — Andha specific case la schema change illama code-only deploy so safe ah rollback panna mudinjathu, DB migration involve aana andha decision innum careful ah edukkanum.</div>
+      <div class="fq"><b>Q:</b> 2 AM la enna panna koodathu nu solringale? — Live production la hotfix pannrathu koodathu — pressure-la mistake panna chance athigam, small incident ah periya ah aakkidum.</div>
+      <div class="fq"><b>Q:</b> Idhe logs illama irundha enna aagirukkum? — 3 vera server la SSH poi timestamp compare pannanum, 2 AM la adhu romba slow aagi error window athigam aagirukkum.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q19">
+    <div class="term">19. An Intermittent Bug That Didn't Reproduce Reliably</div>
+    <div class="tng">Idhu worst kind — debugger attach panni step-by-step panna mudiyathu, 9 la 9 times work pannum. Usually suspect area chutta athigam logging add pannitu, production la thirumba nadakka wait pannitu, slowly conditions narrow pannrathu thaan approach. Timing/race condition/cache staleness/request order dependency thaan common root cause — single-threaded debug session la idhu kaatathu. Zen Campus la oru student attendance oru day ku rendu baari mark aagi (once present once absent) — last write thaan stick aaguthu, so random ah edhu win aagum nu theriyathu. First guess wrong ah irunthathu — frontend double submission nenachen, disable-on-click add panninen, fix aagathu. Real reason — section reassignment oru teacher dashboard-kku propagate aagathu, rendu teacher-um legitimate ah same student ku submit pannirukkaanga, DB level uniqueness check illa. Unique constraint + upsert pattern (insert-ku pathila) add panninen, adhu close aagiputchu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>These are the worst — you can't attach a debugger and step through because it works nine times out of ten. I add more logging around the suspected area and slowly narrow down conditions over multiple occurrences in production. On Zen Campus, occasionally a student's attendance would get marked twice — once present, once absent — and only the last write stuck, so it looked random which one won. My first guess was wrong — I thought it was a double form submission and added a disable-on-click, which didn't fix it. It turned out to be two different teachers legitimately submitting for the same student because of a section reassignment that hadn't propagated to one teacher's dashboard, with no uniqueness check at the DB level. I added a unique constraint plus an upsert pattern instead of a plain insert, and that closed it for good.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Frontend fix work pannathu nu eppadi confirm pannirukeenga? — Disable-on-click deploy panniyum same issue thirumba report aagiputchu — adhu thaan wrong hypothesis nu proof.</div>
+      <div class="fq"><b>Q:</b> Upsert pattern eppadi implement pannirukeenga? — Insert panna munnadi existing record check pannitu, irundha update, illatha insert — alathu DB level la MERGE madhiri single atomic operation.</div>
+      <div class="fq"><b>Q:</b> Intermittent bug ku logging eppadi structure pannuvinga effective ah? — Suspected area ku correlation ID/timestamp/context vachu detailed log podren, next occurrence aana apparam andha logs compare panni pattern kandu pidikka mudiyum.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q20">
+    <div class="term">20. Load Testing Before a Release</div>
+    <div class="tng">First realistic load enna nu figure pannrathu — arbitrary user count illama, "ella class teacher-um 15 nimisham window-la login aagi attendance mark pannrathu" madhiri real scenario. Appuram oru tool vachu key endpoints mela concurrent requests simulate pannitu, response time, error rate, resource usage load ramp aagraappodhu eppadi degrade aaguthu nu paaklam. Oru-rendu user vachu test pannrathu edhuvum sollathu, pool exhaustion/race condition/lock contention madhiri bugs load-la mattum kaanpikkum, adhu production-la kandu pidikkrathai vida staging-la kandu pidikkrathu better. Zen Campus la load testing weak area ah irunthathu — attendance-rush slowness incident-oda oru reason idhu thaan. Adhu aana apparam attendance/billing endpoints ku basic load simulation push pannnen, bigger client school size ku matching concurrent requests vachu, release-ku munnadi staging la catch pannrathu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I'd first figure out realistic load — something like "every class teacher logs in and marks attendance within a fifteen-minute window" — rather than an arbitrary user count, then simulate concurrent requests against the key endpoints and watch response times and error rates as load ramps up. Load testing was actually a weak spot for us at RAX for a while — that gap is part of why the morning attendance-rush slowness caught us in production instead of staging. After that incident I pushed for at least basic load simulation on attendance and billing endpoints before releases touching those modules, hitting them with concurrent requests roughly matching our bigger client schools' size.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Load testing eppadi setup pannirukeenga practically? — Concurrent HTTP requests simulate panna oru tool vachu key endpoints hit pannurom, response time/error rate measure pannurom.</div>
+      <div class="fq"><b>Q:</b> Staging environment production traffic ah eppadi accurately represent pannum? — Bigger client school size ku matching data volume + concurrent request count vachu simulate pannrathanaal, exact illaanalum close ah irukkum.</div>
+      <div class="fq"><b>Q:</b> Load test la enna specific metrics track pannuvinga? — Response time percentile, error rate, DB connection pool usage, thread pool queue length — load increase aagraappodhu idhu ellame watch pannurom.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q21">
+    <div class="term">21. A Data Corruption Incident</div>
+    <div class="tng">Data corruption crash-ai vida scary — system enthuvum sollathu, wrong data-vache run pannikitte irukkum, someone numbers add up aagathu nu kandu pidikkaa varaikkum. Catch pannna apparam, first blast radius figure pannrathu — edhu records, entha time window, appuram code root cause kandu pidichu fix pannrathu, appuram separate ah already wrong ah irukka data ah clean up pannrathu. "Ippo aagathu nu stop pannrathu" um "already wrong ah irukka data fix pannrathu" um rendu vera velai — code fix pannnalum already corrupt aana data automatic ah fix aagathu. Zen Campus fee ledger la — rendu near-simultaneous payment confirmation same student installment ku process aagi, timing-ku pathila oru mattum andha ledger entry ah overwrite pannichu, balance wrong ah vandhachu. First guess rounding bug nu irunthu dead end aagiputchu, correlation ID vachu rendu near-simultaneous request ah trace pannnen, ledger update ku row-lock illatha issue nu theriyithu — proper locking add pannitu, audit trail vachu affected students ledger manual ah reconcile pannnen.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Data corruption is scarier than a crash because the system doesn't tell you anything's wrong — it just keeps running with bad data. Once you catch it, you have to figure out the blast radius first, then find the root cause and fix that separately from cleaning up the already-corrupted records. On Zen Campus there was an issue with fee ledger entries — two near-simultaneous payment confirmations for the same student's installment could both process, and one would overwrite the other's entry, throwing off the balance for a handful of students. My first guess was a rounding bug, which was a dead end. Tracing it through with correlation IDs across the two near-simultaneous requests showed a missing row-lock on the ledger update — I added proper locking and manually reconciled the affected student ledgers from the audit trail.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Code fix pannita mattum pothuma? — Illa, already wrong ah irukka existing records ah separate ah reconcile pannanum — code fix retroactive ah data fix pannathu.</div>
+      <div class="fq"><b>Q:</b> Row-lock illatha problem eppadi identify pannirukeenga? — Correlation ID vachu rendu near-simultaneous request ah trace pannnen, timing overlap kandu pidichen, adhu thaan concurrency issue nu confirm pannirithu.</div>
+      <div class="fq"><b>Q:</b> Idhe vera place-lum irukka chance irukkaathaa nu eppadi check pannirukeenga? — Postmortem la periodic reconciliation check add pannrathu follow-up ah irunthathu — ledger totals vs payment records compare panni automatic ah mismatch flag pannrathu.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q22">
+    <div class="term">22. Rolling Back a Bad Deployment</div>
+    <div class="tng">Andha moment la immediate goal — enthukku break aachu nu puriyathu illa, users ah working state ku thirumba kondu porathu — so last known-good build/config ku rollback pannitu, stable ah irukkithu nu confirm pannitu, appuram root cause proper ah dig pannrathu. Pressure-la live production-la hotfix forward panna try pannina, small incident ah periya ah aakkidum — adhanaal safe, known-working path first select pannen, investigation appuram calm ah pannuren. Payments, auth, attendance data touch panra edhuvum — no debate, rollback first. Andha 2 AM billing incident thaan clear example — exception logs recent payment-gateway-callback change mela point pannitirunthadu, live la patch panna try pannama, andha deployment ah previous version ku straight ah rollback pannnen. Logs vachu payments clean ah process aaguthu nu confirm pannitu, actual null-check bug ah next day tests vachu properly fix pannnen.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>The immediate goal isn't understanding why it broke, it's getting users back to a working state — roll back to the last known-good build, confirm stability, and investigate root cause after, with the pressure off. Trying to hotfix forward live in production under pressure is how a small incident becomes a much bigger one. That 2 AM billing incident is the clearest example — once the exception logs pointed at a recent payment-gateway-callback change, I rolled that deployment straight back instead of patching live, confirmed via logs that payments were processing clean, and fixed the actual null-check bug properly the next day with tests around it.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Eppo rollback pannathu, hotfix forward pannanum nu decide pannuvinga? — Blast radius minor cosmetic mattum irundha hotfix pannalam, payment/auth/attendance data touch pannina always rollback first, no debate.</div>
+      <div class="fq"><b>Q:</b> Rollback pannrathu eppo risky aagum? — DB schema migration kooda deploy pannirunthaa, code rollback mattum pannina schema mismatch varum — adhukku careful ah check pannanum.</div>
+      <div class="fq"><b>Q:</b> Rollback aana apparam next steps enna? — Stable nu confirm pannitu, root cause identify pannitu, tests vachu proper fix pannitu, appuram redeploy pannrathu.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q23">
+    <div class="term">23. The 35% Incident Resolution Time Story <span class="en">(resume walkthrough)</span></div>
+    <div class="tng">Middleware kku munnadi, edhavathu break aana, first reproduce pannanum, appuram multiple services log-la hunt pannanum, multiple servers-la, plain-text unstructured entries vachu — investigation step "problem ah kandu pidi" nu irunthathu. Centralized exception-handling + structured logging podtha apparam, ovvoru error consistent format, stack trace, correlation ID oda varum, so investigation "answer ah padi" nu collapse aagiputchu. Most time incident-la fix pannrathu-la illa, find pannrathu-la thaan poguthu — so find panra time kammi pannina, whole resolution time kammi aagum. Concrete ah — billing error na, munnadi billing service logs, gateway logs, notification service logs separate ah pull pannitu timestamp manual ah line up pannrathu — 20-30 nimisham poguм் fix start panna munnadaake. Apparam, support ticket-la irundha correlation ID eduthu, ore search-la full request path + exception + stack trace kidaikkum — 30 nimisham-la irundhu couple nimisham ku vandhachu, adhu thaan enough incidents mela accumulate aagi <b>35%</b> aachu — oru periya heroic fix illa, every single incident konjam konjam fast aagiruchu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Before this middleware, when something broke, someone had to hunt across multiple services' logs on multiple servers, manually lining up timestamps — that alone could eat twenty or thirty minutes before anyone started fixing anything. After I put the centralized exception-handling and structured logging in, I could take a correlation ID from a support ticket, search once, and get the full request path with the exception and stack trace right there — that step went from half an hour to a couple of minutes. Most of an incident's time isn't spent fixing the bug, it's spent finding it, so shrinking the finding part is what dropped the overall resolution time. It wasn't one heroic fix — it was every single incident getting a little faster, across enough incidents that it added up to 35%.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> 35% number eppadi measure pannirukeenga, exact ah? — Fancy dashboard illa, oru rough before-after comparison — support ticket turnaround visibly fast aagrathu team notice pannirukku few months support-la.</div>
+      <div class="fq"><b>Q:</b> Idhu eppadi reproduce panna mudiyum vera project-lum? — Same principle — centralized error handling + structured logging + correlation ID — edhu microservices system-lum apply pannalam.</div>
+      <div class="fq"><b>Q:</b> Idhu single biggest factor-a, illa combination-a? — Combination — middleware + structured logging + correlation ID moondu saerntu thaan investigation time drop pannathu, oru piece mattum podhathu.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q24">
+    <div class="term">24. Postmortem Process</div>
+    <div class="tng">Fresh ah irukkumbodhu thaan edhu nadakkathu nu eludhi vachukanum — timeline, first enthu paathom, enthu try panniyum work aagathu, real root cause enthu (usually first suspect illa vera edhavathu). Appuram separate ah enthu maathanum nu — code fix ah, monitoring gap ah, process thing-a. "Enthu work aagathu" nu part skip pannitu clean final answer mattum eludhina, useful bit poirvom — wrong turns thaan monitoring/logging blind spot ah kaatrathu. User ah affect panna edhuvum ku pannanum, fast fix aaginalum — blame illa, same category issue thirumba 3 months kazhithu quiet ah varathu nu confirm pannrathu thaan goal. Ledger double-write issue-ku postmortem la "row lock add pannnen, done" nu mattum illa — proactive ah idhu madhiri inconsistency detect panna vazhi illa nu flag pannnen, follow-up ah periodic reconciliation check add pannrathu — ledger totals vs payment records compare pannitu mismatch flag pannrathu, accounts manual ah eyeball pannrathai vida better way.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I try to write down, while it's still fresh, what actually happened — timeline, what didn't work, and what the real root cause turned out to be, since it's often not the first thing you suspect. Then separately, what we're going to change so it doesn't recur, whether that's a code fix, a monitoring gap, or a process change. After the ledger double-write issue on Zen Campus, the postmortem wasn't just "added a row lock, done" — I also flagged that we had no way to detect that kind of inconsistency proactively, we only found out because accounts manually noticed a number looked off. One follow-up was adding a periodic reconciliation check comparing ledger totals against payment records and flagging mismatches automatically.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> "Enthu work aagathu" part edhukku important postmortem la? — Wrong turns thaan real blind spot ah kaatrathu — adhu skip pannina next time same wrong path ku poga chance irukku.</div>
+      <div class="fq"><b>Q:</b> Postmortem blame-focused ah irukanuma? — Illa, blame illa — same category issue thirumba varathu nu confirm pannrathu thaan goal, process/system gap ah fix pannrathu.</div>
+      <div class="fq"><b>Q:</b> Postmortem-la irundhu concrete action item eppadi varum? — Root cause fix + proactive detection mechanism (like reconciliation check) — rendum separate action item ah track pannurom.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q25">
+    <div class="term">25. A Cascading Failure</div>
+    <div class="tng">Cascading failure na, oru service slow/down aagraappodhu, andha service ah call panra caller-um back up aagi fail aagrathu, appuram andha caller-oda caller-um fail aagrathu — oru corner problem system-full spread aagrathu. Timeout/circuit breaker illatha synchronous call irundha idhu thaan varum — upstream everyone indefinitely wait panni nikkum. Zen Campus la notification service (SMS/email confirmation) third-party gateway hiccup vachi slow ah respond panna start pannichu, billing service payment process aana apparam synchronous ah idha call pannuchu, aggressive timeout illama. Billing requests pile up aagi wait panna start pannichu andha core-alathu service ku, billing itself down madhiri kaatichu, aana billing logic fine ah irunthichu. Fix — andha call ku strict timeout add pannnen, notification step ah fire-and-forget-ish ah maathinen — log pannitu separate ah retry pannrathu, payment response ah adhu mela block pannama — graceful degradation idea-oda thaan connect aagrathu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A cascading failure is when one service's slowness causes its callers to also back up and fail, spreading a corner problem system-wide — usually because there's no timeout on a synchronous call to the struggling dependency. On Zen Campus, the notification service started responding slowly because of a third-party gateway hiccup, and billing called it synchronously after processing a payment without an aggressive timeout. Billing requests piled up waiting on a service that wasn't even core, and it looked like billing itself was down even though billing's logic was fine. The fix was adding a strict timeout on that call and making the notification step fire-and-forget — log it and retry separately — instead of blocking the payment response on it.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Idhe billing down nu eppadi first thonuchu, aana illaiya nu eppadi kandu pidichinga? — Logs correlation ID vachu trace pannnen, billing oda own logic fast ah execute aaguthu, notification call mattum hang aagiruchu nu theriyithu.</div>
+      <div class="fq"><b>Q:</b> Circuit breaker pattern idhukku eppadi help pannirukkum? — Notification service repeatedly fail aagraappodhu, circuit "open" aagi, konjam neram andha call ah skip pannitu direct ah fallback ku pogum — namba manual timeout + fire-and-forget approach oru simpler version.</div>
+      <div class="fq"><b>Q:</b> Idhe fix ku apparam vera edho similar risk irukka chance irukkaathaa? — Postmortem-la ella synchronous inter-service call-um timeout irukka nu audit pannrathu follow-up ah irunthichu, same pattern vera place-lum irukka nu check pannrathukku.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  Prepared for Gurumoorthy M — .NET Developer Interview Prep<br>
+  <a href="Part21_Infosys_Prep_Guide.html">Next: Infosys Prep Guide →</a><br>
+  <a href="00_Index.html">← Back to Roadmap Home</a>
+</footer>
+
+</body>
+</html>

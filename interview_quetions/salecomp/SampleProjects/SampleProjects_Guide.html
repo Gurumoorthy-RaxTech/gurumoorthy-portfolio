@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sample Projects Guide — Code-First vs Database-First (ADO.NET + WinForms) | Gurumoorthy</title>
+<style>
+  :root{--accent:#059669;--accent-dim:#065f46;--accent-subtle:rgba(5,150,105,0.12);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.75rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  nav .prog-badge{margin-left:auto;background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:999px;}
+  .hero{padding:2.6rem 1.5rem 1.8rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(5,150,105,.16) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.4rem,4vw,2.3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;max-width:760px;margin-left:auto;margin-right:auto;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  .crosslinks{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;}
+  .crosslinks a{background:var(--card);border:1px solid var(--border);color:var(--info);text-decoration:none;padding:.4rem .9rem;border-radius:8px;font-size:.8rem;font-weight:600;}
+  .crosslinks a:hover{border-color:var(--accent);color:var(--accent);}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:2.6rem;}
+  h2{font-size:1.45rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.02rem;font-weight:700;color:var(--info);margin:1.1rem 0 .5rem;}
+  p{margin-bottom:.6rem;font-size:.92rem;}
+  code{font-family:'Cascadia Code',Consolas,monospace;background:var(--bg3);padding:.1rem .35rem;border-radius:4px;font-size:.85em;color:var(--info);}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  pre code{background:none;padding:0;color:var(--text);}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  a.rlink{color:var(--info);text-decoration:none;border-bottom:1px dashed var(--info);}
+  a.rlink:hover{color:var(--accent);border-color:var(--accent);}
+  .thang{background:linear-gradient(135deg,rgba(5,150,105,.14),rgba(5,150,105,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:.9rem 1.1rem;margin:.8rem 0;display:flex;gap:.7rem;}
+  .thang .ti{font-size:1.3rem;flex-shrink:0;}.thang .tt{color:var(--accent);font-weight:800;font-size:.85rem;}.thang .tb{color:var(--muted);font-size:.87rem;margin-top:.2rem;}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .warn-box{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .bad-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.35);border-radius:8px;padding:.7rem .9rem;margin:.5rem 0;font-size:.85rem;}
+  .tree{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.7;overflow-x:auto;margin:.7rem 0;color:var(--muted);}
+  .tree .f{color:var(--info);}.tree .d{color:var(--accent);font-weight:700;}
+  .steps{counter-reset:step;list-style:none;}
+  .steps li{counter-increment:step;position:relative;padding-left:2.4rem;margin-bottom:.8rem;font-size:.9rem;}
+  .steps li::before{content:counter(step);position:absolute;left:0;top:0;background:var(--accent);color:#fff;width:1.7rem;height:1.7rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.88rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:flex-start;gap:.55rem;font-size:.85rem;cursor:pointer;padding:.3rem .4rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;margin-top:.15rem;flex-shrink:0;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  .completion{text-align:center;padding:2.2rem;background:radial-gradient(ellipse at center,rgba(5,150,105,.22),transparent 70%);border:2px solid var(--accent);border-radius:16px;margin:2rem 0;}
+  .completion h2{color:var(--accent);font-size:1.7rem;border:none;}
+  .badge{display:inline-block;background:var(--accent);color:#fff;font-size:1.15rem;font-weight:900;padding:.7rem 1.7rem;border-radius:50px;margin:1rem 0;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">SAMPLE PROJECTS</span>
+  <a href="#overview">Overview</a><a href="#structure">Structure</a><a href="#compare">Code vs DB First</a>
+  <a href="#connstring">Conn String</a><a href="#walkthrough">Walkthrough</a><a href="#run">How to Run</a>
+  <a href="#troubleshoot">Troubleshoot</a><a href="#scenarios">Scenarios</a><a href="#quiz">Quiz</a>
+  <span class="prog-badge" id="progBadge">0/0 done</span>
+</nav>
+<div class="hero">
+  <h1>Sample Projects Guide — Code-First vs Database-First</h1>
+  <p>Explains the 2 ready-to-run WinForms + ADO.NET (.NET Framework) sample projects — structure, connection string, key code, how to run, and interview scenarios about them. Thanglish-la easy-a puriyanumnu.</p>
+  <div class="tags">
+    <span class="tag">ADO.NET</span><span class="tag">WinForms</span>
+    <span class="tag">.NET Framework 4.7.2</span><span class="tag">Code-First vs Database-First</span><span class="tag">salcomp.com</span>
+  </div>
+  <div class="crosslinks">
+    <a href="../ADO_NET_Guide.html">ADO.NET Guide</a>
+    <a href="../EntityFramework_Guide.html">EF Guide</a>
+    <a href="../WinForms_Guide.html">WinForms Guide</a>
+  </div>
+</div>
+<main>
+
+<section id="overview">
+  <h2>🎯 Overview — What These Two Projects Are</h2>
+  <div class="thang">
+    <div class="ti">💡</div>
+    <div><div class="tt">Thanglish la solradha na</div>
+    <div class="tb">Rendu projects-um ONE SAME Student Management WinForms app — DataGridView-la students list aagum, Add/Update/Delete/Search buttons irukum. Vithyasam ஒரே ஒரு edhu: DB table எப்போ, யாரு create pannuvanga nu. Idhu EF Core-oda "Code-First"/"Database-First" concept illa (adhu EF-ku specific) — idhu andha idea-va raw ADO.NET-la manually implement panniruken, so interview-la "have you done code-first/database-first with plain ADO.NET" nu kekka vaikalum-na confident-a answer pannalam.</div></div>
+  </div>
+  <table>
+    <tr><th>Project</th><th>Who creates the Students table?</th><th>Key file</th></tr>
+    <tr><td><strong>01_DatabaseFirst</strong></td><td>YOU — run <code>Run_This_First.sql</code> in SSMS manually before the app runs</td><td>Run_This_First.sql (outside the app)</td></tr>
+    <tr><td><strong>02_CodeFirst</strong></td><td>THE APP — <code>DatabaseInitializer.EnsureCreated()</code> creates it from C# on startup</td><td>DataAccess/DatabaseInitializer.cs</td></tr>
+  </table>
+  <div class="warn-box">Both projects use the exact same connection string, the exact same <code>StudentRepository.cs</code> CRUD code, and the exact same Form UI — so once you understand one, you understand both. Only <code>Program.cs</code> and the presence/absence of <code>DatabaseInitializer.cs</code> differ.</div>
+</section>
+
+<section id="structure">
+  <h2>📁 Project Structure</h2>
+  <h3>01_DatabaseFirst_ADONet_WinForms</h3>
+  <div class="tree">Run_This_First.sql          <span class="f">← run this in SSMS FIRST</span>
+README.txt
+SchoolApp_DatabaseFirst.sln
+SchoolApp_DatabaseFirst/
+  App.config                 <span class="f">← connection string</span>
+  Program.cs                 <span class="f">← entry point, just runs the form</span>
+  Form1.cs / Form1.Designer.cs  <span class="f">← UI + event handlers</span>
+  Models/
+    Student.cs                <span class="f">← POCO matching the existing table</span>
+  DataAccess/
+    StudentRepository.cs       <span class="f">← ADO.NET CRUD</span>
+  Properties/
+    AssemblyInfo.cs</div>
+
+  <h3>02_CodeFirst_ADONet_WinForms</h3>
+  <div class="tree">README.txt
+SchoolApp_CodeFirst.sln
+SchoolApp_CodeFirst/
+  App.config                 <span class="f">← connection string</span>
+  Program.cs                 <span class="f">← entry point, calls DatabaseInitializer FIRST</span>
+  Form1.cs / Form1.Designer.cs  <span class="f">← UI + event handlers (identical to above)</span>
+  Models/
+    Student.cs                <span class="f">← POCO, the "source of truth" here</span>
+  DataAccess/
+    <span class="d">DatabaseInitializer.cs</span>     <span class="f">← NEW: creates the table if missing</span>
+    StudentRepository.cs       <span class="f">← ADO.NET CRUD (identical to above)</span>
+  Properties/
+    AssemblyInfo.cs</div>
+</section>
+
+<section id="compare">
+  <h2>⚖️ Code-First vs Database-First — ADO.NET Style</h2>
+  <table>
+    <tr><th>Aspect</th><th>Database-First</th><th>Code-First</th></tr>
+    <tr><td>Schema owner</td><td>DBA / SQL script (Run_This_First.sql)</td><td>Application code (DatabaseInitializer.cs)</td></tr>
+    <tr><td>C# class role</td><td>Written to MATCH an existing table</td><td>The "source of truth" — table is derived from it</td></tr>
+    <tr><td>Startup behavior</td><td>Assumes table exists; fails if it doesn't</td><td>Checks + creates table if missing, every startup</td></tr>
+    <tr><td>Real-world fit</td><td>Legacy DB, DBA already owns schema, multiple apps share one DB</td><td>New project, one app owns its schema, fast local setup</td></tr>
+    <tr><td>Production risk</td><td>Low — no runtime DDL</td><td>Running DDL (CREATE TABLE) on every app start is risky at scale — see Scenarios below</td></tr>
+  </table>
+  <div class="thang">
+    <div class="ti">🗂️</div>
+    <div><div class="tt">Interview framing</div>
+    <div class="tb">Interviewer "EF Core Code-First pathi theriyuma" nu kekka, honestly solla: "EF Core has built-in migrations for Code-First. In raw ADO.NET, I replicate the same idea manually — an IF NOT EXISTS-guarded CREATE TABLE that runs once at startup. I've built both patterns to show I understand the difference conceptually, even without EF's migration tooling."</div></div>
+  </div>
+</section>
+
+<section id="connstring">
+  <h2>🔌 Connection String — Line by Line</h2>
+  <pre><code>Server=192.168.1.52;Database=SchoolTest;User ID=SchoolCloud;Password=<YOUR_PASSWORD_HERE>;MultipleActiveResultSets=true;TrustServerCertificate=True;</code></pre>
+  <table>
+    <tr><th>Part</th><th>Meaning (Thanglish)</th></tr>
+    <tr><td><code>Server=192.168.1.52</code></td><td>SQL Server irukra machine-oda IP address — localhost illa, network-la vera server.</td></tr>
+    <tr><td><code>Database=SchoolTest</code></td><td>Connect aana odane enge database select pannanumnu solradhu.</td></tr>
+    <tr><td><code>User ID=SchoolCloud</code></td><td>SQL Server Authentication login username (Windows login illa, SQL login).</td></tr>
+    <tr><td><code>Password=<YOUR_PASSWORD_HERE></code></td><td>Andha SQL login-oda password. Production-la plain text-a App.config-la vekaadhu — Key Vault/encrypted config recommend pannanum.</td></tr>
+    <tr><td><code>MultipleActiveResultSets=true</code></td><td>MARS enable — same connection-la multiple SqlDataReader ஒரே நேரத்தில் open pannalam. Raw ADO.NET-ku strictly required illa, but harmless and future-proof.</td></tr>
+    <tr><td><code>TrustServerCertificate=True</code></td><td>SQL Server-oda TLS certificate self-signed-a irundhaalum client trust pannikkum. Dev/test-ku fine; production-la proper CA certificate + <code>False</code> recommended.</td></tr>
+  </table>
+</section>
+
+<section id="walkthrough">
+  <h2>🧩 File-by-File Walkthrough</h2>
+
+  <h3>App.config — where the connection string lives</h3>
+  <pre><code>&lt;connectionStrings&gt;
+  &lt;add name="SchoolDb"
+       connectionString="Server=192.168.1.52;Database=SchoolTest;User ID=SchoolCloud;Password=<YOUR_PASSWORD_HERE>;MultipleActiveResultSets=true;TrustServerCertificate=True;"
+       providerName="System.Data.SqlClient" /&gt;
+&lt;/connectionStrings&gt;</code></pre>
+  <p><code>name="SchoolDb"</code> — code-la <code>ConfigurationManager.ConnectionStrings["SchoolDb"]</code> nu இதே name-oda match aagum. Hardcoding illama config-la vechurukom-na, server maarna code recompile pannama config file mattum edit pannalam.</p>
+
+  <h3>DatabaseInitializer.cs — Code-First only</h3>
+  <pre><code>public static void EnsureCreated()
+{
+    string connectionString = ConfigurationManager.ConnectionStrings["SchoolDb"].ConnectionString;
+
+    const string sql = @"
+        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Students')
+        BEGIN
+            CREATE TABLE Students (
+                Id INT IDENTITY(1,1) PRIMARY KEY,
+                Name NVARCHAR(100) NOT NULL,
+                ClassName NVARCHAR(50) NULL,
+                Age INT NOT NULL,
+                Email NVARCHAR(150) NULL
+            );
+        END";
+
+    using (var conn = new SqlConnection(connectionString))
+    using (var cmd = new SqlCommand(sql, conn))
+    {
+        conn.Open();
+        cmd.ExecuteNonQuery();
+    }
+}</code></pre>
+  <p><code>IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Students')</code> — idhu safety check, table already irundhaalum error varaadhu, andha CREATE TABLE skip pannidum. <code>ExecuteNonQuery()</code> use pannurom, aeandha DDL statement-ku result rows edhuvum varadhu.</p>
+
+  <h3>Program.cs — where the two projects actually differ</h3>
+  <pre><code>// Database-First Program.cs — no initializer call
+static void Main()
+{
+    Application.EnableVisualStyles();
+    Application.SetCompatibleTextRenderingDefault(false);
+    Application.Run(new Form1());
+}
+
+// Code-First Program.cs — ONE extra line before the form runs
+static void Main()
+{
+    Application.EnableVisualStyles();
+    Application.SetCompatibleTextRenderingDefault(false);
+    DatabaseInitializer.EnsureCreated();   // <-- the only structural difference
+    Application.Run(new Form1());
+}</code></pre>
+
+  <h3>StudentRepository.cs — Insert with SCOPE_IDENTITY()</h3>
+  <pre><code>const string sql = @"INSERT INTO Students (Name, ClassName, Age, Email)
+                      VALUES (@Name, @ClassName, @Age, @Email);
+                      SELECT CAST(SCOPE_IDENTITY() AS INT);";
+...
+return (int)cmd.ExecuteScalar();</code></pre>
+  <p>Rendu SQL statements semicolon-la separate pannitu, same round-trip-la run pannurom — INSERT pannitu, appuram SCOPE_IDENTITY() kekkurom (auto-generated Id return pannum). <code>ExecuteScalar()</code>, aeandha andha SELECT ஒரு single value mattum return pannudhu.</p>
+
+  <h3>Form1.cs — DataGridView refresh pattern</h3>
+  <pre><code>dgvStudents.DataSource = null;
+dgvStudents.DataSource = students;</code></pre>
+  <p><code>null</code> set pannama நேரடியா new list assign panna, DataGridView column layout weird-a stay pannalam. <code>null</code> first vechu fully fresh rebind pannுரோம்.</p>
+
+  <h3>Form1.cs — reading the selected row back (master-detail style)</h3>
+  <pre><code>var student = (Student)dgvStudents.CurrentRow.DataBoundItem;
+_selectedId = student.Id;
+txtName.Text = student.Name;</code></pre>
+  <p>DataGridView oru <code>List&lt;Student&gt;</code>-oda bind pannirundha, ஒவ்வொரு row-um andha <code>Student</code> object-a <code>DataBoundItem</code>-la hold pannirukum — cast pannitu direct-a use pannalam, column index-a manual-a padikara vேண்டாம்.</p>
+</section>
+
+<section id="run">
+  <h2>▶️ How to Run</h2>
+  <h3>Database-First</h3>
+  <ol class="steps">
+    <li>Open SSMS, connect to <code>192.168.1.52</code> with the SchoolCloud login.</li>
+    <li>Open and run <code>Run_This_First.sql</code> against the <code>SchoolTest</code> database — creates the Students table + 3 sample rows.</li>
+    <li>Open <code>SchoolApp_DatabaseFirst.sln</code> in Visual Studio.</li>
+    <li>Press F5 — the grid should show the 3 sample students immediately.</li>
+  </ol>
+  <h3>Code-First</h3>
+  <ol class="steps">
+    <li>Open <code>SchoolApp_CodeFirst.sln</code> in Visual Studio — no SQL script needed first.</li>
+    <li>Press F5 — <code>DatabaseInitializer.EnsureCreated()</code> creates the Students table automatically if it's not already there.</li>
+    <li>Grid starts empty (unless you already ran the other project against the same DB) — use the Add button to create your first student.</li>
+  </ol>
+</section>
+
+<section id="troubleshoot">
+  <h2>🛠️ Troubleshooting</h2>
+  <div class="bad-box"><strong>"A network-related or instance-specific error..."</strong> — can't reach 192.168.1.52. Check you're on the same network/VPN as that SQL Server, and that its firewall allows port 1433.</div>
+  <div class="bad-box"><strong>"Login failed for user 'SchoolCloud'"</strong> — password typo, or SQL Authentication isn't enabled on that server (it might be Windows-Auth-only) — confirm with whoever manages that server.</div>
+  <div class="bad-box"><strong>"A connection was successfully established... but then an error occurred during the pre-login handshake" / SSL/TLS errors</strong> — usually fixed by keeping <code>TrustServerCertificate=True</code> (already set) — if it still fails, the SQL Server's "Force Encryption" setting may need checking with the DBA.</div>
+  <div class="bad-box"><strong>"Invalid object name 'Students'" on the Database-First project</strong> — you forgot to run <code>Run_This_First.sql</code> first, or ran it against a different database than SchoolTest.</div>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 Interview Scenarios</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">Why is running DatabaseInitializer.EnsureCreated() on every app startup risky in production?</span><span class="st">Architecture</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>If multiple instances of the app start at the same time (e.g., several client machines launching simultaneously), they could all run the CREATE TABLE check concurrently, causing race conditions or lock contention. More importantly, in a real production system you generally want schema changes reviewed and applied in a controlled deployment step (like EF Core migrations run deliberately, or a DBA-reviewed script) — not silently triggered by whichever client happens to run first. This sample uses it for convenience in a small desktop app; for a shared multi-user system, Database-First (schema owned and deployed separately) is usually safer.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Why does this project use ADO.NET directly instead of Entity Framework, given EF Core has built-in migrations?</span><span class="st">Trade-off</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>The role's stated focus is ADO.NET and WinForms specifically — showing raw ADO.NET fluency (SqlConnection/SqlCommand, parameterized queries, manual mapping) demonstrates the fundamentals EF abstracts away. It's also lighter-weight for a small desktop tool with one simple table, avoids adding EF as a dependency, and gives full control over the exact SQL executed — useful when the app needs to run against an existing, DBA-managed database where hand-tuned queries matter more than rapid CRUD scaffolding.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What would you change to make this app support multiple users editing at once safely?</span><span class="st">Concurrency</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Right now, Update() blindly overwrites by Id with no concurrency check — "last save wins." To fix: add a <code>RowVersion</code>/<code>timestamp</code> column to Students, include it in the UPDATE's WHERE clause (<code>WHERE Id=@Id AND RowVersion=@RowVersion</code>), and check <code>ExecuteNonQuery()</code>'s return value — if 0 rows were affected, someone else changed the row first, so show a "record was modified, please refresh" message instead of silently succeeding.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">The search box calls the database on every keystroke (TextChanged). Is that a problem, and how would you fix it?</span><span class="st">Performance</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>For a small local table it's harmless, but at scale (thousands of rows, remote/slow DB link) it means one query per keystroke — wasteful and can make the UI feel laggy if the network round-trip is slow. Fix: debounce with a short <code>Timer</code> (e.g., 300ms) that resets on every keystroke and only fires the actual search after typing pauses, or filter an already-loaded in-memory list/DataTable via <code>BindingSource.Filter</code> instead of hitting the DB each time.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">How would you extend Insert + a related table (e.g., Fees) to be atomic, like the ADO.NET guide's transaction example?</span><span class="st">Transactions</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Open one connection, call <code>BeginTransaction()</code>, pass that transaction object into every SqlCommand used for both the Student insert and the Fee insert, and only <code>Commit()</code> after both succeed — <code>Rollback()</code> in a catch block if either fails. See the ADO.NET guide's Concept #6 for the full pattern — it's a direct drop-in extension of this repository's <code>Insert()</code> method.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+
+  <div class="qc"><div class="qq">1. What's the ONLY structural difference between the Code-First and Database-First project's Program.cs?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Both projects use the exact same connection string.')">Code-First uses a different connection string</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Code-First calls DatabaseInitializer.EnsureCreated() before Application.Run() to create the table if it does not exist yet.')">Code-First calls DatabaseInitializer.EnsureCreated() before running the form</button>
+    <button class="qb" onclick="ans(this,'wrong','Both use the identical Form1.cs / Form1.Designer.cs UI code.')">Code-First has a completely different UI</button>
+    <button class="qb" onclick="ans(this,'wrong','StudentRepository.cs is byte-for-byte identical in both projects.')">Code-First\'s StudentRepository has extra methods</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What does the IF NOT EXISTS check in DatabaseInitializer.cs actually protect against?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','SQL injection protection comes from parameterized queries, unrelated to this check.')">SQL injection</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! It prevents a "There is already an object named Students" error from crashing the app on the second and every subsequent run.')">A crash from trying to CREATE a table that already exists</button>
+    <button class="qb" onclick="ans(this,'wrong','Connection pooling is unrelated to this DDL guard.')">Connection pool exhaustion</button>
+    <button class="qb" onclick="ans(this,'wrong','Deleted rows are unrelated to whether the table itself exists.')">Accidentally deleted rows</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. In the Database-First project, what happens if you run the WinForms app WITHOUT running Run_This_First.sql first?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'correct','Correct! There is no code in this project to create the table, so the very first query (GetAll on Form Load) fails because the table doesn\'t exist.')">It throws a SqlException: "Invalid object name \'Students\'"</button>
+    <button class="qb" onclick="ans(this,'wrong','Database-First has no self-healing/auto-create logic at all — that is the Code-First project\'s job.')">The app silently creates the table itself anyway</button>
+    <button class="qb" onclick="ans(this,'wrong','It doesn\'t hang — it fails fast with an exception on the first query.')">The app hangs indefinitely on startup</button>
+    <button class="qb" onclick="ans(this,'wrong','There is no fallback file source in this project.')">It loads data from a local backup file instead</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)" data-id="m-1"><input type="checkbox">I ran Run_This_First.sql and successfully launched the Database-First project</li>
+    <li onclick="ck(this)" data-id="m-2"><input type="checkbox">I launched the Code-First project and confirmed it created the table itself</li>
+    <li onclick="ck(this)" data-id="m-3"><input type="checkbox">I can explain every part of the connection string out loud</li>
+    <li onclick="ck(this)" data-id="m-4"><input type="checkbox">I can explain the difference between the two Program.cs files</li>
+    <li onclick="ck(this)" data-id="m-5"><input type="checkbox">I can explain why calling EnsureCreated() on every startup is risky at scale</li>
+    <li onclick="ck(this)" data-id="m-6"><input type="checkbox">I extended Insert() with a transaction wrapping a second table, from memory</li>
+  </ul>
+</section>
+
+<div class="completion">
+  <h2>🎉 Sample Projects Ready</h2>
+  <div class="badge">STRUCTURE + CODE + RUN + SCENARIOS ✓</div>
+  <p style="color:var(--muted);margin-top:1rem;font-size:.9rem;">Back to: <a class="rlink" href="../ADO_NET_Guide.html">ADO.NET Guide</a> · <a class="rlink" href="../EntityFramework_Guide.html">EF Guide</a> · <a class="rlink" href="../WinForms_Guide.html">WinForms Guide</a></p>
+</div>
+
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Sample Projects Guide — Salcomp Interview Prep, Wednesday</p>
+  <p>Accent: Emerald #059669 · Progress saves in this browser automatically</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+
+  const STORAGE_KEY='sampleprojects-guide-progress-v1';
+  const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const allBoxes = Array.from(document.querySelectorAll('.cl-list li[data-id]'));
+
+  function updateBadge(){
+    const doneCount = Object.values(state).filter(Boolean).length;
+    document.getElementById('progBadge').textContent = doneCount+'/'+allBoxes.length+' done';
+  }
+  function applyState(){
+    allBoxes.forEach(li=>{
+      const cb = li.querySelector('input');
+      const on = !!state[li.dataset.id];
+      cb.checked = on;
+      li.classList.toggle('done', on);
+    });
+    updateBadge();
+  }
+  function ck(li){
+    const cb = li.querySelector('input');
+    const id = li.dataset.id;
+    if(!id) return;
+    state[id] = !state[id];
+    cb.checked = state[id];
+    li.classList.toggle('done', state[id]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    updateBadge();
+  }
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':btn.textContent.replace('Hide','Reveal');}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+
+  applyState();
+</script>
+</body>
+</html>

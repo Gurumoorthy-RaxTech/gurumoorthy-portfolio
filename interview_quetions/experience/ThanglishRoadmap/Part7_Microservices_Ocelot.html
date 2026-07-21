@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 7: Microservices & Ocelot — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox table{width:100%;border-collapse:collapse;font-size:0.85em}
+.cheatbox th,.cheatbox td{padding:6px 10px;border-bottom:1px solid #2a2a5a;text-align:left;color:#e0e0e0}
+.cheatbox th{color:#fbbf24;font-size:0.78em;text-transform:uppercase}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+.resume-block{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:18px 20px;margin:14px 0}
+.resume-block .rtitle{color:#fff;font-weight:700;font-size:1em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.resume-block .rquote{background:#1a1a2e;border-left:3px solid #6b7280;padding:8px 12px;border-radius:0 6px 6px 0;font-size:0.85em;color:#9ca3af;font-style:italic;margin-bottom:10px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 7: Microservices &amp; Ocelot API Gateway</h1>
+  <p>15 Q&amp;A — Thanglish explanation + English answer script + follow-up questions</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html" class="active">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhu Part 7 — un ZenCampus project la irukka microservices architecture full ah deep dive pannurom. Ovvoru item la first Thanglish la concept ah puriinjuko, apparam "Interview la eppadi sollanum" box ah padichu, apparam close pannitu un own words la sollikkanum try pannunga. Follow-up questions um kandippa padinchu vayanga — interviewer usually first question kku "correct" answer vandha udane, adha oda deep-dive question thaan adutha throw pannuvanga.</p>
+</div>
+
+<div class="toc">
+  <h2>Sections</h2>
+  <div class="toc-grid">
+    <a href="#7A">7A. Microservices Fundamentals (1-7)</a>
+    <a href="#7B">7B. Ocelot API Gateway &amp; Cross-Cutting (8-15)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 7 Quick-Recall Cheat Sheet</h2>
+  <ul>
+    <li><b>1. Microservices</b> — periya app ah, StudentService/BillService/HostelService madhiri independent small services ah split pannuvathu.</li>
+    <li><b>2. Monolith vs Microservices</b> — monolith simple aana scale panna kashtam; microservices scale/deploy easy aana operational complexity athigam.</li>
+    <li><b>3. Database-per-service</b> — ovvoru service kum thani DB/schema, vera service direct ah adha touch pannaathu.</li>
+    <li><b>4. Inter-service comms</b> — namba la mostly sync HTTP/REST via gateway, async messaging future scope.</li>
+    <li><b>5. Independent deploy/scale</b> — admission season la StudentService mattum scale pannalam, vera services touch pannama.</li>
+    <li><b>6. Data consistency</b> — no distributed transactions across services; eventual consistency + compensating logic thaan approach.</li>
+    <li><b>7. Versioning</b> — URL/header version (v1/v2), old consumers break aagama backward compatible ah maathanum.</li>
+    <li><b>8. Ocelot</b> — ellame service front la nikkura single entry gateway, client direct ah service ku call pannaathu.</li>
+    <li><b>9. ocelot.json</b> — UpstreamPathTemplate (client kekkurathu) → DownstreamPathTemplate (actual service) mapping.</li>
+    <li><b>10. Load balancing</b> — same service oda multiple instance kitta Ocelot traffic round-robin ah split pannum.</li>
+    <li><b>11. Rate limiting</b> — client per period X requests mattum, over aana 429 thara block pannum.</li>
+    <li><b>12. Auth at gateway</b> — token validation gateway la centralized ah pannalam, role-based authorize per-service la.</li>
+    <li><b>13. Centralized logging</b> — correlation ID + shared middleware — 35% incident resolution time reduction.</li>
+    <li><b>14. Partial failure</b> — oru service down aana full system fail aagama handle pannanum; Polly/circuit breaker awareness.</li>
+    <li><b>15. Docker Compose</b> — ellame services + DB ஒரே YAML la define panni, one command la local/deploy consistent ah start.</li>
+  </ul>
+</div>
+
+<!-- 7A -->
+<div class="section" id="7A">
+  <div class="section-title"><span class="num">7A</span> Microservices Fundamentals</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. Microservices Architecture <span class="en">(What &amp; Why)</span></div>
+    <div class="tng">Namba ZenCampus project ah first single project ah build pannirundha na, ellame ஒரே codebase la StudentService, BillService, HostelService, TransportService ellame kalandhu irundhurukum. Adha maathi, ovvoru domain kum thani thani service ah split pannirukom — StudentService student data mattum paakkum, BillService billing mattum paakkum, HostelService hostel mattum. Idhu oru "restaurant kitchen" madhiri nenachukonga — oru periya chef ella dish um oruthanaale panradhu maathi, separate stations (tandoor, curry, dessert) vachu, ovvoru station thani ah work pannum, ஒரு station busy na vera stations affect aagaathu. Idhu vachu namba team ku bill fix panna, student module ah touch pannama redeploy panna mudiyum — that's the real win.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I designed ZenCampus as a microservices ecosystem instead of one large ASP.NET Core application — separate services for student, billing, hostel, transport, timetable, exam, payment, parent, and reporting, each with its own codebase, database access, and deployment pipeline. This gave us clean domain boundaries — a change in billing logic doesn't require touching or redeploying the student or hostel service. It also means each service can scale independently based on its own traffic pattern.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How many microservices did you build? — Around 11-12: student, bill, transport, timetable, payment, hostel, dvr, exam, parent, report, staff, plus the gateway itself.</div>
+      <div class="fq"><b>Q:</b> Who decided the service boundaries — was it purely by domain? — Yes, domain-driven — each service maps to one ERP module/business capability, not by technical layer.</div>
+      <div class="fq"><b>Q:</b> Did you start with microservices from day one or migrate? — Started with the architecture already planned as microservices since the ERP had clearly separable modules from the requirement stage itself.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. Monolith vs Microservices <span class="en">(honest tradeoffs)</span></div>
+    <div class="tng">Interview la microservices ah over-glorify panna koodathu — interviewer ku andha trap theriyum. Monolith na — ஒரே app, ஒரே deploy, debug panna easy (ஒரே log file, ஒரே process), aana chinna change ku kooda full app ah redeploy pannanum, oru module heavy traffic vandha whole app resource eat pannum. Microservices na — independent deploy/scale pannalam, aana network calls athigam aagum, oru request 4-5 services touch panna vaaipu irukku, so debug panna "distributed" ah aagidum — namma ஒரு log file paartha pothaadhu, correlation ID vachu trace pannanum. Chinna team ku monolith better, namba ERP madhiri periya multi-module system ku microservices worth panna complexity.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Microservices aren't automatically "better" — they trade simplicity for flexibility. A monolith is easier to debug since everything runs in one process with one log stream, and deployment is a single unit. Microservices give independent scaling and deployment, but you pay for it with network latency between services, distributed debugging, and the operational overhead of running and monitoring many services — which is why we invested in centralized logging and a gateway to manage that complexity.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> When would you NOT recommend microservices? — For a small team or a simple CRUD app with no independent scaling need — the operational overhead isn't worth it there.</div>
+      <div class="fq"><b>Q:</b> What's the hardest part of microservices in your experience? — Tracing a bug that spans multiple services — that's exactly why I built the correlation-ID-based centralized logging.</div>
+      <div class="fq"><b>Q:</b> Did you ever consider a modular monolith instead? — It's a valid middle ground, but given the ERP had clear independently-scalable modules like billing and attendance, full microservices fit better for us.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. Database-per-Service Pattern <span class="en">(data ownership)</span></div>
+    <div class="tng">Microservices oda oru golden rule — ovvoru service kum thani DB/schema irukkanum, vera service andha DB ah direct ah touch pannakoodathu. Namba StudentService kitta student data irukku, BillService kitta bill data — BillService ku student name venum na, direct ah StudentService oda DB ku query pannama, StudentService oda API ah call pannanum. Idhu oru "office department" madhiri — HR department oda employee file cabinet ah, Finance department direct ah open panna koodathu, HR kitta request pannanum. Idhu vachu ஒரு service oda schema change pannalum, vera service break aagathu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Each service in our architecture owns its own data — StudentService's tables aren't queried directly by BillService or HostelService. If a service needs data owned by another service, it calls that service's API rather than reaching into its database. This keeps services loosely coupled — I can change StudentService's schema without breaking BillService, as long as the API contract stays the same.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Do all your services use the same database engine? — Mostly SQL Server per service for relational ERP data, with MongoDB used where the data was more flexible/high-volume, like logs or analytics.</div>
+      <div class="fq"><b>Q:</b> What if two services need the same reference data, like a list of classes? — Either duplicate the minimal read-only copy per service, or have one service own it and others call its API — we lean toward the owning-service API approach.</div>
+      <div class="fq"><b>Q:</b> Isn't calling another service's API for every lookup slow? — It can add latency, so for frequently needed reference data we cache it locally in the calling service rather than calling on every request.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. Inter-Service Communication <span class="en">(sync vs async)</span></div>
+    <div class="tng">Services ஒன்றுக்கொன்று pesanum na rendu vazhi irukku — synchronous (HTTP/REST — call panni immediate ah response wait pannurathu) illa asynchronous (message queue mூlama — call pannitu, andha service busy irundhalum namba block aagama continue pannurathu). Namba ZenCampus la — mostly synchronous HTTP calls thaan, adhuvum Ocelot gateway வழி route aagும். Example — PaymentServices oru fee payment process pannumbodhu, StudentService ah call panni "இந்த student valid ah?" nu check pannும். Message queue (RabbitMQ/Kafka) namba currently use pannala, aana notification/SMS madhiri "fire and forget" operations ku async approach best fit nu artham pannirukom.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>In my project, services communicate primarily over synchronous HTTP/REST, routed through the Ocelot gateway — for example, PaymentServices calling StudentService to validate a student before processing a fee payment. We didn't have an async message broker like RabbitMQ or Kafka in this project, but I'm aware that for scenarios needing decoupling — notifications, SMS delivery, report generation — an async, event-driven approach would reduce tight coupling and improve resilience if one service is temporarily down.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's the downside of sync-only communication? — If the called service is slow or down, the caller blocks or fails too — it creates a chain of dependency, which is why circuit breakers matter.</div>
+      <div class="fq"><b>Q:</b> Would you introduce a message queue if you redesigned this today? — Yes, for events like "payment completed" or "student admitted" that multiple services care about, a pub/sub queue would decouple them better than direct HTTP calls.</div>
+      <div class="fq"><b>Q:</b> How do services find each other's addresses? — Through configuration in ocelot.json on the gateway side — downstream services are registered there rather than each service hardcoding others' URLs.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. Independent Deployment &amp; Horizontal Scaling <span class="en">(admission-season example)</span></div>
+    <div class="tng">Idhu microservices oda periya selling point. Namba school ERP la, admission season (June-July madhiri) varumbodhu, StudentService kitta huge traffic varum — parents online form fill pannuvanga, documents upload pannuvanga. Andha time la StudentService mattum extra containers ah spin up pannalam (horizontal scaling), TransportService illa ExamService ah touch pannama. Monolith irundha, full application ah scale pannanum — server resources waste aagum, edhukku na exam module ku andha traffic illa. Idhu oru "bus route" madhiri — rush hour la ஒரே route ku extra buses add pannலாம், vேறு routes ku touch pannama.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Because each service is independently deployable and containerized, during admission season when StudentService gets a traffic spike, I can scale just that service horizontally — run more container instances behind Ocelot's load balancer — without touching or redeploying TransportService, ExamService, or anything else. That's a direct cost and reliability advantage over a monolith, where you'd have to scale the entire application even though only one module is under load.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you scale a service in practice — manually or automated? — In our setup it was manual scaling by running additional container instances during known high-traffic periods; auto-scaling with an orchestrator like Kubernetes would be the next step.</div>
+      <div class="fq"><b>Q:</b> Does Ocelot automatically detect new instances? — Ocelot routes to instances configured in its downstream host/port list, or via a service discovery integration — we managed it through configuration for known instances.</div>
+      <div class="fq"><b>Q:</b> What metric told you StudentService needed scaling? — Response time degradation and request volume from our centralized logging/monitoring during peak admission windows.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q6">
+    <div class="term">6. Data Consistency Across Services <span class="en">(eventual consistency)</span></div>
+    <div class="tng">Idhu oru tricky topic — monolith la ஒரே DB transaction kulla ellame commit/rollback pannalam. Microservices la ஒவ்வொரு service kும் thani DB irukka na, oru operation multiple services ah touch panna, "distributed transaction" nu oru periya headache varum. Example — student admission pannumbodhu StudentService la record create aagணும், appuram BillService la fee record create aagணும் — rendும் ஒரே "all or nothing" transaction ah panna mudியாது cross-service ah. So namba "eventual consistency" nu approach follow pannுrom — StudentService first create pannும், appuram BillService ah call pannும், adhu fail aana, retry logic illa compensating action (rollback student record illa flag panni "pending billing" nu vachu, manual/automated retry) vachu handle pannுrom.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I don't rely on distributed transactions across services — there's no two-phase commit spanning StudentService and BillService's separate databases. Instead I accept eventual consistency: an operation like student admission first commits in StudentService, then calls BillService to create the fee record; if that downstream call fails, I handle it with retries and status flags rather than trying to roll back atomically across two databases. It's honestly one of the harder parts of this architecture, and I'm aware that a proper saga pattern or outbox pattern would make this more robust than what we currently have.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's a saga pattern? — A way to manage a multi-step business transaction across services using a sequence of local transactions plus compensating actions if a later step fails — I know the concept but haven't fully implemented it here.</div>
+      <div class="fq"><b>Q:</b> How do you currently detect a failed downstream step? — The calling service checks the response and logs failure with correlation ID; currently it's closer to manual reconciliation than a fully automated saga.</div>
+      <div class="fq"><b>Q:</b> Isn't eventual consistency risky for billing data? — Yes, that's exactly why I'd prioritize a proper outbox/retry mechanism for money-related flows if I were to harden this further.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q7">
+    <div class="term">7. Versioning Microservices <span class="en">(without breaking consumers)</span></div>
+    <div class="tng">Namba ஒரு service ah update pannுrom na, adha use pannுra vera services illa frontend break aagakoodathu. Example — StudentService oda API response la oru field remove pannினோm, aana BillService andha field expect pannுthu na — production la crash aagும். So namba URL level versioning follow pannுrom — <code>/api/v1/students</code>, <code>/api/v2/students</code> — old consumers v1 use panniட்டே irukanga, pudhu consumers v2 ku migrate aagலаம். Idhu oru "phone app update" madhiri — Play Store la force update pannாma, old version um konjam nாள் work aagும் madhiri vaikanum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I version APIs at the route level — for example /api/v1/students versus /api/v2/students — through Ocelot's routing, so a breaking change doesn't force every consumer to update simultaneously. Old consumers keep hitting v1 while new features roll out under v2, and I deprecate v1 only after confirming nothing depends on it anymore. For non-breaking changes like adding an optional field, I don't bump the version at all — I keep it additive.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you decide if a change is breaking or not? — Removing or renaming a field, or changing a data type, is breaking; adding a new optional field is not.</div>
+      <div class="fq"><b>Q:</b> Do you version at the gateway or at each service? — Both stay in sync — Ocelot routes reflect the version, and the downstream service itself exposes matching versioned endpoints.</div>
+      <div class="fq"><b>Q:</b> How long do you keep an old version alive? — Until we confirm through logging that no client is calling it anymore, then we deprecate it with advance notice.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 7B -->
+<div class="section" id="7B">
+  <div class="section-title"><span class="num">7B</span> Ocelot API Gateway &amp; Cross-Cutting Concerns</div>
+
+  <div class="item" id="q8">
+    <div class="term">8. What is Ocelot <span class="en">(why it fronts everything)</span></div>
+    <div class="tng">Namba kitta 11+ microservices irundha, frontend/mobile app ovvoru service ku separate URL vachu call panna koodathu — confuse aagும், security exposure um athigam. Ocelot oru API Gateway — namba ellame SSMSGateWay nu ஒரே entry point வெச்சிருக்கோம், client Ocelot ku mattum call pannும், Ocelot andha request ah correct downstream service ku route pannும். Idhu oru "hotel reception" madhiri — guest direct ah kitchen/housekeeping ku pesamattanga, reception (front desk) ku pesuvanga, reception thaan andha request ah correct department ku pass pannும். Ocelot la routing, load balancing, rate limiting, authentication — ellame ஒரே இடத்தில் centralize aagும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Ocelot is our API gateway sitting in front of all 11-plus microservices — StudentService, BillService, HostelService, and the rest. The frontend never calls any downstream service directly; it only ever talks to the gateway's URL, and Ocelot routes each request to the right service based on configured routes. This gives us one place to handle cross-cutting concerns — authentication, rate limiting, load balancing, logging — instead of duplicating that logic in every service.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why Ocelot specifically and not something like YARP or Kong? — Ocelot is a lightweight, .NET-native gateway that integrates cleanly with ASP.NET Core and our JWT setup — it fit our stack without adding a separate infra dependency like Kong would.</div>
+      <div class="fq"><b>Q:</b> Is Ocelot itself a single point of failure? — It can be, so we'd run multiple gateway instances behind a load balancer in a fully hardened production setup — that's an area I'm aware needs attention.</div>
+      <div class="fq"><b>Q:</b> Does Ocelot do any business logic? — No, it stays thin — routing, auth checks, rate limiting — actual business logic always lives in the downstream services.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q9">
+    <div class="term">9. ocelot.json Route Configuration <span class="en">(Upstream/Downstream)</span></div>
+    <div class="tng"><code>ocelot.json</code> file la, ovvoru route ku rendு main part irukku — <code>UpstreamPathTemplate</code> (client namba gateway ku enna URL kூப்பிடுவாரோ) and <code>DownstreamPathTemplate</code> (andha request actual ah endha service/port ku pogaணும்). Example — client <code>/students/5</code> nu gateway ku kூப்பிட்டா, Ocelot config paathu adha StudentService oda internal port ku forward pannும். Idhu oru "call center IVR" madhiri — neenga "1 for billing" press pannினீங்க na, andha call automatic ah billing department ku route aagும், neenga direct ah billing number theriinjukanum nu venaam.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Every route in ocelot.json maps an UpstreamPathTemplate — the URL the client calls on the gateway — to a DownstreamPathTemplate plus a downstream host and port for the actual microservice. So a client hitting /students/5 on the gateway gets transparently routed to StudentService running on its own port, without the client ever needing to know that internal address.</div>
+    <pre><code>{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/students/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamPathTemplate": "/api/students/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "studentservice", "Port": 5001 }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    }
+  ]
+}</code></pre>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What does {everything} mean in the template? — It's a catch-all placeholder that forwards any remaining path segments and route values from upstream to downstream unchanged.</div>
+      <div class="fq"><b>Q:</b> How do you manage separate ocelot.json per environment? — We use environment-specific config files, like ocelot.Production.json, merged at startup similar to appsettings pattern.</div>
+      <div class="fq"><b>Q:</b> What happens if a route isn't defined in ocelot.json? — The gateway returns a 404 — Ocelot only forwards requests that match a configured route, which is also a safety boundary against unintended access.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q10">
+    <div class="term">10. Load Balancing via Ocelot <span class="en">(multiple instances)</span></div>
+    <div class="tng">Oru service kitta traffic athigam irundha, adha ஒரே instance handle panna kashtam. So namba andha service ah 2-3 instances ah run pannுrom (Docker containers), Ocelot config la ellame instances ah list pannுrom, Ocelot round-robin (illa least connection) algorithm vachu traffic ah split pannும். Idhu oru "toll booth" madhiri — ஒரே lane la ellame vandi wait panna vaikama, multiple lanes open panni, traffic evenly distribute pannுவது.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>When a service has multiple running instances, I list all of them under DownstreamHostAndPorts in ocelot.json and set a LoadBalancerOptions type — Ocelot supports round-robin and least-connection strategies out of the box. This spreads incoming traffic across instances instead of overloading a single one, which matters a lot for a heavily-hit service like StudentService during peak load.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Which load balancing strategy did you use? — Round-robin for most services — simple and predictable given our instance counts were small.</div>
+      <div class="fq"><b>Q:</b> What if one of the instances goes down? — Ocelot's built-in load balancer doesn't do active health checks by default in the community edition, so a downed instance can still get traffic and fail — that's a known gap I'd address with a proper health-check-aware balancer or orchestrator.</div>
+      <div class="fq"><b>Q:</b> Does load balancing work with Docker Compose scaling? — Yes conceptually — you'd scale replicas via Compose/Kubernetes and update Ocelot's host list, though a service discovery mechanism handles this more dynamically than static config.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q11">
+    <div class="term">11. Rate Limiting in Ocelot <span class="en">(protecting services)</span></div>
+    <div class="tng">Namba API ah oru client (bug irundha script illa attacker) over-use pannா, andha service down aagிடும், adhுla நம்ப ella users ku ம் affect aagும். Rate limiting na — "ஒரு client ku per minute/second இவ்வளவு requests mattum" nு limit vaikுவது. Ocelot la <code>RateLimitOptions</code> config pannி, <code>Limit</code>, <code>Period</code>, <code>PeriodTimespan</code> set pannலாம் — over aana Ocelot 429 (Too Many Requests) thaninu client ku reply pannும், downstream service ku andha request pogादhu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I configured RateLimitOptions per route in ocelot.json — setting a request limit within a time period, like 100 requests per minute per client. If a client exceeds that, Ocelot returns a 429 Too Many Requests response directly, without the request ever reaching the downstream service. This protects services from being overwhelmed by a misbehaving client, a retry storm, or an abusive script.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you identify a "client" for rate limiting — IP or token? — Ocelot can key by client ID header or by the caller's IP; for authenticated endpoints, tying it to the client identity is more accurate than IP alone.</div>
+      <div class="fq"><b>Q:</b> What limit did you set and why? — It's tuned per endpoint — a heavier reporting endpoint gets a stricter limit than a lightweight lookup endpoint, based on expected legitimate usage.</div>
+      <div class="fq"><b>Q:</b> Does rate limiting replace the need for authentication? — No, they solve different problems — auth controls who can access, rate limiting controls how much even a legitimate authenticated caller can hit in a window.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. Authentication/Authorization at Gateway vs Per-Service <span class="en">(where to check)</span></div>
+    <div class="tng">Namba JWT token validation ah Ocelot gateway level la centralize pannுрom — ellame route ku <code>AuthenticationOptions</code> la <code>AuthenticationProviderKey</code> vachு, token valid ah nu first gateway thaான் check pannும். Token invalid na, downstream service ah kூடa touch pannாma gateway அங்கேயே 401 kudukкும். Aana role-based authorization (example — "இந்த endpoint Admin mattum access pannலாம்") — adha namba downstream service level la <code>[Authorize(Roles="Admin")]</code> vachு check pannுрom, edhуkки na andha business-specific rule ovvoru service ku வேறு வேறு ah irukும். So — authentication centralized (gateway), fine-grained authorization decentralized (per-service).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Token validation — checking the JWT signature, issuer, and expiry — happens centrally at the Ocelot gateway using its AuthenticationOptions, so an invalid or missing token never even reaches a downstream service. Fine-grained, role-based authorization — deciding whether this specific user's role can hit this specific endpoint — I handle at the individual service level with [Authorize(Roles = "...")], since those rules differ per service and per endpoint. That split keeps the gateway generic while services own their own business-specific access rules.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> If the gateway already validates the token, why re-check anything downstream? — The gateway just confirms the token is valid; the downstream service still needs to decide what that specific valid user is allowed to do there.</div>
+      <div class="fq"><b>Q:</b> Can a downstream service be called bypassing the gateway? — In a properly locked-down deployment, downstream services would only accept traffic from the gateway's internal network, not be publicly exposed — that's the ideal, and something worth double-checking in any production setup.</div>
+      <div class="fq"><b>Q:</b> How do claims like role flow from gateway to service? — The JWT itself carries the claims; Ocelot forwards the token as-is to the downstream service, which reads the claims from the same token.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. Centralized/Correlated Logging Across Microservices <span class="en">(the 35% story)</span></div>
+    <div class="tng">Idhu namba resume la irukka biggest number — "35% incident resolution time reduction". Story sollுрோm: Munnadi, ovvoru service kூடa thani thani ah exception handle pannிக்கிட்டு, thani log format la log pannிக்கிட்டு irundhுchu. Production la oru bug வந்தா, "இந்த request எங்கே fail aachu" nு StudentService log paakணும், appuram BillService log paakணும், appuram PaymentServices log paakணும் — ரொம்ப time waste aagும். Fix pannினோம் — ovvoru service kூடaम் shared middleware vachு, ஒரே structured log format la log pannுрோம், appuram Ocelot gateway la request varும்bodhு ஒரு unique <b>Correlation ID</b> generate panни, adha header la vечு ella downstream calls kூடaம் pass pannுрோம். So oru request StudentService → BillService → PaymentServices nu 3 services touch pannினா, ella logs kூடaம் same correlation ID irukும் — adha search pannினா, full journey ஒரே place la kidaikும். Idhu thaான் 35% reduction ku main reason.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Before this, every service had its own scattered try-catch blocks with inconsistent log formats, so tracing one failing request across three or four services meant manually stitching together logs from each service separately — that ate a lot of debugging time. I built a shared exception-handling and logging middleware used across every microservice, and paired it with a correlation ID generated at the gateway and passed through every downstream call. So when a production issue comes in, I search by that one correlation ID and get the entire request's journey across services in a structured format — that's what cut our incident resolution time by 35%.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Where does the correlation ID get generated and how is it propagated? — Ocelot generates or forwards it at the gateway as a custom header, and each service's middleware reads it, includes it in every log line, and forwards it on any further downstream calls it makes.</div>
+      <div class="fq"><b>Q:</b> What logging library/format did you use? — Structured logging with a consistent JSON-ish format so logs are searchable and filterable by fields like correlation ID, service name, and severity, rather than parsing free-text.</div>
+      <div class="fq"><b>Q:</b> How did you actually measure the 35% number? — By comparing average time from incident report to root-cause identification before and after rolling out the centralized middleware, tracked against our incident log history.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q14">
+    <div class="term">14. Handling Partial Failures <span class="en">(one service down)</span></div>
+    <div class="tng">Microservices la oru periya risk — oru service down aana, adha depend aagுра vேறு services கூட fail aaka koodathு, illena முழு system கூட viழுந்துடும். Example — PaymentServices, StudentService ah call panнி student valid ah nு check pannுрара, StudentService down aana, PaymentServices andha call kூடa fail aagும் — namba proper timeout illama irundha, PaymentServices ம் kூடa hang aagி whole system slow aagும். Honest ah sollанும்na — namba currently full circuit-breaker pattern (Polly library) implement pannிடல, aana timeout config pannி, downstream call fail aana graceful error return pannуரோம். Idhு oru "traffic signal" madhiri — signal work pannாதுna, andha junction la ellame stop aagாma, police manual ah handle pannுрார் — full system deadlock aagாma oru fallback irukаணும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Honestly, we handled this at a basic level — HTTP client timeouts so a downstream service being slow or down doesn't hang the calling service indefinitely, and graceful error responses instead of unhandled exceptions bubbling up. We haven't implemented a full circuit-breaker pattern with something like Polly in this project, but I'm aware that's the right next step — wrapping downstream calls with retry-with-backoff and a circuit breaker so a struggling service gets given time to recover instead of being hammered with retries, and the caller fails fast instead of hanging.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What is a circuit breaker, in your own words? — It's a pattern that stops calling a failing downstream service after a threshold of failures, "opens the circuit" to fail fast for a cooldown period, then tests with a few calls before fully closing again.</div>
+      <div class="fq"><b>Q:</b> How would you add Polly to your existing HttpClient calls? — Register Polly policies — retry, circuit breaker, timeout — on the HttpClientFactory registration for each service's outgoing client, so it wraps every call automatically.</div>
+      <div class="fq"><b>Q:</b> What's your fallback when a downstream service is unavailable right now? — The caller returns a clear error to the client rather than hanging, and we rely on alerting from the centralized logs to catch it quickly for manual intervention.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q15">
+    <div class="term">15. Containerizing with Docker Compose <span class="en">(local dev + deployment)</span></div>
+    <div class="tng">Namba kitta 11+ microservices + SQL Server + MongoDB — ellame ஒவ்வொன்றா <code>docker run</code> command type panni start pannுрது practical illai. Docker Compose oru YAML file (<code>docker-compose.yml</code>) la ovvoru service (StudentService, BillService, SSMSGateWay, database containers) define pannிட்டு, <code>docker-compose up</code> ஒரே command la ellame ஒரே network la start pannலாம். Idhு vachு new developer join aana, "clone pannு, docker-compose up type pannு" — full environment ready aagும், ovvoru dependency version manually install panna venам். Same file staging/production kூடaம் use pannலாம் (environment variables mattum maathி), so "works on my machine aana server la work aagல" problem completely தீரும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Every microservice has its own Dockerfile, and I use Docker Compose to define all of them — plus SQL Server and MongoDB — as services in a single YAML file with a shared network. That means the entire stack, all 11-plus microservices and databases, comes up with one docker-compose up command, both on my local machine and in staging. It eliminated environment inconsistency issues, since every environment runs the exact same images with the exact same dependency versions, and it made onboarding a new developer to the project dramatically faster.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do services in Compose talk to each other by name? — Docker Compose creates a shared network where each service is reachable by its service name as the hostname, which is what we reference in ocelot.json's downstream host settings.</div>
+      <div class="fq"><b>Q:</b> How do you manage environment-specific settings like connection strings in Compose? — Through environment variables and .env files referenced in the compose file, so the same compose definition works across environments by swapping variable values.</div>
+      <div class="fq"><b>Q:</b> Would you move from Docker Compose to Kubernetes eventually? — Yes — Compose is great for local dev and small deployments, but for auto-scaling, self-healing, and rolling updates in production, Kubernetes would be the natural next step.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>Prepared for Gurumoorthy M — .NET Developer Interview Prep<br><a href="00_Index.html">← Back to Roadmap Home</a></footer>
+</body>
+</html>

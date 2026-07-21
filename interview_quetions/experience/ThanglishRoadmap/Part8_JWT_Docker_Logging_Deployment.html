@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 8: JWT, Docker, Logging & Deployment — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox table{width:100%;border-collapse:collapse;font-size:0.85em}
+.cheatbox th,.cheatbox td{padding:6px 10px;border-bottom:1px solid #2a2a5a;text-align:left;color:#e0e0e0}
+.cheatbox th{color:#fbbf24;font-size:0.78em;text-transform:uppercase}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+.resume-block{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:18px 20px;margin:14px 0}
+.resume-block .rtitle{color:#fff;font-weight:700;font-size:1em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.resume-block .rquote{background:#1a1a2e;border-left:3px solid #6b7280;padding:8px 12px;border-radius:0 6px 6px 0;font-size:0.85em;color:#9ca3af;font-style:italic;margin-bottom:10px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 8: JWT, Docker, Logging &amp; Deployment</h1>
+  <p>20 Q&amp;A — Thanglish explanation + English answer script + follow-up questions</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html" class="active">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhu namba security + deployment side — JWT, Docker, logging, Azure ellame ஒரே pakkam la. Konjam area la (refresh token, Kubernetes, Azure) neenga innum fully hands-on illa — adha honest ah, "idhu ku exposure irukku, deep dive pannala" nu confident ah sollradhu than correct approach. Interviewer ku "idhu theriyaathu" nu maranthupoga koodathu, "idhu vaaipu na ipdi approach pannuven" nu sollradhu than senior level answer.</p>
+</div>
+
+<div class="toc">
+  <h2>Sections</h2>
+  <div class="toc-grid">
+    <a href="#8A">8A. JWT &amp; Security (1-7)</a>
+    <a href="#8B">8B. Docker &amp; Containerization (8-14)</a>
+    <a href="#8C">8C. Logging, Monitoring &amp; Deployment (15-20)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 8 Quick-Recall Cheat Sheet</h2>
+  <ul>
+    <li><b>1. JWT structure</b> — header.payload.signature, signature verify pannradhu than trust base</li>
+    <li><b>2. RBAC</b> — role claim in token + <code>[Authorize(Roles="Admin")]</code></li>
+    <li><b>3. Access vs Refresh token</b> — short-lived access token use panren, refresh token production la add pannala, design theriyum</li>
+    <li><b>4. OTP MFA</b> — generate → SMS gateway → validate → expire, bank locker la zero unauthorized access</li>
+    <li><b>5. SQL Injection</b> — parameterized queries (EF Core/Dapper), never string concat</li>
+    <li><b>6. HTTPS/TLS</b> — data in transit encrypt, man-in-the-middle block</li>
+    <li><b>7. XSS/CSRF</b> — input validation + output encoding + anti-forgery token, API la JWT itself CSRF risk kammi pannum</li>
+    <li><b>8. Why Docker</b> — "works on my machine" problem fix, same container everywhere</li>
+    <li><b>9. Image vs Container</b> — image = blueprint, container = running instance</li>
+    <li><b>10. Dockerfile</b> — base image → build stage → multi-stage → small runtime image</li>
+    <li><b>11. Docker Compose</b> — multiple services + DB, one YAML, one <code>docker-compose up</code></li>
+    <li><b>12. Container networking</b> — service name than hostname (example: <code>http://studentservice</code>)</li>
+    <li><b>13. Secrets in Docker</b> — env vars/Key Vault, never bake password into image</li>
+    <li><b>14. Kubernetes</b> — "Docker at scale", production hands-on illa, concept theriyum</li>
+    <li><b>15. Centralized logging</b> — 35% incident resolution time reduction, Serilog + middleware</li>
+    <li><b>16. Correlation ID</b> — one ID, full request journey across services trace pannalam</li>
+    <li><b>17. CI/CD</b> — Git branch → PR → build/test → deploy, TFS/GitHub/GitLab exposure</li>
+    <li><b>18. Deployment strategy</b> — blue-green/rolling — zero downtime concept aware</li>
+    <li><b>19. Azure basics</b> — AZ-900 in progress, App Service + Key Vault concepts</li>
+    <li><b>20. Debug slow prod issue</b> — logs → correlation ID → execution plan → fix, end to end</li>
+  </ul>
+</div>
+
+<!-- 8A -->
+<div class="section" id="8A">
+  <div class="section-title"><span class="num">8A</span> JWT &amp; Security</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. JWT Structure &amp; Validation <span class="en">(header.payload.signature)</span></div>
+    <div class="tng">JWT nu sonna oru courier parcel madhiri nenachukо — outside oru label irukku (header — enna algorithm use pannirukom nu sollum), ulla contents irukku (payload — userId, role, expiry ellame plain ah readable ah irukkum, but edit panna mudiyathu), and oru tamper-proof seal irukku (signature). Server andha seal ah, thanoda secret key vachu recalculate pannunu, original signature-oda compare pannum. Match aana "sari idhu namma than kudutha token, evanum edit pannala" nu confirm aagum, match aagala na 401 kudukum. Payload encode pannirukom (base64) — encrypt pannala, so andha part la password madhiri sensitive data vaikka koodathu, adha thaan naan role/userId/expiry mattum vachiruken.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A JWT has three parts — header, payload, and signature, separated by dots. The header names the signing algorithm, the payload carries claims like user id, role, and expiry, and the signature is generated by hashing the header and payload with a secret key. On every request my middleware recomputes that signature server-side and compares it — if it doesn't match, or the token has expired, the request is rejected before it ever reaches my controller.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Is the payload encrypted? — No, it's just base64-encoded, so anyone can read it — I never put passwords or secrets in there, only non-sensitive claims.</div>
+      <div class="fq"><b>Q:</b> What happens if the token is tampered with? — Even changing one character breaks the signature match, so the middleware rejects it with 401 before hitting business logic.</div>
+      <div class="fq"><b>Q:</b> Where do you store the secret key used to sign tokens? — In configuration/secrets store, never hardcoded in source — same key the API uses to validate incoming tokens.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. RBAC — Role Based Access Control <span class="en">([Authorize(Roles=...)])</span></div>
+    <div class="tng">Login aana odane, JWT payload kulla oru "role" claim (Admin, Teacher, Parent) embed pannuren. Apparam ovvoru endpoint mela <code>[Authorize(Roles="Admin")]</code> nu attribute podren — idhu oru security guard madhiri, "Admin ID card irundha mattum ulla vidu" nu check pannum. Valid token irundhalum, role match aagala na 403 Forbidden kudukkum — login aagirukan nu artham illa, andha specific door open pannalam nu artham. Namma Zen Campus la ellame API endpoints la idha exactly implement pannirukom.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I embed the user's role as a claim in the JWT at login, and then decorate each endpoint with [Authorize(Roles="...")]. ASP.NET Core's authorization middleware reads that claim on every request — so even with a perfectly valid token, a Parent role gets a 403 the moment they try hitting an Admin-only endpoint. I used this across every API endpoint in Zen Campus.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What if a user has multiple roles? — Claims support multiple role values for one user, and Authorize(Roles="A,B") checks for any match.</div>
+      <div class="fq"><b>Q:</b> Policy-based authorization vs role-based — which do you use? — Mostly role-based since it covered our needs; for finer rules like "only the owner can edit their own record" I'd add a custom policy or handler.</div>
+      <div class="fq"><b>Q:</b> Can roles change without re-login? — Not with the current token — the role is baked in at issue time, so a role change only takes effect on next login or token refresh.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. Access Token vs Refresh Token <span class="en">(honest gap + design awareness)</span></div>
+    <div class="tng">Access token na — namma request ku attach panra short-lived token, expiry konjam kammi ah vaipom (example 30-60 mins) so leak aana kooda risk window sila. Refresh token na — access token expire aana apparam, user again password kekkama, oru long-lived (aana securely stored) token vachu pudhu access token vaanga help pannum. Naan honest ah sollanum na — ippa vare namma projects la simple ah short-expiry access token mattum use pannirukom, full refresh-token rotation flow implement pannala. Aana idhu eppadi design pannanum nu clear ah theriyum — refresh token ah DB la (hashed ah) store pannanum, HttpOnly secure cookie la vaikkanum, and use pannina odane rotate pannanum (old one invalidate).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Currently I issue short-lived access tokens with a reasonable expiry, which forces re-authentication periodically — I haven't yet implemented a full refresh-token rotation flow in production. But I understand the pattern well: store a long-lived refresh token server-side, usually hashed, deliver it via an HttpOnly secure cookie, and rotate it on every use so a stolen refresh token can't be replayed indefinitely. That's the next hardening step I'd bring to a system like this.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why not just make access tokens live longer instead of adding refresh tokens? — Longer-lived tokens increase the blast radius if stolen; short access + refresh gives both security and a smooth UX.</div>
+      <div class="fq"><b>Q:</b> Where would you store the refresh token on the client? — HttpOnly, Secure, SameSite cookie — not localStorage, since JS-accessible storage is vulnerable to XSS token theft.</div>
+      <div class="fq"><b>Q:</b> How do you revoke a compromised refresh token? — Keep a server-side record (or token family) so you can invalidate it immediately, forcing re-login.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. OTP-based MFA Full Flow <span class="en">(bank locker project)</span></div>
+    <div class="tng">Bank locker project la, password mattum pothadhu nu decide pannitom — edhukna locker access na sensitive, so second factor venum. Flow ah step by step sollren: user credentials kudukkiran → system oru random numeric OTP generate pannum → adha DB la (hashed illa, but expiry timestamp vechu) store pannitu, SMS gateway API ku call pannuven, sub-3-second la user phone ku poidum. User andha OTP ah enter pannum bodhu, server-side la compare pannuven — correct ah irukka, expire aagala nu rendu check pannanum (naan 2 minutes expiry vechen). Sari na locker unlock command anuppuven, illa na attempt count track pannitu, over-try pannina temporarily lock pannuven. Ellame audit trail ah SQL Server la log pannirukom — evan eppo access try pannana nu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>In the bank locker system, after primary login I generate a time-limited, single-use OTP, deliver it through an SMS gateway API within about three seconds, and validate it server-side against both correctness and expiry before unlocking. I also track failed attempts to prevent brute-forcing and write every access attempt into an audit log table in SQL Server. This whole lifecycle — generate, deliver, validate, expire — is what got us zero unauthorized access incidents after deployment.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What if the SMS gateway is slow or fails? — I'd add a retry with backoff and a fallback delivery channel; also surface a clear error to the user instead of a silent hang.</div>
+      <div class="fq"><b>Q:</b> How do you prevent OTP brute-force? — Limit attempts per OTP (say 3-5), lock out or cool-down after that, and keep expiry short.</div>
+      <div class="fq"><b>Q:</b> Do you store the OTP in plain text? — I store it short-lived with an expiry and treat it like any sensitive value — minimal retention, cleared after validation or expiry.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. SQL Injection Prevention <span class="en">(parameterized queries)</span></div>
+    <div class="tng">SQL Injection na — user oru textbox la <code>' OR 1=1 --</code> madhiri type pannitu, namma query structure ah maathi, ellame data ah dump pannitu poiduvan. Idhu varradhu, namma user input ah direct ah SQL string kulla concatenate panninom na than. Naan EF Core and Dapper rendayum use pannுrathunala, ivanga default ah parameterized queries generate pannuranga — input ah "just a value" nu mattum treat pannuvanga, query oda logic ah maathamatanga. So <code>@Email</code> madhiri parameter vachu pass pannuren, never string.Format illa string concat panni query build pannala.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I never build SQL by concatenating user input into a string. Both EF Core and Dapper use parameterized queries by default — the input is bound as a parameter value, not spliced into the query text, so a malicious string like ' OR 1=1 -- is treated purely as data and can never change the query's structure. That eliminates injection risk without any extra effort on my part, as long as I stick to parameterized APIs consistently.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What about dynamic queries — like a search with optional filters? — I still build them with parameters, just conditionally adding WHERE clauses with placeholders, never inlining raw values.</div>
+      <div class="fq"><b>Q:</b> Are stored procedures automatically safe from injection? — Only if you pass values as parameters to the proc — if you build dynamic SQL inside the proc by concatenation, it's still vulnerable.</div>
+      <div class="fq"><b>Q:</b> Any other defense layer besides parameterization? — Least-privilege DB accounts and input validation as a second layer, but parameterization is the real fix.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q6">
+    <div class="term">6. HTTPS / TLS — Why Every Request Encrypted</div>
+    <div class="tng">HTTP la data plain text ah travel pannum — namma home wifi, office network, edho public wifi edhu use pannalum, in between irukka evanume oru "packet sniffer" vachu password, token, OTP ellame padikka mudiyum. HTTPS/TLS podra bodhu, client-server between oru encrypted tunnel create aagudhu — data travel pannumbodhu scramble ah irukkum, correct key irukkarava mattum decrypt panna mudiyum. Bank locker project la — OTP, locker unlock command, token ellame HTTPS mela than travel aagudhu, edhukna idhu compromise aana serious problem.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Every API in both projects runs strictly over HTTPS. TLS encrypts the data in transit, so even if someone intercepts the traffic on a shared network, they can't read the JWT, OTP, or any payload — they'd just see encrypted bytes. For a security-sensitive system like the bank locker, where OTPs and unlock commands are flowing over the network, that's non-negotiable.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's the difference between SSL and TLS? — SSL is the older, deprecated protocol; TLS is its modern successor — people still say "SSL certificate" loosely but it's TLS in practice.</div>
+      <div class="fq"><b>Q:</b> How do you enforce HTTPS in ASP.NET Core? — UseHttpsRedirection() middleware plus HSTS, so even an accidental HTTP request gets redirected to HTTPS.</div>
+      <div class="fq"><b>Q:</b> Does HTTPS alone make an API secure? — No — it protects data in transit only; you still need auth, input validation, and injection defenses on top.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q7">
+    <div class="term">7. Common Web Attacks — XSS &amp; CSRF <span class="en">(honest exposure level)</span></div>
+    <div class="tng">Naan deep pentest expert illa nu honest ah sollanum, aana basics clear ah theriyum. XSS na — attacker oru malicious script ah input field mூlama inject pannitu, adha vera user browser la run pannavaikaraan (example: comment box la <code>&lt;script&gt;</code> tag). Adha thadukka — user input ah render pannumbodhu output encode pannanum, React/Razor madhiri frameworks default ah idha handle pannum. CSRF na — user login aagi irundha bodhu, oru malicious site andha user cookie use panni, avaru arivilama oru request namma server ku anuppa try pannum. Namma APIs cookie-based session illa, JWT bearer token (Authorization header la explicit ah anுpanum) use panradhunala, CSRF risk naturally kammi — aana form-based/cookie flow irundha anti-forgery token venum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I'm not a security specialist, but I build with these in mind. For XSS, I rely on the framework's default output encoding and validate/sanitize any user-supplied input before it's rendered or stored. For CSRF, since our APIs use JWT bearer tokens in the Authorization header rather than cookies, the classic CSRF vector is largely mitigated — the attacker's page can't silently attach that header. If I did have a cookie-based or Razor form flow, I'd add the built-in anti-forgery token validation ASP.NET Core provides.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> If you did store JWT in a cookie, would CSRF be a concern again? — Yes — then I'd need SameSite cookie attributes plus anti-forgery tokens to close that gap.</div>
+      <div class="fq"><b>Q:</b> How do you prevent stored XSS from user-generated content? — Sanitize/encode on output, and if rich text is allowed, use a whitelist-based HTML sanitizer rather than trusting raw input.</div>
+      <div class="fq"><b>Q:</b> Any tooling you use to catch these issues? — I lean on framework defaults and code review; I haven't run a dedicated security scanner in these projects yet, that'd be a good addition.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 8B -->
+<div class="section" id="8B">
+  <div class="section-title"><span class="num">8B</span> Docker &amp; Containerization</div>
+
+  <div class="item" id="q8">
+    <div class="term">8. Why Docker <span class="en">("works on my machine" problem)</span></div>
+    <div class="tng">Namba ellorukkum theriyum andha pain — namma laptop la .NET version, DB driver, config ellame perfect ah work aagudhu, aana andha same code ah server ku deploy pannumbodhu, "works on my machine but not on yours" nu problem varum. Reason — server la vera .NET runtime version irukkalam, vera library missing irukkalam, vera OS config irukkalam. Docker idha permanent ah fix pannudhu — namma application code, adhoda exact dependencies (runtime, libraries, config) ellame ஒரு "container" nu package pannitu, andha container edhu machine la venalum — namma laptop, staging server, production server — same ah exact ah run aagum, edhukna ulla irukka environment thaan travel pannudhu, host machine oda difference matter pannadhu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Before Docker, we'd hit the classic problem of code behaving differently across dev, staging, and production because of environment drift — different runtime versions, missing dependencies. Docker packages the app together with its exact runtime and dependencies into an image, so the same container runs identically everywhere. That's exactly why I containerized every microservice in Zen Campus — it removed environment inconsistency as a source of production bugs entirely.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Isn't a VM the same idea? — Conceptually similar but VMs virtualize a whole OS, which is heavy; containers share the host OS kernel, so they're much lighter and start faster.</div>
+      <div class="fq"><b>Q:</b> Does Docker guarantee zero deployment issues? — No, it removes environment drift, but you still need to manage config, secrets, and infra correctly.</div>
+      <div class="fq"><b>Q:</b> What if the host OS is different (Windows vs Linux)? — Linux containers need a Linux kernel — on Windows dev machines that's handled via WSL2/Docker Desktop, and production usually runs Linux containers on Linux hosts.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q9">
+    <div class="term">9. Docker Image vs Container</div>
+    <div class="tng">Idha oru simple analogy vachu explain pannalam — Image na oru "recipe" madhiri, freeze pannirukka, edit panna mudiyathu. Container na andha recipe vachu actual ah cook panniruka "dish" — running, live instance. Same image (recipe) vachu, 5 containers (5 dishes) start pannalam — ovvondrukum tanaa memory, tanaa process, but ellame same code base. Namba StudentService traffic athigama irundha, same StudentService image vachu innoru container start pannitu, load balance pannalam.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>An image is the immutable, packaged blueprint — code, runtime, dependencies, all frozen at build time. A container is a running instance of that image, with its own process and writable layer on top. I can spin up multiple containers from the same image to scale a service horizontally, which is exactly what I'd do if StudentService needed extra capacity during admission season.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> If a container writes data, does it persist after it's removed? — No, by default the writable layer is lost when the container is deleted — for persistence you mount a volume.</div>
+      <div class="fq"><b>Q:</b> How do you tag and version images? — Using tags like myservice:1.2.0 or a git-commit-sha, so I can roll back to a known-good image if a deploy goes wrong.</div>
+      <div class="fq"><b>Q:</b> Where do images get stored/shared? — A container registry — Docker Hub or a private registry like Azure Container Registry.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q10">
+    <div class="term">10. Dockerfile — Base Image &amp; Multi-Stage Builds</div>
+    <div class="tng">Dockerfile na — "eppadi image ah build pannanum" nu step by step instructions vaikka file. .NET service ku typical ah rendu stage vaikkuvom — first stage la full SDK image (heavy, but build tools ellame irukkum) vachu, code restore pannitu, build panni publish pannuvom. Second stage la lightweight runtime-only image (SDK illama) vachu, first stage la irundhu compiled output ah mattum copy pannuvom. Idha "multi-stage build" nu sollுவோம் — final image la SDK, source code, intermediate build files ethுவும் illama, just runtime + published DLLs mattum irukkum, so image size chinnama, deploy pannradhu fast ah, attack surface um kammi ah irukkum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>My Dockerfiles use a multi-stage build — the first stage uses the full .NET SDK image to restore, build, and publish the app, and the second stage starts fresh from a lean ASP.NET runtime image and just copies over the published output. That keeps the final image small since it doesn't carry the SDK, source code, or intermediate build artifacts — smaller images pull faster and have a smaller attack surface.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why not just use the SDK image for everything? — It works, but it's much larger and includes build tooling you don't need at runtime — unnecessary size and surface area.</div>
+      <div class="fq"><b>Q:</b> What goes into a .dockerignore? — bin/obj folders, .git, local config — anything that would bloat the build context or leak local artifacts into the image.</div>
+      <div class="fq"><b>Q:</b> How do you keep image layers cache-friendly? — Copy csproj files and restore dependencies before copying the rest of the source, so Docker can cache the restore layer when only code changes.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q11">
+    <div class="term">11. Docker Compose — Orchestrating Multiple Microservices + DB</div>
+    <div class="tng">Zen Campus la StudentService, BillService, HostelService, TransportService, TimeTableService — pattern ah 10+ microservices + DB irukku. Ovvondraiyum tanaa <code>docker run</code> command type panni start pannradhu practical illa — port mismatch, dependency order ellame manual ah handle panna vendiyathu. Docker Compose oru single YAML file (<code>docker-compose.yml</code>) la, ovvoru service — adhoda image, ports, environment variables, depends_on ellame define pannitu, <code>docker-compose up</code> ஒரே command la full stack ah — ellame microservices + SQL Server container um sேरndhu — start pannalam. Local dev la kூda, oru pudhu team member laptop la clone pannitu, ஒரே command la full environment ready.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>With 10+ microservices plus a database, starting each one individually with docker run isn't practical. I defined the entire stack in a single docker-compose.yml — each service's image, ports, environment variables, and startup dependencies — so the whole system, including the SQL Server container, comes up with one docker-compose up command. That gave us consistent, repeatable environments locally and across staging.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you make sure the DB container is ready before the API starts? — depends_on controls start order, but for true readiness I'd add a healthcheck or retry logic in the app's DB connection startup.</div>
+      <div class="fq"><b>Q:</b> Is Docker Compose used in production? — I mainly used it for local/dev consistency; for real production orchestration you'd typically move to something like Kubernetes or Azure Container Apps.</div>
+      <div class="fq"><b>Q:</b> How do services in Compose find each other? — By service name as hostname — Compose sets up a default network where each service is DNS-resolvable by the name given in the YAML.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. Container Networking Basics <span class="en">(services talk by name)</span></div>
+    <div class="tng">Container networking konjam confuse aagalam first time — but simple ah sollanum na, Docker Compose default ah oru internal network create pannum, andha network la irukka ellaa containers-um oru chinna "office" la irukka team members madhiri, ovvorutharukum peru (service name) vechu call pannalam. So StudentService, BillService ah call pannanum na, IP address theriya theva illa — direct ah <code>http://billservice:8080</code> nu URL vachu call pannalam, Docker internal DNS andha name ah correct container ku resolve pannikum. Namma laptop (host) la irundhu andha container ah access pannanum na mattum, port map pannirukka external port use pannanum (example <code>localhost:5001</code>).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Within a Docker Compose network, containers can reach each other using the service name as the hostname — Docker's internal DNS resolves it automatically, so my StudentService just calls http://billservice:8080 instead of hardcoding an IP. From outside the Docker network, on the host machine, you go through the mapped port, like localhost:5001. This made inter-service configuration simple and portable across environments.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What if two services are on different Compose files/networks? — They can't resolve each other by name unless you explicitly join them to a shared external network.</div>
+      <div class="fq"><b>Q:</b> Is this networking approach production-grade? — For simple setups yes, but at real scale you'd use a proper orchestrator's service discovery, like Kubernetes Services.</div>
+      <div class="fq"><b>Q:</b> How does the Ocelot gateway fit into this network? — Ocelot is itself a container on the same network, configured with the downstream service names as its routing targets.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. Environment Variables &amp; Secrets in Docker</div>
+    <div class="tng">Beginner mistake enna na — connection string, API key, JWT secret ellame directly Dockerfile-la or appsettings.json-la hardcode pannitu, image build pannradhu. Idhu romba risky — image ah edhavadhu registry ku push pannina, andha secrets um exposed aagidum. Correct way — Docker Compose la <code>environment:</code> section vachu, illa <code>.env</code> file (git ignore pannirukanum) vachu, runtime la mattum inject pannanum, image build time la illa. Production la idha innum secure ah pannanum na, Azure Key Vault madhiri secret manager use pannalam — app start aagumbodhu Key Vault-la irundhu fetch pannikum, image la edhuvume store aagathu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I never bake secrets like connection strings or API keys into the Docker image itself. They're passed in as environment variables at container runtime — through Compose's environment section or an untracked .env file locally — so the same image can move across dev, staging, and production with different secrets injected per environment. For production, the ideal next step is pulling secrets from something like Azure Key Vault at startup instead of environment variables on disk.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's wrong with putting secrets in appsettings.json even if it's not in the image? — It's still risky if committed to source control — I use appsettings for non-sensitive config and environment variables/secret managers for anything sensitive.</div>
+      <div class="fq"><b>Q:</b> How do you handle different secrets for dev vs prod? — Different .env files or Compose overrides locally, and environment-specific configuration in the deployment pipeline for higher environments.</div>
+      <div class="fq"><b>Q:</b> Have you used Docker secrets or Kubernetes secrets? — Not hands-on yet — I've used environment-variable injection; secret-store integrations like Key Vault are the next level I'm building toward.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q14">
+    <div class="term">14. Kubernetes Awareness <span class="en">("Docker at scale")</span></div>
+    <div class="tng">Honest ah sollanum na — production la Kubernetes use pannala, aana concept clear ah puriyudhu. Docker Compose namba oru single machine la containers ah manage panna help pannும். Aana real production la — traffic athigama irundha automatic ah scale pannanum, container crash aana automatic ah restart pannanum, multiple servers (nodes) la containers ah spread pannanum nu venum na, adha manual ah manage pannradhu impossible. Kubernetes exactly idha automate pannும் — "namba Docker containers ah, army of machines la, automatic ah manage pannura orchestrator" nu சொல்லலாம். Namba kitta Docker Compose thevai purinjurukku, Kubernetes andha idea ah next level ku eduthுட்டு போகும், adhுனாலе interview la "concept theriyum, hands-on production experience illa" nu clear ah சொல்லுவேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I haven't run Kubernetes in production — my orchestration experience so far is Docker Compose for local and staging environments. But I understand the concept well: Kubernetes automates what you'd otherwise do manually at scale — auto-restarting failed containers, scaling replicas based on load, and distributing containers across multiple nodes with service discovery and load balancing built in. Given my Docker and microservices background, picking it up would be a natural next step, and I'm genuinely interested in learning it.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Do you know the difference between a Pod and a Deployment in Kubernetes? — At a conceptual level — a Pod is the smallest deployable unit wrapping one or more containers, and a Deployment manages replica sets of Pods, handling rollouts and scaling. I'd want hands-on time to go deeper.</div>
+      <div class="fq"><b>Q:</b> What's an alternative to Kubernetes for simpler scaling needs? — Managed container platforms like Azure Container Apps or App Service for Containers, which give some of the scaling benefits with less operational overhead.</div>
+      <div class="fq"><b>Q:</b> How would you start learning Kubernetes given your Docker background? — Since I already think in terms of images and containers, I'd start with minikube locally, translate an existing Compose file into Kubernetes manifests, and learn Deployments/Services/ConfigMaps from there.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 8C -->
+<div class="section" id="8C">
+  <div class="section-title"><span class="num">8C</span> Logging, Monitoring &amp; Deployment</div>
+
+  <div class="item" id="q15">
+    <div class="term">15. Centralized/Structured Logging <span class="en">(35% incident-resolution story)</span></div>
+    <div class="tng">Idhu than namba resume la irukka signature achievement — full detail ah sollanum. Before: ovvoru microservice, ovvoru controller la separate ah try-catch pota irundhom, log format kூda consistent illa — oru service Console.WriteLine pannum, vera oru service vera format la log pannum. Production la bug வந்தா, andha specific service-oda log file ah manual ah தேடி, vேறு service log-oda correlate pannradhu romba time eduthுchu. Fix: naan ellaa microservices kூடavum common ah oru global exception-handling middleware and structured logging library (Serilog madhiri) build panninen — ellaa services-um same JSON-based log format la log pannும், centralized ah oru place (log file/sink) la collect aagும். Idhுனாலே — production la issue வந்தா, log ah search pannினா, exact stack trace, timestamp, request details ellame ஒரே format la kidaikும், developer manual ah scatter aana logs ah correlate panna வேண்டியதில்லை. Idhு exactly than incident resolution time ah 35% கமிа pannுchi.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Before this, each microservice had scattered try-catch blocks with inconsistent log formats, so debugging a production issue meant manually hunting through different services' logs and mentally stitching them together. I built a shared exception-handling middleware and structured logging setup — using Serilog — used consistently across every microservice, so all exceptions get caught centrally, logged in a uniform structured format with timestamps, stack traces, and context, and written to a centralized sink. This consistency and centralization is what cut our production incident-resolution time by 35% — engineers could search one place instead of chasing logs service by service.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Where do the centralized logs get stored/viewed? — Structured log files/sinks aggregated to a common location — in a more mature setup this would flow into something like Seq, ELK, or Application Insights for querying.</div>
+      <div class="fq"><b>Q:</b> What does the exception middleware actually do? — It wraps the request pipeline, catches unhandled exceptions, logs them with full context, and returns a consistent error response instead of leaking a raw stack trace to the client.</div>
+      <div class="fq"><b>Q:</b> How did you measure the 35% improvement? — By comparing average time-to-resolve for production incidents before and after rollout, based on when an issue was reported versus when the root cause was identified from logs.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q16">
+    <div class="term">16. Correlation ID — Tracing a Request Across Services</div>
+    <div class="tng">Microservices la oru periya problem enna na — oru single user action (example: fee payment), Ocelot gateway வழியா StudentService, BillService, PaymentService — moonu service-a touch pannும். Edhavadhu ஒரு service la fail aana, andha specific request ah trace pannradhu kashtam, edhukna ovvoru service-um tanaa logs vekkும். Fix: gateway level la, ovvoru incoming request ku ஒரு unique "Correlation ID" generate pannுவேன் (illa client-tha kudukuma na accept pannுவேன்), andha ID ah header மூலம் downstream ellaa service calls-லும் pass pannுவேன். Ovvoru service andha same correlation ID vachu than log pannும். So production la issue வந்தா, andha ஒரே correlation ID ah search panninா, StudentService la enna aachu, BillService la enna aachu, PaymentService la enna aachu — full journey ஒரே place la kidaikும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>For a request that touches multiple microservices — say, a fee payment flowing through StudentService, BillService, and PaymentService — I generate a correlation ID at the gateway and propagate it through a header on every downstream call. Each service logs using that same ID, so when I'm debugging a production issue, I search once by correlation ID and see the request's entire journey across all services in order, instead of piecing together separate logs manually.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Where do you generate the correlation ID? — At the gateway/edge, or accept one if the client already sends it — then it's attached to the logging context for the whole request lifecycle.</div>
+      <div class="fq"><b>Q:</b> How is it propagated between services? — Via a custom HTTP header, forwarded on every outgoing call so downstream services pick it up and log with it too.</div>
+      <div class="fq"><b>Q:</b> Is this related to distributed tracing tools like OpenTelemetry? — Yes, conceptually — correlation ID is the manual version of what tools like OpenTelemetry/Application Insights automate with full distributed traces and spans.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q17">
+    <div class="term">17. CI/CD Basics <span class="en">(Git-based workflow)</span></div>
+    <div class="tng">Naan Git (GitHub/GitLab) and TFS rendayum use pannirukEn — team size and project depending on edhu use pannurom nu maaruthu. Basic workflow enna na — feature branch la velai pannuven, commit pannitu push pannுven, apparam PR/pull request create pannுven, team review pannitu approve pannuvanga, apparam main/develop branch ku merge aagum. Full automated CI/CD pipeline (automatic build-test-deploy) ah edge-to-edge naan configure pannala nu honest ah sollanum, aana workflow-oda idea clear ah theriyும் — code push aana automatic ah build trigger aagavendum, unit tests run aagavendum, sari na automatic ah staging ku deploy aagavendum, manual approval kondu production ku pogavendum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I work with Git-based workflows on both GitHub/GitLab and TFS, depending on the project — feature branches, pull requests, code review, then merge to develop/main. I haven't personally set up a full CI/CD pipeline from scratch, but I understand the flow well: a push triggers an automated build and test run, and on success it deploys to a staging environment automatically, with production usually gated behind a manual approval. I'm comfortable working within that pipeline and would be glad to get more hands-on with the pipeline configuration itself.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What branching strategy have you used? — Feature-branch workflow with PR-based review before merging to a shared develop/main branch, following Agile sprint cycles.</div>
+      <div class="fq"><b>Q:</b> Have you used GitHub Actions, Azure DevOps Pipelines, or similar? — I've seen and worked alongside pipelines in Azure DevOps/TFS, but writing pipeline YAML from scratch is an area I'd like more depth in.</div>
+      <div class="fq"><b>Q:</b> How would tests factor into a CI pipeline you design? — Run the unit test suite on every PR before merge is allowed — with our >90% code coverage, that gives good confidence before code reaches staging.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q18">
+    <div class="term">18. Deployment Strategies Awareness <span class="en">(blue-green / rolling)</span></div>
+    <div class="tng">Hands-on ah naan idha production la configure pannala nu honest ah sollanum, aana concept clear ah theriyum, edhukna zero-downtime deployment romba important topic. Blue-Green na — rendு identical environments vечிருப்போம் (Blue = current live, Green = new version). Green la deploy pannitu test pannுவோம், sari na traffic ah одரடி ah Blue-ல் இருந்து Green-ku switch pannுவோம் — downtime illama instant cutover. Rolling deployment na — ஒரே நேரத்தில் ellaa instances-a update pannாமல், ஒவ்வொன்றா ஒன்றா update pannுவோம் (example 10 instances la, 2-2 ah update panni traffic verify pannிட்டே pogும்) — edhavadhu problem aana, majority instances ஸ்டில் old stable version la irukும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I haven't personally executed blue-green or rolling deployments in production, but I understand both patterns well since they matter for zero-downtime releases. Blue-green keeps two identical environments and switches traffic to the new one instantly once it's verified, giving an easy rollback by switching back. Rolling deployment updates instances gradually, so if something's wrong, only a fraction of traffic is affected and you catch it before the whole fleet is on the bad version. Given our Docker Compose setup, moving to either strategy would be a natural next step with a proper orchestrator.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's the tradeoff of blue-green over rolling? — Blue-green needs double the infrastructure temporarily but gives instant, clean rollback; rolling is more resource-efficient but rollback is gradual.</div>
+      <div class="fq"><b>Q:</b> How does this relate to Azure Deployment Slots? — Same idea — deploy to a staging slot, verify, then swap into production for near-zero downtime, which is Azure's managed take on blue-green.</div>
+      <div class="fq"><b>Q:</b> What would you monitor right after a deployment to catch issues early? — Error rate and latency in the centralized logs/APM immediately post-deploy, so a bad release is caught within minutes, not hours.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q19">
+    <div class="term">19. Azure Basics <span class="en">(AZ-900 in progress — App Service, Key Vault)</span></div>
+    <div class="tng">Naan honest ah sollanum na — Microsoft Azure Fundamentals (AZ-900) certification ippa progress la irukku, innும் complete pannala. Aana idhu na naan Azure ah touch pannாmல் irukEன் nu artham illa — namma ERP/microservices deployment context vачு core services-oda idea clear ah build pannிட்டு irukEன். App Service na — .NET Web API host panna oru managed platform, server patching/OS update ellame Microsoft thaan paar்த்துக்கும், நாம் code deploy pannா mattum pothum. Key Vault na — connection string, API key madhiri secrets ah secure ah store pannum place, app ku Managed Identity kொடுத்து, credential edhுவும் code la vекamல் Key Vault-லிருந்து fetch pannலாம். Idhு namba Docker secrets handling logic-oda naturally extend aagும் topic, adhுனாலே கற்றுக்கொள்ள enthusiasm romba irukku.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I'll be upfront — I'm currently pursuing Microsoft Azure Fundamentals, AZ-900, and it's in progress, not completed yet. That said, I understand the core services relevant to our deployment story — App Service as a managed hosting platform for .NET APIs where I don't manage the underlying OS, and Key Vault for storing secrets like connection strings, accessed via Managed Identity instead of hardcoding them anywhere. It's a natural extension of how I already think about secrets in Docker, and I'm actively building toward hands-on depth here.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Have you deployed anything to Azure yet? — I've explored App Service and Key Vault conceptually as part of AZ-900 prep; hands-on production deployment to Azure is an area I'm still building.</div>
+      <div class="fq"><b>Q:</b> What's a Managed Identity and why use it? — It lets an Azure resource like App Service authenticate to other Azure services (like Key Vault) without storing any credential at all — Azure handles the identity for you.</div>
+      <div class="fq"><b>Q:</b> Any other Azure services relevant to your Docker/microservices background? — Azure Container Registry for storing images and Azure Container Apps/AKS for running them — those are next on my list to explore after AZ-900.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q20">
+    <div class="term">20. Debugging a Slow Production Issue — End to End</div>
+    <div class="tng">Idhu oru "put it all together" question — interviewer real scenario kudukuவார், "production la oru endpoint suddenly slow aagirukku, eppadi debug pannுвீங்க" nu. Step by step approach sollanum: முதலில் centralized logs/APM la போய், andha time range la எந்த requests slow ah irundhுchு nu identify pannுவேன் — correlation ID vачு andha specific request full journey (which service, edhu step la delay) trace pannுவேன். Adhு oru DB call la delay na, SQL Server execution plan paar்тது — index missing ah, table scan aагுதா, statistics stale ah nu check pannுவேன். Idhு vera microservice call-la delay na, andha downstream service oda own logs/health ah paar்тது root cause pannуவேன். Fix pannிட்ட apparam — same metric (response time, DB call duration) ah monitor panni confirm pannுவேன், idhு exactly recur aagாmல் irukka future ku alert/threshold um set pannуவேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I'd start in the centralized logs to identify which requests were slow in that time window, then use the correlation ID to trace that specific request's journey across services and pinpoint exactly where the time was spent. If it's a database call, I'd pull the execution plan to check for missing indexes, table scans, or stale statistics. If it's a downstream service call, I'd check that service's own logs and health. Once I identify and fix the root cause, I'd verify by watching the same latency metric afterward, and ideally add alerting so a regression like that gets caught automatically next time instead of waiting for a user complaint.</div>
+    <div class="followup">
+      <span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What if logs alone don't pinpoint the bottleneck? — I'd add more granular timing/logging around suspected slow sections, or reach for an APM tool like Application Insights for dependency-level timing breakdowns.</div>
+      <div class="fq"><b>Q:</b> How do you distinguish a code issue from an infrastructure issue? — Check resource metrics (CPU, memory, DB connections) alongside app logs — a spike there points to infra/scaling, consistent slow queries point to code/DB design.</div>
+      <div class="fq"><b>Q:</b> How does this tie back to your 35% incident-resolution improvement? — This whole workflow — centralized structured logs plus correlation ID — is exactly the tooling that made this kind of end-to-end debugging fast instead of guesswork.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+<footer>Prepared for Gurumoorthy M — .NET Developer Interview Prep<br><a href="00_Index.html">← Back to Roadmap Home</a></footer>
+</body>
+</html>

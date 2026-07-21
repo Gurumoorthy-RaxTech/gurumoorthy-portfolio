@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 15: SQL Server Coding Challenges — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+.problem{background:#1a1500;border-left:3px solid #fbbf24;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.9em;color:#fde68a}
+.problem b{color:#fbbf24}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+pre code{background:none;color:inherit;padding:0}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 15: SQL Server Coding Challenges</h1>
+  <p>15 problems with full working T-SQL solutions — classic query-writing + window function patterns</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html" class="active">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhu Part 14 (C# coding challenges) oda SQL version — real, runnable T-SQL solutions with Zen Campus ERP style tables (Students, Attendance, Employees, Fees, Exam Marks). Interview la "write a query to find the Nth highest salary" nu kekumbodhu, neenga screen share pannitu directly type pannanum — so idha padikura mattum pothaadhu, ஒரு paper/whiteboard la manually eludhi practice pannunga first. Apparam mattum idha open pannitu compare pannunga. DENSE_RANK, ROW_NUMBER, self-join, gaps-and-islands — indha patterns thaan 90% interview SQL rounds la repeat aagum, so idhu ellam muscle memory maadhiri aaganum.</p>
+</div>
+
+<div class="toc">
+  <h2>Sections</h2>
+  <div class="toc-grid">
+    <a href="#15A">15A. Classic Query-Writing Problems (1-8)</a>
+    <a href="#15B">15B. Window Functions &amp; Advanced Patterns (9-15)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 15 Quick-Recall Cheat Sheet</h2>
+  <ul>
+    <li><b>1. Nth Highest Salary</b> → DENSE_RANK() handles ties correctly; OFFSET-FETCH is simplest but wrong with duplicates</li>
+    <li><b>2. Find Duplicate Rows</b> → GROUP BY all matching columns, HAVING COUNT(*) &gt; 1</li>
+    <li><b>3. Delete Duplicates, Keep One</b> → ROW_NUMBER() OVER (PARTITION BY dup-cols ORDER BY Id) in a CTE, DELETE WHERE rn &gt; 1</li>
+    <li><b>4. Employees Earning &gt; Manager</b> → self-join Employees e JOIN Employees m ON e.ManagerId = m.EmployeeId</li>
+    <li><b>5. Dept with Highest Avg Salary</b> → GROUP BY DepartmentId, AVG(Salary), ORDER BY DESC, TOP 1 (or TOP 1 WITH TIES)</li>
+    <li><b>6. Employees With No Manager</b> → WHERE ManagerId IS NULL (self-referencing FK, nullable)</li>
+    <li><b>7. Swap Column Values, No Temp Var</b> → single UPDATE with CASE WHEN Id=@Id1 THEN val2 WHEN Id=@Id2 THEN val1 END</li>
+    <li><b>8. 2nd Highest Salary, No TOP/OFFSET</b> → SELECT MAX(Salary) WHERE Salary &lt; (SELECT MAX(Salary) FROM Employees)</li>
+    <li><b>9. Top N Students Per Class</b> → RANK()/DENSE_RANK() OVER (PARTITION BY ClassId ORDER BY Marks DESC) in a CTE, filter rnk &lt;= N</li>
+    <li><b>10. Running Total Per Department</b> → SUM(Salary) OVER (PARTITION BY DepartmentId ORDER BY HireDate ROWS UNBOUNDED PRECEDING)</li>
+    <li><b>11. Consecutive Attendance Days</b> → gaps-and-islands: DATEDIFF(day,0,Date) - ROW_NUMBER() OVER(...) = constant for a streak</li>
+    <li><b>12. Pivot Marks Rows→Columns</b> → PIVOT operator OR conditional aggregation SUM(CASE WHEN Subject='Math' THEN Marks END) — prefer conditional agg</li>
+    <li><b>13. Managers With &gt; N Reports</b> → GROUP BY ManagerId HAVING COUNT(*) &gt; N, join back to Employees for manager name</li>
+    <li><b>14. Avg Days Between Two Dates, Grouped</b> → DATEDIFF(day, AdmissionDate, PaymentDate), AVG(...), GROUP BY ClassId</li>
+    <li><b>15. Rows in Table A Not in B</b> → NOT EXISTS preferred over LEFT JOIN...IS NULL and especially over NOT IN (NULL trap)</li>
+  </ul>
+</div>
+
+<!-- 15A -->
+<div class="section" id="15A">
+  <div class="section-title"><span class="num">15A</span> Classic Query-Writing Problems</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. Find the Nth Highest Salary <span class="en">(Difficulty: Medium · Window Functions / Subquery)</span></div>
+    <div class="problem"><b>Problem:</b> Given an <code>Employees</code> table with columns <code>EmployeeId, Name, Salary</code>, write a query to find the Nth highest salary (N passed as a parameter, e.g. 3rd highest). Handle the case where multiple employees share the same salary.</div>
+    <div class="tng">Idhu interview la mostly kekura first SQL question thaan. Naaka moonu approach kaatanum — <code>OFFSET-FETCH</code> use panradhu simple aana, duplicate salary irundha wrong answer tharum (rows count pannum, distinct salary count pannadhu). <code>DENSE_RANK()</code> thaan correct approach edhukku na adhu "rank" ah salary value mela base pannuthu, row mela illa — so 2 pேrukku same top salary irundhaalum, moonாவadhu unique salary correct ah varum. Old SQL Server (2005 ku munnadi, window function illama) versions ku correlated subquery use pannுவோம் — adhu konjam slow aana works pannும்.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Employees (EmployeeId INT PRIMARY KEY, Name VARCHAR(100), Salary DECIMAL(12,2));
+
+DECLARE @N INT = 3;
+
+-- (a) OFFSET-FETCH approach (simple, but WRONG if duplicate salaries exist above N)
+SELECT DISTINCT Salary
+FROM Employees
+ORDER BY Salary DESC
+OFFSET @N - 1 ROWS FETCH NEXT 1 ROW ONLY;
+
+-- (b) DENSE_RANK() approach — BEST, correctly handles ties
+;WITH RankedSalaries AS (
+    SELECT Salary,
+           DENSE_RANK() OVER (ORDER BY Salary DESC) AS SalaryRank
+    FROM Employees
+)
+SELECT DISTINCT Salary
+FROM RankedSalaries
+WHERE SalaryRank = @N;
+
+-- (c) Correlated subquery approach (works even on very old SQL Server, no window functions needed)
+SELECT TOP 1 Salary
+FROM (
+    SELECT DISTINCT TOP (@N) Salary
+    FROM Employees
+    ORDER BY Salary DESC
+) AS Top_N
+ORDER BY Salary ASC;
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>I'd lead with the DENSE_RANK() version because it's the one that's actually correct in production — with OFFSET-FETCH, if two people tie for 2nd highest, my "3rd highest" would silently be wrong since it counts rows, not distinct salary ranks. DENSE_RANK() ranks by value so ties share a rank and the next distinct salary correctly gets N+1. I'd mention the correlated subquery only as a fallback for legacy SQL Server versions without window function support. On an indexed Salary column this is a single index scan, so performance is fine even on large tables.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> What if you need Nth highest salary per department? — Add <code>PARTITION BY DepartmentId</code> to the DENSE_RANK() window: <code>DENSE_RANK() OVER (PARTITION BY DepartmentId ORDER BY Salary DESC)</code>.</div>
+      <div class="fq"><b>Q:</b> Why not just use RANK() instead of DENSE_RANK()? — RANK() skips numbers after a tie (1,2,2,4), so "3rd highest" would return nothing if there's a tie at rank 2 — DENSE_RANK() keeps ranks consecutive (1,2,2,3), which matches how people actually mean "3rd highest."</div>
+      <div class="fq"><b>Q:</b> How would you get the Nth highest without DISTINCT skewing results if two employees genuinely have different Ids but same salary? — DENSE_RANK() already dedupes by value, so DISTINCT on the final SELECT is just a safety net; the ranking itself is already correct per-value.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. Find Duplicate Rows in a Table <span class="en">(Difficulty: Easy · GROUP BY / HAVING)</span></div>
+    <div class="problem"><b>Problem:</b> A <code>Students</code> table has accidental duplicate entries — same <code>Name</code> and <code>DOB</code> inserted more than once due to a form double-submit bug. Write a query to list all duplicate groups along with how many times each appears.</div>
+    <div class="tng">Idhu straightforward — duplicate nu artham enna columns match aaganum nu decide pannanum first (business rule: Name + DOB same na duplicate). Apparam andha columns mela <code>GROUP BY</code> panni, <code>HAVING COUNT(*) &gt; 1</code> vachu filter pannanum. WHERE clause la filter panna mudiyaadhu edhukku na COUNT() oru aggregate — adhukku HAVING thaan use pannanum, group create aana APPRAM thaan filter aagum.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Students (StudentId INT PRIMARY KEY, Name VARCHAR(100), DOB DATE, ClassId INT);
+
+SELECT Name, DOB, COUNT(*) AS DuplicateCount
+FROM Students
+GROUP BY Name, DOB
+HAVING COUNT(*) > 1
+ORDER BY DuplicateCount DESC;
+
+-- If you also want to see the actual duplicate row IDs:
+SELECT s.*
+FROM Students s
+INNER JOIN (
+    SELECT Name, DOB
+    FROM Students
+    GROUP BY Name, DOB
+    HAVING COUNT(*) > 1
+) d ON s.Name = d.Name AND s.DOB = d.DOB
+ORDER BY s.Name, s.DOB;
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>The key thing I explain is why HAVING and not WHERE — WHERE filters rows before grouping, but COUNT(*) doesn't exist until after grouping, so it has to be HAVING. I also always confirm with the interviewer what "duplicate" means for that table — is it the whole row, or a business key like Name+DOB — because that changes the GROUP BY column list entirely. If this table is large, I'd want an index on (Name, DOB) since that's exactly the columns being grouped and filtered on.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> How do you find duplicates across the ENTIRE row, not just two columns? — GROUP BY every column in the table (or CHECKSUM/HASHBYTES of the whole row for wide tables), HAVING COUNT(*) &gt; 1.</div>
+      <div class="fq"><b>Q:</b> How would you get just the extra copies (not the first occurrence)? — That's problem 3 — use ROW_NUMBER() to number each duplicate group and treat rn &gt; 1 as the "extra" rows.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. Delete Duplicate Rows, Keeping Only One Copy <span class="en">(Difficulty: Medium · ROW_NUMBER / CTE)</span></div>
+    <div class="problem"><b>Problem:</b> Same <code>Students</code> table with duplicate (Name, DOB) rows from problem 2 — but now actually DELETE the extra copies, keeping exactly one row per duplicate group (keep the lowest StudentId).</div>
+    <div class="tng">Idhu real production la periya usage irukka pattern — data cleanup script eludhumbodhu exactly idhu thaan pannuvom. Trick enna na — direct ah DELETE panna mudiyaadhu "duplicate ah irukka rows" nu identify pannாma, edhukku na SQL rows ah individually address panna mudiyாthu unique key illama. So <code>ROW_NUMBER() OVER (PARTITION BY Name, DOB ORDER BY StudentId)</code> vachu ovvoru duplicate group kulla 1,2,3 nu number pannuvom — apparam CTE ah "updatable/deletable" ah treat panni, <code>DELETE FROM CTE WHERE rn &gt; 1</code> pannினா, rn=1 (first/lowest StudentId) mattum survive aagum.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Students (StudentId INT PRIMARY KEY, Name VARCHAR(100), DOB DATE, ClassId INT);
+
+;WITH DupCTE AS (
+    SELECT
+        StudentId,
+        Name,
+        DOB,
+        ROW_NUMBER() OVER (
+            PARTITION BY Name, DOB
+            ORDER BY StudentId ASC   -- keeps the row with the lowest StudentId
+        ) AS rn
+    FROM Students
+)
+DELETE FROM DupCTE
+WHERE rn > 1;
+
+-- Always test first with a SELECT before running the DELETE:
+-- ;WITH DupCTE AS (
+--     SELECT StudentId, Name, DOB,
+--            ROW_NUMBER() OVER (PARTITION BY Name, DOB ORDER BY StudentId ASC) AS rn
+--     FROM Students
+-- )
+-- SELECT * FROM DupCTE WHERE rn > 1;
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>The CTE here isn't just for readability — it's what makes the DELETE possible at all, since you can't put ROW_NUMBER() directly in a DELETE statement's WHERE clause. I always run the SELECT version of the CTE first to eyeball which rows will actually get deleted before flipping it to a DELETE — that's a habit from real incidents where a wrong PARTITION BY column silently deleted the wrong rows. In production I'd also wrap this in a transaction and take a backup of the affected rows into a temp table first.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> What if you want to keep the MOST RECENT duplicate instead of the oldest? — Change <code>ORDER BY StudentId ASC</code> to <code>ORDER BY StudentId DESC</code> (or order by a CreatedDate column DESC) inside the ROW_NUMBER window.</div>
+      <div class="fq"><b>Q:</b> Can you do this without a CTE? — Yes, with a derived table subquery in the DELETE's FROM/JOIN, but CTE is cleaner and more readable — most teams prefer it.</div>
+      <div class="fq"><b>Q:</b> How would you prevent this duplicate problem from happening again? — Add a unique constraint/index on (Name, DOB) if business rules allow, or fix the double-submit bug at the application layer with idempotency keys.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. Employees Earning More Than Their Manager <span class="en">(Difficulty: Easy · Self-Join)</span></div>
+    <div class="problem"><b>Problem:</b> An <code>Employees</code> table has a self-referencing <code>ManagerId</code> column pointing to another row's <code>EmployeeId</code>. Write a query to list employees who earn more than their own manager.</div>
+    <div class="tng">Idhu classic self-join problem — same table ah rendu vera roles la treat pannanum: oru copy "employee" ah, vera copy "manager" ah. So <code>Employees e</code> nu oru alias, <code>Employees m</code> nu vera alias vachu, <code>e.ManagerId = m.EmployeeId</code> mூlama join pannுவோம் — idhu employee-oda manager row ah kandu pudikkும். Apparam simple ah <code>WHERE e.Salary &gt; m.Salary</code> podunga, done.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Employees (EmployeeId INT PRIMARY KEY, Name VARCHAR(100), Salary DECIMAL(12,2), ManagerId INT NULL);
+
+SELECT
+    e.EmployeeId,
+    e.Name       AS EmployeeName,
+    e.Salary     AS EmployeeSalary,
+    m.Name       AS ManagerName,
+    m.Salary     AS ManagerSalary
+FROM Employees e
+INNER JOIN Employees m ON e.ManagerId = m.EmployeeId
+WHERE e.Salary > m.Salary
+ORDER BY (e.Salary - m.Salary) DESC;
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>This is the standard self-join pattern — same table, two aliases, one representing the "child" row and one the "parent" row it references. I use INNER JOIN here deliberately because employees with no manager (ManagerId is NULL) shouldn't show up in this comparison at all — an INNER JOIN naturally excludes them. If I wanted to also flag employees with no manager as "not applicable" rather than silently dropping them, I'd switch to a LEFT JOIN and add a CASE expression.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> What about the CEO who has no manager? — INNER JOIN automatically excludes them since ManagerId is NULL and there's nothing to join to — that's the correct behavior here.</div>
+      <div class="fq"><b>Q:</b> How would you find the salary gap for every manager-report pair, not just where employee earns more? — Just drop the WHERE clause, or keep the join and add a computed column for the gap without filtering.</div>
+      <div class="fq"><b>Q:</b> Can you do this without a self-join, using a subquery instead? — Yes: <code>WHERE Salary > (SELECT Salary FROM Employees m WHERE m.EmployeeId = e.ManagerId)</code>, but that's a correlated subquery per row — the self-join is generally more efficient since the optimizer can use a hash or merge join.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. Department with the Highest Average Salary <span class="en">(Difficulty: Easy · GROUP BY / Aggregate)</span></div>
+    <div class="problem"><b>Problem:</b> Given <code>Employees(EmployeeId, Name, Salary, DepartmentId)</code> and <code>Departments(DepartmentId, DepartmentName)</code>, find the department with the highest average salary. Also show how to handle a tie between two departments.</div>
+    <div class="tng">Standard aggregate-and-sort problem. <code>DepartmentId</code> mela GROUP BY panni, <code>AVG(Salary)</code> calculate pannitu, DESC order la sort panni <code>TOP 1</code> eduthுkalam. Aana "TOP 1" na — rendu department exact ah same average salary irundha, ஏதோ ஒண்ணு mattum arbitrary ah return aagum, adhu correct illa business-wise. So ties handle panna <code>TOP 1 WITH TIES</code> use pannுவோம் — adhu ORDER BY column mela same value irukka ellame return pannும்.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Departments (DepartmentId INT PRIMARY KEY, DepartmentName VARCHAR(100));
+-- CREATE TABLE Employees (EmployeeId INT PRIMARY KEY, Name VARCHAR(100), Salary DECIMAL(12,2), DepartmentId INT);
+
+-- Basic version — single winner
+SELECT TOP 1
+    d.DepartmentName,
+    AVG(e.Salary) AS AvgSalary
+FROM Employees e
+INNER JOIN Departments d ON e.DepartmentId = d.DepartmentId
+GROUP BY d.DepartmentId, d.DepartmentName
+ORDER BY AvgSalary DESC;
+
+-- Tie-safe version — returns ALL departments tied for the highest average
+SELECT TOP 1 WITH TIES
+    d.DepartmentName,
+    AVG(e.Salary) AS AvgSalary
+FROM Employees e
+INNER JOIN Departments d ON e.DepartmentId = d.DepartmentId
+GROUP BY d.DepartmentId, d.DepartmentName
+ORDER BY AvgSalary DESC;
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>I'd start with the plain TOP 1 version since that's what's usually asked, but I always mention the tie problem proactively — it shows I think about correctness, not just getting a query to run. TOP 1 WITH TIES uses the same ORDER BY to decide what counts as "tied," so if two departments land on exactly the same rounded average, both come back instead of one being silently dropped. In a real ERP report I'd also round AVG(Salary) with ROUND() since raw decimal averages can differ by fractions of a rupee and never actually "tie" in the strict sense.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> How would you find the top 3 departments by average salary? — Replace TOP 1 with TOP 3, or use DENSE_RANK() OVER (ORDER BY AVG(Salary) DESC) in a CTE and filter rnk &lt;= 3 for tie-safe top-3.</div>
+      <div class="fq"><b>Q:</b> What if a department has no employees at all? — INNER JOIN excludes it automatically; switch to LEFT JOIN with COALESCE(AVG(e.Salary), 0) if you want empty departments to show up with a zero/null average.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q6">
+    <div class="term">6. Employees With No Manager Assigned <span class="en">(Difficulty: Easy · NULL Handling)</span></div>
+    <div class="problem"><b>Problem:</b> From the same self-referencing <code>Employees</code> table, list all employees who don't have a manager assigned (e.g. the CEO, or newly-onboarded staff whose manager hasn't been set yet in the ERP).</div>
+    <div class="tng">Idhu naaka over-think pannaadha simple question — aana palapper self-join la over-complicate pannिடுவாங்க. <code>ManagerId</code> nullable FK on the same table na, straight ah <code>WHERE ManagerId IS NULL</code> podі pothum, join enna venum. Join venum-nu varradhu enna scenario na — vera table la (example a separate ManagerAssignment mapping table) irundha mattum, adhula andha employee ku entry illama irundha "no manager" nu treat pannanum, appo LEFT JOIN + IS NULL pattern use pannுவோம்.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Employees (EmployeeId INT PRIMARY KEY, Name VARCHAR(100), Salary DECIMAL(12,2), ManagerId INT NULL);
+
+-- Simple case: ManagerId is a nullable column on the same table
+SELECT EmployeeId, Name, Salary
+FROM Employees
+WHERE ManagerId IS NULL;
+
+-- If manager assignment lived in a separate mapping table instead:
+-- CREATE TABLE ManagerAssignments (EmployeeId INT, ManagerId INT);
+SELECT e.EmployeeId, e.Name
+FROM Employees e
+LEFT JOIN ManagerAssignments ma ON e.EmployeeId = ma.EmployeeId
+WHERE ma.ManagerId IS NULL;
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>I always ask a clarifying question first — is ManagerId a nullable column directly on Employees, or is management tracked through a separate junction table? That decides whether it's a one-line WHERE clause or a LEFT JOIN pattern. For the common case, WHERE ManagerId IS NULL is all you need, and a plain equality check like ManagerId = NULL never works in SQL — NULL comparisons always need IS NULL / IS NOT NULL because NULL isn't a value, it's the absence of one.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> Why doesn't WHERE ManagerId = NULL work? — Because NULL isn't comparable with =; any comparison against NULL evaluates to UNKNOWN, not TRUE, so those rows get filtered out — you must use IS NULL.</div>
+      <div class="fq"><b>Q:</b> How would you count how many employees report to no one, per department? — Add GROUP BY DepartmentId with COUNT(*) after filtering WHERE ManagerId IS NULL.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q7">
+    <div class="term">7. Swap Values of a Column Between Two Specific Rows <span class="en">(Difficulty: Medium · Single UPDATE / CASE)</span></div>
+    <div class="problem"><b>Problem:</b> In a <code>Classes</code> table with columns <code>ClassId, RoomNumber</code>, swap the RoomNumber values of two specific classes (Id = 5 and Id = 9) — without using a temporary variable or a temp table, in a single statement. (This is the SQL cousin of the classic "swap two variables without a temp variable" puzzle.)</div>
+    <div class="tng">Idhu C# side la irukka "swap without temp variable" question oda SQL version thaan — namba Part 14 la XOR/addition-subtraction trick use pannினோம், idhu la SQL specific trick use pannுவோம். Naive ah pannினா — first UPDATE Id=5's RoomNumber to Id=9's value, apparam UPDATE Id=9's RoomNumber to Id=5's value — aana rendாவadhu UPDATE run aagும் bodhu, Id=5 already overwrite aayiduchu, so Id=9 wrong value edுthுkkும். Fix enna na — rendும் updates ஒரே single UPDATE statement kulla, CASE expression vachu pannுவோம். SQL Server oru UPDATE statement kulla "old" values ah snapshot eduthுkkитు, appuram apply pannும், so intermediate overwrite problem varadhu.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Classes (ClassId INT PRIMARY KEY, ClassName VARCHAR(50), RoomNumber INT);
+
+DECLARE @Id1 INT = 5, @Id2 INT = 9;
+
+UPDATE Classes
+SET RoomNumber = CASE ClassId
+                    WHEN @Id1 THEN (SELECT RoomNumber FROM Classes WHERE ClassId = @Id2)
+                    WHEN @Id2 THEN (SELECT RoomNumber FROM Classes WHERE ClassId = @Id1)
+                  END
+WHERE ClassId IN (@Id1, @Id2);
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>The reason this works in one statement is that SQL Server evaluates the SET expression for every row against the pre-update snapshot of the table before writing anything back — it's not sequential row-by-row like procedural code, so the subquery inside CASE still sees the original, un-swapped values even for the second row it processes. If I did this as two separate UPDATE statements instead, the first one would overwrite Id 5's value before I read it for Id 9, corrupting the swap — that's the exact bug I'd flag if I saw someone write it as two statements. This is a nice callback to the classic swap-without-temp-variable problem, just solved with SQL's set-based semantics instead of arithmetic tricks.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> Would this work correctly inside a transaction with concurrent writers? — Wrap it in a transaction with an appropriate isolation level (or use ROWLOCK/UPDLOCK hints) to prevent another session from changing RoomNumber between the read and write of this statement.</div>
+      <div class="fq"><b>Q:</b> Can you swap values across TWO DIFFERENT tables in one statement? — Not directly with a single UPDATE (UPDATE only targets one table) — you'd need a transaction wrapping two UPDATE statements, each reading the other table's original value before either write happens.</div>
+      <div class="fq"><b>Q:</b> What if you need to swap N rows in a rotation (row1→row2→row3→row1)? — Same CASE-based single UPDATE pattern generalizes — each WHEN branch pulls the "previous" row's original value, since the whole SET is evaluated against the pre-update state.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q8">
+    <div class="term">8. Second Highest Salary WITHOUT Using TOP/LIMIT/OFFSET-FETCH <span class="en">(Difficulty: Easy · Subquery Trick)</span></div>
+    <div class="problem"><b>Problem:</b> Find the second-highest salary from the <code>Employees</code> table using only a plain subquery — no TOP, no OFFSET-FETCH, no window functions. (A very old-school interview variant, still asked to test basic subquery thinking.)</div>
+    <div class="tng">Idhu oru classic "old school" trick question — idea enna na, "2nd highest" nu artham "the maximum salary that is still less than the overall maximum salary." So inner subquery la MAX(Salary) eduthுkkitு, outer query la adha vida less ah irukka salaries la mele MAX() edுthाल், adhu automatic ah 2nd highest tharும். Idhu neat aana oru limitation irukku — idha "3rd highest" ku extend panna try pannா, query nested ah nested ah pogum (MAX of MAX of MAX...), so real-world la Nth highest ku DENSE_RANK() (problem 1) thaan preferred, idhu 2nd highest interview trivia ku mattum nalla.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Employees (EmployeeId INT PRIMARY KEY, Name VARCHAR(100), Salary DECIMAL(12,2));
+
+SELECT MAX(Salary) AS SecondHighestSalary
+FROM Employees
+WHERE Salary < (SELECT MAX(Salary) FROM Employees);
+
+-- Extending to 3rd highest this way gets ugly fast (nested MAX-of-MAX):
+SELECT MAX(Salary) AS ThirdHighestSalary
+FROM Employees
+WHERE Salary < (
+    SELECT MAX(Salary) FROM Employees
+    WHERE Salary < (SELECT MAX(Salary) FROM Employees)
+);
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>The trick is reframing "second highest" as "the highest value among everything that's not the highest" — that single reframe is what makes the subquery-only solution possible. I'd answer this confidently since it's a well-known pattern, but I'd immediately add the honest caveat: this doesn't scale to "Nth highest" cleanly, you end up nesting a nested subquery per level, which is unreadable and slow beyond 3 or 4 levels. In real work I'd reach for DENSE_RANK() from problem 1 instead — I'm only using this trick here because the question specifically rules out TOP/OFFSET/window functions.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> What if there's only one distinct salary in the whole table? — This query correctly returns NULL, since there's no salary less than the max — that's actually the right answer, "there is no second-highest."</div>
+      <div class="fq"><b>Q:</b> Why do you prefer DENSE_RANK() in production over this trick? — This nested-MAX approach doesn't generalize past a couple of levels and is harder to read; DENSE_RANK() handles any N and ties correctly in one clean expression.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 15B -->
+<div class="section" id="15B">
+  <div class="section-title"><span class="num">15B</span> Window Functions &amp; Advanced Patterns</div>
+
+  <div class="item" id="q9">
+    <div class="term">9. Top N Students Per Class by Marks <span class="en">(Difficulty: Medium · RANK/DENSE_RANK, Partitioned)</span></div>
+    <div class="problem"><b>Problem:</b> Given <code>ExamMarks(StudentId, ClassId, Subject, TotalMarks)</code>, write a query to find the top 2 students per class based on TotalMarks.</div>
+    <div class="tng">Idhu problem 1 oda "partitioned" version — appuram namba WHOLE table mela rank pannினோம், idhu la ovvoru ClassId kulla separately rank pannanum. Adhukku thaan window function la <code>PARTITION BY ClassId</code> add pannுவோம் — idhu "ovvoru class ku separate ah oru mini-ranking start pannு" nu SQL Server ku sollுறாது. <code>RANK()</code> use panna ties irundha same rank kudukkum aana adhukku appuram gap varum; <code>DENSE_RANK()</code> na gap illama continuous ah irukkும் — "top 2" nு business rule na, DENSE_RANK() thaan usual ah correct choice, edhukku na 2 pேrு tie aana rendு perைyும் top-2 ah consider pannanum.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE ExamMarks (StudentId INT, ClassId INT, Subject VARCHAR(50), TotalMarks INT);
+
+;WITH RankedStudents AS (
+    SELECT
+        StudentId,
+        ClassId,
+        TotalMarks,
+        DENSE_RANK() OVER (PARTITION BY ClassId ORDER BY TotalMarks DESC) AS rnk
+    FROM ExamMarks
+)
+SELECT StudentId, ClassId, TotalMarks, rnk
+FROM RankedStudents
+WHERE rnk <= 2
+ORDER BY ClassId, rnk;
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>The core idea to explain is that PARTITION BY resets the ranking counter for every group — so ClassId 1's top student gets rank 1, and ClassId 2's top student also independently gets rank 1, they don't share a global rank. I use DENSE_RANK() over RANK() for "top N" style filters because if two students tie for rank 1, RANK() jumps the next student straight to rank 3, which would silently exclude someone who genuinely earned a top-2 spot. I've written this exact pattern for the Zen Campus exam module — showing rank cards for top performers per class.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> How would you rank students across all subjects combined instead of by total? — Aggregate SUM(Marks) per StudentId, ClassId first in a subquery/CTE, then apply the same DENSE_RANK() pattern on that aggregated result.</div>
+      <div class="fq"><b>Q:</b> What's the difference if you used ROW_NUMBER() instead here? — ROW_NUMBER() never ties — it arbitrarily breaks ties by the ORDER BY's tiebreak order, so exactly 2 rows per class always come back, even if 3 students tied for 2nd place; use it only when you want a strict fixed count regardless of ties.</div>
+      <div class="fq"><b>Q:</b> How do you get the top student per class only, as a single flat result (not a CTE)? — Same query with rnk = 1 instead of &lt;= 2, or use CROSS APPLY with TOP 1 per ClassId if the optimizer needs a nudge for large tables.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q10">
+    <div class="term">10. Running Total / Cumulative Sum Per Department <span class="en">(Difficulty: Medium · Window Aggregate)</span></div>
+    <div class="problem"><b>Problem:</b> For a payroll report, show each employee's salary along with a running (cumulative) total of salaries within their department, ordered by hire date — so HR can see how the department's payroll cost accumulated over time.</div>
+    <div class="tng">Idhu "running total" pattern — old school ah pannunа self-join or correlated subquery vachu O(n²) ah eluduvom, aana window function vachu ஒரே pass la clean ah pannலாம். <code>SUM(Salary) OVER (PARTITION BY DepartmentId ORDER BY HireDate)</code> — PARTITION BY dept-wise separate running total start pannும், ORDER BY HireDate "eந்த order la accumulate pannணும்" nு sollும். Default frame <code>ROWS UNBOUNDED PRECEDING</code> nu explicit ah podலாம் (illa na SQL Server automatically andha default vைchுkkும் oru ORDER BY irukும் bodhu).</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Employees (EmployeeId INT PRIMARY KEY, Name VARCHAR(100), Salary DECIMAL(12,2), DepartmentId INT, HireDate DATE);
+
+SELECT
+    EmployeeId,
+    Name,
+    DepartmentId,
+    HireDate,
+    Salary,
+    SUM(Salary) OVER (
+        PARTITION BY DepartmentId
+        ORDER BY HireDate
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS RunningDeptTotal
+FROM Employees
+ORDER BY DepartmentId, HireDate;
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>I explain this as "each department gets its own independent running total, accumulating in hire-date order." The explicit frame clause — ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — means "sum everything from the start of this partition up to and including this row," which is exactly a running total; I always write it explicitly rather than relying on the implicit default, because it makes the intent obvious to anyone reading the query later. Before window functions existed, this needed a self-join or correlated subquery per row which was O(n²) — the windowed version is a single sorted pass, far cheaper on a large payroll table.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> How would you get a running total across the WHOLE company, not per department? — Drop the PARTITION BY clause entirely — SUM(Salary) OVER (ORDER BY HireDate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) treats the whole table as one partition.</div>
+      <div class="fq"><b>Q:</b> How would you show a moving average of the last 3 hires' salaries instead of a full running total? — Change the frame to ROWS BETWEEN 2 PRECEDING AND CURRENT ROW and use AVG() instead of SUM().</div>
+      <div class="fq"><b>Q:</b> What happens if two employees in the same department have the exact same HireDate? — The running total is still correct in total, but the intermediate row-by-row values for those tied rows can appear in either order — add a tiebreaker like EmployeeId to ORDER BY if row-level determinism matters.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q11">
+    <div class="term">11. Find Consecutive Login/Attendance Days for a Student <span class="en">(Difficulty: Hard · Gaps-and-Islands)</span></div>
+    <div class="problem"><b>Problem:</b> Given an <code>Attendance(StudentId, AttendanceDate)</code> table (one row per day the student was marked present), find the longest streak of consecutive present-days for each student.</div>
+    <div class="tng">Idhu SQL interviews la mostly kekura "hard" category question — "gaps and islands" nu oru famous technique. Idea enna na: ஒரு student consecutive ah present iருந்தா, andha dates oda "row number (in date order)" and "the date itself" oda difference ஒரே constant ah irukும். Example: dates 1,2,3 present na, ROW_NUMBER 1,2,3 — date minus row_number ella rowsукum same value tharும். Aana gap iருந்தா (example date 5 miss aachu, 6ல் resume aachु), andha difference maariடும் — so andha "difference" value ah oru "island group id" ஆ treat pannலாம். Apparam andha group mela GROUP BY panni COUNT(*) pannினா, streak length kidaikும்.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Attendance (StudentId INT, AttendanceDate DATE);
+
+;WITH Islands AS (
+    SELECT
+        StudentId,
+        AttendanceDate,
+        DATEDIFF(DAY, 0, AttendanceDate)
+          - ROW_NUMBER() OVER (PARTITION BY StudentId ORDER BY AttendanceDate) AS IslandGroup
+    FROM Attendance
+),
+Streaks AS (
+    SELECT
+        StudentId,
+        MIN(AttendanceDate) AS StreakStart,
+        MAX(AttendanceDate) AS StreakEnd,
+        COUNT(*) AS StreakLength
+    FROM Islands
+    GROUP BY StudentId, IslandGroup
+)
+SELECT StudentId, StreakStart, StreakEnd, StreakLength
+FROM Streaks
+WHERE StreakLength = (
+    SELECT MAX(s2.StreakLength) FROM Streaks s2 WHERE s2.StudentId = Streaks.StudentId
+)
+ORDER BY StudentId;
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>This is the "gaps and islands" trick, and I'd walk through the intuition slowly since it's genuinely non-obvious the first time you see it — for a run of consecutive calendar dates, the row number (which increases by exactly 1 per row) and the date itself (which also increases by exactly 1 per day) drift apart by a constant amount, so subtracting them gives the same "group id" for every date in that unbroken run; the moment there's a gap, the date jumps ahead of the row number and the group id changes. Once you have that group id, it's just a GROUP BY and COUNT to get streak lengths, then filter for the max per student. I'd also mention DATEDIFF(DAY, 0, date) is just converting the date to an integer day-offset so the subtraction is pure arithmetic — this is exactly the kind of pattern I'd use for a "longest attendance streak" badge feature in the Zen Campus student app.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> How would you find ALL streaks of 5+ days, not just the longest one per student? — Same CTE, but filter the Streaks CTE with WHERE StreakLength &gt;= 5 instead of matching MAX per student.</div>
+      <div class="fq"><b>Q:</b> Does this work if attendance is tracked with timestamps instead of dates? — Cast to DATE first (CAST(AttendanceTimestamp AS DATE)) and dedupe multiple same-day entries before applying the island trick, since the technique assumes one row per calendar day.</div>
+      <div class="fq"><b>Q:</b> How would this apply to the Bank Locker OTP audit-trail logs to find continuous access windows? — Same pattern but on a finer time grain — instead of DAY, use DATEDIFF(MINUTE/SECOND, 0, LogTimestamp) minus ROW_NUMBER() to find continuous blocks of activity with no gap beyond a threshold.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. Pivot Exam Marks from Rows to Columns <span class="en">(Difficulty: Medium · PIVOT / Conditional Aggregation)</span></div>
+    <div class="problem"><b>Problem:</b> <code>ExamMarks(StudentId, Subject, Marks)</code> has one row per student per subject. Produce a report with one row per student and separate columns for Math, Science, and English marks.</div>
+    <div class="tng">Idhu report-generation ku romba common ah kekura pattern — "rows ah columns ah maathanum". SQL Server la built-in <code>PIVOT</code> operator irukku, aana syntax konjam awkward-ah irukும், and subjects hardcode pannणум் structure la. Palapper devs — including naan — <code>CASE</code> vecha conditional aggregation preferred pannுவோம்: <code>SUM(CASE WHEN Subject='Math' THEN Marks END)</code> madhiri ovvoru subject-ku column create pannலாம். Idhu PIVOT operator vida readable ஆ irukும், dynamic ah subjects add pannும் bodhு adjust panna easy ஆ irukும் (dynamic SQL vachு column list build panna mudியும்), so real projects la idhu thaan preferred.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE ExamMarks (StudentId INT, Subject VARCHAR(50), Marks INT);
+
+-- (a) Using the PIVOT operator
+SELECT StudentId, [Math], [Science], [English]
+FROM (
+    SELECT StudentId, Subject, Marks
+    FROM ExamMarks
+) AS SourceTable
+PIVOT (
+    SUM(Marks)
+    FOR Subject IN ([Math], [Science], [English])
+) AS PivotTable;
+
+-- (b) Conditional aggregation — usually preferred: more readable, easier to extend
+SELECT
+    StudentId,
+    SUM(CASE WHEN Subject = 'Math'    THEN Marks END) AS Math,
+    SUM(CASE WHEN Subject = 'Science' THEN Marks END) AS Science,
+    SUM(CASE WHEN Subject = 'English' THEN Marks END) AS English
+FROM ExamMarks
+GROUP BY StudentId;
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>I'd show both, but say upfront that I default to conditional aggregation in real projects. PIVOT's syntax has a rigid shape — you have to know all the column values (subject names) at query-write time and hardcode them in the FOR...IN clause, and it only supports a single aggregate function per pivot. Conditional aggregation with SUM(CASE WHEN...) does the exact same thing but reads like plain SQL anyone can follow, and it's trivial to add a fourth subject or combine it with other aggregates like AVG or COUNT in the same query. If the subject list itself is dynamic and unknown ahead of time, I'd build the column list with dynamic SQL rather than fight PIVOT's static syntax.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> What if a student has no marks recorded for a subject? — Both approaches return NULL for that student's column automatically since there's no matching row to aggregate — wrap in ISNULL/COALESCE if you want 0 instead.</div>
+      <div class="fq"><b>Q:</b> How would you handle an unknown/dynamic list of subjects? — Build the SELECT column list with dynamic SQL (STRING_AGG over DISTINCT Subject values to construct the CASE expressions or PIVOT IN list), then EXEC the generated string.</div>
+      <div class="fq"><b>Q:</b> Can you also get each student's total and average across subjects in the same query? — Yes with conditional aggregation — just add SUM(Marks) AS Total and AVG(Marks) AS AvgMarks as extra columns in the same GROUP BY StudentId query.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. Managers With More Than N Direct Reports <span class="en">(Difficulty: Easy · Self-Reference GROUP BY / HAVING)</span></div>
+    <div class="problem"><b>Problem:</b> Using the self-referencing <code>Employees(EmployeeId, Name, ManagerId)</code> table, find all managers who have more than 3 direct reports, along with the manager's name and report count.</div>
+    <div class="tng">Idhu problem 4 (self-join) oda "count" version thaan. <code>ManagerId</code> mela GROUP BY pannினா, ovvoru manager ku evlo employees report pannுறாங்க nu count kidaikும். <code>HAVING COUNT(*) &gt; 3</code> vachu filter pannuvom. Apparam manager oda Name kaattanum na, andha ManagerId ah திரும்பி Employees table oடா join pannनணும் — edhukku na ManagerId oru Id mattum thaan, name illa.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Employees (EmployeeId INT PRIMARY KEY, Name VARCHAR(100), ManagerId INT NULL);
+
+SELECT
+    m.EmployeeId    AS ManagerId,
+    m.Name          AS ManagerName,
+    COUNT(e.EmployeeId) AS DirectReportCount
+FROM Employees e
+INNER JOIN Employees m ON e.ManagerId = m.EmployeeId
+GROUP BY m.EmployeeId, m.Name
+HAVING COUNT(e.EmployeeId) > 3
+ORDER BY DirectReportCount DESC;
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>This combines two patterns I use constantly — the self-join to resolve ManagerId into an actual name, and GROUP BY/HAVING to filter on an aggregate count. I group by both EmployeeId and Name (not just Name) because two different managers could theoretically share the same name — grouping by the primary key first is the safe habit, Name just comes along as a dependent column. I'd flag N=3 as a parameter in real code — either a stored proc parameter or a query variable — rather than hardcoding it, since HR would likely want to tweak that threshold for different reports.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> How would you find managers with the MOST reports (top manager by team size)? — Same GROUP BY, drop the HAVING filter, ORDER BY COUNT(*) DESC, and add TOP 1 (or TOP 1 WITH TIES for ties).</div>
+      <div class="fq"><b>Q:</b> How do you count INDIRECT reports too — the whole reporting tree under a manager? — That needs a recursive CTE walking down ManagerId relationships level by level, then counting all descendants, not just direct GROUP BY.</div>
+      <div class="fq"><b>Q:</b> What if a manager has zero direct reports — will they show up? — No, INNER JOIN and the implicit GROUP BY only include managers who actually appear as someone's ManagerId; a manager with zero reports never appears as e.ManagerId, so they're naturally excluded — which is correct here since HAVING &gt; 3 would exclude them anyway.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q14">
+    <div class="term">14. Difference in Days Between Two Dates, Grouped Report <span class="en">(Difficulty: Easy · DATEDIFF / AVG / GROUP BY)</span></div>
+    <div class="problem"><b>Problem:</b> Given <code>Students(StudentId, ClassId, AdmissionDate)</code> and <code>FeePayments(StudentId, PaymentDate)</code> (first fee payment per student), write a query showing the average number of days between admission and first fee payment, grouped by class — so the finance team can see which classes are slow to pay.</div>
+    <div class="tng">Idhu report-style question — join rendு tables, <code>DATEDIFF(DAY, date1, date2)</code> vachu difference calculate pannுறோம், apparam <code>AVG()</code> + <code>GROUP BY ClassId</code> vachu class-wise summarize pannுறோம். Simple aana romba practical — real ERP reports la இது madhiri "average delay" metrics romba common.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Students (StudentId INT PRIMARY KEY, ClassId INT, AdmissionDate DATE);
+-- CREATE TABLE FeePayments (PaymentId INT PRIMARY KEY, StudentId INT, PaymentDate DATE);
+-- Assumes FeePayments has one row per student representing their FIRST payment
+-- (or use MIN(PaymentDate) per student if multiple payments exist)
+
+SELECT
+    s.ClassId,
+    AVG(DATEDIFF(DAY, s.AdmissionDate, fp.FirstPaymentDate)) AS AvgDaysToFirstPayment,
+    COUNT(*) AS StudentCount
+FROM Students s
+INNER JOIN (
+    SELECT StudentId, MIN(PaymentDate) AS FirstPaymentDate
+    FROM FeePayments
+    GROUP BY StudentId
+) fp ON s.StudentId = fp.StudentId
+GROUP BY s.ClassId
+ORDER BY AvgDaysToFirstPayment DESC;
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>I always double-check the direction of DATEDIFF's arguments — DATEDIFF(DAY, start, end) gives a positive number when end is after start, and it's an easy mistake to swap them and get negative averages that confuse a report. I pre-aggregate FeePayments down to one row per student (first payment via MIN) before joining, rather than joining raw and risking double-counting a student with multiple payments in the average. This is the kind of report I'd actually build for the Zen Campus billing dashboard — flagging classes where parents are consistently slow to pay fees after admission.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> How would you find students who took more than 30 days to pay, individually not aggregated? — Same join without GROUP BY/AVG, just add WHERE DATEDIFF(DAY, s.AdmissionDate, fp.FirstPaymentDate) > 30.</div>
+      <div class="fq"><b>Q:</b> What about students who admitted but never paid at all? — Switch the inner join to a LEFT JOIN against the FeePayments subquery and they'll appear with a NULL FirstPaymentDate — decide whether to exclude them from the AVG or report them separately as "unpaid."</div>
+      <div class="fq"><b>Q:</b> How do you express this in months instead of days? — Use DATEDIFF(MONTH, ...) instead, though be aware DATEDIFF(MONTH,...) counts calendar-month boundaries crossed, not full 30-day periods — mention that nuance if precision matters.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q15">
+    <div class="term">15. Find Records That Exist in One Table But Not Another <span class="en">(Difficulty: Medium · LEFT JOIN vs NOT EXISTS vs EXCEPT)</span></div>
+    <div class="problem"><b>Problem:</b> Given <code>Students(StudentId, Name)</code> and <code>Attendance(StudentId, AttendanceDate)</code>, find all students who have NEVER had an attendance record marked (i.e. students in Students but with no matching StudentId in Attendance at all). Compare three approaches.</div>
+    <div class="tng">Idhu very common "anti-join" pattern — 3 vazhi la pannலாம், ovvoru ஒண்ணுக்கும் trade-off irukku. <code>LEFT JOIN ... WHERE B.Id IS NULL</code> — popular aana, andha table la multiple matching rows irundhaal (duplicates) duplicate results வரலாம் na careful ah irukanum. <code>NOT EXISTS</code> — correlated subquery, semantically clean, correctly handle pannும் NULLs ah, and mostly SQL Server optimizer idhula best plan generate pannும். <code>NOT IN</code> namba mention pannாதagata try pannாதீங்க — adhu la ஒரு dangerous trap irukku: subquery result la ஒரே ஒரு NULL value இருந்தாலும், NOT IN ellame silently ஆ empty result தரும். <code>EXCEPT</code> — set-based, clean aana column count/types match aaganum rendு sides la.</div>
+    <pre><code>-- Sample schema
+-- CREATE TABLE Students (StudentId INT PRIMARY KEY, Name VARCHAR(100));
+-- CREATE TABLE Attendance (StudentId INT, AttendanceDate DATE);
+
+-- (a) LEFT JOIN ... WHERE IS NULL
+SELECT s.StudentId, s.Name
+FROM Students s
+LEFT JOIN Attendance a ON s.StudentId = a.StudentId
+WHERE a.StudentId IS NULL;
+
+-- (b) NOT EXISTS — preferred: correct with NULLs, usually best execution plan
+SELECT s.StudentId, s.Name
+FROM Students s
+WHERE NOT EXISTS (
+    SELECT 1 FROM Attendance a WHERE a.StudentId = s.StudentId
+);
+
+-- (c) EXCEPT — set-based difference
+SELECT StudentId, Name FROM Students
+EXCEPT
+SELECT s.StudentId, s.Name
+FROM Students s
+INNER JOIN Attendance a ON s.StudentId = a.StudentId;
+
+-- AVOID THIS — NOT IN silently breaks if Attendance.StudentId ever contains NULL:
+-- SELECT StudentId, Name FROM Students
+-- WHERE StudentId NOT IN (SELECT StudentId FROM Attendance);  -- returns ZERO rows if any StudentId is NULL
+</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi walk-through pannanum</span>My default is NOT EXISTS — it's semantically the clearest statement of intent ("give me students where no attendance row exists for them"), it handles NULLs in the subquery correctly, and the SQL Server optimizer typically turns it into an efficient anti-semi-join. LEFT JOIN with IS NULL gives the same result here, but I'm careful with it when the right-hand table could have duplicate StudentId rows, since that's not an issue for NOT EXISTS but can silently inflate a LEFT JOIN's row count before the NULL filter kicks in. I actively avoid NOT IN for this kind of check — if the Attendance.StudentId column ever contains even a single NULL, the entire NOT IN condition evaluates to UNKNOWN for every row and the whole query silently returns zero rows, which is a nasty production bug to track down. EXCEPT is clean too, but it dedupes and requires matching column lists/types, so I reach for it less often than NOT EXISTS.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up variations they might ask</span>
+      <div class="fq"><b>Q:</b> Why exactly does NOT IN break with a NULL in the subquery? — NOT IN expands to a chain of AND (x &lt;&gt; v1) AND (x &lt;&gt; v2)...; comparing against a NULL value always yields UNKNOWN, and UNKNOWN anywhere in an AND chain makes the whole condition UNKNOWN (not TRUE), so that row gets excluded — across all rows, the result set becomes empty.</div>
+      <div class="fq"><b>Q:</b> Which of these three has the best performance on a large table with a supporting index? — NOT EXISTS and LEFT JOIN...IS NULL both typically produce equivalent anti-semi-join plans in SQL Server when Attendance.StudentId is indexed — I'd check the actual execution plan rather than assume, but NOT EXISTS is my starting point.</div>
+      <div class="fq"><b>Q:</b> How would you find students who attended on SOME days but were absent on others (partial mismatch), not just zero-attendance students? — That's a different problem — compare COUNT of expected school days vs COUNT of actual attendance rows per student, or use a calendar table joined with LEFT JOIN to find the specific missing dates.</div>
+    </div>
+  </div>
+
+</div>
+
+</div>
+<footer>Prepared for Gurumoorthy M — .NET Developer Interview Prep<br><a href="00_Index.html">← Back to Roadmap Home</a></footer>
+</body>
+</html>

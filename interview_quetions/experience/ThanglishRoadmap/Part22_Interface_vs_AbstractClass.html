@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 22: Interface vs Abstract Class — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox table{width:100%;border-collapse:collapse;font-size:0.85em}
+.cheatbox th,.cheatbox td{padding:6px 10px;border-bottom:1px solid #2a2a5a;text-align:left;color:#e0e0e0}
+.cheatbox th{color:#fbbf24;font-size:0.78em;text-transform:uppercase}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 22: Interface vs Abstract Class — Deep Dive</h1>
+  <p>35 Q&amp;A — Thanglish explanation + English answer script + follow-up questions</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+  <a href="Part18_MongoDB_NoSQL.html">1️⃣8️⃣ MongoDB &amp; NoSQL</a>
+  <a href="Part19_TCPSocket_SMS_OTP.html">1️⃣9️⃣ TCP Socket &amp; SMS OTP</a>
+  <a href="Part20_PerformanceLoggingProduction.html">2️⃣0️⃣ Perf/Logging/Prod</a>
+  <a href="Part21_Infosys_Prep_Guide.html">🎯 Infosys Prep Guide</a>
+  <a href="Part22_Interface_vs_AbstractClass.html" class="active">2️⃣2️⃣ Interface vs Abstract</a>
+  <a href="Part23_SQL_Performance_Advanced.html">2️⃣3️⃣ SQL Performance Advanced</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhu Interface vs Abstract Class mattum focus panra file — almost every .NET interview la kேட்கும் classic topic, aana most candidates textbook difference mattum sொllі, real project example kொடுக்க maaturaanga. Idhுla ovvoru answer ku Zen Campus project la irundhு (<code>IPaymentService</code>, <code>BaseRepository</code>, <code>ApiControllerBase</code> madhiri) real example vachіருக்கேன் — adha memorize pannாma, andha pattern ah உங்க own project la எங்க use pannினேங்க nu maathi சொல்ல practice pannுங்கள். Chekklist image la irunthu வந்த extra 5 nuance questions (32-35) கூட add pannிருக்கேன் — avanga interview la exact idha thааn கேட்கிறாங்க.</p>
+</div>
+
+<div class="toc">
+  <h2>Sections</h2>
+  <div class="toc-grid">
+    <a href="#22A">22A. Fundamentals — Definitions &amp; Core Differences (Q1-10)</a>
+    <a href="#22B">22B. Instantiation, Inheritance &amp; Multiplicity (Q11-20)</a>
+    <a href="#22C">22C. Real-World Usage, SOLID &amp; Design (Q21-30)</a>
+    <a href="#22D">22D. Bonus — Related C# OOP Nuances (Q31-35)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 22 Quick-Recall Cheat Sheet</h2>
+  <ul>
+    <li><b>Interface</b> → pure contract, "what" mattum, no state, multiple implement panna mudiyum</li>
+    <li><b>Abstract Class</b> → partial implementation + contract, "what + some how", single inherit mattum</li>
+    <li><b>C# 8+ default interface methods</b> → interfaces la body kொடுக்கலாம், aana idhु rare ah use panradhu, mostly backward-compat ku</li>
+    <li><b>Neither can be instantiated directly</b> → <code>new IPaymentService()</code> or <code>new PaymentBase()</code> — rendும் compile error</li>
+    <li><b>Multiple interfaces</b> → yes, <code>class X : IA, IB, IC</code> — okay</li>
+    <li><b>Multiple abstract classes (multiple inheritance)</b> → C# la கிடையாது, ஒரே ஒரு base class mattum</li>
+    <li><b>Abstract Class constructor</b> → irukum, aana direct call panna mudiyaathu — derived class constructor mூlama மட்டும் run aagும்</li>
+    <li><b>Interface constructor</b> → கிடையவே கிடையாது</li>
+    <li><b>Interface fields</b> → allowed illa (properties okay, fields illa); <b>Abstract Class fields</b> → fully allowed</li>
+    <li><b>Rule of thumb</b> → "is-a + shared code" na Abstract Class; "can-do / capability / contract across unrelated classes" na Interface</li>
+    <li><b>ISP connection</b> → periya interface ah chinna focused interfaces ah split pannுрathு (SOLID "I")</li>
+    <li><b>DI connection</b> → almost always Interface ah dependency ah inject pannுрோம், Abstract Class rare ah</li>
+  </ul>
+</div>
+
+<!-- 22A -->
+<div class="section" id="22A">
+  <div class="section-title"><span class="num">22A</span> Fundamentals — Definitions &amp; Core Differences</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. What is an Interface? <span class="en">(Pure Contract)</span></div>
+    <div class="tng">Interface na — oru class enna enna method/property/event kொடுக்கணும் nu ஒரு <b>contract</b> mattum define pannுрathு, implementation edhுவும் kொடுக்காது (C# 8+ la default methods possible aanaalum, andha style rare ah thaan use pannுрோம்). Interface la irukka every member ah, adha implement panра class compulsory ah define pannanum. Example — Zen Campus la <code>IPaymentService</code> interface la <code>ProcessPayment()</code> nu method signature mattum irukும், actual logic <code>OnlinePaymentService</code> and <code>OfflinePaymentService</code> classes la separate ah irukும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"An interface is a pure contract — it defines what members a class must have, without providing any implementation. Any class that implements the interface is required to provide the actual logic for every member. In my project, IPaymentService just declares a ProcessPayment method signature — OnlinePaymentService and OfflinePaymentService each implement it with completely different logic."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can an interface have a body for a method in modern C#? — Yes, C# 8 introduced default interface methods with a body, mainly for adding new members to an existing interface without breaking implementers, but it's used rarely and not a replacement for abstract classes.</div>
+      <div class="fq"><b>Q:</b> What access modifier do interface members have by default? — Public by default and implicitly — you can't mark them private/protected in the classic style (default interface methods allow more modifiers now, but plain members stay implicitly public).</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. What is an Abstract Class? <span class="en">(Partial Implementation)</span></div>
+    <div class="tng">Abstract Class na — oru class direct ah instantiate panna mudiyaadha class, aana adhуla <b>some methods fully implemented</b>, <b>some methods abstract</b> (implementation illama, sub-class implement pannanum) nu irukும். Idhு "common code share pannі, specific parts mattum child class ku vittuduрathு" nு design pattern. En project la <code>BaseRepository&lt;T&gt;</code> abstract class la <code>SaveChangesAsync()</code> madhiri common logic already implement panniruken், aana <code>GetTableName()</code> madhiri abstract method ah ovvoru derived repository (<code>StudentRepository</code>, <code>BillRepository</code>) override pannanum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"An abstract class is a class that can't be instantiated directly and can mix fully implemented methods with abstract methods that derived classes must override. It's useful when related classes share common logic but each needs to customize a specific part. My BaseRepository&lt;T&gt; implements shared logic like SaveChangesAsync, while an abstract GetTableName method is overridden differently by StudentRepository and BillRepository."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can an abstract class have zero abstract methods? — Yes, technically valid — it just still can't be instantiated because of the abstract keyword on the class, even if every method is already implemented.</div>
+      <div class="fq"><b>Q:</b> Is it mandatory for a derived class to override every abstract method? — Yes, unless the derived class is itself declared abstract, in which case it can defer the obligation further down the chain.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. Interface vs Abstract Class <span class="en">(The Core Difference Table)</span></div>
+    <div class="tng">Idhu thaan most-asked question — answer ah oru table madhiri clear ah nenachுkoonga, adhுkkаppuram sொllுngа. <b>Implementation:</b> Interface la illa (mostly), Abstract Class la partial iருkும். <b>Multiple inheritance:</b> Interface la multiple implement panna mudiyும், Abstract Class la ஒரே ஒரு base mattum. <b>Fields:</b> Interface la state/fields illa, Abstract Class la fully allowed. <b>Constructor:</b> Interface la illa, Abstract Class la iருkும் (aana direct instantiate panna mudiyaathu). <b>Access Modifiers:</b> Interface members default public, Abstract Class members private/protected/public எதுவும் ஆகலாம். <b>Purpose:</b> Interface — "can-do" capability contract; Abstract Class — "is-a" relationship + shared code.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"The core differences are: an interface is a pure contract with no implementation and no state, and a class can implement multiple interfaces. An abstract class can mix implemented and abstract methods, has fields and a constructor, but a class can only inherit from one abstract class. I use interfaces for capability contracts across unrelated classes — like IPaymentService — and abstract classes when related classes share real code — like my BaseRepository."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> If you had to pick just one rule of thumb, what would it be? — "Is-a plus shared code" points to abstract class; "can-do across otherwise unrelated types" points to interface.</div>
+      <div class="fq"><b>Q:</b> Has this difference gotten blurrier with C# 8 default interface methods? — A bit — interfaces can now carry implementation — but interfaces still can't hold instance state (fields), which remains the sharpest practical distinction.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. When would you use an Interface? <span class="en">(Decision Criteria)</span></div>
+    <div class="tng">Naan Interface ah use pannуரேன் — enakku unrelated classes (payment types, notification channels, repositories) mூlama <b>same contract</b> mattum venும், code share panna vேண்டாm nா. Especially DI (Dependency Injection) la, unit testing la mock panna venும் nā, and future la multiple implementations வேணும் nа (today Dapper, tomorrow EF Core maathanum nா) — andha ellame Interface use panра scenarios thaan.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I reach for an interface when I need a contract shared across otherwise unrelated classes without sharing implementation — for dependency injection so I can swap implementations at runtime, for unit testing so I can mock the dependency, and whenever I expect multiple, independent implementations of the same capability, like my IStudentRepository being backed by either Dapper or EF Core."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Give one interface from your project and why it's an interface, not an abstract class. — IPaymentService — OnlinePaymentService and OfflinePaymentService share no common code at all, just the same contract, so an interface is the right fit.</div>
+      <div class="fq"><b>Q:</b> Do you always define an interface even for a class with only one implementation? — Mostly yes for anything crossing a service boundary or needing to be mockable in tests, even with one implementation today — it keeps the door open for DI and testing without a later refactor.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. When would you use an Abstract Class? <span class="en">(Decision Criteria)</span></div>
+    <div class="tng">Abstract Class ah naan use pannுрேன் — related classes group ஒரே common code (fields, fully implemented methods) share pannуম் scenario la, aana சில specific parts ovvoru class ku வேறு வேறு ஆக இருக்கும் pothу. Example — namba ellame repository ku common ah <code>SaveChangesAsync()</code>, <code>LogAudit()</code> madhiri methods venும், aana <code>GetTableName()</code> mattum ovvoru repository ku வேறு. Andha "90% same, 10% different" scenario ku Abstract Class perfect fit.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I use an abstract class when a family of related classes shares a large amount of common code, but each needs to customize a specific piece. My BaseRepository&lt;T&gt; is a good example — SaveChangesAsync and audit logging are implemented once and shared, while GetTableName is abstract and different for every concrete repository. It avoids duplicating the shared 90% across every derived class."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What breaks if you use an interface instead in this scenario? — You'd have to duplicate the shared implementation (SaveChangesAsync, logging) in every single derived class, since interfaces traditionally can't hold real shared code — a maintenance nightmare.</div>
+      <div class="fq"><b>Q:</b> Could you combine both — abstract class and interface — for the same hierarchy? — Yes, and it's common — an abstract class can implement an interface, giving you shared code plus a contract other unrelated types can also implement.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q6">
+    <div class="term">6. Can an Interface contain method implementation? <span class="en">(Default Interface Methods, C# 8+)</span></div>
+    <div class="tng">Classic rule — "Interface la implementation illa" — aana C# 8.0 (.NET Core 3.0+) la irundhு, <b>default interface methods</b> nu feature வந்திருக்கு, adhுla body kொடுக்கலாம். Idhu mainly library authors ku — existing interface ku pudhu method add pannினா, adhу implement panрра ellame classes ah break pannாma, default implementation kொடுத்து backward compatibility maintain pannуррதுкku thaan. Naan project la idha rarely thaan use pannுрேன் — most cases la interface la implementation vekkама, plain contract ah thaan வைக்கிறேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Traditionally no, but since C# 8 and .NET Core 3.0, interfaces can have default interface methods with a body. It's mainly meant for library authors to add new members to an existing interface without breaking every class that already implements it. I rarely use this in application code — I keep interfaces as pure contracts and put real implementation in classes."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> If a class doesn't override a default interface method, what happens? — It just uses the interface's default implementation automatically — no compile error.</div>
+      <div class="fq"><b>Q:</b> Why don't you use default interface methods more in your own code? — I want interfaces to stay clear contracts — mixing in real logic blurs the interface-vs-abstract-class distinction and makes it harder to reason about what a class actually does.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q7">
+    <div class="term">7. Can an Abstract Class contain implemented methods? <span class="en">(Yes — Core Feature)</span></div>
+    <div class="tng">Ithuஎல்லேயே Abstract Class oda main purpose thaan — fully implemented (concrete) methods and abstract (no implementation) methods rendும் ஒரே class la mix panna mudiyும். Example — <code>BaseApiController</code> abstract class la <code>HandleError()</code> full ah implement panniருக்கேன் (common error response format), aana <code>ValidateRequest()</code> abstract ah vachु, ovvoru controller adha own validation logic ku override pannுрому.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Yes, that's the whole point of an abstract class — it can freely mix fully implemented methods with abstract ones that have no body. In my BaseApiController, HandleError is fully implemented with a standard error response shape, while ValidateRequest is abstract, and each derived controller provides its own validation logic."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can a derived class call the base class's implemented method directly? — Yes, via base.MethodName() — it's a normal implemented method, fully callable and reusable.</div>
+      <div class="fq"><b>Q:</b> Can it also have virtual (not abstract) methods with a default implementation that CAN be overridden? — Yes — abstract classes commonly mix all three: fully implemented (non-virtual), virtual with a default that can optionally be overridden, and abstract that must be overridden.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q8">
+    <div class="term">8. Can an Interface have constructors? <span class="en">(No)</span></div>
+    <div class="tng">Illaiiye — Interface ku constructor kிடையவே கிடையாது. Reason simple — Interface ku state (fields) illa, so initialize panna edhуvும் illa. Constructor concept "object create aagумbodhu state ah set panradhu" — Interface direct ah object aaga mudiyாthu, adhுla state um illa, so constructor concept idhுkku applicable illave illa.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"No, interfaces cannot have constructors. A constructor's job is to initialize an object's state, but interfaces have no fields or state to initialize, and they can never be instantiated directly — so a constructor simply has nothing to do there."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can an interface have static members in modern C#? — Yes, C# 8+ allows static members including static constructors on interfaces for things like constants or default implementation helpers, but instance constructors are still not allowed.</div>
+      <div class="fq"><b>Q:</b> How do implementing classes then get initialized if the interface has no constructor? — Entirely through the implementing class's own constructor — the interface just guarantees the shape, the class owns all initialization.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q9">
+    <div class="term">9. Can an Abstract Class have constructors? <span class="en">(Yes — but never called directly)</span></div>
+    <div class="tng">Ambadiyும் — Abstract Class ku constructor iருkும், because adhуkku fields/state iருkும், adha initialize pannanum. Aana neenga <code>new AbstractClassName()</code> nа nேrடியaaga call panna mudiyாthu (compile error). Adha instead — derived (child) class oda constructor <code>: base(...)</code> mூlama automatic ah call pannும் pothу, andha abstract class constructor run aagும், common fields initialize aagும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Yes, an abstract class can have a constructor, because it can have fields that need initializing. You just can't call 'new' on the abstract class directly — the constructor only runs when a derived class's constructor implicitly or explicitly calls base(...), which initializes the shared state before the derived class's own constructor body runs."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's the execution order — base constructor or derived constructor first? — The base (abstract) class constructor always runs first, then the derived class constructor body executes.</div>
+      <div class="fq"><b>Q:</b> Can an abstract class constructor be private? — It can be, but then only nested classes within it could derive from it in a meaningful way — in practice abstract class constructors are almost always protected, since only derived classes should ever invoke them.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q10">
+    <div class="term">10. Can we create an object of an Abstract Class? <span class="en">(No — Direct Instantiation Blocked)</span></div>
+    <div class="tng">Illaiiye — <code>new AbstractClassName()</code> nu try pannінா compile-time error kொடுக்கும் — "Cannot create an instance of the abstract class". Aana neenga adha <b>reference variable ah</b> use panna mудியும் — <code>BaseRepository&lt;Student&gt; repo = new StudentRepository();</code> madhiri, right side la concrete derived class object create pannінா, left side la abstract type reference ah vachуkkалাম். Idhу polymorphism oda basic thaan.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"No, you can't directly instantiate an abstract class — new AbstractClassName() is a compile-time error. But you absolutely can use it as a reference type — BaseRepository&lt;Student&gt; repo = new StudentRepository(); — where the object on the right is a concrete derived class, and the abstract type on the left is just the reference variable's declared type, enabling polymorphism."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How does the compiler enforce this? — The 'abstract' keyword on the class is a compiler-level flag — any 'new' expression targeting that type is rejected at compile time, not runtime.</div>
+      <div class="fq"><b>Q:</b> Is there any reflection-based way around this restriction? — No — Activator.CreateInstance on an abstract type also throws at runtime; the restriction is enforced by the CLR itself, not just the C# compiler.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 22B -->
+<div class="section" id="22B">
+  <div class="section-title"><span class="num">22B</span> Instantiation, Inheritance &amp; Multiplicity</div>
+
+  <div class="item" id="q11">
+    <div class="term">11. Can we create an object of an Interface? <span class="en">(No — Same Logic as Abstract Class)</span></div>
+    <div class="tng">Illaiiye — Interface ku definitely object create panna mudiyாthu, because adhуla implementation edhуvும் illa, so runtime la "enna code run panramும்" nu edhуvும் ille. Aana Abstract Class madhiriye, Interface ah reference type ah use pannலाம் — <code>IPaymentService svc = new OnlinePaymentService();</code>.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"No — an interface can never be instantiated directly, since it has no implementation at all for the runtime to execute. Just like an abstract class though, it can absolutely be used as a reference type — IPaymentService svc = new OnlinePaymentService(); — the concrete implementing class is what actually gets created."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why is using the interface as the reference type useful here? — It lets calling code depend only on the contract, so I can swap OnlinePaymentService for OfflinePaymentService without changing any code that consumes IPaymentService.</div>
+      <div class="fq"><b>Q:</b> What does 'svc.GetType()' return at runtime in that example? — The actual concrete type — OnlinePaymentService — reflection always reports the real runtime type, not the compile-time reference type.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. Can a class inherit multiple Interfaces? <span class="en">(Yes)</span></div>
+    <div class="tng">Aamा — C# la oru class multiple interfaces implement pannலாம் — <code>class OnlinePaymentService : IPaymentService, IAuditable, IRetryable</code> madhiri. Idhу thaan "multiple inheritance of type" — C# classes ku single class inheritance mattum allow pannினாலும், interfaces ku andha restriction illa. Idhу exactly namba ISP (Interface Segregation Principle) follow panna help pannும் — periya interface ku pathila, chinna chinna focused interfaces ah combine pannிக்கலாம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Yes, a class can implement any number of interfaces — class OnlinePaymentService : IPaymentService, IAuditable, IRetryable is perfectly valid. This is how C# gives you multiple inheritance of type even though it restricts you to a single base class. It also directly supports the Interface Segregation Principle — I can compose several small, focused interfaces instead of forcing everything through one bloated one."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What if two interfaces have a method with the exact same signature? — The class provides one implementation and it satisfies both interfaces, unless you need different behavior per interface, in which case you use explicit interface implementation.</div>
+      <div class="fq"><b>Q:</b> Is there a practical limit to how many interfaces you'd implement on one class? — No hard limit, but if a single class is implementing many unrelated interfaces it's often a Single Responsibility Principle smell worth reconsidering.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. Can a class inherit multiple Abstract Classes? <span class="en">(No)</span></div>
+    <div class="tng">Illaiiye — C# la (Java madhiriye) oru class <b>ஒரே ஒரு</b> base class mattum inherit panna mудியும் — adhу abstract class aayirundhalum, normal class aayirundhalum. "Multiple class inheritance" C# design ah avoid panniருக்கு — reason, "Diamond Problem" nа oru issue வரும் (rendு parent classes ku ஒரே method name irundhா, yaаru version ah use pannуррathு nु ambiguity). Andha problem ah avoid panna thaan, C# — single class inheritance + multiple interface implementation combination ah choose pannіருக்கு.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"No — C# only allows single inheritance from one class, abstract or not. This is a deliberate design decision to avoid the diamond problem, where two parent classes might have conflicting implementations of the same member and the compiler wouldn't know which one to use. Instead, C# lets you inherit one base class and implement as many interfaces as you need to compose behavior."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How would you work around needing 'two sets' of shared behavior? — Compose instead of inherit — bring in a second abstract class's behavior via a member field/interface (composition), or restructure the hierarchy so one abstract class covers both concerns.</div>
+      <div class="fq"><b>Q:</b> Does C# 8's default interface methods reintroduce the diamond problem? — Partially — if two interfaces provide conflicting default implementations, the implementing class is forced to explicitly resolve the conflict itself, so the compiler still won't silently pick one.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q14">
+    <div class="term">14. What is the purpose of an Interface? <span class="en">(Contract for Polymorphism)</span></div>
+    <div class="tng">Interface oda main purpose — <b>loose coupling</b> and <b>polymorphism</b> achieve panradhu. Adhу "type ah pathi kவலை padாma, capability ah pathi mattум் pேசு" nு design pannа help pannும். En code la controller <code>IStudentRepository</code> ah mattум் theriyum் — adhу Dapper vachा iருக்கா, EF Core vachа iருக்கா nu theriyaathu, theriyavum் venum் illa. Idhу thaan testability, extensibility, and DI ellame possible ah panрродhு.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"An interface's core purpose is to enable loose coupling and polymorphism by letting code depend on a capability contract instead of a concrete type. My controllers only know about IStudentRepository — not whether it's backed by Dapper or EF Core underneath — which is exactly what makes dependency injection, unit testing with mocks, and swapping implementations later all possible without touching consumer code."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Is 'loose coupling' the same idea as Dependency Inversion Principle? — They're closely tied — DIP is the design rule (depend on abstractions), and interfaces are the primary C# mechanism used to actually achieve that loose coupling in practice.</div>
+      <div class="fq"><b>Q:</b> What's the cost of overusing interfaces? — Extra indirection — for a class that will realistically only ever have one implementation and no test-mocking need, an interface can be unnecessary ceremony; I add one when there's a real reason (DI, testing, multiple implementations).</div>
+    </div>
+  </div>
+
+  <div class="item" id="q15">
+    <div class="term">15. What is the purpose of an Abstract Class? <span class="en">(Shared Code + Partial Contract)</span></div>
+    <div class="tng">Abstract Class oda main purpose — code duplication ah avoid panni, related classes kூllа <b>common logic ah ஒரே இடத்தில் share pannுрathு</b>, aana specific parts ah customize panna room kொடுкkuррathு. Idhу "template method" madhiri thaan work pannும் — base class la overall flow/skeleton ah fix pannі, specific steps ah abstract methods ah vittu, derived classes அந்த steps ah override pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"An abstract class's purpose is to centralize shared code across a family of related classes, while still leaving room for each derived class to customize specific parts. It's essentially the Template Method pattern — the abstract class fixes the overall skeleton and shared logic, while abstract methods are the customizable steps each derived class fills in differently."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How is that different from just using composition/helper classes? — Composition avoids the tight is-a coupling of inheritance, but abstract classes are simpler when the shared logic genuinely belongs to a common lineage of related types, not just reusable utility code.</div>
+      <div class="fq"><b>Q:</b> Can you name the Template Method pattern explicitly in an interview? — Yes — it's worth naming directly: "this is the Template Method pattern" signals you know the formal design pattern behind the abstract class usage, not just the C# mechanics.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q16">
+    <div class="term">16. Which is faster, Interface or Abstract Class? <span class="en">(Performance Nuance)</span></div>
+    <div class="tng">Technically — Abstract Class method calls oru <b>tiny bit</b> fast aaganum (virtual table lookup neraiya direct), Interface method calls oru extra level of indirection (interface dispatch table) irukkалாம். Aana idhु — real-world applications la (web APIs, business logic) <b>measurable ah irundhе illa</b> — microseconds/nanoseconds level difference thaan, adha nееनga profile pannினாலும் kவலை படலाam। Idha main deciding factor ah nенachukoodadhu — design correctness (loose coupling vs shared code) thaan main criteria, performance illa.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Technically, abstract class method calls can be marginally faster than interface calls, because interface dispatch has one extra layer of indirection through an interface method table. But in practice, for typical business application code — web APIs, services, repositories — this difference is nanoseconds and never shows up as a real bottleneck. I choose between them based on design fit — loose coupling versus shared code — not micro-benchmarks."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Have you ever actually had to care about this in production? — No — in three-plus years of production .NET work, this specific difference has never been the cause of a real performance issue I've had to fix; database and network calls dominate every time.</div>
+      <div class="fq"><b>Q:</b> When would this micro-difference actually matter? — Extremely hot paths called millions of times per second in tight loops — think low-level game engines or high-frequency trading — not typical CRUD/web API code.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q17">
+    <div class="term">17. Can an Abstract Class have private methods? <span class="en">(Yes)</span></div>
+    <div class="tng">Aamа — Abstract Class ku private methods fully allowed. Idhу useful — internal helper logic ah vачі, adha derived classes kூда expose panна vேண்டாm nа. Example — <code>BaseRepository</code> la <code>private string BuildConnectionString()</code> madhiri internal helper vачаலाம், derived classes adha access panna mудியாthu, aana public/protected methods internally adha call pannலाம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Yes, absolutely — an abstract class can have private methods, just like any normal class. I use them for internal helper logic that shouldn't be exposed or overridden by derived classes — for example, a private BuildConnectionString helper inside BaseRepository that only the base class's own methods call internally."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can a private method in an abstract class be abstract itself? — No — 'private abstract' is a contradiction and a compile error; abstract methods must be overridable, which requires at least protected visibility.</div>
+      <div class="fq"><b>Q:</b> Can derived classes call a base class's private method indirectly? — Only indirectly, by calling a public/protected method in the base class that internally uses the private helper — the private method itself stays completely inaccessible to derived classes.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q18">
+    <div class="term">18. Can an Interface contain properties? <span class="en">(Yes — but no backing field)</span></div>
+    <div class="tng">Aamа — Interface la properties define panna mудியும், aana adhуkku backing field kொடுக்க mудியாthু (state illaiye). <code>interface IAuditable { DateTime CreatedAt { get; set; } }</code> madhiri declare pannலाம், aana implement panра class thaan actual storage decide pannуரроது — auto-property ah, computed property ah, whatever. Interface just "idha property irukanum" nு specify pannுрродu mattум்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Yes, interfaces can declare properties — like a CreatedAt DateTime property with a getter and setter — but they can't have a backing field, since interfaces hold no state. The implementing class decides how to actually back that property, whether that's an auto-property or a computed value."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can an interface property have only a getter, no setter? — Yes — you can declare a read-only property with just { get; }, and the implementing class can still choose to back it however it wants, including a computed expression-bodied property.</div>
+      <div class="fq"><b>Q:</b> Real example from your project of an interface property? — IAuditable exposing CreatedBy and CreatedAt so any entity implementing it — Student, Bill, Employee — guarantees those audit fields exist and can be handled generically in a shared audit-logging layer.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q19">
+    <div class="term">19. Can an Abstract Class contain fields/variables? <span class="en">(Yes — Full State Support)</span></div>
+    <div class="tng">Aamа — Abstract Class la normal fields/variables fully allowed — private, protected, public evanga vениumаналும் irukalaам். Idhу thaan Interface ah vida oru periya difference — Abstract Class ku real state iருkkuम், Interface ku illa. Example — <code>BaseRepository</code> abstract class la <code>protected readonly AppDbContext _context</code> field vачு, derived classes ellame andha same context ah access pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Yes — abstract classes fully support fields, with any access modifier, private, protected, or public. That's one of the sharpest differences from an interface, which can never hold state. My BaseRepository holds a protected readonly AppDbContext field that every derived repository inherits and shares."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why protected instead of private for that context field? — So derived classes can directly use it in their own query logic — private would hide it entirely, forcing an extra property/method just to expose it back out.</div>
+      <div class="fq"><b>Q:</b> Can an abstract class have static fields too? — Yes — static fields work exactly like in a normal class, shared across all instances of any derived type.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q20">
+    <div class="term">20. Real-time scenario where you used an Interface <span class="en">(Project Story)</span></div>
+    <div class="tng">En Zen Campus ERP project la, fee payment ah rendு mode la handle panna vேண்டியirundhுchу — online (gateway) and offline (cash/cheque counter entry). Rendும் completely different logic, aana same "process a payment" contract thaan follow pannуррroanka. Naan <code>IPaymentService</code> interface create panni, <code>ProcessPayment(PaymentRequest)</code> method define pannினேன். <code>OnlinePaymentService</code> gateway API call pannும், <code>OfflinePaymentService</code> direct ah DB la record pannும். Controller <code>IPaymentService</code> ah mattум் depend aagும், actual implementation DI mூlama runtime la inject aagும் — payment mode based ah correct implementation ah <code>PaymentServiceFactory</code> decide pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"In my ERP project, fee payments had two completely different flows — online gateway payments and offline counter cash entries — sharing no implementation but needing the same contract. I created an IPaymentService interface with a ProcessPayment method, implemented separately by OnlinePaymentService and OfflinePaymentService. Controllers depend only on the interface; a PaymentServiceFactory picks the right implementation at runtime based on the payment mode, and it's fully unit-testable by mocking IPaymentService."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why not an abstract class here instead? — Because the two implementations share zero actual code — no common logic to centralize — so an interface's pure contract is the correct fit, not an abstract class.</div>
+      <div class="fq"><b>Q:</b> How does the factory decide which implementation to use? — It reads the payment mode from the incoming request (online/offline) and resolves the matching registered implementation, either through a simple switch or a keyed DI resolution.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 22C -->
+<div class="section" id="22C">
+  <div class="section-title"><span class="num">22C</span> Real-World Usage, SOLID &amp; Design</div>
+
+  <div class="item" id="q21">
+    <div class="term">21. Real-time scenario where you used an Abstract Class <span class="en">(Project Story)</span></div>
+    <div class="tng">En project la neraiya repositories iருkku — <code>StudentRepository</code>, <code>BillRepository</code>, <code>EmployeeRepository</code> — ellame same pattern follow pannuм்: save pannும் pothу change tracking log pannanum், audit fields (<code>CreatedBy</code>, <code>ModifiedAt</code>) auto-set pannанум், same <code>AppDbContext</code> use pannанும். Idha ovvoru repository la duplicate pannாma, <code>BaseRepository&lt;T&gt;</code> abstract class create pannினேன் — common logic (<code>SaveChangesAsync</code>, audit stamping) fully implement pannினேன், aana <code>GetTableName()</code> madhiri entity-specific part ah abstract ah vачு, ovvoru derived repository அந்த mattum override pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Across my repositories — Student, Bill, Employee — I had identical boilerplate for saving changes, audit-stamping CreatedBy/ModifiedAt, and using the same DbContext. Instead of duplicating that in every repository, I built a BaseRepository&lt;T&gt; abstract class that implements the shared save/audit logic once, leaving only the entity-specific piece — like GetTableName — as an abstract method each concrete repository overrides."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What would happen if you'd used an interface here instead? — I'd have had to copy-paste the same save/audit logic into every single repository class, since an interface can't hold that shared implementation — exactly the duplication the abstract class avoids.</div>
+      <div class="fq"><b>Q:</b> Did BaseRepository also implement an interface? — Yes — BaseRepository&lt;T&gt; implements IGenericRepository&lt;T&gt;, so consumers can still depend on the interface for DI/testing while the abstract class handles the shared implementation underneath.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q22">
+    <div class="term">22. What happens if a class implements an Interface but doesn't define its methods? <span class="en">(Compile Error)</span></div>
+    <div class="tng">Compile-time error thaan varும் — "does not implement interface member". C# compiler strict ah check pannும் — interface la irukka every method/property ah, implement panра class definitely provide pannанும், illainaа build fail aagум். Exception — andha class kூда <code>abstract</code> nа declare panniருந்தா, remaining implementation ah adhу derived class ku pass pannலाam், adhуkku exception கிடையாது.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"It's a compile-time error — the compiler enforces that every member declared in the interface must be implemented by the class. The only exception is if the implementing class itself is declared abstract, in which case it's allowed to leave the interface members unimplemented and defer that obligation to whichever concrete class eventually derives from it."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Does this happen at runtime or compile time? — Strictly compile time — the code won't even build, unlike some languages where a missing method might only fail when actually called at runtime.</div>
+      <div class="fq"><b>Q:</b> What if the interface has a default implementation (C# 8+)? — Then it's fine to not override it — the class automatically inherits the interface's default implementation, and only members without a default must be explicitly implemented.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q23">
+    <div class="term">23. Difference between Abstract Methods and Virtual Methods <span class="en">(Must-Override vs Can-Override)</span></div>
+    <div class="tng">Abstract Method — <b>implementation illaiye illa</b>, derived class <b>compulsory ah</b> override pannанும். Virtual Method — <b>default implementation already irukку</b>, derived class venуманா override pannலam், venும் இல்லைனா andha default logic ah use pannலाam். Example — <code>abstract void ValidateRequest();</code> — ovvoru controller thanoda own validation kொடுக்க vேண்டியathu. <code>virtual void LogRequest()</code> — base class la already default logging irukку, specific controller ku venும்நா mattum override pannலaाम்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"An abstract method has no implementation at all and forces every non-abstract derived class to override it. A virtual method has a default implementation already, and overriding it in a derived class is optional. I use abstract for things that genuinely differ per class, like ValidateRequest, and virtual for things with a sensible default that only occasionally needs customizing, like a base LogRequest method."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can an abstract method exist in a non-abstract class? — No — a class containing any abstract member must itself be declared abstract; the compiler enforces this pairing.</div>
+      <div class="fq"><b>Q:</b> What keyword does the derived class need when overriding either kind? — Both require the 'override' keyword in the derived class — the difference is entirely in the base declaration (abstract vs virtual), not in how it's overridden.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q24">
+    <div class="term">24. Can an Abstract Class implement an Interface? <span class="en">(Yes — Common Pattern)</span></div>
+    <div class="tng">Aamа, mudியும் — idhு very common pattern thaan. Abstract Class oru Interface ah implement pannலaाम், aana andha interface oda methods ellame full ah implement pannадha needed illa — abstract class adha "partially implement pannі, remaining ah abstract ah vачு, derived classes ku pass pannலaाम்". Example — <code>BaseRepository&lt;T&gt; : IGenericRepository&lt;T&gt;</code> — interface oda <code>GetAllAsync()</code> ah base class fully implement pannும், aana <code>GetTableName()</code> madhiri interface la illама separate abstract method ah add pannலaाம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Yes, and it's a very common pattern — an abstract class can implement an interface, and it doesn't have to fully implement every member itself; it can implement some and leave the rest abstract for derived classes to complete. My BaseRepository&lt;T&gt; implements IGenericRepository&lt;T&gt;, providing the common CRUD logic itself while adding its own additional abstract members for derived repositories to fill in."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why combine both instead of picking just one? — You get the best of both — the interface gives external code a clean, mockable contract to depend on, while the abstract class gives internal derived classes real shared implementation.</div>
+      <div class="fq"><b>Q:</b> Can the derived concrete class also implement additional interfaces beyond what the abstract base already implements? — Yes — a derived class can add any number of extra interfaces on top of whatever its abstract base class already implements.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q25">
+    <div class="term">25. Why do we use Interfaces in Dependency Injection? <span class="en">(DI's Core Mechanism)</span></div>
+    <div class="tng">DI la Interface use pannuрроதுкku main reason — <b>loose coupling + testability + swappability</b>. Container la <code>services.AddScoped&lt;IStudentRepository, StudentRepository&gt;()</code> register pannினா, consumer classes <code>IStudentRepository</code> ah mattум் ask pannும், actual concrete class ah theriyaathu. Idhу unit test la mock object ah easy ah inject panna help pannும் (real DB touch pannாma), and production la implementation swap pannுрродும் pothу (Dapper la irundhு EF Core ku, or vice versa) consumer code touch pannадha vேண்டியirукkaathu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Interfaces are what actually makes dependency injection useful — the container maps an abstraction to a concrete type, like AddScoped&lt;IStudentRepository, StudentRepository&gt;(), and every consumer only ever asks for the interface. That gives me two big wins: I can inject a mock implementation in unit tests without touching a real database, and I can swap the underlying implementation in production without changing any consuming code."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Could you do DI with an abstract class instead of an interface? — Yes, technically the container can inject an abstract-class reference too, but interfaces are preferred because they don't force an inheritance hierarchy and support multiple contracts per class.</div>
+      <div class="fq"><b>Q:</b> What happens if two implementations are registered for the same interface? — By default the last registration wins for a simple GetRequiredService call — if you genuinely need both side by side, .NET 8+ keyed services let you register and resolve each by an explicit key.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q26">
+    <div class="term">26. Which SOLID principle is related to Interfaces? <span class="en">(ISP + DIP)</span></div>
+    <div class="tng">Rendு principles direct ah Interface ku connected — <b>Interface Segregation Principle (ISP)</b> — periya, "do-everything" interface ku pathila, chinna chinna focused interfaces ah split pannанும், client thevaipadadha methods ah force pannакூடадு. <b>Dependency Inversion Principle (DIP)</b> — high-level modules concrete class ku pathila, Interface (abstraction) ku depend aaganum். Rendும் real projects la interfaces mூlама thaan practically implement pannрроம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Two SOLID principles directly involve interfaces — Interface Segregation Principle, which says split large interfaces into small, focused ones so clients aren't forced to implement methods they don't need, and Dependency Inversion Principle, which says high-level modules should depend on abstractions, not concrete classes. In practice, interfaces are the concrete C# mechanism I use to satisfy both."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Give an ISP example from your project. — Instead of one giant IRepository with 15 methods, I split into IReadRepository and IWriteRepository so a read-only reporting service only depends on the query methods it actually needs.</div>
+      <div class="fq"><b>Q:</b> How do ISP and DIP work together in practice? — ISP shapes the interface to be small and focused, and DIP is the rule that says depend on that shaped interface rather than a concrete class — they reinforce each other.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q27">
+    <div class="term">27. What are the advantages of using Interfaces? <span class="en">(Summary)</span></div>
+    <div class="tng">Interface oda advantages — 1) <b>Loose coupling</b> — code concrete class ku pathila contract ku depend aagும். 2) <b>Multiple inheritance of type</b> — oru class palavidha contracts follow pannலam். 3) <b>Testability</b> — mock objects easy ah inject panna mудியும். 4) <b>Flexibility</b> — implementation maathinaаlum consumer code touch pannадha venடியirукkaathu. 5) <b>Team collaboration</b> — interface ah muன்na define pannінா, different developers parallel ah different implementations vela pannலाम்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Interfaces give you loose coupling since code depends on a contract, not a concrete class; multiple inheritance of type, since a class can implement several interfaces; strong testability through mocking; flexibility to swap implementations without touching consumers; and better team collaboration — once an interface contract is agreed on, different developers can build separate implementations in parallel."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Which of these has mattered most in your actual work? — Testability and swappability — being able to mock IStudentRepository in unit tests, and having actually swapped a Dapper implementation for EF Core once without touching any controller.</div>
+      <div class="fq"><b>Q:</b> Any downside to weigh against these advantages? — Extra indirection and more files/types to navigate — worth it when there's a real need for DI, testing, or multiple implementations, unnecessary ceremony otherwise.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q28">
+    <div class="term">28. What are the advantages of using Abstract Classes? <span class="en">(Summary)</span></div>
+    <div class="tng">Abstract Class oda advantages — 1) <b>Code reuse</b> — common logic ஒரே இடத்தில் implement pannі, duplication avoid pannலाம். 2) <b>Partial abstraction</b> — some methods fully define pannі, some mattум் derived class ku vitrudalaам். 3) <b>Fields/state support</b> — shared state ah maintain pannலaाम். 4) <b>Constructor logic</b> — common initialization ஒரே இடத்தில் pannலaाम். 5) <b>Template Method pattern</b> — overall algorithm skeleton ah fix pannі, specific steps ah customize panna room kொடுкkalaам்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Abstract classes give real code reuse across related classes, support partial abstraction where some methods are fully implemented and others deferred, allow shared state through fields, centralize common constructor initialization, and naturally support the Template Method pattern — fixing a shared algorithm's skeleton while letting derived classes customize specific steps."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> When has code reuse via abstract class saved you real effort? — BaseRepository&lt;T&gt; — adding a new entity's repository takes minutes now, since save/audit logic is already there; before that pattern, every new repository meant copy-pasting the same boilerplate.</div>
+      <div class="fq"><b>Q:</b> What's the risk of overusing abstract classes? — Deep inheritance hierarchies get rigid and hard to change — favor abstract classes for a genuinely shared, stable "is-a" relationship, not just to avoid a bit of duplication.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q29">
+    <div class="term">29. What is Interface Segregation Principle? <span class="en">(SOLID "I")</span></div>
+    <div class="tng">ISP sொல்лுрродு enna na — client ah force pannакூடадு, adhуvுку thேவைப்படாத methods ah implement panна. Periya "fat" interface ku pathila, chinna chinna focused interfaces ah split pannі, ovvoru class thanoda thேவைya interfaces mattum implement pannанум். Example — namba <code>IStudentRepository</code> la read matum் write ellame ஒரே இடத்தில் irundhа, oru read-only reporting service kூда <code>Delete()</code> method implement panna force aagும் (empty body vачு, meaningless ah). Adha thead-off pannuрродுкку, <code>IStudentReadRepository</code> and <code>IStudentWriteRepository</code> nu split pannலaаம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Interface Segregation Principle says clients shouldn't be forced to depend on or implement methods they don't use. Instead of one large interface with everything, you split it into smaller, focused ones. If IStudentRepository had both read and write methods together, a read-only reporting service would still be forced to implement Delete with a meaningless empty body — splitting into IStudentReadRepository and IStudentWriteRepository avoids that."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How is ISP different from SRP? — SRP is about a class having one reason to change; ISP is specifically about interface contracts not forcing unrelated methods onto every implementer — related, but ISP is scoped to contracts.</div>
+      <div class="fq"><b>Q:</b> What's a sign an interface violates ISP? — If an implementing class routinely throws NotImplementedException or leaves empty bodies for some methods, the interface is doing too much and needs splitting.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q30">
+    <div class="term">30. In your project, where did you use Interfaces and Abstract Classes? <span class="en">(Consolidated Answer)</span></div>
+    <div class="tng">Rendையும் combine pannі use pannினேன் — <b>Interfaces</b>: <code>IPaymentService</code> (online/offline payment — zero shared code, DI mூlama swap aagும்), <code>IStudentRepository</code>/<code>IBillRepository</code> (Dapper/EF Core backing swap panna, unit test mock panна), <code>IAuditable</code> (multiple unrelated entities la CreatedAt/CreatedBy contract). <b>Abstract Classes</b>: <code>BaseRepository&lt;T&gt;</code> (common save/audit logic, entity-specific part abstract), <code>BaseApiController</code> (common error handling, entity-specific validation abstract). Rendும் sேra — <code>BaseRepository&lt;T&gt; : IGenericRepository&lt;T&gt;</code> madhiri, abstract class thanoda interface implement pannுрроது.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I use both deliberately, based on the relationship between the classes involved. Interfaces — IPaymentService for online/offline payment strategies with zero shared code, IStudentRepository and IBillRepository so I can swap Dapper and EF Core and mock them in unit tests, and IAuditable as a small contract shared across otherwise unrelated entities. Abstract classes — BaseRepository&lt;T&gt; for real shared CRUD and audit logic, and BaseApiController for shared error handling. And I combine them — BaseRepository&lt;T&gt; itself implements IGenericRepository&lt;T&gt;, so I get shared implementation internally and a clean, mockable contract externally."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> If you had to justify this decision-making to a junior developer in one sentence? — "Is-a plus shared code" → abstract class; "can-do across unrelated types, or needs DI/mocking" → interface; often you'll want both together.</div>
+      <div class="fq"><b>Q:</b> What would you do differently if you rebuilt this today? — Probably nothing structurally different — this split has held up well across the project's growth; if anything I'd introduce IStudentReadRepository/IStudentWriteRepository splits earlier for stricter ISP compliance.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 22D -->
+<div class="section" id="22D">
+  <div class="section-title"><span class="num">22D</span> Bonus — Related C# OOP Nuances</div>
+
+  <div class="item" id="q31">
+    <div class="term">31. Can method overloading differ only by return type? <span class="en">(No)</span></div>
+    <div class="tng">Illaiiye — C# la method overloading ah decide pannுрроது, method signature (name + parameter types/count/order) vачு mattум், return type vачு illa. So <code>int GetValue()</code> and <code>string GetValue()</code> — parameter same ah (none) irundhа, rendும் return type mattум் வேறுபடும்பொழுது — compile error thaan varும், "already defines a member with the same parameter types".</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"No — method overloading in C# is resolved purely by the method signature, meaning the parameter types, count, and order. The return type is not part of the signature for overload resolution, so having two methods that differ only by return type is a compile-time error."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How would you achieve two 'versions' that only differ in return type? — Give them different names, or add a differentiating parameter — e.g. TryGetValue(out int) alongside GetValue() — or use generics with a type parameter driving the return type.</div>
+      <div class="fq"><b>Q:</b> Is this true for overriding too? — Overriding is different — an override must match the base method's signature AND return type exactly (except for covariant return types added in C# 9 for reference types).</div>
+    </div>
+  </div>
+
+  <div class="item" id="q32">
+    <div class="term">32. Can an abstract method exist in a non-abstract class? <span class="en">(No)</span></div>
+    <div class="tng">Illaiiye — oru class la abstract method iருந்தа, andha class definitely <code>abstract</code> nу declare pannाnும். Compiler rule idhу — "'ClassName.MethodName()' is abstract but it is contained in non-abstract class 'ClassName'". Reason logical ah nенachukoongа — abstract method ku implementation illa, adha class instantiate pannінா, andha method call pannினா enna nadaккும் nு clarity illa — so compiler already andha risk ah block pannуррродு.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"No — if a class contains even one abstract method, the class itself must be declared abstract, or it's a compile error. This makes sense logically — an abstract method has no implementation, so if the class could be instantiated, calling that method would have nothing to execute, which the compiler simply won't allow."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can a sealed class have abstract methods? — No — sealed and abstract are mutually exclusive on a class; sealed prevents further inheritance while abstract requires it to complete the type.</div>
+      <div class="fq"><b>Q:</b> If a class is abstract, must it contain at least one abstract method? — No — a class can be marked abstract purely to prevent direct instantiation, even with zero abstract members, all its methods fully implemented.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q33">
+    <div class="term">33. How do you implement two Interfaces having the same method? <span class="en">(Explicit Interface Implementation)</span></div>
+    <div class="tng">Rendு scenario iருkkuम். <b>Same behavior venும்na</b> — oru normal method implement pannінா pothum், rendு interfaces ku同 same method ah automatically satisfy pannும். <b>Different behavior venум்na</b> (each interface ku வேறு logic) — <b>explicit interface implementation</b> use pannанும் — <code>void IPrintable.Print() { ... }</code> and <code>void IExportable.Print() { ... }</code> madhiri, method ah interface name vachu qualify pannанும். Idha call panна, object ah andha specific interface type ku cast pannі call pannанும் — <code>((IPrintable)obj).Print()</code>.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"If both interfaces should share the same behavior, one plain method implementation satisfies both. If they genuinely need different behavior for the same method name, I use explicit interface implementation — qualifying the method with the interface name, like void IPrintable.Print(). To call it, you cast the object to that specific interface type first, since the method isn't visible on the class's own public surface."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why is the explicitly implemented method hidden from the class's public API? — By design — it forces callers to be explicit about which interface's version they mean, avoiding ambiguity when the same method name means two different things.</div>
+      <div class="fq"><b>Q:</b> Have you used explicit interface implementation in real code? — It's rare in day-to-day application code — mostly comes up when adapting a class to satisfy two third-party or framework interfaces that happen to collide on a method name.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q34">
+    <div class="term">34. What is a private constructor? <span class="en">(Controlling Instantiation)</span></div>
+    <div class="tng">Private constructor na — class ku constructor iருkும், aana adhуkku <code>private</code> access modifier vачி, class oda outside la iருந்து (or even derived classes la iருந்தும்) <code>new ClassName()</code> nு direct ah call panна mудியாtha maathi block pannுрроது. Use cases — 1) <b>Singleton pattern</b> — ஒரே ஒரு instance mattум் iருkka venும் nа. 2) <b>Static-only classes</b> — utility/helper class la static methods mattум் iருkkanum் nа, object create panna venడाм் nа. 3) <b>Factory pattern</b> — object creation ah oru static factory method mூlама mattум் control pannанும் nа.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"A private constructor is a constructor marked private, which blocks any code outside the class from calling 'new' on it directly. I've used it for a couple of things — enforcing the Singleton pattern so only one instance can ever exist, static-only utility classes where instantiation makes no sense, and factory patterns where object creation should only happen through a controlled static factory method, not directly."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can an abstract class have a private constructor? — Technically yes, but it becomes uninstantiable even by derived classes unless they're nested within it, since derived classes need at least protected access to call base() — so it's rarely useful outside very specific sealed-hierarchy designs.</div>
+      <div class="fq"><b>Q:</b> How is a private constructor different from a static class? — A static class can never be instantiated at all and can't have instance members; a class with only a private constructor CAN still be instantiated from within itself, which is exactly what Singleton and factory patterns rely on.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q35">
+    <div class="term">35. If <code>A obj = new B();</code> which overridden method gets called? <span class="en">(Runtime Polymorphism)</span></div>
+    <div class="tng">Idhу classic polymorphism question. If <code>B</code> class <code>A</code> ah inherit pannі, oru method ah <code>override</code> pannினா — <code>obj.MethodName()</code> call pannும்பொழுது, <b>B oda overridden version thaan run aagும்</b>, A oda original version illa — even though compile-time reference type <code>A</code> thaan. Idhу thaan "runtime polymorphism" / "dynamic method dispatch" — actual method call decide aaguрродு, <b>compile time type ah vачी இல்லை, runtime object type ah vачி</b>. Aana andha method <code>virtual</code>/<code>abstract</code>/<code>override</code> keywords illama, normal method ah irundhа — adhу "method hiding" (<code>new</code> keyword), adhула compile-time type (A) thaan decide pannும், B oda version illa.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"If B overrides A's method using the virtual/override keywords, then obj.MethodName() calls B's overridden version at runtime, even though the compile-time reference type is A — that's runtime polymorphism, resolved by the actual object type, not the reference type. But if the method isn't declared virtual/override — say B just uses 'new' to hide A's method — then it's method hiding, and the reference type A determines which version runs, calling A's version instead."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why does this matter practically? — It's exactly why my controllers can hold an IPaymentService reference and get the correct OnlinePaymentService or OfflinePaymentService behavior automatically at runtime — polymorphism is what makes DI-based swapping actually work.</div>
+      <div class="fq"><b>Q:</b> What's the difference between 'override' and 'new' on a derived method in one line? — 'override' replaces the base behavior polymorphically for all reference types; 'new' just hides it and only applies when accessed through the derived type's own reference.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  Prepared for Gurumoorthy M — .NET Developer Interview Prep, RAX Tech International, Chennai<br>
+  <a href="00_Index.html">← Back to Roadmap Home</a>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 3: ASP.NET Core — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox table{width:100%;border-collapse:collapse;font-size:0.85em}
+.cheatbox th,.cheatbox td{padding:6px 10px;border-bottom:1px solid #2a2a5a;text-align:left;color:#e0e0e0}
+.cheatbox th{color:#fbbf24;font-size:0.78em;text-transform:uppercase}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+.resume-block{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:18px 20px;margin:14px 0}
+.resume-block .rtitle{color:#fff;font-weight:700;font-size:1em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.resume-block .rquote{background:#1a1a2e;border-left:3px solid #6b7280;padding:8px 12px;border-radius:0 6px 6px 0;font-size:0.85em;color:#9ca3af;font-style:italic;margin-bottom:10px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 3: ASP.NET Core</h1>
+  <p>20 Q&amp;A — Thanglish explanation + English answer script + follow-up questions</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html" class="active">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhu ASP.NET Core framework internals — pipeline, DI, filters, caching, exception handling ellame idhula irukku. Ovvoru item first Thanglish la padichu artham puriinjuko, apparam "Interview la eppadi sollanum" box padichu, adha close pannitu un own words la sொல்லி practice pannunga. Middleware pipeline order mattum verbatim memorize pannanum — idhu almost every interview la varum.</p>
+</div>
+
+<div class="toc">
+  <h2>Sections</h2>
+  <div class="toc-grid">
+    <a href="#3A">3A. Hosting, Middleware &amp; Pipeline (Q1-7)</a>
+    <a href="#3B">3B. MVC, Routing &amp; Filters (Q8-14)</a>
+    <a href="#3C">3C. Cross-Cutting Concerns (Q15-20)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 3 Quick-Recall Cheat Sheet</h2>
+  <ul>
+    <li><b>1. Pipeline order (mandatory memorize):</b> Exception Handling → HTTPS Redirection → Static Files → Routing → CORS → Authentication → Authorization → Custom Middleware → Endpoints</li>
+    <li><b>2. Program.cs (.NET 6+):</b> single file, top-level statements, WebApplicationBuilder — old Startup.cs (ConfigureServices + Configure) removed</li>
+    <li><b>3. Custom middleware:</b> class with <code>RequestDelegate _next</code> + <code>InvokeAsync(HttpContext)</code>, registered via <code>app.UseMiddleware&lt;T&gt;()</code></li>
+    <li><b>4. Kestrel:</b> built-in cross-platform web server; IIS/Nginx sits in front as reverse proxy for TLS termination, load balancing, static file offload</li>
+    <li><b>5. DI lifetimes:</b> see table below — pick wrong lifetime = memory leak or shared-state bug</li>
+    <li><b>6. Config:</b> appsettings.json → appsettings.{Environment}.json → env vars → command line (later wins); strongly-typed via <code>IOptions&lt;T&gt;</code></li>
+    <li><b>7. Environments:</b> <code>ASPNETCORE_ENVIRONMENT</code> var drives Development/Staging/Production behavior; set in launchSettings.json locally</li>
+    <li><b>8. MVC:</b> Model (data) + View (Razor UI) + Controller (traffic cop) — separation of concerns</li>
+    <li><b>9. Routing:</b> Attribute routing (<code>[Route]</code> on controller/action, Web API default) vs Conventional (<code>MapControllerRoute</code> pattern, classic MVC default)</li>
+    <li><b>10. Filters:</b> Action Filter (before/after action) · Exception Filter (catch unhandled) · Authorization Filter (runs first, gatekeeper)</li>
+    <li><b>11. Model Binding:</b> JSON/form/route → C# object auto-map; validation via Data Annotations or FluentValidation</li>
+    <li><b>12. ViewBag/ViewData:</b> current request only, controller→view; TempData: survives one redirect (uses session/cookie)</li>
+    <li><b>13. Razor:</b> .cshtml + C# via <code>@</code>; <code>_Layout.cshtml</code> = common shell, <code>@RenderBody()</code> plugs page in</li>
+    <li><b>14. [ApiController]:</b> auto 400 on invalid ModelState, auto [FromBody] inference, requires attribute routing, problem-details responses</li>
+    <li><b>15. CORS:</b> browser same-origin block; server explicitly whitelists allowed origins via <code>AddCors</code> + <code>UseCors</code></li>
+    <li><b>16. Caching:</b> in-memory (<code>IMemoryCache</code>, single server) vs response caching (HTTP cache headers) vs distributed (Redis, multi-instance)</li>
+    <li><b>17. Health checks:</b> <code>/health</code> endpoint via <code>AddHealthChecks()</code> — used by load balancer/k8s to know if instance is alive</li>
+    <li><b>18. Lifecycle:</b> Program.cs runs once at startup; <code>BackgroundService</code>/<code>IHostedService</code> = long-running background tasks inside the app process</li>
+    <li><b>19. Logging:</b> <code>ILogger&lt;T&gt;</code> built-in, structured logging with named params (not string concat), Serilog for sinks + correlation ID</li>
+    <li><b>20. Global exception middleware:</b> one place catches all unhandled exceptions, logs with correlation ID, returns consistent error JSON — cut incident resolution time 35%</li>
+  </ul>
+  <br>
+  <table>
+    <tr><th>Lifetime</th><th>New instance</th><th>Use when</th></tr>
+    <tr><td><b>Transient</b></td><td>Every single injection</td><td>Lightweight, stateless services (e.g. a mapper/helper)</td></tr>
+    <tr><td><b>Scoped</b></td><td>Once per HTTP request</td><td>DbContext, repository — same instance across one request</td></tr>
+    <tr><td><b>Singleton</b></td><td>Once for app lifetime</td><td>Config objects, in-memory cache, thread-safe shared state</td></tr>
+  </table>
+</div>
+
+<!-- 3A -->
+<div class="section" id="3A">
+  <div class="section-title"><span class="num">3A</span> Hosting, Middleware &amp; Pipeline</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. Request Pipeline / Middleware Order <span class="en">(ASP.NET Core Pipeline)</span></div>
+    <div class="tng">Oru request app ku varumbodhu, adhu oru "assembly line" madhiri, ஒவ்வொரு middleware ah cross pannிட்டு தான் final controller ku pogum. Ovvoru middleware "idha check pannிட்டு, next ku pass pannu" nu sொல்லும் — <code>next()</code> call pannாma வேற route ah short-circuit ah kூட pannலாம் (example: exception handler la error irundhа, adhே pipeline ah stop panniடும், next ku போகாது). Order thavaru na — example Authentication ku munnadi Authorization vecha, user ah check pannாmலேயே role check panна try pannும், adhu crash aagும். Idha oru "security checkpoints" nु nenachukonga — first gate, second gate, apparam matum thaan hall ku entry.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>The ASP.NET Core pipeline is an ordered chain of middleware components, and each one decides whether to pass the request to the next or short-circuit it. My standard order is: exception handling first, then HTTPS redirection, static files, routing, CORS, authentication, authorization, my custom middleware like logging, and finally the endpoint itself. Getting this order wrong is a classic bug — if authorization runs before authentication, you're checking roles on a user who was never identified.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why does exception handling middleware go first? — Because it needs to wrap everything downstream in a try-catch; if it's registered later, exceptions thrown by earlier middleware won't be caught.</div>
+      <div class="fq"><b>Q:</b> What happens if you put UseRouting() after UseAuthorization()? — App throws at runtime — authorization needs the endpoint metadata that routing sets, so routing must come first.</div>
+      <div class="fq"><b>Q:</b> Can a middleware short-circuit the pipeline? — Yes, by not calling next() — e.g., a maintenance-mode middleware can return 503 immediately without hitting the rest of the pipeline.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. Program.cs Minimal Hosting vs Old Startup.cs <span class="en">(Minimal Hosting Model)</span></div>
+    <div class="tng">.NET 5 varaikkும் rendு files irundhuchu — <code>Program.cs</code> (host build panna) + <code>Startup.cs</code> (ConfigureServices method la DI register pannுவathு, Configure method la pipeline set pannுவathு). .NET 6-la irundhu — ellame oru single <code>Program.cs</code> file kulla top-level statements ah eluthலாம், <code>Class</code> illama, <code>Main</code> method கூட explicit ah venam. Konjam kammi boilerplate, easy ah paakalam. Aana namba old projects (v5 base) la Startup.cs pattern kூட paakக்கூடும் nu ready ah irukkanum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Before .NET 6, we had a separate Startup.cs with ConfigureServices for DI registration and Configure for the middleware pipeline, wired up from Program.cs. From .NET 6 onward, the minimal hosting model merges everything into one Program.cs using top-level statements — WebApplicationBuilder to register services and WebApplication to build the pipeline. Functionally they do the same thing, it's just less ceremony. I've worked with both since our ZenCampus services span v5 through v8.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can you still use Startup.cs in .NET 6+? — Yes, it's still supported for backward compatibility, but minimal hosting is the recommended default.</div>
+      <div class="fq"><b>Q:</b> What's WebApplicationBuilder? — It's the object that combines configuration, DI container, and logging setup — replaces the old IHostBuilder/IWebHostBuilder split.</div>
+      <div class="fq"><b>Q:</b> Does the middleware order rule still apply in minimal hosting? — Absolutely, order still matters — you just write app.Use... calls directly in Program.cs instead of inside Configure().</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. Writing a Custom Middleware <span class="en">(Custom Middleware)</span></div>
+    <div class="tng">Custom middleware na — namba own logic ah pipeline la inject pannுрathу. Example, namba ZenCampus la ovvoru request ku "idhu evlo time eduthuchu, andha request ID enna" nu log panna, oru custom logging middleware eludhinom. Class la rendு thing venum — constructor la <code>RequestDelegate next</code> vachukonga (idhu thaan next middleware ku pass pannுрathு), and <code>InvokeAsync(HttpContext context)</code> method la namba logic vechutu, kadaisila <code>await _next(context)</code> call pannanum — illana pipeline appadi thaan stop aagi pogum.</div>
+    <pre><code>public class RequestLoggingMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger&lt;RequestLoggingMiddleware&gt; _logger;
+
+    public RequestLoggingMiddleware(RequestDelegate next,
+        ILogger&lt;RequestLoggingMiddleware&gt; logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var correlationId = Guid.NewGuid().ToString();
+        context.Items["CorrelationId"] = correlationId;
+        _logger.LogInformation("Request {Method} {Path} started - {CorrelationId}",
+            context.Request.Method, context.Request.Path, correlationId);
+
+        await _next(context); // pass to next middleware
+
+        _logger.LogInformation("Request finished with {StatusCode} - {CorrelationId}",
+            context.Response.StatusCode, correlationId);
+    }
+}
+
+// Program.cs
+app.UseMiddleware&lt;RequestLoggingMiddleware&gt;();</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A custom middleware is a class with a constructor that captures the next RequestDelegate, and an InvokeAsync method that runs my logic and then calls await next(context) to hand off to the rest of the pipeline. I register it with app.UseMiddleware&lt;T&gt;(). I built exactly this pattern for centralized request logging across our microservices — attaching a correlation ID to every request so I could trace it end-to-end across services when debugging production issues.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What if you forget to call _next(context)? — The pipeline stops right there — nothing downstream, including the controller, ever runs, and the request hangs or returns whatever you set before that.</div>
+      <div class="fq"><b>Q:</b> Middleware class vs inline app.Use() lambda — which do you prefer and why? — Class-based for anything reusable or with dependencies injected via constructor; inline lambda only for quick one-off checks in Program.cs.</div>
+      <div class="fq"><b>Q:</b> Is middleware a singleton? — Yes by default, middleware is constructed once at startup — so don't store per-request state as instance fields, use context.Items or scoped services instead.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. Kestrel &amp; Reverse Proxy <span class="en">(Kestrel, IIS/Nginx)</span></div>
+    <div class="tng">Kestrel na ASP.NET Core kூடavே varura built-in, cross-platform, super-fast web server — namba app itself Kestrel mூlama HTTP requests handle pannும். Aana production la, Kestrel ah direct ah internet ku expose panna maatoம் — front la IIS (Windows) illa Nginx (Linux/Docker) nu oru "reverse proxy" vecharuvom. Idhu enna panнும் na — TLS/SSL certificate handle pannும், static files serve pannலாம், multiple app instances ku traffic route pannலாம் (load balancing), and Kestrel ah direct attack-கிроம் இருந்து protect pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Kestrel is the lightweight, cross-platform web server that ships with ASP.NET Core and actually processes the HTTP requests. In production I never expose Kestrel directly to the internet — I put Nginx or IIS in front of it as a reverse proxy, which handles TLS termination, serves static content efficiently, and can load balance across multiple container instances. In our Docker setup, each microservice container runs Kestrel internally, and the gateway or reverse proxy in front handles the external traffic.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why not expose Kestrel directly? — Kestrel is optimized for app processing, not hardened for internet-facing concerns like connection limits, request filtering, and DDoS mitigation the way IIS/Nginx are.</div>
+      <div class="fq"><b>Q:</b> What is ForwardedHeaders middleware for? — It reads X-Forwarded-For/X-Forwarded-Proto headers from the proxy so the app knows the real client IP and scheme instead of the proxy's.</div>
+      <div class="fq"><b>Q:</b> In your Ocelot setup, is Ocelot also a reverse proxy? — Yes, Ocelot itself acts as an API gateway/reverse proxy in front of the microservices, and it in turn can sit behind Nginx/IIS for TLS.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. Dependency Injection &amp; the 3 Service Lifetimes <span class="en">(Transient/Scoped/Singleton)</span></div>
+    <div class="tng">DI na class ah, adhoda dependencies (example <code>IStudentRepository</code>) thaanே create pannாma, outside irundhு "inject" pannуவathу — idhu vachа testing easy, code loosely coupled aagும். Aana lifetime wrong ah pick pannினா periya problem varும். Real story: oru DbContext ah namba <b>Singleton</b> ah register pannினோm nu vachukonga — andha same instance ellаருкkூம் share aagும், multiple requests parallel ah same DbContext use pannினா, thread-safety issue வந்து data corrupt aagும் illна crash aagும். DbContext eppavuм <b>Scoped</b> ah irukkanum — per-request oru fresh instance. Adhே madhiri, config object ah <b>Transient</b> ah pannினா, every injection ku pudhusa create aagும், waste of memory — adhа Singleton ah vecha pothum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Dependency Injection means a class receives its dependencies from outside instead of newing them up itself, which keeps code loosely coupled and testable. The three lifetimes matter a lot — Transient creates a new instance every time it's injected, Scoped creates one per HTTP request, and Singleton creates one for the entire app lifetime. I've seen the classic bug firsthand — if you accidentally register a DbContext as Singleton, every request shares the same context instance, and under concurrent load you get thread-safety exceptions or corrupted change-tracking. DbContext must always be Scoped; only truly stateless or thread-safe things like configuration or an in-memory cache wrapper should be Singleton.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What happens if a Singleton injects a Scoped service? — You get a "captive dependency" — the scoped service gets pinned to the singleton's lifetime forever, which is a runtime error in ASP.NET Core by default (validated at startup in Development).</div>
+      <div class="fq"><b>Q:</b> How do you register services in Program.cs? — builder.Services.AddTransient&lt;T&gt;(), AddScoped&lt;T&gt;(), or AddSingleton&lt;T&gt;(), usually against an interface mapped to an implementation.</div>
+      <div class="fq"><b>Q:</b> Is HttpClient okay as Transient? — Not directly — raw HttpClient can exhaust sockets; use IHttpClientFactory (AddHttpClient) which manages the lifetime correctly under the hood.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q6">
+    <div class="term">6. Configuration System <span class="en">(appsettings.json, IOptions&lt;T&gt;)</span></div>
+    <div class="tng">Namba connection string, JWT secret, external API URL ellame code la hardcode pannாmல் <code>appsettings.json</code> la vecharuvom. Adhுட்டு <code>appsettings.Development.json</code>, <code>appsettings.Production.json</code> nu environment-specific overrides um vecha mудிуும் — production values local settings ah override pannும். Namba இதை direct ah <code>IConfiguration</code> vecha string ah eduthுkkலாம், aana best practice na — oru C# class create pannிட்டு, <code>IOptions&lt;T&gt;</code> mூlama strongly-typed ah inject pannுрathу, so typo-na compile time la kaanаாmல் runtime la kூட clean ah fail aagும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>ASP.NET Core layers configuration from multiple sources — appsettings.json as the base, appsettings.{Environment}.json overriding it per environment, then environment variables, then command-line args, with later sources winning. Instead of pulling raw strings via IConfiguration everywhere, I bind sections to strongly-typed POCO classes and inject them via IOptions&lt;T&gt; — that gives compile-time safety and one place to change if the config shape changes. For secrets like connection strings and JWT keys, in production those come from environment variables or a secret store rather than being committed in appsettings.json.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> IOptions vs IOptionsSnapshot vs IOptionsMonitor — difference? — IOptions is singleton, read once at startup; IOptionsSnapshot is scoped and re-reads per request; IOptionsMonitor is singleton but supports live reload notifications.</div>
+      <div class="fq"><b>Q:</b> How do you keep secrets out of source control locally? — User Secrets (dotnet user-secrets) for local dev, and Key Vault or environment variables for deployed environments.</div>
+      <div class="fq"><b>Q:</b> Which config source wins if the same key is in appsettings.json and an env var? — Environment variables win — the later-registered provider in the configuration builder chain overrides earlier ones.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q7">
+    <div class="term">7. Environment-Specific Behavior <span class="en">(Development/Staging/Production, launchSettings)</span></div>
+    <div class="tng">App evlo environment la run aagுрோm nu decide pannுрathு <code>ASPNETCORE_ENVIRONMENT</code> nаа environment variable. Local la work pannுмbodhu, <code>launchSettings.json</code> file la idha set pannிருппோm (usually "Development"). Idha vecha namba code la <code>app.Environment.IsDevelopment()</code> check panни — Development la detailed error page (<code>UseDeveloperExceptionPage</code>) kaாттி, Production la user ku andha stack trace theriya vidama, generic error page mattum kaатுрோm — security ku miga important, edhуnala stack trace la table names, internal paths ellame leak aagலாம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>The ASPNETCORE_ENVIRONMENT variable — set locally through launchSettings.json and via actual environment variables or Docker env in deployed environments — drives conditional behavior in Program.cs. The most important one is exception detail: in Development I show the developer exception page with full stack traces for fast debugging, but in Production I switch to a generic error handler so I'm never leaking internal details like table names, file paths, or connection info to an end user. I also swap things like Swagger UI being enabled only outside Production.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Where does ASPNETCORE_ENVIRONMENT actually get set in a Docker container? — As an environment variable in the Dockerfile/docker-compose or the orchestrator's env config, not in launchSettings.json which is a local-dev-only file.</div>
+      <div class="fq"><b>Q:</b> Can you add custom environments beyond Dev/Staging/Production? — Yes, it's just a string — you can name it "QA" or "UAT" and check it with app.Environment.IsEnvironment("QA").</div>
+      <div class="fq"><b>Q:</b> Should Swagger be enabled in Production? — Generally no for public APIs, or at least gated behind auth — I typically enable it for Development/Staging only.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3B -->
+<div class="section" id="3B">
+  <div class="section-title"><span class="num">3B</span> MVC, Routing &amp; Filters</div>
+
+  <div class="item" id="q8">
+    <div class="term">8. MVC Pattern <span class="en">(Model-View-Controller)</span></div>
+    <div class="tng">MVC na oru simple separation — <b>Model</b> data ah represent pannும் (example: Student class), <b>View</b> andha data ah HTML ah render pannும் (Razor .cshtml file), <b>Controller</b> user request ah receive pannிட்டு, correct model ah fetch panни, correct view ku pass pannும் — oru "traffic cop" madhiri. Idhu vachа namba UI logic um, business logic um, data um clean ah separate ah irukkும் — oru file la ellame kuழпinja spaghetti code aagாmல்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>MVC separates an app into three responsibilities — the Model holds the data, the View renders the UI from that data, and the Controller sits between them, handling the incoming request, invoking business logic, and choosing which view to return with which data. In ZenCampus, my admission and attendance modules use this pattern directly — a Controller action fetches student data through a service layer and returns a strongly-typed Razor view, keeping the view itself free of business logic.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Where does business logic live — controller or model? — Ideally neither directly — I push it into a service/business-logic layer the controller calls, keeping controllers thin.</div>
+      <div class="fq"><b>Q:</b> MVC vs MVVM — quick difference? — MVVM adds a ViewModel that the view binds to reactively (common in WPF/Angular); classic server-rendered MVC has the controller pushing a model into the view per request.</div>
+      <div class="fq"><b>Q:</b> Can a controller return something other than a View? — Yes — JsonResult, RedirectResult, FileResult, StatusCode results, or in Web API just the data/IActionResult directly.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q9">
+    <div class="term">9. Attribute Routing vs Conventional Routing <span class="en">(Routing)</span></div>
+    <div class="tng">Conventional routing na — oru central place (Program.cs) la ஒரு pattern define pannுрোm, example <code>{controller}/{action}/{id?}</code> — andha pattern follow panни ellа URLs-um automatic ah map aagும். Attribute routing na — ovvoru controller/action mேலே direct ah <code>[Route("api/students")]</code>, <code>[HttpGet("{id}")]</code> nu podுрோm — explicit ah, konjum control adhikam. Web API-ku attribute routing thaan standard, edhуnала API URLs precise ah, RESTful ah irukkанும். Classic MVC (Razor views) ku convention routing kூடа use pannலாம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Conventional routing defines a single URL pattern centrally — like {controller}/{action}/{id?} — and every controller follows it implicitly. Attribute routing puts the route directly on the controller and action using [Route] and [HttpGet]/[HttpPost] attributes, giving explicit, per-endpoint control. All my Web API controllers use attribute routing because it maps cleanly to REST resource paths like api/students/{id}, and it's actually required once you mark a controller with [ApiController].</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can you mix both in the same app? — Yes, but not usually on the same controller — typically Razor MVC controllers use conventional, API controllers use attribute routing.</div>
+      <div class="fq"><b>Q:</b> What does [Route("api/[controller]")] do? — [controller] is a token that gets replaced with the controller's class name minus "Controller" — so StudentsController becomes api/students automatically.</div>
+      <div class="fq"><b>Q:</b> How do you version an API with routing? — Common approach is a route segment like api/v1/students, or a custom header/query param combined with API versioning middleware.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q10">
+    <div class="term">10. Action / Exception / Authorization Filters <span class="en">(Filters)</span></div>
+    <div class="tng">Filters na — controller action run aaguрathukku munnadi illна apparam, cross-cutting logic ah automatic ah run pannுрathukku use pannுрோm, ovvoru action la manually repeat pannாmல். <b>Action Filter</b> — action run aagுрathukku munnadi/apparam logic (example: model validation check, timing log). <b>Exception Filter</b> — action level la specific exception ah catch pannுрathукки (global middleware exception ah miss aagi filter la catch aagалாம் sila cases la — controller-specific handling ku useful). <b>Authorization Filter</b> — pipeline la ellathுkkும் munnadi run aagும், "idhு user ku access irukka" nu first gate ah check pannும், fail ana action um trigger aagாது.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Filters let me hook into the MVC action-execution pipeline without repeating logic in every action. Action Filters run before and after an action executes — I've used them for logging execution time and for common model-state checks. Exception Filters catch exceptions thrown during action execution and let me return controller-specific error responses when the global middleware handling is too generic. Authorization Filters run earliest, before model binding even happens, and simply gate whether the request is allowed to reach the action at all — that's what [Authorize] is built on.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's the filter execution order? — Authorization → Resource → Model Binding → Action → Exception (on error) → Result filters, roughly in that pipeline sequence.</div>
+      <div class="fq"><b>Q:</b> Global exception middleware vs Exception Filter — when would you use which? — Middleware for app-wide, consistent error shape across all requests including non-MVC; Exception Filters when you need MVC-context-aware handling, like returning a specific view for a specific controller's errors.</div>
+      <div class="fq"><b>Q:</b> How do you write a custom Action Filter? — Implement IActionFilter (or inherit ActionFilterAttribute) and override OnActionExecuting/OnActionExecuted, then apply it via attribute or register it globally in MVC options.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q11">
+    <div class="term">11. Model Binding &amp; Validation <span class="en">(Data Annotations, FluentValidation)</span></div>
+    <div class="tng">Client anுppுрa JSON/form data ah, automatic ah C# object (DTO) ah convert pannுрathு thaan Model Binding — <code>[FromBody]</code>, <code>[FromQuery]</code>, <code>[FromRoute]</code> vecha data engे irundhு varудு nu control pannலாம். Validation ku basic rules (Required, MaxLength, Range) ku Data Annotations pothum. Aana rule complex ah irundha — example "EndDate must be after StartDate" nु rendு fields depend aagும் rule — adhukku FluentValidation nalla, edhуnала separate validator class la clean ah readable ah eludhலாm, unit test kూட easy.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Model binding automatically maps incoming request data — JSON body, query string, route values — into my C# request DTOs, using attributes like [FromBody] or [FromQuery] to control the source. For validation, Data Annotations handle simple per-field rules like Required or MaxLength directly on the model. When a rule spans multiple fields or needs conditional logic, I reach for FluentValidation instead — it keeps the model itself clean and puts validation logic in a dedicated, testable validator class.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What happens automatically when validation fails on an [ApiController]? — It short-circuits before reaching my action code and returns a 400 Bad Request with a ValidationProblemDetails body listing the failed fields.</div>
+      <div class="fq"><b>Q:</b> Can model binding fail silently? — If a type mismatch happens, ModelState.IsValid becomes false rather than throwing — that's why checking ModelState (or relying on [ApiController] auto-400) matters.</div>
+      <div class="fq"><b>Q:</b> How do you register FluentValidation in the pipeline? — Via AddFluentValidationAutoValidation() (or manually calling validators in the action/service) after installing the FluentValidation.AspNetCore package.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. ViewBag vs ViewData vs TempData <span class="en">(Data Transfer to Views)</span></div>
+    <div class="tng">Mூnrும் controller-la irundhு view ku data anுppுрathукки thaan, aana difference: <b>ViewData</b> — dictionary (string key, object value), current request ku mattum valid. <b>ViewBag</b> — ViewData-oda dynamic wrapper, same purpose, konjum easy syntax (<code>ViewBag.Message</code> nु direct ah access pannலாம், cast pannтвேண்டாம்). <b>TempData</b> — idhu specialе na, one redirect வரைкும் data survive pannும் (session illна cookie use pannும் internally) — example: "Student saved successfully" nु message ah, Create action la set pannினா, redirect aana Index page-la kூடа andha message kaанலாம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>ViewData and ViewBag do the same job — passing data from controller to view for the current request — ViewBag is just a dynamic wrapper over the same ViewData dictionary, so no casting needed. TempData is different — it's meant to survive exactly one redirect, backed by session or cookies internally, which is exactly what I use for the classic post-redirect-get pattern — like showing "Record saved successfully" after a Create action redirects to the Index listing.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Does TempData survive more than one redirect? — Not by default — once read, it's marked for deletion; you'd call TempData.Keep() to preserve it for another redirect.</div>
+      <div class="fq"><b>Q:</b> Why prefer a strongly-typed ViewModel over ViewBag? — Compile-time safety and IntelliSense — ViewBag typos only fail at runtime since it's dynamic.</div>
+      <div class="fq"><b>Q:</b> What's TempData's default storage mechanism? — Session state by default (cookie-based TempData provider is also available) — so it requires session middleware to be enabled.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. Razor Views &amp; Layout Pages <span class="en">(Razor, _Layout.cshtml)</span></div>
+    <div class="tng">Razor na — HTML kூடа directly C# code eludhура syntax, <code>@</code> symbol vecha switch pannுрோm (example <code>@foreach(var s in Model.Students){ ... }</code>). Ovvoru page ku header, footer, navbar ellame repeat pannамала, oru common <code>_Layout.cshtml</code> file vecharuvom — adhula <code>@RenderBody()</code> nु oru placeholder irukkும், andha spot la individual page content plug aagும். ZenCampus la admission form, attendance grid ellame idhே layout structure follow pannும், so UI consistent ah irukkும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Razor is a templating syntax that lets me embed C# directly inside HTML using the @ symbol — for loops, conditionals, calling helper methods, all inline with markup. To avoid repeating the header, nav, and footer on every page, I use a shared _Layout.cshtml with a @RenderBody() call, and every individual view just renders its content into that slot via @{ Layout = "_Layout"; }. I also use partial views and view components for reusable chunks like a student-card widget across multiple ZenCampus screens.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Partial View vs View Component — difference? — Partial views are simple markup reuse with data passed in; View Components have their own logic/class behind them, more like a mini self-contained controller+view.</div>
+      <div class="fq"><b>Q:</b> What's _ViewStart.cshtml? — A file that runs before every view in its folder and sets shared defaults, most commonly the default Layout, so you don't repeat it per view.</div>
+      <div class="fq"><b>Q:</b> How do you pass a strongly-typed model to a Razor view? — @model Namespace.Type at the top of the .cshtml, then the controller returns View(myModelInstance).</div>
+    </div>
+  </div>
+
+  <div class="item" id="q14">
+    <div class="term">14. [ApiController] Attribute <span class="en">(ApiController Attribute)</span></div>
+    <div class="tng">Web API controller mேலே <code>[ApiController]</code> podுма bodhu, konjum "free" features automatic ah kidaikkும். Model validation fail aana automatic ah 400 Bad Request return aagும் — namba <code>if(!ModelState.IsValid)</code> nு eludhура வேண்டியதில்லை. Parameter binding kூடа smart ah aagும் — complex type na automatic ah <code>[FromBody]</code>-nu assume pannும். Attribute routing mandatory aagும் (conventional routing use panna mудியாது). Error responses ellame standard "ProblemDetails" format ku follow aagும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Marking a controller with [ApiController] gives me automatic model-state validation — if binding fails, it short-circuits and returns a 400 with a standard ProblemDetails body without me writing that check in every action. It also infers binding sources smartly, so complex types default to [FromBody] without me specifying it, and it enforces attribute routing rather than conventional. It's essentially boilerplate reduction and consistency for API controllers, and I put it on every Web API controller in my microservices by default.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Does [ApiController] work with Razor MVC controllers? — It's meant for API controllers only — MVC controllers returning views don't use it, since automatic 400 JSON responses don't make sense for HTML views.</div>
+      <div class="fq"><b>Q:</b> Can you customize the automatic 400 response shape? — Yes, via ApiBehaviorOptions.InvalidModelStateResponseFactory in Program.cs to return a custom error format.</div>
+      <div class="fq"><b>Q:</b> Does [ApiController] replace [Route] on the controller? — No, you still need [Route] — [ApiController] just enforces that attribute routing is used, it doesn't define the route itself.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3C -->
+<div class="section" id="3C">
+  <div class="section-title"><span class="num">3C</span> Cross-Cutting Concerns</div>
+
+  <div class="item" id="q15">
+    <div class="term">15. CORS <span class="en">(Cross-Origin Resource Sharing)</span></div>
+    <div class="tng">Browser oru security rule follow pannும் — "same-origin policy" — namba frontend (example <code>localhost:4200</code> illна <code>zencampus.com</code>) vera domain la irukka API ah (example <code>api.zencampus.com</code>) call pannினா, browser default ah block pannிடும். CORS na server side la explicit ah "இந்த origin(s) ku permission kொடுккிரேன்" nு whitelist pannுрathு. ZenCampus frontend (Razor/JS modules) namba Ocelot gateway ku call pannுрதுனால், gateway level la CORS policy configure panniрுкkanum — allowed origins, allowed methods (GET/POST/etc), allowed headers (Authorization token pass aaganum edhуnала) ellame specify pannувод்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>CORS solves the problem of the browser's same-origin policy blocking requests from one domain to a different API domain by default. On the server, I explicitly configure a CORS policy — allowed origins, methods, and headers — using AddCors in Program.cs and apply it with UseCors before authentication in the pipeline. For our ERP, since the frontend calls through the Ocelot gateway, I configure the allowed origin list at the gateway level, and make sure the Authorization header is explicitly allowed since we're sending JWT tokens on every request.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why not just use AllowAnyOrigin() everywhere? — It's a security risk, especially combined with credentials/cookies — you'd be letting any website make authenticated calls to your API; always whitelist specific origins in production.</div>
+      <div class="fq"><b>Q:</b> Can AllowAnyOrigin be combined with AllowCredentials? — No, the CORS spec disallows that combination — browsers will reject it; you must specify explicit origins if credentials are involved.</div>
+      <div class="fq"><b>Q:</b> Where in the pipeline should UseCors go? — After UseRouting and before UseAuthentication/UseAuthorization, so the preflight and origin checks happen before auth logic runs.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q16">
+    <div class="term">16. Response Caching &amp; In-Memory Caching <span class="en">(IMemoryCache, Response Caching)</span></div>
+    <div class="tng">Namba resume la "caching vecha performance boost" nு irukku — idhу eppadi nு kekka vaaippу irukku. Frequently accessed, aana rarely change aagுрा data ah (example: dropdown la course list, static config) every request kூடum DB ku pona waste — adha oru first time fetch panни <code>IMemoryCache</code> la vecharuvom, next requests ellame memory ला irundhே fast ah serve aagும். Response Caching na HTTP level la — <code>[ResponseCache]</code> attribute vecha, entire HTTP response ah cache pannலாம் (client browser illна intermediate proxy level la கூட). Single server ku IMemoryCache pothum, aana multiple instances (microservices scale aana bodhu) irundhа, ஒவ்வொரு instance kூடा separate memory-la cache aagும் — appdi na Redis madhiri distributed cache venum, ellа instances-um same cache share panна.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>For data that's read often but changes rarely — like a dropdown list of courses or config lookups — I cache it in IMemoryCache after the first fetch, with an expiration policy, so subsequent requests skip the database entirely. That was a meaningful chunk of our performance improvement, since it cut repeated round-trips to SQL Server for the same static data. I'm also aware IMemoryCache is per-instance — since we scale services horizontally, if I need cache consistency across multiple running instances, that's where I'd move to a distributed cache like Redis instead.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you invalidate a stale cache entry when data changes? — Either set a short sliding/absolute expiration, or explicitly call _cache.Remove(key) in the update/delete code path that changes the underlying data.</div>
+      <div class="fq"><b>Q:</b> IMemoryCache vs Response Caching middleware — difference? — IMemoryCache caches arbitrary objects/data in app memory that I control programmatically; response caching middleware caches the entire HTTP response based on cache-control headers.</div>
+      <div class="fq"><b>Q:</b> Why would you move to Redis instead of IMemoryCache? — When running multiple instances behind a load balancer, IMemoryCache is per-process — Redis gives one shared cache so all instances see the same cached data.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q17">
+    <div class="term">17. Health Checks <span class="en">(Health Checks)</span></div>
+    <div class="tng">Microservices architecture-la, load balancer illна Docker/orchestrator ku theriyanum "இந்த service instance uயிround இருக்கா, illна down aagிட்டதா" nु. Adhуkки <code>/health</code> nु oru endpoint expose pannுрோm, <code>AddHealthChecks()</code> vecha register pannுрோm — DB connection okay ah, dependent service reachable ah ellame check panни, "Healthy"/"Unhealthy" status return pannுрோம். Instance unhealthy na, load balancer andha instance ku traffic anுppாma, healthy instance ku mattum route pannும் — production downtime avoid aagும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Health checks expose an endpoint — typically /health — that reports whether the service and its critical dependencies, like the database connection, are actually working, not just that the process is running. I register them with AddHealthChecks() and map them with MapHealthChecks() in Program.cs. In a microservices setup like ours, this matters because the orchestrator or load balancer polls that endpoint and stops routing traffic to an instance that reports unhealthy, instead of letting users hit a broken instance.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's the difference between liveness and readiness checks? — Liveness asks "is the process alive" (restart if not); readiness asks "is it ready to serve traffic" (hold traffic if not) — both can be exposed as separate health check endpoints/tags.</div>
+      <div class="fq"><b>Q:</b> Can you add a custom health check, like checking SQL Server connectivity? — Yes, implement IHealthCheck or use a package like AspNetCore.HealthChecks.SqlServer and register it with a name and tag.</div>
+      <div class="fq"><b>Q:</b> Who typically consumes the /health endpoint? — Load balancers, container orchestrators (Docker/Kubernetes), or monitoring tools like Application Insights/Prometheus.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q18">
+    <div class="term">18. Application Lifecycle &amp; Hosted Services <span class="en">(IHostedService, BackgroundService)</span></div>
+    <div class="tng">App start aагுра bodhu — Program.cs run aagுрath் од்раே time (services register, middleware pipeline build), apparam <code>app.Run()</code> call panни server listen panna aaramikkும். Aana sila velaikku — example, ஒரு scheduled job every 5 minutes run pannуரவं, illна queue la irundhு message process pannурவं — request-response cycle ku velиle, background la continuously run aaganum. Adhуkку <code>IHostedService</code> illна adhода easier base class <code>BackgroundService</code> use pannுрோm — <code>ExecuteAsync</code> method override panни, app start aагுрात் ொடே idhу automatic ah start aагும், app stop panна bodhu graceful ah stop aагும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>The app's lifecycle runs Program.cs once at startup — building configuration, registering services, constructing the middleware pipeline — and then starts listening via app.Run(). For work that needs to run continuously or on a schedule independent of any single HTTP request — like a background job that polls for pending notifications or processes a queue — I implement BackgroundService and override ExecuteAsync, which the host starts automatically at app startup and stops gracefully during shutdown. I've used this pattern for periodic cleanup and batch-processing tasks that shouldn't block the request pipeline.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> BackgroundService vs IHostedService directly — why prefer BackgroundService? — BackgroundService is an abstract base class that already implements StartAsync/StopAsync boilerplate around a single ExecuteAsync loop — simpler than implementing IHostedService from scratch.</div>
+      <div class="fq"><b>Q:</b> How do you register a hosted service? — builder.Services.AddHostedService&lt;MyBackgroundService&gt;() in Program.cs.</div>
+      <div class="fq"><b>Q:</b> How does a BackgroundService access a Scoped service like DbContext? — It's registered as Singleton itself, so it must manually create a scope via IServiceScopeFactory inside ExecuteAsync to resolve Scoped dependencies safely.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q19">
+    <div class="term">19. Logging in ASP.NET Core <span class="en">(ILogger, Structured Logging)</span></div>
+    <div class="tng">ASP.NET Core-la built-in ah <code>ILogger&lt;T&gt;</code> irukkும், DI mூlама edhு class kூடа inject pannலாம். "Structured logging" na — plain string concatenation panна maттум, <code>_logger.LogInformation("Student {StudentId} saved", id)</code> madhiri named placeholders vecha log pannுрோm — idhу vachа log data structured ah store aagும் (JSON madhiri), so later "StudentId = 105 ku ellа logs kaатு" nу query panна easy. Namba resume la "centralized logging" nு irukku — adhу idhே ILogger-ah, Serilog madhiri oru logging library kூடa combine panни, ellа microservices-мும் same format-la, correlation ID-கூடa, oru central sink (file/DB/ELK) ku anுppுрathு.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>ASP.NET Core has built-in ILogger&lt;T&gt; that I inject into any class via DI. The key practice is structured logging — using named placeholders like LogInformation("Student {StudentId} saved", id) instead of string concatenation — so the logging framework can capture StudentId as a queryable field, not just flatten it into text. In my ERP, I layered Serilog on top of ILogger to write structured logs to a central sink, and every log line carries the correlation ID from my logging middleware, so across all our microservices I can pull every log entry tied to one specific request — that's the foundation that got us the 35% cut in incident resolution time.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What are log levels and when do you use each? — Trace/Debug for dev diagnostics, Information for normal flow events, Warning for recoverable issues, Error for failures, Critical for app-crashing issues — production usually runs at Information or Warning.</div>
+      <div class="fq"><b>Q:</b> Why structured logging over string concatenation? — Structured fields let you query/filter logs precisely (e.g., "all errors for StudentId=105") in a log aggregator, instead of doing text search across flattened strings.</div>
+      <div class="fq"><b>Q:</b> How do you avoid logging sensitive data like passwords or tokens? — Explicitly exclude those fields from log statements, and use logging enrichers/scrubbers if a library risks serializing full request objects.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q20">
+    <div class="term">20. Global Exception Handling Middleware <span class="en">(35% Incident-Resolution Cut)</span></div>
+    <div class="tng">Idhу namba real achievement — 35% incident resolution time cut pannினа story. Munnadi eppadi irundhுchу na — ovvoru controller/service-la separate ah try-catch potirundhோm, log format consistent illa, sila places la exception silent ah swallow aagi kூடா irundhучchу — production la bug வந்தа, evan search pannாலும் root cause fast ah kandupudikka time eduthுchу. Adhуkку fix pannингதа na — oru single global exception-handling middleware eludhинோм, pipeline-la ellaвetтुммும் kudda முதலில் vечும் (exception handling always FIRST in pipeline order). Idhу ellа unhandled exceptions-ai catch pannум், structured ah log pannும் (correlation ID-கூடа), and client ku consistent ah oru clean error response (example: <code>{ traceId, message, statusCode }</code>) return pannும் — internal stack trace client ku poga koodathу, but same traceId use pannி log system-la exact exception details paakalaam். Idhу thaan namba ellа microservices-мும் use panнிndhோm — so oru service la error வந்தаலும், same pattern-la debug pannலாம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>This one I can speak to in detail because it's a direct resume achievement. Before, we had scattered try-catch blocks across controllers with inconsistent logging, and some exceptions were even silently swallowed — so when something broke in production, tracing the root cause took a long time. I replaced that with a single global exception-handling middleware, registered first in the pipeline, that catches every unhandled exception app-wide. It logs the full exception with a correlation ID using structured logging, maps the exception type to an appropriate HTTP status code — like a custom NotFoundException to 404, a validation exception to 400 — and returns a clean, consistent error payload to the client with just a traceId and message, never the internal stack trace. Because I rolled the same middleware pattern out across all our microservices with a shared correlation ID flowing through the Ocelot gateway, when a production issue came in, I could grab that traceId and follow the exact failure across every service it touched instead of guessing — that consistency and traceability is what drove the 35% reduction in incident resolution time.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you map different exception types to different HTTP status codes? — In the middleware's catch block, a switch/pattern-match on exception type — custom exceptions like NotFoundException/ValidationException map to 404/400, anything unrecognized defaults to 500.</div>
+      <div class="fq"><b>Q:</b> UseExceptionHandler vs a custom exception middleware — which did you use? — I used a custom middleware for full control over the response shape and correlation ID logging, though UseExceptionHandler with a handler lambda achieves a similar result with less code for simpler needs.</div>
+      <div class="fq"><b>Q:</b> How do you make sure the stack trace never leaks to the client in production? — The middleware only ever returns a traceId and a generic message in the response body; the full exception with stack trace goes only to the log sink, gated by environment so Development can still show more detail locally.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>Prepared for Gurumoorthy M — .NET Developer Interview Prep<br><a href="00_Index.html">← Back to Roadmap Home</a></footer>
+
+</body>
+</html>

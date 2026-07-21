@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 2: OOP & SOLID — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox table{width:100%;border-collapse:collapse;font-size:0.85em}
+.cheatbox th,.cheatbox td{padding:6px 10px;border-bottom:1px solid #2a2a5a;text-align:left;color:#e0e0e0}
+.cheatbox th{color:#fbbf24;font-size:0.78em;text-transform:uppercase}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+.resume-block{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:18px 20px;margin:14px 0}
+.resume-block .rtitle{color:#fff;font-weight:700;font-size:1em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.resume-block .rquote{background:#1a1a2e;border-left:3px solid #6b7280;padding:8px 12px;border-radius:0 6px 6px 0;font-size:0.85em;color:#9ca3af;font-style:italic;margin-bottom:10px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 2: OOP &amp; SOLID Principles</h1>
+  <p>15 Q&amp;A — Thanglish explanation + English answer script + follow-up questions</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html" class="active">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhu OOP &amp; SOLID mattum focus panra file. Interviewer "OOP nu enna, example sollu" nu kekkumbodhu, textbook definition sonna adhu boring ah kekkum — adhukku pathila un Zen Campus project la irukka <code>IPaymentService</code>, ovvoru microservice, repository pattern ellame vachu real example kudukanum. Ovvoru item la Thanglish paragraph first padichu concept ah puriinjuko, apparam "Answer Script" box padichu adha exact ah eppadi interview la pesanum nu practice pannunga. Follow-up questions kuda kudutha irukku — interviewer next enna kekkalam nu prepare aayidunga.</p>
+</div>
+
+<div class="toc">
+  <h2>Sections</h2>
+  <div class="toc-grid">
+    <a href="#2A">2A. OOP Core — 4 Pillars, Inheritance, Polymorphism, Interfaces (Q1-Q7)</a>
+    <a href="#2B">2B. SOLID Principles + Design Patterns (Q8-Q15)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 2 Quick-Recall Cheat Sheet</h2>
+  <ul>
+    <li><b>Encapsulation</b> → data private ah vachu, property/method mூlama control panradhu</li>
+    <li><b>Abstraction</b> → "what" mattum kaatti, "how" hide panradhu</li>
+    <li><b>Inheritance</b> → existing class oda properties/methods reuse panradhu (is-a relationship)</li>
+    <li><b>Polymorphism</b> → same method name, different behavior (overload = compile-time, override = runtime)</li>
+    <li><b>Interface</b> → contract mattum, no implementation, multiple implement panna mudiyum</li>
+    <li><b>Abstract Class</b> → partial implementation + contract, single inherit mattum</li>
+    <li><b>Composition &gt; Inheritance</b> → "has-a" vachu build pannu, tight coupling avoid pannu</li>
+    <li><b>SRP</b> → one class, one reason to change</li>
+    <li><b>OCP</b> → open for extension, closed for modification — new class add pannu, old code touch pannaadhe</li>
+    <li><b>LSP</b> → child class ah parent oda place la vechalum app break aagakoodadhu</li>
+    <li><b>ISP</b> → periya interface ah chinna chinna focused interfaces ah split pannu</li>
+    <li><b>DIP</b> → high-level code concrete class-a depend aagaadhu, abstraction (interface) ah depend aagum</li>
+    <li><b>IoC Container</b> → DI framework runtime la dependencies ah auto-resolve pannum, DIP ah practical ah implement pannurathu</li>
+    <li><b>Coupling vs Cohesion</b> → low coupling (services independent), high cohesion (class oda vela ஒரே purpose)</li>
+    <li><b>Design Patterns</b> → Repository (data access abstract), Singleton (DI lifetime), Factory (object creation logic centralize), Strategy (interface vachu algorithm swap)</li>
+  </ul>
+  <h2 style="margin-top:16px">SOLID — Quick Table</h2>
+  <table>
+    <tr><th>Letter</th><th>Principle</th><th>One-line meaning</th></tr>
+    <tr><td>S</td><td>Single Responsibility</td><td>Oru class ku oru vela mattum, one reason to change</td></tr>
+    <tr><td>O</td><td>Open/Closed</td><td>Extend panna easy ah irukanum, existing code modify panna koodadhu</td></tr>
+    <tr><td>L</td><td>Liskov Substitution</td><td>Child class parent ah replace pannalum behavior correct ah irukanum</td></tr>
+    <tr><td>I</td><td>Interface Segregation</td><td>Client thevaipadadha methods ah implement panna force pannakoodadhu</td></tr>
+    <tr><td>D</td><td>Dependency Inversion</td><td>Concrete class ku instead, abstraction (interface) ku depend aagu</td></tr>
+  </table>
+</div>
+
+<!-- 2A -->
+<div class="section" id="2A">
+  <div class="section-title"><span class="num">2A</span> OOP Core — 4 Pillars, Inheritance, Polymorphism, Interfaces</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. 4 Pillars of OOP <span class="en">(Overview)</span></div>
+    <div class="tng">OOP nu solradhu edhuvo periya theory illa — namba real world la irukka objects ah (Student, Payment, Employee) nenaichu, adhukku matching ah code ah design panradhu thaan. 4 pillars irukku: <b>Encapsulation</b> — data ah safe ah private ah vachu, controlled ah access panradhu. <b>Abstraction</b> — complex logic ah hide panni, simple interface mattum kaataradhu. <b>Inheritance</b> — oru class vera class oda code ah reuse pannuradhu. <b>Polymorphism</b> — same method name, but different classes la different ah behave pannuradhu. Naan Zen Campus la ivanga 4 pillars ah daily use pannuren — especially <code>IPaymentService</code> interface la Polymorphism, Repository pattern la Abstraction.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"OOP has four pillars — Encapsulation for protecting internal state, Abstraction for hiding complexity behind a simple contract, Inheritance for reusing behavior across related classes, and Polymorphism for letting one interface behave differently across implementations. In my ERP project, I use all four together — for example my IPaymentService interface with OnlinePayment and OfflinePayment implementations is a live example of abstraction plus polymorphism."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Which pillar do you use the most in your project? — Polymorphism and Abstraction together, mostly through interfaces — like IPaymentService and repository interfaces.</div>
+      <div class="fq"><b>Q:</b> Is C# a 100% pure OOP language? — Not fully — it has primitive types (int, bool) which aren't objects in the pure sense, and static members/methods break strict OOP too, so it's "mostly OOP" not pure.</div>
+      <div class="fq"><b>Q:</b> Can you name a real class from your project for each pillar? — Encapsulation: private fields in my repository classes; Abstraction: IStudentRepository; Inheritance: base ApiController; Polymorphism: IPaymentService implementations.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. Encapsulation <span class="en">(Deep-Dive with Example)</span></div>
+    <div class="tng">Encapsulation na — data (fields) ah private ah vachu, outside world adha direct ah touch panna mudiyaathu, property or method mூlama மட்டும் access pannanum nu artham. ATM machine madhiri nenachukonga — உங்க balance amount ah neenga direct ah edit panna mudiyaathu, "Withdraw" button (method) mூlama மட்டும் touch panna mudiyும், adhுக்குள்ள validation (sufficient balance iruka nu check) irukkும். Zen Campus la <code>BillService</code> la, invoice amount field ah private ah vachu, <code>ApplyPayment()</code> method mூlama மட்டும் update pannurom — so negative amount or invalid state la balance போகாது.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Encapsulation means keeping fields private and exposing controlled access through properties or methods, so the class itself enforces its invariants. In my billing microservice, I never expose the balance field directly — I expose an ApplyPayment method that validates the amount before mutating state, so it's impossible to push the object into an invalid state from outside."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why not just make everything public and simple? — Because then any code anywhere could set invalid values directly — no validation, no control, bugs become very hard to trace back.</div>
+      <div class="fq"><b>Q:</b> Difference between private field and public property with private setter? — Both restrict external writes, but a property can add validation logic in the setter, expose computed values, or be part of an interface — a raw private field can't do any of that.</div>
+      <div class="fq"><b>Q:</b> Is encapsulation only about access modifiers? — Mostly about access control, but also about bundling data and the methods that operate on it together in one unit — that's the real "capsule" idea.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. Abstraction vs Encapsulation <span class="en">(Commonly Confused)</span></div>
+    <div class="tng">Idhu interview la ellarukkum confuse aagum topic. Simple ah sollanum na — Abstraction is about <b>"what"</b> vs <b>"how"</b> — user ku enna panna mudiyum nu mattum kaatti, adhu eppadi internal ah work aaguthu nu hide pannuradhu (example: car drive panradhu, steering/accelerator use pannalam, aana engine internal ah eppadi work aaguthu nu therinja thevai illa). Encapsulation is about <b>protecting data</b> — access ah restrict panni, controlled ah mattum modify panna vidradhu (wallet la PIN irukka madhiri). Abstraction = design level la complexity hide panradhu (interface/abstract class vechu). Encapsulation = implementation level la data safety (private fields vechu). Rendume ஒண்ணா தெரியும் aana purpose வேற வேற.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Abstraction is about hiding implementation complexity and exposing only what's needed — it's a design-level concept, typically done through interfaces or abstract classes. Encapsulation is about protecting data by controlling access to it — it's an implementation-level concept, done with access modifiers. I'd say abstraction answers 'what can this do', encapsulation answers 'who can touch the internals'."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can you have abstraction without encapsulation? — Technically yes if fields are public, but that's bad practice — real-world abstraction usually relies on encapsulation underneath to actually hide the internals.</div>
+      <div class="fq"><b>Q:</b> Give one line to remember the difference forever. — Abstraction hides complexity from the user, encapsulation hides data from the outside world.</div>
+      <div class="fq"><b>Q:</b> Which one does an interface achieve? — Mainly abstraction — it declares "what" without exposing "how", it has no data to encapsulate.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. Inheritance — Types <span class="en">(Single / Multilevel / Hierarchical)</span></div>
+    <div class="tng">Inheritance na — oru class (child), vera class (parent) oda properties/methods ah reuse pannuradhu, "is-a" relationship. 3 types: <b>Single</b> — oru parent, oru child (<code>Employee</code> → <code>Manager</code>). <b>Multilevel</b> — chain madhiri (<code>Employee</code> → <code>Manager</code> → <code>SeniorManager</code>) — grandparent to grandchild. <b>Hierarchical</b> — oru parent-ku multiple children (<code>Employee</code> → <code>Teacher</code>, <code>Employee</code> → <code>Driver</code>, <code>Employee</code> → <code>Accountant</code>). C# la classes ku multiple inheritance kidayathu (rendu parent class inherit panna mudiyathu) — confusion (diamond problem) avoid panradhukku — aana interfaces ah multiple implement pannalam.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"C# supports single, multilevel, and hierarchical inheritance for classes. Single is one parent-one child, multilevel is a chain across generations, and hierarchical is one base class with multiple derived classes — like a base Employee class with Teacher, Driver, and Accountant derived from it. C# deliberately doesn't allow multiple class inheritance to avoid the diamond ambiguity problem, but a class can implement multiple interfaces instead."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why doesn't C# support multiple inheritance for classes? — To avoid the diamond problem — if two parent classes have a method with the same signature, the compiler can't decide which one the child should use.</div>
+      <div class="fq"><b>Q:</b> How do you achieve multiple-inheritance-like behavior in C#? — By implementing multiple interfaces on one class, or using composition — injecting multiple dependencies instead of inheriting from multiple classes.</div>
+      <div class="fq"><b>Q:</b> What's the base keyword used for? — To explicitly call the parent class's constructor or a specific overridden method from the child class.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. Polymorphism <span class="en">(Compile-time vs Runtime)</span></div>
+    <div class="tng">Polymorphism na "many forms" — same method name, but different ah behave pannuradhu. Rendu types: <b>Compile-time (Overloading)</b> — same method name, different parameters, compiler thaan decide pannum which method call aaganum nu (example: <code>Calculate(int a, int b)</code> vs <code>Calculate(int a, int b, int c)</code>). <b>Runtime (Overriding)</b> — base class la <code>virtual</code> method irukkும், derived class la <code>override</code> panradhu, actual object type based ah runtime la decide aagும் (example: <code>IPaymentService.Pay()</code> — <code>OnlinePaymentService</code> and <code>OfflinePaymentService</code> rendும் <code>Pay()</code> ah different ah implement pannும், aana call panra code ku "IPaymentService.Pay() call panren" nu mattum theriyும், actual eppadi run aagும் nu runtime la decide aagும்).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Compile-time polymorphism is method overloading — same method name, different signatures, resolved by the compiler at build time. Runtime polymorphism is method overriding through virtual and override, resolved based on the actual object type at runtime. My IPaymentService interface is a real example — OnlinePaymentService and OfflinePaymentService both implement Pay() differently, and my controller just calls IPaymentService.Pay() without caring which one runs — that decision happens at runtime based on what got injected."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Difference between overriding and hiding (new keyword)? — Override participates in runtime polymorphism through the virtual table; new just hides the base method at compile time based on the reference type, not the actual object.</div>
+      <div class="fq"><b>Q:</b> Can you overload based on return type alone? — No — C# requires the parameter list to differ; return type alone isn't enough to distinguish overloads.</div>
+      <div class="fq"><b>Q:</b> Why is runtime polymorphism also called dynamic binding? — Because the actual method to execute is determined dynamically at runtime by looking at the object's real type, not the variable's declared type.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q6">
+    <div class="term">6. Interface vs Abstract Class <span class="en">(When to Pick Which)</span></div>
+    <div class="tng">Interface na — "enna panna vendum" nu contract mattum sollும், "eppadi panna vendum" nu implementation kொடுக்காது, oru class multiple interfaces implement pannலாம். Abstract class na — konjam common logic already implement pannirukும், konjam abstract ah vittu child class fill pannanum, aana single inheritance mattum. Naan எப்போ interface pick pannுவேன் na — <code>IPaymentService</code> madhiri, completely different implementations irukkும்போது (Online vs Offline payment — logic vera vera, common code onnum illa). Abstract class pick pannுவேன் na — common code share pannanum, but konjam customization venum (example: <code>BaseMicroserviceController</code> la common error-handling logic already irukkும், specific controllers adha inherit panni extra logic add pannும்).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I pick an interface when I need a pure contract with no shared implementation, and the class might need to implement multiple contracts — that's exactly why IPaymentService is an interface, since online and offline payment logic have nothing in common. I pick an abstract class when there's real shared logic to inherit along with the contract, and single inheritance is fine — like a base controller with common exception handling that specific controllers extend."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can an interface have a method body in C#? — Since C# 8, interfaces can have default implementations, but I still treat interfaces as pure contracts and put real shared logic in abstract classes or helper services.</div>
+      <div class="fq"><b>Q:</b> Can an abstract class have a constructor? — Yes, and it runs when a derived class is instantiated, mainly used to initialize shared fields — but you still can't instantiate the abstract class directly.</div>
+      <div class="fq"><b>Q:</b> If I have to choose one default, which would you pick? — I'd lean interface-first, since it keeps things loosely coupled and testable — I only reach for an abstract class when there's genuine shared code to avoid duplicating.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q7">
+    <div class="term">7. Composition vs Inheritance <span class="en">("Favor Composition" Principle)</span></div>
+    <div class="tng">Inheritance is "is-a" relationship (Manager is-a Employee). Composition is "has-a" relationship (Car has-a Engine — Engine ah separate object ah vachu, Car adha use pannும், Car Engine இல்ல illa). Problem enna na — inheritance over-use pannினா, "fragile base class" problem varும் — base class la maathinā, ellame derived classes um affect aagும், tight coupling. So industry la "favor composition over inheritance" nu sollுவாங்க. Zen Campus la naan idha follow pannுрேன் — example, <code>NotificationService</code> ku SMS send panna venும் na, <code>SmsGateway</code> class ah inherit pannாma, adha oru dependency ah inject pannுрேன் (composition) — so tomorrow email gateway venும் na, easy ah swap pannலாம், inheritance chain touch pannாma.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Inheritance models an is-a relationship, composition models a has-a relationship by injecting one object into another instead of extending it. I generally favor composition because inheritance creates tight coupling to the base class — any change there ripples into every derived class. In my project, services depend on other services or gateways through constructor injection rather than inheriting from them, which keeps things flexible and easy to swap or mock in tests."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's the fragile base class problem exactly? — When changing a base class's internal behavior unintentionally breaks derived classes that depended on the old behavior, even though the public contract looks unchanged.</div>
+      <div class="fq"><b>Q:</b> Does that mean inheritance is bad? — No, it's still right for genuine is-a hierarchies with stable shared behavior — the guidance is to default to composition and reach for inheritance only when it's a clear, stable is-a relationship.</div>
+      <div class="fq"><b>Q:</b> How does composition help with unit testing? — Since dependencies are injected as interfaces rather than baked in through inheritance, I can substitute a mock or fake implementation easily in tests without touching the class under test.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2B -->
+<div class="section" id="2B">
+  <div class="section-title"><span class="num">2B</span> SOLID Principles + Design Patterns</div>
+
+  <div class="item" id="q8">
+    <div class="term">8. Single Responsibility Principle <span class="en">(SRP)</span></div>
+    <div class="tng">SRP nu solradhu — oru class ku oru vela mattum irukanum, adha change panna oru reason mattum irukanum. Idha explain panna best example enna na, naan direct ah Zen Campus microservices ah sollுவேன் — <code>StudentService</code> student data mattum handle pannும், <code>BillService</code> billing mattum, <code>AttendanceService</code> attendance mattum. Ovvoru service ku ovvoru specific responsibility. Billing logic maathina, attendance service ah touch panna தேவையில்லை — adhுதான் SRP oda real benefit. Class level la kூடa idha follow pannுрேன் — example <code>StudentValidator</code> class validation mattum pannும், DB save pannுрthу vera <code>StudentRepository</code> class dhaan pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"SRP means a class should have only one reason to change. I apply this both at the architecture level and the class level — my microservices architecture is a direct example, where StudentService only owns student data, BillService only owns billing, so a billing change never forces a redeploy of the student module. Within a service too, I separate validation logic, repository logic, and business logic into different classes so each one changes for exactly one reason."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you identify an SRP violation in a class? — If I can list two unrelated reasons someone might need to modify the class — like "changing validation rules" and "changing how data is saved" — that's a sign it's doing too much.</div>
+      <div class="fq"><b>Q:</b> Isn't splitting classes too much also a problem? — Yes, over-splitting adds unnecessary indirection — the goal is cohesive, focused responsibility, not the smallest possible class.</div>
+      <div class="fq"><b>Q:</b> How does SRP relate to your microservices split? — Each microservice is essentially SRP applied at the architecture level — one bounded business capability per service instead of per class.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q9">
+    <div class="term">9. Open/Closed Principle <span class="en">(OCP)</span></div>
+    <div class="tng">OCP na — class/module "open for extension, closed for modification" nu irukanum, artham enna na, pudhu functionality add panna venum na, existing tested code ah edit panna koodadhu, pudhusa oru class add panni extend pannanum. En best example — <code>IPaymentService</code> interface. Ippo enakku Online, Offline payment irukku. Nalaikku "Wallet payment" nu pudhu type add panna venum na, existing <code>OnlinePaymentService</code> or <code>OfflinePaymentService</code> code ah edit panna தேவையில்லை — புதுசா <code>WalletPaymentService : IPaymentService</code> nu oru class create panni, DI container la register pannினா pothும். Existing tested code touch aagல, so existing bugs varra chance illai.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Open/Closed means a class should be extendable without modifying its existing, already-tested code. My IPaymentService setup demonstrates this well — when we needed to add a new payment mode, I just created a new class implementing the interface and registered it in DI, without touching OnlinePaymentService or OfflinePaymentService at all. That keeps the existing, already-verified logic untouched and reduces regression risk."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you achieve OCP practically in C#? — Mainly through interfaces, abstract classes, and polymorphism — code against the abstraction, then add new implementations for new behavior instead of branching with if-else on type.</div>
+      <div class="fq"><b>Q:</b> What's a code smell that violates OCP? — A big switch or if-else chain checking a type or enum to decide behavior — every new case means editing that same method again and again.</div>
+      <div class="fq"><b>Q:</b> Does OCP mean you never touch old code? — Not literally never — it means the design should minimize the need to, especially for adding new variants of existing behavior.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q10">
+    <div class="term">10. Liskov Substitution Principle <span class="en">(LSP)</span></div>
+    <div class="tng">LSP na — child class ah, parent class oda place la substitute pannினalum, app oda behavior correct ah irukanum, break aagakூடாது. Classic example — Rectangle class ku Square ah inherit panna try pannினா problem varும் (Square la width/height set panna, rendும் ஒண்ணா maara vendியthu, Rectangle expect panra behavior break aagும்). En project context la sollанumnа — <code>IPaymentService</code>-oda ellame implementations um <code>Pay()</code> call pannினா same "contract" ah follow pannanum — amount deduct pannி, success/failure return pannனும். Oru implementation matum unexpected ah exception throw pannினா, illa different meaning kொடுத்தா, andha class ah <code>IPaymentService</code> nu substitute panna mudியாது — LSP violate aagும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"LSP says a derived class should be substitutable for its base type without breaking the caller's expectations. The classic example is Square inheriting from Rectangle — it looks like an is-a relationship, but Square breaks the contract that width and height can vary independently. In my code, every IPaymentService implementation must honor the same contract — take an amount, return a consistent success or failure result — if one implementation throws unexpectedly or behaves differently, code that depends on the interface can no longer trust it, and that's an LSP violation."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why does the Rectangle-Square example break LSP? — Because setting Square's width also changes its height to keep it square, which violates the Rectangle contract that width and height are independent — code written against Rectangle breaks when given a Square.</div>
+      <div class="fq"><b>Q:</b> How do you catch LSP violations in code review? — Look for a derived class that throws NotImplementedException, weakens a base guarantee, or needs type-checking (is/as) in the calling code to work correctly.</div>
+      <div class="fq"><b>Q:</b> Is LSP only about inheritance? — It applies to any substitutable abstraction, including interface implementations, not just class inheritance — the "IPaymentService" example is interface-based LSP.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q11">
+    <div class="term">11. Interface Segregation Principle <span class="en">(ISP)</span></div>
+    <div class="tng">ISP na — client ku thevaipadatha methods ah, oru periya "fat" interface la vachi force pannakூடாது, adha chinna chinna focused interfaces ah split pannanum. Example — naan oru <code>IRepository</code> interface la <code>GetAll()</code>, <code>GetById()</code>, <code>Add()</code>, <code>Update()</code>, <code>Delete()</code> ellame vachিட்டேன் nu vachுkonga. Aana namba <code>ReportService</code> ku read mattum venும் (GetAll/GetById), Delete/Update ellame venaam — ana andha service um force ah full interface implement pannும், adhுla thevaiyillatha methods ku dummy/NotImplementedException throw panna vendியidum — idhு ISP violation. Fix — <code>IReadRepository</code> and <code>IWriteRepository</code> nu rendு chinna interfaces ah split pannினா, ovvoru client தனக்கு தேவையான mattum implement pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"ISP says clients shouldn't be forced to depend on methods they don't use. If I have one fat IRepository with Get, Add, Update, and Delete, but a reporting service only ever reads data, forcing it to implement Update and Delete is a violation — those methods end up unimplemented or throwing exceptions. I'd split that into smaller interfaces like IReadRepository and IWriteRepository, so a read-only consumer only depends on the read contract."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How is ISP different from SRP? — SRP is about a class having one reason to change; ISP is specifically about interfaces not forcing clients to implement methods they don't need — related but ISP is scoped to contracts.</div>
+      <div class="fq"><b>Q:</b> What's a sign an interface violates ISP? — If implementing classes routinely throw NotImplementedException or leave empty method bodies for some methods, the interface is too broad.</div>
+      <div class="fq"><b>Q:</b> Does splitting interfaces hurt discoverability? — A little, but you can still combine smaller interfaces into a composite one for classes that genuinely need everything — you don't lose that option, you just don't force it on everyone.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. Dependency Inversion Principle <span class="en">(DIP)</span></div>
+    <div class="tng">DIP na — high-level modules (business logic, controllers) low-level modules (DB access, external services) ah direct ah depend aagakூடாது, rendும் ஒரு abstraction (interface) ah depend aaganum. En project la exact ah idha implement pannirukேன் — Repository pattern over Dapper/EF Core. Controller <code>SqlStudentRepository</code> nu concrete class ah nேrடியaaga depend aagாma, <code>IStudentRepository</code> interface ah mattும் depend aagும். Implementation (Dapper vachா, EF Core vachா) inject aagும் at runtime via DI. Idhु nala benefit enna na, nalaikku Dapper vittu vera data access technology ku maara venும் na, controller code ah touch pannாma, pudusa oru <code>IStudentRepository</code> implementation mattum swap pannінா pothும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"DIP says high-level modules shouldn't depend on low-level modules directly — both should depend on abstractions. In my project, controllers and business logic depend on IStudentRepository, not on a concrete SqlStudentRepository or DapperStudentRepository — the concrete implementation gets injected at runtime through DI. That means I can swap the underlying data-access technology, or plug in a mock for unit testing, without touching a single line in the controller."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Isn't DIP the same as Dependency Injection? — No — DIP is the design principle (depend on abstractions), Dependency Injection is one common technique used to implement it by supplying dependencies from outside.</div>
+      <div class="fq"><b>Q:</b> What breaks if you skip DIP? — Your business logic becomes tightly coupled to a specific database or library, making it hard to unit test and hard to swap implementations later without rewriting the high-level code.</div>
+      <div class="fq"><b>Q:</b> Where exactly do you define the interface — in the high-level or low-level project? — The abstraction should live close to or owned by the high-level module/consumer, with the low-level implementation depending on and fulfilling that contract — that's the "inversion" part.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. IoC Container &amp; DI-DIP Connection <span class="en">(How They Tie Together)</span></div>
+    <div class="tng">DIP oru principle — "abstraction ah depend aagu" nு sொல்லும். Aana andha abstraction (interface) ku actual concrete implementation ah eppa, yaru kொடுக்கும்? Adhுक்கு thaan Dependency Injection + IoC Container use pannுрோம். ASP.NET Core la <code>Program.cs</code> la <code>builder.Services.AddScoped&lt;IStudentRepository, StudentRepository&gt;()</code> nu register pannினா, IoC Container (built-in DI container) oru "map" vachiருக்கும் — "yaaru IStudentRepository kேட்டாலும், StudentRepository object கொடு" nு. Controller constructor la <code>IStudentRepository</code> parameter kேட்டா, container automatic ah correct object ah create panni inject pannும். So DIP theory ah, DI + IoC Container thaan practical ah runtime la implement pannுрathு.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"DIP is the design principle, and the IoC container is what makes it practical at runtime. I register my interfaces and their implementations in Program.cs — like AddScoped<IStudentRepository, StudentRepository>() — and the built-in ASP.NET Core container resolves and injects the right concrete object into any constructor that asks for the interface. So the container is the piece of infrastructure that actually wires the abstraction to a real implementation, without my business logic ever knowing or caring which concrete class it got."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What are the DI lifetimes and when do you use each? — Transient for lightweight, stateless services created fresh every time; Scoped for per-HTTP-request objects like a DbContext or repository; Singleton for shared, thread-safe state across the app's lifetime, like a config or cache service.</div>
+      <div class="fq"><b>Q:</b> What happens if you forget to register an interface in DI? — You get a runtime InvalidOperationException at startup or first resolution saying the service isn't registered — it fails fast rather than silently.</div>
+      <div class="fq"><b>Q:</b> Can you inject a Singleton into a Scoped service safely? — Yes, that direction is fine; the problem is the reverse — injecting a Scoped or Transient service into a Singleton causes a captive dependency bug where short-lived state gets pinned for the app's whole life.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q14">
+    <div class="term">14. Coupling vs Cohesion <span class="en">(Design Quality)</span></div>
+    <div class="tng">Coupling na — rendு classes/modules eவ்வளவு ஒண்ணை ஒன்று depend aagirukku nu அளவு. Cohesion na — ஒரு class/module oda internal responsibilities எவ்வளவு closely related ah irukku nு அளவு. Namba goal always — <b>low coupling, high cohesion</b>. Zen Campus microservices architecture idhukku exact ah oru example — <code>StudentService</code> and <code>BillService</code> rendும் independent ah deploy pannலாm (low coupling — API contract mூlama மட்டும் communicate pannுрom, direct DB access illa). Ovvoru service kூllaа irukka code, ஒரே purpose ku (student management, or billing) related ah irukும் (high cohesion). Tight coupling irundhா, oru service change panna, vera services ellame redeploy panna vendியidும் — adhу thaan namba microservices split panradhுкku main reason.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Coupling is how much one module depends on the internals of another, and cohesion is how focused a module's own responsibilities are. The goal is always low coupling and high cohesion. My microservices architecture is a direct example — StudentService and BillService only talk through well-defined API contracts, not shared databases, so they're loosely coupled and can be deployed independently, while each service internally stays highly cohesive because it only deals with one business capability."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How does DI reduce coupling? — By depending on interfaces rather than concrete classes, a consumer is coupled only to a contract, not to a specific implementation, so implementations can change without affecting the consumer.</div>
+      <div class="fq"><b>Q:</b> Can you have high cohesion but still tight coupling? — Yes — a class can do one focused job well but still reach directly into another class's internals or concrete type, which keeps coupling high even though cohesion is fine.</div>
+      <div class="fq"><b>Q:</b> How would you measure or spot low cohesion in a class? — If the class's methods use only a small subset of its own fields each, or the class name needs "and" to describe it (like "ValidatorAndLogger"), that's usually low cohesion.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q15">
+    <div class="term">15. Common Design Patterns He'd Use <span class="en">(Repository, Singleton, Factory, Strategy)</span></div>
+    <div class="tng">Naan interview la theory ah patterns ellame recite pannாma, actual ah use pannра 4 pattern mattum confident ah sொல்лலலாம். <b>Repository</b> — data access logic ah abstract panni, <code>IStudentRepository</code> madhiri interface வெச்சு, Dapper/EF Core details ah business logic la irundhு hide pannுрோம் (DIP oda practical use). <b>Singleton</b> — GoF pattern manually implement pannாma, ASP.NET Core DI la <code>AddSingleton()</code> vachு achieve pannுрோம் (example: config/cache service, whole app life ku ஒரே instance). <b>Factory</b> — object creation logic ah centralize panradhu — example: payment type based ah correct <code>IPaymentService</code> implementation ah decide panni return panра oru <code>PaymentServiceFactory</code>. <b>Strategy</b> — same problem-ku multiple algorithms/approaches irundhா, interface வெச்சு runtime la swap pannுрathு — <code>IPaymentService</code> தானே best example, "which payment strategy" nு runtime la decide aagும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I keep it practical and tie patterns to what I've actually used. Repository pattern to abstract Dapper and EF Core data access behind interfaces. Singleton, mostly through ASP.NET Core's built-in Singleton DI lifetime rather than hand-rolling the classic pattern, for things like shared config or cache services. Factory pattern when I need to decide, at runtime, which concrete implementation to create — like picking the right payment service based on payment type. And Strategy pattern, which is basically what my IPaymentService setup is — multiple interchangeable algorithms behind one interface, selected at runtime through DI."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Isn't Strategy pattern the same as just using an interface? — Strategy is essentially the design pattern name for exactly that — an interface with interchangeable implementations selected at runtime — IPaymentService is a textbook Strategy example in disguise.</div>
+      <div class="fq"><b>Q:</b> Why use DI Singleton instead of the classic Singleton pattern with a private static instance? — The classic pattern is hard to unit test and creates hidden global state; the DI container's Singleton lifetime gives the same one-instance-per-app-lifetime behavior but through injection, so it's mockable and testable.</div>
+      <div class="fq"><b>Q:</b> When would you introduce a Factory instead of just injecting the interface directly? — When the decision of which implementation to use depends on runtime data, like an incoming payment type in the request, rather than being fixed at startup registration time.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  Prepared for Gurumoorthy M — .NET Developer Interview Prep<br>
+  <a href="00_Index.html">← Back to Roadmap Home</a>
+</footer>
+
+</body>
+</html>

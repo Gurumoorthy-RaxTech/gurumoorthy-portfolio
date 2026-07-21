@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gurumoorthy M — .NET Full Stack Interview Prep | Random Trees</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --surface:#ffffff; --surface-2:#eef1f8; --border:#e0e4ee;
+    --text:#1b2333; --text-dim:#5b6479; --accent:#0e9f6e; --accent-2:#2f5fe0;
+    --q-color:#0b5e3f; --a-color:#2c3547; --tag-bg:#e3f7ee; --tag-text:#0e9f6e;
+    --resume-bg:#fff7ea; --resume-border:#f0d9a8; --resume-accent:#b5730a;
+    --gap-bg:#fdeeee; --gap-border:#f0b8b8; --gap-accent:#c23636;
+    --shadow:0 1px 3px rgba(20,30,60,.06), 0 1px 2px rgba(20,30,60,.08);
+    --radius:12px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1420; --surface:#161d2e; --surface-2:#1d2538; --border:#2a3350;
+      --text:#e8ecf7; --text-dim:#9aa4c0; --accent:#3ddc97; --accent-2:#7c9bff;
+      --q-color:#6fe3b3; --a-color:#d3d9ec; --tag-bg:#173328; --tag-text:#3ddc97;
+      --resume-bg:#241d0e; --resume-border:#4a3a15; --resume-accent:#e0b25a;
+      --gap-bg:#2a1616; --gap-border:#5a2a2a; --gap-accent:#e08a8a;
+      --shadow:0 1px 3px rgba(0,0,0,.35), 0 1px 2px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1420; --surface:#161d2e; --surface-2:#1d2538; --border:#2a3350;
+    --text:#e8ecf7; --text-dim:#9aa4c0; --accent:#3ddc97; --accent-2:#7c9bff;
+    --q-color:#6fe3b3; --a-color:#d3d9ec; --tag-bg:#173328; --tag-text:#3ddc97;
+    --resume-bg:#241d0e; --resume-border:#4a3a15; --resume-accent:#e0b25a;
+    --gap-bg:#2a1616; --gap-border:#5a2a2a; --gap-accent:#e08a8a;
+  }
+  :root[data-theme="light"]{
+    --bg:#f5f7fb; --surface:#ffffff; --surface-2:#eef1f8; --border:#e0e4ee;
+    --text:#1b2333; --text-dim:#5b6479; --accent:#0e9f6e; --accent-2:#2f5fe0;
+    --q-color:#0b5e3f; --a-color:#2c3547; --tag-bg:#e3f7ee; --tag-text:#0e9f6e;
+    --resume-bg:#fff7ea; --resume-border:#f0d9a8; --resume-accent:#b5730a;
+    --gap-bg:#fdeeee; --gap-border:#f0b8b8; --gap-accent:#c23636;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height:1.5;
+  }
+  a{color:var(--accent);}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 20px 60px;}
+
+  header.hero{
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    color:#fff; padding:36px 20px 30px;
+  }
+  .hero-inner{max-width:1180px; margin:0 auto;}
+  .hero-title{font-size:26px; font-weight:800; margin:0 0 4px;}
+  .hero-sub{font-size:14.5px; opacity:.92; margin:0;}
+  .hero-meta{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+  .pill{
+    background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.35);
+    padding:6px 14px; border-radius:999px; font-size:12.5px; font-weight:600;
+    backdrop-filter: blur(4px);
+  }
+  .pill b{font-weight:800;}
+
+  .toolbar{
+    position:sticky; top:0; z-index:20; background:var(--bg);
+    padding:16px 0; border-bottom:1px solid var(--border);
+    display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+  }
+  #search{
+    flex:1; min-width:220px; padding:11px 16px; border-radius:10px;
+    border:1px solid var(--border); background:var(--surface); color:var(--text);
+    font-size:14.5px; outline:none;
+  }
+  #search:focus{border-color:var(--accent);}
+  .stat{font-size:13px; color:var(--text-dim); white-space:nowrap;}
+  .btn{
+    padding:10px 16px; border-radius:10px; border:1px solid var(--border);
+    background:var(--surface); color:var(--text); font-size:13.5px; font-weight:600; cursor:pointer;
+  }
+  .btn:hover{border-color:var(--accent); color:var(--accent);}
+
+  .layout{display:grid; grid-template-columns:250px 1fr; gap:28px; margin-top:24px;}
+  @media (max-width:860px){ .layout{grid-template-columns:1fr;} .toc{position:static; order:2;} }
+
+  .toc{
+    position:sticky; top:76px; align-self:start;
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px; max-height:calc(100vh - 100px); overflow-y:auto; box-shadow:var(--shadow);
+  }
+  .toc h3{margin:0 0 10px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim);}
+  .toc ul{list-style:none; margin:0; padding:0;}
+  .toc li a{
+    display:flex; justify-content:space-between; gap:8px; padding:7px 8px; border-radius:8px;
+    color:var(--text); text-decoration:none; font-size:13.5px;
+  }
+  .toc li a:hover{background:var(--surface-2); color:var(--accent);}
+  .toc li a .count{color:var(--text-dim); font-size:12px;}
+
+  section.category{margin-bottom:30px; scroll-margin-top:80px;}
+  .cat-header{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .cat-icon{font-size:20px;}
+  .cat-title{font-size:18px; font-weight:800; margin:0;}
+  .cat-count{font-size:12px; color:var(--text-dim); background:var(--surface-2); padding:3px 10px; border-radius:999px;}
+
+  .qa-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;}
+  .qa{
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:14px 16px; box-shadow:var(--shadow);
+  }
+  .qa .q{font-weight:700; color:var(--q-color); font-size:14.5px; margin-bottom:5px;}
+  .qa .q .num{color:var(--text-dim); font-weight:700; margin-right:6px;}
+  .qa .a{color:var(--a-color); font-size:14px;}
+  .qa .a::before{content:"→ "; color:var(--accent); font-weight:700;}
+
+  section.resume-section{
+    background:var(--resume-bg); border:1px solid var(--resume-border); border-radius:var(--radius);
+    padding:20px 22px; margin-bottom:24px;
+  }
+  section.resume-section .cat-title{color:var(--resume-accent);}
+  section.resume-section .qa{background:var(--surface);}
+  section.resume-section .qa .q{color:var(--resume-accent);}
+  section.resume-section .qa .a::before{color:var(--resume-accent);}
+
+  section.gap-section{
+    background:var(--gap-bg); border:1px solid var(--gap-border); border-radius:var(--radius);
+    padding:20px 22px; margin-bottom:34px;
+  }
+  section.gap-section .cat-title{color:var(--gap-accent);}
+  section.gap-section .qa{background:var(--surface);}
+  section.gap-section .qa .q{color:var(--gap-accent);}
+  section.gap-section .qa .a::before{color:var(--gap-accent);}
+
+  .tag{display:inline-block; background:var(--tag-bg); color:var(--tag-text); font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; margin-left:8px; vertical-align:middle;}
+
+  footer{text-align:center; color:var(--text-dim); font-size:12.5px; padding:30px 20px 10px; border-top:1px solid var(--border); margin-top:20px;}
+
+  .hidden{display:none !important;}
+
+  @media print{
+    .toolbar, .toc{display:none !important;}
+    .layout{grid-template-columns:1fr;}
+    header.hero{background:#0e9f6e !important; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    .qa{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="hero-title">.NET Full Stack Developer — Interview Prep Guide</p>
+    <p class="hero-sub">Gurumoorthy M · 3 Yrs 5 Mos Experience · ASP.NET Core MVC · C# · Web API · SOAP/WCF · MS SQL · Microservices</p>
+    <div class="hero-meta">
+      <span class="pill">🏢 Company: <b>Random Trees</b></span>
+      <span class="pill">🗓️ Interview: <b>Friday, 17 Jul 2026</b></span>
+      <span class="pill">📍 Chennai · Hybrid</span>
+      <span class="pill">📋 <b>200</b> Core Q&A + Resume &amp; JD-Gap Q&A</span>
+      <span class="pill">🎯 Format: Single-line, interview-ready answers</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="toolbar">
+    <input id="search" type="text" placeholder="🔍 Search questions or answers (e.g. Blazor, WCF, Azure DevOps, Microservices)...">
+    <span class="stat" id="resultStat"></span>
+    <button class="btn" id="expandAllBtn">Jump to resume Q&A</button>
+    <button class="btn" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+
+  <div class="layout">
+    <nav class="toc" id="toc">
+      <h3>Jump to section</h3>
+      <ul id="tocList"></ul>
+    </nav>
+
+    <main id="main">
+      <section class="resume-section" id="resume-section">
+        <div class="cat-header">
+          <span class="cat-icon">📌</span>
+          <h2 class="cat-title">Resume-Based Questions — Mapped to Random Trees JD <span class="tag">MUST PREP</span></h2>
+          <span class="cat-count" id="count-resume"></span>
+        </div>
+        <ul class="qa-list" id="list-resume"></ul>
+      </section>
+
+      <section class="gap-section" id="gap-section">
+        <div class="cat-header">
+          <span class="cat-icon">⚠️</span>
+          <h2 class="cat-title">JD Skill-Gap Talking Points <span class="tag">HONEST FRAMING</span></h2>
+          <span class="cat-count" id="count-gap"></span>
+        </div>
+        <p style="font-size:13.5px; color:var(--text-dim); margin:-4px 0 14px;">These JD items (Blazor, hands-on Azure DevOps CI/CD, dedicated eCommerce build) aren't explicit on your resume. Use these honest bridge answers instead of overclaiming — they show self-awareness and a fast ramp-up plan, which interviewers value.</p>
+        <ul class="qa-list" id="list-gap"></ul>
+      </section>
+
+      <div id="categories"></div>
+    </main>
+  </div>
+
+  <footer>
+    Prepared for Gurumoorthy M's interview with Random Trees (JD: .NET Full Stack Web Developer) · For personal interview preparation use only.
+  </footer>
+</div>
+
+<script>
+const CATEGORIES = [
+  { id:"csharp", icon:"🔷", title:"C# Fundamentals & OOP", items:[
+    ["What is C#?","A modern, object-oriented, type-safe programming language developed by Microsoft that runs on the .NET runtime."],
+    ["What are the four pillars of OOP?","Encapsulation, Abstraction, Inheritance, and Polymorphism."],
+    ["Difference between abstract class and interface?","An abstract class can have implementation and state and supports single inheritance, while an interface only declares members (with C# 8+ allowing default implementation) and supports multiple inheritance."],
+    ["What is the difference between value type and reference type?","Value types (struct, int, bool) store data directly on the stack, while reference types (class, string, array) store a reference to data on the heap."],
+    ["What is boxing and unboxing?","Boxing converts a value type to an object (heap), and unboxing converts it back to a value type (stack)."],
+    ["What is the difference between == and .Equals()?","== compares references by default (or value for value types/overloaded operators), while .Equals() checks value equality and can be overridden."],
+    ["What are delegates?","Type-safe function pointers that hold references to methods with a matching signature."],
+    ["What is a lambda expression?","An anonymous, inline function using => syntax, often used with LINQ and delegates."],
+    ["What is LINQ?","Language Integrated Query, a set of methods for querying collections using SQL-like syntax directly in C#."],
+    ["What is the difference between IEnumerable and IQueryable?","IEnumerable executes queries in memory, while IQueryable builds an expression tree executed on the data source (e.g. database)."],
+    ["What is the difference between async/await and Task?","Task represents an asynchronous operation, while async/await are keywords that let you write non-blocking code that reads like synchronous code."],
+    ["What is a nullable type?","A value type suffixed with ? (e.g. int?) that can also hold a null value."],
+    ["What is dependency injection?","A design pattern where dependencies are provided to a class from the outside rather than created internally, improving testability and loose coupling."],
+    ["What is garbage collection?",".NET's automatic memory management process that reclaims memory occupied by unreachable objects."],
+    ["What are generics?","A feature that allows classes, methods, and interfaces to operate on typed parameters, improving type safety and reusability."]
+  ]},
+  { id:"aspnetcore", icon:"🌐", title:"ASP.NET Core MVC & Razor", items:[
+    ["What is .NET Core?","A cross-platform, open-source, high-performance framework for building modern applications on Windows, Linux, and macOS."],
+    ["What is the difference between .NET Framework and .NET Core?",".NET Framework is Windows-only and legacy, while .NET Core (now .NET 5+) is cross-platform, open-source, and higher performance."],
+    ["What is Middleware in ASP.NET Core?","Components assembled into a pipeline that handle requests and responses, such as authentication, logging, and routing."],
+    ["What is Program.cs used for in ASP.NET Core?","To configure services (dependency injection) and the middleware pipeline for the application."],
+    ["What is the difference between AddScoped, AddTransient, and AddSingleton?","Scoped creates one instance per HTTP request, Transient creates a new instance every time it's requested, and Singleton creates one instance for the application's lifetime."],
+    ["What is Razor syntax?","A markup syntax that embeds C# code within HTML using the @ symbol for dynamic web page rendering."],
+    ["What is the MVC pattern?","Model-View-Controller, an architectural pattern separating data (Model), UI (View), and request-handling logic (Controller)."],
+    ["What is routing in ASP.NET Core?","The mechanism that maps incoming HTTP request URLs to controller actions."],
+    ["What are Filters in ASP.NET Core?","Attributes that run custom logic before or after specific stages of the request pipeline, such as Authorization, Action, and Exception filters."],
+    ["What is model binding?","The process of mapping HTTP request data (query string, form, route) to action method parameters automatically."],
+    ["What is model validation?","The process of verifying that submitted data meets defined rules using data annotations like [Required] and [Range]."],
+    ["What is the difference between ViewBag, ViewData, and TempData?","ViewBag and ViewData pass data from controller to view for a single request, while TempData persists data across a redirect using session."],
+    ["What is Kestrel?","The lightweight, cross-platform web server built into ASP.NET Core."],
+    ["What is the difference between IActionResult and ActionResult<T>?","IActionResult is an interface for flexible return types, while ActionResult<T> allows returning either a specific type or an IActionResult like NotFound()."],
+    ["What is appsettings.json used for?","To store configuration settings such as connection strings and app settings, loaded via the Configuration API."],
+    ["How does ASP.NET Core support multiple environments?","By loading environment-specific files like appsettings.Development.json to override base settings per environment."],
+    ["What is the Dependency Injection container in .NET Core?","The built-in IoC container that resolves and manages the lifetime of registered services."],
+    ["Why use asynchronous controller actions?","Async actions use async/await to avoid blocking threads during I/O operations, improving scalability under load."],
+    ["What is CORS and how is it configured?","Cross-Origin Resource Sharing, a security feature configured via AddCors/UseCors to allow requests from specified external origins."],
+    ["What are Razor Pages and how do they differ from traditional MVC?","Razor Pages combine the view and page-handler logic into a single self-contained .cshtml/.cshtml.cs file per page, simplifying page-focused scenarios versus MVC's separate controller-per-multiple-views structure."]
+  ]},
+  { id:"webapi", icon:"🔌", title:"Web API & REST", items:[
+    ["What is a RESTful API?","An API that follows REST principles, using standard HTTP verbs and stateless resource-based URLs."],
+    ["What are the main HTTP verbs used in REST?","GET, POST, PUT, PATCH, and DELETE."],
+    ["Difference between PUT and PATCH?","PUT replaces the entire resource, while PATCH applies a partial update."],
+    ["What is the difference between Web API and MVC Controller?","Web API controllers return data (typically JSON/XML) for APIs, while MVC controllers return views for web pages (they're unified in ASP.NET Core)."],
+    ["What is Swagger/OpenAPI?","A tool that auto-generates interactive API documentation and lets you test endpoints directly."],
+    ["What is content negotiation?","The process where the API returns a response in the format requested by the client via the Accept header (JSON, XML, etc.)."],
+    ["What do HTTP status codes 200, 201, 400, 401, 403, 404, 500 mean?","200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, and 500 Internal Server Error."],
+    ["What is idempotency in REST?","A property where calling the same operation multiple times produces the same result, true for GET, PUT, and DELETE."],
+    ["What is API versioning and why is it needed?","A strategy (URL, header, or query string based) to manage breaking changes without disrupting existing API consumers."],
+    ["What is the difference between synchronous and asynchronous APIs?","Synchronous APIs block the calling thread until completion, while asynchronous APIs free the thread to handle other work while waiting."],
+    ["What is rate limiting?","Restricting the number of requests a client can make in a given time window to protect the API from overload or abuse."],
+    ["What is an API Gateway?","A single entry point that routes, aggregates, and manages requests to multiple backend microservices."],
+    ["What is HATEOAS?","Hypermedia As The Engine Of Application State, where API responses include links to related actions/resources."],
+    ["What is the difference between REST and SOAP?","REST is lightweight and uses JSON/HTTP, while SOAP is a stricter, XML-based protocol with built-in security and transaction standards."],
+    ["How do you handle exceptions globally in Web API?","By using exception-handling middleware (UseExceptionHandler) or a custom ExceptionFilter to catch and format errors consistently."]
+  ]},
+  { id:"soapwcf", icon:"📡", title:"SOAP & WCF", items:[
+    ["What is SOAP?","Simple Object Access Protocol, a strict, XML-based messaging protocol for exchanging structured information between systems."],
+    ["What is WCF?","Windows Communication Foundation, a .NET framework for building service-oriented applications that can communicate over multiple protocols like HTTP, TCP, and named pipes."],
+    ["What is the difference between SOAP and REST?","SOAP is a protocol with strict XML contracts and built-in security/transaction standards, while REST is an architectural style using lightweight HTTP verbs and typically JSON."],
+    ["What is a WSDL?","Web Services Description Language, an XML document that describes a SOAP service's operations, messages, and endpoint location."],
+    ["What are WCF Bindings?","Configurations that define how a WCF service communicates, specifying transport (HTTP, TCP), encoding, and security settings, such as basicHttpBinding or netTcpBinding."],
+    ["What is an Endpoint in WCF?","A combination of Address, Binding, and Contract (the ABC of WCF) that defines where and how clients can access a service."],
+    ["What is a ServiceContract in WCF?","An interface attribute that defines the operations a WCF service exposes to clients."],
+    ["What is the difference between WCF and Web API?","WCF supports multiple protocols and message formats with heavy configuration, while Web API is lightweight, HTTP-only, and designed specifically for RESTful services."],
+    ["When would you still use SOAP/WCF today?","For legacy enterprise system integration, scenarios requiring strict contracts (WSDL), or when WS-Security/transactional messaging is mandated."],
+    ["What is a DataContract in WCF?","An attribute that defines how a class's data is serialized and exchanged between a WCF service and its clients."],
+    ["What is duplex communication in WCF?","A communication pattern where both client and server can send messages to each other independently, useful for real-time notifications."],
+    ["What is the difference between BasicHttpBinding and WsHttpBinding?","BasicHttpBinding offers basic interoperable SOAP 1.1 communication, while WsHttpBinding adds WS-* standards support for security, reliability, and transactions."],
+    ["How do you secure a WCF service?","By configuring transport-level security (HTTPS) or message-level security (WS-Security) along with authentication and authorization settings in the binding."],
+    ["What is a Fault Contract in WCF?","A way to define and communicate structured error information from a WCF service back to the client."],
+    ["How would you consume a SOAP web service in .NET Core?","By adding a Connected Service/service reference or using the WCF Web Service Reference tooling to generate a client proxy from the WSDL."]
+  ]},
+  { id:"sqlserver", icon:"🗄️", title:"MS SQL Server", items:[
+    ["What is a primary key?","A column or set of columns that uniquely identifies each row in a table and cannot be null."],
+    ["What is a foreign key?","A column that creates a link between two tables by referencing the primary key of another table."],
+    ["What is the difference between clustered and non-clustered index?","A clustered index physically sorts and stores the table's data rows, while a non-clustered index stores a separate structure with pointers back to the data."],
+    ["What is normalization?","The process of organizing database tables to reduce redundancy and improve data integrity, typically up to 3NF."],
+    ["What is denormalization and when would you use it?","Intentionally introducing redundancy to improve read performance, often used in reporting or high-read systems."],
+    ["What is a stored procedure?","A precompiled, reusable set of SQL statements stored in the database that can accept parameters and return results."],
+    ["What is the difference between DELETE, TRUNCATE, and DROP?","DELETE removes rows with logging and can be rolled back, TRUNCATE removes all rows quickly without row-level logging, and DROP removes the entire table structure."],
+    ["What is a JOIN and what types exist?","An operation combining rows from two or more tables; types include INNER, LEFT, RIGHT, FULL OUTER, and CROSS JOIN."],
+    ["What is the difference between UNION and UNION ALL?","UNION removes duplicate rows from combined result sets, while UNION ALL keeps all rows including duplicates."],
+    ["What is a transaction and what are ACID properties?","A logical unit of work; ACID stands for Atomicity, Consistency, Isolation, and Durability."],
+    ["What are isolation levels in SQL Server?","Read Uncommitted, Read Committed, Repeatable Read, Serializable, and Snapshot, controlling how transactions handle concurrent data access."],
+    ["What is a deadlock and how do you resolve it?","A situation where two transactions block each other indefinitely; resolved by consistent access ordering, shorter transactions, and proper indexing."],
+    ["What is a CTE (Common Table Expression)?","A temporary named result set defined with WITH, used to simplify complex queries or enable recursion."],
+    ["What is the difference between a view and a table?","A view is a virtual, saved SQL query that doesn't store data itself, while a table physically stores data."],
+    ["How do you optimize a slow SQL query?","By analyzing the execution plan, adding appropriate indexes, avoiding SELECT *, and rewriting inefficient joins or subqueries."],
+    ["What is an execution plan?","A visual/text representation of how SQL Server will execute a query, used to identify performance bottlenecks."],
+    ["What is the difference between WHERE and HAVING?","WHERE filters rows before grouping, while HAVING filters groups after aggregation (GROUP BY)."],
+    ["What is a trigger in SQL Server?","A special stored procedure that automatically executes in response to INSERT, UPDATE, or DELETE events on a table."],
+    ["What is table partitioning?","Splitting a large table into smaller, manageable pieces based on a column value to improve query and maintenance performance."],
+    ["What is the difference between varchar and nvarchar?","varchar stores non-Unicode data (1 byte/char), while nvarchar stores Unicode data (2 bytes/char) supporting international characters."]
+  ]},
+  { id:"webfront", icon:"🎨", title:"HTML, CSS, JavaScript & jQuery", items:[
+    ["What is the difference between var, let, and const?","var is function-scoped and hoisted, let is block-scoped and reassignable, and const is block-scoped and cannot be reassigned."],
+    ["What is a closure in JavaScript?","A function that retains access to its outer scope's variables even after the outer function has returned."],
+    ["What is the difference between == and === in JavaScript?","== compares values with type coercion, while === compares both value and type strictly."],
+    ["What is event bubbling?","The process where an event triggered on a child element propagates upward through its ancestor elements."],
+    ["What is AJAX?","Asynchronous JavaScript and XML, a technique for sending/receiving data from a server without reloading the page."],
+    ["What is the difference between $.ajax(), $.get(), and $.post() in jQuery?","$.ajax() is the full-featured configurable method, while $.get() and $.post() are shorthand wrappers for GET and POST requests."],
+    ["What is the difference between synchronous and asynchronous JavaScript?","Synchronous code executes sequentially and blocks, while asynchronous code (callbacks, promises, async/await) runs without blocking the main thread."],
+    ["What is a Promise in JavaScript?","An object representing the eventual completion or failure of an asynchronous operation."],
+    ["What is the DOM?","The Document Object Model, a tree-structured representation of an HTML page that JavaScript can read and manipulate."],
+    ["What is event delegation in jQuery?","Attaching a single event handler to a parent element to manage events for current and future child elements, using .on()."],
+    ["What is JSON and why is it used in APIs?","JavaScript Object Notation, a lightweight, language-independent data format widely used for API request/response payloads."],
+    ["What is the difference between localStorage and sessionStorage?","localStorage persists data with no expiration, while sessionStorage clears data when the browser tab is closed."],
+    ["Why use client-side validation alongside server-side validation?","Client-side validation gives instant user feedback, but server-side validation is always required since client checks can be bypassed."],
+    ["What is a Single Page Application (SPA)?","A web app that dynamically rewrites content without full page reloads, typically using frameworks like Angular, React, or Blazor."],
+    ["What does 'this' refer to in JavaScript?","It refers to the execution context of a function, which varies based on how the function is called (object, global, or bound context)."],
+    ["What is responsive web design?","A design approach that makes web pages render well across different screen sizes and devices using flexible layouts and media queries."],
+    ["What is the box model in CSS?","A model describing how an element's content, padding, border, and margin combine to determine its total size."],
+    ["What is Flexbox used for?","A CSS layout model for arranging items in a single dimension (row or column) with flexible alignment and spacing."],
+    ["What is semantic HTML?","Using HTML tags that convey meaning about their content (like header, nav, article) rather than generic divs."],
+    ["What is the difference between id and class selectors in CSS?","id selects a single unique element, while class can be applied to and select multiple elements."]
+  ]},
+  { id:"blazor", icon:"🅱️", title:"Blazor UI", items:[
+    ["What is Blazor?","A .NET framework for building interactive web UIs using C# instead of JavaScript, running either in the browser via WebAssembly or on the server via SignalR."],
+    ["What is the difference between Blazor Server and Blazor WebAssembly?","Blazor Server runs the app on the server and streams UI updates over a SignalR connection, while Blazor WebAssembly runs the app entirely in the browser via WASM."],
+    ["What is a Razor Component in Blazor?","A self-contained UI building block (.razor file) combining HTML markup and C# logic, similar to a reusable control."],
+    ["What is data binding in Blazor?","Using the @bind directive to synchronize a UI element's value with a C# property automatically in both directions."],
+    ["What are Blazor component parameters?","Public properties marked with [Parameter] that allow a parent component to pass data into a child component."],
+    ["What is the component lifecycle in Blazor?","A sequence of methods like OnInitialized, OnParametersSet, and OnAfterRender that run at defined points during a component's life."],
+    ["How does Blazor handle events?","Using event attributes like @onclick that bind DOM events directly to C# methods on the component."],
+    ["What is dependency injection in Blazor?","Blazor uses the same built-in DI container as ASP.NET Core, injecting services into components via the @inject directive."],
+    ["What is the difference between Blazor and Razor Pages/MVC?","Blazor builds interactive, component-based UIs with C# running client-side or via SignalR, while Razor Pages/MVC render server-side HTML per request."],
+    ["How do you call JavaScript from Blazor?","Using JavaScript interop (IJSRuntime) to invoke JS functions from C# code and vice versa."],
+    ["What is a cascading parameter in Blazor?","A way to pass a value from an ancestor component down to all descendant components without explicit parameter passing at each level."],
+    ["How does state management work in Blazor?","Through component parameters, cascading values, or dedicated state container services registered in DI for sharing state across components."],
+    ["What is prerendering in Blazor?","Generating the initial HTML on the server before the interactive Blazor app takes over in the browser, improving perceived load time."],
+    ["What is a Blazor Hybrid app?","A native app (e.g. using .NET MAUI) that hosts Razor components in a native WebView, sharing UI code across web and desktop/mobile."],
+    ["Why might a .NET shop choose Blazor over React/Angular?","It allows full-stack development in C# without context-switching to JavaScript, reusing existing .NET skills and code across client and server."]
+  ]},
+  { id:"microservices", icon:"🧩", title:"Microservices Architecture", items:[
+    ["What is microservices architecture?","An architectural style where an application is built as a collection of small, independently deployable services, each owning its own logic and data."],
+    ["What are the advantages of microservices over monolithic architecture?","Independent deployment, scalability, technology flexibility, and fault isolation."],
+    ["What are the challenges of microservices?","Distributed data management, inter-service communication complexity, network latency, and difficulty in debugging/tracing."],
+    ["What is service discovery?","A mechanism that allows services to find and communicate with each other dynamically without hardcoded addresses."],
+    ["What is an API Gateway's role in microservices?","It acts as a single entry point handling routing, load balancing, authentication, and rate limiting for all backend services."],
+    ["What is the difference between synchronous and asynchronous communication in microservices?","Synchronous (HTTP/REST/gRPC) waits for an immediate response, while asynchronous (message queues like RabbitMQ/Kafka) decouples services via events."],
+    ["What is the Circuit Breaker pattern?","A resilience pattern that stops calls to a failing service temporarily to prevent cascading failures."],
+    ["What is the Saga pattern?","A pattern for managing distributed transactions across microservices using a sequence of local transactions with compensating actions."],
+    ["What is the Database-per-Service pattern?","Each microservice owns and manages its own database to ensure loose coupling and independent scalability."],
+    ["What is Domain-Driven Design (DDD)?","An approach to designing software based on modeling around business domains and bounded contexts, commonly used to define microservice boundaries."],
+    ["What is centralized logging in microservices?","Aggregating logs from all services into a single system (e.g. ELK stack) for easier monitoring and troubleshooting."],
+    ["How do you handle distributed transactions in microservices?","By using patterns like Saga or eventual consistency instead of traditional two-phase commit."],
+    ["What is a Bounded Context?","A DDD concept defining explicit boundaries within which a specific domain model applies, often mapped to a microservice."],
+    ["What is a health check in microservices?","An endpoint that reports whether a service is running and ready to accept traffic, used by load balancers/orchestrators."],
+    ["What is the Strangler pattern?","A migration strategy where a monolith is gradually replaced by microservices, routing traffic incrementally to the new services."]
+  ]},
+  { id:"cicd", icon:"🚀", title:"CI/CD & Azure DevOps", items:[
+    ["What is CI/CD?","Continuous Integration and Continuous Deployment/Delivery, practices that automate building, testing, and releasing code changes frequently and reliably."],
+    ["What is Azure DevOps?","A Microsoft platform providing tools for CI/CD pipelines, work item tracking (Boards), repos, and artifact management for the full software delivery lifecycle."],
+    ["What is a Build Pipeline in Azure DevOps?","An automated workflow that compiles code, runs tests, and produces deployable artifacts whenever code is pushed."],
+    ["What is a Release Pipeline in Azure DevOps?","An automated workflow that deploys build artifacts to one or more environments like Dev, QA, and Production."],
+    ["What is a YAML pipeline in Azure DevOps?","A code-based way to define build/release pipelines using a YAML file stored alongside the source code for version control."],
+    ["What is the difference between Continuous Integration and Continuous Deployment?","Continuous Integration merges and tests code changes frequently, while Continuous Deployment automatically releases every passing build to production."],
+    ["What are Azure DevOps Boards used for?","Tracking work items like user stories, tasks, and bugs, and visualizing progress via Kanban boards and sprint backlogs."],
+    ["What is a Git repo in Azure Repos?","A version-controlled source code repository hosted within Azure DevOps, supporting branching, pull requests, and code reviews."],
+    ["What are Pipeline Artifacts?","The output files (e.g. compiled binaries, packages) produced by a build pipeline and passed along to a release pipeline for deployment."],
+    ["What is a Pull Request gate/policy?","A branch protection rule requiring code review, successful builds, or passing tests before code can be merged."],
+    ["How do you manage secrets in Azure DevOps pipelines?","Using Variable Groups linked to Azure Key Vault or pipeline secret variables instead of hardcoding sensitive values."],
+    ["What is Infrastructure as Code (IaC) and its relevance to CI/CD?","Managing infrastructure through code (e.g. ARM templates, Terraform) so environments can be provisioned consistently as part of the pipeline."],
+    ["What are deployment slots (e.g. in Azure App Service)?","Separate staging environments that let you deploy and validate a new version before swapping it into production with minimal downtime."],
+    ["What is a rollback strategy in CI/CD?","A plan to quickly revert to a previous stable release/artifact if a new deployment introduces critical issues."],
+    ["What is the benefit of automated testing within a CI/CD pipeline?","It catches regressions early by running unit/integration tests automatically on every build, before code reaches production."]
+  ]},
+  { id:"genai", icon:"🤖", title:"Generative AI Tools in Development", items:[
+    ["What is GitHub Copilot?","An AI pair-programming tool that suggests code completions, functions, and boilerplate in real time based on context, powered by large language models."],
+    ["How can Claude/AI assistants help in day-to-day .NET development?","By generating boilerplate code, explaining unfamiliar code, writing unit tests, refactoring suggestions, and helping debug errors faster."],
+    ["What are the benefits of using AI coding assistants?","Faster development, reduced boilerplate typing, quick documentation lookup, and help exploring unfamiliar APIs or codebases."],
+    ["What are the risks of relying on AI-generated code?","It can introduce subtle bugs, security vulnerabilities, or outdated patterns if not reviewed carefully, so human verification is essential."],
+    ["How do you responsibly use AI tools like Copilot or Claude in an enterprise codebase?","By treating AI output as a first draft — always reviewing, testing, and validating suggestions against coding standards and security requirements before merging."],
+    ["Can AI coding tools replace code review?","No, they assist development speed but human code review is still required to catch logic errors, security issues, and business-rule mismatches."],
+    ["How would you use an AI assistant to speed up writing unit tests?","By providing the method signature and expected behavior, then having the assistant draft test cases which you then verify and refine for edge cases."],
+    ["What is prompt engineering in the context of coding assistants?","Crafting clear, specific instructions/context so the AI tool generates more accurate and relevant code suggestions."],
+    ["How can AI tools help with legacy code understanding?","By summarizing complex or undocumented code, explaining logic flow, and suggesting safe refactoring approaches."],
+    ["What data/security precautions matter when using AI coding tools on company code?","Ensuring the tool's data handling policy doesn't leak proprietary code, and avoiding pasting sensitive credentials or customer data into prompts."]
+  ]},
+  { id:"ecommerce", icon:"🛒", title:"eCommerce Solution Development", items:[
+    ["What are the core modules of a typical eCommerce platform?","Product catalog, shopping cart, checkout, payment processing, order management, and inventory management."],
+    ["How would you design a shopping cart in an ASP.NET Core application?","By maintaining cart state per user session or persisted in the database, with APIs to add, update, and remove items before checkout."],
+    ["How do you integrate a payment gateway securely in an eCommerce app?","By using the gateway's hosted checkout or tokenization APIs so sensitive card data never touches your own servers, staying PCI-DSS compliant."],
+    ["How would you handle inventory management to prevent overselling?","By using database transactions or optimistic concurrency checks to decrement stock atomically at order placement."],
+    ["What is the role of caching in an eCommerce product catalog?","To reduce database load and speed up page loads for frequently viewed product listings and search results."],
+    ["How would you design order processing to be resilient?","Using an asynchronous, event-driven workflow (order placed → payment → inventory → shipping) so a failure in one step doesn't block the whole transaction."],
+    ["How do you handle security risks in an eCommerce checkout flow?","By using parameterized queries/ORM, validating all inputs server-side, and encrypting sensitive data in transit and at rest."],
+    ["Why do SEO-friendly URLs and routing matter in eCommerce web apps?","Clean, descriptive URLs improve search engine ranking and user experience for product and category pages."],
+    ["How would you scale an eCommerce platform during high-traffic events like sales?","By horizontally scaling stateless services, adding distributed caching, using a CDN for static assets, and load-testing checkout flows beforehand."],
+    ["How does microservices architecture benefit an eCommerce system?","It allows independent scaling of high-demand modules like catalog search or checkout without affecting the whole platform."]
+  ]},
+  { id:"jwt", icon:"🔐", title:"JWT & Security", items:[
+    ["What is JWT?","JSON Web Token, a compact, self-contained token format used to securely transmit claims between parties as a signed JSON object."],
+    ["What are the three parts of a JWT?","Header, Payload, and Signature, separated by dots."],
+    ["How does JWT authentication work?","The server issues a signed token after login; the client sends it in the Authorization header on subsequent requests, and the server validates its signature."],
+    ["What is the difference between authentication and authorization?","Authentication verifies who the user is, while authorization determines what the authenticated user is allowed to do."],
+    ["What is Role-Based Access Control (RBAC)?","An authorization model that grants permissions to users based on assigned roles rather than individual users."],
+    ["How do you refresh a JWT token?","By issuing a separate, longer-lived refresh token that the client exchanges for a new access token when it expires."],
+    ["How do you prevent SQL injection?","By always using parameterized queries or ORM-generated commands instead of concatenating raw user input into SQL."],
+    ["What is CSRF and how do you prevent it?","Cross-Site Request Forgery, a security attack prevented using anti-forgery tokens tied to the user's session."],
+    ["What is XSS and how do you prevent it?","Cross-Site Scripting, an injection attack prevented by encoding/sanitizing user input before rendering it in HTML."],
+    ["Why use HTTPS/TLS?","To encrypt data in transit between client and server, preventing eavesdropping and man-in-the-middle attacks."]
+  ]},
+  { id:"patterns", icon:"🏗️", title:"Design Patterns & Architecture", items:[
+    ["What is the Repository Pattern?","A design pattern that abstracts data access logic behind an interface, decoupling business logic from the data source."],
+    ["What is the Unit of Work pattern?","A pattern that groups multiple repository operations into a single transaction, committing them together via SaveChanges."],
+    ["What is SOLID?","Five design principles: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion."],
+    ["What is the Singleton pattern?","A creational pattern ensuring a class has only one instance and provides a global point of access to it."],
+    ["What is the Factory pattern?","A creational pattern that provides an interface for creating objects without specifying their exact concrete class."],
+    ["What is the Strategy pattern?","A behavioral pattern that defines a family of interchangeable algorithms and selects one at runtime."],
+    ["What is Clean Architecture?","A layered architecture that separates concerns (domain, application, infrastructure, presentation) with dependencies pointing inward toward the domain."],
+    ["What is CQRS?","Command Query Responsibility Segregation, a pattern that separates read (query) and write (command) operations into different models."],
+    ["What is caching and what types exist?","Storing frequently accessed data temporarily to reduce load; types include in-memory caching, distributed caching (Redis), and output caching."],
+    ["What is logging middleware used for?","Centrally capturing request/response details and exceptions across the application for monitoring and debugging."]
+  ]},
+  { id:"agile", icon:"🔁", title:"Agile, Git & General", items:[
+    ["What is Agile methodology?","An iterative software development approach emphasizing collaboration, flexibility, and delivering working software in short cycles."],
+    ["What is a Sprint in Scrum?","A fixed time-box (usually 1-4 weeks) during which a specific set of work is completed and made ready for review."],
+    ["What is the difference between a Product Backlog and Sprint Backlog?","The Product Backlog is the full prioritized list of all work for the product, while the Sprint Backlog is the subset selected for the current sprint."],
+    ["What is Git and why is it used?","A distributed version control system used to track code changes, enable collaboration, and manage branching/merging."],
+    ["What is the difference between Git merge and rebase?","Merge combines branches by creating a new merge commit preserving history, while rebase replays commits onto another branch for a linear history."],
+    ["What is a user story?","A short, plain-language description of a feature from the end user's perspective, typically 'As a [user], I want [goal], so that [benefit].'"],
+    ["What is Definition of Done?","A shared checklist of criteria (coded, tested, reviewed, documented) that a work item must meet before it's considered complete."],
+    ["What is a Sprint Retrospective?","A recurring meeting at the end of a sprint where the team reflects on what went well, what didn't, and how to improve."],
+    ["What is the difference between Scrum and Kanban?","Scrum works in fixed-length sprints with defined roles and ceremonies, while Kanban is a continuous flow model focused on visualizing and limiting work in progress."],
+    ["What does a good code review typically check for?","Correctness, readability, adherence to coding standards, test coverage, and potential security or performance issues."]
+  ]}
+];
+
+const RESUME_QA = [
+  ["Walk me through your overall experience relevant to this .NET Full Stack role.","3 years 5 months building ASP.NET Core MVC, Web API, and microservices solutions end-to-end, including UI development, database design, and production support."],
+  ["Tell me about the Zen Campus project and how it maps to full-stack development.","Built a school ERP with ASP.NET Core MVC/Razor Views for the front end and Web API microservices for the back end, covering admissions, attendance, billing, payroll, and inventory."],
+  ["What front-end technologies have you used, and how do they align with this JD's HTML/CSS/JS/jQuery requirement?","Built responsive UI using Razor Views, Bootstrap, JavaScript, and jQuery for client-side validation and dynamic form interactions across the ERP modules."],
+  ["Your resume lists WCF as a backend framework skill — describe your exposure to it.","Worked with WCF as part of the broader .NET Framework/.NET Core service stack; comfortable with SOAP service contracts, bindings, and consuming/exposing WCF endpoints alongside REST APIs."],
+  ["How does your microservices and Ocelot Gateway experience relate to this role's Microservices Architecture requirement?","Directly built and deployed multiple ASP.NET Core Web API microservices routed through an Ocelot API Gateway, handling load balancing, rate limiting, and JWT authentication."],
+  ["How have you approached database work with MS SQL Server?","Designed schemas, wrote and optimized stored procedures, and tuned indexing/queries — cutting DB query time by 40% on the Zen Campus platform."],
+  ["Describe a REST API you built end-to-end.","Built RESTful Web APIs for the OTP lifecycle — generate, deliver, validate, expire — in the bank locker system, with full audit trail logging in SQL Server."],
+  ["How do you approach client-side validation vs server-side validation in your projects?","I use JavaScript/jQuery for immediate UI feedback, always backed by server-side model validation in ASP.NET Core for data integrity and security."],
+  ["What is your experience with version control and collaborative development?","Used Git (GitHub/GitLab) and TFS for source control while working in Agile sprints with over 90% code coverage."],
+  ["Describe your experience integrating third-party services like SMS or payment gateways.","Integrated a third-party SMS gateway for OTP-based MFA achieving sub-3-second delivery, and integrated payment gateways for the ERP's billing and payment processing module."],
+  ["How did you ensure code quality and reliability in a hybrid/production support role?","By writing unit tests to maintain over 90% code coverage, using centralized logging/exception handling, and participating in code reviews during Agile sprints."],
+  ["What is your experience with containerization?","Containerized all Zen Campus microservices using Docker and Docker Compose for consistent, repeatable cross-environment deployments."],
+  ["How did you reduce production incident resolution time by 35%?","By building centralized logging and exception-handling middleware that captured structured error details across all microservices for faster root-cause analysis."],
+  ["What is your notice period and availability?","60 days notice period, based in Chennai, and comfortable with a hybrid work mode."],
+  ["Why do you think you're a strong fit for this .NET Full Stack role at Random Trees?","My hands-on experience across ASP.NET Core MVC, Web API, microservices, MS SQL Server, and JavaScript/jQuery covers most of the core stack, and I ramp up quickly on adjacent technologies."]
+];
+
+const GAP_QA = [
+  ["Have you built any UI with Blazor?","Not yet in production — my UI work has been through ASP.NET Core MVC and Razor Views with JavaScript/jQuery; since Blazor also uses Razor syntax and C#, it's a natural next step I'm actively getting comfortable with."],
+  ["Have you driven CI/CD pipelines in Azure DevOps directly?","My day-to-day has focused on development, testing, and production support within Agile sprints using Git and TFS; I haven't personally authored Azure DevOps pipelines yet, but I'm comfortable with Git-based workflows and quick to pick up pipeline configuration."],
+  ["Have you worked on a dedicated eCommerce platform?","Not a dedicated eCommerce platform, but I built the payment processing module and modular CRUD/catalog-style features for the Zen Campus ERP, which share the same patterns — transactional operations, payment gateway integration, and inventory tracking."],
+  ["How do you use AI tools like GitHub Copilot or Claude in your development workflow?","I use AI assistants to speed up boilerplate code, explore unfamiliar APIs, and draft unit tests, while always reviewing and testing the output before merging — a habit I'd bring into any GenAI-assisted workflow here."],
+  ["What would be your ramp-up plan for the JD areas you haven't used in production — Blazor, Azure DevOps CI/CD, and eCommerce specifics?","Lean on my existing Razor/C#/microservices foundation — Blazor and hands-on Azure DevOps practice would be my first two focus areas, since the underlying concepts (components, contracts, pipelines) are close to what I already do daily."],
+  ["Why are you looking to move from RAX Tech International now?","To broaden my exposure to the full modern .NET stack — including Blazor, CI/CD with Azure DevOps, and larger-scale eCommerce-style systems — in a role that builds directly on my microservices and full-stack foundation."]
+];
+
+function renderQA(container, items, startNum){
+  container.innerHTML = "";
+  items.forEach((pair, idx) => {
+    const li = document.createElement("li");
+    li.className = "qa";
+    li.dataset.q = pair[0].toLowerCase();
+    li.dataset.a = pair[1].toLowerCase();
+    li.innerHTML = `<div class="q"><span class="num">Q${startNum + idx}.</span>${pair[0]}</div><div class="a">${pair[1]}</div>`;
+    container.appendChild(li);
+  });
+}
+
+function init(){
+  const catsContainer = document.getElementById("categories");
+  const tocList = document.getElementById("tocList");
+  let counter = 1;
+
+  renderQA(document.getElementById("list-resume"), RESUME_QA, 1);
+  document.getElementById("count-resume").textContent = RESUME_QA.length + " questions";
+  const tocResume = document.createElement("li");
+  tocResume.innerHTML = `<a href="#resume-section">📌 Resume-Based <span class="count">${RESUME_QA.length}</span></a>`;
+  tocList.appendChild(tocResume);
+
+  renderQA(document.getElementById("list-gap"), GAP_QA, 1);
+  document.getElementById("count-gap").textContent = GAP_QA.length + " questions";
+  const tocGap = document.createElement("li");
+  tocGap.innerHTML = `<a href="#gap-section">⚠️ JD Skill-Gap <span class="count">${GAP_QA.length}</span></a>`;
+  tocList.appendChild(tocGap);
+
+  CATEGORIES.forEach(cat => {
+    const section = document.createElement("section");
+    section.className = "category";
+    section.id = cat.id;
+    section.innerHTML = `
+      <div class="cat-header">
+        <span class="cat-icon">${cat.icon}</span>
+        <h2 class="cat-title">${cat.title}</h2>
+        <span class="cat-count">${cat.items.length} questions</span>
+      </div>
+      <ul class="qa-list" id="list-${cat.id}"></ul>
+    `;
+    catsContainer.appendChild(section);
+    renderQA(document.getElementById("list-" + cat.id), cat.items, counter);
+    counter += cat.items.length;
+
+    const tocItem = document.createElement("li");
+    tocItem.innerHTML = `<a href="#${cat.id}">${cat.icon} ${cat.title} <span class="count">${cat.items.length}</span></a>`;
+    tocList.appendChild(tocItem);
+  });
+
+  document.getElementById("resultStat").textContent = `${counter - 1 + RESUME_QA.length + GAP_QA.length} total questions`;
+}
+init();
+
+const searchInput = document.getElementById("search");
+searchInput.addEventListener("input", () => {
+  const term = searchInput.value.trim().toLowerCase();
+  const allQAItems = document.querySelectorAll(".qa");
+  let visibleCount = 0;
+
+  allQAItems.forEach(li => {
+    const match = !term || li.dataset.q.includes(term) || li.dataset.a.includes(term);
+    li.classList.toggle("hidden", !match);
+    if(match) visibleCount++;
+  });
+
+  document.querySelectorAll("section.category, section.resume-section, section.gap-section").forEach(sec => {
+    const visibleInSection = sec.querySelectorAll(".qa:not(.hidden)").length;
+    sec.classList.toggle("hidden", visibleInSection === 0);
+  });
+
+  document.getElementById("resultStat").textContent = term
+    ? `${visibleCount} match${visibleCount === 1 ? "" : "es"} for "${term}"`
+    : `${allQAItems.length} total questions`;
+});
+
+document.getElementById("expandAllBtn").addEventListener("click", () => {
+  document.getElementById("resume-section").scrollIntoView({behavior:"smooth", block:"start"});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WinForms Complete Guide — Salcomp Interview Prep | Gurumoorthy</title>
+<style>
+  :root{--accent:#d97706;--accent-dim:#92400e;--accent-subtle:rgba(217,119,6,0.13);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.75rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  nav .prog-badge{margin-left:auto;background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:999px;}
+  .hero{padding:2.6rem 1.5rem 1.8rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(217,119,6,.16) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.5rem,4vw,2.4rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;max-width:760px;margin-left:auto;margin-right:auto;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  .crosslinks{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;}
+  .crosslinks a{background:var(--card);border:1px solid var(--border);color:var(--info);text-decoration:none;padding:.4rem .9rem;border-radius:8px;font-size:.8rem;font-weight:600;}
+  .crosslinks a:hover{border-color:var(--accent);color:var(--accent);}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:2.6rem;}
+  h2{font-size:1.45rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.02rem;font-weight:700;color:var(--info);margin:1.1rem 0 .5rem;}
+  p{margin-bottom:.6rem;font-size:.92rem;}
+  code{font-family:'Cascadia Code',Consolas,monospace;background:var(--bg3);padding:.1rem .35rem;border-radius:4px;font-size:.85em;color:var(--info);}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  pre code{background:none;padding:0;color:var(--text);}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  a.rlink{color:var(--info);text-decoration:none;border-bottom:1px dashed var(--info);}
+  a.rlink:hover{color:var(--accent);border-color:var(--accent);}
+  .thang{background:linear-gradient(135deg,rgba(217,119,6,.14),rgba(217,119,6,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:.9rem 1.1rem;margin:.8rem 0;display:flex;gap:.7rem;}
+  .thang .ti{font-size:1.3rem;flex-shrink:0;}.thang .tt{color:var(--accent);font-weight:800;font-size:.85rem;}.thang .tb{color:var(--muted);font-size:.87rem;margin-top:.2rem;}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .warn-box{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .bad-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.35);border-radius:8px;padding:.7rem .9rem;margin:.5rem 0;font-size:.85rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.88rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:flex-start;gap:.55rem;font-size:.85rem;cursor:pointer;padding:.3rem .4rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;margin-top:.15rem;flex-shrink:0;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  .completion{text-align:center;padding:2.2rem;background:radial-gradient(ellipse at center,rgba(217,119,6,.22),transparent 70%);border:2px solid var(--accent);border-radius:16px;margin:2rem 0;}
+  .completion h2{color:var(--accent);font-size:1.7rem;border:none;}
+  .badge{display:inline-block;background:var(--accent);color:#fff;font-size:1.15rem;font-weight:900;padding:.7rem 1.7rem;border-radius:50px;margin:1rem 0;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">WINFORMS</span>
+  <a href="#overview">Overview</a><a href="#concepts">Concepts</a><a href="#coding">Coding</a>
+  <a href="#moreproblems">More Problems</a><a href="#assignment">Assignment</a><a href="#scenarios">Scenarios</a><a href="#quiz">Quiz</a>
+  <span class="prog-badge" id="progBadge">0/0 done</span>
+</nav>
+<div class="hero">
+  <h1>WinForms Complete Guide — Salcomp Interview (Wed)</h1>
+  <p>Concepts + coding problems + assignment-style challenges + interview Q&amp;A. Neenga already "C# WinForms desktop applications" maintain pannirukeenga resume-la — idhu andha experience-a interview-ku ready pannum, Thanglish-la explain pannitu.</p>
+  <div class="tags">
+    <span class="tag">Form Lifecycle</span><span class="tag">Data Binding</span>
+    <span class="tag">Cross-Thread UI</span><span class="tag">DataGridView</span><span class="tag">salcomp.com</span>
+  </div>
+  <div class="crosslinks">
+    <a href="ADO_NET_Guide.html">← ADO.NET Guide</a>
+    <a href="EntityFramework_Guide.html">← Entity Framework Guide</a>
+    <a href="SampleProjects/SampleProjects_Guide.html">→ Sample Projects (Code-First / Database-First)</a>
+  </div>
+</div>
+<main>
+
+<section id="overview">
+  <h2>🎯 Overview — Why WinForms + ADO.NET Together</h2>
+  <div class="thang">
+    <div class="ti">💡</div>
+    <div><div class="tt">Thanglish la solradha na</div>
+    <div class="tb">Salcomp oru manufacturing/EMS company — idhu maadhiri companies-la desktop apps romba common: shop-floor data entry, inventory tracking, production reports — ellame WinForms + SQL Server backend-a irukum vaaipu adhigam. So interviewer ADO.NET and WinForms-a SEPARATE-a kekkalam, aana real assignment romba probability-a "WinForms form-la DataGridView bind pannunga, ADO.NET vachu" nu combined-a irukum. Andha combo-va Coding Problems section-la specifically cover pannirukom.</div></div>
+  </div>
+  <div class="warn-box"><strong>2-Day Prep Priority:</strong> Since this is a MAIN focus area (along with ADO.NET), don't skip anything here. Priority order if short on time: Form Lifecycle → Data Binding → Cross-Thread UI updates → Coding Problems 1, 2, 5 → Assignment Simulation.</div>
+</section>
+
+<section id="concepts">
+  <h2>📚 Core Concepts</h2>
+
+  <h3>1. Form Lifecycle</h3>
+  <table>
+    <tr><th>Event</th><th>When it fires</th><th>What you typically do here</th></tr>
+    <tr><td>Constructor</td><td>Form object created, before it's shown</td><td>InitializeComponent(), wire up basic state</td></tr>
+    <tr><td>Load</td><td>Just before the form is first displayed</td><td>Load data (fill DataGridView, populate ComboBox), set initial control state</td></tr>
+    <tr><td>Shown</td><td>Right after the form is displayed for the first time</td><td>Anything needing the form to already be visible (focus a control, show a welcome dialog)</td></tr>
+    <tr><td>FormClosing</td><td>User is closing the form, cancellable</td><td>"Unsaved changes — are you sure?" confirmation — set <code>e.Cancel = true</code> to stop the close</td></tr>
+    <tr><td>FormClosed</td><td>After the form has actually closed</td><td>Final cleanup, unsubscribe events, release resources</td></tr>
+    <tr><td>Dispose</td><td>Resources released</td><td>Usually automatic via <code>components.Dispose()</code> in Designer code</td></tr>
+  </table>
+  <pre><code>private void StudentForm_Load(object sender, EventArgs e)
+{
+    dataGridView1.DataSource = studentRepository.GetStudentsTable(schoolId);
+}
+
+private void StudentForm_FormClosing(object sender, FormClosingEventArgs e)
+{
+    if (hasUnsavedChanges)
+    {
+        var result = MessageBox.Show("You have unsaved changes. Close anyway?", "Confirm",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        if (result == DialogResult.No) e.Cancel = true;
+    }
+}</code></pre>
+
+  <h3>2. Common Controls</h3>
+  <table>
+    <tr><th>Control</th><th>Use for</th></tr>
+    <tr><td>TextBox</td><td>Single-line text input</td></tr>
+    <tr><td>DataGridView</td><td>Tabular data display/edit — bound to DataTable/List/BindingSource</td></tr>
+    <tr><td>ComboBox</td><td>Dropdown single-select (e.g. select a Class)</td></tr>
+    <tr><td>ListBox / ListView</td><td>Multi-item list, ListView supports columns/icons/details view</td></tr>
+    <tr><td>BindingSource</td><td>A layer between UI controls and the data source — enables Add/Remove/Navigate without touching the raw data collection directly</td></tr>
+    <tr><td>ErrorProvider</td><td>Shows a validation error icon next to a control</td></tr>
+    <tr><td>BackgroundWorker</td><td>Runs long work off the UI thread with built-in progress/completion events</td></tr>
+  </table>
+
+  <h3>3. Events & Delegates — Event-Driven Programming</h3>
+  <pre><code>// WinForms is entirely event-driven — the UI thread sits idle until an event fires
+private void btnSave_Click(object sender, EventArgs e)
+{
+    // this method is a delegate wired to the Click event —
+    // Designer.cs has: this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+    SaveStudent();
+}</code></pre>
+  <p>Interview point: "what is an event in .NET?" → a special multicast delegate — a "publish/subscribe" mechanism where a control (publisher) raises an event, and one or more handler methods (subscribers) run in response. <code>+=</code> subscribes, <code>-=</code> unsubscribes.</p>
+
+  <h3>4. Data Binding — the ADO.NET Bridge</h3>
+  <pre><code>// Simple binding: DataGridView directly to a DataTable
+dataGridView1.DataSource = studentRepository.GetStudentsTable(schoolId);
+
+// Better: through a BindingSource — gives you navigation, add/remove, and easy re-filtering
+private BindingSource _studentsBindingSource = new BindingSource();
+
+private void StudentForm_Load(object sender, EventArgs e)
+{
+    _studentsBindingSource.DataSource = studentRepository.GetStudentsTable(schoolId);
+    dataGridView1.DataSource = _studentsBindingSource;
+}
+
+// Filtering through the BindingSource (works if DataSource is a DataTable):
+_studentsBindingSource.Filter = "Name LIKE '%" + searchText.Replace("'", "''") + "%'";</code></pre>
+  <div class="thang">
+    <div class="ti">🔗</div>
+    <div><div class="tt">Thanglish bridge</div>
+    <div class="tb">Idhu ADO.NET guide-la irukra <code>SqlDataAdapter.Fill(DataTable)</code> pattern-oda direct-a connect aagudhu. WinForms interview-la "how do you populate a grid from SQL Server" nu kekka vaikalam — answer: repository method DataTable return pannum (ADO.NET), form andha DataTable-a DataGridView.DataSource-ku assign pannum. Simple, no ORM needed.</div></div>
+  </div>
+
+  <h3>5. Cross-Thread UI Updates — The #1 WinForms Gotcha</h3>
+  <div class="bad-box">❌ <strong>CRASHES:</strong> updating a control directly from a background thread throws <code>InvalidOperationException: Cross-thread operation not valid: Control 'lblStatus' accessed from a thread other than the thread it was created on.</code></div>
+  <pre><code>// WRONG — crashes if called from a non-UI thread
+private void UpdateStatus(string text)
+{
+    lblStatus.Text = text;
+}
+
+// RIGHT — check InvokeRequired, marshal back to the UI thread
+private void UpdateStatus(string text)
+{
+    if (lblStatus.InvokeRequired)
+        lblStatus.Invoke(new Action(() =&gt; lblStatus.Text = text));
+    else
+        lblStatus.Text = text;
+}
+
+// MODERN — async/await keeps you on the UI thread automatically after "await"
+private async void btnImport_Click(object sender, EventArgs e)
+{
+    lblStatus.Text = "Importing...";
+    await Task.Run(() =&gt; ImportLargeFile());   // heavy work off the UI thread
+    lblStatus.Text = "Done!";                    // back on UI thread automatically — no Invoke needed
+}</code></pre>
+  <p>Why this happens: WinForms controls have "thread affinity" — only the thread that created a control may touch its properties. <code>Control.Invoke()</code> marshals the call back onto that UI thread. <code>BackgroundWorker</code> is the older pattern (has built-in <code>ProgressChanged</code>/<code>RunWorkerCompleted</code> events that auto-marshal); <code>async</code>/<code>await</code> with <code>Task.Run</code> is the modern, preferred approach.</p>
+
+  <h3>6. ShowDialog() vs Show()</h3>
+  <table>
+    <tr><th></th><th>Show()</th><th>ShowDialog()</th></tr>
+    <tr><td>Blocking?</td><td>No — code after it runs immediately</td><td>Yes — code after it waits until the dialog closes</td></tr>
+    <tr><td>Modal?</td><td>No (modeless) — user can click back on the parent</td><td>Yes (modal) — parent form is disabled until closed</td></tr>
+    <tr><td>Use for</td><td>Non-blocking tool windows</td><td>Add/Edit dialogs, confirmations — "wait for the user's answer"</td></tr>
+  </table>
+  <pre><code>using var editForm = new StudentEditForm(student);
+if (editForm.ShowDialog() == DialogResult.OK)
+{
+    // only runs after the dialog is closed with OK
+    RefreshGrid();
+}</code></pre>
+
+  <h3>7. Validation — Validating Event + ErrorProvider</h3>
+  <pre><code>private ErrorProvider errorProvider1 = new ErrorProvider();
+
+private void txtAge_Validating(object sender, CancelEventArgs e)
+{
+    if (!int.TryParse(txtAge.Text, out int age) || age &lt; 0 || age &gt; 120)
+    {
+        errorProvider1.SetError(txtAge, "Enter a valid age (0-120)");
+        e.Cancel = true;   // keeps focus in this control until fixed
+    }
+    else
+    {
+        errorProvider1.SetError(txtAge, "");   // clear the error icon
+    }
+}
+
+// Numeric-only TextBox — block non-digit keys at the source
+private void txtAge_KeyPress(object sender, KeyPressEventArgs e)
+{
+    if (!char.IsDigit(e.KeyChar) &amp;&amp; !char.IsControl(e.KeyChar))
+        e.Handled = true;   // suppress the keystroke
+}</code></pre>
+
+  <h3>8. MDI vs SDI</h3>
+  <p>SDI (Single Document Interface): each form is its own independent top-level window — most business apps use this. MDI (Multiple Document Interface): one parent container form (<code>IsMdiContainer = true</code>) hosts multiple child forms inside it, like an old-school Office/Photoshop-style app. MDI is less common in modern apps but still asked about conceptually.</p>
+
+  <h3>9. UserControl — Reusable Custom Controls</h3>
+  <p>A <code>UserControl</code> is a composite of existing controls packaged as one reusable unit — e.g., a <code>NumericTextBox</code> with built-in range validation, or a <code>StudentSearchPanel</code> reused across multiple forms. Build it once, drop it on any form like a built-in control.</p>
+
+  <h3>10. Menu, ToolStrip, StatusStrip</h3>
+  <p><code>MenuStrip</code>: top File/Edit/View menu bar. <code>ToolStrip</code>: toolbar with buttons/icons. <code>StatusStrip</code>: bottom bar for status text, progress bars. All are event-driven the same way as buttons — a <code>Click</code> handler per menu item.</p>
+
+  <h3>11. App Settings — app.config / Properties.Settings</h3>
+  <pre><code>// App.config
+&lt;connectionStrings&gt;
+  &lt;add name="Default" connectionString="Server=.;Database=ZenCampus;Integrated Security=true;" /&gt;
+&lt;/connectionStrings&gt;
+
+// Reading it
+string connStr = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
+
+// Properties.Settings.Default — for user preferences (window size/position, last-used filters)
+Properties.Settings.Default.LastSearchText = txtSearch.Text;
+Properties.Settings.Default.Save();</code></pre>
+
+  <h3>12. WinForms vs WPF (Quick Comparison)</h3>
+  <table>
+    <tr><th></th><th>WinForms</th><th>WPF</th></tr>
+    <tr><td>Rendering</td><td>GDI+, control-based</td><td>DirectX, vector-based, resolution-independent</td></tr>
+    <tr><td>Layout</td><td>Absolute/anchor/dock positioning</td><td>XAML, flexible layout containers (Grid, StackPanel)</td></tr>
+    <tr><td>Data binding</td><td>Basic, less flexible</td><td>Rich, MVVM-friendly, two-way binding built for it</td></tr>
+    <tr><td>Best for</td><td>Simple internal business tools, fast to build</td><td>Modern-looking, complex, highly customized UIs</td></tr>
+  </table>
+</section>
+
+<section id="coding">
+  <h2>💻 Coding Problems (Reveal Solution)</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">Load a DataGridView with student records from SQL Server on form load, using ADO.NET.</span><span class="st">Basics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>public partial class StudentForm : Form
+{
+    private readonly StudentRepository _repo = new StudentRepository(connStr);
+
+    private void StudentForm_Load(object sender, EventArgs e)
+    {
+        dataGridView1.DataSource = _repo.GetStudentsTable(schoolId: 1);
+        dataGridView1.AutoGenerateColumns = true;
+        dataGridView1.ReadOnly = true;
+        dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+    }
+}
+// StudentRepository.GetStudentsTable() is the SqlDataAdapter.Fill(DataTable) method
+// from the ADO.NET guide — same repository, reused here.</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Fix this code — it crashes with "Cross-thread operation not valid" when importing a large file.</span><span class="st">Debugging</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Fix</button>
+  <div class="rc">
+  <pre><code>// BEFORE — crashes
+private void btnImport_Click(object sender, EventArgs e)
+{
+    Task.Run(() =&gt;
+    {
+        var rows = ImportFile();
+        lblStatus.Text = $"Imported {rows} rows";   // CRASH: touching UI from background thread
+    });
+}
+
+// AFTER — fixed with async/await (preferred modern approach)
+private async void btnImport_Click(object sender, EventArgs e)
+{
+    lblStatus.Text = "Importing...";
+    int rows = await Task.Run(() =&gt; ImportFile());
+    lblStatus.Text = $"Imported {rows} rows";   // safe — back on UI thread after await
+}
+
+// ALTERNATIVE — fixed with explicit Invoke
+private void btnImport_Click(object sender, EventArgs e)
+{
+    Task.Run(() =&gt;
+    {
+        var rows = ImportFile();
+        lblStatus.Invoke(new Action(() =&gt; lblStatus.Text = $"Imported {rows} rows"));
+    });
+}</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">Add live search/filter to the DataGridView as the user types in a TextBox.</span><span class="st">Data Binding</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>private BindingSource _bindingSource = new BindingSource();
+private DataTable _allStudents;
+
+private void StudentForm_Load(object sender, EventArgs e)
+{
+    _allStudents = _repo.GetStudentsTable(schoolId: 1);
+    _bindingSource.DataSource = _allStudents;
+    dataGridView1.DataSource = _bindingSource;
+}
+
+private void txtSearch_TextChanged(object sender, EventArgs e)
+{
+    string safe = txtSearch.Text.Replace("'", "''");   // escape single quotes for the DataView filter syntax
+    _bindingSource.Filter = string.IsNullOrWhiteSpace(safe) ? "" : $"Name LIKE '%{safe}%'";
+}</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">Make a TextBox accept numbers only, with a max value of 100.</span><span class="st">Validation</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>private void txtMarks_KeyPress(object sender, KeyPressEventArgs e)
+{
+    if (!char.IsDigit(e.KeyChar) &amp;&amp; !char.IsControl(e.KeyChar))
+        e.Handled = true;
+}
+
+private void txtMarks_Validating(object sender, CancelEventArgs e)
+{
+    if (!int.TryParse(txtMarks.Text, out int marks) || marks &lt; 0 || marks &gt; 100)
+    {
+        errorProvider1.SetError(txtMarks, "Enter 0-100");
+        e.Cancel = true;
+    }
+    else
+    {
+        errorProvider1.SetError(txtMarks, "");
+    }
+}</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">Build a master-detail view — selecting a student in the grid loads their fee records below.</span><span class="st">Master-Detail</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+{
+    if (dataGridView1.CurrentRow == null) return;
+    int studentId = (int)dataGridView1.CurrentRow.Cells["Id"].Value;
+    dataGridViewFees.DataSource = _repo.GetFeesTable(studentId);   // ADO.NET call, another SqlDataAdapter.Fill()
+}</code></pre>
+  <p>Interview point: "how do you avoid a DB hit on every single grid navigation keystroke?" — mention debouncing with a small Timer delay, or only reacting to <code>SelectionChanged</code> (fires once per selection) rather than <code>CellMouseMove</code> or similar high-frequency events.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">Build a login form: validate credentials against SQL Server with proper error handling.</span><span class="st">Full Flow</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>private void btnLogin_Click(object sender, EventArgs e)
+{
+    if (string.IsNullOrWhiteSpace(txtUser.Text) || string.IsNullOrWhiteSpace(txtPass.Text))
+    {
+        MessageBox.Show("Username and password required.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        return;
+    }
+    try
+    {
+        btnLogin.Enabled = false;
+        bool valid = _authRepo.ValidateLogin(txtUser.Text, HashPassword(txtPass.Text));
+        if (valid)
+        {
+            var main = new MainForm();
+            main.Show();
+            this.Hide();
+        }
+        else
+        {
+            MessageBox.Show("Invalid username or password.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+    catch (SqlException ex)
+    {
+        MessageBox.Show("Could not reach the database. Please try again.", "Connection Error");
+        // log ex somewhere — never show raw exception details to the end user
+    }
+    finally
+    {
+        btnLogin.Enabled = true;
+    }
+}
+
+// ValidateLogin uses a parameterized ADO.NET query — never string-concatenate credentials into SQL
+public bool ValidateLogin(string username, string passwordHash)
+{
+    const string sql = "SELECT COUNT(*) FROM Users WHERE Username=@U AND PasswordHash=@P";
+    using var conn = new SqlConnection(_connStr);
+    using var cmd = new SqlCommand(sql, conn);
+    cmd.Parameters.AddWithValue("@U", username);
+    cmd.Parameters.AddWithValue("@P", passwordHash);
+    conn.Open();
+    return (int)cmd.ExecuteScalar() &gt; 0;
+}</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">Spot the bug — this form leaks memory every time it's opened and closed. Why, and fix?</span><span class="st">Debugging</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc">
+  <pre><code>// BEFORE — leaks
+public partial class StudentEditForm : Form
+{
+    public StudentEditForm()
+    {
+        InitializeComponent();
+        AppEvents.StudentListChanged += OnStudentListChanged;   // subscribes to a STATIC/long-lived event
+    }
+    // no unsubscribe anywhere!
+}</code></pre>
+  <p><strong>Bug:</strong> the form subscribes to a static/long-lived event (<code>AppEvents.StudentListChanged</code>) but never unsubscribes. The static event holder keeps a reference to the form's handler alive forever, which keeps the ENTIRE form object alive in memory — even after the user closes it and it should be garbage collected. Open/close this form 100 times and you leak 100 form instances.</p>
+  <pre><code>// AFTER — fixed
+public partial class StudentEditForm : Form
+{
+    public StudentEditForm()
+    {
+        InitializeComponent();
+        AppEvents.StudentListChanged += OnStudentListChanged;
+        this.FormClosed += (s, e) =&gt; AppEvents.StudentListChanged -= OnStudentListChanged;
+    }
+}</code></pre></div></div>
+</section>
+
+<section id="moreproblems">
+  <h2>➕ More Practice Problems</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">Bind a ComboBox to a list of classes so the user picks one by name but the code gets the ClassId.</span><span class="st">Data Binding</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>private void StudentForm_Load(object sender, EventArgs e)
+{
+    List&lt;ClassRoom&gt; classes = _repo.GetAllClasses();   // e.g. [{Id=1,Name="9-A"}, {Id=2,Name="9-B"}]
+
+    cboClass.DataSource = classes;
+    cboClass.DisplayMember = "Name";   // what the USER sees in the dropdown
+    cboClass.ValueMember = "Id";       // what the CODE reads back
+}
+
+private void btnAdd_Click(object sender, EventArgs e)
+{
+    int selectedClassId = (int)cboClass.SelectedValue;   // reads the Id, not the displayed name
+    // ... use selectedClassId when inserting the student
+}</code></pre>
+  <p><code>DisplayMember</code>/<code>ValueMember</code> is the standard WinForms pattern for "friendly text to the user, real key to the code" — avoids ever parsing the displayed string back into an id.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">Export the currently displayed DataGridView rows to a CSV file.</span><span class="st">Export</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>private void btnExportCsv_Click(object sender, EventArgs e)
+{
+    using var sfd = new SaveFileDialog { Filter = "CSV files (*.csv)|*.csv", FileName = "students.csv" };
+    if (sfd.ShowDialog() != DialogResult.OK) return;
+
+    var sb = new StringBuilder();
+
+    var headers = dgvStudents.Columns.Cast&lt;DataGridViewColumn&gt;().Select(c =&gt; c.HeaderText);
+    sb.AppendLine(string.Join(",", headers));
+
+    foreach (DataGridViewRow row in dgvStudents.Rows)
+    {
+        if (row.IsNewRow) continue;
+        var cells = row.Cells.Cast&lt;DataGridViewCell&gt;()
+            .Select(c =&gt; "\"" + (c.Value?.ToString() ?? "").Replace("\"", "\"\"") + "\"");
+        sb.AppendLine(string.Join(",", cells));
+    }
+
+    File.WriteAllText(sfd.FileName, sb.ToString());
+    MessageBox.Show("Exported to " + sfd.FileName, "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+}</code></pre>
+  <p>Wrapping each cell value in quotes (and escaping embedded quotes as <code>""</code>) keeps commas/quotes inside a student's name or email from corrupting the CSV structure.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">Remember the form's last window size and position between runs.</span><span class="st">Settings</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>// Properties.Settings.Default requires 2 user-scoped settings defined in
+// Properties/Settings.settings: WindowSize (Size), WindowLocation (Point)
+
+private void Form1_Load(object sender, EventArgs e)
+{
+    if (Properties.Settings.Default.WindowSize != Size.Empty)
+    {
+        this.Size = Properties.Settings.Default.WindowSize;
+        this.Location = Properties.Settings.Default.WindowLocation;
+    }
+}
+
+private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+{
+    Properties.Settings.Default.WindowSize = this.Size;
+    Properties.Settings.Default.WindowLocation = this.Location;
+    Properties.Settings.Default.Save();   // persists to user.config on disk
+}</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">11</div><div><span class="sq">Build a reusable NumericTextBox UserControl with a configurable Min/Max range.</span><span class="st">Custom Control</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>public partial class NumericTextBox : UserControl
+{
+    private TextBox _textBox = new TextBox();
+
+    public int MinValue { get; set; } = 0;
+    public int MaxValue { get; set; } = 100;
+
+    public int Value
+    {
+        get =&gt; int.TryParse(_textBox.Text, out int v) ? v : 0;
+        set =&gt; _textBox.Text = value.ToString();
+    }
+
+    public NumericTextBox()
+    {
+        _textBox.Dock = DockStyle.Fill;
+        _textBox.KeyPress += (s, e) =&gt;
+        {
+            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+                e.Handled = true;
+        };
+        _textBox.Validating += (s, e) =&gt;
+        {
+            if (Value &lt; MinValue || Value &gt; MaxValue)
+            {
+                MessageBox.Show($"Enter a value between {MinValue} and {MaxValue}.");
+                e.Cancel = true;
+            }
+        };
+        this.Controls.Add(_textBox);
+    }
+}
+// Drop it on any form like a built-in control: numericTextBox1.MinValue = 1; numericTextBox1.MaxValue = 100;</code></pre>
+  <p>This is a very common WinForms interview coding exercise — building one reusable control that packages validation logic, instead of copy-pasting KeyPress/Validating handlers onto every numeric field across every form.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">12</div><div><span class="sq">Auto-refresh the DataGridView every 30 seconds without blocking the UI or fighting the user's current selection.</span><span class="st">Timer</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>private System.Windows.Forms.Timer _refreshTimer = new System.Windows.Forms.Timer { Interval = 30000 };
+
+private void Form1_Load(object sender, EventArgs e)
+{
+    _refreshTimer.Tick += async (s, e) =&gt; await RefreshGridAsync();
+    _refreshTimer.Start();
+}
+
+private async Task RefreshGridAsync()
+{
+    int? selectedId = _selectedId != 0 ? _selectedId : (int?)null;
+
+    var students = await Task.Run(() =&gt; _repository.GetAll());   // DB call off the UI thread
+    LoadGrid(students);                                            // back on UI thread automatically (async/await)
+
+    if (selectedId.HasValue)
+        foreach (DataGridViewRow row in dgvStudents.Rows)
+            if (row.DataBoundItem is Student st && st.Id == selectedId.Value)
+                row.Selected = true;   // restore selection after refresh
+}</code></pre>
+  <p><code>System.Windows.Forms.Timer</code> (not <code>System.Threading.Timer</code>) fires its <code>Tick</code> event already on the UI thread, so no <code>Invoke</code> is needed around simple UI updates — but the actual DB call is still pushed to a background thread via <code>Task.Run</code> so a slow query doesn't freeze the form for those 30-second refreshes.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">13</div><div><span class="sq">The DataGridView flickers badly every time it refreshes with new data. Fix it.</span><span class="st">Rendering</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>// A DataGridView subclass with double buffering enabled
+public class BufferedDataGridView : DataGridView
+{
+    public BufferedDataGridView()
+    {
+        this.DoubleBuffered = true;   // DataGridView.DoubleBuffered is protected - only accessible via a subclass
+    }
+}
+
+// Or, without subclassing, via reflection (quick fix, less clean):
+typeof(DataGridView).InvokeMember(
+    "DoubleBuffered",
+    System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+    null, dgvStudents, new object[] { true });</code></pre>
+  <p><code>DoubleBuffered</code> is <code>protected</code> on <code>Control</code>/<code>DataGridView</code> by design — Microsoft expects you to enable it via a subclass, which is the cleaner approach for a real project; the reflection trick is a fast one-liner for a quick fix under interview time pressure.</p></div></div>
+</section>
+
+<section id="assignment">
+  <h2>📋 Mock Assignment — What HR Might Give You</h2>
+  <div class="warn-box"><strong>Simulated brief:</strong> "Build a Student Management WinForms app: a form with a DataGridView listing students from SQL Server (via ADO.NET), a search box, and Add/Edit/Delete buttons opening a modal dialog. 60 minutes."</div>
+  <p>This exact combo — WinForms UI + raw ADO.NET backend, no ORM — is the single most likely assignment shape given a role that lists both as the main focus.</p>
+  <h3>What they're actually grading</h3>
+  <ul class="cl-list">
+    <li data-id="asg-1"><input type="checkbox" onclick="event.stopPropagation()">DataGridView correctly bound to data fetched via ADO.NET (SqlDataAdapter/DataTable)</li>
+    <li data-id="asg-2"><input type="checkbox" onclick="event.stopPropagation()">Add/Edit dialog opened with ShowDialog(), grid refreshed only after DialogResult.OK</li>
+    <li data-id="asg-3"><input type="checkbox" onclick="event.stopPropagation()">Delete has a confirmation MessageBox before hitting the DB</li>
+    <li data-id="asg-4"><input type="checkbox" onclick="event.stopPropagation()">Search box filters without freezing the UI or re-querying on every keystroke unnecessarily</li>
+    <li data-id="asg-5"><input type="checkbox" onclick="event.stopPropagation()">Basic input validation (empty name, invalid number) before saving</li>
+    <li data-id="asg-6"><input type="checkbox" onclick="event.stopPropagation()">Try/catch around DB calls with a user-friendly error message, not a raw stack trace</li>
+    <li data-id="asg-7"><input type="checkbox" onclick="event.stopPropagation()">No cross-thread UI crash if any async/background work is used</li>
+  </ul>
+  <div class="good-box">Practice tip: actually open Visual Studio tonight, create a WinForms project, and build this end-to-end against a local SQL Server table. Doing it once cold, with a timer, is worth more than reading this whole guide twice.</div>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 Interview Scenarios</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">Walk through the WinForms Form lifecycle events in order, and where you'd load data.</span><span class="st">Lifecycle</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Constructor (InitializeComponent runs, controls exist but not visible) → Load (form about to display — this is where you fetch and bind data, since controls are fully initialized but the user hasn't seen a flash of empty UI) → Shown (form is now visible — good for focusing a control or showing a first-run tip) → FormClosing (cancellable — check for unsaved changes here) → FormClosed (cleanup, unsubscribe from any external/static events) → Dispose (resource cleanup).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Why can't you update a Label's Text property directly from a background thread?</span><span class="st">Threading</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>WinForms controls have "thread affinity" — the underlying Win32 window handle can only be safely touched by the thread that created it (the UI thread). Direct access from another thread throws <code>InvalidOperationException</code> (in debug builds; in release it can silently corrupt UI state, which is worse). Fix: <code>Control.Invoke()</code>/<code>BeginInvoke()</code> to marshal the call onto the UI thread, or simply use <code>async</code>/<code>await</code> — code after an <code>await</code> automatically resumes on the original UI thread's SynchronizationContext.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">ShowDialog() vs Show() — when would using the wrong one cause a bug?</span><span class="st">Forms</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>If you use <code>Show()</code> for an Edit dialog and then immediately read its result on the next line, you'd read stale/default data — <code>Show()</code> doesn't block, so the code after it runs before the user has even seen the dialog, let alone clicked OK. <code>ShowDialog()</code> blocks until the dialog closes and gives you a real <code>DialogResult</code> to branch on. Conversely, using <code>ShowDialog()</code> for something that should stay open alongside the main form (like a floating tool palette) would incorrectly block/disable the main window.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">How do you keep the UI responsive while running a long-running operation, like importing 10,000 rows?</span><span class="st">Threading</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Never run long work directly on the UI thread's event handler — it freezes the whole form (no repaint, no click response) until it finishes. Options: <code>async</code>/<code>await</code> with <code>Task.Run()</code> for the heavy work (modern, preferred); <code>BackgroundWorker</code> (older, has built-in <code>ProgressChanged</code> and <code>RunWorkerCompleted</code> events that already marshal to the UI thread for you); or a raw <code>Thread</code> with manual <code>Invoke</code> calls (most control, most boilerplate). For a progress bar during import, BackgroundWorker's <code>ReportProgress()</code> is still a clean fit.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">Why would a form not get garbage collected even after the user closes it?</span><span class="st">Memory</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Most common cause: the form subscribed to an event on a longer-lived object (a static event, a singleton service, or a parent form) and never unsubscribed. The event's invocation list holds a reference to the form's handler method, which keeps the form instance reachable from GC's perspective — "the tail wags the dog." Fix: unsubscribe in <code>FormClosed</code>, or use weak event patterns for long-lived publishers.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">How would you structure a WinForms app so business logic isn't tangled into the Form code-behind?</span><span class="st">Architecture</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Keep the Form as thin as possible — it only handles UI events and delegates to separate classes: a Repository/DataAccess layer for ADO.NET calls, and optionally a Presenter/Controller class if following MVP (Model-View-Presenter) — the Form implements a simple interface (<code>IStudentView</code>) with properties/events, and the Presenter contains the actual logic and orchestrates calls to the Repository. This makes the logic unit-testable without needing to instantiate a real Form.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+
+  <div class="qc"><div class="qq">1. Where should you load initial data into a DataGridView?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','The constructor runs before InitializeComponent finishes fully wiring the Designer — Load is the standard place.')">In the form's constructor, before InitializeComponent()</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! The Load event fires once controls are fully initialized and just before the form displays — the standard place to fetch and bind data.')">In the Form_Load event handler</button>
+    <button class="qb" onclick="ans(this,'wrong','Shown fires after the form is already visible — data would pop in after a visible empty flash.')">In the Form_Shown event handler</button>
+    <button class="qb" onclick="ans(this,'wrong','FormClosing is for cleanup/confirmation on exit, not initial data load.')">In the FormClosing event handler</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What exception do you get updating a TextBox from a background thread without Invoke?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','NullReferenceException is unrelated — the control exists, it\'s just the wrong thread touching it.')">NullReferenceException</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! "Cross-thread operation not valid" — controls have thread affinity to the UI thread that created them.')">InvalidOperationException</button>
+    <button class="qb" onclick="ans(this,'wrong','No timeout is involved in a direct property assignment.')">TimeoutException</button>
+    <button class="qb" onclick="ans(this,'wrong','Casting isn\'t what fails here — it\'s the thread affinity check.')">InvalidCastException</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. Which method BLOCKS execution until the dialog form is closed?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Show() is non-blocking — code continues immediately.')">Show()</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! ShowDialog() blocks the calling code and disables the parent form until the dialog closes, returning a DialogResult.')">ShowDialog()</button>
+    <button class="qb" onclick="ans(this,'wrong','Visible = true just makes it visible, no blocking or modal behavior.')">Visible = true</button>
+    <button class="qb" onclick="ans(this,'wrong','Focus() just sets input focus — no blocking behavior.')">Focus()</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. A form leaks memory across repeated open/close cycles because of a subscribed event. What's the fix?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','GC.Collect() forces a collection attempt but won\'t collect an object that\'s still referenced by a live event subscription.')">Call GC.Collect() manually after closing</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Unsubscribing (-=) in FormClosed removes the reference the long-lived publisher holds to the form\'s handler, letting the form become eligible for garbage collection.')">Unsubscribe from the event in FormClosed</button>
+    <button class="qb" onclick="ans(this,'wrong','Making the form static would make the leak permanent and worse, not fix it.')">Make the Form class static</button>
+    <button class="qb" onclick="ans(this,'wrong','Dispose() alone doesn\'t remove external event subscriptions unless you explicitly do it in a Dispose override or FormClosed.')">Call this.Dispose() at the start of the constructor</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">5. What's the safest way to run a 10,000-row import without freezing the form?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Running it directly on the UI thread in the Click handler freezes the form until it finishes.')">Call the import method directly inside the button's Click handler</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! await Task.Run(...) moves the heavy work off the UI thread, and execution resumes on the UI thread automatically after await completes — no manual Invoke needed.')">await Task.Run(() =&gt; ImportRows()) inside an async event handler</button>
+    <button class="qb" onclick="ans(this,'wrong','Thread.Sleep just pauses — it doesn\'t move work off the UI thread.')">Wrap it in Thread.Sleep(0) calls between rows</button>
+    <button class="qb" onclick="ans(this,'wrong','Increasing the timer interval doesn\'t address the UI thread being blocked by synchronous work.')">Increase the form\'s Timer interval</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)" data-id="m-1"><input type="checkbox">I can recite the Form lifecycle order and where to load data</li>
+    <li onclick="ck(this)" data-id="m-2"><input type="checkbox">I can bind a DataGridView to ADO.NET data via DataTable / BindingSource</li>
+    <li onclick="ck(this)" data-id="m-3"><input type="checkbox">I can fix a cross-thread UI exception with Invoke or async/await</li>
+    <li onclick="ck(this)" data-id="m-4"><input type="checkbox">I know ShowDialog() vs Show() and when each is correct</li>
+    <li onclick="ck(this)" data-id="m-5"><input type="checkbox">I can implement TextBox validation with KeyPress + Validating + ErrorProvider</li>
+    <li onclick="ck(this)" data-id="m-6"><input type="checkbox">I can explain why an unsubscribed event handler leaks a form</li>
+    <li onclick="ck(this)" data-id="m-7"><input type="checkbox">I built the mock assignment (WinForms + ADO.NET CRUD app) at least once, timed</li>
+  </ul>
+</section>
+
+<div class="completion">
+  <h2>🎉 WinForms Ready</h2>
+  <div class="badge">CONCEPTS + CODING + ASSIGNMENT ✓</div>
+  <p style="color:var(--muted);margin-top:1rem;font-size:.9rem;">Back to: <a class="rlink" href="ADO_NET_Guide.html">ADO.NET Guide</a> and <a class="rlink" href="EntityFramework_Guide.html">Entity Framework Guide</a></p>
+</div>
+
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">WinForms Guide — Salcomp Interview Prep, Wednesday</p>
+  <p>Accent: Amber #d97706 · Progress saves in this browser automatically</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+
+  const STORAGE_KEY='winforms-guide-progress-v1';
+  const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const allBoxes = Array.from(document.querySelectorAll('.cl-list li[data-id]'));
+
+  function updateBadge(){
+    const doneCount = Object.values(state).filter(Boolean).length;
+    document.getElementById('progBadge').textContent = doneCount+'/'+allBoxes.length+' done';
+  }
+  function applyState(){
+    allBoxes.forEach(li=>{
+      const cb = li.querySelector('input');
+      const on = !!state[li.dataset.id];
+      cb.checked = on;
+      li.classList.toggle('done', on);
+    });
+    updateBadge();
+  }
+  function ck(li){
+    const cb = li.querySelector('input');
+    const id = li.dataset.id;
+    if(!id) return;
+    state[id] = !state[id];
+    cb.checked = state[id];
+    li.classList.toggle('done', state[id]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    updateBadge();
+  }
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':btn.textContent.replace('Hide','Reveal');}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+
+  applyState();
+</script>
+</body>
+</html>

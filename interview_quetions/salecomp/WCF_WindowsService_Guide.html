@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WCF &amp; Windows Service Complete Guide — Salcomp Interview Prep | Gurumoorthy</title>
+<style>
+  :root{--accent:#d97706;--accent-dim:#92400e;--accent-subtle:rgba(217,119,6,0.14);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.75rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  nav .prog-badge{margin-left:auto;background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:999px;}
+  .hero{padding:2.6rem 1.5rem 1.8rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(217,119,6,.16) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.5rem,4vw,2.4rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;max-width:760px;margin-left:auto;margin-right:auto;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  .crosslinks{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;}
+  .crosslinks a{background:var(--card);border:1px solid var(--border);color:var(--info);text-decoration:none;padding:.4rem .9rem;border-radius:8px;font-size:.8rem;font-weight:600;}
+  .crosslinks a:hover{border-color:var(--accent);color:var(--accent);}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:2.6rem;}
+  h2{font-size:1.45rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.02rem;font-weight:700;color:var(--info);margin:1.1rem 0 .5rem;}
+  p{margin-bottom:.6rem;font-size:.92rem;}
+  code{font-family:'Cascadia Code',Consolas,monospace;background:var(--bg3);padding:.1rem .35rem;border-radius:4px;font-size:.85em;color:var(--info);}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  pre code{background:none;padding:0;color:var(--text);}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .thang{background:linear-gradient(135deg,rgba(217,119,6,.14),rgba(217,119,6,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:.9rem 1.1rem;margin:.8rem 0;display:flex;gap:.7rem;}
+  .thang .ti{font-size:1.3rem;flex-shrink:0;}.thang .tt{color:var(--accent);font-weight:800;font-size:.85rem;}.thang .tb{color:var(--muted);font-size:.87rem;margin-top:.2rem;}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .warn-box{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .bad-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.35);border-radius:8px;padding:.7rem .9rem;margin:.5rem 0;font-size:.85rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.8rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.88rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:flex-start;gap:.55rem;font-size:.85rem;cursor:pointer;padding:.3rem .4rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;margin-top:.15rem;flex-shrink:0;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  .completion{text-align:center;padding:2.2rem;background:radial-gradient(ellipse at center,rgba(217,119,6,.22),transparent 70%);border:2px solid var(--accent);border-radius:16px;margin:2rem 0;}
+  .completion h2{color:var(--accent);font-size:1.7rem;border:none;}
+  .badge{display:inline-block;background:var(--accent);color:#fff;font-size:1.15rem;font-weight:900;padding:.7rem 1.7rem;border-radius:50px;margin:1rem 0;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">WCF + WINDOWS SERVICE</span>
+  <a href="#overview">Overview</a><a href="#wcfconcepts">WCF Concepts</a><a href="#wsconcepts">Windows Service</a>
+  <a href="#coding">Coding</a><a href="#scenarios">Scenarios</a><a href="#quiz">Quiz</a>
+  <span class="prog-badge" id="progBadge">0/0 done</span>
+</nav>
+<div class="hero">
+  <h1>WCF &amp; Windows Service Complete Guide — Salcomp Interview Prep</h1>
+  <p>ABC of WCF, bindings, instancing/concurrency, faults, security, self-hosting — plus ServiceBase lifecycle, installation, recovery, and the classic "WCF hosted inside a Windows Service" pattern. Thanglish-la explanation, fast revision-ku easy-a.</p>
+  <div class="tags">
+    <span class="tag">Service/Operation/Data Contract</span><span class="tag">Bindings</span>
+    <span class="tag">Self-Hosting</span><span class="tag">ServiceBase</span><span class="tag">salcomp.com</span>
+  </div>
+  <div class="crosslinks">
+    <a href="ADO_NET_Guide.html">→ ADO.NET Guide</a>
+    <a href="EntityFramework_Guide.html">→ Entity Framework Guide</a>
+    <a href="AdvancedCSharp_100_QA.html">→ Advanced C# 100 Q&amp;A</a>
+  </div>
+</div>
+<main>
+
+<section id="overview">
+  <h2>🎯 Overview — Why This Combo Matters</h2>
+  <div class="thang">
+    <div class="ti">💡</div>
+    <div><div class="tt">Thanglish la solradha na</div>
+    <div class="tb">Legacy .NET Framework enterprise apps-la (school ERP, billing systems like ungaluku irukura Salcomp stack) — WCF services-a often oru Windows Service-oda inside self-host pannuvanga, IIS illama. Ippo REST/Web API/gRPC popular, aana interviewer "old system maintain pannanumnu vanthaa" nu WCF+Windows Service combo kekkalam. Rendaiyum puriyanumnu ithu guide.</div></div>
+  </div>
+  <table>
+    <tr><th>Topic</th><th>One-line meaning</th></tr>
+    <tr><td>WCF</td><td>Framework to build SOAP/XML-based (or REST-lite) service endpoints — Address, Binding, Contract (ABC)</td></tr>
+    <tr><td>Windows Service</td><td>A long-running background process managed by the Windows Service Control Manager (SCM) — no UI, starts at boot</td></tr>
+    <tr><td>Why combined</td><td>A WCF service with no IIS available (internal LAN app, factory server) is typically self-hosted inside a Windows Service so it starts automatically and survives reboots</td></tr>
+  </table>
+  <div class="warn-box"><strong>Interview priority:</strong> ABC of WCF + Instance/Concurrency modes + hosting a WCF service inside ServiceBase (Section "Coding" #1) are the highest-yield topics — most interviewers test whether you've actually WIRED these together, not just definitions.</div>
+</section>
+
+<section id="wcfconcepts">
+  <h2>📚 WCF Core Concepts</h2>
+
+  <h3>1. The ABC of WCF — Address, Binding, Contract</h3>
+  <table>
+    <tr><th>Letter</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td>A — Address</td><td>WHERE the service lives (URL/URI)</td><td><code>net.tcp://server01:8090/StudentService</code></td></tr>
+    <tr><td>B — Binding</td><td>HOW client and service communicate (transport, encoding, security)</td><td><code>NetTcpBinding</code>, <code>BasicHttpBinding</code></td></tr>
+    <tr><td>C — Contract</td><td>WHAT operations the service exposes</td><td><code>IStudentService</code> interface with <code>[ServiceContract]</code></td></tr>
+  </table>
+  <div class="thang">
+    <div class="ti">🔤</div>
+    <div><div class="tt">Thanglish la solradha na</div>
+    <div class="tb">Interviewer "ABC of WCF" nu direct-a kekkalam — idhu oru classic one-liner. Address = "enga irukku", Binding = "eppadi pேசுவோம்", Contract = "enna pேசுவோம்" nu maadhiri nyabagam vachukonga.</div></div>
+  </div>
+
+  <h3>2. Service Contract, Operation Contract, Data Contract</h3>
+  <pre><code>[ServiceContract]
+public interface IStudentService
+{
+    [OperationContract]
+    StudentDto GetStudent(int id);
+
+    [OperationContract]
+    [FaultContract(typeof(StudentNotFoundFault))]
+    void UpdateStudent(StudentDto student);
+}
+
+[DataContract]
+public class StudentDto
+{
+    [DataMember] public int Id { get; set; }
+    [DataMember] public string Name { get; set; }
+    [DataMember] public decimal PendingFee { get; set; }
+}</code></pre>
+  <p><code>[ServiceContract]</code> marks an interface as a WCF service boundary. <code>[OperationContract]</code> marks which methods on that interface are actually callable remotely — a service interface can have plain helper methods without this attribute, and those stay internal/non-exposed. <code>[DataContract]</code>/<code>[DataMember]</code> control exactly which class and which properties get serialized over the wire (XML/SOAP by default) — unlike plain public properties, you explicitly opt in per member, giving you control over the wire format and versioning.</p>
+
+  <h3>3. Bindings — Which One, When</h3>
+  <table>
+    <tr><th>Binding</th><th>Transport</th><th>Use case</th></tr>
+    <tr><td>BasicHttpBinding</td><td>HTTP, SOAP 1.1</td><td>Interop with old/non-WCF clients, simplest, least secure by default</td></tr>
+    <tr><td>WSHttpBinding</td><td>HTTP, SOAP 1.2 + WS-* standards</td><td>Web-facing services needing message security, reliable sessions, transactions</td></tr>
+    <tr><td>NetTcpBinding</td><td>TCP, binary encoding</td><td>Fastest — WCF-to-WCF only, same LAN/intranet (e.g., internal service-to-service calls)</td></tr>
+    <tr><td>NetNamedPipeBinding</td><td>Named pipes</td><td>Fastest possible — but ONLY same-machine communication (e.g., two processes on one server)</td></tr>
+    <tr><td>NetMsmqBinding</td><td>MSMQ (queued)</td><td>Disconnected/offline messaging — sender and receiver don't need to be online at the same time</td></tr>
+  </table>
+  <div class="warn-box">Rule of thumb interviewers expect: same machine → NamedPipe; same LAN, WCF-to-WCF → NetTcp; cross-platform/web-facing → (Ws)HttpBinding; guaranteed delivery without both sides online → Msmq.</div>
+
+  <h3>4. Hosting Options</h3>
+  <table>
+    <tr><th>Host</th><th>Notes</th></tr>
+    <tr><td>IIS / WAS</td><td>Managed lifecycle, app pool recycling, needs HTTP-based binding, easiest to deploy/monitor</td></tr>
+    <tr><td>Self-hosting (Console app)</td><td>Simple for dev/testing — but dies when the console closes</td></tr>
+    <tr><td>Self-hosting (Windows Service)</td><td>Production-grade self-host — starts at boot, survives logoff, supports any binding including NetTcp/NamedPipe. See Coding #1 below.</td></tr>
+  </table>
+
+  <h3>5. Instance Management — InstanceContextMode</h3>
+  <table>
+    <tr><th>Mode</th><th>Behavior</th><th>Use when</th></tr>
+    <tr><td>PerCall (default)</td><td>New service instance created for EVERY call, disposed right after</td><td>Stateless services, best scalability — default and usually correct choice</td></tr>
+    <tr><td>PerSession</td><td>One instance per client session (multiple calls from same client reuse it)</td><td>Need to remember state across a sequence of calls from one client (e.g., a multi-step wizard)</td></tr>
+    <tr><td>Single</td><td>ONE instance for the entire service lifetime, shared by ALL clients</td><td>Rare — shared in-memory cache/counter; must be made thread-safe yourself</td></tr>
+  </table>
+
+  <h3>6. Concurrency Mode</h3>
+  <pre><code>[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single,
+                 ConcurrencyMode = ConcurrencyMode.Multiple)]
+public class StudentService : IStudentService
+{
+    private readonly object _lock = new object();
+    private int _activeSessionCount;
+
+    public void RegisterSession()
+    {
+        lock (_lock) { _activeSessionCount++; } // must self-protect — Multiple mode allows concurrent calls in
+    }
+}</code></pre>
+  <p><code>Single</code> concurrency (default) — WCF allows only ONE thread into the instance at a time (auto-locks for you), safest but least scalable. <code>Multiple</code> — many threads can enter concurrently; YOU must add your own locking for any shared state (as above). <code>Reentrant</code> — single-threaded like Single, but allows the current call to call OUT to another service and back in without deadlocking itself.</p>
+
+  <h3>7. Faults — Proper Error Handling Across the Wire</h3>
+  <pre><code>[DataContract]
+public class StudentNotFoundFault
+{
+    [DataMember] public int StudentId { get; set; }
+    [DataMember] public string Message { get; set; }
+}
+
+// Service implementation:
+public StudentDto GetStudent(int id)
+{
+    var student = _repo.Find(id);
+    if (student == null)
+        throw new FaultException&lt;StudentNotFoundFault&gt;(
+            new StudentNotFoundFault { StudentId = id, Message = "Student not found" });
+    return student;
+}
+
+// Client:
+try { var s = client.GetStudent(999); }
+catch (FaultException&lt;StudentNotFoundFault&gt; fex)
+{
+    Console.WriteLine(fex.Detail.Message);
+}</code></pre>
+  <p>A plain C# exception thrown inside a WCF service does NOT cross the wire as-is — by default it gets converted into a generic, detail-stripped fault (for security, so internal exception details/stack traces aren't leaked to clients) unless <code>includeExceptionDetailInFaults</code> is enabled (dev/debug only, never in production). <code>FaultContract</code> + <code>FaultException&lt;T&gt;</code> is the correct way to deliberately communicate a specific business error back to the client with strongly-typed detail.</p>
+
+  <h3>8. Security Modes</h3>
+  <table>
+    <tr><th>Mode</th><th>Meaning</th></tr>
+    <tr><td>None</td><td>No encryption/auth — internal trusted networks only</td></tr>
+    <tr><td>Transport</td><td>Security at the transport level (HTTPS/TLS for HTTP bindings, or TCP transport security) — encrypts the whole channel</td></tr>
+    <tr><td>Message</td><td>Individual SOAP messages are encrypted/signed, transport itself may be plain — works end-to-end even through intermediaries</td></tr>
+    <tr><td>TransportWithMessageCredential</td><td>Transport-level encryption (HTTPS) PLUS message-level credentials (e.g., username/password token) for authentication</td></tr>
+  </table>
+
+  <h3>9. Duplex Contracts (Server Push / Callbacks)</h3>
+  <pre><code>public interface IAttendanceCallback
+{
+    [OperationContract(IsOneWay = true)]
+    void OnAttendanceMarked(int studentId, string status);
+}
+
+[ServiceContract(CallbackContract = typeof(IAttendanceCallback))]
+public interface IAttendanceService
+{
+    [OperationContract]
+    void Subscribe();
+}</code></pre>
+  <p>Duplex contracts let the SERVICE call back INTO the client (push notifications) — needs a binding that supports duplex, like <code>WSDualHttpBinding</code> or <code>NetTcpBinding</code> (HTTP request/response bindings like BasicHttpBinding can't do this natively). Conceptually this is WCF's older answer to what SignalR solves more elegantly in modern .NET — a fair interview talking point if asked to compare.</p>
+
+  <h3>10. Throttling &amp; Metadata Exchange (MEX)</h3>
+  <pre><code>&lt;serviceBehaviors&gt;
+  &lt;behavior&gt;
+    &lt;serviceThrottling maxConcurrentCalls="200" maxConcurrentSessions="100" maxConcurrentInstances="200" /&gt;
+    &lt;serviceMetadata httpGetEnabled="true" /&gt;
+  &lt;/behavior&gt;
+&lt;/serviceBehaviors&gt;</code></pre>
+  <p><code>ServiceThrottlingBehavior</code> caps concurrent calls/sessions/instances to protect the service from being overwhelmed — tune these based on load testing, not defaults blindly. The MEX (metadata exchange) endpoint is what lets a client's "Add Service Reference" fetch the WSDL to auto-generate a proxy — it must be explicitly enabled (<code>httpGetEnabled</code> or a dedicated mex endpoint) and is typically disabled in production for security once clients already have their generated proxies.</p>
+</section>
+
+<section id="wsconcepts">
+  <h2>🛠️ Windows Service Core Concepts</h2>
+
+  <h3>11. What Is a Windows Service, and the ServiceBase Lifecycle</h3>
+  <pre><code>public class AttendanceSyncService : ServiceBase
+{
+    private Timer _timer;
+
+    public AttendanceSyncService() { ServiceName = "AttendanceSyncService"; }
+
+    protected override void OnStart(string[] args)
+    {
+        _timer = new Timer(SyncAttendance, null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
+    }
+
+    protected override void OnStop()
+    {
+        _timer?.Dispose();
+    }
+
+    private void SyncAttendance(object state)
+    {
+        // do the actual work; wrap in try/catch — an unhandled exception here can kill the service
+    }
+}
+
+static class Program
+{
+    static void Main()
+    {
+        ServiceBase.Run(new AttendanceSyncService());
+    }
+}</code></pre>
+  <p>A Windows Service is a long-running executable managed by the Windows Service Control Manager (SCM) — no user interaction, no UI, can start automatically at boot before any user logs in, and runs under a configurable service account. <code>ServiceBase</code> (.NET Framework) is the base class you override: <code>OnStart</code> (kick off background work — must return quickly, ideally &lt;30 seconds, or the SCM reports a start failure), <code>OnStop</code> (clean shutdown), plus optional <code>OnPause</code>/<code>OnContinue</code> if <code>CanPauseAndContinue = true</code>.</p>
+
+  <h3>12. Installing a Windows Service</h3>
+  <table>
+    <tr><th>Method</th><th>Notes</th></tr>
+    <tr><td>sc.exe create</td><td><code>sc create AttendanceSyncService binPath= "C:\App\Service.exe"</code> — built into Windows, no extra tooling needed</td></tr>
+    <tr><td>InstallUtil.exe (older)</td><td>Uses a <code>ServiceInstaller</code>/<code>ServiceProcessInstaller</code> pair in the project — classic .NET Framework approach, mostly superseded now</td></tr>
+    <tr><td>PowerShell New-Service</td><td><code>New-Service -Name "AttendanceSyncService" -BinaryPathName "C:\App\Service.exe"</code></td></tr>
+    <tr><td>Modern Worker Service (.NET 6+)</td><td><code>UseWindowsService()</code> in Program.cs — the same executable can also self-install via <code>sc create</code>, no separate installer classes needed</td></tr>
+  </table>
+
+  <h3>13. Debugging a Windows Service</h3>
+  <p>You cannot just hit F5 on a Windows Service project — the SCM must start it, so debugging requires either: (1) attach Visual Studio's debugger to the running service process (Debug → Attach to Process) after starting it via <code>services.msc</code>/<code>net start</code>, or (2) write the app so it can ALSO run as a plain console app when passed a command-line flag (e.g., <code>if (Environment.UserInteractive) RunAsConsole(); else ServiceBase.Run(...)</code>) — letting you debug the exact same logic directly in Visual Studio without installing it as a service at all. Modern Worker Service templates make this trivial since the Generic Host runs the same way whether hosted as a console app or a Windows Service.</p>
+
+  <h3>14. Service Accounts &amp; Permissions</h3>
+  <table>
+    <tr><th>Account</th><th>Notes</th></tr>
+    <tr><td>LocalSystem</td><td>Highest local privileges, no network credentials — avoid unless truly needed, security risk</td></tr>
+    <tr><td>NetworkService</td><td>Limited local privileges, presents the COMPUTER's credentials on the network</td></tr>
+    <tr><td>LocalService</td><td>Limited local privileges, anonymous on the network — no network access</td></tr>
+    <tr><td>Custom domain/service account</td><td>Most controlled — grant only the specific file/DB/network permissions the service actually needs (principle of least privilege)</td></tr>
+  </table>
+
+  <h3>15. Recovery Options (Auto-Restart on Failure)</h3>
+  <pre><code>sc failure AttendanceSyncService reset= 86400 actions= restart/60000/restart/60000/run/1000</code></pre>
+  <p>Configurable in <code>services.msc</code> (Recovery tab) or via <code>sc failure</code> — tells the SCM what to do if the service crashes: restart immediately, restart after a delay, run a recovery program, or take no action. Production services should always have at least "restart the service" configured for the first and second failure, since an unattended crash otherwise means silent downtime until someone notices.</p>
+
+  <h3>16. Logging — No Console, So Where Do Errors Go?</h3>
+  <pre><code>protected override void OnStart(string[] args)
+{
+    try { StartWork(); }
+    catch (Exception ex)
+    {
+        EventLog.WriteEntry("AttendanceSyncService", ex.ToString(), EventLogEntryType.Error);
+        throw;
+    }
+}</code></pre>
+  <p>A Windows Service has no console/UI to write to — <code>Console.WriteLine</code> goes nowhere useful. Standard practice: write to the Windows Event Log (<code>System.Diagnostics.EventLog</code>) for critical start/stop/failure events, and use a proper logging framework (Serilog/NLog writing to rolling files) for detailed operational logs — this is exactly why every unhandled-exception path inside the service loop must be caught and logged, or failures become invisible.</p>
+
+  <h3>17. Hosting a WCF Service Inside a Windows Service (The Classic Combo)</h3>
+  <pre><code>public class StudentServiceHost : ServiceBase
+{
+    private ServiceHost _host;
+
+    protected override void OnStart(string[] args)
+    {
+        _host = new ServiceHost(typeof(StudentService));
+        _host.Open(); // opens all configured endpoints (e.g., net.tcp://.../StudentService)
+    }
+
+    protected override void OnStop()
+    {
+        _host?.Close(); // graceful close — completes in-flight calls, then shuts endpoints down
+    }
+}</code></pre>
+  <p>This is the pattern that ties both halves of this guide together: <code>ServiceHost</code> (WCF) is opened inside <code>OnStart</code> and closed inside <code>OnStop</code> (ServiceBase, Windows Service). The Windows Service gives the WCF endpoint a durable, auto-starting home without needing IIS — common for internal LAN services (e.g., NetTcpBinding) on a factory/school server that must be always-on. Always call <code>_host.Close()</code> rather than letting it be abandoned — Close() allows outstanding calls to finish within a timeout, whereas an abrupt process kill drops them.</p>
+
+  <h3>18. Windows Service vs Modern Worker Service (.NET 6+)</h3>
+  <table>
+    <tr><th>Aspect</th><th>Classic ServiceBase (.NET Framework)</th><th>Worker Service (.NET 6+, BackgroundService)</th></tr>
+    <tr><td>Base class</td><td><code>ServiceBase</code>, override OnStart/OnStop</td><td><code>BackgroundService</code>, override ExecuteAsync</td></tr>
+    <tr><td>Hosting</td><td>Always a Windows Service (Windows-only)</td><td>Cross-platform — same code runs as console, Windows Service (<code>UseWindowsService()</code>), or Linux systemd (<code>UseSystemd()</code>)</td></tr>
+    <tr><td>DI</td><td>Manual wiring, no built-in container</td><td>Full Generic Host + DI container out of the box</td></tr>
+    <tr><td>Async support</td><td>OnStart must return fast; async work needs manual Task/Timer plumbing</td><td>ExecuteAsync is natively async with CancellationToken support</td></tr>
+  </table>
+</section>
+
+<section id="coding">
+  <h2>💻 Coding &amp; Debugging Problems</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">Self-host a WCF service (NetTcpBinding) inside a Windows Service, with graceful start/stop.</span><span class="st">Combo</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>[ServiceContract]
+public interface IStudentService
+{
+    [OperationContract]
+    StudentDto GetStudent(int id);
+}
+
+[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
+public class StudentService : IStudentService
+{
+    public StudentDto GetStudent(int id) =&gt; StudentRepository.GetById(id);
+}
+
+public partial class StudentServiceHostWindows : ServiceBase
+{
+    private ServiceHost _host;
+    public StudentServiceHostWindows() { ServiceName = "StudentWcfHost"; }
+
+    protected override void OnStart(string[] args)
+    {
+        _host = new ServiceHost(typeof(StudentService),
+            new Uri("net.tcp://localhost:8090/StudentService"));
+        _host.AddServiceEndpoint(typeof(IStudentService), new NetTcpBinding(), "");
+        try
+        {
+            _host.Open();
+        }
+        catch
+        {
+            _host.Abort(); // Abort (not Close) on a failed Open — Close assumes a healthy channel
+            throw;
+        }
+    }
+
+    protected override void OnStop()
+    {
+        if (_host.State == CommunicationState.Faulted) _host.Abort();
+        else _host.Close(TimeSpan.FromSeconds(10));
+    }
+}</code></pre>
+  <p>Key detail interviewers look for: use <code>Abort()</code> instead of <code>Close()</code> when the host is in a Faulted state or failed to open — calling Close() on a faulted channel throws a secondary exception masking the real one.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Fix this WCF client code that leaks connections — it never properly closes the proxy.</span><span class="st">Debugging</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Fix</button>
+  <div class="rc"><pre><code>// BEFORE — "using" on a WCF proxy is a well-known trap
+using (var client = new StudentServiceClient())
+{
+    var s = client.GetStudent(1); // if this throws (e.g., timeout), Dispose() calls Close(),
+}                                  // which itself throws inside a faulted channel -&gt; original exception is swallowed
+
+// AFTER — correct pattern
+var client = new StudentServiceClient();
+try
+{
+    var s = client.GetStudent(1);
+    client.Close();
+}
+catch (CommunicationException)
+{
+    client.Abort();
+    throw;
+}
+catch (TimeoutException)
+{
+    client.Abort();
+    throw;
+}
+catch
+{
+    client.Abort();
+    throw;
+}</code></pre>
+  <p>A generated WCF client proxy implements IDisposable, but its <code>Dispose()</code> internally calls <code>Close()</code> — if the channel faulted (e.g., the call itself threw a CommunicationException/TimeoutException), Close() throws again while unwinding, and that second exception can hide the original cause. Correct pattern: call <code>Close()</code> explicitly on success, and <code>Abort()</code> explicitly in every catch block, never relying on `using`/Dispose for a WCF proxy.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">Add a FaultContract so the client gets a meaningful error instead of a generic exception when a student isn't found.</span><span class="st">Faults</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>[DataContract]
+public class StudentNotFoundFault
+{
+    [DataMember] public int StudentId { get; set; }
+}
+
+[ServiceContract]
+public interface IStudentService
+{
+    [OperationContract]
+    [FaultContract(typeof(StudentNotFoundFault))]
+    StudentDto GetStudent(int id);
+}
+
+public StudentDto GetStudent(int id)
+{
+    var s = _repo.Find(id);
+    if (s == null)
+        throw new FaultException&lt;StudentNotFoundFault&gt;(new StudentNotFoundFault { StudentId = id });
+    return s;
+}
+
+// client:
+try { var s = client.GetStudent(999); }
+catch (FaultException&lt;StudentNotFoundFault&gt; fault)
+{
+    Console.WriteLine($"Student {fault.Detail.StudentId} not found");
+}</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">Configure the service so it survives being called by 500 concurrent clients without falling over.</span><span class="st">Throttling</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>var behavior = new ServiceThrottlingBehavior
+{
+    MaxConcurrentCalls = 400,
+    MaxConcurrentSessions = 400,
+    MaxConcurrentInstances = 400
+};
+_host.Description.Behaviors.Add(behavior);</code></pre>
+  <p>Default throttling limits in older WCF versions are quite low (e.g., 16 concurrent calls) — under real load this silently queues/blocks callers well before any hardware limit is hit. Explicitly configuring <code>ServiceThrottlingBehavior</code> based on load-testing results (not guessed numbers) is a standard production hardening step.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">Write a Windows Service that also runs as a console app for local debugging (no install needed).</span><span class="st">Debugging</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>static class Program
+{
+    static void Main(string[] args)
+    {
+        var service = new AttendanceSyncService();
+        if (Environment.UserInteractive)
+        {
+            // Running from Visual Studio / a console — simulate SCM calls directly
+            service.StartConsole(args);
+            Console.WriteLine("Running as console. Press ENTER to stop.");
+            Console.ReadLine();
+            service.StopConsole();
+        }
+        else
+        {
+            ServiceBase.Run(service); // real SCM-managed startup
+        }
+    }
+}
+
+public class AttendanceSyncService : ServiceBase
+{
+    public void StartConsole(string[] args) =&gt; OnStart(args);
+    public void StopConsole() =&gt; OnStop();
+    protected override void OnStart(string[] args) { /* same logic either way */ }
+    protected override void OnStop() { /* same logic either way */ }
+}</code></pre>
+  <p><code>Environment.UserInteractive</code> is false when running as an actual Windows Service (no desktop session) and true when run directly from a console/IDE — branching on it lets the exact same class be debugged with F5 with zero install/attach ceremony.</p></div></div>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 Interview Scenarios</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What are the ABC of WCF?</span><span class="st">Core</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Address (where — the URI the service listens on), Binding (how — transport protocol, encoding, and security used to communicate), Contract (what — the operations/interface the service exposes). Every WCF endpoint is defined by exactly these three things, either in config (web.config/app.config <code>&lt;endpoint&gt;</code>) or in code.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Why would you choose NetTcpBinding over BasicHttpBinding for two internal services talking to each other?</span><span class="st">Bindings</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>NetTcpBinding uses TCP directly with binary encoding — significantly faster and lower overhead than HTTP+SOAP text/XML encoding, and supports session, reliable messaging, and transport security out of the box. The tradeoff: it's WCF-to-WCF only (can't be called from a non-.NET client or a plain HTTP tool like Postman) and typically restricted to same-LAN/intranet use — fine for internal service-to-service calls, wrong choice for anything public-facing or needing broad interop.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What happens if OnStart() in a Windows Service takes too long?</span><span class="st">Lifecycle</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>The SCM (Service Control Manager) expects OnStart to return within a default timeout (historically ~30 seconds); if it takes too long, Windows reports the service failed to start (even if the work is technically still progressing) and may mark it as stopped/failed, which can also trigger any configured Recovery actions. Long-running initialization should be kicked off asynchronously (a background thread/Task started in OnStart, with OnStart itself returning immediately) rather than blocking inside OnStart.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">Client vs Abort vs Close on a WCF proxy — why does it matter which one you call?</span><span class="st">Client Lifecycle</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>Close()</code> performs a graceful shutdown — only safe to call when the channel is healthy (not Faulted). If the channel already faulted (e.g., a timeout or communication exception occurred), calling Close() throws a NEW exception during the graceful handshake, masking the real underlying error. <code>Abort()</code> immediately and forcefully terminates the channel without attempting a graceful handshake — always safe to call regardless of channel state, which is why the standard pattern calls Close() only in the success path and Abort() in every catch block.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">How would you troubleshoot a Windows Service that starts but then immediately stops in production?</span><span class="st">Troubleshooting</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>First check the Windows Event Log (Application and System logs) for the service's own error entries and any .NET unhandled-exception entries. Verify the service account has the required permissions (file paths, DB connection, network resources it needs) — a common cause is running under a low-privilege account that can't reach a config file or database. If OnStart is doing real work before returning, wrap it in try/catch to log the actual exception (an unhandled exception during OnStart is otherwise easy to miss). Also confirm any dependent services (e.g., SQL Server, another Windows Service it depends on) are set as a formal Service Dependency so it doesn't start before its dependencies are ready.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">Instancing mode PerCall vs Single — what's the tradeoff, and which is the safer default?</span><span class="st">Instancing</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>PerCall creates a brand-new, stateless instance for every single call and disposes it right after — no shared state, so no thread-safety concerns by design, and it scales best under load (WCF just spins up more instances as needed). Single keeps exactly ONE instance alive for the service's whole lifetime, shared across every client and every call — enables shared in-memory state (like a cache or counter) but makes YOU fully responsible for thread-safety (locks) since concurrent calls can hit the same instance simultaneously. PerCall is the safer, more scalable default; reach for Single only when you have a specific, deliberate reason to share state.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+
+  <div class="qc"><div class="qq">1. What does the "B" in the ABC of WCF stand for?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Binding is the B — this describes the address/endpoint, the \"where.\"')">Behavior (config for the endpoint's URI)</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Binding defines HOW client and service communicate — transport, encoding, security.')">Binding (how client and service communicate)</button>
+    <button class="qb" onclick="ans(this,'wrong','That describes the service\'s implementing class, not the B in ABC.')">Base class of the service</button>
+    <button class="qb" onclick="ans(this,'wrong','Buffer size is a binding SETTING, not what the letter itself stands for.')">Buffer size configuration</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. Why should you call Abort() instead of Close() on a faulted WCF client proxy?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'correct','Correct! Close() attempts a graceful handshake that itself throws on a faulted channel, hiding the real original exception.')">Close() on a faulted channel throws a new exception, masking the real error</button>
+    <button class="qb" onclick="ans(this,'wrong','Abort() has no relation to memory allocation behavior — it\'s about safe teardown of a broken channel.')">Abort() releases memory faster due to garbage collection priority</button>
+    <button class="qb" onclick="ans(this,'wrong','Faulted has nothing to do with obsolescence — it means the channel is in an unusable error state.')">Close() is deprecated in favor of Abort() in all cases</button>
+    <button class="qb" onclick="ans(this,'wrong','Both eventually release the connection — the difference is about handshake safety, not connection pooling.')">Abort() returns the connection to a pool, Close() does not</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. What happens if a plain C# exception (not a FaultException) is thrown inside a WCF service method by default?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','By default the details are stripped for security — the client does NOT see the full exception unless debug settings are explicitly enabled.')">The client receives the full exception message and stack trace</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! By default, details are stripped and a generic fault is sent, unless includeExceptionDetailInFaults is explicitly enabled (dev only).')">It's converted into a generic fault with details stripped, for security</button>
+    <button class="qb" onclick="ans(this,'wrong','The service instance itself is not automatically destroyed just because an exception was thrown — that depends on instancing/session state, not this alone.')">The service silently swallows it and returns null</button>
+    <button class="qb" onclick="ans(this,'wrong','WCF does not require a FaultContract declaration merely to avoid a crash — it affects what detail reaches the client, not whether an error propagates at all.')">The application crashes immediately with no way to prevent it</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. Which binding would you choose for two processes on the SAME machine needing the fastest possible IPC?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','BasicHttpBinding works cross-machine too but has more overhead than named pipes for same-machine IPC.')">BasicHttpBinding</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! NetNamedPipeBinding is restricted to same-machine communication but is the fastest option for that scenario.')">NetNamedPipeBinding</button>
+    <button class="qb" onclick="ans(this,'wrong','NetMsmqBinding is for queued, disconnected messaging — not the fastest choice for live same-machine IPC.')">NetMsmqBinding</button>
+    <button class="qb" onclick="ans(this,'wrong','WSHttpBinding adds WS-* overhead (security, reliable sessions) that\'s unnecessary for same-machine IPC.')">WSHttpBinding</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">5. Why should OnStart() in a Windows Service avoid long-running synchronous work?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'correct','Correct! The SCM has a start timeout — if OnStart doesn\'t return in time, Windows reports the service failed to start.')">The Service Control Manager (SCM) times out and reports a start failure</button>
+    <button class="qb" onclick="ans(this,'wrong','OnStart has no special relationship to garbage collection generations.')">It forces the .NET garbage collector into Gen 2 mode</button>
+    <button class="qb" onclick="ans(this,'wrong','Windows Services and WCF hosting are unrelated to browser rendering — this isn\'t the mechanism at play.')">It blocks the WCF client's browser rendering thread</button>
+    <button class="qb" onclick="ans(this,'wrong','OnStop is unrelated — the timeout concern here is specifically about OnStart and the SCM\'s startup window.')">It prevents OnStop() from ever being defined</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)" data-id="m-1"><input type="checkbox">I can explain the ABC of WCF (Address/Binding/Contract) from memory</li>
+    <li onclick="ck(this)" data-id="m-2"><input type="checkbox">I know when to pick NetTcp vs BasicHttp vs WsHttp vs NamedPipe vs Msmq bindings</li>
+    <li onclick="ck(this)" data-id="m-3"><input type="checkbox">I can explain InstanceContextMode and ConcurrencyMode with an example each</li>
+    <li onclick="ck(this)" data-id="m-4"><input type="checkbox">I know why FaultContract/FaultException is needed instead of plain exceptions</li>
+    <li onclick="ck(this)" data-id="m-5"><input type="checkbox">I always call Close() on success and Abort() on any catch for a WCF proxy</li>
+    <li onclick="ck(this)" data-id="m-6"><input type="checkbox">I can write a ServiceBase with OnStart/OnStop and explain the SCM startup timeout</li>
+    <li onclick="ck(this)" data-id="m-7"><input type="checkbox">I can self-host a WCF ServiceHost inside a Windows Service's OnStart/OnStop</li>
+    <li onclick="ck(this)" data-id="m-8"><input type="checkbox">I know why Console.WriteLine is useless in a service and use EventLog/file logging instead</li>
+    <li onclick="ck(this)" data-id="m-9"><input type="checkbox">I can explain recovery options (auto-restart on failure) and service accounts</li>
+  </ul>
+</section>
+
+<div class="completion">
+  <h2>🎉 WCF + Windows Service Ready</h2>
+  <div class="badge">CONCEPTS + CODING + SCENARIOS ✓</div>
+  <p style="color:var(--muted);margin-top:1rem;font-size:.9rem;">Also revise: <a class="rlink" href="ADO_NET_Guide.html">ADO.NET Guide</a>, <a class="rlink" href="EntityFramework_Guide.html">Entity Framework Guide</a>, <a class="rlink" href="AdvancedCSharp_100_QA.html">Advanced C# 100 Q&amp;A</a></p>
+</div>
+
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">WCF &amp; Windows Service Guide — Salcomp Interview Prep</p>
+  <p>Accent: Amber #d97706 · Progress saves in this browser automatically</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+
+  const STORAGE_KEY='wcf-winservice-guide-progress-v1';
+  const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const allBoxes = Array.from(document.querySelectorAll('.cl-list li[data-id]'));
+
+  function updateBadge(){
+    const doneCount = Object.values(state).filter(Boolean).length;
+    document.getElementById('progBadge').textContent = doneCount+'/'+allBoxes.length+' done';
+  }
+  function applyState(){
+    allBoxes.forEach(li=>{
+      const cb = li.querySelector('input');
+      const on = !!state[li.dataset.id];
+      cb.checked = on;
+      li.classList.toggle('done', on);
+    });
+    updateBadge();
+  }
+  function ck(li){
+    const cb = li.querySelector('input');
+    const id = li.dataset.id;
+    if(!id) return;
+    state[id] = !state[id];
+    cb.checked = state[id];
+    li.classList.toggle('done', state[id]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    updateBadge();
+  }
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':btn.textContent.replace('Hide','Reveal');}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+
+  applyState();
+</script>
+</body>
+</html>

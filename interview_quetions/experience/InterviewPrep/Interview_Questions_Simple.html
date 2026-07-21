@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gurumoorthy M — 300+ Interview Questions (Simple English Edition)</title>
+<style>
+  :root{
+    --bg:#0f1420; --panel:#161d2e; --panel2:#1c2438; --border:#2a3550;
+    --text:#e7ecf7; --muted:#9aa7c2; --accent:#5eb0ff; --accent2:#7dd3a8;
+    --warn:#f5b942; --danger:#ff7a7a; --code:#0b111e;
+    --tag-technical:#5eb0ff; --tag-scenario:#7dd3a8; --tag-production:#ff7a7a;
+    --tag-behavioral:#c99bff; --tag-problem:#f5b942; --tag-env:#ff9d5c; --tag-achievement:#5ee0c0;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f4f6fb; --panel:#ffffff; --panel2:#eef1f8; --border:#dbe1ee;
+      --text:#182036; --muted:#5a6685; --accent:#1c6fd4; --accent2:#158a5a; --warn:#a5680a; --danger:#c0392b; --code:#eef1f8; }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Segoe UI',Calibri,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  header.top{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--border);padding:16px 24px;}
+  header.top h1{font-size:20px;margin:0 0 2px;}
+  header.top p.sub{margin:0 0 6px;color:var(--muted);font-size:13px;}
+  header.top p.badge-row{margin:0 0 12px;}
+  .simple-badge{display:inline-block;background:rgba(125,211,168,.15);color:var(--accent2);border:1px solid var(--accent2);padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;}
+  .switch-link{color:var(--accent);font-size:12px;text-decoration:none;margin-left:8px;}
+  .switch-link:hover{text-decoration:underline;}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+  #search{flex:1;min-width:220px;padding:9px 14px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:14px;}
+  #search:focus{outline:2px solid var(--accent);}
+  .stats{display:flex;gap:14px;font-size:12.5px;color:var(--muted);flex-wrap:wrap;}
+  .stats b{color:var(--accent);}
+  .chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .chip{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--panel2);color:var(--muted);font-size:12.5px;cursor:pointer;user-select:none;white-space:nowrap;}
+  .chip.active{background:var(--accent);color:#04101f;border-color:var(--accent);font-weight:600;}
+  .chip .count{opacity:.7;margin-left:4px;}
+  main{max-width:980px;margin:0 auto;padding:20px 20px 100px;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;}
+  .card-head{padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+  .card-head:hover{background:var(--panel2);}
+  .qnum{color:var(--muted);font-size:12px;margin-right:6px;}
+  .qtext{font-size:15px;font-weight:600;line-height:1.4;}
+  .tags{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
+  .tag{font-size:10.5px;padding:3px 9px;border-radius:20px;white-space:nowrap;font-weight:600;}
+  .tag.cat{background:var(--panel2);color:var(--muted);border:1px solid var(--border);}
+  .tag.type-Technical{background:rgba(94,176,255,.15);color:var(--tag-technical);}
+  .tag.type-Scenario{background:rgba(125,211,168,.15);color:var(--tag-scenario);}
+  .tag.type-Production-Issue{background:rgba(255,122,122,.15);color:var(--tag-production);}
+  .tag.type-Behavioral{background:rgba(201,155,255,.15);color:var(--tag-behavioral);}
+  .tag.type-Problem-Solving{background:rgba(245,185,66,.15);color:var(--tag-problem);}
+  .tag.type-Environmental-Struggle{background:rgba(255,157,92,.15);color:var(--tag-env);}
+  .tag.type-Achievement{background:rgba(94,224,192,.15);color:var(--tag-achievement);}
+  .chevron{color:var(--muted);font-size:14px;flex-shrink:0;transition:transform .15s;}
+  .card.open .chevron{transform:rotate(90deg);}
+  .card-body{display:none;padding:0 18px 18px;border-top:1px solid var(--border);}
+  .card.open .card-body{display:block;padding-top:14px;}
+  .row{margin-bottom:10px;}
+  .row .lbl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px;}
+  .row.what .lbl{color:var(--accent);}
+  .row.why .lbl{color:var(--warn);}
+  .row.when .lbl{color:var(--tag-behavioral);}
+  .row.example .lbl{color:var(--accent2);}
+  .row .content{font-size:14px;color:var(--text);}
+  .row.example{background:var(--panel2);border-left:3px solid var(--accent2);border-radius:0 8px 8px 0;padding:10px 12px;margin-top:12px;}
+  .no-results{text-align:center;color:var(--muted);padding:60px 20px;font-size:15px;}
+  .top-btn{position:fixed;bottom:20px;right:20px;background:var(--accent);color:#04101f;border:none;border-radius:50%;width:44px;height:44px;font-size:18px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.35);z-index:15;}
+  .expand-btns{display:flex;gap:8px;margin-top:10px;}
+  .expand-btns button{font-size:12px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--panel2);color:var(--text);cursor:pointer;}
+  .expand-btns button:hover{border-color:var(--accent);}
+  mark{background:rgba(245,185,66,.4);color:inherit;border-radius:2px;}
+  @media print{
+    header.top{position:static;}
+    .toolbar, .top-btn, .expand-btns{display:none;}
+    .card-body{display:block !important;padding-top:14px;}
+    .chevron{display:none;}
+    body{background:#fff;color:#000;}
+    .card{break-inside:avoid;border:1px solid #ccc;}
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>300+ Interview Questions &amp; Answers — Simple English Edition</h1>
+  <p class="sub">Gurumoorthy M · .NET Developer · SQL, Web API, Microservices, ADO.NET/Dapper, WinForms, Core C#, security, production issues &amp; behavioral — short, plain-English What / Why / When / Real-time Example for each</p>
+  <p class="badge-row"><span class="simple-badge">✓ Simple English — short sentences, easy to say out loud</span> <a class="switch-link" href="Interview_Questions_200.html">Switch to the original detailed edition →</a></p>
+  <div class="toolbar">
+    <input id="search" type="text" placeholder="Search questions, keywords, technologies…">
+    <div class="stats"><span id="visibleCount"><b>0</b> shown</span><span><b id="totalCount">0</b> total</span></div>
+  </div>
+  <div class="chip-row" id="categoryChips"></div>
+  <div class="chip-row" id="typeChips"></div>
+  <div class="expand-btns">
+    <button id="expandAll">Expand all visible</button>
+    <button id="collapseAll">Collapse all</button>
+    <button id="printBtn">Print / Save PDF</button>
+  </div>
+</header>
+<main id="main"></main>
+<button class="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<script src="questions_data_simple.js"></script>
+<script>
+(function(){
+  var state = { search: '', category: 'All', type: 'All', open: new Set() };
+  var main = document.getElementById('main');
+  var categoryChips = document.getElementById('categoryChips');
+  var typeChips = document.getElementById('typeChips');
+
+  var categories = ['All'].concat(Array.from(new Set(QUESTIONS.map(function(q){return q.category;}))));
+  var types = ['All'].concat(Array.from(new Set(QUESTIONS.map(function(q){return q.type;}))));
+
+  function catCount(c){ return c==='All' ? QUESTIONS.length : QUESTIONS.filter(function(q){return q.category===c;}).length; }
+  function typeCount(t){ return t==='All' ? QUESTIONS.length : QUESTIONS.filter(function(q){return q.type===t;}).length; }
+
+  function renderChips(container, list, current, onClick, countFn){
+    container.innerHTML = '';
+    list.forEach(function(v){
+      var chip = document.createElement('div');
+      chip.className = 'chip' + (v === current ? ' active' : '');
+      chip.innerHTML = v + '<span class="count">' + countFn(v) + '</span>';
+      chip.addEventListener('click', function(){ onClick(v); });
+      container.appendChild(chip);
+    });
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function highlight(text, term){
+    var safe = escapeHtml(text);
+    if(!term) return safe;
+    try{
+      var re = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      return safe.replace(re, '<mark>$1</mark>');
+    }catch(e){ return safe; }
+  }
+
+  function matches(q, term){
+    if(!term) return true;
+    var hay = (q.question + ' ' + q.what + ' ' + q.why + ' ' + q.when + ' ' + q.example + ' ' + q.category).toLowerCase();
+    return hay.indexOf(term.toLowerCase()) !== -1;
+  }
+
+  function typeClass(t){ return 'type-' + t.replace(/\s+/g,'-'); }
+
+  function render(){
+    var term = state.search.trim();
+    var filtered = QUESTIONS.filter(function(q, idx){
+      q._idx = idx;
+      if(state.category !== 'All' && q.category !== state.category) return false;
+      if(state.type !== 'All' && q.type !== state.type) return false;
+      if(!matches(q, term)) return false;
+      return true;
+    });
+
+    document.getElementById('visibleCount').innerHTML = '<b>' + filtered.length + '</b> shown';
+    document.getElementById('totalCount').textContent = QUESTIONS.length;
+
+    if(filtered.length === 0){
+      main.innerHTML = '<div class="no-results">No questions match your filters. Try clearing the search or selecting "All".</div>';
+      return;
+    }
+
+    var html = filtered.map(function(q, i){
+      var isOpen = state.open.has(q._idx);
+      return '' +
+      '<div class="card' + (isOpen ? ' open' : '') + '" data-idx="' + q._idx + '">' +
+        '<div class="card-head" onclick="window.__toggleCard(' + q._idx + ')">' +
+          '<div><span class="qnum">Q' + (i+1) + '.</span><span class="qtext">' + highlight(q.question, term) + '</span></div>' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<div class="tags">' +
+              '<span class="tag cat">' + escapeHtml(q.category) + '</span>' +
+              '<span class="tag ' + typeClass(q.type) + '">' + escapeHtml(q.type) + '</span>' +
+            '</div>' +
+            '<span class="chevron">▶</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card-body">' +
+          '<div class="row what"><div class="lbl">What</div><div class="content">' + highlight(q.what, term) + '</div></div>' +
+          '<div class="row why"><div class="lbl">Why</div><div class="content">' + highlight(q.why, term) + '</div></div>' +
+          '<div class="row when"><div class="lbl">When</div><div class="content">' + highlight(q.when, term) + '</div></div>' +
+          '<div class="row example"><div class="lbl">Real-Time Example</div><div class="content">' + highlight(q.example, term) + '</div></div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    main.innerHTML = html;
+  }
+
+  window.__toggleCard = function(idx){
+    if(state.open.has(idx)) state.open.delete(idx); else state.open.add(idx);
+    var el = main.querySelector('.card[data-idx="' + idx + '"]');
+    if(el) el.classList.toggle('open');
+  };
+
+  document.getElementById('search').addEventListener('input', function(e){
+    state.search = e.target.value;
+    render();
+  });
+
+  document.getElementById('expandAll').addEventListener('click', function(){
+    Array.from(main.querySelectorAll('.card')).forEach(function(c){
+      state.open.add(parseInt(c.getAttribute('data-idx'), 10));
+      c.classList.add('open');
+    });
+  });
+  document.getElementById('collapseAll').addEventListener('click', function(){
+    state.open.clear();
+    Array.from(main.querySelectorAll('.card')).forEach(function(c){ c.classList.remove('open'); });
+  });
+  document.getElementById('printBtn').addEventListener('click', function(){ window.print(); });
+
+  function onCategoryClick(v){ state.category = v; renderChips(categoryChips, categories, state.category, onCategoryClick, catCount); render(); }
+  function onTypeClick(v){ state.type = v; renderChips(typeChips, types, state.type, onTypeClick, typeCount); render(); }
+
+  renderChips(categoryChips, categories, state.category, onCategoryClick, catCount);
+  renderChips(typeChips, types, state.type, onTypeClick, typeCount);
+
+  render();
+})();
+</script>
+</body>
+</html>

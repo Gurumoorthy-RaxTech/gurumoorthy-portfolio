@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Developer Interview Prep — 100 Questions + Coding Problems</title>
+<style>
+  :root{
+    --bg:#faf9f7;
+    --panel:#ffffff;
+    --panel-2:#f2f1ee;
+    --text:#1d1f23;
+    --muted:#5b6270;
+    --border:#e4e2dd;
+    --accent:#1f6f5c;
+    --accent-2:#a8632c;
+    --code-bg:#161a1f;
+    --code-text:#dfe4ea;
+    --code-key:#7fd8c4;
+    --code-str:#e0b878;
+    --code-com:#7c8595;
+    --shadow: 0 1px 2px rgba(20,20,15,.04), 0 8px 24px -12px rgba(20,20,15,.10);
+  }
+  :root[data-theme="dark"]{
+    --bg:#14161a;
+    --panel:#1b1e24;
+    --panel-2:#20242b;
+    --text:#e9eaec;
+    --muted:#9aa2b1;
+    --border:#2c313a;
+    --accent:#5fd0b6;
+    --accent-2:#e0a05f;
+    --code-bg:#0e1013;
+    --code-text:#dbe1e8;
+    --code-key:#7fd8c4;
+    --code-str:#e0b878;
+    --code-com:#6b7280;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14161a;
+      --panel:#1b1e24;
+      --panel-2:#20242b;
+      --text:#e9eaec;
+      --muted:#9aa2b1;
+      --border:#2c313a;
+      --accent:#5fd0b6;
+      --accent-2:#e0a05f;
+      --code-bg:#0e1013;
+      --code-text:#dbe1e8;
+      --code-key:#7fd8c4;
+      --code-str:#e0b878;
+      --code-com:#6b7280;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+    }
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family: ui-sans-serif, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    line-height:1.6;
+    font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:var(--accent);}
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 24px 96px;
+    display:grid;
+    grid-template-columns: 250px minmax(0,1fr);
+    gap:48px;
+  }
+
+  header.masthead{
+    max-width:1180px;
+    margin:0 auto;
+    padding:40px 24px 28px;
+    border-bottom:1px solid var(--border);
+  }
+  .eyebrow{
+    font-family: ui-monospace, "Cascadia Code", "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size:12.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    font-weight:600;
+  }
+  h1.title{
+    font-family: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-weight:600;
+    font-size:clamp(28px,4vw,40px);
+    margin:8px 0 10px;
+    text-wrap:balance;
+    letter-spacing:-.01em;
+  }
+  .sub{
+    color:var(--muted);
+    font-size:16px;
+    max-width:760px;
+  }
+  .meta-row{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-top:18px;
+    font-size:13.5px;
+    color:var(--muted);
+  }
+  .meta-row b{color:var(--text);}
+
+  /* Sidebar TOC */
+  nav.toc{
+    position:sticky;
+    top:24px;
+    align-self:start;
+    padding-top:40px;
+    font-size:14px;
+  }
+  nav.toc .toc-label{
+    font-family: ui-monospace, monospace;
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  nav.toc ol{
+    list-style:none;
+    margin:0;
+    padding:0;
+    border-left:1px solid var(--border);
+  }
+  nav.toc li{margin:0;}
+  nav.toc a{
+    display:block;
+    padding:6px 0 6px 14px;
+    color:var(--muted);
+    text-decoration:none;
+    border-left:2px solid transparent;
+    margin-left:-1px;
+  }
+  nav.toc a:hover{color:var(--text); border-left-color:var(--border);}
+  nav.toc a .n{
+    font-variant-numeric:tabular-nums;
+    color:var(--accent-2);
+    margin-right:6px;
+    font-family: ui-monospace, monospace;
+    font-size:12px;
+  }
+
+  main{min-width:0; padding-top:40px;}
+
+  section.cat{
+    margin-bottom:14px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--panel);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  section.cat > summary{
+    cursor:pointer;
+    list-style:none;
+    padding:18px 22px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    background:var(--panel-2);
+  }
+  section.cat > summary::-webkit-details-marker{display:none;}
+  section.cat > summary::after{
+    content:"+";
+    font-family:ui-monospace,monospace;
+    color:var(--muted);
+    font-size:18px;
+    flex-shrink:0;
+  }
+  section.cat[open] > summary::after{content:"–";}
+  .cat-title{
+    font-family: ui-serif, Georgia, serif;
+    font-size:19px;
+    font-weight:600;
+  }
+  .cat-count{
+    font-family:ui-monospace,monospace;
+    font-size:12.5px;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+  .cat-body{padding:6px 22px 18px;}
+
+  ol.qlist{
+    list-style:none;
+    margin:0;
+    padding:0;
+    counter-reset: q;
+  }
+  ol.qlist li{
+    counter-increment: q;
+    padding:12px 0;
+    border-top:1px solid var(--border);
+    display:flex;
+    gap:12px;
+  }
+  ol.qlist li:first-child{border-top:none;}
+  ol.qlist li::before{
+    content: counter(q);
+    font-family: ui-monospace, monospace;
+    font-variant-numeric:tabular-nums;
+    font-size:13px;
+    color:var(--accent-2);
+    min-width:22px;
+    padding-top:2px;
+    flex-shrink:0;
+  }
+  ol.qlist li .qcol{flex:1; min-width:0;}
+  ol.qlist li .qtext code{
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    background:var(--panel-2);
+    padding:1px 5px;
+    border-radius:4px;
+    font-size:.92em;
+  }
+  ol.qlist .ans-body{margin-top:10px;}
+  ol.qlist .ans-body p{margin:0 0 8px; font-size:14.5px; line-height:1.62; color:var(--text);}
+  ol.qlist .ans-body p:last-child{margin-bottom:0;}
+  ol.qlist .ans-body pre{margin-top:6px; margin-bottom:8px;}
+  ol.qlist .ans-body code{
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    background:var(--panel-2);
+    padding:1px 5px;
+    border-radius:4px;
+    font-size:.92em;
+  }
+
+  h2.section-head{
+    font-family: ui-serif, Georgia, serif;
+    font-size:28px;
+    font-weight:600;
+    margin:56px 0 6px;
+    letter-spacing:-.01em;
+  }
+  p.section-sub{color:var(--muted); margin:0 0 24px; max-width:640px;}
+
+  .problem{
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--panel);
+    box-shadow:var(--shadow);
+    margin-bottom:20px;
+    overflow:hidden;
+  }
+  .problem-head{
+    padding:16px 22px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:var(--panel-2);
+    border-bottom:1px solid var(--border);
+  }
+  .problem-num{
+    font-family:ui-monospace,monospace;
+    color:var(--accent);
+    font-size:13px;
+    font-weight:600;
+  }
+  .problem-title{
+    font-weight:600;
+    font-size:15.5px;
+  }
+  .difficulty{
+    margin-left:auto;
+    font-family:ui-monospace,monospace;
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:3px 9px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    color:var(--muted);
+  }
+  .difficulty.easy{color:var(--accent);border-color:var(--accent);}
+  .difficulty.med{color:var(--accent-2);border-color:var(--accent-2);}
+  .difficulty.hard{color:#c0564f;border-color:#c0564f;}
+
+  .problem-body{padding:16px 22px 20px;}
+  .problem-body p{margin:0 0 12px;}
+
+  pre{
+    background:var(--code-bg);
+    color:var(--code-text);
+    padding:16px 18px;
+    border-radius:8px;
+    overflow-x:auto;
+    font-size:13.5px;
+    line-height:1.55;
+    margin:0 0 4px;
+  }
+  pre code{
+    font-family: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  }
+  .kw{color:var(--code-key); font-weight:600;}
+  .str{color:var(--code-str);}
+  .com{color:var(--code-com); font-style:italic;}
+
+  details.answer{
+    margin-top:10px;
+    border-top:1px dashed var(--border);
+    padding-top:10px;
+  }
+  details.answer summary{
+    cursor:pointer;
+    color:var(--accent);
+    font-size:13.5px;
+    font-weight:600;
+    font-family:ui-monospace,monospace;
+    letter-spacing:.02em;
+  }
+  details.answer[open] summary{margin-bottom:10px;}
+
+  .schema-box{
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:14px 18px;
+    margin:0 0 32px;
+    font-size:14px;
+  }
+  .schema-box h3{margin:0 0 8px; font-size:14px; font-family:ui-monospace,monospace; letter-spacing:.04em; text-transform:uppercase; color:var(--muted);}
+  .schema-tables{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin-top:10px;}
+  .schema-tables table{width:100%; border-collapse:collapse; font-size:13px;}
+  .schema-tables caption{
+    text-align:left; font-family:ui-monospace,monospace; font-weight:600; color:var(--accent-2); padding-bottom:4px; font-size:12.5px;
+  }
+  .schema-tables td{padding:2px 0; color:var(--muted); font-family:ui-monospace,monospace; font-size:12.5px;}
+  .schema-tables td.col{color:var(--text);}
+
+  footer{
+    max-width:1180px;
+    margin:0 auto;
+    padding:32px 24px 60px;
+    color:var(--muted);
+    font-size:13px;
+    border-top:1px solid var(--border);
+    margin-top:40px;
+  }
+
+  @media (max-width:860px){
+    .wrap{grid-template-columns:1fr;}
+    nav.toc{position:static; padding-top:0; margin-bottom:24px;}
+    nav.toc ol{columns:2; gap:20px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="eyebrow">Interview Prep Kit</div>
+  <h1 class="title">SQL Server Developer — 100 Interview Questions &amp; SQL Coding Problems</h1>
+  <p class="sub">Built from a 3–4 yr SQL Server / .NET / Angular-React job description: heavy on data import &amp; migration, T-SQL, performance tuning, and full-stack support. Every question includes a full written answer — click "Show answer" to expand it.</p>
+  <div class="meta-row">
+    <span><b>100</b> interview questions with answers across 13 topics</span>
+    <span><b>15</b> hands-on SQL coding problems with solutions</span>
+    <span>Target: <b>SQL Server / T-SQL</b> · ASP.NET Core · Angular/React</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc">
+    <div class="toc-label">Contents</div>
+    <ol>
+      <li><a href="#c1"><span class="n">01</span>SQL Fundamentals &amp; Querying</a></li>
+      <li><a href="#c2"><span class="n">02</span>Joins &amp; Subqueries</a></li>
+      <li><a href="#c3"><span class="n">03</span>Stored Procs, Views, Functions, Triggers</a></li>
+      <li><a href="#c4"><span class="n">04</span>Indexing &amp; Performance Tuning</a></li>
+      <li><a href="#c5"><span class="n">05</span>Transactions, Locking &amp; Concurrency</a></li>
+      <li><a href="#c6"><span class="n">06</span>Data Import, Migration &amp; ETL</a></li>
+      <li><a href="#c7"><span class="n">07</span>Database Design &amp; Normalization</a></li>
+      <li><a href="#c8"><span class="n">08</span>ASP.NET Core / C# / Web API</a></li>
+      <li><a href="#c9"><span class="n">09</span>Angular &amp; React</a></li>
+      <li><a href="#c10"><span class="n">10</span>HTML, CSS &amp; JavaScript</a></li>
+      <li><a href="#c11"><span class="n">11</span>REST vs SOAP APIs</a></li>
+      <li><a href="#c12"><span class="n">12</span>SSIS, SSRS &amp; Power BI</a></li>
+      <li><a href="#c13"><span class="n">13</span>Git, CI/CD &amp; Behavioral</a></li>
+      <li><a href="#coding"><span class="n">▸</span>SQL Coding Problems</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <details class="cat" id="c1" open>
+      <summary><span class="cat-title">01 · SQL Fundamentals &amp; Querying</span><span class="cat-count">15 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">What is the difference between <code>DELETE</code>, <code>TRUNCATE</code>, and <code>DROP</code>?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>DELETE</code> removes rows one at a time, is logged per-row, fires triggers, and can be filtered with <code>WHERE</code> or rolled back. <code>TRUNCATE</code> deallocates all data pages at once (minimally logged), resets identity, skips row-level triggers, and can't use <code>WHERE</code>. <code>DROP</code> removes the table object itself, including its structure, indexes, and constraints.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Explain the logical order of execution of a <code>SELECT</code> statement (<code>FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY</code>).</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>SQL Server evaluates clauses logically as: <code>FROM</code>/<code>JOIN</code> → <code>WHERE</code> → <code>GROUP BY</code> → <code>HAVING</code> → <code>SELECT</code> (incl. column aliases) → <code>DISTINCT</code> → <code>ORDER BY</code> → <code>OFFSET/FETCH</code>. This is why you can't reference a <code>SELECT</code> alias in <code>WHERE</code> (not yet resolved) but you can in <code>ORDER BY</code> (resolved last). The written order (<code>SELECT</code> first) is just syntax, not execution order.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is the difference between <code>WHERE</code> and <code>HAVING</code>?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>WHERE</code> filters individual rows before grouping/aggregation happens; it can't reference aggregate functions. <code>HAVING</code> filters groups after <code>GROUP BY</code> has produced aggregated results, so it can filter on <code>SUM()</code>, <code>COUNT()</code>, etc. Filtering as early as possible with <code>WHERE</code> is usually more efficient since it reduces rows before the (expensive) aggregation step.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is the difference between <code>UNION</code> and <code>UNION ALL</code>?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>UNION</code> combines result sets and removes duplicate rows, which requires an implicit sort/distinct pass and is more expensive. <code>UNION ALL</code> simply concatenates result sets, keeping duplicates, and is faster since it skips the dedup step. Use <code>UNION ALL</code> whenever you know the sets are already distinct or duplicates are acceptable.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Explain <code>GROUP BY</code> with multiple aggregate functions and how <code>NULL</code>s are grouped.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>You can compute several aggregates (<code>SUM</code>, <code>COUNT</code>, <code>AVG</code>, <code>MAX</code>) in one <code>GROUP BY</code> query as long as every non-aggregated column in <code>SELECT</code> also appears in <code>GROUP BY</code>. For grouping purposes, SQL Server treats all <code>NULL</code> values as equal — they're collapsed into a single group — even though <code>NULL = NULL</code> is normally unknown in a <code>WHERE</code> comparison.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What are window functions? Explain <code>ROW_NUMBER()</code>, <code>RANK()</code>, and <code>DENSE_RANK()</code> with an example.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Window functions compute a value across a set of rows (a "window", defined by <code>OVER (PARTITION BY ... ORDER BY ...)</code>) without collapsing them into one row like <code>GROUP BY</code> does. <code>ROW_NUMBER()</code> assigns a unique sequential number per partition; <code>RANK()</code> assigns the same rank to ties but skips the next number(s); <code>DENSE_RANK()</code> assigns the same rank to ties without skipping.</p>
+          <pre><code><span class="kw">SELECT</span> StudentId, Marks,
+       ROW_NUMBER() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> ClassId <span class="kw">ORDER BY</span> Marks <span class="kw">DESC</span>) <span class="kw">AS</span> rn
+<span class="kw">FROM</span> Results;</code></pre>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Difference between <code>RANK()</code> and <code>DENSE_RANK()</code> when there are ties.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>For scores 90, 90, 80: <code>RANK()</code> gives 1, 1, 3 (it leaves a gap equal to the number of tied rows); <code>DENSE_RANK()</code> gives 1, 1, 2 (no gap). Choose <code>RANK()</code> when the gap should reflect competition-style standings, and <code>DENSE_RANK()</code> when you want compact, gap-free tiers.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do <code>LAG()</code> and <code>LEAD()</code> work? Give a use case (e.g. month-over-month comparison).</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>LAG()</code> reads a value from a previous row and <code>LEAD()</code> reads from a following row, within the same ordered partition, without needing a self-join. A common use is comparing a student's fee payment this month to last month: <code>LAG(Amount) OVER (PARTITION BY StudentId ORDER BY PaidOn)</code> returns the prior payment on the same row so you can subtract directly.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is a Common Table Expression (CTE)? When would you use a recursive CTE?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A CTE (<code>WITH name AS (...)</code>) is a named, temporary result set scoped to the statement that follows it — it improves readability over nested subqueries and can be referenced multiple times. A recursive CTE (an anchor query <code>UNION ALL</code>'d with a recursive query referencing itself) is used for hierarchical data like org charts, category trees, or bill-of-materials explosions.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Difference between a temp table (<code>#temp</code>), a table variable (<code>@table</code>), and a CTE.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A temp table lives in <code>tempdb</code>, supports indexes/statistics, and is best for large intermediate result sets reused across multiple statements. A table variable also lives in <code>tempdb</code> but has limited statistics (historically assumed 1 row by the optimizer) and no user-created nonclustered indexes pre-2014, making it riskier for large data. A CTE has no physical storage — it's inlined into the query and only exists for that one statement.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you find and remove duplicate rows in a table that has no primary key?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Use <code>ROW_NUMBER()</code> partitioned by the columns that define a "duplicate" and delete every row where the row number is greater than 1 (see Coding Problem 02 below for the full pattern). Without a unique key, this window-function approach is the standard way to disambiguate otherwise-identical rows.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Explain <code>PIVOT</code> and <code>UNPIVOT</code> with an example.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>PIVOT</code> rotates unique values from a row-based column into multiple columns, typically alongside an aggregate (e.g. turning a Month column into Jan/Feb/Mar columns of summed amounts — see Coding Problem 11). <code>UNPIVOT</code> does the reverse: it turns multiple columns back into row-value pairs, useful when reshaping a wide report table for storage or further joins.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How does <code>NULL</code> behave in comparisons, aggregates, and <code>ORDER BY</code>?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>NULL</code> represents "unknown," so <code>NULL = NULL</code> and <code>NULL &lt;&gt; x</code> both evaluate to unknown (not true), which is why you must use <code>IS NULL</code>/<code>IS NOT NULL</code>. Aggregate functions like <code>SUM</code>, <code>AVG</code>, <code>COUNT(column)</code> ignore <code>NULL</code>s entirely (though <code>COUNT(*)</code> counts all rows). By default SQL Server sorts <code>NULL</code>s first in ascending order.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is the difference between <code>CHAR</code>, <code>VARCHAR</code>, <code>NVARCHAR</code>, and <code>TEXT</code>?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>CHAR(n)</code> is fixed-length and space-padded; <code>VARCHAR(n)</code> is variable-length ASCII/single-byte, saving space for variable data; <code>NVARCHAR(n)</code> is variable-length Unicode (2 bytes/char), required for multi-language text such as names in Excel imports. <code>TEXT</code> is a legacy large-object type deprecated in favor of <code>VARCHAR(MAX)</code>/<code>NVARCHAR(MAX)</code>, which support normal string functions and better performance.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How would you write a query to find the 2nd or Nth highest salary from an Employee table?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Use <code>DENSE_RANK()</code> over <code>Salary DESC</code> and filter <code>WHERE rnk = N</code> — this correctly handles duplicate salaries, unlike a plain <code>TOP N</code> approach. See Coding Problem 01 below for the full query, plus a <code>TOP</code>/<code>MIN</code> alternative for versions or contexts where window functions aren't convenient.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="cat" id="c2">
+      <summary><span class="cat-title">02 · Joins &amp; Subqueries</span><span class="cat-count">10 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">Explain <code>INNER JOIN</code>, <code>LEFT JOIN</code>, <code>RIGHT JOIN</code>, <code>FULL OUTER JOIN</code>, and <code>CROSS JOIN</code> with examples.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>INNER JOIN</code> returns only rows matching in both tables. <code>LEFT JOIN</code> returns all rows from the left table plus matches from the right (unmatched right columns are <code>NULL</code>) — e.g. all students plus their payments, including students with none. <code>RIGHT JOIN</code> is the mirror image. <code>FULL OUTER JOIN</code> returns all rows from both sides, matched where possible. <code>CROSS JOIN</code> returns the full Cartesian product with no join condition.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is a self-join? Give a real scenario (e.g. employee-manager hierarchy).</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A self-join joins a table to itself using two aliases, typically to relate rows within the same table. Classic example: <code>Employees e JOIN Employees m ON e.ManagerId = m.EmployeeId</code> to pair each employee with their manager's name from the same table.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Difference between a correlated subquery and a non-correlated subquery.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A non-correlated subquery runs independently once and its result is reused for the outer query (e.g. <code>WHERE Salary &gt; (SELECT AVG(Salary) FROM Employees)</code>). A correlated subquery references a column from the outer query, so conceptually it re-executes for every outer row (e.g. finding each employee's department average) — this can be slower unless the optimizer rewrites it as a join.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Difference between <code>EXISTS</code> and <code>IN</code> — which performs better and why?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>EXISTS</code> stops scanning as soon as it finds one matching row (semi-join, short-circuits), and handles <code>NULL</code>s in the subquery correctly. <code>IN</code> materializes the full subquery result list before comparing, and famously misbehaves if that list contains a <code>NULL</code> combined with <code>NOT IN</code> (can silently return zero rows). For large subquery result sets, <code>EXISTS</code> is generally safer and often faster.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What happens when you join two tables where one side has <code>NULL</code> foreign keys?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>An <code>INNER JOIN</code> silently drops those rows because <code>NULL = anything</code> is never true. If you need to keep rows with a <code>NULL</code> foreign key (e.g. students not yet assigned a class), you must use a <code>LEFT JOIN</code> instead — this is a common source of "missing rows" bugs after a bulk import leaves some foreign keys unpopulated.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you find rows in Table A that don't exist in Table B (anti-join pattern)?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <pre><code><span class="kw">SELECT</span> a.*
+<span class="kw">FROM</span> TableA a
+<span class="kw">LEFT JOIN</span> TableB b <span class="kw">ON</span> a.Id = b.AId
+<span class="kw">WHERE</span> b.AId <span class="kw">IS NULL</span>;
+<span class="com">-- or: WHERE NOT EXISTS (SELECT 1 FROM TableB b WHERE b.AId = a.Id)</span></code></pre>
+          <p>Both forms are common in import reconciliation, e.g. finding staged rows that never made it into the production table.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Explain the difference between filtering in the <code>ON</code> clause vs the <code>WHERE</code> clause for an outer join.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>For a <code>LEFT JOIN</code>, a condition in <code>ON</code> is applied while matching rows (unmatched left rows still appear, with <code>NULL</code>s on the right), while the same condition in <code>WHERE</code> is applied after the join completes and can eliminate the unmatched (<code>NULL</code>) rows entirely — silently turning your outer join back into something resembling an inner join. This is a frequent bug when adding a filter on a right-side column.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is a Cartesian product and how does it accidentally happen in production queries?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A Cartesian product pairs every row of one table with every row of another, producing rows = (rows in A) × (rows in B). It happens accidentally when a join is missing its <code>ON</code> condition, or when the join condition doesn't uniquely relate rows (e.g. joining on a non-unique column), which can silently multiply row counts and inflate <code>SUM()</code> results.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you join more than 2 tables efficiently, and how does join order affect the query plan?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>The SQL Server optimizer generally re-orders joins itself based on cardinality estimates and available indexes, so the order you write joins in usually doesn't dictate execution order. What matters more is that each join has a selective, index-backed predicate — filtering down to the smallest row set as early as possible — and that statistics are up to date so the optimizer's estimates are accurate.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What's the difference between <code>APPLY</code> (<code>CROSS APPLY</code>/<code>OUTER APPLY</code>) and a regular join?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>APPLY</code> lets the right-hand side be a table-valued expression that references columns from the left-hand side — something a normal <code>JOIN</code>'s <code>ON</code> clause can't do. It's commonly used to pull "top N related rows per row" (e.g. each student's most recent payment) via <code>CROSS APPLY (SELECT TOP 1 ... ORDER BY ...)</code>. <code>OUTER APPLY</code> is the <code>LEFT JOIN</code> equivalent, keeping left rows with no match.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="cat" id="c3">
+      <summary><span class="cat-title">03 · Stored Procedures, Views, Functions &amp; Triggers</span><span class="cat-count">10 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">What is the advantage of a stored procedure over an ad-hoc SQL query?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Stored procedures get a cached, reusable execution plan (avoiding recompilation), reduce network round-trips by bundling logic server-side, centralize business rules so multiple apps stay consistent, and provide a security boundary — you can grant <code>EXECUTE</code> rights without granting direct table access, which also helps prevent SQL injection since parameters are strongly typed.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Difference between a scalar function, an inline table-valued function (iTVF), and a multi-statement table-valued function (MTVF) — and their performance implications.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A scalar function returns one value and, pre-SQL Server 2019, is notoriously slow because it's invoked row-by-row and blocks parallelism. An iTVF is essentially a parameterized view — a single <code>SELECT</code> the optimizer can inline into the calling query, so it performs like a view/join. An MTVF returns a table built with multiple statements into an internal table variable, which the optimizer treats as a black box (fixed row estimate), often hurting plan quality. Prefer iTVFs where possible.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is a view? Difference between a regular view and an indexed (materialized) view.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A view is a stored, named query that's re-executed against live data every time it's referenced — it doesn't store data itself. An indexed (materialized) view actually persists its result set physically via a unique clustered index, so reads are fast, but every underlying data change must maintain that index too, adding write overhead — a trade-off worth making for expensive aggregates queried often but written rarely.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Can you update data through a view? What are the restrictions?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Yes, if the view is based on a single table (or updates target only one underlying table), doesn't use aggregates, <code>DISTINCT</code>, <code>GROUP BY</code>, or set operators, and includes any <code>NOT NULL</code> columns without defaults. Views joining multiple tables generally aren't directly updatable unless you add an <code>INSTEAD OF</code> trigger to control how the update is distributed across base tables.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is a trigger? Difference between <code>AFTER</code>/<code>FOR</code> and <code>INSTEAD OF</code> triggers.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A trigger is code that fires automatically in response to <code>INSERT</code>/<code>UPDATE</code>/<code>DELETE</code> on a table or view. An <code>AFTER</code> (a.k.a. <code>FOR</code>) trigger runs after the data modification has completed and can roll it back; it's used for auditing, cascading logic, or validation. An <code>INSTEAD OF</code> trigger runs in place of the actual modification, letting you redirect the operation entirely — commonly used to make a multi-table view updatable.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What are the risks of using triggers for business logic during bulk imports?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Triggers fire per statement (not per batch call), but if written naively assuming single-row inserts, they can silently process only <code>inserted.*</code> incorrectly for multi-row bulk operations. They also add hidden overhead to every bulk insert, can cause deadlocks/long transactions on large batches, and make troubleshooting harder since the logic isn't visible in the calling code. For heavy imports it's often safer to disable non-essential triggers and apply that logic explicitly in the import script.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you handle errors inside a stored procedure? Explain <code>TRY...CATCH</code> and <code>ERROR_MESSAGE()</code>/<code>ERROR_LINE()</code>.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <pre><code><span class="kw">BEGIN TRY</span>
+  <span class="kw">BEGIN TRANSACTION</span>;
+  <span class="com">-- import statements here</span>
+  <span class="kw">COMMIT</span>;
+<span class="kw">END TRY</span>
+<span class="kw">BEGIN CATCH</span>
+  <span class="kw">IF</span> @@TRANCOUNT &gt; 0 <span class="kw">ROLLBACK</span>;
+  <span class="kw">INSERT INTO</span> ErrorLog (Message, Line, Proc)
+  <span class="kw">VALUES</span> (ERROR_MESSAGE(), ERROR_LINE(), ERROR_PROCEDURE());
+  <span class="kw">THROW</span>;
+<span class="kw">END CATCH</span>;</code></pre>
+          <p><code>TRY...CATCH</code> traps runtime errors so they can be logged and handled gracefully instead of aborting the batch outright; <code>ERROR_MESSAGE()</code>/<code>ERROR_LINE()</code>/<code>ERROR_PROCEDURE()</code> capture diagnostic detail, and <code>THROW</code> (or <code>RAISERROR</code>) re-raises the error to the caller after logging.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What are table-valued parameters (TVPs) and how are they used to pass bulk data from C# to a stored procedure?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A TVP is a user-defined table type that lets you pass an entire set of rows into a stored procedure as a single strongly-typed parameter, avoiding row-by-row round trips or string concatenation. In C#, you build a <code>DataTable</code> matching the type's shape and pass it via a <code>SqlParameter</code> with <code>SqlDbType.Structured</code> — ideal for bulk-importing a validated batch of records in one call.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is <code>SET NOCOUNT ON</code> and why is it recommended in stored procedures?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>SET NOCOUNT ON</code> suppresses the "N rows affected" message SQL Server sends after each statement. In procedures with many statements (common in import logic), this reduces network chatter and can noticeably improve performance, and it prevents client libraries like ADO.NET from misinterpreting extra result sets.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you version-control and deploy stored procedure changes safely in a live environment?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Keep every procedure's <code>CREATE OR ALTER</code> script in source control (Git) alongside application code, run changes through code review, and deploy via a migration tool or CI/CD pipeline rather than manually in SSMS. Test against a staging database first, wrap the deploy in a transaction where possible, and keep the previous version's script handy for a quick rollback.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="cat" id="c4">
+      <summary><span class="cat-title">04 · Indexing &amp; Performance Tuning</span><span class="cat-count">10 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">Difference between a clustered index and a non-clustered index. Can a table have more than one clustered index?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A clustered index physically orders the table's data rows on disk by the key — only one is allowed per table since data can only be sorted one way. A non-clustered index is a separate structure with a copy of key columns plus a pointer (the clustered key, or RID if there's no clustered index) back to the data row; a table can have many.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is a covering index and how does it avoid a key lookup?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A covering index contains every column a query needs (in its key or as <code>INCLUDE</code>d columns), so SQL Server can satisfy the query entirely from the index without a "key lookup" back to the clustered data row. This eliminates a costly per-row lookup operation and is one of the highest-leverage tuning techniques for frequently-run reporting queries.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is index fragmentation and how do you fix it (<code>REORGANIZE</code> vs <code>REBUILD</code>)?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Fragmentation happens as inserts/updates/deletes cause index pages to split and fall out of logical order, hurting range-scan performance. <code>ALTER INDEX ... REORGANIZE</code> is an online, lightweight defrag of leaf-level pages (good for moderate fragmentation, ~10–30%); <code>ALTER INDEX ... REBUILD</code> fully recreates the index (better for heavy fragmentation, &gt;30%) and can run online or offline depending on edition.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you read an execution plan? What operators indicate a performance problem (e.g. Table Scan, Key Lookup, Sort)?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Read the plan right-to-left, top-to-bottom, and compare estimated vs actual row counts — a big gap signals stale statistics. Watch for <code>Table Scan</code>/<code>Clustered Index Scan</code> on large tables (missing or unused index), <code>Key Lookup</code> (missing covering index), <code>Sort</code>/<code>Hash Match</code> operators with high cost (missing supporting index for <code>ORDER BY</code>/joins), and thick arrows (large row counts flowing between operators).</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is a composite index and how does column order matter?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A composite (multi-column) index is only efficiently seekable from its leading column(s) inward — like a phone book sorted by last name then first name, useless for searching by first name alone. Put the column with the highest selectivity and most common equality-filter usage first, and order remaining columns to match your most common query patterns and <code>ORDER BY</code> clauses.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is SARGability — give an example of a non-SARGable predicate and how to fix it.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>SARGable (Search ARGument-able) predicates let the optimizer use an index seek rather than a scan. Wrapping a column in a function breaks that: <code>WHERE YEAR(PaidOn) = 2026</code> forces a scan since every row must be evaluated. Rewrite it as a range: <code>WHERE PaidOn &gt;= '2026-01-01' AND PaidOn &lt; '2027-01-01'</code>, which can seek an index on <code>PaidOn</code> directly.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Difference between statistics and indexes — how does the query optimizer use them?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>An index is a physical structure that speeds up data access; statistics are metadata describing the distribution of values in a column (histograms), which the optimizer uses purely to estimate row counts and pick a plan — they don't store the data itself. Stale statistics (common after a huge bulk import) lead to bad row estimates and poor plan choices even if the right indexes exist, so <code>UPDATE STATISTICS</code> after large loads matters.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How would you diagnose and fix a slow bulk-import stored procedure that runs fine on 10K rows but times out on 5 million?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Check the actual execution plan at scale for scans instead of seeks, missing indexes on staging/lookup tables, and row-by-row logic (cursors/loops) that doesn't scale — convert those to set-based operations. Also check for parameter sniffing on a plan cached from a small run, excessive logging/triggers firing per row, lock escalation causing blocking, and whether statistics are stale after the data grew. Batch very large inserts (e.g. 10K-row chunks) to avoid one giant transaction log/lock footprint.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What are included columns in a non-clustered index and when should you use them?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>INCLUDE</code>d columns are stored at the leaf level of a non-clustered index without being part of the key (so they don't affect sort order or key size limits). Use them to make an index covering — add columns the query only <code>SELECT</code>s (not filters or sorts on) so the engine can satisfy the whole query from the index alone.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Explain parameter sniffing and how it can cause inconsistent query performance.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>SQL Server caches a query plan based on the parameter values used the first time it compiles. If that first call had an unusual value (e.g. a class with 2 students vs. one with 20,000), the cached plan may be badly suited to typical calls — fast for one caller, slow for another using the same procedure. Fixes include <code>OPTION (RECOMPILE)</code>, <code>OPTIMIZE FOR</code> hints, or splitting into separate procedures for very different data profiles.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="cat" id="c5">
+      <summary><span class="cat-title">05 · Transactions, Locking &amp; Concurrency</span><span class="cat-count">8 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">Explain the ACID properties with a real example from a payment/fee transaction.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><b>Atomicity</b> — a fee payment that debits a student's balance and inserts a receipt either both happen or neither does. <b>Consistency</b> — the transaction can't leave the balance in an invalid state (e.g. violating a check constraint). <b>Isolation</b> — two clerks processing payments for the same student concurrently don't see each other's uncommitted changes. <b>Durability</b> — once committed, the payment survives a server crash immediately after.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is a deadlock? How do you detect and resolve one in SQL Server?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A deadlock occurs when two transactions each hold a lock the other needs, so neither can proceed. SQL Server's deadlock monitor detects the cycle and automatically kills the "victim" (usually the cheaper-to-rollback transaction), returning error 1205. You diagnose it via the deadlock graph (SQL Server Profiler/Extended Events/the system_health session) and typically fix it by accessing tables in a consistent order across transactions, keeping transactions short, and adding appropriate indexes to reduce lock scope.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Explain SQL Server transaction isolation levels (Read Uncommitted, Read Committed, Repeatable Read, Serializable, Snapshot).</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><b>Read Uncommitted</b> allows dirty reads (no locking). <b>Read Committed</b> (the default) only reads committed data but values can change between reads in the same transaction. <b>Repeatable Read</b> locks read rows so they can't change until the transaction ends, preventing non-repeatable reads but not phantoms. <b>Serializable</b> is the strictest, range-locking to block phantom rows too. <b>Snapshot</b> uses row versioning to give each transaction a consistent point-in-time view without blocking readers/writers against each other.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is the difference between optimistic and pessimistic locking, and which fits a bulk-import scenario?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Pessimistic locking acquires a lock upfront and holds it until the transaction completes, blocking other writers — safe but reduces concurrency. Optimistic locking assumes conflicts are rare: it reads without locking and checks a version/timestamp column at write time to detect if the row changed, retrying on conflict. For bulk imports, which are typically the sole writer to staging tables and don't compete with live users, minimal locking (often via batching plus <code>ROWLOCK</code> hints) is usually preferable to broad pessimistic locks that would stall the application.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is a dirty read, a non-repeatable read, and a phantom read?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A <b>dirty read</b> sees another transaction's uncommitted change, which might later roll back. A <b>non-repeatable read</b> happens when a transaction reads the same row twice and gets different values because another transaction committed a change in between. A <b>phantom read</b> happens when a transaction re-runs a range query and sees new rows that another transaction inserted in between — the row set itself changed, not just a value.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you safely perform an UPSERT (insert-or-update) under concurrent load — is <code>MERGE</code> safe by itself?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>MERGE</code> is not inherently safe under concurrency — a well-documented race condition lets two simultaneous <code>MERGE</code> statements both see "not matched" and both attempt an insert, causing a primary-key violation. The reliable fix is wrapping it in an explicit transaction with a <code>HOLDLOCK</code> (or <code>SERIALIZABLE</code>) hint on the target, or using a unique index plus a <code>TRY...CATCH</code> retry pattern around a simple <code>INSERT</code>/<code>UPDATE</code> as an alternative.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What locking hints (<code>NOLOCK</code>, <code>ROWLOCK</code>, <code>UPDLOCK</code>) do and when <code>NOLOCK</code> is dangerous.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>NOLOCK</code> (equivalent to Read Uncommitted) reads without taking or respecting locks — it's fast but can return dirty, duplicate, or missing rows, and can even error out on an index being rebuilt mid-scan; avoid it for anything financial. <code>ROWLOCK</code> forces row-level (rather than page/table) locking to reduce blocking scope. <code>UPDLOCK</code> takes an update lock on read, preventing another transaction from also acquiring an update lock on the same row — useful to prevent two processes reading-then-updating the same row simultaneously.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How would you design a large batch import so it doesn't block live application traffic?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Load into a staging table first (no contention with live tables), then move data into production in smaller batches (e.g. 1,000–10,000 rows per transaction) rather than one giant transaction that holds locks for a long duration. Use <code>ROWLOCK</code> hints, schedule heavy imports during low-traffic windows if possible, and consider Snapshot Isolation so readers aren't blocked by the import's writes at all.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="cat" id="c6">
+      <summary><span class="cat-title">06 · Data Import, Migration &amp; ETL</span><span class="cat-count">12 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">What approaches do you know for importing large CSV/Excel files into SQL Server (<code>BULK INSERT</code>, <code>BCP</code>, OPENROWSET, SSIS, C# <code>SqlBulkCopy</code>)? Compare them.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>BULK INSERT</code>/<code>BCP</code> are the fastest for plain server-side file loads but offer little validation and need file access on the SQL Server box. <code>OPENROWSET(BULK...)</code> is similar, usable inline in a query. SSIS gives a visual, reusable ETL pipeline with built-in transformation/error-routing but has more setup overhead. <code>SqlBulkCopy</code> in .NET is the best fit when the file arrives via a web upload — it streams rows from the app tier without needing server file-system access, and lets you validate/transform in C# first.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How does <code>SqlBulkCopy</code> in .NET work, and how would you handle partial failures mid-batch?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>SqlBulkCopy</code> streams rows from a <code>DataTable</code>/<code>IDataReader</code> directly into SQL Server using the bulk copy protocol, bypassing per-row <code>INSERT</code> overhead. Set <code>BatchSize</code> to commit in chunks rather than one massive transaction; on failure mid-batch, only the current batch rolls back (earlier committed batches stay), so pair it with a staging table and a resumable "last successful batch" marker so a retry doesn't reinsert already-loaded rows.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you validate incoming data (data types, required fields, referential integrity) before loading it into production tables?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Load raw values as loosely-typed text into a staging table first, then run validation queries using <code>TRY_CAST</code>/<code>TRY_CONVERT</code> for type checks, <code>NOT EXISTS</code>/<code>LEFT JOIN</code> checks against reference tables for FK validity, and simple predicates for required-field/format checks (e.g. email pattern). Route failing rows to an error table with a reason, and only <code>INSERT</code> the rows that pass every check into production.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Describe a staging-table pattern for imports — why load into staging first instead of directly into production tables?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A staging table has loose types (mostly <code>NVARCHAR</code>) and no constraints, so a raw bulk load never fails on a bad row. From there you validate, clean, and transform in a controlled second step, and only well-formed rows ever touch production — keeping production tables' constraints, triggers, and indexes intact and avoiding partially-corrupted data reaching live reports or application queries.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you parse and query JSON data in SQL Server (<code>OPENJSON</code>, <code>JSON_VALUE</code>, <code>JSON_QUERY</code>, <code>FOR JSON</code>)?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>OPENJSON</code> shreds a JSON array/object into a rowset (see Coding Problem 08). <code>JSON_VALUE</code> extracts a single scalar from a JSON column/variable (e.g. <code>JSON_VALUE(Payload,'$.Email')</code>); <code>JSON_QUERY</code> extracts a JSON object/array fragment instead of a scalar. Going the other way, <code>FOR JSON PATH</code>/<code>FOR JSON AUTO</code> serializes a query's result set back into JSON — handy for API responses built straight from SQL.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you parse and query XML data in SQL Server (<code>OPENXML</code>, <code>nodes()</code>, <code>value()</code>, <code>FOR XML</code>)?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>The native <code>XML</code> data type's <code>.nodes()</code> method shreds elements into a rowset, and <code>.value()</code> extracts a typed scalar from a node (see Coding Problem 09) — this is the modern, preferred approach. <code>OPENXML</code> is the older, more verbose method requiring an explicit document handle via <code>sp_xml_preparedocument</code>. <code>FOR XML PATH</code>/<code>AUTO</code>/<code>RAW</code> serialize query results into XML for the reverse direction, e.g. generating an XML export file.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you identify and handle duplicate records across multiple import files/batches?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Define a natural business key for "duplicate" (e.g. email, or student admission number + name), and before inserting from staging, check <code>NOT EXISTS</code> against both the production table and rows already processed in the current staging batch (using <code>ROW_NUMBER()</code> to keep only the first occurrence within the file itself). Log skipped duplicates with their source file/row so the business can confirm they weren't legitimate re-registrations.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What's your strategy for re-running a failed import safely (idempotency) without creating duplicate or corrupted data?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Make the load step check-before-insert (<code>NOT EXISTS</code> by natural key, or a <code>MERGE</code>/upsert) rather than blind <code>INSERT</code>, tag each staged row with a batch/file identifier so a rerun can target only unprocessed rows, and wrap the production move in a transaction so a mid-run failure doesn't leave partial data. See Coding Problem 15 for the concrete pattern.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you log and report import failures — row-level error capture vs. batch-level rollback?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>For business-rule failures (bad email, missing field), capture at row level into an error table with the source row and reason, and continue processing the rest of the batch — this gives the business an actionable list to fix and re-upload. For system-level failures (connection loss, constraint violation mid-transaction), roll back the whole batch since partial application-level state could be inconsistent, then surface a single batch-level error/notification.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you handle encoding issues, date-format mismatches, and locale differences in imported files?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Explicitly specify the file's encoding (e.g. UTF-8 with BOM handling) when reading it rather than trusting a default, since mismatches corrupt special characters silently. For dates, never trust implicit conversion — parse using <code>TRY_CONVERT</code> with an explicit style code or a known format string, and standardize on an unambiguous format (ISO <code>yyyy-MM-dd</code>) as early as possible in the pipeline to avoid day/month swaps between locales (e.g. <code>03/04</code> as Mar 4 vs Apr 3).</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is the difference between a full load and an incremental/delta load in data migration?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A full load wipes/reloads the entire target dataset every run — simple, but expensive and disruptive for large tables. An incremental (delta) load only pulls rows that are new or changed since the last run, typically tracked via a <code>ModifiedDate</code>/timestamp column, a change-tracking feature, or a high-watermark value — far cheaper for ongoing syncs, but requires reliable change detection on the source.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How would you migrate data between two databases with different schemas while preserving referential integrity?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Map old-to-new tables/columns explicitly (a mapping document helps), migrate parent (referenced) tables before child tables so foreign keys always resolve, and build an ID-mapping table (old key → new key) when surrogate keys change, so child-table inserts can translate references correctly. Disable/defer FK constraints during bulk load if needed, then re-enable and validate with a check for orphaned rows before going live.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="cat" id="c7">
+      <summary><span class="cat-title">07 · Database Design &amp; Normalization</span><span class="cat-count">8 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">Explain 1NF, 2NF, and 3NF with a practical example.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><b>1NF</b>: every column holds a single atomic value — no comma-separated subjects in one cell. <b>2NF</b>: every non-key column depends on the whole primary key, not part of it — in an Enrollment table keyed by (StudentId, CourseId), a StudentName column would violate 2NF since it only depends on StudentId. <b>3NF</b>: no non-key column depends on another non-key column — e.g. storing both ClassId and ClassTeacherName in Students violates 3NF since ClassTeacherName depends on ClassId, not StudentId; it belongs in a Classes table.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">When would you deliberately denormalize a schema, and what's the trade-off?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Denormalize (duplicate data, pre-aggregate, or flatten joins) when read performance on a hot reporting path matters more than write simplicity — e.g. storing a student's current class name directly on a dashboard table to avoid a join on every page load. The trade-off is update complexity and risk of data drift: every place the duplicated value lives must be kept in sync, usually via triggers or application logic.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Difference between a primary key, a unique key, and a surrogate key.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A primary key uniquely identifies each row and disallows <code>NULL</code>s; a table can have only one. A unique key/constraint also enforces uniqueness but allows one <code>NULL</code> (or more, depending on config) and a table can have several. A surrogate key is a system-generated identifier (identity column, <code>GUID</code>) with no business meaning, used instead of a natural key (like email) that might change over time.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is referential integrity and how do foreign keys with <code>ON DELETE CASCADE</code> affect data imports?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Referential integrity ensures a foreign key value always matches an existing row in the referenced table — no orphaned child records. <code>ON DELETE CASCADE</code> automatically deletes dependent child rows when the parent is deleted, which is convenient but dangerous during imports: a staging cleanup or a mistaken re-import that deletes and reinserts a "parent" row can unintentionally cascade-delete large amounts of unrelated child data.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you design a schema to support soft deletes and audit history?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Add an <code>IsDeleted</code> bit (or <code>DeletedAt</code> nullable datetime) column instead of physically deleting rows, and filter it out of normal queries (often via a view). For audit history, add <code>CreatedAt</code>/<code>CreatedBy</code>/<code>ModifiedAt</code>/<code>ModifiedBy</code> columns, or maintain a separate history/audit table populated by triggers or application code capturing before/after values on every change.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What data type would you choose for money values, and why not <code>FLOAT</code>?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Use <code>DECIMAL(p,s)</code> (or the <code>MONEY</code> type, though <code>DECIMAL</code> is generally preferred for its explicit precision control). <code>FLOAT</code> is a binary floating-point approximation, so it can introduce tiny rounding errors when representing decimal fractions exactly — unacceptable for financial totals where cents must add up precisely.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How would you model a many-to-many relationship (e.g. students to courses)?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Create a junction (bridge) table — e.g. <code>Enrollments(StudentId, CourseId, ...)</code> — with foreign keys to both sides and a composite primary key (or its own surrogate key plus a unique constraint on the pair). This lets each student enroll in many courses and each course have many students, and lets you attach relationship-specific attributes like enrollment date or grade.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is a check constraint, and how does it differ from validating data in application code?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A <code>CHECK</code> constraint enforces a boolean rule at the database level (e.g. <code>CHECK (Amount &gt; 0)</code>), so it's guaranteed no matter which application, script, or direct query writes to the table. Application-level validation can be bypassed by any other client hitting the database directly (including bulk import tools), so check constraints act as a last line of defense — the two are complementary, not substitutes for each other.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="cat" id="c8">
+      <summary><span class="cat-title">08 · ASP.NET Core / C# / Web API</span><span class="cat-count">10 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">How do you call a stored procedure from C# using ADO.NET or Dapper, and how do you pass a table-valued parameter?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>With ADO.NET, create a <code>SqlCommand</code> with <code>CommandType.StoredProcedure</code>, add typed <code>SqlParameter</code>s, and call <code>ExecuteReader</code>/<code>ExecuteNonQuery</code>. Dapper simplifies this to one line: <code>conn.Query&lt;T&gt;("dbo.ImportStudents", param, commandType: CommandType.StoredProcedure)</code>. For a TVP, build a <code>DataTable</code> matching the SQL user-defined table type and pass it as a parameter with <code>SqlDbType.Structured</code>, giving the stored procedure the whole batch in one round trip.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Difference between Entity Framework Core and Dapper — when would you choose one over the other for a data-heavy import module?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>EF Core is a full ORM with change tracking, migrations, and LINQ-to-SQL translation — great developer productivity for typical CRUD, but its per-entity tracking and generated SQL add overhead unsuited to bulk operations. Dapper is a lightweight micro-ORM that maps raw SQL/stored-procedure results to objects with minimal overhead, giving you full control over the exact query — the better fit for a high-throughput import module where you're hand-tuning performance-critical SQL anyway.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you implement dependency injection in ASP.NET Core, and why does it matter for testability?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Register services against interfaces in <code>Program.cs</code> (e.g. <code>builder.Services.AddScoped&lt;IImportService, ImportService&gt;()</code>), and the framework's built-in container injects them into controller/service constructors automatically. This matters for testability because a unit test can supply a mock/fake implementation of <code>IImportService</code> instead of a real database-backed one, letting you test business logic in isolation without a live SQL Server connection.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you build a Web API endpoint that accepts a file upload (CSV/Excel) and processes it asynchronously?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Accept the file via <code>[FromForm] IFormFile file</code> on a <code>multipart/form-data</code> POST endpoint, save/stream it, then hand off actual processing to a background job (e.g. a hosted service, a queue like Azure Storage Queue/RabbitMQ, or <code>IBackgroundTaskQueue</code>) so the HTTP request returns immediately with a job/tracking ID instead of blocking the client while millions of rows import. The client then polls a status endpoint or receives a notification when processing completes.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Explain the difference between synchronous and asynchronous methods (<code>async</code>/<code>await</code>) and why it matters for a bulk-import API.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A synchronous call blocks the calling thread until it completes; an <code>async</code> method frees the thread to handle other requests while waiting on I/O (like a database call), and resumes via <code>await</code> when the result is ready. For a bulk-import API handling many concurrent uploads, async I/O lets the server scale to far more simultaneous requests with the same thread pool instead of each blocked import call tying up a thread doing nothing but waiting.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you handle and return structured error responses from a Web API (status codes, <code>ProblemDetails</code>)?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Use meaningful HTTP status codes (400 for validation errors, 404 for not found, 409 for conflicts like duplicate import, 500 for unexpected server errors), and return a consistent body shape — ASP.NET Core's built-in <code>ProblemDetails</code> (RFC 7807) standardizes this with fields like <code>title</code>, <code>status</code>, and <code>detail</code>, so every error the API returns, including for import failures, has a predictable, machine-parseable structure the frontend can render consistently.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is middleware in ASP.NET Core, and how would you use it for logging or global exception handling?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Middleware components form a pipeline that every HTTP request passes through in order (e.g. authentication → logging → routing → your endpoint), each able to inspect/modify the request or short-circuit the pipeline. A custom exception-handling middleware wraps <code>await _next(context)</code> in a <code>try/catch</code>, logs unhandled exceptions, and returns a clean <code>ProblemDetails</code> response instead of leaking a stack trace — a single place to catch everything rather than repeating try/catch in every controller.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you implement pagination, filtering, and sorting on a large dataset exposed via API?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Accept query parameters (<code>page</code>, <code>pageSize</code>, <code>sortBy</code>, filter fields) and push them down into the SQL query using <code>OFFSET ... FETCH NEXT</code> (or keyset/seek pagination for very large tables, which scales better than <code>OFFSET</code> on deep pages) so the database returns only the needed slice — never load the full dataset into memory and paginate in C#. Return total count and page metadata alongside the data so the client can render pagination controls.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Difference between <code>IEnumerable</code>, <code>IQueryable</code>, and <code>List&lt;T&gt;</code> — and why the choice matters for query performance.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>IQueryable&lt;T&gt;</code> builds an expression tree that's translated into SQL and only executes when enumerated — chaining <code>.Where()</code>/<code>.OrderBy()</code> on it pushes those operations to the database. <code>IEnumerable&lt;T&gt;</code> operates in-memory over already-materialized objects, so chaining LINQ on it after a premature <code>.ToList()</code> means filtering happens in application memory, not the database — a common accidental performance bug pulling far more rows than needed. <code>List&lt;T&gt;</code> is a concrete, fully-materialized in-memory collection.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you secure a Web API (JWT authentication, API keys, role-based authorization)?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>JWT bearer authentication validates a signed token on each request (via <code>AddAuthentication().AddJwtBearer(...)</code> middleware) without server-side session state, embedding claims like user ID and roles. Role/policy-based <code>[Authorize(Roles = "Admin")]</code> attributes then restrict specific endpoints (e.g. only an admin role can trigger a bulk import). API keys are a simpler alternative for service-to-service calls, validated via a custom middleware or handler checking a header against known keys.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="cat" id="c9">
+      <summary><span class="cat-title">09 · Angular &amp; React</span><span class="cat-count">8 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">Explain one-way vs two-way data binding — how does Angular's <code>[(ngModel)]</code> compare to React's controlled components?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>One-way binding flows data in a single direction (model → view, or view → model), requiring an explicit event handler to sync the other way. Angular's <code>[(ngModel)]</code> "banana in a box" syntax gives built-in two-way binding — the input updates the model and the model updates the input automatically. React has no built-in two-way binding; a "controlled component" simulates it by setting the input's <code>value</code> from state and updating that state explicitly in an <code>onChange</code> handler.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What are components, and how do Angular components differ structurally from React functional components?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A component is a self-contained, reusable unit of UI with its own template and logic. An Angular component is a TypeScript class decorated with <code>@Component</code>, pairing a separate HTML template (and often a separate CSS file) with class properties/methods, plus built-in dependency injection. A React functional component is just a JavaScript/TypeScript function that returns JSX, using hooks for state and side effects instead of a class — generally more lightweight with less required boilerplate.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you call a REST API from Angular (<code>HttpClient</code>) or React (<code>fetch</code>/<code>axios</code>) and handle loading/error states?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>In Angular, inject <code>HttpClient</code> and subscribe to the Observable it returns (e.g. <code>this.http.get&lt;Student[]&gt;(url).subscribe(...)</code>), tracking a <code>loading</code> flag and catching errors with <code>catchError</code>/in the subscribe error callback. In React, call <code>fetch</code> or <code>axios</code> inside a <code>useEffect</code>, storing the response, a loading boolean, and an error in <code>useState</code>, then conditionally render a spinner, the data, or an error message based on those states.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What are React hooks (<code>useState</code>, <code>useEffect</code>) used for, and what problem do they solve?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>useState</code> lets a function component hold local, re-render-triggering state without needing a class. <code>useEffect</code> runs side effects (data fetching, subscriptions, timers) after render, with a dependency array controlling when it re-runs. Hooks solved the problem of sharing stateful logic between components without the "wrapper hell" of higher-order components/render props that class-based React required, and let related logic live together instead of being split across lifecycle methods.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is Angular's dependency injection system, and how does a service get shared across components?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Angular has a hierarchical DI container: services decorated with <code>@Injectable({providedIn: 'root'})</code> become app-wide singletons automatically injected into any component/service constructor that declares them as a parameter. Because it's the same instance everywhere it's injected at that scope, a service is a natural place to hold shared state (like the current logged-in user or a cached import-progress status) accessible from multiple components.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How would you build a UI to upload a large file and show progress while it's being processed on the backend?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Use <code>XMLHttpRequest</code> or axios's <code>onUploadProgress</code> (or Angular's <code>HttpClient</code> with <code>reportProgress: true</code>) to show upload-transfer progress via a progress bar. Since server-side processing happens after the upload completes, have the API return a job ID immediately and poll a status endpoint (or use SignalR/WebSockets for push updates) to show processing progress separately from the upload itself.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you display and paginate a large grid of data (e.g. thousands of imported records) without freezing the browser?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Never render all rows at once — request paginated data from the API (server-side paging, not loading everything into the browser) and/or use a virtualized grid component (e.g. Angular CDK's virtual scroll, React's <code>react-window</code>/<code>react-virtualized</code>) that only renders the DOM nodes currently visible in the viewport, recycling them as the user scrolls, which keeps DOM size and render cost constant regardless of total row count.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is the virtual DOM (React) and change detection (Angular) — how do they affect rendering performance?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>React keeps an in-memory virtual DOM tree, diffs it against the previous version on state change, and applies only the minimal set of real DOM updates needed — avoiding expensive full re-renders. Angular instead walks its component tree on each change-detection cycle (triggered by events/async operations via Zone.js) comparing bound values to previous ones; large component trees can make this costly, which is why <code>OnPush</code> change detection (checking a component only when its inputs change by reference) is used to optimize hot paths.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="cat" id="c10">
+      <summary><span class="cat-title">10 · HTML, CSS &amp; JavaScript</span><span class="cat-count">5 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">Difference between <code>&lt;div&gt;</code> and semantic HTML5 tags — why does it matter for accessibility?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A <code>&lt;div&gt;</code> carries no meaning — it's a generic box. Semantic tags like <code>&lt;nav&gt;</code>, <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;table&gt;</code>, and <code>&lt;button&gt;</code> convey the purpose of the content to the browser, search engines, and screen readers, which lets assistive technology announce landmarks and let users jump directly to a page's navigation or main content instead of reading through unlabeled generic containers.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Explain CSS specificity and the box model.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Specificity determines which CSS rule wins when multiple rules target the same element, roughly ranked: inline styles &gt; IDs &gt; classes/attributes/pseudo-classes &gt; element/type selectors, with <code>!important</code> overriding all of it. The box model describes how an element's rendered size is built up from content, then padding, then border, then margin — <code>box-sizing: border-box</code> makes width/height include padding and border rather than adding them on top, which avoids a lot of layout surprises.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Difference between <code>var</code>, <code>let</code>, and <code>const</code> in JavaScript.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><code>var</code> is function-scoped and hoisted (usable before its declaration line, as <code>undefined</code>), which can cause subtle bugs in loops/closures. <code>let</code> is block-scoped and not accessible before declaration (temporal dead zone), and its value can be reassigned. <code>const</code> is also block-scoped but can't be reassigned after initialization (though object/array contents it points to can still be mutated). Modern code should default to <code>const</code>, using <code>let</code> only when reassignment is needed, and avoid <code>var</code>.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is a Promise, and how does it relate to <code>async</code>/<code>await</code>?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A Promise represents the eventual result (or failure) of an asynchronous operation, in one of three states: pending, fulfilled, or rejected, and is consumed via <code>.then()</code>/<code>.catch()</code>. <code>async</code>/<code>await</code> is syntactic sugar over Promises — an <code>async</code> function always returns a Promise, and <code>await</code> pauses execution within that function until the awaited Promise settles, letting asynchronous code (like an API call) read like sequential synchronous code instead of nested callbacks.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How would you validate a form client-side before submitting file-import data to the server?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Check required fields, allowed file types/extensions, and a reasonable file-size limit before upload begins, and give immediate inline feedback (not just an alert on submit). For structured data, you can even parse the CSV/Excel client-side (e.g. with a library) to catch obviously malformed headers or empty files early. Client-side validation is purely a UX convenience, though — the server must always re-validate independently since client checks can be bypassed.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="cat" id="c11">
+      <summary><span class="cat-title">11 · REST vs SOAP APIs</span><span class="cat-count">5 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">Key differences between REST and SOAP — protocol, payload format, and when you'd still need to support SOAP.</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>REST is an architectural style over HTTP using verbs (GET/POST/PUT/DELETE) with typically JSON payloads — lightweight, cacheable, and the modern default. SOAP is a stricter XML-based protocol with a formal contract (WSDL), built-in error handling, and standards for transactions/security (WS-Security) — heavier but more rigorous. You'd still need SOAP when integrating with older enterprise systems (banking, government, some ERP/legacy college-management platforms) that only expose SOAP endpoints.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is WSDL, and how do you consume a SOAP service from a .NET application?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>WSDL (Web Services Description Language) is an XML contract describing a SOAP service's operations, message formats, and endpoint address. In .NET, you add a "Connected Service"/"Service Reference" pointing at the WSDL URL, and Visual Studio generates a strongly-typed client proxy class so you can call the SOAP operations like normal C# methods without hand-writing the XML envelope.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Explain idempotency in REST — which HTTP verbs are idempotent and why does it matter for retrying a failed import call?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>An idempotent operation produces the same end state no matter how many times it's repeated. <code>GET</code>, <code>PUT</code>, and <code>DELETE</code> are idempotent by spec; <code>POST</code> is not — calling it twice typically creates two resources. This matters for a flaky import call: if the client times out and retries a non-idempotent <code>POST</code>, it can create duplicate records, so import endpoints should either use an idempotency key or be designed as an idempotent upsert (<code>PUT</code>-style) so a safe retry doesn't duplicate data.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you version a REST API without breaking existing consumers?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Common approaches: URL versioning (<code>/api/v1/students</code>, <code>/api/v2/students</code>), a custom header (<code>Api-Version: 2</code>), or content negotiation via the <code>Accept</code> header. URL versioning is the simplest and most visible. Whichever approach, keep the old version live and functioning until consumers have migrated, and communicate deprecation timelines rather than changing a live endpoint's contract in place.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is the difference between authentication and authorization, and how is each typically implemented in a REST API?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Authentication verifies who you are (login, typically producing a JWT or session token); authorization determines what you're allowed to do once identified (role/claim-based access checks). In ASP.NET Core, authentication is handled by middleware validating credentials/tokens, while authorization is enforced per-endpoint with <code>[Authorize]</code>/policy attributes checking the authenticated user's roles or claims before letting the request reach the controller action.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="cat" id="c12">
+      <summary><span class="cat-title">12 · SSIS, SSRS &amp; Power BI</span><span class="cat-count">5 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">What is an SSIS package, and what are the core components (Control Flow, Data Flow, Connection Managers)?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>An SSIS package is a self-contained ETL workflow (a <code>.dtsx</code> file). Control Flow orchestrates the overall sequence of tasks (e.g. "truncate staging, then run data flow, then email on failure") including loops and conditional branches. Data Flow tasks handle the actual row-by-row movement and transformation between a source and destination (e.g. CSV → SQL table, with lookups/derived columns in between). Connection Managers define reusable connections (file paths, database connection strings) referenced by tasks in the package.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How would you build an SSIS package to import a CSV file, validate rows, and route errors to a separate table?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Use a Flat File Source to read the CSV, add Data Conversion/Derived Column transforms to enforce types and required-field checks, and configure the destination component's Error Output to redirect any row that fails conversion or a lookup (e.g. an invalid foreign key via a Lookup transform) to a separate OLE DB Destination pointing at an error-logging table, instead of failing the whole package. Valid rows continue to the normal destination.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is the difference between SSIS and writing a custom C# import utility — when would you pick each?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>SSIS is best for scheduled, recurring, fairly standard ETL jobs where a visual designer, built-in scheduling (via SQL Agent), and reusable transformation components speed up development and give non-developers visibility into the flow. A custom C# utility (e.g. behind a Web API using <code>SqlBulkCopy</code>) is better when the import is triggered interactively by end users through the application UI, needs custom business logic that's awkward to express visually, or must integrate tightly with the app's existing authentication/logging.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">What is SSRS, and how do you build a parameterized report backed by a stored procedure?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>SSRS (SQL Server Reporting Services) is a server-based platform for authoring, publishing, and rendering paginated reports (PDF, Excel, etc.) accessed through a report portal or embedded viewer. In Report Builder/SSDT, you create a dataset whose query calls a stored procedure, map the procedure's parameters to report parameters (which render as filter dropdowns/date pickers on the report page), and the report re-executes the procedure with the user's chosen values each time it's run.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How does Power BI connect to SQL Server, and what's the difference between Import mode and DirectQuery?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Power BI connects via a native SQL Server connector using a server/database name (and optionally a gateway for on-premises databases). Import mode copies data into Power BI's own in-memory compressed model at refresh time — fast interactive reports, but data is only as fresh as the last scheduled refresh. DirectQuery instead sends live queries back to SQL Server on every interaction — always current, but report performance depends directly on the underlying query/database performance.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="cat" id="c13">
+      <summary><span class="cat-title">13 · Git, CI/CD &amp; Behavioral</span><span class="cat-count">4 questions</span></summary>
+      <div class="cat-body">
+        <ol class="qlist">
+          <li><div class="qcol"><div class="qtext">Explain your typical Git branching workflow (feature branches, pull requests, merge vs rebase).</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>Branch off <code>main</code>/<code>develop</code> for each feature or fix, commit incrementally with clear messages, then open a pull request for code review before merging back. <code>merge</code> preserves full history with a merge commit and is safer for shared/public branches; <code>rebase</code> replays commits on top of the latest base for a cleaner, linear history but rewrites commit hashes — fine for a local feature branch before it's pushed/shared, risky afterward since it breaks history for anyone else who's pulled it.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How does a Jenkins pipeline typically build and deploy a .NET application, and where would database migration scripts fit in?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p>A typical pipeline (defined in a Jenkinsfile) checks out code, restores NuGet packages, runs <code>dotnet build</code>/<code>dotnet test</code>, publishes artifacts, and deploys to the target environment (e.g. IIS, a container registry, or a cloud app service). Database migration scripts run as their own pipeline stage — ideally via a migration tool (e.g. DbUp, EF Core migrations, or versioned SQL scripts) executed right before or after the app deploy, so schema changes are applied consistently and are tracked alongside code changes rather than run manually.</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">Describe a time you had to troubleshoot a data-mismatch issue after an import — how did you isolate the cause and fix it?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><i>This is a behavioral question — answer with a real, specific story from your experience.</i> A strong structure: describe the symptom (e.g. totals didn't reconcile after an import), how you isolated it (compared row counts between source file and staging/production, checked for silent truncation/type-conversion issues, diffed a sample of records), the root cause you found (e.g. a date-format mismatch causing rows to silently fail a filter, or duplicate rows from a re-run import), the fix, and what you changed afterward to prevent recurrence (added validation, added a reconciliation report, etc.).</p>
+          </div></details></div></li>
+
+          <li><div class="qcol"><div class="qtext">How do you coordinate with other teams (business, QA, frontend) when requirements around an import format change mid-project?</div>
+          <details class="answer"><summary>Show answer</summary><div class="ans-body">
+          <p><i>Another behavioral question — tailor to your own experience.</i> Good talking points: getting the new format's sample file and requirements documented explicitly before changing code (to avoid repeated rework), assessing impact on already-imported historical data, communicating the change and timeline to QA so test cases get updated, coordinating with frontend if the change affects upload UI/validation messages, and versioning or feature-flagging the change if the old format must still be supported temporarily.</p>
+          </div></details></div></li>
+        </ol>
+      </div>
+    </details>
+
+    <h2 class="section-head" id="coding">SQL Coding Problems</h2>
+    <p class="section-sub">15 hands-on problems mirroring real import/reporting work — duplicates, running totals, ranking, JSON/XML parsing, upserts, and hierarchy queries. All solutions target SQL Server (T-SQL). Click <b>Show solution</b> to reveal.</p>
+
+    <div class="schema-box">
+      <h3>Sample schema used below</h3>
+      <div class="schema-tables">
+        <table>
+          <caption>Students</caption>
+          <tr><td class="col">StudentId</td><td>INT PK</td></tr>
+          <tr><td class="col">Name</td><td>NVARCHAR(100)</td></tr>
+          <tr><td class="col">Email</td><td>NVARCHAR(150)</td></tr>
+          <tr><td class="col">ClassId</td><td>INT FK</td></tr>
+          <tr><td class="col">JoinDate</td><td>DATE</td></tr>
+        </table>
+        <table>
+          <caption>Payments</caption>
+          <tr><td class="col">PaymentId</td><td>INT PK</td></tr>
+          <tr><td class="col">StudentId</td><td>INT FK</td></tr>
+          <tr><td class="col">Amount</td><td>DECIMAL(10,2)</td></tr>
+          <tr><td class="col">PaidOn</td><td>DATE</td></tr>
+        </table>
+        <table>
+          <caption>Employees</caption>
+          <tr><td class="col">EmployeeId</td><td>INT PK</td></tr>
+          <tr><td class="col">Name</td><td>NVARCHAR(100)</td></tr>
+          <tr><td class="col">ManagerId</td><td>INT FK NULL</td></tr>
+          <tr><td class="col">Salary</td><td>DECIMAL(10,2)</td></tr>
+          <tr><td class="col">DeptId</td><td>INT FK</td></tr>
+        </table>
+        <table>
+          <caption>StagingImport</caption>
+          <tr><td class="col">RowId</td><td>INT IDENTITY</td></tr>
+          <tr><td class="col">RawEmail</td><td>NVARCHAR(150)</td></tr>
+          <tr><td class="col">RawAmount</td><td>NVARCHAR(50)</td></tr>
+          <tr><td class="col">SourceFile</td><td>NVARCHAR(200)</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- 1 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">01</span>
+        <span class="problem-title">Find the Nth highest salary</span>
+        <span class="difficulty easy">Easy</span>
+      </div>
+      <div class="problem-body">
+        <p>From <code>Employees</code>, return the 3rd highest distinct salary.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">SELECT</span> Salary
+<span class="kw">FROM</span> (
+  <span class="kw">SELECT</span> DISTINCT Salary,
+         DENSE_RANK() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> rnk
+  <span class="kw">FROM</span> Employees
+) ranked
+<span class="kw">WHERE</span> rnk = 3;
+
+<span class="com">-- Alternative without window functions:</span>
+<span class="kw">SELECT</span> <span class="kw">MIN</span>(Salary) <span class="kw">FROM</span> (
+  <span class="kw">SELECT</span> <span class="kw">DISTINCT TOP</span> 3 Salary
+  <span class="kw">FROM</span> Employees
+  <span class="kw">ORDER BY</span> Salary <span class="kw">DESC</span>
+) t;</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">02</span>
+        <span class="problem-title">Remove duplicate rows, keeping the earliest one</span>
+        <span class="difficulty easy">Easy</span>
+      </div>
+      <div class="problem-body">
+        <p>The <code>Students</code> table has duplicate rows by <code>Email</code> due to a re-run import. Delete duplicates, keeping only the row with the earliest <code>JoinDate</code>.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">WITH</span> ranked <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> StudentId,
+         ROW_NUMBER() <span class="kw">OVER</span> (
+           <span class="kw">PARTITION BY</span> Email
+           <span class="kw">ORDER BY</span> JoinDate <span class="kw">ASC</span>, StudentId <span class="kw">ASC</span>
+         ) <span class="kw">AS</span> rn
+  <span class="kw">FROM</span> Students
+)
+<span class="kw">DELETE FROM</span> ranked <span class="kw">WHERE</span> rn &gt; 1;</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">03</span>
+        <span class="problem-title">Running total of payments per student</span>
+        <span class="difficulty med">Medium</span>
+      </div>
+      <div class="problem-body">
+        <p>For each student, show every payment plus a running cumulative total ordered by <code>PaidOn</code>.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">SELECT</span> StudentId, PaidOn, Amount,
+       <span class="kw">SUM</span>(Amount) <span class="kw">OVER</span> (
+         <span class="kw">PARTITION BY</span> StudentId
+         <span class="kw">ORDER BY</span> PaidOn
+         <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+       ) <span class="kw">AS</span> RunningTotal
+<span class="kw">FROM</span> Payments
+<span class="kw">ORDER BY</span> StudentId, PaidOn;</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">04</span>
+        <span class="problem-title">Students who paid this month but not last month</span>
+        <span class="difficulty med">Medium</span>
+      </div>
+      <div class="problem-body">
+        <p>Find students who made a payment in the current calendar month but had no payment in the previous month.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">WITH</span> thisMonth <span class="kw">AS</span> (
+  <span class="kw">SELECT DISTINCT</span> StudentId <span class="kw">FROM</span> Payments
+  <span class="kw">WHERE</span> DATEFROMPARTS(<span class="kw">YEAR</span>(PaidOn), <span class="kw">MONTH</span>(PaidOn), 1)
+        = DATEFROMPARTS(<span class="kw">YEAR</span>(GETDATE()), <span class="kw">MONTH</span>(GETDATE()), 1)
+),
+lastMonth <span class="kw">AS</span> (
+  <span class="kw">SELECT DISTINCT</span> StudentId <span class="kw">FROM</span> Payments
+  <span class="kw">WHERE</span> DATEFROMPARTS(<span class="kw">YEAR</span>(PaidOn), <span class="kw">MONTH</span>(PaidOn), 1)
+        = DATEFROMPARTS(<span class="kw">YEAR</span>(DATEADD(<span class="kw">MONTH</span>,-1,GETDATE())),
+                         <span class="kw">MONTH</span>(DATEADD(<span class="kw">MONTH</span>,-1,GETDATE())), 1)
+)
+<span class="kw">SELECT</span> tm.StudentId
+<span class="kw">FROM</span> thisMonth tm
+<span class="kw">LEFT JOIN</span> lastMonth lm <span class="kw">ON</span> tm.StudentId = lm.StudentId
+<span class="kw">WHERE</span> lm.StudentId <span class="kw">IS NULL</span>;</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">05</span>
+        <span class="problem-title">Employee-manager hierarchy (recursive CTE)</span>
+        <span class="difficulty hard">Hard</span>
+      </div>
+      <div class="problem-body">
+        <p>Return every employee with their full reporting chain depth from the top-level manager (<code>ManagerId IS NULL</code>).</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">WITH</span> OrgChart <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> EmployeeId, Name, ManagerId, 0 <span class="kw">AS</span> Depth
+  <span class="kw">FROM</span> Employees
+  <span class="kw">WHERE</span> ManagerId <span class="kw">IS NULL</span>
+
+  <span class="kw">UNION ALL</span>
+
+  <span class="kw">SELECT</span> e.EmployeeId, e.Name, e.ManagerId, oc.Depth + 1
+  <span class="kw">FROM</span> Employees e
+  <span class="kw">INNER JOIN</span> OrgChart oc <span class="kw">ON</span> e.ManagerId = oc.EmployeeId
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> OrgChart
+<span class="kw">OPTION</span> (MAXRECURSION 100);</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">06</span>
+        <span class="problem-title">Bulk-load a CSV with SqlBulkCopy pattern (staging → validate → merge)</span>
+        <span class="difficulty med">Medium</span>
+      </div>
+      <div class="problem-body">
+        <p>Write the T-SQL that validates rows already bulk-loaded into <code>StagingImport</code> and moves only clean rows into <code>Students</code>, logging bad rows separately.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="com">-- 1. Flag invalid rows (bad email format or non-numeric amount)</span>
+<span class="kw">SELECT</span> * <span class="kw">INTO</span> #BadRows
+<span class="kw">FROM</span> StagingImport
+<span class="kw">WHERE</span> RawEmail <span class="kw">NOT LIKE</span> <span class="str">'%_@__%.__%'</span>
+   <span class="kw">OR</span> TRY_CAST(RawAmount <span class="kw">AS</span> DECIMAL(10,2)) <span class="kw">IS NULL</span>;
+
+<span class="kw">INSERT INTO</span> ImportErrorLog (RowId, RawEmail, RawAmount, SourceFile, Reason, LoggedAt)
+<span class="kw">SELECT</span> RowId, RawEmail, RawAmount, SourceFile, <span class="str">'Invalid email or amount'</span>, GETDATE()
+<span class="kw">FROM</span> #BadRows;
+
+<span class="com">-- 2. Load only clean rows, skipping ones already logged as bad</span>
+<span class="kw">INSERT INTO</span> Students (Email, JoinDate)
+<span class="kw">SELECT</span> s.RawEmail, GETDATE()
+<span class="kw">FROM</span> StagingImport s
+<span class="kw">LEFT JOIN</span> #BadRows b <span class="kw">ON</span> s.RowId = b.RowId
+<span class="kw">WHERE</span> b.RowId <span class="kw">IS NULL</span>;</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">07</span>
+        <span class="problem-title">Upsert (MERGE) incoming payment records</span>
+        <span class="difficulty med">Medium</span>
+      </div>
+      <div class="problem-body">
+        <p>Given a staging table of new/updated payments, insert new ones and update existing ones by <code>PaymentId</code>.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">MERGE INTO</span> Payments <span class="kw">AS</span> target
+<span class="kw">USING</span> StagingPayments <span class="kw">AS</span> source
+   <span class="kw">ON</span> target.PaymentId = source.PaymentId
+<span class="kw">WHEN MATCHED AND</span> target.Amount &lt;&gt; source.Amount <span class="kw">THEN</span>
+  <span class="kw">UPDATE SET</span> target.Amount = source.Amount,
+                 target.PaidOn = source.PaidOn
+<span class="kw">WHEN NOT MATCHED BY TARGET THEN</span>
+  <span class="kw">INSERT</span> (PaymentId, StudentId, Amount, PaidOn)
+  <span class="kw">VALUES</span> (source.PaymentId, source.StudentId, source.Amount, source.PaidOn)
+<span class="kw">OUTPUT</span> $action, inserted.PaymentId;
+<span class="com">-- Note: wrap in a transaction with HOLDLOCK/SERIALIZABLE hint under concurrent load
+-- to avoid the well-known MERGE race condition.</span></code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">08</span>
+        <span class="problem-title">Parse a JSON payload into rows</span>
+        <span class="difficulty med">Medium</span>
+      </div>
+      <div class="problem-body">
+        <p>An API sends a JSON array of student records. Parse it into a relational result set using <code>OPENJSON</code>.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">DECLARE</span> @json NVARCHAR(MAX) = <span class="str">'[
+  {"Name":"Arun","Email":"arun@test.com","ClassId":3},
+  {"Name":"Divya","Email":"divya@test.com","ClassId":5}
+]'</span>;
+
+<span class="kw">SELECT</span> Name, Email, ClassId
+<span class="kw">FROM</span> OPENJSON(@json)
+<span class="kw">WITH</span> (
+  Name    NVARCHAR(100) <span class="str">'$.Name'</span>,
+  Email   NVARCHAR(150) <span class="str">'$.Email'</span>,
+  ClassId INT           <span class="str">'$.ClassId'</span>
+);</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">09</span>
+        <span class="problem-title">Parse an XML import file</span>
+        <span class="difficulty med">Medium</span>
+      </div>
+      <div class="problem-body">
+        <p>Extract student nodes from an XML document into rows.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">DECLARE</span> @xml XML = <span class="str">'
+&lt;Students&gt;
+  &lt;Student Name="Arun" Email="arun@test.com" ClassId="3" /&gt;
+  &lt;Student Name="Divya" Email="divya@test.com" ClassId="5" /&gt;
+&lt;/Students&gt;'</span>;
+
+<span class="kw">SELECT</span>
+  T.c.value(<span class="str">'@Name'</span>,    <span class="str">'NVARCHAR(100)'</span>) <span class="kw">AS</span> Name,
+  T.c.value(<span class="str">'@Email'</span>,   <span class="str">'NVARCHAR(150)'</span>) <span class="kw">AS</span> Email,
+  T.c.value(<span class="str">'@ClassId'</span>, <span class="str">'INT'</span>)          <span class="kw">AS</span> ClassId
+<span class="kw">FROM</span> @xml.nodes(<span class="str">'/Students/Student'</span>) <span class="kw">AS</span> T(c);</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">10</span>
+        <span class="problem-title">Find gaps in a sequence (missing invoice numbers)</span>
+        <span class="difficulty hard">Hard</span>
+      </div>
+      <div class="problem-body">
+        <p><code>Payments.PaymentId</code> should be sequential. Find missing IDs after a bad import.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">WITH</span> seq <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> PaymentId,
+         LEAD(PaymentId) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> PaymentId) <span class="kw">AS</span> NextId
+  <span class="kw">FROM</span> Payments
+)
+<span class="kw">SELECT</span> PaymentId <span class="kw">AS</span> GapStart, NextId <span class="kw">AS</span> GapEnd,
+       NextId - PaymentId - 1 <span class="kw">AS</span> MissingCount
+<span class="kw">FROM</span> seq
+<span class="kw">WHERE</span> NextId - PaymentId &gt; 1;</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 11 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">11</span>
+        <span class="problem-title">Pivot monthly payment totals per student</span>
+        <span class="difficulty med">Medium</span>
+      </div>
+      <div class="problem-body">
+        <p>Show each student as a row with one column per month (Jan–Jun) containing total paid that month.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">SELECT</span> StudentId, [1] <span class="kw">AS</span> Jan, [2] <span class="kw">AS</span> Feb, [3] <span class="kw">AS</span> Mar,
+       [4] <span class="kw">AS</span> Apr, [5] <span class="kw">AS</span> May, [6] <span class="kw">AS</span> Jun
+<span class="kw">FROM</span> (
+  <span class="kw">SELECT</span> StudentId, <span class="kw">MONTH</span>(PaidOn) <span class="kw">AS</span> Mo, Amount
+  <span class="kw">FROM</span> Payments
+  <span class="kw">WHERE</span> <span class="kw">YEAR</span>(PaidOn) = 2026
+) src
+<span class="kw">PIVOT</span> (
+  <span class="kw">SUM</span>(Amount) <span class="kw">FOR</span> Mo <span class="kw">IN</span> ([1],[2],[3],[4],[5],[6])
+) <span class="kw">AS</span> pvt;</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 12 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">12</span>
+        <span class="problem-title">Split a delimited string column into rows</span>
+        <span class="difficulty easy">Easy</span>
+      </div>
+      <div class="problem-body">
+        <p>An imported file has a <code>Subjects</code> column like <code>'Math,Science,English'</code>. Split into one row per subject per student.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">SELECT</span> s.StudentId, TRIM(val.value) <span class="kw">AS</span> Subject
+<span class="kw">FROM</span> StudentSubjectsRaw s
+<span class="kw">CROSS APPLY</span> STRING_SPLIT(s.Subjects, <span class="str">','</span>) <span class="kw">AS</span> val;</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 13 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">13</span>
+        <span class="problem-title">Detect data-type mismatches before import</span>
+        <span class="difficulty med">Medium</span>
+      </div>
+      <div class="problem-body">
+        <p>Every value in <code>StagingImport.RawAmount</code> should be a valid decimal. List rows where it isn't, without throwing a conversion error.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">SELECT</span> RowId, RawAmount, SourceFile
+<span class="kw">FROM</span> StagingImport
+<span class="kw">WHERE</span> TRY_CAST(RawAmount <span class="kw">AS</span> DECIMAL(10,2)) <span class="kw">IS NULL</span>
+  <span class="kw">AND</span> RawAmount <span class="kw">IS NOT NULL</span>;</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 14 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">14</span>
+        <span class="problem-title">Second highest payment per student (correlated subquery vs window function)</span>
+        <span class="difficulty med">Medium</span>
+      </div>
+      <div class="problem-body">
+        <p>Return each student's second-largest single payment. Show both approaches.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="com">-- Window function approach (preferred, single scan)</span>
+<span class="kw">SELECT</span> StudentId, Amount
+<span class="kw">FROM</span> (
+  <span class="kw">SELECT</span> StudentId, Amount,
+         ROW_NUMBER() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> StudentId <span class="kw">ORDER BY</span> Amount <span class="kw">DESC</span>) <span class="kw">AS</span> rn
+  <span class="kw">FROM</span> Payments
+) x
+<span class="kw">WHERE</span> rn = 2;
+
+<span class="com">-- Correlated subquery approach</span>
+<span class="kw">SELECT</span> p1.StudentId, <span class="kw">MAX</span>(p1.Amount) <span class="kw">AS</span> SecondHighest
+<span class="kw">FROM</span> Payments p1
+<span class="kw">WHERE</span> p1.Amount &lt; (
+  <span class="kw">SELECT MAX</span>(p2.Amount) <span class="kw">FROM</span> Payments p2
+  <span class="kw">WHERE</span> p2.StudentId = p1.StudentId
+)
+<span class="kw">GROUP BY</span> p1.StudentId;</code></pre>
+        </details>
+      </div>
+    </div>
+
+    <!-- 15 -->
+    <div class="problem">
+      <div class="problem-head">
+        <span class="problem-num">15</span>
+        <span class="problem-title">Safe re-runnable import (idempotent load)</span>
+        <span class="difficulty hard">Hard</span>
+      </div>
+      <div class="problem-body">
+        <p>The same import file might be uploaded twice. Write an insert that only adds students that don't already exist by email, and reports how many were skipped.</p>
+        <details class="answer">
+          <summary>Show solution</summary>
+          <pre><code><span class="kw">DECLARE</span> @Inserted INT, @Skipped INT;
+
+<span class="kw">INSERT INTO</span> Students (Name, Email, ClassId, JoinDate)
+<span class="kw">OUTPUT</span> inserted.StudentId
+<span class="kw">SELECT</span> si.Name, si.Email, si.ClassId, GETDATE()
+<span class="kw">FROM</span> StagingImport si
+<span class="kw">WHERE NOT EXISTS</span> (
+  <span class="kw">SELECT</span> 1 <span class="kw">FROM</span> Students s <span class="kw">WHERE</span> s.Email = si.RawEmail
+);
+
+<span class="kw">SET</span> @Inserted = @@ROWCOUNT;
+<span class="kw">SELECT</span> @Skipped = <span class="kw">COUNT</span>(*) <span class="kw">FROM</span> StagingImport;
+<span class="kw">SET</span> @Skipped -= @Inserted;
+
+<span class="kw">SELECT</span> @Inserted <span class="kw">AS</span> RowsInserted, @Skipped <span class="kw">AS</span> RowsSkippedAsDuplicate;</code></pre>
+        </details>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  Prepared for a SQL Server / .NET / Angular-React developer interview (3–4 yrs) — covers T-SQL fundamentals, performance tuning, bulk data import/ETL, and full-stack support topics from the job description.
+</footer>
+
+</body>
+</html>

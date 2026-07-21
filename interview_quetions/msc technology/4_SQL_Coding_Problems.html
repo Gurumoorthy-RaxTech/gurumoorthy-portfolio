@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Coding Problems (Thanglish) — MSC Prep</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.85em;margin:0 10px;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:22px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.problem{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a;scroll-margin-top:20px}
+.problem.hot{border-color:#f39c1255}
+.p-header{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.p-num{background:#8b5cf6;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.85em;flex-shrink:0}
+.p-title{font-weight:bold;color:#fff;font-size:1.05em}
+.hot-badge{background:#1f0a0a;color:#f39c12;font-size:0.72em;padding:3px 10px;border-radius:4px;font-weight:bold;border:1px solid #f39c1255}
+.p-statement{color:#c0c8e0;font-size:0.92em;background:#0f0f20;padding:12px 14px;border-radius:6px;margin:10px 0;line-height:1.7}
+.p-statement b{color:#f0dc82}
+.lang-label{color:#a78bfa;font-size:0.8em;font-weight:bold;margin:14px 0 4px;display:flex;align-items:center;gap:6px}
+.lang-label .dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#e48b3d}
+pre{background:#0a0a1a;border:1px solid #1e1e3a;border-radius:8px;padding:14px;overflow-x:auto;font-family:'Consolas',monospace;font-size:0.82em;line-height:1.6;margin:4px 0 10px;color:#9cdcfe}
+.sample{margin:8px 0 10px 0}
+.sample table{width:100%;border-collapse:collapse;font-size:0.82em}
+.sample th{background:#0d0020;color:#a78bfa;padding:6px 10px;text-align:left;border:1px solid #1e1e3a}
+.sample td{padding:6px 10px;border:1px solid #1e1e3a;color:#c0c0d0}
+.sample-label{color:#7a7a9a;font-size:0.76em;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.explain{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;font-size:0.88em;color:#c4b5fd}
+.explain .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.output-box{background:#0a1f0a;border:1px solid #2ecc7144;border-radius:6px;padding:8px 12px;margin:6px 0 10px;font-size:0.82em;color:#bbf7d0}
+.output-box .olbl{color:#2ecc71;font-weight:bold;font-size:0.76em;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:3px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">MSC Technology (India) Pvt Ltd — Interview Prep</div>
+  <h1>SQL Coding Round Problems</h1>
+  <p>Microsoft SQL Server-la kekkра common query problems — Nth Highest Salary, Duplicates, Window Functions, Joins ellame Thanglish explanation-oda</p>
+  <div style="margin-top:12px">
+    <span class="badge">Joins</span><span class="badge">Subqueries</span><span class="badge">Window Functions</span>
+    <span class="badge">GROUP BY / HAVING</span><span class="badge">Self Join</span><span class="badge">CTE</span>
+  </div>
+</header>
+
+<div class="linkbar">
+  <a href="1_Thanglish_Concepts_and_Resume.html">← Concepts + Resume</a>
+  <a href="2_Frontend_Questions_Thanglish.html">← Frontend Q&amp;A</a>
+  <a href="3_Coding_Problems_CSharp_JS.html">← C#/JS Problems</a>
+  <a href="MSC_Technology_Top100_QA.html">Top 100 Q&amp;A →</a>
+</div>
+
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 SQL Round ku eppadi prepare pannanum</div>
+  <p>Ella problem-um <code>Employee</code> table oru sample data vечு explain pannirукோम் (idhe table structure ellaa problems-кும் repeat aagும்). Interview la — first "approach" ah verbal ah sollанум ("naan window function use pannрேன்", "self join use pannрேன்" nு), apparam query eluthанும். SQL Server syntax (<code>TOP</code>, <code>OFFSET-FETCH</code>) mattum illaама, MySQL syntax (<code>LIMIT</code>) um kекклाаम் — rendайும் mention pannினா plus point, edhуkки na un resume-la SQL Server AND MySQL rendайும் irukku.</p>
+</div>
+
+<div class="sample">
+  <div class="sample-label">Sample Table — Employee (ella problems-кும் use pannрோm்)</div>
+  <table>
+    <tr><th>EmpId</th><th>Name</th><th>Salary</th><th>DeptId</th><th>ManagerId</th><th>JoinDate</th></tr>
+    <tr><td>1</td><td>Arun</td><td>50000</td><td>10</td><td>NULL</td><td>2022-01-15</td></tr>
+    <tr><td>2</td><td>Bala</td><td>65000</td><td>10</td><td>1</td><td>2022-03-10</td></tr>
+    <tr><td>3</td><td>Chitra</td><td>65000</td><td>20</td><td>1</td><td>2023-06-20</td></tr>
+    <tr><td>4</td><td>Deepa</td><td>45000</td><td>20</td><td>3</td><td>2023-11-05</td></tr>
+    <tr><td>5</td><td>Elango</td><td>80000</td><td>10</td><td>1</td><td>2021-08-01</td></tr>
+  </table>
+</div>
+
+<div class="toc">
+  <h2>20 SQL Problems</h2>
+  <div class="toc-grid">
+    <a href="#s1">1. Nth Highest Salary ⭐</a>
+    <a href="#s2">2. Second Highest Salary (Subquery)</a>
+    <a href="#s3">3. Find Duplicate Records</a>
+    <a href="#s4">4. Delete Duplicate Rows</a>
+    <a href="#s5">5. Employees Earning More Than Manager</a>
+    <a href="#s6">6. Department-wise Employee Count</a>
+    <a href="#s7">7. Employees with No Department (NULL)</a>
+    <a href="#s8">8. Common Records Between Two Tables</a>
+    <a href="#s9">9. Records in A Not in B</a>
+    <a href="#s10">10. Running Total (Window Function)</a>
+    <a href="#s11">11. Rank Employees by Salary (RANK/DENSE_RANK)</a>
+    <a href="#s12">12. Employees Joined in Last 30 Days</a>
+    <a href="#s13">13. Self Join — Employee-Manager Pairs</a>
+    <a href="#s14">14. GROUP BY with HAVING</a>
+    <a href="#s15">15. Update Salary using CASE WHEN</a>
+    <a href="#s16">16. Find Missing IDs in Sequence</a>
+    <a href="#s17">17. Top N Records per Group</a>
+    <a href="#s18">18. Count NULL Values in a Column</a>
+    <a href="#s19">19. Split Comma-Separated Values into Rows</a>
+    <a href="#s20">20. Find Employees with Same Salary</a>
+  </div>
+</div>
+
+<!-- S1 -->
+<div class="problem hot" id="s1">
+  <div class="p-header"><span class="p-num">1</span><span class="p-title">Find the Nth Highest Salary</span><span class="hot-badge">🔥 Romba frequent ah kekkumaale question</span></div>
+  <div class="p-statement">Employee table-la, N-avathu highest salary evлова nу find pannанும் (N — 3 vaikanum-nу vечு example).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL Server — Using OFFSET-FETCH</div>
+<pre>SELECT DISTINCT Salary
+FROM Employee
+ORDER BY Salary DESC
+OFFSET 2 ROWS FETCH NEXT 1 ROWS ONLY;
+-- N=3 na, OFFSET = N-1 = 2 rows skip pannitu, next 1 row eduthukanum</pre>
+
+  <div class="lang-label"><span class="dot"></span>SQL Server — Using DENSE_RANK (best approach for interviews)</div>
+<pre>WITH RankedSalary AS (
+    SELECT Salary, DENSE_RANK() OVER (ORDER BY Salary DESC) AS Rnk
+    FROM Employee
+)
+SELECT DISTINCT Salary
+FROM RankedSalary
+WHERE Rnk = 3;   -- N value idhu la vekkalam</pre>
+
+  <div class="lang-label"><span class="dot"></span>MySQL — Using LIMIT</div>
+<pre>SELECT DISTINCT Salary
+FROM Employee
+ORDER BY Salary DESC
+LIMIT 1 OFFSET 2;   -- N=3 na OFFSET = N-1</pre>
+
+  <div class="output-box"><span class="olbl">Sample Output (N=3)</span>Salary = 50000 (80000=1st, 65000=2nd, 50000=3rd)</div>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>DISTINCT</code> mукkийam — edhуkки na rendு employees same salary irundhа, adha "rendு rank" ah count panна koodathu. <code>DENSE_RANK()</code> approach best-a irukку edhуkки na — N dynamic-a maатранум்na, <code>WHERE Rnk = @N</code> nு parameterize pannலाam், aana <code>OFFSET-FETCH</code>-la N maатрумbodhu formula (N-1) calculate pannанும். Interview la — "duplicate salaries irundha epadi handle pannுвீнga?" nу follow-up kекклाam் — <code>DENSE_RANK</code> (same rank kudukкும், gap illaама) vs <code>RANK</code> (same rank kudukкும், aana next rank gap vaikкும்) difference sollанும்.</div>
+</div>
+
+<!-- S2 -->
+<div class="problem" id="s2">
+  <div class="p-header"><span class="p-num">2</span><span class="p-title">Find the Second Highest Salary (Classic Subquery Way)</span></div>
+  <div class="p-statement">Idhу romba classic question — <code>MAX()</code> subquery vечу second highest salary find pannанும் (window function illaama).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL</div>
+<pre>SELECT MAX(Salary) AS SecondHighestSalary
+FROM Employee
+WHERE Salary &lt; (SELECT MAX(Salary) FROM Employee);</pre>
+
+  <div class="output-box"><span class="olbl">Sample Output</span>SecondHighestSalary = 65000 (80000 highest, 65000 next)</div>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span>Inner query first, overall highest salary (80000) find pannрோம். Outer query, andha highest salary-vida chinна ella salaries-la irundhu, meense highest-ah (MAX) eduthрோம் — adhу thaан "second highest". Idhу simple, aana N-th highest ku extend pannрாathу (N periya-a irundhа nested subqueries romba varும்) — adhуkки DENSE_RANK approach (Problem 1) better.</div>
+</div>
+
+<!-- S3 -->
+<div class="problem" id="s3">
+  <div class="p-header"><span class="p-num">3</span><span class="p-title">Find Duplicate Records in a Table</span></div>
+  <div class="p-statement">Employee table-la, same Name (matching) evanaаvатு rendு முறை irukка nу find pannанும்.</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL</div>
+<pre>SELECT Name, COUNT(*) AS Occurrences
+FROM Employee
+GROUP BY Name
+HAVING COUNT(*) &gt; 1;</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>GROUP BY Name</code> vечு, same name-oda ella rows-um ஒரே group-கு vaнрோம். <code>COUNT(*)</code> vечு ovvoru group-la evлो rows irukку nу count pannрோம். <code>HAVING COUNT(*) &gt; 1</code> — group-level filter (aggregate function mела filter panna <code>WHERE</code> use panна mудியாது, <code>HAVING</code> thaан use pannанும்).</div>
+</div>
+
+<!-- S4 -->
+<div class="problem" id="s4">
+  <div class="p-header"><span class="p-num">4</span><span class="p-title">Delete Duplicate Rows (Keep One Copy)</span></div>
+  <div class="p-statement">Duplicate rows irundhа, oru copy mattum vaитучцு, mигутி duplicates ah delete pannанும் (production data cleanup-ла romba practical).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL Server — Using CTE + ROW_NUMBER</div>
+<pre>WITH CTE AS (
+    SELECT *,
+           ROW_NUMBER() OVER (PARTITION BY Name, Salary ORDER BY EmpId) AS RowNum
+    FROM Employee
+)
+DELETE FROM CTE WHERE RowNum &gt; 1;
+-- PARTITION BY-la vekkra columns thaan "duplicate check" panra columns</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>ROW_NUMBER() OVER (PARTITION BY ...)</code> — duplicate-a considerpannра columns (Name, Salary) vaчु "group" pannрோम் (PARTITION), ovvoru group-kula 1, 2, 3 nு number kудுтрோм். RowNum = 1 na andha group-la "first" row (idha vaitikonанум்), RowNum &gt; 1 na duplicate copies — adha delete pannрோम். CTE (Common Table Expression) — temporary result-ай vекки, adhla direct ah DELETE pannலாம் — idhу SQL Server-la romba common pattern.</div>
+</div>
+
+<!-- S5 -->
+<div class="problem" id="s5">
+  <div class="p-header"><span class="p-num">5</span><span class="p-title">Find Employees Earning More Than Their Manager</span></div>
+  <div class="p-statement">Employee-oda salary, avanka Manager-oda salary vida periyа-a irukка nу find pannанும் (Self Join classic example).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL</div>
+<pre>SELECT e.Name AS EmployeeName, e.Salary AS EmployeeSalary,
+       m.Name AS ManagerName, m.Salary AS ManagerSalary
+FROM Employee e
+INNER JOIN Employee m ON e.ManagerId = m.EmpId
+WHERE e.Salary &gt; m.Salary;</pre>
+
+  <div class="output-box"><span class="olbl">Sample Output</span>Chitra (65000) &gt; Manager Arun (50000) → returned</div>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span>Idhу "Self Join" — same table-ah (Employee) rendு vera "aliases" (e = employee, m = manager) ஆக vечு, thankитае join pannрோम். <code>e.ManagerId = m.EmpId</code> — employee-oda ManagerId, andha manager-oda actual EmpId-a match pannрோम். Apparam <code>WHERE e.Salary &gt; m.Salary</code> vечு filter pannрோм். Self join — hierarchical data (employee-manager, category-subcategory) irukка bodhu romba common ah kекквார்кள்.</div>
+</div>
+
+<!-- S6 -->
+<div class="problem" id="s6">
+  <div class="p-header"><span class="p-num">6</span><span class="p-title">Department-wise Employee Count</span></div>
+  <div class="p-statement">Ovvoru department-la evлो employees irukanga nу count pannанும்.</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL</div>
+<pre>SELECT DeptId, COUNT(*) AS EmployeeCount
+FROM Employee
+GROUP BY DeptId
+ORDER BY EmployeeCount DESC;</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span>Basic <code>GROUP BY</code> aggregate query — DeptId vечू ella rows-ай group pannிட்டு, ovvoru group-la <code>COUNT(*)</code> vечு rows count pannрோम். Interview la follow-up — "Department name kూடа kाттанும் na?" — adhуkки Department table kூடa <code>JOIN</code> pannанும்.</div>
+</div>
+
+<!-- S7 -->
+<div class="problem" id="s7">
+  <div class="p-header"><span class="p-num">7</span><span class="p-title">Find Employees with No Department (NULL Handling)</span></div>
+  <div class="p-statement">DeptId column NULL-a irukка employees ah find pannанும் (<code>= NULL</code> use pannினа work aaguбоду nு interviewer kекквார் — trap question!).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL</div>
+<pre>SELECT Name, DeptId
+FROM Employee
+WHERE DeptId IS NULL;   -- '= NULL' NEVER work aagathu!</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span>Idhу oru classic "trap" question — SQL-la, NULL-ah "value" nு consider pannாது, adhу "unknown" nு consider pannрராதू. So <code>WHERE DeptId = NULL</code> na, edhуvும் ozero rows-а kூடa return pannாathू (silent fail — error kூடा varаthू!). Correct way — <code>IS NULL</code> / <code>IS NOT NULL</code> mattum use pannанும். Idhа interview la specific ah sollінா, "idhу basic-ma theriunj иருкார்" nு impress aagும்.</div>
+</div>
+
+<!-- S8 -->
+<div class="problem" id="s8">
+  <div class="p-header"><span class="p-num">8</span><span class="p-title">Find Common Records Between Two Tables</span></div>
+  <div class="p-statement"><code>TableA</code> and <code>TableB</code>-la rendайும் irukка common EmpId values find pannанும் (Employee and EmployeeArchive nु rendு tables vечு example).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL Server — Using INTERSECT</div>
+<pre>SELECT EmpId FROM Employee
+INTERSECT
+SELECT EmpId FROM EmployeeArchive;</pre>
+
+  <div class="lang-label"><span class="dot"></span>Using INNER JOIN (same result, more common in interviews)</div>
+<pre>SELECT DISTINCT a.EmpId
+FROM Employee a
+INNER JOIN EmployeeArchive b ON a.EmpId = b.EmpId;</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>INTERSECT</code> — rendайும் table-la match aagра rows ah return pannும் (SET operation, columns/types match aaganум். <code>INNER JOIN</code> — same result kидைккும், aана interview la <code>JOIN</code> approach thaан kекквார்кள் mostly, edhуkки na real projects-la <code>INTERSECT</code> vida <code>JOIN</code> thaан frequently use pannрோம்.</div>
+</div>
+
+<!-- S9 -->
+<div class="problem" id="s9">
+  <div class="p-header"><span class="p-num">9</span><span class="p-title">Find Records in Table A but NOT in Table B</span></div>
+  <div class="p-statement">Employee table-la irukka, aana EmployeeArchive table-la illaата records find pannанும் (classic "anti-join" pattern).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL Server — Using LEFT JOIN + NULL check (recommended)</div>
+<pre>SELECT a.EmpId, a.Name
+FROM Employee a
+LEFT JOIN EmployeeArchive b ON a.EmpId = b.EmpId
+WHERE b.EmpId IS NULL;</pre>
+
+  <div class="lang-label"><span class="dot"></span>Using NOT EXISTS (better performance for large tables)</div>
+<pre>SELECT a.EmpId, a.Name
+FROM Employee a
+WHERE NOT EXISTS (
+    SELECT 1 FROM EmployeeArchive b WHERE b.EmpId = a.EmpId
+);</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>LEFT JOIN</code> pannினா, TableA-la ella rows-um வரும், match aana TableB columns fill aagும், match aaghaла NULL varும். So <code>WHERE b.EmpId IS NULL</code> vечு, "TableB-la match illaата" rows mattum filter pannрோम். <code>NOT EXISTS</code> approach — periya tables-кு better performance kудுкும் (edhуkки na match kидैта udanaா andha row-ku check stop pannிடும், <code>NOT IN</code> subquery vida fast, especially NULL values irundhа <code>NOT IN</code> romba dangerous — empty/wrong result kудுккும், idha interview la mention pannினா impress aagும்).</div>
+</div>
+
+<!-- S10 -->
+<div class="problem" id="s10">
+  <div class="p-header"><span class="p-num">10</span><span class="p-title">Running Total / Cumulative Sum (Window Function)</span></div>
+  <div class="p-statement">Ovvoru employee salary-oda, "adhуvаraikkும் vanда ella salaries-oda cumulative sum" ah calculate pannанும் (finance/reports-la romba common).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL Server</div>
+<pre>SELECT EmpId, Name, Salary,
+       SUM(Salary) OVER (ORDER BY EmpId ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS RunningTotal
+FROM Employee;</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>SUM() OVER()</code> — oru "window function", <code>GROUP BY</code> madhiri rows-ai collapse pannாmал், ovvoru row-kum oru aggregate value calculate pannும் (each row visible ah irukкும், aana adhoda கூடா calculated column kூடа varும்). <code>ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code> na — "start-la irundhu இந்த row varaikkும்" ella rows-um sum pannு nу artham. Idhу dashboard reports (Bill/Payment cumulative totals) build pannрумbodhu romba useful — un resume-la "dashboards" mentioned-нала idha nalла தெरியுмнு prepare pannunga.</div>
+</div>
+
+<!-- S11 -->
+<div class="problem" id="s11">
+  <div class="p-header"><span class="p-num">11</span><span class="p-title">Rank Employees by Salary within Department</span></div>
+  <div class="p-statement">Ovvoru department-kula, employees-ah salary-based ah rank pannанும் (RANK, DENSE_RANK, ROW_NUMBER difference kூடа sollанум்).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL Server</div>
+<pre>SELECT Name, DeptId, Salary,
+       RANK() OVER (PARTITION BY DeptId ORDER BY Salary DESC) AS Rnk,
+       DENSE_RANK() OVER (PARTITION BY DeptId ORDER BY Salary DESC) AS DenseRnk,
+       ROW_NUMBER() OVER (PARTITION BY DeptId ORDER BY Salary DESC) AS RowNum
+FROM Employee;</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>PARTITION BY DeptId</code> — ovvoru department-ku separate ah "reset" pannிட்டு rank pannрோm் (GROUP BY madhiri "split" pannும், aana rows collapse aаghaathу). 3 functions-oda difference: <b>ROW_NUMBER()</b> — always unique number (1,2,3,4...), duplicate salary irundhа கூடா different number kудுккும். <b>RANK()</b> — same salary na same rank kудுккும், aana next rank-la "gap" varும் (1,2,2,4). <b>DENSE_RANK()</b> — same salary na same rank, aана gap illaама next rank continue aagும் (1,2,2,3). Idhу interview-la super frequent-a kекква question — 3-um clear-a explain panna practice pannunga.</div>
+</div>
+
+<!-- S12 -->
+<div class="problem" id="s12">
+  <div class="p-header"><span class="p-num">12</span><span class="p-title">Find Employees Who Joined in the Last 30 Days</span></div>
+  <div class="p-statement">Recently joined employees ah date function vечу find pannанும்.</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL Server</div>
+<pre>SELECT Name, JoinDate
+FROM Employee
+WHERE JoinDate &gt;= DATEADD(DAY, -30, GETDATE());</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>GETDATE()</code> — current date/time kудுккும். <code>DATEADD(DAY, -30, GETDATE())</code> — current date-la irundhu 30 days "subtract" pannрோм் (negative number pass pannினа subtract aagும், positive na add aagும்). So JoinDate andha date vida periyа (recent) na, last 30 days-la joined ah artham.</div>
+</div>
+
+<!-- S13 -->
+<div class="problem" id="s13">
+  <div class="p-header"><span class="p-num">13</span><span class="p-title">Self Join — List Employee with their Manager Name</span></div>
+  <div class="p-statement">Ovvoru employee-oda peside, avanka Manager-oda peру kూdа kाттанும் (Employee table thaнiye — Manager info kூдा andha table-la thaan irukку).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL</div>
+<pre>SELECT e.Name AS Employee, ISNULL(m.Name, 'No Manager') AS Manager
+FROM Employee e
+LEFT JOIN Employee m ON e.ManagerId = m.EmpId;</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>LEFT JOIN</code> use pannрром் (INNER JOIN illa) — edhуkки na CEO/top-level employee-кு ManagerId NULL ah irukкும் (Problem 5-la Arun example), INNER JOIN pannினа andha row miss aаgi поидும். LEFT JOIN vечு, manager illaата employees-um list-la varும், <code>ISNULL()</code> vечу "No Manager" nу friendly-ah kaатрோम்.</div>
+</div>
+
+<!-- S14 -->
+<div class="problem" id="s14">
+  <div class="p-header"><span class="p-num">14</span><span class="p-title">GROUP BY with HAVING — Departments with Average Salary &gt; 50000</span></div>
+  <div class="p-statement">Evanka departments-la average salary 50000-vida periya-a irukanga nу find pannанும்.</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL</div>
+<pre>SELECT DeptId, AVG(Salary) AS AvgSalary, COUNT(*) AS TotalEmployees
+FROM Employee
+GROUP BY DeptId
+HAVING AVG(Salary) &gt; 50000
+ORDER BY AvgSalary DESC;</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>WHERE</code> vs <code>HAVING</code> — idhу interview la romba frequent-ah kекквார்кள் (Top 100 file-la kூда irukку). <code>WHERE</code> — individual rows ah group aагுмуन்னа filter pannும். <code>HAVING</code> — group aana apparam, aggregate result (AVG, COUNT, SUM) mела filter pannும். So <code>AVG(Salary) &gt; 50000</code> madhiri aggregate condition, <code>HAVING</code>-la thaan podanum, <code>WHERE</code>-la podвна syntax error varும்.</div>
+</div>
+
+<!-- S15 -->
+<div class="problem" id="s15">
+  <div class="p-header"><span class="p-num">15</span><span class="p-title">Update Salary using CASE WHEN (Conditional Update)</span></div>
+  <div class="p-statement">Salary 50000-vida chinна employees-кு 10% hike, 50000-70000 kula irukка employees-кு 5% hike kudukanум் (oru single UPDATE statement-la).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL</div>
+<pre>UPDATE Employee
+SET Salary = CASE
+    WHEN Salary &lt; 50000 THEN Salary * 1.10
+    WHEN Salary BETWEEN 50000 AND 70000 THEN Salary * 1.05
+    ELSE Salary
+END;</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>CASE WHEN</code> — SQL-la "if-else" madhiri, condition based ah different values kудுккலाம். Idha vечு, multiple separate <code>UPDATE</code> statements eluthाama (3 IF conditions-ku 3 separate updates), oru single statement-la ella conditions-um handle pannலााम் — production-la performance-ум better (table ah oru murai mattum scan pannрோम்).</div>
+</div>
+
+<!-- S16 -->
+<div class="problem" id="s16">
+  <div class="p-header"><span class="p-num">16</span><span class="p-title">Find Missing IDs in a Sequence</span></div>
+  <div class="p-statement">EmpId 1 to 10 varaikkում் иருкanum-нு expect pannрோம், aана edhavаdhu ID missing-a irukку — adha find pannанும் (data integrity check-ku useful).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL Server — Using a Numbers CTE</div>
+<pre>WITH Numbers AS (
+    SELECT 1 AS Num
+    UNION ALL
+    SELECT Num + 1 FROM Numbers WHERE Num &lt; 10
+)
+SELECT Num AS MissingId
+FROM Numbers
+WHERE Num NOT IN (SELECT EmpId FROM Employee)
+OPTION (MAXRECURSION 100);</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span>Idhу "Recursive CTE" — 1-la start pannிட்டு, ovvoru step-la +1 pannிட்டு 10 varaikkும் oru "numbers list" generate pannрோম் (idhу temporary, actual table illa). Apparam andha full list-la irundhu, Employee table-la иருкра IDs-ah remove pannினा (<code>NOT IN</code>), balance-la irukка numbers thaан "missing IDs".</div>
+</div>
+
+<!-- S17 -->
+<div class="problem" id="s17">
+  <div class="p-header"><span class="p-num">17</span><span class="p-title">Find Top N Records per Group (e.g., Top 2 Highest Paid per Department)</span></div>
+  <div class="p-statement">Ovvoru department-la, top 2 highest-paid employees mattum list pannанும்.</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL Server — Using ROW_NUMBER + CTE</div>
+<pre>WITH RankedEmployees AS (
+    SELECT Name, DeptId, Salary,
+           ROW_NUMBER() OVER (PARTITION BY DeptId ORDER BY Salary DESC) AS Rnk
+    FROM Employee
+)
+SELECT Name, DeptId, Salary
+FROM RankedEmployees
+WHERE Rnk &lt;= 2;</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span>Problem 11-la seen "ranking within group" logic-э — <code>PARTITION BY DeptId</code> vечு ovvoru department-ku separate-a rank pannிட்டு, <code>WHERE Rnk &lt;= 2</code> vечு top 2 mattum filter pannрோম். "Top N per group" — idhу romba common real-world pattern (top selling products per category, top scorers per class), interview la definitely varும்.</div>
+</div>
+
+<!-- S18 -->
+<div class="problem" id="s18">
+  <div class="p-header"><span class="p-num">18</span><span class="p-title">Count NULL Values in a Column</span></div>
+  <div class="p-statement">ManagerId column-la evлो NULL values irukку nу count pannанும்.</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL</div>
+<pre>SELECT COUNT(*) AS NullManagerCount
+FROM Employee
+WHERE ManagerId IS NULL;
+
+-- Ella columns-la evlo NULL irukku nu oru query-la
+SELECT
+    SUM(CASE WHEN ManagerId IS NULL THEN 1 ELSE 0 END) AS NullManagerId,
+    SUM(CASE WHEN DeptId IS NULL THEN 1 ELSE 0 END) AS NullDeptId
+FROM Employee;</pre>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span>Simple approach — <code>WHERE column IS NULL</code> vечு <code>COUNT(*)</code>. Multiple columns-oda NULL count oru query-la venum-нா — <code>CASE WHEN column IS NULL THEN 1 ELSE 0 END</code> ah <code>SUM()</code> pannрோм் — idhу "conditional counting" pattern, romba useful trick.</div>
+</div>
+
+<!-- S19 -->
+<div class="problem" id="s19">
+  <div class="p-header"><span class="p-num">19</span><span class="p-title">Split Comma-Separated Values into Rows</span></div>
+  <div class="p-statement">"Chennai,Mumbai,Delhi" nу oru column-la comma-separated ah irukка value-ah, separate rows ah maатранும் (legacy data cleanup-ла romba common problem).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL Server 2016+ — Using STRING_SPLIT</div>
+<pre>SELECT value AS City
+FROM STRING_SPLIT('Chennai,Mumbai,Delhi', ',');</pre>
+
+  <div class="output-box"><span class="olbl">Output</span>Chennai / Mumbai / Delhi — 3 separate rows</div>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>STRING_SPLIT()</code> — SQL Server 2016+ la built-in function, delimiter (comma) vечு string-ай split pannிட்டு, ovvoru piece-ум oru separate row ah return pannும். Legacy systems-la (WinForms/older .NET apps-la mentioned un resume-la), oru column-la multiple values comma-separated ah store pannirукка bad practice-a irukகும் — adha normalize panна idha use pannலாम்.</div>
+</div>
+
+<!-- S20 -->
+<div class="problem" id="s20">
+  <div class="p-header"><span class="p-num">20</span><span class="p-title">Find Employees with Same Salary (Grouped List)</span></div>
+  <div class="p-statement">Same salary vaanguра employees-ai, salary-vaаri group pannі, ovvoru group-oda employee names comma-separated ah kaатанум் (STRING_AGG use pannі).</div>
+
+  <div class="lang-label"><span class="dot"></span>SQL Server 2017+</div>
+<pre>SELECT Salary, STRING_AGG(Name, ', ') AS Employees, COUNT(*) AS EmployeeCount
+FROM Employee
+GROUP BY Salary
+HAVING COUNT(*) &gt; 1;</pre>
+
+  <div class="output-box"><span class="olbl">Sample Output</span>Salary=65000 | Employees="Bala, Chitra" | EmployeeCount=2</div>
+
+  <div class="explain"><span class="lbl">🗣️ Thanglish Logic Explanation</span><code>STRING_AGG()</code> — SQL Server 2017+ la built-in aggregate function, GROUP BY vечу group aana rows-oda oru column-ai, single comma-separated string ah "combine" pannும். Idhу reports build pannрумbodhu romba useful — example: "Idhу department-la irukка ella employees peру oru cell-la kaатанும்" madhiri UI requirements-ku.</div>
+</div>
+
+</div>
+
+<footer>
+  Prepared for MSC Technology (India) Pvt Ltd interview prep — Gurumoorthy M<br>
+  <a href="1_Thanglish_Concepts_and_Resume.html">Concepts + Resume</a> · <a href="2_Frontend_Questions_Thanglish.html">Frontend Q&amp;A</a> · <a href="3_Coding_Problems_CSharp_JS.html">C#/JS Coding Problems</a> · <a href="MSC_Technology_Top100_QA.html">Top 100 Q&amp;A</a>
+</footer>
+
+</body>
+</html>

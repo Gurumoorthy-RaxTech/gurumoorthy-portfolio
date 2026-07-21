@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7-Day Azure Roadmap for .NET Developers | Gurumoorthy</title>
+<style>
+  :root{--accent:#0078D4;--accent-dim:#005a9e;--accent-subtle:rgba(0,120,212,0.10);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.76rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  nav .prog-badge{margin-left:auto;background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:999px;}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(0,120,212,.14) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.6rem,4vw,2.6rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:2.6rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.05rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  p{margin-bottom:.5rem;font-size:.92rem;}
+  a.rlink{color:var(--info);text-decoration:none;border-bottom:1px dashed var(--info);}
+  a.rlink:hover{color:var(--accent);border-color:var(--accent);}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .warn-box{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .day{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.5rem;margin-bottom:1.2rem;border-left:4px solid var(--accent);}
+  .day-head{display:flex;align-items:center;gap:.9rem;margin-bottom:.4rem;flex-wrap:wrap;}
+  .day-num{background:var(--accent);color:#fff;font-weight:900;font-size:1rem;width:2.4rem;height:2.4rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .day-title{font-weight:800;font-size:1.15rem;}
+  .day-sub{color:var(--muted);font-size:.82rem;margin-left:auto;}
+  .day-goal{color:var(--info);font-size:.88rem;font-style:italic;margin:.5rem 0 .8rem;}
+  .day-bridge{background:var(--accent-subtle);border:1px solid var(--accent-dim);border-radius:8px;padding:.6rem .9rem;font-size:.83rem;margin-bottom:.8rem;}
+  .res-list{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.9rem;}
+  .res-chip{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.35rem .7rem;font-size:.78rem;color:var(--info);text-decoration:none;}
+  .res-chip:hover{border-color:var(--accent);color:var(--accent);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:flex-start;gap:.55rem;font-size:.85rem;cursor:pointer;padding:.3rem .4rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;margin-top:.15rem;flex-shrink:0;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  .day-progress{height:6px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-top:1rem;}
+  .day-progress-fill{height:100%;background:var(--accent);width:0%;transition:width .3s;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.9rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .resume-bullet{background:var(--card2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:.7rem 1rem;margin:.5rem 0;font-size:.87rem;}
+  .completion{text-align:center;padding:2.5rem;background:radial-gradient(ellipse at center,rgba(0,120,212,.2),transparent 70%);border:2px solid var(--accent);border-radius:16px;margin:2rem 0;}
+  .completion h2{color:var(--accent);font-size:2rem;border:none;}
+  .badge{display:inline-block;background:var(--accent);color:#fff;font-size:1.3rem;font-weight:900;padding:.8rem 2rem;border-radius:50px;margin:1rem 0;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">AZURE</span>
+  <a href="#overview">Overview</a><a href="#day1">Day 1</a><a href="#day2">Day 2</a><a href="#day3">Day 3</a>
+  <a href="#day4">Day 4</a><a href="#day5">Day 5</a><a href="#day6">Day 6</a><a href="#day7">Day 7</a>
+  <a href="#scenarios">Scenarios</a><a href="#quiz">Quiz</a><a href="#resume">Resume</a>
+  <span class="prog-badge" id="progBadge">0/0 done</span>
+</nav>
+<div class="hero">
+  <h1>7-Day Azure Roadmap — for a .NET Developer</h1>
+  <p>Built around what you already know (ASP.NET Core, Docker, SQL Server, MongoDB, JWT, Ocelot) — mapped straight onto its Azure equivalent, so you learn Azure by relating it to code you've already shipped.</p>
+  <div class="tags">
+    <span class="tag">AZ-900 Fundamentals</span><span class="tag">Hands-on Deployment</span><span class="tag">Interview Ready in 7 Days</span>
+    <span class="tag" style="background:rgba(0,120,212,.2);border-color:#0078D4;color:#4fc3f7;">Azure Blue #0078D4</span>
+  </div>
+</div>
+<main>
+
+<section id="overview">
+  <h2>🗺️ Overview — Your Skills Mapped to Azure</h2>
+  <p>You already have 3+ years of production experience with the building blocks Azure just renames and manages for you. This week is mostly translation, not new concepts.</p>
+  <table>
+    <tr><th>What you already do</th><th>Azure equivalent</th><th>Covered on</th></tr>
+    <tr><td>ASP.NET Core Web API on IIS / on-prem</td><td>Azure App Service (Web App / Web App for Containers)</td><td>Day 2</td></tr>
+    <tr><td>Docker & Docker Compose microservices</td><td>Azure Container Registry + Azure Container Apps / AKS</td><td>Day 2 &amp; 5</td></tr>
+    <tr><td>SQL Server with Dapper / EF Core</td><td>Azure SQL Database</td><td>Day 3</td></tr>
+    <tr><td>MongoDB for unstructured data</td><td>Azure Cosmos DB (API for MongoDB)</td><td>Day 3</td></tr>
+    <tr><td>JWT auth + RBAC you built by hand</td><td>Microsoft Entra ID (Azure AD) App Registrations + Managed Identity</td><td>Day 4</td></tr>
+    <tr><td>Hardcoded / appsettings connection strings</td><td>Azure Key Vault + Managed Identity</td><td>Day 4</td></tr>
+    <tr><td>Ocelot API Gateway (routing, rate limiting)</td><td>Azure API Management</td><td>Day 5</td></tr>
+    <tr><td>Centralized logging & exception middleware</td><td>Application Insights + Azure Monitor + Log Analytics</td><td>Day 6</td></tr>
+    <tr><td>TCP socket / SMS gateway async integration</td><td>Azure Service Bus / Event Grid (pub-sub, decoupling)</td><td>Day 6</td></tr>
+    <tr><td>Manual deployment</td><td>Azure DevOps Pipelines / GitHub Actions CI-CD</td><td>Day 6</td></tr>
+  </table>
+  <div class="warn-box"><strong>Interview sooner than 7 days?</strong> Compress to Day 1 → Day 2 → Day 4 → Day 7. Those four give you the AZ-900 vocabulary, one real deployment you can screen-share, the security story (Key Vault/Managed Identity), and rehearsed talking points — enough to survive "tell me about your Azure experience" credibly.</div>
+  <div class="good-box"><strong>Your resume already lists</strong> "Microsoft Certified: Azure Fundamentals (AZ-900) – In Progress." This week's Day 7 practice test is designed to let you either book the real exam immediately after, or — at minimum — speak about every AZ-900 topic without hesitation even before the certificate lands.</div>
+</section>
+
+<section id="day1">
+  <div class="day">
+    <div class="day-head"><div class="day-num">1</div><div class="day-title">Cloud & Azure Fundamentals (AZ-900 Core)</div><div class="day-sub">Mon · 3 hrs</div></div>
+    <p class="day-goal">Goal: speak fluently about regions, resource groups, subscriptions, IaaS/PaaS/SaaS, and pricing — the vocabulary every other day depends on.</p>
+    <div class="day-bridge">🔗 Bridge from what you know: a "Resource Group" is basically the Azure version of "everything for one deployment lives in one folder" — a logical container for related resources (App Service + SQL DB + Key Vault for one app) that you can manage, bill, and delete together.</div>
+    <div class="res-list">
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts/" target="_blank">📄 MS Learn: Describe Cloud Concepts</a>
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/training/paths/microsoft-azure-fundamentals-describe-azure-architecture-services/" target="_blank">📄 MS Learn: Azure Architecture & Services</a>
+      <a class="res-chip" href="https://azure.microsoft.com/en-us/pricing/calculator/" target="_blank">📄 Azure Pricing Calculator</a>
+    </div>
+    <ul class="cl-list">
+      <li onclick="ck(this)" data-id="d1-1"><input type="checkbox">Create a free Azure account (or use an existing sandbox) — note the $200 credit / 12-month free tier limits</li>
+      <li onclick="ck(this)" data-id="d1-2"><input type="checkbox">Learn IaaS vs PaaS vs SaaS with one example each from your own stack (VM=IaaS, App Service=PaaS, Office 365=SaaS)</li>
+      <li onclick="ck(this)" data-id="d1-3"><input type="checkbox">Learn Region vs Availability Zone vs Resource Group vs Subscription vs Management Group — draw the hierarchy from memory</li>
+      <li onclick="ck(this)" data-id="d1-4"><input type="checkbox">Install Azure CLI, run <code>az login</code>, <code>az group create</code> to make your first resource group from the terminal</li>
+      <li onclick="ck(this)" data-id="d1-5"><input type="checkbox">Read about SLA %, high availability, and disaster recovery — know 99.9% vs 99.95% vs 99.99% differences</li>
+      <li onclick="ck(this)" data-id="d1-6"><input type="checkbox">Skim ARM templates / Bicep — understand "infrastructure as code" as the cloud version of a setup script</li>
+    </ul>
+    <div class="day-progress"><div class="day-progress-fill" id="fill-day1"></div></div>
+  </div>
+</section>
+
+<section id="day2">
+  <div class="day">
+    <div class="day-head"><div class="day-num">2</div><div class="day-title">Compute — Deploy Your Own Web API</div><div class="day-sub">Tue · 4 hrs</div></div>
+    <p class="day-goal">Goal: deploy a real ASP.NET Core Web API to Azure — this single task is the highest-leverage thing you do all week, because you can screen-share it in an interview.</p>
+    <div class="day-bridge">🔗 Bridge: App Service is the managed version of "IIS + a server you patch yourself." Web App for Containers is the managed version of your existing <code>docker-compose up</code> — same image, Azure runs and scales it for you.</div>
+    <div class="res-list">
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/app-service/" target="_blank">📄 Azure App Service Docs</a>
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/container-registry/" target="_blank">📄 Azure Container Registry</a>
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/azure-functions/" target="_blank">📄 Azure Functions Overview</a>
+    </div>
+    <ul class="cl-list">
+      <li onclick="ck(this)" data-id="d2-1"><input type="checkbox">Take one small ASP.NET Core Web API (even a toy CRUD project) and publish it to App Service (F1/Free tier) directly from Visual Studio</li>
+      <li onclick="ck(this)" data-id="d2-2"><input type="checkbox">Push an existing Docker image to Azure Container Registry (<code>az acr build</code>) — reuse a Dockerfile you already have</li>
+      <li onclick="ck(this)" data-id="d2-3"><input type="checkbox">Create a "Web App for Containers" pointing at that ACR image and deploy it</li>
+      <li onclick="ck(this)" data-id="d2-4"><input type="checkbox">Configure App Settings (connection strings, environment variables) — compare to your appsettings.json / launchSettings.json pattern</li>
+      <li onclick="ck(this)" data-id="d2-5"><input type="checkbox">Stream live logs (<code>az webapp log tail</code> or Log Stream in Portal) while hitting an endpoint with Postman</li>
+      <li onclick="ck(this)" data-id="d2-6"><input type="checkbox">Read up on Azure Functions (serverless) — know when you'd pick it over App Service (event-driven, pay-per-execution, short tasks)</li>
+    </ul>
+    <div class="day-progress"><div class="day-progress-fill" id="fill-day2"></div></div>
+  </div>
+</section>
+
+<section id="day3">
+  <div class="day">
+    <div class="day-head"><div class="day-num">3</div><div class="day-title">Data — Azure SQL & Cosmos DB</div><div class="day-sub">Wed · 3.5 hrs</div></div>
+    <p class="day-goal">Goal: map SQL Server/Dapper and MongoDB experience directly onto their managed Azure equivalents — this is where your existing skills transfer almost 1:1.</p>
+    <div class="day-bridge">🔗 Bridge: Azure SQL Database is SQL Server with the OS/patching/backups managed for you — same T-SQL, same Dapper code, just a different connection string. Cosmos DB's "API for MongoDB" accepts your existing MongoDB driver code almost unchanged.</div>
+    <div class="res-list">
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/azure-sql/database/" target="_blank">📄 Azure SQL Database Docs</a>
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/" target="_blank">📄 Cosmos DB — API for MongoDB</a>
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/storage/" target="_blank">📄 Azure Storage (Blob/Table/Queue)</a>
+    </div>
+    <ul class="cl-list">
+      <li onclick="ck(this)" data-id="d3-1"><input type="checkbox">Provision an Azure SQL Database (Basic/Serverless tier), set the firewall rule to allow your IP</li>
+      <li onclick="ck(this)" data-id="d3-2"><input type="checkbox">Connect via SSMS and via your existing Dapper repository code — just swap the connection string</li>
+      <li onclick="ck(this)" data-id="d3-3"><input type="checkbox">Learn Azure SQL Database vs SQL Managed Instance vs SQL on a VM — know when you'd pick each (this is a very common interview question)</li>
+      <li onclick="ck(this)" data-id="d3-4"><input type="checkbox">Create a Cosmos DB account with the "API for MongoDB," connect it with your existing MongoDB.Driver C# code</li>
+      <li onclick="ck(this)" data-id="d3-5"><input type="checkbox">Skim Blob Storage (files/reports — your PDF/Excel exports), Table Storage (key-value/NoSQL), and Queue Storage (simple async messaging)</li>
+      <li onclick="ck(this)" data-id="d3-6"><input type="checkbox">Provision an Azure Cache for Redis instance and explain how it'd replace your in-memory caching for a multi-instance App Service</li>
+    </ul>
+    <div class="day-progress"><div class="day-progress-fill" id="fill-day3"></div></div>
+  </div>
+</section>
+
+<section id="day4">
+  <div class="day">
+    <div class="day-head"><div class="day-num">4</div><div class="day-title">Security & Identity</div><div class="day-sub">Thu · 3 hrs</div></div>
+    <p class="day-goal">Goal: turn "3 years of hand-rolled JWT + RBAC" into "I know how Azure does identity and secrets management" — this is the story that makes an interviewer believe you're Azure-ready.</p>
+    <div class="day-bridge">🔗 Bridge: Microsoft Entra ID (formerly Azure AD) is a managed identity provider — instead of you issuing/validating JWTs yourself, Entra ID issues tokens and your API just validates them. Managed Identity + Key Vault replaces every hardcoded connection string/API key you've ever written.</div>
+    <div class="res-list">
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/entra/identity-platform/" target="_blank">📄 Microsoft Entra ID / Identity Platform</a>
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/key-vault/" target="_blank">📄 Azure Key Vault Docs</a>
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview" target="_blank">📄 Managed Identities Overview</a>
+    </div>
+    <ul class="cl-list">
+      <li onclick="ck(this)" data-id="d4-1"><input type="checkbox">Register an app in Microsoft Entra ID (App Registration) and inspect the client ID / tenant ID / issued token</li>
+      <li onclick="ck(this)" data-id="d4-2"><input type="checkbox">Learn RBAC — built-in roles (Owner, Contributor, Reader) vs your own custom app roles/claims</li>
+      <li onclick="ck(this)" data-id="d4-3"><input type="checkbox">Create a Key Vault, store a secret (e.g. your Day 3 SQL connection string) in it instead of appsettings.json</li>
+      <li onclick="ck(this)" data-id="d4-4"><input type="checkbox">Enable System-Assigned Managed Identity on your Day 2 App Service, grant it "Get Secret" access on the Key Vault, and read the secret at runtime with zero credentials in code</li>
+      <li onclick="ck(this)" data-id="d4-5"><input type="checkbox">Learn Managed Identity: System-assigned vs User-assigned — know the difference and when you'd pick each</li>
+      <li onclick="ck(this)" data-id="d4-6"><input type="checkbox">Skim VNet, Network Security Groups, and Private Endpoints — just enough to explain "how you'd lock a DB down to only your app"</li>
+    </ul>
+    <div class="day-progress"><div class="day-progress-fill" id="fill-day4"></div></div>
+  </div>
+</section>
+
+<section id="day5">
+  <div class="day">
+    <div class="day-head"><div class="day-num">5</div><div class="day-title">Containers, Microservices & API Management</div><div class="day-sub">Fri · 4 hrs</div></div>
+    <p class="day-goal">Goal: this is your strongest bridge day — you already ship Dockerized microservices behind Ocelot, so show how that becomes Azure's managed equivalents.</p>
+    <div class="day-bridge">🔗 Bridge: Azure API Management is Ocelot-as-a-managed-service — routing, rate limiting, and policies through a Portal/config instead of a JSON file you own. Azure Container Apps is "Docker Compose that Azure scales and load-balances for you," without needing to fully learn Kubernetes.</div>
+    <div class="res-list">
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/container-apps/" target="_blank">📄 Azure Container Apps Docs</a>
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/aks/" target="_blank">📄 Azure Kubernetes Service (AKS)</a>
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/api-management/" target="_blank">📄 Azure API Management Docs</a>
+    </div>
+    <ul class="cl-list">
+      <li onclick="ck(this)" data-id="d5-1"><input type="checkbox">Learn App Service (Containers) vs Container Apps vs AKS — know the decision tree: simple single container → App Service; multiple microservices needing scale-to-zero/Dapr → Container Apps; full orchestration control → AKS</li>
+      <li onclick="ck(this)" data-id="d5-2"><input type="checkbox">Deploy 2 of your existing Dockerized microservices to Azure Container Apps from the same ACR you used on Day 2</li>
+      <li onclick="ck(this)" data-id="d5-3"><input type="checkbox">Create an Azure API Management instance in front of those two services</li>
+      <li onclick="ck(this)" data-id="d5-4"><input type="checkbox">Configure one routing rule + one rate-limit policy in APIM — compare it line-by-line to your Ocelot ocelot.json config</li>
+      <li onclick="ck(this)" data-id="d5-5"><input type="checkbox">Read about AKS at a conceptual level: pods, nodes, deployments, services — enough to answer "have you heard of Kubernetes on Azure?" credibly</li>
+    </ul>
+    <div class="day-progress"><div class="day-progress-fill" id="fill-day5"></div></div>
+  </div>
+</section>
+
+<section id="day6">
+  <div class="day">
+    <div class="day-head"><div class="day-num">6</div><div class="day-title">DevOps, Monitoring & Messaging</div><div class="day-sub">Sat · 3.5 hrs</div></div>
+    <p class="day-goal">Goal: close the loop from code to production — CI/CD, observability, and async messaging are asked in almost every Azure interview.</p>
+    <div class="day-bridge">🔗 Bridge: Application Insights is your centralized logging/exception middleware, upgraded — automatic distributed tracing across microservices instead of hand-written correlation IDs. Service Bus is the managed, reliable version of the TCP socket / SMS gateway async messaging you already built for the bank locker system.</div>
+    <div class="res-list">
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/devops/pipelines/" target="_blank">📄 Azure Pipelines Docs</a>
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview" target="_blank">📄 Application Insights Overview</a>
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/azure/service-bus-messaging/" target="_blank">📄 Azure Service Bus Docs</a>
+    </div>
+    <ul class="cl-list">
+      <li onclick="ck(this)" data-id="d6-1"><input type="checkbox">Build a GitHub Actions (or Azure Pipelines) YAML workflow that builds and deploys your Day 2 Web API on every push to main</li>
+      <li onclick="ck(this)" data-id="d6-2"><input type="checkbox">Wire Application Insights into that Web API and generate one real trace + one exception, then view it in the Portal</li>
+      <li onclick="ck(this)" data-id="d6-3"><input type="checkbox">Explore Log Analytics / KQL basics — write one simple query to filter requests by status code</li>
+      <li onclick="ck(this)" data-id="d6-4"><input type="checkbox">Create a Service Bus queue, send a message from a small .NET console app, receive it in another — compare to your TCP socket locker flow</li>
+      <li onclick="ck(this)" data-id="d6-5"><input type="checkbox">Skim Event Grid vs Event Hub vs Service Bus — know the one-line distinction (reactive events / high-throughput streaming / reliable queued messaging)</li>
+      <li onclick="ck(this)" data-id="d6-6"><input type="checkbox">Set one Azure Monitor alert (e.g. CPU &gt; 80% on your App Service) so you can describe alerting end-to-end</li>
+    </ul>
+    <div class="day-progress"><div class="day-progress-fill" id="fill-day6"></div></div>
+  </div>
+</section>
+
+<section id="day7">
+  <div class="day">
+    <div class="day-head"><div class="day-num">7</div><div class="day-title">Mock Interview, AZ-900 Practice & Resume Update</div><div class="day-sub">Sun · 3-4 hrs</div></div>
+    <p class="day-goal">Goal: convert the week into an actual resume line and interview-ready talking points — this is the day that turns learning into an offer.</p>
+    <div class="res-list">
+      <a class="res-chip" href="https://learn.microsoft.com/en-us/credentials/certifications/exams/az-900/practice-assessments-for-microsoft-certifications" target="_blank">📄 Free Microsoft Practice Assessment (AZ-900)</a>
+    </div>
+    <ul class="cl-list">
+      <li onclick="ck(this)" data-id="d7-1"><input type="checkbox">Take the free Microsoft AZ-900 practice assessment — target 85%+, review every miss</li>
+      <li onclick="ck(this)" data-id="d7-2"><input type="checkbox">Answer every question in the Scenarios and Quiz sections below out loud, not silently in your head</li>
+      <li onclick="ck(this)" data-id="d7-3"><input type="checkbox">Update your resume using the Resume Tips section below — add the bullets and skills that are now actually true</li>
+      <li onclick="ck(this)" data-id="d7-4"><input type="checkbox">Prepare 2 STAR stories: (1) deploying Zen Campus components to Azure this week, (2) securing secrets with Key Vault + Managed Identity</li>
+      <li onclick="ck(this)" data-id="d7-5"><input type="checkbox">If ready, book the real AZ-900 exam (or set a target date within the next 2 weeks) — cheap, ~45 min, and turns "in progress" into a real credential</li>
+    </ul>
+    <div class="day-progress"><div class="day-progress-fill" id="fill-day7"></div></div>
+  </div>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">Azure SQL Database vs SQL Managed Instance vs SQL on a VM — when would you pick each?</span><span class="st">Data</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Azure SQL Database: fully managed PaaS, single-database or elastic pool, no OS access, fastest to provision — pick this for a new cloud-native app like Zen Campus where you don't need SQL Agent, cross-database queries, or OS-level access. SQL Managed Instance: near-100% SQL Server compatibility (SQL Agent, cross-DB queries, linked servers) with less management than a VM — pick this when migrating a legacy on-prem app that relies on instance-level features. SQL on a VM: full IaaS, you patch the OS and SQL Server yourself — pick this only when you need full control (specific SQL Server version, custom OS configuration, or software that must run alongside SQL Server).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Your API currently reads a SQL connection string from appsettings.json. How would you secure it in Azure?</span><span class="st">Security</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Move the connection string into Azure Key Vault as a secret. Enable System-Assigned Managed Identity on the App Service. Grant that identity "Get" permission on the Key Vault secret (via access policy or RBAC). Reference the secret in App Settings using a Key Vault reference (<code>@Microsoft.KeyVault(SecretUri=...)</code>), or fetch it at startup with Azure.Identity + Azure.Security.KeyVault.Secrets. Result: zero credentials in source control or config files, and secrets can be rotated without redeploying code.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">You have 6 Dockerized microservices behind Ocelot on-prem. How do you move this to Azure with minimal re-architecture?</span><span class="st">Compute</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Push each service's image to Azure Container Registry. Deploy each as an Azure Container App (or Web App for Containers if simpler) — this gives managed scaling and HTTPS without learning full Kubernetes. Replace Ocelot with Azure API Management in front of the services for routing, rate limiting, and auth policies — or keep Ocelot running as one of the containers if you want to migrate incrementally rather than rewrite the gateway config immediately. Either way, the Docker images themselves barely change; it's the hosting and gateway layer that moves.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What's the difference between Azure App Service, Azure Container Apps, and AKS — and how do you choose?</span><span class="st">Compute</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>App Service: simplest, best for a single web app or API, PaaS — Azure fully manages the runtime, minimal config. Container Apps: built on Kubernetes under the hood but abstracts it away — good for multiple microservices needing scale-to-zero, revisions, and Dapr-style service-to-service calls, without managing a cluster. AKS: full Kubernetes control — pick it when you need custom scheduling, service meshes, complex networking, or your team already knows Kubernetes operations. Rule of thumb: start with App Service or Container Apps; only reach for AKS when you have a concrete reason.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">How would you migrate your MongoDB collections to Azure with the least code change?</span><span class="st">Data</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Use Azure Cosmos DB with the API for MongoDB (formerly "Mongo API"). It speaks the MongoDB wire protocol, so your existing MongoDB.Driver C# code and connection string pattern work with only the connection string swapped. You get Cosmos DB's global distribution, automatic indexing, and SLA-backed throughput without rewriting queries. The trade-off: some advanced native MongoDB features/aggregation operators may have partial compatibility, so check the compatibility docs for anything unusual you use.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">Explain the difference between horizontal and vertical scaling in Azure App Service.</span><span class="st">Fundamentals</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Vertical scaling ("scale up"): move to a bigger App Service Plan tier — more CPU/RAM per instance, same number of instances. Good for a single-instance bottleneck. Horizontal scaling ("scale out"): increase the instance count — more copies of the same app running behind the load balancer, handling more concurrent requests. Can be manual or autoscale-based on CPU/memory/queue-length rules. For a stateless ASP.NET Core Web API (no in-process session state), horizontal scaling is usually the better first move because it also improves availability.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">How would you replace your hand-rolled JWT issuing/validation with Microsoft Entra ID?</span><span class="st">Security</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Register the API and client app in Microsoft Entra ID (App Registrations). Entra ID issues the JWT access tokens instead of your own code — it handles login, MFA, token refresh, and revocation. Your ASP.NET Core API just validates incoming tokens using the standard JWT Bearer middleware configured with Entra ID's authority/issuer and audience — <code>AddMicrosoftIdentityWebApi()</code> from Microsoft.Identity.Web does most of this. Role-based authorization then maps Entra ID app roles or groups to your existing [Authorize(Roles="...")] attributes with little change to controller code.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">What's the difference between Service Bus, Event Grid, and Event Hub?</span><span class="st">Messaging</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Service Bus: reliable, ordered, transactional message queuing/pub-sub between services — closest to what you'd want for "send this fee-payment confirmation, guarantee it's processed exactly once." Event Grid: lightweight, reactive event routing (e.g. "a blob was uploaded," "a resource was created") — near-real-time, fire-and-forget notifications to many subscribers. Event Hub: high-throughput streaming ingestion for large volumes of telemetry/log data (think IoT locker sensor data at scale), built for analytics pipelines, not per-message guaranteed processing. For your bank-locker TCP/SMS flow, Service Bus is the closest match.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">What is a Managed Identity and why is it better than a service principal with a stored secret?</span><span class="st">Security</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>A Managed Identity is an identity Azure automatically creates and manages for a resource (like an App Service), with no credentials for you to store, rotate, or leak. System-assigned: tied to the resource's lifecycle, deleted when the resource is deleted, one-to-one. User-assigned: a standalone identity you create once and attach to multiple resources, useful when several App Services need the same permissions. Compare to a manually created service principal with a client secret — you'd have to store that secret somewhere (defeating the purpose) and remember to rotate it. Managed Identity removes that entire class of risk.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">You have 3 years of .NET experience but limited hands-on Azure. How do you answer "what's your Azure experience?" honestly?</span><span class="st">Behavioral</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Be honest about depth but concrete about what you've done: "I've been deploying and securing ASP.NET Core microservices — App Service and Container Apps for compute, Azure SQL and Cosmos DB for data, Key Vault with Managed Identity for secrets, and Application Insights for monitoring. My production experience is with the on-prem equivalents of all of these — Docker, SQL Server, MongoDB, JWT auth — so the concepts aren't new, I've been applying them on Azure specifically." Then, if applicable: "I'm finishing my AZ-900 certification this week." This is credible precisely because it's honest and specific, not inflated.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+
+  <div class="qc"><div class="qq">1. Which Azure service is the closest managed equivalent to your Ocelot API Gateway?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Traffic Manager does DNS-level routing across regions, not per-request policy-based routing like Ocelot.')">Azure Traffic Manager</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Azure API Management provides routing, rate limiting, authentication policies, and request/response transformation — the same job Ocelot does, but as a managed service with a Portal-driven config.')">Azure API Management</button>
+    <button class="qb" onclick="ans(this,'wrong','Load Balancer works at the network layer (L4), not the HTTP-routing/policy layer Ocelot operates at.')">Azure Load Balancer</button>
+    <button class="qb" onclick="ans(this,'wrong','Front Door is a global CDN/entry point — closer, but APIM is the direct policy-and-routing equivalent of Ocelot.')">Azure Front Door</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. Which storage type would you use for the PDF/Excel reports your app generates?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Table Storage is for structured NoSQL key-value data, not binary files.')">Table Storage</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Blob Storage is built for unstructured binary data — PDFs, Excel files, images, backups — with tiers (Hot/Cool/Archive) for cost optimization.')">Blob Storage</button>
+    <button class="qb" onclick="ans(this,'wrong','Queue Storage holds small messages for async processing, not files.')">Queue Storage</button>
+    <button class="qb" onclick="ans(this,'wrong','Azure SQL Database could store file bytes but is the wrong tool — expensive and not designed for large binary blobs.')">Azure SQL Database</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. What does a System-Assigned Managed Identity's lifecycle depend on?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','That describes a user-assigned identity, which is independent and reusable.')">It's created once and shared across many resources</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! System-assigned identity is tied 1:1 to the resource — created when the resource is created, deleted when the resource is deleted.')">It's tied to the lifecycle of the single resource it's enabled on</button>
+    <button class="qb" onclick="ans(this,'wrong','Managed Identity requires no client secret at all — that\'s the entire point of it.')">It requires a manually rotated client secret</button>
+    <button class="qb" onclick="ans(this,'wrong','It can be scoped with RBAC to as little as one Key Vault secret — it isn\'t automatically subscription-wide.')">It automatically has Owner rights on the whole subscription</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. Your App Service needs to scale to handle 10x traffic during admission season. What's the first thing to try for a stateless Web API?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Vertical scaling helps, but for a stateless API, scaling out first improves both capacity and availability.')">Move to a bigger VM-based App Service Plan tier only</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! For a stateless API, scale out (horizontal scaling) — add more instances behind the load balancer, ideally via autoscale rules on CPU or request queue length.')">Configure autoscale to add more instances (scale out)</button>
+    <button class="qb" onclick="ans(this,'wrong','Manually restarting doesn\'t add capacity — it just resets the existing single instance.')">Manually restart the App Service before peak hours</button>
+    <button class="qb" onclick="ans(this,'wrong','Moving to a VM would mean managing the OS yourself — the opposite direction from what App Service already gives you.')">Migrate off App Service to a raw VM</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">5. Which best describes Azure's shared responsibility model for a PaaS service like App Service?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','That\'s the IaaS model (like a VM) — App Service is PaaS, so Microsoft manages the OS/runtime patching too.')">You manage the OS patching, Microsoft manages only the datacenter</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! On PaaS, Microsoft manages the OS, runtime, and physical infrastructure — you\'re responsible for your app code, data, and access configuration.')">Microsoft manages the OS/runtime/infrastructure; you manage your app code, data, and identity/access config</button>
+    <button class="qb" onclick="ans(this,'wrong','SaaS (e.g. Office 365) is where Microsoft manages almost everything — App Service (PaaS) still leaves your code and data to you.')">Microsoft manages everything including your application code</button>
+    <button class="qb" onclick="ans(this,'wrong','You never manage the physical datacenter yourself in any Azure service tier.')">You are responsible for the physical datacenter security</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">6. Which Azure service should you wire into your Web API to replace hand-written centralized logging middleware?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Azure Monitor is the umbrella platform; Application Insights is the specific APM component you\'d add to the app.')">Azure Monitor Alerts only</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Application Insights gives you automatic request tracing, exception capture, dependency tracking, and distributed tracing across microservices — an upgrade on hand-rolled middleware.')">Application Insights</button>
+    <button class="qb" onclick="ans(this,'wrong','Key Vault is for secrets management, unrelated to logging/telemetry.')">Azure Key Vault</button>
+    <button class="qb" onclick="ans(this,'wrong','Traffic Manager does DNS routing across regions, not application telemetry.')">Azure Traffic Manager</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section id="resume">
+  <h2>📝 Resume Tips — After This Week</h2>
+  <p>Only add a bullet once you've actually done the hands-on task — every line below maps to a Day 1-6 exercise so it's defensible if an interviewer asks a follow-up question.</p>
+
+  <h3>Skills line to add</h3>
+  <div class="resume-bullet">Azure App Service · Azure Container Apps · Azure SQL Database · Azure Cosmos DB (MongoDB API) · Azure Key Vault · Microsoft Entra ID · Azure API Management · Application Insights · Azure DevOps / GitHub Actions CI-CD</div>
+
+  <h3>Experience bullets (add under RAX Tech International once true)</h3>
+  <div class="resume-bullet">Deployed and configured ASP.NET Core Web API microservices to Azure App Service / Azure Container Apps, with images built and pushed through Azure Container Registry.</div>
+  <div class="resume-bullet">Eliminated hardcoded secrets by migrating connection strings and API keys to Azure Key Vault, accessed via System-Assigned Managed Identity — zero credentials in source control.</div>
+  <div class="resume-bullet">Set up CI/CD pipelines in GitHub Actions / Azure Pipelines for automated build and deployment on every push, reducing manual release effort.</div>
+  <div class="resume-bullet">Instrumented microservices with Application Insights for distributed tracing and exception monitoring, reducing time-to-diagnose production issues.</div>
+  <div class="resume-bullet">Evaluated and prototyped Azure API Management as a managed alternative to Ocelot API Gateway for centralized routing, rate limiting, and request policies.</div>
+
+  <h3>Certifications line</h3>
+  <div class="resume-bullet">Microsoft Certified: Azure Fundamentals (AZ-900) — <em>update from "In Progress" to the pass date once you sit the exam on Day 7</em></div>
+
+  <div class="warn-box"><strong>Don't overclaim.</strong> "Deployed to Azure App Service" after Day 2's hands-on task is honest. "Designed enterprise Azure cloud architecture" after one week is not — and it's the fastest way to lose credibility three questions into a technical interview. Scope every bullet to what you can defend live.</div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)" data-id="m-1"><input type="checkbox">I can explain IaaS vs PaaS vs SaaS with an example from my own stack</li>
+    <li onclick="ck(this)" data-id="m-2"><input type="checkbox">I've deployed a real ASP.NET Core Web API to Azure App Service and can screen-share it</li>
+    <li onclick="ck(this)" data-id="m-3"><input type="checkbox">I've pushed a Docker image to Azure Container Registry and run it as a container app</li>
+    <li onclick="ck(this)" data-id="m-4"><input type="checkbox">I can explain when to use Azure SQL Database vs Managed Instance vs SQL on a VM</li>
+    <li onclick="ck(this)" data-id="m-5"><input type="checkbox">I've connected to Cosmos DB using the API for MongoDB with my existing driver code</li>
+    <li onclick="ck(this)" data-id="m-6"><input type="checkbox">I've moved a secret into Key Vault and read it via Managed Identity, with zero credentials in code</li>
+    <li onclick="ck(this)" data-id="m-7"><input type="checkbox">I can compare App Service vs Container Apps vs AKS and justify a choice</li>
+    <li onclick="ck(this)" data-id="m-8"><input type="checkbox">I've set up one CI/CD pipeline that builds and deploys on push</li>
+    <li onclick="ck(this)" data-id="m-9"><input type="checkbox">I've wired Application Insights into an app and viewed a real trace</li>
+    <li onclick="ck(this)" data-id="m-10"><input type="checkbox">I've taken the AZ-900 practice assessment and scored 85%+</li>
+  </ul>
+</section>
+
+<div class="completion">
+  <h2>🎉 Ready to Talk Azure</h2>
+  <div class="badge">7 DAYS · AZ-900 + HANDS-ON ✓</div>
+  <p style="color:var(--muted);margin-top:1rem;font-size:.95rem;">Cloud Fundamentals → App Service Deployment → Data (SQL/Cosmos) → Security (Entra ID/Key Vault) → Containers/APIM → DevOps/Monitoring → Mock Interview</p>
+  <p style="color:var(--accent);margin-top:.5rem;font-weight:700;">Every service above maps to something you've already shipped in production. Say that in the interview.</p>
+</div>
+
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">7-Day Azure Roadmap — check items off daily, progress saves in this browser automatically</p>
+  <p>Accent: Azure Blue #0078D4 · Built to bridge your ASP.NET Core / Docker / SQL Server / MongoDB / JWT experience onto Azure</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+
+  const STORAGE_KEY='azure-roadmap-progress-v1';
+  const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const allBoxes = Array.from(document.querySelectorAll('.cl-list li[data-id]'));
+
+  function dayKeyOf(id){ return id.split('-')[0]; }
+
+  function updateFills(){
+    const days = {};
+    allBoxes.forEach(li=>{
+      const d = dayKeyOf(li.dataset.id);
+      days[d] = days[d] || {done:0, total:0};
+      days[d].total++;
+      if(state[li.dataset.id]) days[d].done++;
+    });
+    Object.keys(days).forEach(d=>{
+      const el = document.getElementById('fill-'+d);
+      if(el) el.style.width = (days[d].done/days[d].total*100)+'%';
+    });
+    const doneCount = Object.values(state).filter(Boolean).length;
+    document.getElementById('progBadge').textContent = doneCount+'/'+allBoxes.length+' done';
+  }
+
+  function applyState(){
+    allBoxes.forEach(li=>{
+      const cb = li.querySelector('input');
+      const on = !!state[li.dataset.id];
+      cb.checked = on;
+      li.classList.toggle('done', on);
+    });
+    updateFills();
+  }
+
+  function ck(li){
+    const cb = li.querySelector('input');
+    const id = li.dataset.id;
+    if(!id) return;
+    state[id] = !state[id];
+    cb.checked = state[id];
+    li.classList.toggle('done', state[id]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    updateFills();
+  }
+
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+
+  applyState();
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+@page
+@model DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Dashboard</h2>
+    <div class="d-flex align-items-center gap-3">
+        <span class="text-muted">Signed in as <strong>@Model.Username</strong></span>
+        <form method="post" asp-page-handler="Logout">
+            <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+        </form>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-bg-primary shadow-sm">
+            <div class="card-body">
+                <div class="fs-2 fw-bold">@Model.Employees.Count</div>
+                <div>Total Employees</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-success shadow-sm">
+            <div class="card-body">
+                <div class="fs-2 fw-bold">@Model.Departments.Count</div>
+                <div>Total Departments</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-dark shadow-sm">
+            <div class="card-body">
+                <div class="fs-2 fw-bold">@Model.TotalPayroll.ToString("C0")</div>
+                <div>Total Monthly Salary</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header">Employees</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th class="text-end">Salary</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (Model.Employees.Count == 0)
+                    {
+                        <tr><td colspan="5" class="text-center text-muted py-3">No employees yet.</td></tr>
+                    }
+                    else
+                    {
+                        @foreach (var e in Model.Employees)
+                        {
+                            <tr>
+                                <td>@e.EmployeeId</td>
+                                <td>@e.FirstName @e.LastName</td>
+                                <td>@e.Email</td>
+                                <td><span class="badge text-bg-info">@e.DepartmentName</span></td>
+                                <td class="text-end">@e.Salary.ToString("C0")</td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header">Departments</div>
+            <ul class="list-group list-group-flush">
+            @if (Model.Departments.Count == 0)
+            {
+                <li class="list-group-item text-muted">No departments yet.</li>
+            }
+            else
+            {
+                @foreach (var d in Model.Departments)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>@d.Name</span>
+                        <span class="text-muted">@d.Location</span>
+                    </li>
+                }
+            }
+            </ul>
+        </div>
+    </div>
+</div>

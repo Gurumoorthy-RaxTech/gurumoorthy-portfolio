@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 12: WPF — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.realproj{background:#001a2e;border-left:3px solid #3b82f6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.88em;color:#bfdbfe}
+.realproj .lbl{color:#60a5fa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.realproj.honest{border-left-color:#f59e0b;background:#1a1100}
+.realproj.honest .lbl{color:#fbbf24}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox table{width:100%;border-collapse:collapse;font-size:0.85em}
+.cheatbox th,.cheatbox td{padding:6px 10px;border-bottom:1px solid #2a2a5a;text-align:left;color:#e0e0e0}
+.cheatbox th{color:#fbbf24;font-size:0.78em;text-transform:uppercase}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+.cheatbox .warn-line{background:#1a1100;border-left:3px solid #f59e0b;border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:14px;color:#fbbf24;font-size:0.88em;font-weight:600}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 12: WPF</h1>
+  <p>15 Q&amp;A — Thanglish explanation + English answer script + honest positioning + follow-up questions</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html" class="active">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhu romba important — WPF ku neenga resume la escape claim panala, adhu correct thaan, edho fake ah "naan project la WPF use pannen" nu solla vendaam. Idhu oru <b>conceptual prep file</b> — WPF fundamentals, XAML, MVVM ellam puriinjukanum, aana interview la kekumbodhu honest ah "hands-on production WPF illa, aana concept ah nalla theriyum, en WinForms + architecture experience vachu fast ah pick up pannuven" nu confident ah sollanum. Ovvoru item kitta "🎯 Idha eppadi honest ah frame pannanum" nu oru separate box irukku — adha specifically padichu practice pannunga, adhu than un safety net interview la.</p>
+</div>
+
+<div class="toc">
+  <h2>Sections</h2>
+  <div class="toc-grid">
+    <a href="#12A">12A. WPF Fundamentals &amp; XAML (1-8)</a>
+    <a href="#12B">12B. MVVM, Advanced &amp; Honest Positioning (9-15)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 12 Quick-Recall Cheat Sheet</h2>
+  <div class="warn-line">⚠️ Remember: WPF is conceptual knowledge for you, not a shipped project — never claim otherwise, lean on your real WinForms experience instead.</div>
+  <ul>
+    <li><b>1. WPF vs WinForms:</b> XAML-based declarative UI, DirectX retained-mode rendering, vs WinForms' code-heavy GDI+ immediate-mode drawing.</li>
+    <li><b>2. XAML:</b> XML-based markup that maps 1:1 to C# objects — <code>&lt;Button/&gt;</code> tag = <code>new Button()</code> under the hood.</li>
+    <li><b>3. Layout panels:</b> Grid (rows/cols), StackPanel (linear stack), DockPanel (edge-docking), WrapPanel (auto-wrap flow).</li>
+    <li><b>4. Data Binding:</b> <code>{Binding Path}</code> connects UI to a property; <code>INotifyPropertyChanged</code> + <code>ObservableCollection</code> keep UI in sync automatically.</li>
+    <li><b>5. Dependency Properties:</b> special properties with built-in change notification, binding, styling, animation support — plain CLR properties can't do this.</li>
+    <li><b>6. Routed Events:</b> bubbling (child→parent, most common) vs tunneling (parent→child, "Preview" events).</li>
+    <li><b>7. Styles &amp; Templates:</b> Style = set properties in bulk; ControlTemplate = redefine a control's whole look; DataTemplate = define how data renders.</li>
+    <li><b>8. Resources / ResourceDictionary:</b> centralized, reusable styles/brushes/templates, mergeable across the app for consistent theming.</li>
+    <li><b>9. MVVM:</b> Model (data) / View (XAML) / ViewModel (state + commands) — View never touches code-behind logic, binds to ViewModel instead.</li>
+    <li><b>10. Commands (ICommand):</b> binds a button's "action" to a ViewModel method instead of a code-behind Click handler — RelayCommand/DelegateCommand is the common helper.</li>
+    <li><b>11. IValueConverter:</b> transforms bound data for display (bool→Visibility, DateTime→string) without polluting the ViewModel with UI concerns.</li>
+    <li><b>12. Dispatcher:</b> WPF's UI-thread marshaller — same "only UI thread touches controls" rule as WinForms' InvokeRequired/Invoke, solved via <code>Dispatcher.Invoke</code> or just <code>await</code> back on the UI thread.</li>
+    <li><b>13. WPF vs WinForms choice:</b> WPF for rich/animated/skinnable UI + MVVM testability; WinForms for fast, simple, low-overhead internal tools (like his real locker app).</li>
+    <li><b>14. MVVM toolkits:</b> CommunityToolkit.Mvvm (Microsoft, source generators, modern), Prism (modular, navigation, DI, enterprise apps) — awareness level.</li>
+    <li><b>15. "Do you have WPF experience?":</b> honest script — real WinForms hands-on + strong WPF/MVVM conceptual prep, no fabricated project.</li>
+  </ul>
+</div>
+
+<!-- 12A -->
+<div class="section" id="12A">
+  <div class="section-title"><span class="num">12A</span> WPF Fundamentals &amp; XAML</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. WPF vs WinForms <span class="en">(architecture difference)</span></div>
+    <div class="tng">WinForms la namba UI ah mostly code la thaan build pannுவோம் — <code>Button b = new Button(); b.Location = ...</code> nu C# code la set pannுவோம். WPF la adhu maari illa — UI ah <b>XAML</b> nu oru separate markup file la declarative ah eழுதுவோம், design ah design pannறவங்க separate ah pannலாம், developer logic ah separate ah pannலாம். Rendering side um difference — WinForms GDI+ vechu "immediate mode" la draw pannும் (ovvoru frame ah manually redraw), WPF DirectX vechu "retained mode" la — oru scene graph vachu automatic ah re-render pannும், so animations, transforms, scaling ellam smooth ah varும். Simple ah sonna — WinForms Notepad madhiri basic, WPF oru modern skinnable app madhiri.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>WPF separates UI definition into declarative XAML markup, while WinForms builds UI mostly through imperative C# code. WPF uses DirectX-based retained-mode rendering with a vector graphics engine, so it scales, animates, and skins far more easily than WinForms' GDI+ immediate-mode drawing. That architectural split — markup for structure, code-behind or ViewModel for logic — is also what enables WPF's strong MVVM story.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>I'd say I've worked hands-on with WinForms in production — a locker management console — where I already pushed myself to keep business logic out of the Form class for testability. I've studied WPF's XAML-first, retained-mode architecture in depth conceptually, and I understand exactly why it's a step up for rich, data-driven UI. I haven't shipped a WPF app yet, but the transition wouldn't be starting from zero.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why does WPF use DirectX instead of GDI+? — For hardware-accelerated, resolution-independent vector rendering, so UI scales cleanly and animations stay smooth.</div>
+      <div class="fq"><b>Q:</b> Can you mix WinForms and WPF controls? — Yes, via ElementHost (WPF-in-WinForms) or WindowsFormsHost (WinForms-in-WPF) interop.</div>
+      <div class="fq"><b>Q:</b> Is WPF still relevant in 2026? — Yes for enterprise desktop/LOB apps needing rich UI on Windows; new cross-platform work often leans MAUI, but WPF has huge existing footprint.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. XAML Basics <span class="en">(markup to objects)</span></div>
+    <div class="tng">XAML na "eXtensible Application Markup Language" — namma ஒரு XML madhiri file la UI ah describe pannுவோம். Idhu just "pretty markup" illa — ovvoru XAML tag um actual ah oru C# object ku direct ah map aagும். <code>&lt;Button Content="Save"/&gt;</code> nu eழுதினா, andha behind-the-scenes compiler adha <code>Button b = new Button(); b.Content = "Save";</code> nu convert pannும் (via a generated .g.cs file + BAML). So XAML na "declarative object graph" nu nenachukalam — design ah easy ah edit panna mudiyும், data binding define panna easy ah irukும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>XAML is a declarative XML-based markup language where every element maps directly to a .NET class, and every attribute maps to a property or event on that class. At compile time it's parsed into BAML and combined with a generated partial class, so the tags you write in the designer are literally object instantiation and property-setting under the hood — just expressed declaratively instead of imperatively.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>I understand XAML conceptually well — that it's not "just markup" but compiles down to real object construction, and that's exactly why data binding and templating work so cleanly in it. I haven't built a production XAML tree at scale, but reading and reasoning about a XAML file wouldn't be unfamiliar territory for me — I'd be productive quickly given my C# and UI-event background from WinForms.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What is BAML? — Binary Application Markup Language — the compiled, tokenized form of XAML embedded as a resource in the assembly, parsed faster at runtime than raw XML.</div>
+      <div class="fq"><b>Q:</b> Can you write WPF UI entirely in C# without XAML? — Yes, technically, by constructing the object tree in code — but you lose the designer/markup separation that's WPF's main productivity win.</div>
+      <div class="fq"><b>Q:</b> What connects XAML to code-behind? — The <code>x:Class</code> attribute on the root element ties the XAML-generated partial class to your code-behind .cs file.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. Layout Containers <span class="en">(Grid, StackPanel, DockPanel, WrapPanel)</span></div>
+    <div class="tng">WPF la layout ah panel controls vechu manage pannுவோம் — WinForms la neenga pixel-by-pixel <code>Location</code>/<code>Size</code> set panra madhiri illa, idhu "flow-based" layout. <b>Grid</b> — rows/columns define panni, table madhiri arrange pannுவது, most flexible. <b>StackPanel</b> — items ah oru line la (horizontal illa vertical) stack pannுவது, simple forms ku nalla irukும். <b>DockPanel</b> — children ah edges (Top/Bottom/Left/Right/Fill) la dock pannுவது, classic "toolbar top, statusbar bottom, content fill" layout ku perfect. <b>WrapPanel</b> — items ah oru line la potu, space mudinja next line ku automatic ah wrap aagும் — gallery/tag-cloud madhiri UI ku use pannுவோம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Grid is the most flexible — row and column definitions for table-like layouts. StackPanel arranges children in a single line, horizontal or vertical, good for simple forms. DockPanel docks children to an edge — top, bottom, left, right — with the last child typically filling remaining space, which is a common shell layout for toolbar-plus-content screens. WrapPanel flows children left to right and wraps to a new line when space runs out, useful for tag or thumbnail layouts.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>I haven't built production screens with these panels, but conceptually the mental shift from WinForms' absolute positioning to WPF's flow-based layout makes sense to me — it's actually closer to how I think about responsive web layout in ASP.NET Core views, just applied to desktop. Given a spec, I'd know which panel fits which layout problem without much ramp-up.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you make a Grid responsive? — Use "*" star-sizing and "Auto" for rows/columns instead of fixed pixel widths, so space redistributes on resize.</div>
+      <div class="fq"><b>Q:</b> Can panels be nested? — Yes, freely — e.g. a DockPanel shell containing a Grid form inside its Fill area is very common.</div>
+      <div class="fq"><b>Q:</b> Difference between Grid and StackPanel performance-wise? — Grid does a two-pass measure/arrange and is heavier for very deeply nested layouts; StackPanel is lighter for simple linear content.</div>
+    </div>
+    <pre><code>&lt;Grid&gt;
+  &lt;Grid.RowDefinitions&gt;
+    &lt;RowDefinition Height="Auto"/&gt;
+    &lt;RowDefinition Height="*"/&gt;
+  &lt;/Grid.RowDefinitions&gt;
+  &lt;TextBlock Grid.Row="0" Text="Student Name"/&gt;
+  &lt;TextBox   Grid.Row="1" Text="{Binding StudentName}"/&gt;
+&lt;/Grid&gt;</code></pre>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. Data Binding <span class="en">(Binding, INotifyPropertyChanged, ObservableCollection)</span></div>
+    <div class="tng">WinForms la namba data ah UI la kaatanum na, manually <code>textBox1.Text = student.Name;</code> nu eழுதுவோம் — data change aana UI ah manually update pannanum. WPF la <code>{Binding Path}</code> vechu, control ah directly oru property kூட "link" pannிடலாம் — data change aana automatic ah UI update aagும் (and vice versa, two-way binding na UI change aana data um update aagும்). Idhu work aaganum na, andha class <code>INotifyPropertyChanged</code> interface implement pannanum — property set aagும்bodhu <code>PropertyChanged</code> event raise pannanum, adha WPF binding engine listen pannும். List data ku <code>ObservableCollection&lt;T&gt;</code> use pannுவோம் — item add/remove aanaவுடன் automatic ah UI (ListBox/DataGrid) refresh aagும், namba manually refresh pannத் தேவை இல்லை.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Data binding connects a UI element's property to a source property using {Binding Path}. For it to auto-update the UI, the source class implements INotifyPropertyChanged and raises PropertyChanged whenever a property setter changes the value. For collections, ObservableCollection&lt;T&gt; raises CollectionChanged automatically on add/remove, so a bound ListBox or DataGrid refreshes itself without any manual UI-update code.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>This is one WPF concept I can bridge cleanly from real experience — in my WinForms locker app I manually wrote the "update UI when data changes" logic by calling control updates directly after every data change, which is exactly the boilerplate INotifyPropertyChanged and ObservableCollection eliminate. I haven't wired up live two-way bindings in a shipped app, but I understand precisely what problem they solve because I've solved it the manual way myself.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Difference between OneWay, TwoWay, OneWayToSource binding modes? — OneWay: source→UI only; TwoWay: both directions; OneWayToSource: UI→source only.</div>
+      <div class="fq"><b>Q:</b> What if a class has 20 properties — do you write PropertyChanged manually for each? — Typically use a base class (ObservableObject / BindableBase) with a SetProperty helper, or source generators in CommunityToolkit.Mvvm.</div>
+      <div class="fq"><b>Q:</b> What happens if you bind to a plain List&lt;T&gt; instead of ObservableCollection? — Initial binding works, but add/remove after binding won't auto-refresh the UI since List doesn't raise change notifications.</div>
+    </div>
+    <pre><code>&lt;TextBox Text="{Binding StudentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/&gt;
+
+public class StudentVM : INotifyPropertyChanged {
+    private string _name;
+    public string StudentName {
+        get =&gt; _name;
+        set { _name = value; OnPropertyChanged(nameof(StudentName)); }
+    }
+    public event PropertyChangedEventHandler PropertyChanged;
+    void OnPropertyChanged(string p) =&gt;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
+}</code></pre>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. Dependency Properties <span class="en">(vs plain CLR properties)</span></div>
+    <div class="tng">Normal C# property na, get/set kூட oru private field vachுruppோம் — adhu la binding, styling, animation, default value inheritance ellam free ah kidaikaathu, ovvondrukும் நாம் manual code eழுத vendும். <b>Dependency Property</b> na WPF-oda special property system — <code>DependencyObject</code> base class use panni register pannுவோம். Idhu vachா, automatic ah data binding support pannும், style/trigger la value set panna mudியும், animation apply panna mudியும், parent la irundhu value inherit pannும் (example: FontSize parent la set panninா child automatic ah get pannும்), and memory-efficient ah irukும் (default values ellam per-instance store aagாம், shared ah store aagும்). Athanaala thaan Button.Width, TextBox.Text lam ellam plain property illa, DependencyProperty ah declare pannirukanga.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A Dependency Property is a property registered with WPF's property system via DependencyObject, giving it built-in support for data binding, styling, animation, value inheritance from the visual tree, and change notification — none of which a plain CLR auto-property gets for free. WPF needs this because its entire UI model — templating, triggers, animation, binding — relies on the framework being able to observe and override property values generically, which a plain field-backed property can't support.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>I understand dependency properties at the conceptual level — why WPF needed a richer property system than plain CLR properties to support binding, styling and animation uniformly across every control. I haven't authored a custom DependencyProperty in a shipped app, but I've built custom controls' worth of property/event plumbing in WinForms by hand, so I get the underlying problem it's solving, even without WPF-specific hands-on time.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you declare a custom Dependency Property? — Use <code>DependencyProperty.Register(name, type, ownerType, metadata)</code> and expose a CLR wrapper property that calls GetValue/SetValue.</div>
+      <div class="fq"><b>Q:</b> What's a DependencyObject vs a regular object? — DependencyObject provides the GetValue/SetValue infrastructure and thread affinity that dependency properties need to function.</div>
+      <div class="fq"><b>Q:</b> Difference between Dependency Property and Attached Property? — An attached property is a dependency property usable on any element, not just the class that defines it — e.g. Grid.Row can be set on any child, not just Grid itself.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q6">
+    <div class="term">6. Routed Events <span class="en">(bubbling vs tunneling)</span></div>
+    <div class="tng">Normal C# event na, andha specific control mattum handle pannும். WPF la <b>Routed Events</b> na — event ah visual tree வழியா "route" pannலாம். Rendu types: <b>Bubbling</b> — event source (example oru Button click) la irundhu, parent parent ah mேலே mேலே போய் (Button → StackPanel → Window) event travel aagும் — idhu thaan most common, example <code>Click</code> event. <b>Tunneling</b> — opposite direction, root la irundhu source ku கீழே varும் — idhu "Preview" prefix vechu identify pannலாம், example <code>PreviewMouseDown</code> — root Window la இருந்து start aaகி, andha specific button varை varை pogும். Real use case: parent la ஒரே handler vechு, ella child button clicks ஐயும் ஒரே இடத்தில் catch pannலாம் — bubbling la thaan idhu easy ah possible.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Routed events travel through the visual tree instead of being confined to a single element. Bubbling events, like Click, start at the source element and travel up through its ancestors — so I can attach one handler at a parent Panel or Window and catch clicks from any child button inside it. Tunneling events, prefixed with Preview, travel the opposite direction — from the root down to the source — which lets an ancestor intercept and potentially suppress an event before the target control ever sees it.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>I know routed events conceptually — the bubble-up-vs-tunnel-down model and why WPF needed it for scenarios like a parent panel centrally handling clicks from dynamically generated children. I haven't wired custom routed event handling in a real app, but the underlying idea — event propagation through a hierarchy — isn't new to me; it's conceptually similar to DOM event bubbling I'd have reasoned about on the web side too.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you stop a routed event from bubbling further? — Set <code>e.Handled = true</code> in the event args inside the handler.</div>
+      <div class="fq"><b>Q:</b> Give an example of a tunneling event. — PreviewMouseDown, PreviewKeyDown — always paired with a bubbling counterpart (MouseDown, KeyDown).</div>
+      <div class="fq"><b>Q:</b> What's the third routed event strategy? — Direct events — behave like normal .NET events, no bubbling or tunneling, e.g. MouseEnter.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q7">
+    <div class="term">7. Styles &amp; Templates <span class="en">(ControlTemplate, DataTemplate)</span></div>
+    <div class="tng">WinForms la oru button oda look ah change pannanum na, seriously limited — color konjam maathலாம், aana button oda fundamental shape/behavior ah maathradhu romba kashtam, custom drawing eழுதவேண்டியிருக்கும். WPF la athu illa — <b>Style</b> vechு, multiple controls ku common properties (color, font, padding) bulk ah apply pannலாம் — CSS class madhiri nenachுக்கலாம். <b>ControlTemplate</b> vechு, control oda entire visual structure ah — behavior maintain pannிக்கொண்டே — completely redesign pannலாம் (example: Button ah round shape ah, gradient background ah maathலாம், aana Click event still work pannும்). <b>DataTemplate</b> na — data ah எப்படி UI ல் render pannணும் nu define pannுவது (example: ListBox la ஒவ்வொரு Student object ஐயும் oru card layout ah காட்ட DataTemplate use pannலாம்).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A Style bulk-applies property values across controls — similar to a CSS class. A ControlTemplate goes further and completely redefines a control's visual tree while preserving its behavior — so I can restyle a Button's entire look without losing its Click semantics. A DataTemplate defines how a piece of data should be visually rendered — for instance, how each Student object in a bound ListBox should look as a card instead of plain text. This is a huge jump from WinForms, where control appearance is largely fixed and true re-theming requires owner-draw code.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>I haven't built custom ControlTemplates or DataTemplates in a shipped app, and I'll say that plainly if asked. What I can speak to honestly is the contrast — in WinForms I hit real limits trying to customize control appearance, so I understand exactly why WPF's template system exists and what problem it's solving, even without hands-on WPF template authoring yet.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can a Style include triggers? — Yes, Style.Triggers can change property values based on conditions like IsMouseOver, IsPressed.</div>
+      <div class="fq"><b>Q:</b> Difference between ControlTemplate and DataTemplate? — ControlTemplate redefines a control's own look; DataTemplate defines how bound data (not a control) is rendered.</div>
+      <div class="fq"><b>Q:</b> Can Styles be inherited? — Yes, via BasedOn="{StaticResource BaseStyle}" for style inheritance.</div>
+    </div>
+    <pre><code>&lt;Style x:Key="RoundButtonStyle" TargetType="Button"&gt;
+  &lt;Setter Property="Background" Value="#8b5cf6"/&gt;
+  &lt;Setter Property="Foreground" Value="White"/&gt;
+  &lt;Setter Property="Template"&gt;
+    &lt;Setter.Value&gt;
+      &lt;ControlTemplate TargetType="Button"&gt;
+        &lt;Border CornerRadius="20" Background="{TemplateBinding Background}"&gt;
+          &lt;ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/&gt;
+        &lt;/Border&gt;
+      &lt;/ControlTemplate&gt;
+    &lt;/Setter.Value&gt;
+  &lt;/Setter&gt;
+&lt;/Style&gt;</code></pre>
+  </div>
+
+  <div class="item" id="q8">
+    <div class="term">8. Resources &amp; Resource Dictionaries <span class="en">(sharing styles across app)</span></div>
+    <div class="tng">Style, Brush, DataTemplate ellam oru single window/page la mattum use pannினா okay, aana full app la 20-30 screens la consistent ah same theme வேணும் na, ovvொரு file la copy-paste pannுவது maintenance nightmare. <b>ResourceDictionary</b> na — idhu ella reusable resources ஐயும் ஒரே central file la define pannி, App.xaml la <code>MergedDictionaries</code> வழியா whole app kூட share pannலாம். Enterprise apps la "theme" nu solradhுkூட idhu thaan base — color palette, font sizes, common styles ஒரே இடத்தில் maintain pannினா, ஒரு color maathினா whole app maариும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A ResourceDictionary centralizes reusable resources — brushes, styles, templates — in one XAML file, which you then merge into App.xaml's MergedDictionaries so every window in the application can reference them via StaticResource or DynamicResource. This is how WPF apps implement consistent theming — change a color or font size once in the shared dictionary, and it reflects across every screen that references it, instead of hunting through dozens of individual XAML files.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>I get the "single source of truth for shared styling" idea well from a different angle — in my ASP.NET Core work I've centralized shared CSS and layout partials for exactly the same reason, avoid duplicating styling across pages. ResourceDictionary is WPF's version of that same discipline. I haven't organized one in a real WPF app, but the underlying architectural instinct — don't repeat styling, centralize it — is one I already apply.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> StaticResource vs DynamicResource? — StaticResource resolves once at load time; DynamicResource re-resolves at runtime, useful for live theme switching.</div>
+      <div class="fq"><b>Q:</b> Where do you typically define app-wide resources? — App.xaml's Application.Resources, often merging separate dictionary files via MergedDictionaries.</div>
+      <div class="fq"><b>Q:</b> Can resources be scoped to just one window? — Yes, define them in that Window's own Resources section instead of App.xaml for narrower scope.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 12B -->
+<div class="section" id="12B">
+  <div class="section-title"><span class="num">12B</span> MVVM, Advanced Concepts &amp; Honest Interview Positioning</div>
+
+  <div class="item" id="q9">
+    <div class="term">9. MVVM Pattern <span class="en">(Model-View-ViewModel)</span></div>
+    <div class="tng">MVVM na WPF-oda flagship architecture pattern. <b>Model</b> — pure data + business logic (example: Student class, Database access). <b>View</b> — XAML mattum, purely UI, no logic — just bindings. <b>ViewModel</b> — View kூட Model ஐ connect pannும் middle layer — properties (bindable), commands (button actions), and INotifyPropertyChanged ellam idhula thaan irukும். Idhu oda periya benefit na — View ah completely maathினாலும் (redesign), ViewModel touch pannத் தேவை இல்லை, and ViewModel ah unit test panna mudியும் UI touch pannாமலேயே — edhுனா ViewModel oru plain C# class, WPF control எதுவும் depend aaghirukaadhu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>MVVM separates an app into three layers — Model for data and business rules, View for pure XAML UI with no logic, and ViewModel as the middle layer exposing bindable properties and ICommand-based actions that the View binds to. The View knows about the ViewModel through DataContext and data binding, but the ViewModel has zero reference to the View — which is what makes ViewModels unit-testable without spinning up any UI, and lets designers restyle the View without breaking application logic.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>This is where I can honestly bridge from real experience — in my WinForms locker management project I deliberately kept business logic out of the Form class and pushed it into separate service/manager classes so the Form stayed thin and testable. That's the same instinct MVVM formalizes with the ViewModel layer and data binding instead of manual event-wiring. I haven't implemented full MVVM in a shipped WPF app, but the separation-of-concerns discipline behind it is already how I think about UI code.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How does the View know which ViewModel to bind to? — Usually via DataContext, set either in code-behind or XAML, sometimes through a ViewModelLocator.</div>
+      <div class="fq"><b>Q:</b> Why is MVVM better than code-behind for testability? — ViewModel has no dependency on WPF UI classes, so you can unit test it directly without a UI thread or rendered controls.</div>
+      <div class="fq"><b>Q:</b> Is MVVM mandatory in WPF? — No, code-behind works fine for small apps, but MVVM scales much better for larger, testable, maintainable apps.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q10">
+    <div class="term">10. Commands in WPF <span class="en">(ICommand, RelayCommand/DelegateCommand)</span></div>
+    <div class="tng">WinForms la Button click ah handle pannணும் na, direct ah <code>button1.Click += ...</code> event handler eழுதுவோம் — idhu code-behind la tight ah irukும். WPF MVVM la adhை vேற mாதிரி pannுவோம் — Button oda <code>Command</code> property ah, ViewModel la irukka oru <code>ICommand</code> property kூட bind pannுவோம். <code>ICommand</code>-oda 2 main members — <code>Execute()</code> (action run pannுவது) and <code>CanExecute()</code> (button enable/disable aaha vேண்டுமா nu decide pannுவது — example: TextBox empty ah irukும்bodhu Save button automatic ah disable aahும்). <code>RelayCommand</code> illa <code>DelegateCommand</code> na, idha manual ah ovvொரு command class eழுதாம boilerplate குறைக்கும் helper classes.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Instead of wiring a Click event handler in code-behind, WPF lets a Button's Command property bind to an ICommand exposed by the ViewModel. ICommand has Execute, which runs the action, and CanExecute, which WPF automatically uses to enable or disable the control — so a Save button can auto-disable when required fields are empty, without manually toggling IsEnabled. RelayCommand or DelegateCommand are lightweight ICommand implementations that take delegates in the constructor, avoiding writing a full command class for every action.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>I've done the WinForms equivalent for years — enabling/disabling Save or Submit buttons based on form validation state, wired through direct event handlers and manual IsEnabled toggling. ICommand's CanExecute is essentially automating that exact pattern I already implement by hand. I haven't used ICommand/RelayCommand in a real WPF project, but I understand precisely what manual problem it's replacing because I've solved that problem the WinForms way myself.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you force CanExecute to re-evaluate? — Call <code>CommandManager.InvalidateRequerySuggested()</code>, or raise <code>CanExecuteChanged</code> manually in a custom RelayCommand.</div>
+      <div class="fq"><b>Q:</b> Can Commands take parameters? — Yes, via CommandParameter bound in XAML, passed into Execute(object parameter).</div>
+      <div class="fq"><b>Q:</b> Why not just use Click event in MVVM? — It would put logic in code-behind, breaking the View/ViewModel separation and hurting testability.</div>
+    </div>
+    <pre><code>&lt;Button Content="Save" Command="{Binding SaveCommand}"
+        CommandParameter="{Binding SelectedStudent}"/&gt;
+
+public ICommand SaveCommand =&gt; new RelayCommand(
+    execute: _ =&gt; SaveStudent(),
+    canExecute: _ =&gt; !string.IsNullOrWhiteSpace(StudentName));</code></pre>
+  </div>
+
+  <div class="item" id="q11">
+    <div class="term">11. Value Converters <span class="en">(IValueConverter)</span></div>
+    <div class="tng">Sometimes namba data oda type, UI la kaananum na direct ah match aagaadhு — example: ViewModel la <code>bool IsActive</code> irukku, aana UI la adhை Visibility (<code>Visible</code>/<code>Collapsed</code>) ah convert pannணும், illa DateTime ah "dd-MMM-yyyy" format string ah convert pannணும். Idhை ViewModel kூட pannினா, ViewModel UI-specific concerns thெரிஞ்சுக்கும் (bad separation). Athுக்காக <code>IValueConverter</code> — <code>Convert()</code> (source→UI) and <code>ConvertBack()</code> (UI→source) methods vachு, oru small standalone class eழுதி, XAML binding la <code>Converter=</code> nu attach pannுவோம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>An IValueConverter transforms a bound value between the source type and what the UI needs to display, via Convert and ConvertBack methods. A common example is a BoolToVisibilityConverter that turns a ViewModel's bool into Visible or Collapsed, keeping that UI-specific mapping out of the ViewModel so the ViewModel stays purely about state and logic, not presentation details.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>I get why this exists — keep display-formatting concerns out of the data/business layer, which is the same principle I follow in ASP.NET Core when I format dates or statuses in the view/DTO layer rather than in domain models. I haven't written an IValueConverter in a shipped WPF app, but given the interface — Convert and ConvertBack — I could implement one correctly without much guidance.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> When would ConvertBack matter? — Only needed for TwoWay bindings, e.g. converting a displayed formatted string back into the source type when the user edits it.</div>
+      <div class="fq"><b>Q:</b> Is there a built-in BoolToVisibilityConverter? — WPF ships BooleanToVisibilityConverter in System.Windows.Controls out of the box.</div>
+      <div class="fq"><b>Q:</b> Can a converter take a parameter? — Yes, via ConverterParameter in the binding, passed as the parameter argument to Convert/ConvertBack.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. Dispatcher &amp; Async on UI Thread <span class="en">(same root problem as InvokeRequired)</span></div>
+    <div class="tng">WPF layoutum WinForms layoutum ஒரே fundamental rule follow pannும் — UI controls ஐ, andha UI thread mattum touch pannணும். Background thread la irundhே direct ah control update pannினா exception varும். WinForms la namba <code>InvokeRequired</code> check panni <code>Invoke()</code>/<code>BeginInvoke()</code> use pannுவோம். WPF la athுக்கு equivalent ah <b>Dispatcher</b> irukku — <code>Dispatcher.Invoke()</code> illa <code>Dispatcher.BeginInvoke()</code> vechு, background thread la இருந்து UI thread ku "வேலை" ஐ marshal pannலாம். Modern WPF code la async/await use pannினா idhு simple ah aagும் — <code>await Task.Run(...)</code> pண்ணி, andha await க்கு அப்புறம் வர code automatic ah UI thread ku back வந்து run aagும் (SynchronizationContext வழியா), so explicit Dispatcher call கூட வேணாம் பல cases la.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>WPF has the same constraint as WinForms — only the UI thread can touch UI controls directly. Where WinForms uses InvokeRequired and Invoke, WPF uses the Dispatcher object, via Dispatcher.Invoke or Dispatcher.BeginInvoke, to marshal a delegate back onto the UI thread from a background thread. With async/await, WPF's SynchronizationContext usually handles this automatically — after an awaited Task.Run completes, execution resumes back on the UI thread by default, so you often don't need to call the Dispatcher explicitly at all.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>This one I can speak to with real confidence, because I've hit this exact problem in production — in my WinForms locker app, background polling/socket threads needed to update UI controls, and I used InvokeRequired plus Invoke to marshal those updates safely, and I've handled the async/await version of this too. WPF's Dispatcher solves the identical problem with a different API name; conceptually there's nothing new here for me to learn, just a new method name to reach for.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Dispatcher.Invoke vs BeginInvoke? — Invoke is synchronous and blocks the calling thread until done; BeginInvoke is asynchronous/fire-and-forget, queued on the UI thread.</div>
+      <div class="fq"><b>Q:</b> What happens if you update a WPF control from a non-UI thread without Dispatcher? — Throws an InvalidOperationException — "The calling thread cannot access this object because a different thread owns it."</div>
+      <div class="fq"><b>Q:</b> Why does async/await avoid explicit Dispatcher calls? — Because WPF's SynchronizationContext captures the UI thread context before the await, and posts the continuation back to it automatically.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. WPF vs WinForms — When to Use Which <span class="en">(clear-eyed comparison)</span></div>
+    <div class="tng">Idhை interview la they ask panனா, balanced ah answer pannணும் — WPF "better" nu solli WinForms ah downplay pannாதேங்க, edhுனா both have valid use cases. <b>WinForms</b> — fast to build, low learning curve, lightweight, perfect for internal tools, quick utilities, admin consoles where UI doesn't need to be fancy — namma locker management app exactly idhுக்கு fit aagும். <b>WPF</b> — richer, skinnable, animatable UI, strong data-binding/MVVM story, better for customer-facing apps or apps with complex, evolving UI requirements, but steeper learning curve and more setup overhead for simple tools. Real answer: "correct tool for the job" — chinna internal tool ku WinForms over-engineering aagாthu, periya customer-facing polished app ku WPF worth the investment.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>WinForms is faster to build with and has a lower learning curve, which makes it a strong choice for internal tools, quick utilities, and admin consoles where UI polish isn't the priority — that's exactly the profile of my locker management application. WPF is the better choice when the UI needs to be rich, skinnable, or heavily data-driven, and when the team wants MVVM-level testability and separation as the app grows in complexity. Neither is universally "better" — it's a tradeoff between development speed and UI sophistication.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>I'd say this from real experience rather than theory — my WinForms locker app was exactly the "fast, functional, internal tool" case where WPF would have been overkill for the timeline we had. But if a future project needed a more polished, animated, or heavily templated desktop UI, I understand why WPF would be the right call, and I'd be picking it up with real architectural instincts already in place, not starting cold.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Would you rewrite an existing WinForms app in WPF? — Only if there's a real UI/UX driver — rich theming, complex data visualization, animation — not just for its own sake; rewrites carry real cost.</div>
+      <div class="fq"><b>Q:</b> Is WinForms "legacy" now? — It's mature and still actively supported and used, especially for internal LOB tools; not going away, just not the choice for rich UI.</div>
+      <div class="fq"><b>Q:</b> What about MAUI vs WPF for new projects? — MAUI targets cross-platform including mobile; WPF is Windows-only desktop — the choice depends on target platforms.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q14">
+    <div class="term">14. MVVM Toolkits <span class="en">(CommunityToolkit.Mvvm, Prism — awareness level)</span></div>
+    <div class="tng">MVVM ah manual ah eழுதினா, ovvொரு property ku PropertyChanged raise pannுறது, ovvொரு command ku RelayCommand class eழுதுறது — romba boilerplate. Athை குறைக்க toolkits use pannுவோம். <b>CommunityToolkit.Mvvm</b> (Microsoft-supported) — <code>[ObservableProperty]</code> and <code>[RelayCommand]</code> attributes vechு, source generators mூலம் andha boilerplate ஐ automatic ah generate பண்ணும் — modern, lightweight. <b>Prism</b> — periya enterprise apps ku, modular navigation, dependency injection integration, region management ellam kூட built-in ah kொடுக்கும் — periய, multi-module apps ku better fit.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>CommunityToolkit.Mvvm is Microsoft's modern, lightweight MVVM library — it uses source generators with attributes like ObservableProperty and RelayCommand to eliminate the boilerplate of manually implementing INotifyPropertyChanged and ICommand classes. Prism is a heavier, enterprise-oriented framework with built-in modularity, navigation, and DI container integration, better suited to large, multi-module WPF applications with complex navigation needs. I'd reach for CommunityToolkit.Mvvm for most apps, and consider Prism specifically when the app has real modular/navigation complexity.</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>This is genuinely awareness-level knowledge for me — I know what problem each toolkit solves and roughly when you'd reach for one over the other, but I haven't used either in a real project. I'll say that directly rather than pretend otherwise; given my C# and DI background from ASP.NET Core, picking up either toolkit's conventions would be straightforward.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What do source generators actually do here? — Generate the INotifyPropertyChanged boilerplate and ICommand wrapper code at compile time from your attributed fields/methods, so you write less code by hand.</div>
+      <div class="fq"><b>Q:</b> Is Prism still actively maintained? — Yes, it has an active open-source community version and remains common in enterprise WPF codebases.</div>
+      <div class="fq"><b>Q:</b> Would you build MVVM without any toolkit? — For a small app, yes, plain INotifyPropertyChanged and a hand-rolled RelayCommand base class is enough; toolkits pay off as the app grows.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q15">
+    <div class="term">15. THE META QUESTION — "Do you have WPF experience?" <span class="en">(honest positioning coaching)</span></div>
+    <div class="tng">Idhu than most important item idhu la — enna interviewer directly kேட்டா, "Do you have WPF experience?" nu, embarrass aaghாம நேர்மையா, aana confident ah answer pண்ண ஒரு clear script வேணும். Never "no" mattum solli stop pண்ணாதீங்க — adhு weak ah kேக்கும். Never fake project story invent pண்ணாதீங்க — resume la WPF illama, andha spot cross-check pண்ணினா, dishonest ah kாணும், whole interview trust பிரச்சினை aagும். Correct approach: (1) honest ah state pண்ணுங்க — "my hands-on production experience is WinForms, not WPF", (2) immediately pivot to real strength — "but I've studied WPF's architecture and MVVM in depth, and here's specifically what I understand...", (3) bridge to real WinForms experience showing transferable instincts — separation of concerns, data binding discipline, threading rules, (4) close with eagerness — "I'd be productive with WPF quickly because the architectural thinking already transfers." Idhை memorize pண்ணி, natural ah sொல்ல practice pண்ணுங்க — script madhiri sound aாகாம.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum (verbatim script)</span>"My hands-on production experience is with WinForms, not WPF — I built and shipped a locker management application in WinForms as part of my current role. That said, I've studied WPF's architecture closely on my own — XAML, data binding, dependency properties, MVVM, commanding, the Dispatcher for thread marshaling — and I understand it well conceptually. A lot of the discipline transfers directly: in my WinForms app I already kept business logic out of the Form class for testability, handled cross-thread UI updates with InvokeRequired and Invoke, and managed UI state based on data changes manually. WPF's MVVM and data binding essentially formalize and automate patterns I was already applying by hand. So while I haven't shipped a WPF app yet, I'd expect to be productive with it quickly, because the underlying architectural thinking isn't new to me — just the specific APIs are."</div>
+    <div class="realproj honest"><span class="lbl">🎯 Idha eppadi honest ah frame pannanum</span>Practice this exact structure out loud until it doesn't sound rehearsed: honest fact first (WinForms is real, WPF isn't), immediate pivot to depth of conceptual prep, concrete bridge points from real WinForms work (Form/logic separation, InvokeRequired threading, manual UI-sync), and a confident, non-apologetic close about ramp-up speed. Never let the sentence "I don't have WPF experience" stand alone without the very next sentence showing what you DO know — silence after the admission is what makes it sound like a weakness instead of a scoped, honest strength.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> "So if we hired you, could you build a WPF screen from day one?" — "I'd need a short ramp-up on WPF-specific APIs and tooling, but the architectural thinking — MVVM, binding, separation of concerns — I already have; I wouldn't be learning software design from scratch, just a new UI framework's syntax."</div>
+      <div class="fq"><b>Q:</b> "Why does your resume not mention WPF then?" — "Because I want my resume to reflect only what I've actually shipped — WinForms is what I built in production, and I'd rather be precise about that than inflate it."</div>
+      <div class="fq"><b>Q:</b> "Have you at least built a personal WPF project?" — Answer honestly based on actual status — if none exists, say so plainly and pivot back to the depth of conceptual study and WinForms-based transferable experience, without fabricating one.</div>
+    </div>
+  </div>
+
+</div>
+
+</div>
+<footer>Prepared for Gurumoorthy M — .NET Developer Interview Prep<br><a href="00_Index.html">← Back to Roadmap Home</a></footer>
+</body>
+</html>

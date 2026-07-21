@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 5: SQL Server — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox table{width:100%;border-collapse:collapse;font-size:0.85em}
+.cheatbox th,.cheatbox td{padding:6px 10px;border-bottom:1px solid #2a2a5a;text-align:left;color:#e0e0e0}
+.cheatbox th{color:#fbbf24;font-size:0.78em;text-transform:uppercase}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+.resume-block{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:18px 20px;margin:14px 0}
+.resume-block .rtitle{color:#fff;font-weight:700;font-size:1em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.resume-block .rquote{background:#1a1a2e;border-left:3px solid #6b7280;padding:8px 12px;border-radius:0 6px 6px 0;font-size:0.85em;color:#9ca3af;font-style:italic;margin-bottom:10px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 5: SQL Server</h1>
+  <p>25 Q&amp;A — Thanglish explanation + English answer script + follow-up questions</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html" class="active">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhu namba resume la mikka strong ah irukka area — "cut query execution time by 40%", "OTP validation response by 50%" rendும் SQL Server optimization thaan. Interviewer idha deep ah kekka vaaipu adhika. Ovvoru item la "Thanglish" explanation padichi concept ah nல்லா puriinjuko, apparam "Answer Script" ah close pannitu un own words la sொல்லிparkanum. Follow-up questions um serththu padinga — interviewer oru topic la 2-3 level deep ah pogுவanga.</p>
+</div>
+
+<div class="toc">
+  <h2>Sections</h2>
+  <div class="toc-grid">
+    <a href="#5A">5A. Query Fundamentals &amp; Joins (1-6)</a>
+    <a href="#5B">5B. Indexing &amp; Performance Tuning (7-13)</a>
+    <a href="#5C">5C. Transactions, Concurrency &amp; Constraints (14-19)</a>
+    <a href="#5D">5D. Design, Scale &amp; Real-World Ops (20-25)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 5 Quick-Recall Cheat Sheet</h2>
+  <ul>
+    <li><b>1. Joins</b> — INNER=matching only, LEFT=all left+match, RIGHT=all right+match, FULL=both sides, CROSS=cartesian, SELF=table joins itself</li>
+    <li><b>2. WHERE vs HAVING</b> — WHERE filters rows before grouping, HAVING filters groups after aggregation</li>
+    <li><b>3. Subquery vs Join</b> — Join when you need columns from both tables; EXISTS subquery when you just need existence check</li>
+    <li><b>4. UNION vs UNION ALL</b> — UNION removes duplicates (slower, implicit sort), UNION ALL just appends (faster)</li>
+    <li><b>5. CTE</b> — WITH clause named result set, readable, supports recursion, not materialized/indexed</li>
+    <li><b>6. Window Functions</b> — ROW_NUMBER/RANK/DENSE_RANK + PARTITION BY for top-N-per-group without collapsing rows</li>
+    <li><b>7. Clustered vs Non-Clustered</b> — Clustered = physical row order (1 per table), Non-Clustered = separate pointer structure (many per table)</li>
+    <li><b>8. Finding slow queries</b> — Execution plan: Table/Clustered Index Scan = bad, Index Seek = good; Query Store / sys.dm_exec_query_stats for prod</li>
+    <li><b>9. Covering Index</b> — Index has every column the query needs (key + INCLUDE), avoids Key Lookup</li>
+    <li><b>10. Over-indexing</b> — Every index slows INSERT/UPDATE/DELETE; drop unused ones via sys.dm_db_index_usage_stats</li>
+    <li><b>11. Stored Procs vs inline SQL</b> — Cached execution plan + parameterized + no direct table access = faster and safer</li>
+    <li><b>12. The 40% story</b> — Attendance report 5s → execution plan showed scans → added composite index + SP + Dapper mapping → 2-3s</li>
+    <li><b>13. Optimization checklist</b> — No SELECT *, sargable WHERE, right indexes, set-based not cursors, paginate, update stats</li>
+    <li><b>14. ACID</b> — Atomicity, Consistency, Isolation, Durability — all-or-nothing, valid states, no interference, survives crash</li>
+    <li><b>15. Isolation levels</b> — Read Committed = default; Snapshot for non-blocking reports; Serializable = strictest/slowest</li>
+    <li><b>16. Deadlocks</b> — Circular wait on locks; SQL Server kills the cheaper "victim"; fix = consistent access order, short transactions</li>
+    <li><b>17. PK/FK/Unique/Check</b> — PK=unique+not null (1 per table), FK=referential integrity, Unique=allows one null, Check=custom rule</li>
+    <li><b>18. Optimistic vs Pessimistic</b> — Pessimistic locks upfront (ATM-style); Optimistic checks rowversion at save time, rejects on conflict</li>
+    <li><b>19. Triggers</b> — Auto-fire on DML; useful for DB-level audit but hidden logic, hard to debug — use sparingly</li>
+    <li><b>20. Normalization vs Denormalization</b> — 1NF/2NF/3NF removes duplication; denormalize only for read-heavy dashboards/reports</li>
+    <li><b>21. Temp table vs Table var vs CTE</b> — #Temp = indexable/real stats (big data), @TableVar = no stats (small data), CTE = not materialized</li>
+    <li><b>22. Pagination</b> — <code>OFFSET x ROWS FETCH NEXT y ROWS ONLY</code> with mandatory ORDER BY, index the sort column</li>
+    <li><b>23. SQL Injection prevention</b> — Always parameterized queries (Dapper @param / EF Core / SqlParameter), never string concat</li>
+    <li><b>24. Views</b> — Saved SELECT, reuse complex joins, can restrict columns for security; indexed views physically store data</li>
+    <li><b>25. Backup/Recovery</b> — Full/Differential/Log backups, Full recovery model for point-in-time restore — DBA territory mostly, basics understood</li>
+  </ul>
+  <br>
+  <table>
+    <tr><th>Join Type</th><th>What it returns</th></tr>
+    <tr><td>INNER JOIN</td><td>Only rows matching in both tables</td></tr>
+    <tr><td>LEFT JOIN</td><td>All left rows + matched right (NULL if no match)</td></tr>
+    <tr><td>RIGHT JOIN</td><td>All right rows + matched left (NULL if no match)</td></tr>
+    <tr><td>FULL JOIN</td><td>All rows both sides, NULL where no match either side</td></tr>
+    <tr><td>CROSS JOIN</td><td>Every row × every row (cartesian product) — rare, use carefully</td></tr>
+    <tr><td>SELF JOIN</td><td>Table joined to itself — e.g. Employee-Manager hierarchy</td></tr>
+  </table>
+  <br>
+  <table>
+    <tr><th>Isolation Level</th><th>Dirty Read</th><th>Non-Repeatable Read</th><th>Phantom Read</th></tr>
+    <tr><td>Read Uncommitted</td><td>Possible</td><td>Possible</td><td>Possible</td></tr>
+    <tr><td>Read Committed (default)</td><td>Prevented</td><td>Possible</td><td>Possible</td></tr>
+    <tr><td>Repeatable Read</td><td>Prevented</td><td>Prevented</td><td>Possible</td></tr>
+    <tr><td>Serializable</td><td>Prevented</td><td>Prevented</td><td>Prevented</td></tr>
+    <tr><td>Snapshot</td><td>Prevented</td><td>Prevented</td><td>Prevented (row-versioning, no blocking)</td></tr>
+  </table>
+</div>
+
+<!-- 5A -->
+<div class="section" id="5A">
+  <div class="section-title"><span class="num">5A</span> Query Fundamentals &amp; Joins</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. Types of Joins <span class="en">(INNER / LEFT / RIGHT / FULL / CROSS / SELF)</span></div>
+    <div class="tng">Namba rendு table ah oru common column (key) vachi connect pannுрதுக்கு thaan joins. School ERP example vachi paakalam — <b>Students</b> table oru side, <b>Fees</b> table vera side, StudentId thaan connecting key. <b>INNER JOIN</b> na — rendு table லும் match aana rows mattum thaan varும் (fees record irukka students mattum). <b>LEFT JOIN</b> na — Students table full ah eduthுட்டு, fees match aanaal add pannும், illana NULL kaatும் (fees pay pannாma irukka students um list la varும் — idhu thaan real reports ku useful). <b>RIGHT JOIN</b> na LEFT oda opposite. <b>FULL JOIN</b> na rendு side layum full ah edukும். <b>CROSS JOIN</b> na every row oda every row combine aagும் (cartesian product — carefully use pannanum, accidentally periya table la use pannினா millions of rows varும்). <b>SELF JOIN</b> na table ah adhே table kூடா join pannுрது — example Employee table la Manager um employee thaане, so EmployeeId = ManagerId vachi join pannலாம்.</div>
+    <pre><code>SELECT s.Name, f.AmountDue
+FROM Students s
+LEFT JOIN Fees f ON s.StudentId = f.StudentId;</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I use joins to combine related tables through a common key. INNER JOIN gives only matching rows, LEFT JOIN gives everything from the left table with NULLs where there's no match, FULL JOIN gives both sides, and CROSS JOIN is a cartesian product I use rarely and carefully. I also use SELF JOIN for hierarchy-type data, like a manager-employee relationship in the same table.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Difference between LEFT JOIN and LEFT OUTER JOIN? — Same thing, OUTER is just an optional keyword SQL Server lets you drop.</div>
+      <div class="fq"><b>Q:</b> When would you actually use CROSS JOIN in a real project? — Rarely — maybe generating all date-vs-class combinations for a timetable grid or report scaffold.</div>
+      <div class="fq"><b>Q:</b> If you filter on the right table's column in WHERE after a LEFT JOIN, what happens? — It silently turns your LEFT JOIN into an effective INNER JOIN, since NULL rows get filtered out — a classic mistake I watch out for.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. GROUP BY + HAVING vs WHERE <span class="en">(filtering rows vs filtering groups)</span></div>
+    <div class="tng"><b>WHERE</b> na — grouping nadakura munnadi, individual rows ah filter pannுрது (example: Status='Active' irukka students mattum edukkanum). <b>GROUP BY</b> na — rows ah oru column basis la group pannுрது (example: ClassId wise group panni count எடுக்கनும்). <b>HAVING</b> na — group aana apparam, aggregate result mela filter pannுрது (example: 30-க்கு mேல் students irukka classes mattum kaatanum). Simple ah artham vechுக்க — WHERE gate la nikkும், oru oruthar ah check pannும், group aaganum munnaale; HAVING team form aana apparam, andha team size check pannும்.</div>
+    <pre><code>SELECT ClassId, COUNT(*) AS TotalStudents
+FROM Students
+WHERE Status = 'Active'
+GROUP BY ClassId
+HAVING COUNT(*) &gt; 30;</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>WHERE filters individual rows before grouping happens, and it can't reference aggregate functions. HAVING filters after GROUP BY has produced aggregated results, so it's the right place to say something like "only classes with more than 30 active students." I always push non-aggregate filters into WHERE for performance, since it reduces the row count before the expensive grouping step.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can WHERE and HAVING be used together in one query? — Yes — WHERE filters rows first, then GROUP BY runs, then HAVING filters the grouped output.</div>
+      <div class="fq"><b>Q:</b> Can HAVING be used without GROUP BY? — Technically yes, treating the whole table as one group, but it's rare and usually a sign the query should just use WHERE.</div>
+      <div class="fq"><b>Q:</b> Why is WHERE cheaper than HAVING for non-aggregate filters? — Because WHERE removes rows before the grouping/aggregation cost even happens, so there's less data to process.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. Subqueries vs Joins <span class="en">(when each is better)</span></div>
+    <div class="tng">Subquery na — query kulla vera oru query irukும் (nested). Join na — rendு table ah nேraaga side-by-side combine pannுрது. Generally, join namакки rendு table oda columns um oru result la venும் bodhu best — optimizer um join ah nல்லா optimize pannும். Aana நான் oru row exist pannுthா illaiya nu மட்டும் check pannா poдும் bodhu — full join pannாma <code>EXISTS</code> subquery use pannுрேன், அது first match kிடைச்ச உடனே stop aagும், duplicate rows வரவே varாthு. Correlated subquery na — outer query oda column ah refer pannும் subquery, adhu ovvoru outer row кki ஒரு தடவை run aagும் — periya table ku slow ah aagலாம், so careful ah use pannanum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I use joins when I need columns from both tables in the final result — the optimizer handles those well. I reach for an EXISTS subquery when I only need to check whether a related row exists, because it short-circuits at the first match and avoids the row-duplication issues a join can cause. I'm cautious with correlated subqueries since they can execute once per outer row and get slow on large tables.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> IN vs EXISTS — which is better for large subquery result sets? — EXISTS usually, since it stops at the first match; IN has to materialize the full list to compare against.</div>
+      <div class="fq"><b>Q:</b> What's a correlated subquery, in one line? — A subquery that references a column from the outer query, so it logically re-runs for every outer row.</div>
+      <div class="fq"><b>Q:</b> Can a subquery ever be faster than a join? — Yes, for pure existence checks — EXISTS avoids fetching and duplicating matched columns that a JOIN would produce.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. UNION vs UNION ALL <span class="en">(combining result sets)</span></div>
+    <div class="tng"><b>UNION</b> na rendு query result ah combine pannிட்டு, duplicate rows ah automatic ah remove pannும் (internally sort/distinct pannும், so konjam slow). <b>UNION ALL</b> na duplicates remove pannாma, rendும் oda mattum append pannிடும் — fast. Example: current students list + alumni list combine pannும் bodhu, same person rendு listla um வந்தா duplicate வேணாம் na UNION use pannலாம். Aana rendு vera log tables ah combine panniட்டு export pannும் bodhu duplicate irundா problem illa na, UNION ALL use panni speed edukkலாம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>UNION removes duplicate rows across the combined result sets, which means an implicit sort/distinct operation and a performance cost. UNION ALL just concatenates both result sets without checking duplicates, so it's faster. I default to UNION ALL unless I specifically know duplicates are possible and unwanted — for example combining current and archived attendance records for an annual report.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why exactly is UNION ALL faster? — It skips the distinct/sort step UNION needs to eliminate duplicates.</div>
+      <div class="fq"><b>Q:</b> Do the columns need to match between the two queries? — Yes — same number of columns, and compatible data types in the same order.</div>
+      <div class="fq"><b>Q:</b> Where have you used UNION in a real report? — Combining current-year and archived attendance tables into one annual attendance report.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. CTE — Common Table Expression <span class="en">(WITH clause)</span></div>
+    <div class="tng">CTE na — <code>WITH</code> clause vachi, oru temporary named result set define pannுрது, appuram அந்த query ah namal name vecha reference pannலாம். Readability romba improve aagும் — periya nested subquery ah instead of writing, step-by-step name kொடுத்து break pannலாம். Real power na — <b>recursive CTE</b>, hierarchy data ku (example: Manager tree, Class-Section hierarchy) — anchor query + recursive query serthu use pannலாம். ஆனா CTE ah namal materialize pannாthு, adhு index um panna mudியாthு — every time reference panна bodhு andha underlying query rerun aagலாம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A CTE is a named, temporary result set defined with WITH, used to break a complex query into readable steps or to write recursive queries — like walking a manager-employee hierarchy. It's not materialized as a physical object, so it can't be indexed, and SQL Server may re-evaluate it each time it's referenced, so for large reused intermediate results I'd use a temp table instead.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> CTE vs subquery — any real performance difference? — Mostly the same execution plan; CTE's main win is readability, except for recursive CTEs which subqueries can't do at all.</div>
+      <div class="fq"><b>Q:</b> Can you use a CTE recursively? — Yes — define an anchor member and a recursive member that references the CTE itself, useful for org charts or class hierarchies.</div>
+      <div class="fq"><b>Q:</b> Can a CTE be indexed? — No, since it's never materialized as a table — that's the key difference from a temp table.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q6">
+    <div class="term">6. Window Functions — ROW_NUMBER, RANK, DENSE_RANK, PARTITION BY <span class="en">(top-N per group)</span></div>
+    <div class="tng">Window functions na — GROUP BY madhiri rows ah collapse pannாma, ovvoru row кkum கூட ஒரு calculated value (rank, row number, running total) add pannுрது. <b>PARTITION BY</b> na — data ah logical groups ah split pannுрது (example: ClassId wise), <code>OVER()</code> கூட use pannுрோம். Real use case — "top scorer per class" report: ovvoru class ku, marks அடிப்படையில் ROW_NUMBER kொடுத்து, rn=1 ah filter pannினா top scorer கிடைக்கும். <b>RANK</b> na tie irundா next number ah skip pannும் (1,1,3), <b>DENSE_RANK</b> na skip pannாma (1,1,2).</div>
+    <pre><code>WITH RankedMarks AS (
+  SELECT StudentName, ClassId, Marks,
+    ROW_NUMBER() OVER (PARTITION BY ClassId ORDER BY Marks DESC) AS rn
+  FROM Marks
+)
+SELECT StudentName, ClassId, Marks
+FROM RankedMarks
+WHERE rn = 1;</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Window functions let me compute a rank or row number per row without collapsing the result set the way GROUP BY does. I use PARTITION BY to reset the calculation per group — for example, ROW_NUMBER over Marks partitioned by ClassId, ordered descending, wrapped in a CTE and filtered to rn=1, gives me the top scorer per class in a single query instead of a correlated subquery per class.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Difference between RANK and DENSE_RANK on ties? — RANK leaves a gap after ties (1,1,3), DENSE_RANK doesn't (1,1,2).</div>
+      <div class="fq"><b>Q:</b> Can you filter directly on ROW_NUMBER() in the same SELECT's WHERE clause? — No, window functions can't be used in WHERE directly — you have to wrap the query in a CTE or subquery and filter the outer one.</div>
+      <div class="fq"><b>Q:</b> Where else have you used this pattern? — Deduplicating records, like picking the latest attendance entry per student per day when duplicates exist.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 5B -->
+<div class="section" id="5B">
+  <div class="section-title"><span class="num">5B</span> Indexing &amp; Performance Tuning</div>
+
+  <div class="item" id="q7">
+    <div class="term">7. Clustered vs Non-Clustered Index <span class="en">(physical order vs pointer structure)</span></div>
+    <div class="tng"><b>Clustered index</b> na — actual table data ah, physical ah, andha index order layே arrange pannிடும் — book oda pages themselves order la vecha madhiri. Adhанால ஒரு table кki ஒரே ஒரு clustered index thaan possible (usually Primary Key mேல் automatic ah varும்). <b>Non-clustered index</b> na — vேra separate structure, actual data illama, "இந்த value இருக்கும் row idhோ" nu pointer mattum vечிருக்கும் — book oda back-side index page madhiri, page number kொடுக்கும், data adhே page la irukும். Oru table ku multiple non-clustered indexes create pannலாம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A clustered index defines the physical storage order of the table itself, so there can only be one per table — I usually put it on the primary key, an ever-increasing narrow column, to avoid page fragmentation. A non-clustered index is a separate B-tree structure that just points back to the row, and a table can have several of them tuned to different query patterns.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How many clustered indexes can a table have? — Only one, because it physically orders the data — you can't order the same table two different ways at once.</div>
+      <div class="fq"><b>Q:</b> What happens if a table has no clustered index? — It's stored as a "heap" — unordered data, generally slower lookups without a good non-clustered index to help.</div>
+      <div class="fq"><b>Q:</b> Why pick a narrow, ever-increasing column for the clustered key? — A wide or random key causes page splits and fragmentation every time a new row is inserted out of order; a narrow, increasing key like an identity column keeps inserts efficient.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q8">
+    <div class="term">8. How he finds slow queries <span class="en">(execution plan, scan vs seek)</span></div>
+    <div class="tng">Naan first SSMS la "Include Actual Execution Plan" on pannிடுவேன், query run pannினа apparam plan ah paakுவேன். <b>Table Scan</b> illana <b>Clustered Index Scan</b> na — full table ah padikுthु nu artham (periya table ku romba bad). <b>Index Seek</b> na — directly index வெச்சு venும் rows ah seek pannிடும் (good). Estimated vs Actual row count la periya difference irundா, statistics outdated ah irukும் nu suspect pannுவேன். Production la — Query Store illana <code>sys.dm_exec_query_stats</code> vечி, top CPU/duration edukkும் queries ah kandுpiடிப்பேன், overhead illama.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I start with the actual execution plan in SSMS — a Table Scan or Clustered Index Scan means SQL Server is reading every row, while an Index Seek means it's using an index efficiently. I also check for a big gap between estimated and actual row counts, which usually points to stale statistics. In production, I use Query Store or sys.dm_exec_query_stats to find the top time-consuming queries without adding tracing overhead.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Difference between Table Scan and Index Seek in plain terms? — Scan reads every row to find matches; Seek navigates directly to the matching rows using the index's B-tree structure.</div>
+      <div class="fq"><b>Q:</b> What tool finds the top slow queries in production without adding overhead? — Query Store, or sys.dm_exec_query_stats — both use existing SQL Server metadata rather than live tracing.</div>
+      <div class="fq"><b>Q:</b> What does a "Key Lookup" in the plan mean, and is it bad? — It means the non-clustered index found the matching rows but had to go back to the clustered index for extra columns — a sign the index isn't covering the query; I'd consider adding INCLUDE columns.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q9">
+    <div class="term">9. Covering Index <span class="en">(no key lookup needed)</span></div>
+    <div class="tng">Oru query ku venும் ella columns um (SELECT la வேணும், WHERE la வேணும், ORDER BY la வேணும்) — andha ellame ஒரே non-clustered index kூடа இருந்தா, adha "covering index" nu sொல்லுவோம். Adhு irundா SQL Server clustered index ku back pona (Key Lookup) தேவை இல்லை, andha index onnுல மட்டும் full answer கிடைக்கும். <code>INCLUDE</code> clause vachi, key columns ah touch pannாma, extra columns ah leaf level la mattum add pannலாம் — sort order affect aagாthु.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A covering index contains every column a query needs — filter, join, and select columns — so SQL Server can answer entirely from the index without a Key Lookup back to the clustered index. I use the INCLUDE clause to add extra output columns to the index leaf level without making them part of the key, keeping the seek predicate narrow while still avoiding the lookup.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Difference between key columns and INCLUDE columns? — Key columns define the index's sort order and seek predicate; INCLUDE columns just ride along at the leaf level for covering, without adding sort/storage overhead in the tree.</div>
+      <div class="fq"><b>Q:</b> Any downside to covering indexes? — A wider index means more storage and more write overhead on every insert/update, so I only cover the queries that actually matter.</div>
+      <div class="fq"><b>Q:</b> How do you spot a covering index working in the plan? — No Key Lookup operator shows up — just a clean Index Seek.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q10">
+    <div class="term">10. Over-indexing tradeoffs <span class="en">(read speed vs write cost)</span></div>
+    <div class="tng">Every index um, ஒரு INSERT/UPDATE/DELETE nadakும் bodhு, adhуkkும் extra ah update aaganum — so index adhikama irundா, writes slow aagும். Attendance table madhiri, dhinamும் thousands of rows insert aагும் table la over-indexing pannினா, andha inserts romba slow aagும். So balance venும் — WHERE/JOIN/ORDER BY la frequently use aagுrа columns kku mattum index podுவேன், unused indexes ah <code>sys.dm_db_index_usage_stats</code> vечி kandுpiடிச்சு drop pannுவேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Every index adds overhead on writes, since it has to be maintained on every insert, update, and delete — so I don't index everything blindly. I check sys.dm_db_index_usage_stats to see which indexes actually get seeks or scans versus which just soak up update cost with zero reads, and drop the unused ones. On write-heavy tables like attendance, I keep indexes minimal; on read-heavy report tables, I add more.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you find unused indexes? — sys.dm_db_index_usage_stats — compare seeks/scans/lookups against updates; high updates with zero reads is a drop candidate.</div>
+      <div class="fq"><b>Q:</b> Does over-indexing hurt SELECT performance too? — Indirectly — the optimizer has more index options to evaluate — but the bigger, more direct cost is always on the write side.</div>
+      <div class="fq"><b>Q:</b> Real example from your project? — Attendance table gets heavy daily inserts, so I kept it to essential indexes only; billing/report tables that are read far more than written got more indexes.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q11">
+    <div class="term">11. Stored Procedures vs inline SQL <span class="en">(performance + security angle)</span></div>
+    <div class="tng">Performance angle — stored procedure oda execution plan cache aagும், next time call pannும் bodhு andha plan reuse aagும், parse/compile overhead kammi. Security angle — SP la mattum parameterized calls aagும், application ku direct table access தேவையில்லை, so SQL injection risk um kammiaagும். Business logic ah DB level la centralize pannினா, maintain panna easy aagும் — especially heavy report/aggregation logic ku.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Stored procedures get a cached, reusable execution plan and avoid the repeated parse/compile cost of ad-hoc inline SQL. They also naturally use parameterized calls instead of direct table access from application code, which reduces SQL injection surface. I moved our heaviest reporting queries — attendance and fee summaries — into stored procedures so the logic executes close to the data instead of being built dynamically in the application layer.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Doesn't EF Core/Dapper with parameters also get plan caching? — Yes, parameterized queries from either get cached plans too — but a stored procedure gives more explicit control and can bundle multiple statements or transaction logic together server-side.</div>
+      <div class="fq"><b>Q:</b> Any downside to stored procedures? — Splitting logic between the app and DB layer makes it harder to version-control and unit test, so I reserve them for heavy reporting/aggregation, not routine CRUD.</div>
+      <div class="fq"><b>Q:</b> Where did you use SPs in Zen Campus specifically? — Attendance and fee-collection reports — both involve heavy joins and aggregation across several tables.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. Real Story — the 40% query time reduction <span class="en">(STAR walkthrough)</span></div>
+    <div class="tng"><b>Situation:</b> Zen Campus la report screens — especially attendance report — romba slow ah irundhுchு, dashboard load pannும் bodhு users wait pannуவaanga. <b>Task:</b> namба team ku andha response time ah kammi pannuрது ஒரு priority ஆanachू. <b>Action:</b> naan first execution plan paаtேன் — attendance report la AttendanceDate + ClassId combination மேல filter panна bodhு, table scan varुthு nu therinjuchு — missing index thaan reason. Composite index add pannினேன் andha rendு columns mேல. Appuram heavy join+aggregation logic ah application layer la irundу eduthу, stored procedure ku move pannினேன். And EF Core ku badhила, andha specific report ku Dapper vechu proper mapping panniunga, materialization overhead kammi aагுm nu. Rarely-change lookup data (class list madhiri) ku in-memory caching um add pannினேன். <b>Result:</b> attendance report ~5 seconds la irundу ~2-3 seconds ku வந்துchு, and mула reporting module la average ah 40% query time reduction achieve pannினோम்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>One of our attendance reports initially took around 5 seconds. I profiled it with the execution plan and found a table scan caused by a missing composite index on the filter columns. After optimizing the stored procedure, adding the right index, and using Dapper with proper mapping instead of EF Core for that hot path, we reduced the response time to around 2 to 3 seconds. Across similar reports and queries, that combination of indexing, stored procedures, and Dapper/EF Core tuning is what drove the overall 40% query execution time reduction I mention on my resume.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How exactly did you measure the 40%? — Compared average before/after response times on representative report queries, using execution plan duration on the DB side and application-side timing/logging.</div>
+      <div class="fq"><b>Q:</b> Why Dapper instead of EF Core specifically for that report? — EF Core's change tracking and entity materialization add overhead that isn't needed for a read-only, large-result report — Dapper's lightweight object mapping was faster for that particular hot path.</div>
+      <div class="fq"><b>Q:</b> What if the index alone hadn't been enough? — I'd also look at rewriting the query to be sargable, avoiding SELECT *, and pre-aggregating or caching data that doesn't change often, like static lookup lists.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. Query optimization checklist <span class="en">(day-to-day habits)</span></div>
+    <div class="tng">Idhu naan day-to-day follow pannுра checklist: (1) <code>SELECT *</code> avoid pannுрேன், venும் columns mattum edукурувேன். (2) WHERE/JOIN/ORDER BY la use aagுрa columns ku correct index irukுthா nu check pannுрேன். (3) Execution plan la scan varுthா nu paakுрேன். (4) WHERE la indexed column mேல function podாma irukка paakுрேன் (example <code>WHERE YEAR(Date)=2024</code> — idhу index ah "non-sargable" ah maатrиdum, scan force aagும்). (5) Cursors/loops avoid pannிட்டு set-based operations use pannுрேன். (6) Parameterized queries mattum use pannுрேன். (7) Periya result sets ku pagination podுрேன். (8) Heavy logic ku stored procedures. (9) Periodic ah statistics update pannுрேன், fragmented indexes rebuild/reorganize pannுрேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Before writing a query, I avoid SELECT * and only pull what's needed, make sure WHERE/JOIN/ORDER BY columns are indexed, and keep predicates sargable so the optimizer can actually use those indexes — no functions wrapped around indexed columns. I prefer set-based logic over cursors, always parameterize, paginate large result sets, push heavy aggregation into stored procedures, and periodically check for index fragmentation and outdated statistics.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's wrong with using a function on an indexed column in WHERE? — It makes the predicate non-sargable, so SQL Server can't seek using the index and falls back to a scan.</div>
+      <div class="fq"><b>Q:</b> What does "sargable" mean? — Search ARGument ABLE — a predicate written so the optimizer can directly use an index seek instead of evaluating a function per row.</div>
+      <div class="fq"><b>Q:</b> How often do you rebuild or reorganize indexes? — Depends on fragmentation from sys.dm_db_index_physical_stats — I reorganize around 10-30% fragmentation and rebuild above that, usually scheduled during low-traffic hours.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 5C -->
+<div class="section" id="5C">
+  <div class="section-title"><span class="num">5C</span> Transactions, Concurrency &amp; Constraints</div>
+
+  <div class="item" id="q14">
+    <div class="term">14. ACID Properties <span class="en">(Atomicity, Consistency, Isolation, Durability)</span></div>
+    <div class="tng"><b>Atomicity</b> na — oru transaction full ah succeed aаганум illana full ah rollback aаганும், nடுவில் oru part mattum apply aагக்கூடாது (fee payment insert pannினா, receipt entry um serthу insert aагனும், rendும் aагனும் illana rendும் poganும்). <b>Consistency</b> na — DB ஒரு valid state la irundு vera valid state кku mattum pogும், constraints violate aагாmல். <b>Isolation</b> na — concurrent ah run aагுрa transactions ஒன்னை ஒன்னு affect pannாma irukanum. <b>Durability</b> na — commit ஆன apparam, server crash ஆனாலும் andha data poganаthु.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>ACID stands for Atomicity — a transaction either fully completes or fully rolls back, Consistency — the database moves between valid states without violating constraints, Isolation — concurrent transactions don't interfere with each other, and Durability — once committed, the change survives a crash because SQL Server writes it to the transaction log first. A real example from my locker project: OTP validation and its audit log insert are wrapped in one transaction, so both succeed or both roll back.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Give a real example where atomicity mattered in your work. — OTP validation plus the audit trail insert in the bank locker system — both had to succeed together in one transaction.</div>
+      <div class="fq"><b>Q:</b> Which ACID property does the isolation level control? — Isolation — it determines how much of another transaction's uncommitted or committed changes a transaction can see.</div>
+      <div class="fq"><b>Q:</b> How does SQL Server guarantee durability? — Write-ahead logging — changes are written to the transaction log before the commit is acknowledged, so a crash can be recovered from the log.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q15">
+    <div class="term">15. Transaction Isolation Levels <span class="en">(Read Committed default + when he'd change it)</span></div>
+    <div class="tng"><b>Read Committed</b> — SQL Server default, dirty reads (uncommitted data padikுрது) illa, aana non-repeatable reads possible. <b>Read Uncommitted</b> — dirty reads even allow pannும், fastest but risky, rarely use pannுрேன். <b>Repeatable Read</b> — transaction full ஆаgும் varைilла andha read pannина rows ah lock pannும். <b>Serializable</b> — strictest, phantom reads கூட block pannும், aаna locking அதிகம் so throughput kammiaагும். <b>Snapshot</b> — row versioning vачி, blocking illама consistent read கொடுக்கும். Naan default Read Committed la thaan velai pannுрேன் aаna heavy reports run aагும் bodhு, ongoing writes ah block pannாma/block aагாma irukка Snapshot isolation ku switch pannுவேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Read Committed is SQL Server's default, and it's fine for most of my day-to-day CRUD — no dirty reads, decent concurrency. I'd move to Snapshot isolation for heavy reporting queries so they get a consistent view without blocking or being blocked by ongoing writes, and I'd only reach for Serializable in rare cases where phantom rows during a transaction would actually cause a correctness problem, knowing it costs throughput.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's a dirty read? — Reading another transaction's uncommitted data, which might later get rolled back — so you read something that never officially existed.</div>
+      <div class="fq"><b>Q:</b> When would you use Snapshot isolation specifically? — For reporting/dashboard queries that shouldn't block or be blocked by concurrent writes — it uses row versioning instead of locks.</div>
+      <div class="fq"><b>Q:</b> What's a phantom read? — New rows matching your query's criteria appear when you re-run the same query within one transaction — Serializable is the level that prevents it.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q16">
+    <div class="term">16. Deadlocks <span class="en">(what causes them, how he's handled one)</span></div>
+    <div class="tng">Deadlock na — rendு transactions, ஒன்னு vेра ஒன்னு vech irukка resource ah lock panniட்டு, மறு transaction release panна wait pannிட்டு irukும் — circular wait situation. SQL Server automatic ah idha detect pannிட்டு, roll back panna kammi cost aагுра transaction ah "deadlock victim" ah kill pannும் (error 1205). Naan handle panninadhu eppadi na — ella stored procedures லும் tables ah consistent order la access pannும்படி maатrினேn (example: always Students first, appuram Fees), transactions ah short ah vечேன், appropriate indexes vechு lock scope kammi pannினேn, and application code la deadlock error ah catch panni retry logic add pannினேn.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A deadlock happens when two transactions each hold a lock the other needs, creating a circular wait — SQL Server detects this and kills the cheaper transaction as the "victim." I've handled these by making sure all procedures touch tables in a consistent order, keeping transactions as short as possible, adding indexes to shrink the lock footprint, and wrapping critical calls in retry logic that catches error 1205 and retries once.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How does SQL Server pick the deadlock victim? — Usually whichever transaction is cheapest to roll back, unless you've explicitly set a deadlock priority.</div>
+      <div class="fq"><b>Q:</b> How do you debug a deadlock after it's happened? — SQL Server Profiler or Extended Events deadlock graph shows exactly which resources and queries were involved.</div>
+      <div class="fq"><b>Q:</b> What's a practical code-level way to prevent deadlocks? — Access tables/rows in the same order everywhere, keep transactions short, and never wait on user input or an external call inside an open transaction.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q17">
+    <div class="term">17. Primary Key vs Foreign Key vs Unique vs Check <span class="en">(constraints)</span></div>
+    <div class="tng"><b>Primary Key</b> — row ah uniquely identify pannும், NULL allow pannாthу, oru table ku ஒரே ஒரு PK. <b>Foreign Key</b> — vேrе table oda PK ah reference pannும், referential integrity maintain pannும் (Fees table la StudentId irundா, andha StudentId Students table la exist pannанும்). <b>Unique</b> constraint — duplicate values allow pannаthu, aаna PK madhiri illама oru NULL row allow pannலாm. <b>Check</b> constraint — specific condition satisfy pannанум (example: Marks BETWEEN 0 AND 100, FeeAmount &gt;= 0).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Primary Key uniquely identifies each row and never allows NULL — one per table. Foreign Key enforces referential integrity by pointing to a Primary Key in another table, so I can't insert a fee record for a student that doesn't exist. Unique constraints prevent duplicate values but do allow one NULL, unlike a Primary Key. Check constraints enforce a business rule directly in the schema, like marks staying between 0 and 100.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can a table have multiple unique constraints but only one primary key? — Yes exactly — one PK per table, but any number of unique constraints.</div>
+      <div class="fq"><b>Q:</b> What happens deleting a parent row that's referenced by a foreign key? — Fails by default, unless ON DELETE CASCADE (or SET NULL) is configured — protects referential integrity.</div>
+      <div class="fq"><b>Q:</b> Give a Check constraint example from your project. — Fee amount must be greater than or equal to zero, and attendance status must be one of a fixed set of allowed values.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q18">
+    <div class="term">18. Optimistic vs Pessimistic Concurrency Control <span class="en">(lock now vs check later)</span></div>
+    <div class="tng"><b>Pessimistic</b> concurrency — row ah edit pannும் bodhே lock pannிடுவோम், vேrе யாरும் andha row ah touch panna mудியாது வரерை — ATM machine madhiri, oru transaction use pannும்बोदhु, vேrе யாरும் andha account ah touch panna mудியாthу. <b>Optimistic</b> concurrency — lock pannாma edit pannுрோm, save pannும் bodhு mattum "idha edhavadhு vera oruthar change pannினार்களா" nu rowversion/timestamp column vechு check pannுрோm — conflict irundா reject pannிடுவोm, user ku retry sொல்லுவोम். EF Core default ah optimistic concurrency use pannுрதु, concurrency token vечि.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Pessimistic concurrency locks a row the moment you start editing, so no one else can touch it until you're done — like an ATM session. Optimistic concurrency doesn't lock upfront; it lets edits happen freely and checks a rowversion/timestamp at save time — if the row changed since you read it, the update is rejected and the user retries. I generally prefer optimistic since most of our data has low contention, and EF Core supports it directly with a concurrency token.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you implement optimistic concurrency in SQL Server directly? — Add a rowversion column, include it in the UPDATE's WHERE clause, and if zero rows are affected, that means someone else already changed the row.</div>
+      <div class="fq"><b>Q:</b> When would you prefer pessimistic locking instead? — High-contention scenarios where conflicts are frequent and retries would be wasteful — like a seat or time-slot booking system.</div>
+      <div class="fq"><b>Q:</b> Does EF Core support optimistic concurrency out of the box? — Yes — mark a property with [Timestamp] or configure it as a concurrency token, and EF Core throws a DbUpdateConcurrencyException on conflict.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q19">
+    <div class="term">19. Triggers <span class="en">(what they are, why he's cautious)</span></div>
+    <div class="tng">Trigger na — oru event (INSERT/UPDATE/DELETE) nadaकும் bodhு automatic ah fire aагுра oru piece of code. Audit logging ku useful, example — fee record edit aаgும் bodhு, old value ah automatic ah audit table la log pannலாm, edhа application-level code miss pannினалும். Aаna naan careful ah use pannுрேn, edhуnала — trigger hidden ah run aагுрhu, developer manual ah paartha thavira teriyатு, debug panna kastam, performance hit varа vaाippу irukку, appuram nested triggers/recursive triggers ellame confusion aагум். So explicit ah application layer la audit logging pannுрதே prefer pannுрேन், unless DB level integrity ku hard requirement irukка.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A trigger auto-fires on an INSERT, UPDATE, or DELETE without anyone explicitly calling it — I've used them for DB-level audit logging so no code path can bypass it. But I'm cautious with them because that logic runs silently — it's easy to forget it exists, hard to debug when something behaves unexpectedly, and nested triggers can cause confusing cascading effects. I prefer explicit logging in the application or stored procedure layer unless there's a hard requirement that the audit must fire no matter what touches the data.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why exactly are you cautious with triggers? — They run silently on every DML statement, are easy to overlook, and can cause hidden performance issues or cascading trigger chains that are hard to trace.</div>
+      <div class="fq"><b>Q:</b> Where would a trigger genuinely be the right tool? — Enforcing an audit trail at the database level that must fire regardless of which application or path modifies the data.</div>
+      <div class="fq"><b>Q:</b> What do you use instead when possible? — Explicit logging in the application/stored procedure layer, or SQL Server's built-in Change Data Capture or Temporal Tables for audit history.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 5D -->
+<div class="section" id="5D">
+  <div class="section-title"><span class="num">5D</span> Design, Scale &amp; Real-World Ops</div>
+
+  <div class="item" id="q20">
+    <div class="term">20. Normalization (1NF/2NF/3NF) vs Denormalization <span class="en">(tradeoffs)</span></div>
+    <div class="tng">Normalization na — data duplicate aагாmал், related data ah separate tables ku split pannுртு. <b>1NF</b> — ovvoru column лум atomic value irукanum, repeating groups иருkkக்கூடாdhு. <b>2NF</b> — composite key la, partial dependency irукக்கூடாthु (part of key mேлाமே depend aагுра column иருkkக்கூடாdhு). <b>3NF</b> — transitive dependency иருkkக்கூடாthु, non-key column key mேлा mattum depend aаганum, vera non-key column mேла illa. <b>Denormalization</b> na — intentional ah konjam duplicate data vечுкkuрту, read-heavy dashboards/reports fast ah irukкaнும் nu — 5 table join pannாma, oru pre-joined summary table use pannுрோm.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Normalization avoids data duplication by splitting related data into separate tables — 1NF means atomic column values, 2NF removes partial dependency on part of a composite key, and 3NF removes transitive dependency so non-key columns depend only on the key. I do intentionally denormalize for read-heavy dashboards — precomputed summary tables so I'm not joining four or five tables on every page load, but I keep transactional data fully normalized.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Give a 3NF violation example. — Storing ClassTeacherName directly in the Students table — it depends on ClassId, not on StudentId, so that's a transitive dependency.</div>
+      <div class="fq"><b>Q:</b> When did you denormalize in Zen Campus? — Dashboard summary tables where joining 4-5 tables on every load was too slow — I used a periodically refreshed, precomputed summary table instead.</div>
+      <div class="fq"><b>Q:</b> Is denormalization always purely about performance? — Mostly yes for reads, but it trades off write complexity and risk of inconsistency, so I only apply it to read-heavy reporting data, never core transactional tables.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q21">
+    <div class="term">21. Temp Tables vs Table Variables vs CTEs <span class="en">(when to use which)</span></div>
+    <div class="tng"><b>Temp table (#Temp)</b> — actual table tempdb la create aагும், index podலாm, real statistics irукும் — periya intermediate result sets ku best. <b>Table variable (@Table)</b> — similar aаna SQL Server statistics maintain pannாthу (optimizer 1 row nu assume pannிடும்), so periya data ku bad execution plan varа vaаippу — small dataset/lookup ku fine. <b>CTE</b> — materialize aagаthу, just named subquery, oru query кku mattum exist pannும், readability/recursion ku best aаna repeated reference aana ovvoru тடवैум் re-evaluate aаgும் vaаippу irukку.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>For a large intermediate result set in a report procedure, I use a temp table because it can be indexed and SQL Server keeps real statistics on it. Table variables skip statistics entirely — the optimizer assumes a small fixed row count — so they're fine for small lookup data but risky for anything large. A CTE isn't materialized at all — it's just a named subquery scoped to one statement, great for readability and recursion but re-evaluated on each reference.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Which do you pick for a large intermediate result set in a report SP? — A temp table — it can be indexed and has real statistics, which matters a lot once row counts get big.</div>
+      <div class="fq"><b>Q:</b> Why can table variables cause bad execution plans? — No statistics maintained on them, so the optimizer assumes a low fixed row count, which can lead to poor plan choices on larger data.</div>
+      <div class="fq"><b>Q:</b> Can you index a CTE? — No — it's not a physical or temporary object, it only exists within that single query's scope.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q22">
+    <div class="term">22. Pagination in SQL Server <span class="en">(OFFSET-FETCH for large report lists)</span></div>
+    <div class="tng">Periya report list (thousands of students/fee records) full ah oru shot la load pannாma, page-by-page ah fetch pannுрту thaan pagination. SQL Server 2012+ la <code>OFFSET-FETCH</code> clause irукку, aana andha vech <code>ORDER BY</code> mandatory. Page 3, page size 20 na — first 40 rows skip panni, next 20 edukkanum. Important — ORDER BY column ku always index poданум, illana ovvoru page ku um full table scan panni sort pannிडும், deep pages ku slow aагும்.</div>
+    <pre><code>SELECT StudentName, ClassId, AttendanceDate
+FROM AttendanceReport
+ORDER BY AttendanceDate DESC
+OFFSET 40 ROWS FETCH NEXT 20 ROWS ONLY;</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>For large report grids I use OFFSET-FETCH with a mandatory ORDER BY — OFFSET skips the earlier pages' rows and FETCH NEXT pulls just the current page. I make sure the ORDER BY column is indexed, otherwise SQL Server still has to scan and sort the whole table for every page. I've used this for server-side paging in attendance and fee report grids instead of loading thousands of rows into the browser at once.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why is ORDER BY mandatory with OFFSET-FETCH? — Without a defined order, pagination isn't deterministic — the same "page 2" could return different rows on different calls.</div>
+      <div class="fq"><b>Q:</b> Downside of OFFSET-FETCH for very large offsets, like page 10000? — SQL Server still has to skip past all the prior rows, so deep pages get progressively slower — keyset pagination (WHERE Id &gt; lastSeenId) scales better there.</div>
+      <div class="fq"><b>Q:</b> Where did you actually use this? — Attendance and fee report grids in the UI — server-side paging with OFFSET-FETCH instead of dumping thousands of rows to the client.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q23">
+    <div class="term">23. SQL Injection Prevention <span class="en">(parameterized queries)</span></div>
+    <div class="tng">User input ah namba direct ah SQL query string kூடa concatenate panniна, attacker adha misuse panni database ah hack pannலாம் — example <code>' OR 1=1 --</code> madhiri inject panni ella data um retrieve pannலாm illна delete kூடa pannலாm. Parameterized queries use pannினा — Dapper la <code>@param</code>, EF Core la LINQ, ADO.NET la <code>SqlParameter</code> — input data ah "data" ah mattum treat pannும், query structure ah mாатруhathu, so injection sāتthiyамே illa. Namba Zen Campus la entire codebase la, ella query லும் parameterized ah thaan eluthirукkом் — resume la explicit ah mention pannirukka point idhу thaan.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I never concatenate user input directly into a SQL string — both EF Core and Dapper use parameterized queries by default, so input is always treated purely as data, never as executable SQL structure, which eliminates injection risk. This is something I've applied consistently across every query in the Zen Campus codebase, and it's a specific point I call out on my resume.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Have you ever caught a real risky pattern in code review? — Yes — a search filter built by string-concatenating user input, I flagged it and got it converted to a parameterized Dapper query before it shipped.</div>
+      <div class="fq"><b>Q:</b> Does using a stored procedure alone protect against injection? — Only if parameters are passed properly — if the procedure itself builds dynamic SQL by concatenating strings internally, it's still vulnerable.</div>
+      <div class="fq"><b>Q:</b> Any other layer of defense besides parameterization? — Input validation/allow-listing, least-privilege DB accounts for the application, and avoiding dynamic SQL unless it's truly unavoidable.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q24">
+    <div class="term">24. Views <span class="en">(when he'd use one)</span></div>
+    <div class="tng">View na — oru saved SELECT query, table madhiri query pannலாm, aаna actual data ah store pannாthu (indexed view thavira). Complex join ah repeat pannாma, ஒரே தடவை define pannிட்டு, appuram simple ah <code>SELECT * FROM ViewName</code> pannலாm. Security angle um irукку — sensitive columns ah hide pannிட்டு, specific columns mattum expose pannலாm oru view mூlamа. Multiple reports/screens ku same combined dataset venум் bodhу idhу romba useful.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A view is a saved SELECT statement I can query like a table, without it physically storing the data — useful when several reports or screens need the same combined join logic, so I define it once instead of repeating the join everywhere. It's also handy for security — I can expose only specific columns through a view and keep sensitive ones hidden from the consuming layer.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> When would you use a view instead of just writing the join every time? — When multiple reports or screens need the same combined dataset repeatedly — keeps the join logic in one maintainable place.</div>
+      <div class="fq"><b>Q:</b> What's an indexed/materialized view? — A view whose result is physically stored and indexed — good for heavy aggregation queries read often but whose source data changes rarely.</div>
+      <div class="fq"><b>Q:</b> Can you update data through a view? — Yes for simple single-table views, but views with joins or aggregates usually aren't directly updatable.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q25">
+    <div class="term">25. Backup &amp; Recovery Basics <span class="en">(what he's touched vs DBA territory)</span></div>
+    <div class="tng">Full backup na — whole database oda snapshot. Differential na — last full backup ku appuram maатрина data mattum. Transaction log backup na — point-in-time recovery ku thேவை, Full recovery model use pannினал mattum idhu velai seyум். Naan honest ah sொல்ловேn — production backup schedule/DR strategy design pannுртு, namba RAX la DBA/infra team territory, naan andha level la deep ah touch pannlе. Aаna recovery model select pannுрту (Simple vs Full), backup chain eppadi velai seyும் nu understand pannuрேн், and dev/staging DB ah backup la irundu restore panni test pannிна experience irукку.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I understand the fundamentals — Full backups as the base snapshot, Differential for changes since the last full, and transaction log backups for point-in-time recovery when the database is in Full recovery model. That said, I'll be upfront that designing and owning the production backup schedule and disaster recovery strategy is more our DBA/infra team's territory — what I've directly done is restore dev and staging databases from backups for testing, and make informed calls on recovery model settings for new databases.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What recovery model would you choose for a production transactional database? — Full recovery model, so transaction log backups are possible and point-in-time recovery is available — not just Simple.</div>
+      <div class="fq"><b>Q:</b> Have you personally configured backup jobs in production? — Not the production backup/DR strategy itself — that's owned by our DBA/infra team — but I've restored dev/staging databases from backups for testing and understand the full/differential/log chain.</div>
+      <div class="fq"><b>Q:</b> Difference between Simple and Full recovery model? — Simple truncates the transaction log automatically after each checkpoint with no point-in-time recovery; Full retains the log until it's backed up, enabling restore to a specific point in time.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+<footer>Prepared for Gurumoorthy M — .NET Developer Interview Prep<br><a href="00_Index.html">← Back to Roadmap Home</a></footer>
+</body>
+</html>

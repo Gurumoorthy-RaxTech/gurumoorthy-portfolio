@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gurumoorthy M — Last-Minute Interview Cheatsheet</title>
+<style>
+  :root{
+    --bg:#0f1420; --panel:#161d2e; --panel2:#1c2438; --border:#2a3550;
+    --text:#e7ecf7; --muted:#9aa7c2; --accent:#5eb0ff; --accent2:#7dd3a8;
+    --warn:#f5b942; --danger:#ff7a7a; --code:#0b111e;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f4f6fb; --panel:#ffffff; --panel2:#eef1f8; --border:#dbe1ee;
+      --text:#182036; --muted:#5a6685; --accent:#1c6fd4; --accent2:#158a5a; --warn:#a5680a; --danger:#c0392b; --code:#eef1f8; }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Segoe UI',Calibri,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;}
+  .wrap{display:flex;max-width:1400px;margin:0 auto;}
+  nav{position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;width:260px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);padding:18px 14px;}
+  nav h1{font-size:15px;margin:0 0 4px;color:var(--accent);}
+  nav .sub{font-size:11px;color:var(--muted);margin-bottom:16px;}
+  nav a{display:block;font-size:13px;color:var(--text);text-decoration:none;padding:6px 8px;border-radius:6px;margin-bottom:2px;}
+  nav a:hover{background:var(--panel2);color:var(--accent);}
+  main{flex:1;min-width:0;padding:28px 40px 80px;}
+  header.top{margin-bottom:24px;}
+  header.top h1{font-size:26px;margin:0 0 6px;}
+  header.top p{color:var(--muted);margin:0;font-size:14px;}
+  section{margin-bottom:34px;scroll-margin-top:16px;}
+  section h2{font-size:19px;border-bottom:2px solid var(--accent);padding-bottom:6px;margin-bottom:14px;color:var(--accent);}
+  section h3{font-size:15px;margin:18px 0 8px;color:var(--accent2);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  @media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr;}}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+  table{width:100%;border-collapse:collapse;background:var(--panel);border-radius:8px;overflow:hidden;font-size:13.5px;}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top;}
+  th{background:var(--panel2);color:var(--accent);font-size:12.5px;text-transform:uppercase;letter-spacing:.03em;}
+  tr:last-child td{border-bottom:none;}
+  code, .code-inline{background:var(--code);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:Consolas,'Courier New',monospace;font-size:12.5px;color:var(--accent2);}
+  pre{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,'Courier New',monospace;font-size:12.5px;line-height:1.5;}
+  ul{margin:6px 0;padding-left:20px;}
+  li{margin-bottom:4px;}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:var(--panel2);border:1px solid var(--border);color:var(--muted);margin-left:6px;}
+  .metric{background:linear-gradient(135deg,var(--panel2),var(--panel));border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+  .metric .num{font-size:24px;font-weight:700;color:var(--accent);}
+  .metric .lbl{font-size:12px;color:var(--muted);margin-top:4px;}
+  .star{border-left:3px solid var(--accent2);background:var(--panel);padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:10px;}
+  .star b{color:var(--accent2);}
+  .qa-flag{color:var(--warn);}
+  .top-btn{position:fixed;bottom:20px;right:20px;background:var(--accent);color:#04101f;border:none;border-radius:50%;width:42px;height:42px;font-size:18px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.35);}
+  @media print{
+    nav,.top-btn{display:none;}
+    main{padding:0;}
+    body{background:#fff;color:#000;}
+    section{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <h1>⚡ Cheatsheet</h1>
+  <div class="sub">Gurumoorthy M · .NET Developer<br>Last-minute prep — skim only</div>
+  <a href="#pitch">🎤 Elevator Pitch</a>
+  <a href="#metrics">📊 Metrics to Remember</a>
+  <a href="#mvc">🧩 ASP.NET Core MVC / Web API</a>
+  <a href="#micro">🕸️ Microservices &amp; Ocelot</a>
+  <a href="#data">🗄️ Dapper / EF Core / SQL</a>
+  <a href="#mongo">🍃 MongoDB</a>
+  <a href="#security">🔐 JWT / RBAC / Security</a>
+  <a href="#docker">🐳 Docker</a>
+  <a href="#socket">🔌 TCP Socket / OTP / SMS</a>
+  <a href="#perf">📈 Performance / Logging</a>
+  <a href="#git">🌿 Git Commands</a>
+  <a href="#agile">🔄 Agile / Scrum Terms</a>
+  <a href="#star">🌟 STAR Achievement Answers</a>
+  <a href="#askthem">❓ Questions to Ask Them</a>
+</nav>
+<main>
+  <header class="top">
+    <h1>Last-Minute Interview Cheatsheet</h1>
+    <p>Condensed reference for every technology on the resume. Read top-to-bottom in 20 minutes before the call. Pair with <b>Interview_Questions_200.html</b> for full depth.</p>
+  </header>
+
+  <section id="pitch">
+    <h2>🎤 30-Second Elevator Pitch</h2>
+    <div class="card">
+      "I'm Gurumoorthy, a .NET developer with 3 years 5 months at RAX Tech International, Chennai. I build ASP.NET Core Web API microservices — currently architecting <b>Zen Campus</b>, a school ERP platform serving 1,000+ concurrent users, routed through an <b>Ocelot API Gateway</b>, backed by SQL Server via Dapper/EF Core and MongoDB for unstructured data. I cut query execution time by <b>40%</b> through indexing and stored-procedure tuning, and cut production incident resolution time by <b>35%</b> by building centralized logging and exception-handling middleware. I also built an OTP-based bank locker access system integrating TCP socket hardware communication and SMS gateway MFA — <b>zero unauthorized access incidents</b> since deployment. I'm comfortable owning a feature end-to-end: API design, DB optimization, JWT/RBAC security, Docker containerization, and production support."
+    </div>
+  </section>
+
+  <section id="metrics">
+    <h2>📊 Metrics to Remember (say these numbers exactly)</h2>
+    <div class="grid3">
+      <div class="metric"><div class="num">40%</div><div class="lbl">DB query time cut (Dapper/EF indexing + stored procs)</div></div>
+      <div class="metric"><div class="num">35%</div><div class="lbl">Incident resolution time cut (centralized logging middleware)</div></div>
+      <div class="metric"><div class="num">1,000+</div><div class="lbl">Concurrent users served by microservices</div></div>
+      <div class="metric"><div class="num">50%</div><div class="lbl">OTP validation response time cut (Dapper optimization)</div></div>
+      <div class="metric"><div class="num">&lt;3 sec</div><div class="lbl">SMS OTP delivery time</div></div>
+      <div class="metric"><div class="num">0</div><div class="lbl">Unauthorized access incidents post-deployment</div></div>
+      <div class="metric"><div class="num">90%+</div><div class="lbl">Code coverage in Agile sprints</div></div>
+      <div class="metric"><div class="num">3y 5m</div><div class="lbl">Total experience · Feb 2023 – Present</div></div>
+    </div>
+  </section>
+
+  <section id="mvc">
+    <h2>🧩 ASP.NET Core MVC / Web API</h2>
+    <h3>Middleware pipeline order (memorize)</h3>
+    <pre>ExceptionHandler → HSTS → HttpsRedirection → Static Files → Routing
+→ CORS → Authentication → Authorization → Custom Middleware → Endpoints</pre>
+    <h3>DI Service Lifetimes</h3>
+    <table>
+      <tr><th>Lifetime</th><th>Instance created</th><th>Typical use</th></tr>
+      <tr><td><code>Transient</code></td><td>Every request for the service</td><td>Lightweight, stateless services</td></tr>
+      <tr><td><code>Scoped</code></td><td>Once per HTTP request</td><td>DbContext, repository, unit of work</td></tr>
+      <tr><td><code>Singleton</code></td><td>Once for app lifetime</td><td>Config, caching, logging providers</td></tr>
+    </table>
+    <h3>Quick facts</h3>
+    <ul>
+      <li>Routing: attribute routing (<code>[Route("api/[controller]")]</code>) preferred for Web API; conventional routing for MVC views.</li>
+      <li>Model validation: <code>[ApiController]</code> auto-returns 400 on invalid <code>ModelState</code>.</li>
+      <li>Filters order: Authorization → Resource → Action → Exception → Result.</li>
+      <li>Razor Pages = page-focused (one class per page); MVC = controller-centric, better for multi-action APIs/views mix.</li>
+      <li>Versioning: URL segment (<code>/api/v1/</code>) or header-based via <code>Microsoft.AspNetCore.Mvc.Versioning</code>.</li>
+      <li>Swagger/OpenAPI: auto-generates docs via <code>AddSwaggerGen()</code> — critical for microservices contract sharing.</li>
+      <li>WCF vs Web API: WCF = SOAP/config-heavy, multi-protocol; Web API = lightweight REST/JSON over HTTP — used WCF only on one legacy integration.</li>
+    </ul>
+  </section>
+
+  <section id="micro">
+    <h2>🕸️ Microservices &amp; Ocelot API Gateway</h2>
+    <h3>Ocelot ocelot.json skeleton</h3>
+    <pre>{
+  "Routes": [{
+    "UpstreamPathTemplate": "/gateway/students/{everything}",
+    "DownstreamPathTemplate": "/api/students/{everything}",
+    "DownstreamScheme": "https",
+    "DownstreamHostAndPorts": [{ "Host": "student-service", "Port": 443 }],
+    "AuthenticationOptions": { "AuthenticationProviderKey": "JwtKey" },
+    "RateLimitOptions": { "EnableRateLimiting": true, "Limit": 100, "Period": "1m" },
+    "LoadBalancerOptions": { "Type": "RoundRobin" }
+  }]
+}</pre>
+    <h3>Core patterns to name-drop</h3>
+    <ul>
+      <li><b>Database-per-service</b> — each microservice (admissions, billing, attendance, payroll) owns its own schema.</li>
+      <li><b>API Gateway (Ocelot)</b> — single entry point: routing, JWT validation, rate limiting, load balancing, request aggregation.</li>
+      <li><b>Circuit breaker / resilience</b> — Polly for retries + circuit breaking when a downstream service is slow/down.</li>
+      <li><b>Correlation ID</b> — propagate a request ID across services for tracing in centralized logs.</li>
+      <li><b>Saga / eventual consistency</b> — used for multi-service transactions like admission→billing.</li>
+      <li>Chatty communication → mitigated with response aggregation at the gateway.</li>
+    </ul>
+  </section>
+
+  <section id="data">
+    <h2>🗄️ Dapper vs EF Core vs ADO.NET</h2>
+    <table>
+      <tr><th></th><th>Dapper</th><th>EF Core</th><th>ADO.NET</th></tr>
+      <tr><td>Type</td><td>Micro-ORM</td><td>Full ORM</td><td>Raw data access</td></tr>
+      <tr><td>Speed</td><td>Fastest (close to raw ADO.NET)</td><td>Slower (change tracking overhead)</td><td>Fastest but manual</td></tr>
+      <tr><td>Use when</td><td>High-perf reads, reports, stored procs</td><td>Rapid CRUD, migrations, complex relational graphs</td><td>Legacy or ultra low-level control</td></tr>
+      <tr><td>Used on</td><td>Reporting queries, OTP validation (50% faster)</td><td>Core CRUD across ERP modules</td><td>Legacy WCF integration</td></tr>
+    </table>
+    <h3>Dapper snippet</h3>
+    <pre>var students = await connection.QueryAsync&lt;Student&gt;(
+    "sp_GetActiveStudents", new { classId }, commandType: CommandType.StoredProcedure);</pre>
+    <h3>SQL Server quick facts</h3>
+    <ul>
+      <li><b>Clustered index</b> = table sorted by key (1 per table). <b>Non-clustered</b> = separate structure with pointer, can have many.</li>
+      <li><b>Covering index</b> = includes all columns a query needs → avoids key lookup.</li>
+      <li>Fix N+1: batch queries / use <code>Include()</code> in EF or a single JOIN query in Dapper.</li>
+      <li>Deadlocks: caused by two txns locking resources in reverse order → fix with consistent access order, shorter transactions, <code>READ COMMITTED SNAPSHOT</code>.</li>
+      <li>Always use parameterized queries — never string-concatenate SQL (SQL injection).</li>
+      <li>Execution plan: look for <b>Table Scan</b> (bad, add index) vs <b>Index Seek</b> (good).</li>
+      <li>My 40% win = added missing non-clustered indexes on FK/filter columns + converted N+1 loops to stored procs + added in-memory caching for lookup tables.</li>
+    </ul>
+  </section>
+
+  <section id="mongo">
+    <h2>🍃 MongoDB</h2>
+    <ul>
+      <li>Used for: unstructured/high-volume data — activity logs, real-time analytics, dashboard feeds in Zen Campus.</li>
+      <li>Document model = BSON, schema-flexible; embed for 1:few tight relations, reference for 1:many/large collections.</li>
+      <li>Indexing: <code>createIndex()</code> on frequently filtered fields; compound indexes for multi-field queries.</li>
+      <li>Aggregation pipeline: <code>$match → $group → $sort → $project</code> for analytics rollups.</li>
+      <li>Polyglot persistence: SQL Server = transactional/relational (billing, admissions); MongoDB = flexible/high-volume (logs, dashboards).</li>
+      <li>CAP theorem: MongoDB tunes toward CP or AP via write/read concern settings.</li>
+    </ul>
+  </section>
+
+  <section id="security">
+    <h2>🔐 JWT / RBAC / Security</h2>
+    <h3>JWT structure</h3>
+    <pre>header.payload.signature
+{alg, typ}.{sub, roles, exp, iat}.HMACSHA256(base64(header)+"."+base64(payload), secret)</pre>
+    <ul>
+      <li>Access token = short-lived (15-60 min); Refresh token = long-lived, stored securely, used to mint new access tokens.</li>
+      <li>RBAC in ASP.NET Core: <code>[Authorize(Roles = "Admin,Staff")]</code> or policy-based <code>[Authorize(Policy = "CanEditBilling")]</code>.</li>
+      <li>Gateway-level auth: Ocelot validates JWT once at the gateway so downstream services trust the token (or re-validate for defense-in-depth).</li>
+      <li>Prevent SQL injection: parameterized queries / stored procs, never raw string concatenation.</li>
+      <li>Enforce HTTPS/TLS everywhere; HSTS in production.</li>
+      <li>Store JWT in <code>httpOnly</code> secure cookie or memory (avoid localStorage for XSS resistance).</li>
+      <li>Audit trail logging on the OTP system — every generate/deliver/validate/expire event logged with timestamp + actor.</li>
+    </ul>
+  </section>
+
+  <section id="docker">
+    <h2>🐳 Docker</h2>
+    <pre># Common commands
+docker build -t zencampus/student-service:1.0 .
+docker run -d -p 8080:80 --name student-svc zencampus/student-service:1.0
+docker compose up -d --build
+docker logs -f student-svc
+docker exec -it student-svc bash
+docker ps / docker images / docker network ls</pre>
+    <h3>Minimal multi-stage Dockerfile</h3>
+    <pre>FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY . .
+RUN dotnet publish -c Release -o /app
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=build /app .
+ENTRYPOINT ["dotnet", "StudentService.dll"]</pre>
+    <ul>
+      <li>Image = template; Container = running instance of an image.</li>
+      <li>Docker Compose orchestrates all Zen Campus microservices + SQL Server + MongoDB containers together for consistent local/staging environments.</li>
+      <li>Multi-stage build keeps final image small (SDK stage discarded, only runtime + published DLLs kept).</li>
+    </ul>
+  </section>
+
+  <section id="socket">
+    <h2>🔌 TCP Socket / OTP / SMS Gateway</h2>
+    <ul>
+      <li>TCP = connection-oriented, reliable, ordered (used for locker hardware — correctness matters more than speed).</li>
+      <li>.NET <code>Socket</code>/<code>TcpListener</code>/<code>TcpClient</code> classes; async via <code>SendAsync</code>/<code>ReceiveAsync</code>.</li>
+      <li>OTP lifecycle: <b>Generate</b> (secure random, 6-digit) → <b>Deliver</b> (SMS gateway API) → <b>Validate</b> (compare + expiry check) → <b>Expire</b> (TTL ~2-5 min, audit-logged).</li>
+      <li>Rate-limit OTP attempts (e.g. 3 tries) to block brute force; lock/cooldown after threshold.</li>
+      <li>Sub-3-second SMS delivery achieved via async dispatch + gateway API with fast provider SLA.</li>
+      <li>Keep-alive + reconnection logic handles intermittent socket drops from locker hardware in the field.</li>
+    </ul>
+  </section>
+
+  <section id="perf">
+    <h2>📈 Performance / Logging / Production Issues</h2>
+    <ul>
+      <li>Centralized exception-handling middleware: <code>app.UseExceptionHandler()</code> or custom middleware catching unhandled exceptions, logging structured error + correlation ID, returning consistent error response.</li>
+      <li>Structured logging: <code>ILogger&lt;T&gt;</code> / Serilog, log as JSON with request ID, user, timestamp, severity.</li>
+      <li>In-memory caching (<code>IMemoryCache</code>) for lookup/reference data (fee structures, class lists) — biggest lever in the 40% perf win.</li>
+      <li>35% incident-resolution win = centralized logs + correlation IDs meant no more grepping across servers — root cause found from one dashboard.</li>
+      <li>Production outage triage order: check health/monitoring dashboard → check recent deployment → check logs by correlation ID → isolate service → mitigate (rollback/scale/restart) → root-cause after.</li>
+      <li>Memory leak diagnosis: dotnet-counters / dotnet-trace, watch Gen2 heap growth, check for undisposed connections/event handler leaks.</li>
+      <li>Thread pool starvation: caused by blocking async code (<code>.Result</code>/<code>.Wait()</code>) — always <code>await</code> end-to-end.</li>
+    </ul>
+  </section>
+
+  <section id="git">
+    <h2>🌿 Git Cheat Sheet</h2>
+    <pre>git status                     # working tree state
+git checkout -b feature/x      # new branch
+git add -p                     # stage selectively
+git commit -m "message"
+git pull --rebase origin main
+git push origin feature/x
+git stash / git stash pop      # shelve WIP
+git log --oneline --graph -10
+git merge --no-ff feature/x    # keep merge history
+git cherry-pick &lt;sha&gt;
+git revert &lt;sha&gt;                # safe undo (keeps history)
+git reset --hard &lt;sha&gt;          # destructive undo (careful)</pre>
+  </section>
+
+  <section id="agile">
+    <h2>🔄 Agile / Scrum Quick Terms</h2>
+    <div class="grid2">
+      <div class="card"><b>Sprint</b> — fixed timebox (usually 2 weeks) to deliver a shippable increment.</div>
+      <div class="card"><b>Standup</b> — daily 15-min sync: done / doing / blockers.</div>
+      <div class="card"><b>Backlog grooming</b> — refining and estimating upcoming stories.</div>
+      <div class="card"><b>Story points</b> — relative effort/complexity estimate, not hours.</div>
+      <div class="card"><b>Definition of Done</b> — code + tests (&gt;90% coverage target) + review + deploy-ready.</div>
+      <div class="card"><b>Retrospective</b> — end-of-sprint: what went well / what to improve.</div>
+    </div>
+  </section>
+
+  <section id="star">
+    <h2>🌟 STAR Answers — Top Achievements (speak these out loud once before the call)</h2>
+    <div class="star"><b>40% query time reduction:</b> Situation — Zen Campus reports were timing out under load. Task — mine was to optimize the data-access layer. Action — profiled slow queries, added targeted non-clustered/covering indexes, converted hot-path inline queries to stored procs via Dapper, added in-memory caching for reference data. Result — 40% cut in query execution time, reports that took 4-5 seconds now return in under 2.</div>
+    <div class="star"><b>35% incident resolution improvement:</b> Situation — production bugs took hours to trace across microservices with scattered logs. Task — build a way to find root cause fast. Action — designed centralized logging + global exception-handling middleware with correlation IDs threaded through the Ocelot gateway and every downstream service. Result — resolution time dropped 35%, on-call debugging became a single dashboard search instead of SSH-ing into multiple servers.</div>
+    <div class="star"><b>Zero unauthorized access (bank locker OTP):</b> Situation — a bank needed a secure, auditable locker access system. Task — build MFA with OTP over SMS integrated with physical locker hardware over TCP. Action — designed the full OTP lifecycle with expiry + attempt rate-limiting, encrypted the TCP channel, added full audit trail logging in SQL Server. Result — zero unauthorized access incidents post-deployment, sub-3-second SMS delivery, 50% faster OTP validation after Dapper tuning.</div>
+    <div class="star"><b>Microservices at scale (1,000+ users):</b> Situation — Zen Campus needed to serve 1,000+ concurrent users across many modules without one module's load affecting another. Task — architect for independent scalability. Action — split into microservices per domain (admissions, attendance, billing, payroll, inventory), fronted by Ocelot for routing/load balancing/rate limiting, containerized each with Docker for consistent deploys. Result — services scale and deploy independently; a spike in attendance-module traffic during morning check-in doesn't degrade billing.</div>
+  </section>
+
+  <section id="askthem">
+    <h2>❓ Smart Questions to Ask the Interviewer</h2>
+    <ul>
+      <li>"What does the microservices landscape look like here — how many services, and what's the gateway/service-mesh strategy?"</li>
+      <li>"How is production observability handled — centralized logging, tracing, alerting stack?"</li>
+      <li>"What's the team's approach to database choice — polyglot persistence, or standardized on one engine?"</li>
+      <li>"What does the on-call/production-support rotation look like for this team?"</li>
+      <li>"What would success look like in the first 3 months in this role?"</li>
+    </ul>
+  </section>
+
+</main>
+</div>
+<button class="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+</body>
+</html>

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 23: SQL Performance &amp; Scale — Advanced Deep Dive — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox table{width:100%;border-collapse:collapse;font-size:0.85em}
+.cheatbox th,.cheatbox td{padding:6px 10px;border-bottom:1px solid #2a2a5a;text-align:left;color:#e0e0e0}
+.cheatbox th{color:#fbbf24;font-size:0.78em;text-transform:uppercase}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 23: SQL Performance &amp; Scale — Advanced Deep Dive</h1>
+  <p>46 Q&amp;A — Thanglish explanation + English answer script + follow-up questions</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+  <a href="Part18_MongoDB_NoSQL.html">1️⃣8️⃣ MongoDB &amp; NoSQL</a>
+  <a href="Part19_TCPSocket_SMS_OTP.html">1️⃣9️⃣ TCP Socket &amp; SMS OTP</a>
+  <a href="Part20_PerformanceLoggingProduction.html">2️⃣0️⃣ Perf/Logging/Prod</a>
+  <a href="Part21_Infosys_Prep_Guide.html">🎯 Infosys Prep Guide</a>
+  <a href="Part22_Interface_vs_AbstractClass.html">2️⃣2️⃣ Interface vs Abstract</a>
+  <a href="Part23_SQL_Performance_Advanced.html" class="active">2️⃣3️⃣ SQL Performance Advanced</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhу Part 5 (SQL Server basics) ku <b>advanced companion</b> — indexing internals, concurrency deep-dive, database design at scale, aur production scenario-based questions, exact ah senior/experienced-hire level la kேட்кра maathiri. Part 5 la irundhа basics already strong ah irukкum், idhуla mattум் "3-6 years experience" level depth kொடுத்திருக்கேன். Ovvoru production/scenario question ku (37-40) STAR method (Situation-Task-Action-Result) follow pannі, un own real incident maathi maathi sொல்ல practice pannுங்கள் — interviewer exact ah "so tell me about a time..." nு adha thaan expect pannuрроанга.</p>
+</div>
+
+<div class="toc">
+  <h2>Sections</h2>
+  <div class="toc-grid">
+    <a href="#23A">23A. Query Optimization (Q1-8)</a>
+    <a href="#23B">23B. Indexing (Q9-16)</a>
+    <a href="#23C">23C. Transactions &amp; Concurrency (Q17-24)</a>
+    <a href="#23D">23D. Database Design (Q25-30)</a>
+    <a href="#23E">23E. Advanced SQL (Q31-36)</a>
+    <a href="#23F">23F. Production &amp; Scenario-Based (Q37-40)</a>
+    <a href="#23G">23G. Bonus — Functions, Views &amp; Multi-Result-Set SPs (Q41-46)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 23 Quick-Recall Cheat Sheet</h2>
+  <ul>
+    <li><b>First step for any slow query</b> → Execution plan, check Scan vs Seek, look for the fattest arrow (biggest row estimate mismatch)</li>
+    <li><b>Clustered Index</b> → table oda actual physical order (1 per table); <b>Non-Clustered</b> → separate pointer structure (many per table)</li>
+    <li><b>Covering Index</b> → query ku venும் columns ellame index la irundhaа thaан, key lookup venும் illa — INCLUDE columns vачி achieve pannலam்</li>
+    <li><b>Fragmentation</b> → 5-30% REORGANIZE, &gt;30% REBUILD (rule of thumb)</li>
+    <li><b>Isolation levels (weakest → strongest)</b> → Read Uncommitted → Read Committed (default) → Repeatable Read → Serializable → Snapshot</li>
+    <li><b>Deadlock fix</b> → same order la resources access pannуம்படி standardize pannуроadhு, transactions சிறியதா vачு vечிроadhу</li>
+    <li><b>Optimistic vs Pessimistic</b> → Optimistic = check at save time (rowversion/timestamp); Pessimistic = lock upfront (SELECT...FOR UPDATE style)</li>
+    <li><b>OLTP vs OLAP</b> → OLTP = many small fast writes (normalized); OLAP = few large reads for analytics (denormalized/star schema)</li>
+    <li><b>CTE vs Temp Table</b> → CTE = query-scoped, no index, re-evaluated each reference; Temp Table = session-scoped, can index, materialized once</li>
+    <li><b>ROW_NUMBER vs RANK vs DENSE_RANK</b> → ROW_NUMBER unique sequential; RANK skips numbers after tie; DENSE_RANK no gaps after tie</li>
+    <li><b>CROSS APPLY vs OUTER APPLY</b> → CROSS APPLY = INNER JOIN-like (drops no-match rows); OUTER APPLY = LEFT JOIN-like (keeps them with NULLs)</li>
+    <li><b>CPU spike triage</b> → sys.dm_exec_query_stats ORDER BY total_worker_time DESC — find the top CPU-consuming query first</li>
+  </ul>
+</div>
+
+<!-- 23A -->
+<div class="section" id="23A">
+  <div class="section-title"><span class="num">23A</span> Query Optimization</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. How do you optimize a SQL query that takes several minutes to execute? <span class="en">(Systematic Approach)</span></div>
+    <div class="tng">Naan oru fixed order follow pannуроேன் — 1) Actual Execution Plan ah poduthu paакрроேன், enga Scan (bad) nadaккுthu, enga Seek (good) nadaккுthу nа. 2) Estimated vs Actual row count difference paакрроேன் — periya gap iruந்தா, statistics outdated ah iruккலाம். 3) Missing index suggestions (SSMS thanа kaаtрроду) paакрроேன், aana blindly add pannாma, real benefit iruккா nа check pannрроேன். 4) SELECT * иருந்தа, venும்нா columns mattум் ah change pannрроேன். 5) Function on the WHERE-clause column iருந்thа (non-SARGable), adhа remove pannрроேன். Idha ellame after, still slow ah iருந்thа thaan query rewrite (subquery ku pathila JOIN, madhiri) pannрроேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I follow a fixed sequence: look at the actual execution plan first for scans versus seeks, check for estimated-versus-actual row count mismatches which usually means stale statistics, review missing index suggestions but validate the real benefit before adding them, replace SELECT * with only needed columns, and remove non-SARGable expressions like functions wrapped around a WHERE column that block index usage. Only after all that do I consider rewriting the query structure itself."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's a non-SARGable predicate, with an example? — A WHERE clause that wraps the indexed column in a function, like WHERE YEAR(OrderDate) = 2024 — it forces a scan; rewriting as WHERE OrderDate &gt;= '2024-01-01' AND OrderDate &lt; '2025-01-01' lets the optimizer seek.</div>
+      <div class="fq"><b>Q:</b> How do you refresh outdated statistics? — UPDATE STATISTICS on the table, or enable AUTO_UPDATE_STATISTICS, or for very large tables use UPDATE STATISTICS WITH FULLSCAN during a maintenance window for full accuracy.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. How do you identify performance bottlenecks in SQL Server? <span class="en">(Diagnostic Toolkit)</span></div>
+    <div class="tng">Naan wait stats mூlама start pannрроேன் — <code>sys.dm_os_wait_stats</code> paакрроேн், SQL Server enna kaаthirукки nu theriyும் (CPU, I/O, locks, network). Apparam <code>sys.dm_exec_query_stats</code> vачı, top CPU/IO consuming queries ah rank pannрроேн். Activity Monitor real-time la current blocking/waiting sessions kaаtрродு. Idha ellame sேra — bottleneck CPU-bound ஆ, I/O-bound ஆ, illainaа lock/blocking-bound ஆ nு classify pannрроேн், apparam adhуkка specific fix pannрроேн்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I start with wait statistics from sys.dm_os_wait_stats to see what SQL Server is actually spending time waiting on — CPU, I/O, locks, or network. Then sys.dm_exec_query_stats to rank queries by CPU or logical reads and find the worst offenders. Activity Monitor gives me a real-time view of current blocking. Together this lets me classify the bottleneck as CPU-bound, I/O-bound, or lock-contention-bound before deciding on a fix."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's a common high wait type and what does it mean? — PAGEIOLATCH_SH/EX usually means disk I/O pressure reading pages into memory — often points to missing indexes causing full scans, or genuinely undersized storage.</div>
+      <div class="fq"><b>Q:</b> Do you use any external monitoring tools? — Yes — Query Store built into SQL Server for historical plan regression tracking, and for production I've relied on Application Insights/APM dashboards to correlate DB latency with overall request latency.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. What is an Execution Plan, and how do you analyze it? <span class="en">(Reading the Plan)</span></div>
+    <div class="tng">Execution Plan na — SQL Server query ah eppadi run pannрроду nа decide pannினа "roadmap" — enga index use pannрроду, enga scan pannрроду, enga join algorithm (nested loop/hash/merge) use pannрроду ellame kaаtрродு. Naan <b>Actual</b> plan ah paакрроேн் (Estimated illa, since Actual la real row counts irукkum). Main things паாркрроேн் — 1) <b>Thick arrows</b> — periya data movement, bottleneck ирукkалाம். 2) <b>Table Scan/Index Scan</b> icons — Seek ku pathila full scan nadaккிаthा nа check pannрроேн். 3) <b>Estimated vs Actual rows</b> — periya mismatch iruந்தा statistics problem. 4) <b>Cost %</b> — evнgе time consume aагuрроேн் nа highlight pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"An execution plan shows exactly how SQL Server chose to run the query — which indexes it used, whether it scanned or sought, and which join algorithm it picked. I always look at the Actual plan rather than Estimated, since it has real row counts. I look for thick arrows indicating large data movement, table or index scans where a seek should be possible, big estimated-versus-actual row mismatches pointing to stale statistics, and the cost percentage to find where time is really going."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Nested loop vs hash join vs merge join — when does SQL Server pick each? — Nested loop for small outer sets joined to an indexed inner set; hash join for large unsorted sets without useful indexes; merge join when both inputs are already sorted on the join key.</div>
+      <div class="fq"><b>Q:</b> What tool do you use to capture the actual execution plan? — SSMS's "Include Actual Execution Plan" (Ctrl+M) before running the query, or SET STATISTICS XML ON for capturing it programmatically/in scripts.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. How do you troubleshoot slow-running queries in production? <span class="en">(Live System, No Downtime)</span></div>
+    <div class="tng">Production la carefully approach pannانும் — direct ah query kill panна mудியாthу, business impact irукkalaam். Naan first <code>sys.dm_exec_requests</code> and <code>sys.dm_exec_sql_text</code> vачі, currently run aагுрра queries ah live ah paакрроேн், blocking iruккா nа check pannрроேн். Query Store irundhа (SQL 2016+), past performance history vачі "idhу eppovудு la irundhу slow aагுthу" nу timeline paакрроேн் — recent deployment/statistics change correlate pannрроேн். Read-replica/reporting server iருந்thа, heavy analytical queries ah adhуkку redirect pannрроேн், OLTP server ah free ah vачுрроேн்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"In production I have to be careful — I can't just kill queries without understanding business impact. I check sys.dm_exec_requests and sys.dm_exec_sql_text for what's currently running and whether there's active blocking. If Query Store is enabled, I look at historical performance to pinpoint when a query regressed, and correlate that with recent deployments or statistics changes. If there's a read replica or reporting server available, I offload heavy analytical queries there to protect the OLTP workload."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> When would you actually kill a session in production? — Only as a last resort for a clearly runaway query causing widespread blocking, and only after confirming with the team/checking it isn't mid-critical-transaction.</div>
+      <div class="fq"><b>Q:</b> How does Query Store help spot regressions specifically? — It stores plan history per query, so you can compare a query's performance before and after a plan change and force the old, better-performing plan back if a regression is confirmed.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. What techniques do you use to optimize queries on large tables? <span class="en">(Millions+ Rows)</span></div>
+    <div class="tng">Periya tables ku specific techniques use pannрроேн் — 1) <b>Proper indexing</b> — WHERE/JOIN/ORDER BY columns la index irукkanum். 2) <b>Partitioning</b> — date range vачі table ah partition pannінா, query relevant partition mattум் touch pannும். 3) <b>Pagination</b> — <code>OFFSET-FETCH</code> vачі, ஒரே நேரம்la ellame load pannாma page-by-page. 4) <b>Avoid SELECT *</b> — venум்на columns mattум். 5) <b>Batch processing</b> — bulk update/delete ah oru periya transaction ah pannாma, small batches (5000 rows madhiri) ah split pannі pannрроேн், lock escalation avoid pannрроேн்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"For large tables I combine several techniques — proper indexes on WHERE/JOIN/ORDER BY columns, table partitioning by date range so queries only touch relevant partitions, OFFSET-FETCH pagination instead of loading everything at once, projecting only needed columns instead of SELECT *, and batching bulk updates or deletes into smaller chunks like 5000 rows at a time to avoid lock escalation and long-running transactions."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What is lock escalation and why does batching avoid it? — SQL Server escalates many row/page locks into a single table lock once a threshold (~5000 locks) is crossed, blocking other queries — batching a bulk operation keeps each transaction's lock count under that threshold.</div>
+      <div class="fq"><b>Q:</b> Have you personally partitioned a table in production? — I've designed for it conceptually — date-range partitioning on a transaction/billing history table — the actual DBA-level partition function/scheme setup is something I've worked through with a DBA rather than owned solo.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q6">
+    <div class="term">6. How do you reduce IO and CPU consumption in SQL Server? <span class="en">(Resource Efficiency)</span></div>
+    <div class="tng">IO reduce panna — covering indexes use pannрроேн் (key lookup avoid aагум்), unnecessary columns select pannாma iருkрроேн், TEXT/large columns ah necessary illainа fetch pannாma iруккрроேн். CPU reduce panna — parameterized queries/stored procedures use pannрроேн் (execution plan reuse aагум், recompile avoid aагும்), scalar UDFs (user-defined functions) row-by-row call aагுрроадhu avoid pannрроேн் (adhу CPU ah severely affect pannும், inline TVF ku maathрроேн் venум்нா), unnecessary implicit conversions (datatype mismatch la) avoid pannрроேн்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"For I/O, I focus on covering indexes to avoid key lookups and only selecting the columns actually needed. For CPU, I rely on parameterized queries and stored procedures so execution plans get reused instead of recompiled every time, I avoid scalar UDFs in row-by-row contexts since they silently kill performance by running once per row, and I watch for implicit conversions from data type mismatches, which can quietly force a scan instead of a seek."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why exactly are scalar UDFs so expensive? — Prior to SQL Server 2019's scalar UDF inlining, they execute row-by-row rather than set-based, and the optimizer can't parallelize or properly cost them, so a UDF in a WHERE or SELECT on a large table can be catastrophically slow.</div>
+      <div class="fq"><b>Q:</b> What's a real example of an implicit conversion causing a scan? — Comparing an NVARCHAR column to a VARCHAR literal, or an INT column to a string parameter — SQL Server converts every row's value to match, which blocks index seek usage entirely.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q7">
+    <div class="term">7. How do you optimize queries involving millions of records? <span class="en">(Scale-Specific Tactics)</span></div>
+    <div class="tng">Million+ records la — first, query ah <b>set-based</b> ah design pannрроேн், cursor/row-by-row loop avoid pannрроேн் (adhу exponentially slow aагும்). Aggregate queries ku indexed views/materialized summary tables consider pannрроேн் (real-time recompute panna vேண்டியthu illa). JOIN order and index alignment double-check pannрроேн் — periya table ah first filter pannі, apparam чротா join pannрроேн். TOP/OFFSET-FETCH vачி result set ah limit pannрроேн், UI-ku ellame ஒரே ноுru la venடам்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"At millions-of-rows scale, the biggest win is staying set-based — cursors or row-by-row loops don't scale linearly, they degrade badly. I consider indexed views or pre-aggregated summary tables for expensive repeated aggregations instead of recomputing them live every time. I double-check join order so the largest table gets filtered down early, and I always paginate results with OFFSET-FETCH rather than returning the full million-row set to the UI."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's an indexed view and when would you use one? — A materialized view with a unique clustered index, so SQL Server maintains and stores the aggregated result physically — useful for a heavily-queried aggregate (like daily sales totals) that would otherwise be recomputed on every request.</div>
+      <div class="fq"><b>Q:</b> Why are cursors specifically bad at this scale? — They process one row at a time with per-row overhead, versus SQL Server's query engine which is built to optimize set-based operations across the whole result set at once — the gap widens dramatically as row count grows.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q8">
+    <div class="term">8. What tools do you use to monitor SQL Server performance? <span class="en">(Toolkit Overview)</span></div>
+    <div class="tng">Naan use panра tools — <b>SSMS Activity Monitor</b> (quick real-time look), <b>Query Store</b> (historical plan/performance regression tracking, SQL 2016+ built-in), <b>Extended Events</b> (lightweight, low-overhead deep tracing — Profiler ku replacement), <b>Dynamic Management Views (DMVs)</b> like <code>sys.dm_exec_query_stats</code>, <code>sys.dm_os_wait_stats</code>, <code>sys.dm_db_index_usage_stats</code>. Production-level la, APM tools (Application Insights, or infra-level Grafana/Prometheus dashboards) vачі, DB latency ah overall app latency ку correlate pannрроேн்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"My toolkit is SSMS Activity Monitor for a quick real-time check, Query Store for historical performance and plan regression tracking, Extended Events for lightweight deep tracing — the modern replacement for Profiler — and DMVs like sys.dm_exec_query_stats, sys.dm_os_wait_stats, and sys.dm_db_index_usage_stats for targeted diagnostics. At the application level, I've used Application Insights to correlate database latency with overall request latency in production."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why Extended Events over the old SQL Profiler? — Profiler has much higher overhead and is deprecated by Microsoft; Extended Events is lightweight enough to run continuously in production without materially impacting performance.</div>
+      <div class="fq"><b>Q:</b> How do you find unused indexes with DMVs? — sys.dm_db_index_usage_stats shows seeks/scans/lookups/updates per index — an index with high updates but near-zero seeks/scans is a strong candidate to drop, since it's pure write overhead with no read benefit.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 23B -->
+<div class="section" id="23B">
+  <div class="section-title"><span class="num">23B</span> Indexing</div>
+
+  <div class="item" id="q9">
+    <div class="term">9. Difference between Clustered and Non-Clustered Indexes <span class="en">(Physical vs Logical)</span></div>
+    <div class="tng">Clustered Index na — table oda <b>actual physical row order</b> ah define pannрроадu — so ஒரு table ku <b>ஒரே ஒரு</b> clustered index mattum iருккும் (usually Primary Key mூlама auto create aагுрроадு). Non-Clustered Index na — separate structure, adhула indexed column(s) + pointer (row locator) mattум் iருккும் — actual data row வேறு இடத்தில் irukkும். Table ku <b>பல</b> non-clustered indexes iருккலाம் (SQL Server 2016+ la max 999). Non-clustered index use pannінா, actual data venும்на "Key Lookup" nு extra step vேண்டியiருккும் (adhа avoid panна thaan Covering Index concept).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"A clustered index defines the table's actual physical row order, so there can only be one per table — typically created automatically on the primary key. A non-clustered index is a separate structure holding the indexed columns plus a pointer back to the actual data row, and a table can have many of them. Using a non-clustered index that doesn't cover all needed columns requires an extra Key Lookup step to fetch the rest of the row, which is exactly what covering indexes are designed to eliminate."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What does the pointer in a non-clustered index actually point to? — If the table has a clustered index, it points to the clustering key; if the table is a heap (no clustered index), it points directly to the physical row location (RID).</div>
+      <div class="fq"><b>Q:</b> Why is primary key usually the clustered index by default? — It's the natural, unique, stable identifier most queries filter or join on, so physically ordering the table by it tends to benefit the most common access patterns — though it's not mandatory, and sometimes a different column is a better clustering key.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q10">
+    <div class="term">10. When should you create a Composite Index? <span class="en">(Multi-Column Index)</span></div>
+    <div class="tng">Composite Index na — oru index la <b>multiple columns</b> combine pannі create pannuрроадு. Naan idha create panна — query oda WHERE clause la <b>multiple columns together</b> frequently filter aагுрроадு-na venும், example <code>WHERE DepartmentId = @dept AND Status = @status</code>. <b>Column order</b> muklyaam் — most selective/most frequently filtered column ah <b>first</b> vачு create pannaнும் (equality columns first, range columns last), illainaа index effectively use aагаathu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I create a composite index when queries frequently filter on multiple columns together, like DepartmentId and Status in the same WHERE clause. Column order matters a lot — I put equality-filter columns first and range-filter columns last, and generally the most selective or most frequently used column leads, otherwise the index won't be used efficiently, or at all, for queries that only reference the later columns."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> If you have index (A, B), does a query filtering only on B benefit? — Generally no — a composite index is only useful left-to-right, like a phone book sorted by last-then-first name; searching by first name alone can't use it efficiently.</div>
+      <div class="fq"><b>Q:</b> Does column order matter for a query filtering on both A and B with AND? — The optimizer can still use index (A, B) even if your WHERE clause lists B before A in the SQL text — it's the index's own column order that matters, not the order you write the predicates in.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q11">
+    <div class="term">11. How do you determine whether an index is actually being used? <span class="en">(Usage Verification)</span></div>
+    <div class="tng"><code>sys.dm_db_index_usage_stats</code> DMV vачі check pannрроேн் — idhула ovvoru index ku, seeks/scans/lookups (read side) and updates (write side) count kாтрроадு. Seeks/scans/lookups ellame zero-ku close ah iruந்தа, aana updates high ah iருந்thа — andha index practically use aагадha "dead weight" — drop panna candidate. Execution plan la kூда, query specific index ah use pannрроадo illa nа directly паакрроேн்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I check sys.dm_db_index_usage_stats, which shows seeks, scans, lookups, and updates per index since the last SQL Server restart. If an index has near-zero reads but high update counts, it's pure write overhead with no read benefit — a strong candidate to drop. I also verify at the query level by checking the actual execution plan to see whether a specific index was chosen for a specific query."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why does it matter that this DMV resets on restart? — Stats only reflect activity since the last restart or failover, so a recently-restarted server might show an important index as "unused" simply because it hasn't been hit yet — you need enough elapsed time for the numbers to be meaningful.</div>
+      <div class="fq"><b>Q:</b> What's the risk of dropping an index purely based on this data? — A rarely-run but business-critical monthly/quarterly report query might rely on it — I'd check the business calendar or wait for a full cycle before dropping anything based on short-window usage data.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. What are Covering Indexes and Included Columns? <span class="en">(Avoiding Key Lookups)</span></div>
+    <div class="tng">Covering Index na — oru index la, query ku venум் <b>ellame columns</b> (SELECT, WHERE, JOIN, ORDER BY ellame) already иருந்தа, SQL Server andha index ah mattum vачீуе full result kொடுக்к mудியும் — actual table/clustered index ku "Key Lookup" pona venடாm். <code>INCLUDE</code> clause use pannі, key columns illама, SELECT-mattум் venும் columns ah "included columns" ah add pannலाம் — idhу key size ah increase pannадha, aana query result la ируккும். Example — <code>CREATE INDEX IX_Emp ON Employees(DepartmentId) INCLUDE (FirstName, Salary)</code>.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"A covering index contains every column a query needs — for filtering, joining, and selecting — so SQL Server can satisfy the entire query from the index itself, without a Key Lookup back to the clustered index. The INCLUDE clause lets me add columns that are only needed in the SELECT list, not for filtering or sorting, without making them part of the index key — keeping the key narrow while still avoiding the lookup. For example, indexing DepartmentId with INCLUDE (FirstName, Salary) covers a query that filters by department and selects those two columns."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why not just put everything in the key instead of INCLUDE? — A wider key means a bigger index, more page splits, slower writes, and it affects sort order — INCLUDE keeps only what's needed for filtering/sorting in the key while cheaply carrying the rest.</div>
+      <div class="fq"><b>Q:</b> How do you spot a missing covering opportunity in an execution plan? — A Key Lookup operator next to an Index Seek — SSMS often even suggests the exact INCLUDE columns needed to eliminate it via a missing index hint.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. What are Index Fragmentation and Index Rebuild/Reorganize? <span class="en">(Maintenance)</span></div>
+    <div class="tng">Fragmentation na — index oda logical page order aur physical disk order mismatch aагுрроадு, mostly frequent inserts/updates/deletes vachा. Idhу read performance ah degrade pannும் (extra disk I/O). Check panna — <code>sys.dm_db_index_physical_stats</code> vачі fragmentation % paакрроேн். <b>Rule of thumb</b> — 5-30% fragmentation na <code>ALTER INDEX ... REORGANIZE</code> (light, online operation), 30%+ na <code>ALTER INDEX ... REBUILD</code> (heavier, rebuilds from scratch, better result — <code>ONLINE = ON</code> vачі Enterprise edition la downtime illama pannலam்).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Fragmentation happens when an index's logical page order drifts from its physical disk order, mainly from ongoing inserts, updates, and deletes, and it hurts read performance through extra I/O. I check sys.dm_db_index_physical_stats for the fragmentation percentage — between 5 and 30 percent I use REORGANIZE, which is lighter and always online; above 30 percent I use REBUILD, which fully rebuilds the index and gives a cleaner result, and can be done online with ONLINE = ON on supported editions to avoid blocking."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Does REBUILD update statistics automatically? — Yes, REBUILD updates statistics with a full scan as a side effect; REORGANIZE does not, so you'd want a separate UPDATE STATISTICS after a REORGANIZE if that's a concern.</div>
+      <div class="fq"><b>Q:</b> How would you automate this maintenance? — A scheduled SQL Agent job (or Maintenance Plan / Ola Hallengren's popular open-source scripts) that checks fragmentation per index nightly or weekly and applies REORGANIZE or REBUILD based on the threshold automatically.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q14">
+    <div class="term">14. How many indexes are too many? <span class="en">(Read vs Write Tradeoff)</span></div>
+    <div class="tng">Fixed number kидியாthu — idhу table oda read:write ratio ah depend aагுрроadhу. Rule of thumb ah, oru transactional table ku 5-8 indexes (including PK) reasonable range. Heavy write table (audit log, transaction table) la, 3-4 ku kூда keep pannрроேн் — indexes rேrаthaане INSERT/UPDATE/DELETE கூட update aаганும், adhу write performance ah kуруккும். Reporting/read-heavy table la periya எண்ணிக்கை indexes okay (12-15 வரை iருந்தalும் common).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"There's no fixed number — it depends heavily on the table's read-to-write ratio. For a typical transactional table I'd aim for around 5 to 8 indexes including the primary key. For a heavy-write table like an audit log, I'd keep it closer to 3 or 4, because every index has to be updated on every insert, update, or delete, directly costing write performance. A read-heavy reporting table can reasonably carry more, sometimes 12 to 15."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How would you actually decide if you have too many on a real table? — Cross-check sys.dm_db_index_usage_stats — if several indexes show near-zero reads but real update counts, that's the specific signal to prune, rather than picking an arbitrary count.</div>
+      <div class="fq"><b>Q:</b> Do foreign key columns automatically get an index? — No — SQL Server doesn't auto-index foreign key columns, and I deliberately add non-clustered indexes on FK columns myself, since they're frequently used in joins and otherwise cause scans.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q15">
+    <div class="term">15. Why can indexes sometimes reduce performance? <span class="en">(The Write Cost)</span></div>
+    <div class="tng">Index — read (SELECT) ku fast aагум், aana write (INSERT/UPDATE/DELETE) ku cost kूட்டும், because every write operation la, table data mattum illama, andha column ah touch panра <b>every index um</b> update aаганும். Over-indexed table la, oru simple INSERT — 8-10 indexes ellame update pannанும் na, adhу significantly slow aагும். Adhु மட்டும் illama, indexes disk space um occupy pannும், backup/restore time um increase pannும், aur fragmentation maintenance overhead கூட kூட்டும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Indexes speed up reads but add real cost to writes, because every insert, update, or delete has to update not just the table but every index that touches the changed columns. On an over-indexed table, a single insert might have to update eight or ten indexes, which noticeably slows write throughput. Indexes also consume disk space, increase backup and restore time, and add ongoing fragmentation-maintenance overhead."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How would you convince a team to drop an index they're nervous about removing? — Show the usage_stats data — near-zero reads, real update cost — and if still hesitant, disable it first (ALTER INDEX ... DISABLE) rather than dropping, so it can be quickly re-enabled if something breaks.</div>
+      <div class="fq"><b>Q:</b> Is this tradeoff different for OLTP vs OLAP systems? — Yes — OLTP systems (frequent writes) need to index conservatively; OLAP/reporting systems (read-heavy, batch-loaded) can afford many more indexes since writes happen in controlled, infrequent batches.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q16">
+    <div class="term">16. How do you design indexing strategies for high-volume transactional systems? <span class="en">(OLTP Indexing Philosophy)</span></div>
+    <div class="tng">High-volume OLTP system la (namba Zen Campus ERP madhiri, real-time student/billing transactions), indexing strategy conservative ah irуkanum். Naan follow pannра principles — 1) Primary key + foreign keys mattум் baseline ah index pannрроேн். 2) Actual query patterns (production la real WHERE/JOIN/ORDER BY) ah monitor pannі, adha based ah mattум் additional indexes add pannрроேн் — guess pannாma. 3) Composite indexes ah wisely design pannрроேн் (column order correct ah). 4) Periodic ah <code>sys.dm_db_index_usage_stats</code> review pannі, unused indexes drop pannрроேн். 5) Heavy write tables (transaction log, audit) la minimal indexing mattum vачுрроேн். 6) Off-peak hours la mattум் REBUILD/REORGANIZE maintenance schedule pannрроேн், peak transaction time la illa.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"For a high-volume OLTP system like my ERP's billing and attendance transactions, I keep indexing conservative and data-driven. I baseline with the primary key and foreign keys, then add indexes based on actual observed query patterns from production, not guesswork. Composite indexes are designed carefully for column order. I periodically review usage stats to prune anything unused, keep heavy-write tables like transaction logs minimally indexed, and schedule index maintenance for off-peak hours so REBUILD operations don't compete with live transaction traffic."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you find "actual observed query patterns" in production? — Query Store's top-resource-consuming-queries view, or DMV-based query stats aggregated over a representative time window — not assumptions from the schema alone.</div>
+      <div class="fq"><b>Q:</b> Would your strategy differ for the reporting side of the same system? — Yes — I'd either offload reporting to a read replica/reporting database with a much richer index set, or accept heavier indexing there specifically, since it doesn't compete with the OLTP write path.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 23C -->
+<div class="section" id="23C">
+  <div class="section-title"><span class="num">23C</span> Transactions &amp; Concurrency</div>
+
+  <div class="item" id="q17">
+    <div class="term">17. Explain ACID properties with real-world examples <span class="en">(Atomicity, Consistency, Isolation, Durability)</span></div>
+    <div class="tng"><b>Atomicity</b> — transaction la irукка ellame steps ஒன்னா நடக்கனும், illa ஒண்ணும் நடக்காது. Example — fee payment la, "deduct balance" + "insert payment record" rendும் ஒன்னா success aаганும், oru step fail aанா rendும் rollback aаgaнும். <b>Consistency</b> — transaction mудிந்тха appuram, DB ellame constraints (FK, check) valid ah irукkаnum் — negative balance possible aаgакூடадு. <b>Isolation</b> — concurrent transactions ஒண்ணு vera ondrу ah affect pannакூடадு (isolation levels control pannும்). <b>Durability</b> — commit aана transaction, server crash aanaаlum் permanent ah save aагіruккանும் (transaction log mூlама achieve pannрроадு).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Atomicity means all steps in a transaction succeed together or none do — deducting a balance and inserting a payment record either both happen or both roll back. Consistency means the database stays valid against all constraints after the transaction — no negative balances. Isolation means concurrent transactions don't interfere with each other, controlled by isolation levels. Durability means once committed, the change survives even a server crash, guaranteed through the transaction log."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Which ACID property does the transaction log primarily support? — Durability, primarily — the write-ahead log ensures committed changes can be recovered even after a crash, before the actual data pages are flushed to disk.</div>
+      <div class="fq"><b>Q:</b> How does SQL Server enforce atomicity technically? — Through the transaction log and rollback mechanism — if any statement in the transaction fails, SQL Server uses the log to undo everything already applied in that transaction.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q18">
+    <div class="term">18. What are SQL Server Isolation Levels? <span class="en">(The 5 Levels)</span></div>
+    <div class="tng">5 main levels iруккும், weakest to strongest — 1) <b>Read Uncommitted</b> — dirty reads possible (uncommitted data padikkалам், риsky). 2) <b>Read Committed</b> — SQL Server default, committed data mattум் paакрроேн், aana same transaction la rерреat query different result kொடுкkалाம் (non-repeatable read). 3) <b>Repeatable Read</b> — same row rерреat panна same result, aana phantom rows (new rows) vаraлaam். 4) <b>Serializable</b> — strictest, phantom reads um block pannும், aana concurrency கмми aагум். 5) <b>Snapshot</b> — row versioning vачі, blocking illama consistent read kொடுкkும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"There are five main levels, from weakest to strongest isolation. Read Uncommitted allows dirty reads of uncommitted data. Read Committed, the SQL Server default, only reads committed data but can give different results on repeated reads within the same transaction. Repeatable Read locks read rows so they can't change, but new phantom rows can still appear. Serializable is the strictest, blocking phantom rows too, at the cost of concurrency. Snapshot uses row versioning to give a consistent read without blocking writers at all."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why is Read Committed the default and not something stricter? — It's the best practical balance — good protection against dirty reads while keeping reasonable concurrency; stricter levels trade meaningfully more blocking for guarantees most applications don't actually need.</div>
+      <div class="fq"><b>Q:</b> When have you actually changed the isolation level from the default? — For a specific reporting query that needed a consistent snapshot without blocking live OLTP writes, I used READ COMMITTED SNAPSHOT isolation at the database level rather than locking-based isolation.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q19">
+    <div class="term">19. How do you prevent Deadlocks? <span class="en">(Proactive Design)</span></div>
+    <div class="tng">Naan follow pannра practices — 1) <b>Consistent access order</b> — ellaа transactions/procedures um, tables ah <b>same order</b> la access pannाnum் (example — always Departments first, apparam Employees) — order maariа thaan deadlocks mostly nadaккும். 2) <b>Short transactions</b> — transaction ah quick ah keep pannі, unnecessary logic/UI wait ah transaction kூllа vекkадатு. 3) <b>Lower isolation level</b> venум்нா use pannрроேн் (Read Committed Snapshot). 4) <b>Indexes</b> proper ah vачு, lock duration குறைக்கும். 5) Retry logic (catch deadlock exception 1205, retry) application side la add pannрроேн் — deadlock completely avoid panna mудியாதா pothும், graceful ah handle panна mудியும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I prevent deadlocks primarily by enforcing a consistent resource access order across all transactions and procedures — most deadlocks happen because two transactions lock the same tables in opposite order. I keep transactions as short as possible, avoid doing unrelated work inside a transaction, use Read Committed Snapshot isolation where appropriate to reduce locking, and ensure indexes are in place so locks are held for a shorter duration. As a safety net, I also add retry logic in the application to catch deadlock error 1205 and retry the operation gracefully."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's the deadlock error number and how do you catch it in C#? — SQL error 1205 — I catch a SqlException, check ex.Number == 1205, and retry the operation a small number of times with a short backoff before giving up.</div>
+      <div class="fq"><b>Q:</b> Does SQL Server automatically resolve a deadlock once it happens? — Yes — it detects the cycle and picks a "victim" transaction to kill and roll back, letting the other proceed, so the app must be ready to handle that failed transaction, not assume every transaction always succeeds.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q20">
+    <div class="term">20. How do you identify and resolve Deadlocks in production? <span class="en">(Post-Mortem Investigation)</span></div>
+    <div class="tng">Identify panна — SQL Server Profiler/Extended Events la <code>deadlock_graph</code> event enable pannі, deadlock nadaккும்бодhу automatic ah XML graph capture pannலам் — adhula exact ah yeva rендு queries, evanga resources, endha order la lock vachaангா nа full detail iருккும். <code>sys.event_log</code> um trace flag <code>1222</code> (error log ku deadlock info) enable panna мudiyum். Resolve panна — deadlock graph paакрроேн், access order fix pannрроேн், apparam similar scenario ah load-test pannі confirm pannрроேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"To identify deadlocks in production, I enable the deadlock_graph Extended Event, which automatically captures a detailed XML graph the moment a deadlock happens — exactly which two queries, which resources, and in what order they were locked. I've also used trace flag 1222 to log deadlock details to the error log. To resolve it, I read the graph to find the conflicting access order, fix the code to standardize that order, and then load-test the same scenario to confirm the fix actually holds."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Walk me through a real deadlock you resolved. — Two stored procedures updated Student and Attendance tables in opposite order under concurrent load; the deadlock graph showed the exact lock cycle, and standardizing both procedures to always touch Student before Attendance eliminated it.</div>
+      <div class="fq"><b>Q:</b> Is deadlock priority (SET DEADLOCK_PRIORITY) something you've used? — Occasionally — to bias SQL Server toward killing a lower-priority background/batch transaction instead of a user-facing one when a deadlock does occur, as a safety net rather than a primary fix.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q21">
+    <div class="term">21. What are Locking, Blocking, and Latching? <span class="en">(Concurrency Control Primitives)</span></div>
+    <div class="tng"><b>Locking</b> — SQL Server data consistency ku, resources (rows/pages/tables) ah temporarily "lock" pannуроадu, vera transactions andha resource ah conflicting way la touch panна vேண்டாm் nா. <b>Blocking</b> — oru transaction, vera transaction release panра varaikkும் kaаthirукkும் situation — normal behavior thaan (locking oda direct side-effect), aana over-blocking na performance problem. <b>Latching</b> — idhу lower-level, memory structure (data pages) ah физically protect panна SQL Server internal ah use pannра very short-duration lightweight lock — user code la directly control panна mудியாthу, SQL Server internal engine handle pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Locking is SQL Server reserving a resource — row, page, or table — so concurrent transactions can't conflict with each other on it. Blocking is the natural consequence — one transaction waiting for another to release its lock; some blocking is normal, but excessive blocking is a performance problem. Latching is a lower-level, much shorter-duration protection mechanism SQL Server uses internally to guard in-memory data page structures — it's not something application code controls directly, it's purely an internal engine concern."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Is blocking always bad? — No — brief blocking is normal and expected in any concurrent system; it becomes a real problem only when wait times grow long enough to cause timeouts or a visible slowdown to users.</div>
+      <div class="fq"><b>Q:</b> How would you find what's currently blocking what? — sp_who2 or sys.dm_exec_requests joined with sys.dm_os_waiting_tasks shows the blocking_session_id chain — I can trace exactly which session is blocking which.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q22">
+    <div class="term">22. What is Row Versioning? <span class="en">(Snapshot Isolation Mechanism)</span></div>
+    <div class="tng">Row Versioning na — oru row update aагுрродu pothु, SQL Server pazhaya version ah <code>tempdb</code> la copy panni vачுрроадu, apparam readers andha "snapshot" version ah padikkалам், writer lock ku kаathirukkada vேண்டам். Idhу Snapshot Isolation aur Read Committed Snapshot Isolation (RCSI) rendум்-kku base mechanism. Main benefit — <b>readers writers ah block pannaathu, writers readers ah block pannaathu</b> — high-concurrency systems ku periya win.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Row versioning means SQL Server keeps a previous version of a row in tempdb when it's being updated, so readers can access that consistent snapshot version instead of waiting on a lock held by the writer. It's the underlying mechanism behind both Snapshot Isolation and Read Committed Snapshot Isolation. The big benefit is that readers don't block writers and writers don't block readers, which is a significant concurrency win for high-traffic systems."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's the cost of enabling row versioning? — Extra load and storage pressure on tempdb, since every changed row's previous version gets stored there until no longer needed — tempdb sizing becomes more important once you enable it.</div>
+      <div class="fq"><b>Q:</b> Difference between Snapshot Isolation and RCSI specifically? — RCSI changes the behavior of the existing Read Committed level to use row versioning instead of locking, database-wide and transparent; full Snapshot Isolation is a separate, stricter level a transaction opts into explicitly for a fully consistent point-in-time view.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q23">
+    <div class="term">23. How do you handle concurrent updates from multiple users? <span class="en">(Practical Strategy)</span></div>
+    <div class="tng">Depend pannрроадu — business scenario evнgе na. <b>Low-conflict scenario</b> (rare simultaneous edit, example — student profile edit) — Optimistic concurrency use pannрроேн் — <code>rowversion</code>/<code>timestamp</code> column vачі, save pannрроadhу pothu "idhу last read panна appuram vera yaаru change pannалiруккaанga-nா" check pannрроேн், change iருந்தа, error kaатті user ah refresh pannі retry pannра maathi sொллрроேн். <b>High-conflict scenario</b> (billing/inventory balance madhiri, exact ah concurrent-safe venும்nа) — Pessimistic locking use pannрроேн் — <code>SELECT ... WITH (UPDLOCK, ROWLOCK)</code> madhiri, andha row ah explicitly lock pannі, transaction mудியும் вараіkkும் vera update wait pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"It depends on the actual conflict likelihood. For low-conflict scenarios like editing a student profile, I use optimistic concurrency — a rowversion column that detects if the row changed since it was last read, and if so, the save fails gracefully and the user is asked to refresh and retry. For high-conflict scenarios like updating a billing or inventory balance where correctness under concurrency really matters, I use pessimistic locking — an explicit UPDLOCK/ROWLOCK hint that locks the row for the duration of the transaction so no other update can interleave."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How does EF Core support optimistic concurrency out of the box? — A [Timestamp] / rowversion-mapped property automatically gets included in the WHERE clause of generated UPDATE statements — a mismatch throws DbUpdateConcurrencyException, which I catch and surface to the user.</div>
+      <div class="fq"><b>Q:</b> What's the downside of defaulting to pessimistic locking everywhere? — Reduced concurrency/throughput — locking rows even when conflicts are rare unnecessarily makes other users wait, so I reserve it for genuinely high-conflict, correctness-critical paths.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q24">
+    <div class="term">24. Difference between Pessimistic and Optimistic Concurrency <span class="en">(Lock Now vs Check Later)</span></div>
+    <div class="tng"><b>Pessimistic</b> — "conflict nадаккும் nа assume pannі, upfront ah lock pannуроadu" — row ah read panра момент itself, lock vачирудुроேன், vera transaction wait pannанும். Safe, aana concurrency குறையும் (throughput drop aагум்). <b>Optimistic</b> — "conflict rare aаga irукkалाam் nа assume pannі, save pannра momент mattum check pannுрроadu" — read time la lock illa, save time la "row change aагіருка்கா" nа verify pannрроேன் (rowversion vачі), conflict iருந்thа тан் reject/retry panна vекkрроேன். High-concurrency read-heavy systems ku Optimistic better, exact correctness-critical writes ku Pessimistic better.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Pessimistic concurrency assumes conflicts will happen and locks the row upfront at read time, so other transactions have to wait — it's safe but reduces throughput. Optimistic concurrency assumes conflicts are rare, doesn't lock at read time, and only checks at save time — usually via a rowversion column — whether the row changed since it was read, rejecting or retrying only if there's an actual conflict. I lean optimistic for high-concurrency, read-heavy scenarios, and pessimistic when correctness under simultaneous writes is critical, like balance updates."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What HTTP status code would you return for an optimistic concurrency conflict in a Web API? — 409 Conflict is the semantically correct status code, with a message telling the client to refetch the latest data and retry.</div>
+      <div class="fq"><b>Q:</b> Can you combine both in the same system? — Yes, and it's common — optimistic concurrency as the default across most entities, with pessimistic locking reserved specifically for the few high-conflict, correctness-critical operations like balance deduction.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 23D -->
+<div class="section" id="23D">
+  <div class="section-title"><span class="num">23D</span> Database Design</div>
+
+  <div class="item" id="q25">
+    <div class="term">25. How do you design a database for scalability? <span class="en">(Design Principles)</span></div>
+    <div class="tng">Naan follow pannра principles — 1) <b>Proper normalization</b> — redundancy avoid pannі, data integrity maintain pannрроேн் (aana over-normalize pannаma, read-heavy paths ku selective denormalize pannрроேн்). 2) <b>Right data types</b> — smallest sufficient type use pannрроேн் (INT ku pathila BIGINT venடам் nа, VARCHAR(MAX) everywhere venடам்). 3) <b>Indexing strategy</b> upfront ah plan pannрроேн். 4) <b>Partitioning</b> future growth ku consider pannрроேн் (periya tables ku). 5) <b>Read replicas / reporting DB</b> separate pannі, OLTP load ku pathила reporting load ah offload pannрроேன். 6) <b>Archiving strategy</b> upfront ah design pannрроேன் — historical data active table la kидакка vекkадеதу.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I design for scalability by starting with proper normalization to keep data integrity, while selectively denormalizing specific read-heavy paths where it genuinely helps. I choose right-sized data types instead of defaulting everything to the largest option, plan the indexing strategy upfront rather than reactively, consider partitioning for tables I expect to grow very large, separate reporting workloads onto a read replica so they don't compete with OLTP traffic, and design an archiving strategy from day one so historical data doesn't bloat the active tables indefinitely."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Give a concrete example of selective denormalization you've done. — Storing a DepartmentName snapshot directly on an Employee history record, so historical reports show the department name as it was at the time, without needing a join that could reflect a later department rename.</div>
+      <div class="fq"><b>Q:</b> How early do you think about partitioning — at design time or when it becomes a problem? — I identify likely-large tables (transaction/audit logs) at design time and design the schema partition-friendly (a good date column, sensible PK), but I usually don't implement the actual partition scheme until data volume actually demands it.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q26">
+    <div class="term">26. Differences between OLTP and OLAP databases <span class="en">(Transactional vs Analytical)</span></div>
+    <div class="tng"><b>OLTP</b> (Online Transaction Processing) — day-to-day operations ku, many small, fast read/write transactions — example, student attendance mark pannрроадu, fee payment record pannрроадு. Highly normalized schema (data integrity priority). <b>OLAP</b> (Online Analytical Processing) — reporting/analytics ku, fewer but much bigger, complex queries — example, "last quarter fee collection trend department-wise". Denormalized schema (star/snowflake) — query speed priority, data redundancy okay. En Zen Campus ERP oda main app OLTP, aana reporting dashboards ku separate denormalized summary tables use pannрроேн்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"OLTP systems handle everyday operations — many small, fast transactions like marking attendance or recording a payment — and are highly normalized to prioritize data integrity. OLAP systems support reporting and analytics — fewer but much larger, complex aggregation queries — and are typically denormalized, often into a star or snowflake schema, prioritizing query speed over storage efficiency. My ERP's core application is OLTP, but I use separate denormalized summary tables specifically for reporting dashboards."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why not just run OLAP-style reports directly against the OLTP tables? — Heavy analytical queries against normalized OLTP tables mean many joins and full scans, competing for locks and I/O with live transactional traffic — separating them protects both workloads.</div>
+      <div class="fq"><b>Q:</b> What's a star schema in one sentence? — A central fact table (e.g. FeePayments) surrounded by denormalized dimension tables (Student, Department, Date) that it references, optimized for fast aggregation queries.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q27">
+    <div class="term">27. When should you normalize or denormalize a database? <span class="en">(Tradeoff Decision)</span></div>
+    <div class="tng"><b>Normalize</b> panна vேண்டியathu — data integrity critical ah irукка scenarios (financial records, master data), write-heavy systems (update anomalies avoid pannанும்), storage efficiency mукkyамா irукка pothu. <b>Denormalize</b> panна vேண்டியathu — read-heavy/reporting scenarios (join cost avoid panна), performance critical dashboards, historical snapshot data (values change aагаама stay panна vேண்டியathu — example, invoice la irукka product price, master table la maариаlum invoice oda original price maарика்кудадு).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I normalize when data integrity is critical, the system is write-heavy, or I need to avoid update anomalies — like master data and financial records. I denormalize for read-heavy or reporting scenarios where join cost matters, for performance-critical dashboards, and for historical snapshots that should never change even if the source data later does — like the price stored on an invoice line, which must stay frozen even if the product's master price changes afterward."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's an update anomaly, concretely? — If a customer's address is duplicated across every one of their orders instead of normalized into a single Customers table, updating their address means updating it in many places — miss one, and now the data is inconsistent.</div>
+      <div class="fq"><b>Q:</b> Is denormalization ever done at the query level instead of schema level? — Yes — materialized/indexed views can give denormalized-style read performance while the underlying schema stays normalized, which is often a better middle ground than denormalizing the actual tables.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q28">
+    <div class="term">28. Explain the different Normal Forms with practical scenarios <span class="en">(1NF, 2NF, 3NF)</span></div>
+    <div class="tng"><b>1NF</b> — ovvoru column la atomic (single) value mattум் irukanum், repeating groups iருkkаkuдадu. Bad example — <code>PhoneNumbers</code> column la "9876543210, 9123456789" comma-separated ah save pannuрроadhu — 1NF violate pannурроадu; fix — separate <code>Phone</code> table. <b>2NF</b> — 1NF + every non-key column, <b>full</b> primary key ah depend aаganум் (partial dependency illama) — composite key table la matter pannும். <b>3NF</b> — 2NF + non-key columns, vera non-key column ah depend aаgaகூдадु (transitive dependency illama) — example, Employee table la <code>DepartmentName</code> nேrடியaаga vачаama, <code>DepartmentId</code> mattум் vачі, Departments table la separate ah <code>DepartmentName</code> vекkanum்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"1NF requires atomic column values with no repeating groups — comma-separated phone numbers in one column violates it; the fix is a separate related table. 2NF, on top of 1NF, requires every non-key column to depend on the entire primary key, not just part of it — relevant specifically for composite keys. 3NF, on top of 2NF, requires non-key columns to depend only on the key, not on another non-key column — storing DepartmentName directly on the Employee table instead of just DepartmentId, with the name looked up from Departments, violates 3NF."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Do you always design to 3NF in your real projects? — Mostly yes for the core transactional schema, then deliberately denormalize specific reporting tables or add snapshot columns where I have a clear performance or historical-accuracy reason to.</div>
+      <div class="fq"><b>Q:</b> What comes after 3NF? — BCNF (Boyce-Codd Normal Form), then 4NF and 5NF dealing with multi-valued and join dependencies — mostly academic in day-to-day work; 3NF is where practical schema design usually settles.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q29">
+    <div class="term">29. How do you partition very large tables? <span class="en">(Table Partitioning)</span></div>
+    <div class="tng">SQL Server la Table Partitioning — oru periya logical table ah, physically <b>multiple partitions</b> ah split pannuрроadhु (usually date range vачі), aana application ku ஒரே table madhiriye theriyும். Steps — 1) <b>Partition Function</b> create pannі, boundary values define pannанум் (example, month-wise boundaries). 2) <b>Partition Scheme</b> create pannі, ovvoru partition ah endha filegroup la store pannанும் nа map pannанும். 3) Table/index ah andha partition scheme mூlама create pannанும். Benefit — query oda WHERE clause la partition key (date) iருந்thа, SQL Server relevant partition(s) mattum touch pannும் ("partition elimination"), maintenance (rebuild/archive) கூда per-partition ah pannலam், whole table touch pannாma.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Table partitioning splits one large logical table into multiple physical partitions, usually by a date range, while the application still sees it as a single table. It's set up with a partition function defining the boundary values, a partition scheme mapping each partition to a filegroup, and then creating the table or index against that scheme. The big benefit is partition elimination — a query filtering on the partition key only touches the relevant partitions — and maintenance operations like rebuilding an index or archiving old data can be done per-partition instead of against the whole table."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's a good partition key choice and why? — A column that's both frequently filtered on and naturally grows over time, like a transaction or created date — it aligns query patterns with partition elimination and makes archiving old partitions natural.</div>
+      <div class="fq"><b>Q:</b> Is partitioning the same as sharding? — No — partitioning splits data within a single database/server; sharding splits data across multiple separate database servers entirely, usually for horizontal scale beyond what one server can handle.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q30">
+    <div class="term">30. How do you archive historical data without affecting performance? <span class="en">(Archiving Strategy)</span></div>
+    <div class="tng">Naan follow pannра approach — 1) <b>Separate archive table/database</b> create pannі, "cutoff date" ku appuram data ah periodic ah (nightly/monthly job) move pannрроேн். 2) <b>Batch-wise move pannрроேн்</b> — oru periya bulk delete/insert ah ஒரே transaction la pannாma, chunks ah split pannі (5000 rows madhiri), lock escalation avoid pannрроேн். 3) Off-peak hours la mattум் schedule pannрроேн். 4) Archive table ku குறைந்த indexing mattум் venும் (write-once, read-rarely). 5) Application side la, "recent data" query ah active table ku mattum் point pannрроேн், "historical report" venум்nа mattum் archive table ah query pannрроேன் (UNION ALL, illainaа separate reporting flow).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I move data older than a defined cutoff into a separate archive table or database through a scheduled batch job, always in small chunks rather than one massive delete-and-insert, to avoid lock escalation and long-running transactions. I schedule it for off-peak hours, keep the archive table lightly indexed since it's written once and read rarely, and keep the application's default queries pointed only at the active table — historical reporting queries explicitly target the archive, either through a separate flow or a UNION ALL when both ranges are genuinely needed."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you decide the cutoff date/retention period? — That's a business decision, not a technical one — I work with stakeholders on compliance/business requirements (e.g., "keep 2 years active, archive beyond that") rather than picking an arbitrary number myself.</div>
+      <div class="fq"><b>Q:</b> Would table partitioning help with archiving too? — Yes, significantly — with date-based partitioning, "archiving" old data can become a fast metadata-only operation (switching a partition out), far cheaper than a row-by-row delete/move.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 23E -->
+<div class="section" id="23E">
+  <div class="section-title"><span class="num">23E</span> Advanced SQL</div>
+
+  <div class="item" id="q31">
+    <div class="term">31. What are Common Table Expressions (CTEs), and when do you use them? <span class="en">(WITH clause)</span></div>
+    <div class="tng">CTE na — <code>WITH</code> clause vачі define panра, oru <b>temporary, query-scoped</b> named result set — andha ஒரே query kூllа mattум் valid, session-wide illa. Naan use pannра scenarios — 1) Complex query ah readable ah break panна (periya subquery ku pathila, named step-by-step CTEs). 2) <b>Recursive queries</b> ku (org chart, category tree madhiri hierarchical data) — <code>WITH RECURSIVE</code> style. 3) Window functions kூда combine pannі use panна (CTE la <code>ROW_NUMBER()</code> calculate pannі, outer query la filter pannрроேн்).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"A CTE, defined with the WITH clause, is a temporary named result set scoped only to the query it's part of — it doesn't persist beyond that. I use them to break a complex query into readable, named steps instead of deeply nested subqueries, for recursive queries like traversing a hierarchical category or org-chart structure, and very commonly to compute a window function like ROW_NUMBER in the CTE and then filter on it in the outer query, since you can't filter directly on a window function in the same SELECT."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Is a CTE materialized/indexed like a temp table? — No — a CTE is essentially a named subquery; SQL Server re-evaluates it each time it's referenced within the query, and you can't add an index to it directly.</div>
+      <div class="fq"><b>Q:</b> Can you reference a CTE multiple times in the same query? — Yes, within that one statement — but each reference re-executes the underlying query logic, which is one reason a temp table can be better for a genuinely expensive computation referenced many times.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q32">
+    <div class="term">32. What are Window Functions, and where have you used them? <span class="en">(OVER clause)</span></div>
+    <div class="tng">Window Function na — GROUP BY madhiri rows ah collapse pannாma, ovvoru row ku, adha suround panра "window" (set of related rows, <code>PARTITION BY</code> vачі define pannрроадு) ah base ah vачі calculation pannுрроadhu — result row-level ah thaan iருккும், aggregate aагадu. En project la — 1) Top-N per group (department-wise top 3 salary employees) — <code>ROW_NUMBER() OVER (PARTITION BY DepartmentId ORDER BY Salary DESC)</code>. 2) Running total (monthly fee collection cumulative) — <code>SUM(Amount) OVER (ORDER BY PaymentDate)</code>. 3) Comparing current row to previous row (<code>LAG</code>/<code>LEAD</code>) — attendance streak calculate panна.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Window functions calculate a value across a related set of rows — a 'window', defined by PARTITION BY — without collapsing the result the way GROUP BY does; you still get one row per input row. I've used ROW_NUMBER with PARTITION BY to get the top-3-salary employees per department, SUM with an OVER (ORDER BY) clause for running totals like cumulative monthly fee collection, and LAG/LEAD to compare a row to the previous or next row, for things like detecting attendance streaks."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can you filter directly on a window function result in the same SELECT? — No — window functions are logically evaluated after WHERE, so you can't reference them in the same query's WHERE clause; you wrap the query in a CTE or subquery and filter in the outer query instead.</div>
+      <div class="fq"><b>Q:</b> What's the difference between PARTITION BY and GROUP BY? — GROUP BY collapses rows into one row per group; PARTITION BY (inside OVER) keeps every original row but computes the value relative to its group — you get both the detail row and the aggregate context together.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q33">
+    <div class="term">33. Explain ROW_NUMBER(), RANK(), DENSE_RANK(), and NTILE() <span class="en">(Ranking Functions)</span></div>
+    <div class="tng"><b>ROW_NUMBER()</b> — every row ku unique sequential number (1,2,3,4...) — ties iருந்thாலும் kூда arbitrary ah ஒரு order kொடுкkும். <b>RANK()</b> — ties ku same rank kொடுкkும், aana adhуkку appuram number ah <b>skip</b> pannும் (1,2,2,4 — 3 skip aагுрроadhу). <b>DENSE_RANK()</b> — ties ku same rank kொடுкkும், aana <b>skip pannाathу</b>, continuous ah pоагும் (1,2,2,3). <b>NTILE(n)</b> — result set ah <b>n equal buckets</b> ah divide pannும் (example, <code>NTILE(4)</code> — employees ah salary based ah 4 quartiles ah split pannும், performance bucketing/percentile analysis ku use pannрроேன்).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"ROW_NUMBER gives every row a unique sequential number, breaking ties arbitrarily. RANK gives tied rows the same rank but then skips the next number — like 1, 2, 2, 4. DENSE_RANK also gives tied rows the same rank but doesn't skip — 1, 2, 2, 3. NTILE divides the result set into a specified number of roughly equal buckets — I've used NTILE(4) to split employees into salary quartiles for compensation analysis."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> When would you specifically want RANK over DENSE_RANK? — When the gap itself is meaningful — like a competition leaderboard where two people tied for 2nd place means the next person really is 4th, not 3rd.</div>
+      <div class="fq"><b>Q:</b> How would you get exactly the top-3 per group using one of these? — ROW_NUMBER() OVER (PARTITION BY GroupColumn ORDER BY ValueColumn DESC) in a CTE, then filter the outer query WHERE rn &lt;= 3 — RANK could return more than 3 rows if there are ties at the boundary.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q34">
+    <div class="term">34. Difference between CROSS APPLY and OUTER APPLY <span class="en">(Correlated Table-Valued Joins)</span></div>
+    <div class="tng"><code>APPLY</code> operator — right side la, left side row ah reference panра (correlated) table-valued function/subquery ah use panна help pannும் — normal JOIN la idha panна mудியாது (JOIN condition la, right side subquery, left side column ah directly reference panна mудியாthu, APPLY la mудியும்). <b>CROSS APPLY</b> — INNER JOIN madhiri behave pannும் — right side result <b>empty</b> aанா, andha left row drop aагும். <b>OUTER APPLY</b> — LEFT JOIN madhiri behave pannும் — right side empty aанaalум், left row NULL values-eodu иருந்தும் keep pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"APPLY lets the right-hand side — a table-valued function or subquery — reference columns from the left-hand row, which a normal JOIN's ON clause can't do. CROSS APPLY behaves like an INNER JOIN — if the right side returns nothing for a given left row, that row is dropped entirely. OUTER APPLY behaves like a LEFT JOIN — the left row is kept with NULLs even if the right side returns nothing."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Give a real example where you'd need CROSS APPLY instead of a JOIN. — Getting the most recent payment per student — CROSS APPLY (SELECT TOP 1 * FROM Payments WHERE StudentId = s.StudentId ORDER BY PaymentDate DESC) — the subquery needs to reference the outer student row, which a plain JOIN's ON clause can't express.</div>
+      <div class="fq"><b>Q:</b> Could you rewrite that same example without APPLY? — Yes, with a window function (ROW_NUMBER PARTITION BY StudentId ORDER BY PaymentDate DESC) in a CTE and filtering rn = 1 — often a cleaner alternative when a full table-valued function isn't otherwise needed.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q35">
+    <div class="term">35. When would you use Temporary Tables versus Table Variables? <span class="en">(#Temp vs @TableVar)</span></div>
+    <div class="tng"><b>Temp Table (<code>#Temp</code>)</b> — real table madhiri, statistics maintain pannрроадு, indexes create panна мudiyும், periya data volumes ku better (optimizer proper ah plan pannும்), stored procedure kூllा nested transactions kூда rollback aага mudiyும் scope depend ah. <b>Table Variable (<code>@TableVar</code>)</b> — memory-oriented (aana idhу kூда tempdb use pannலаம் periya iருந்тха), statistics maintain pannाathu (optimizer always "1 row" assume pannும், periya data la wrong plan choose pannலaam்), transaction rollback la kூда affect aагадhु (logging குறைவு). Naan சிறிய, predictable-size datasets ku (குறைந்த rows) Table Variable use pannрроேн், periya/variable-size datasets ku, complex query venும் pothу Temp Table use pannрроேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"A temp table behaves like a real table — it maintains statistics and can be indexed, so the optimizer builds a proper plan, which matters for larger data volumes. A table variable is lighter-weight but doesn't maintain statistics — the optimizer always assumes roughly one row for it, which can produce a bad plan on larger datasets — and it isn't affected by transaction rollback, so it survives even if the surrounding transaction rolls back. I use table variables for small, predictable-size intermediate data, and temp tables when the dataset is larger, variable in size, or needs proper indexing for a complex downstream query."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Has this "no statistics" issue with table variables improved in recent SQL Server versions? — Yes — SQL Server 2019+ introduced Table Variable Deferred Compilation, which gives the optimizer accurate row counts for table variables at execution time, closing much of the historical gap.</div>
+      <div class="fq"><b>Q:</b> Can you create an index on a table variable? — Yes, inline via constraints (PRIMARY KEY, UNIQUE) when declaring it, though it's more limited than the full CREATE INDEX flexibility available on a real temp table.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q36">
+    <div class="term">36. How do you optimize Stored Procedures? <span class="en">(SP-Specific Tuning)</span></div>
+    <div class="tng">Naan follow pannра techniques — 1) <b>Parameter sniffing</b> issue watch pannрроேн் — first call oda parameter based ah cached plan, apparam different parameter ku suboptimal aагалам் — <code>OPTION (RECOMPILE)</code> venும்нா, illainaа <code>OPTIMIZE FOR</code> hint use pannрроேн். 2) <code>SET NOCOUNT ON</code> ellame procedure la add pannрроேன் (unnecessary "rows affected" message network ku poгаathu). 3) Temp tables/table variables wisely choose pannрроேன் (Q35 logic). 4) Dynamic SQL avoid pannрроேн் venடி illainа (plan reuse குறையும்). 5) Transaction scope minimal ah vачுрроேн். 6) Multiple statements iருந்thа, execution plan ovvoru statement ku separately check pannрроேன் — ஒரே procedure la ஒरு slow statement mattум் whole thing ah slow pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I watch specifically for parameter sniffing, where the plan cached from the first execution's parameter values performs badly for very different parameter values later — I use OPTION (RECOMPILE) or OPTIMIZE FOR when that's a real problem. I always add SET NOCOUNT ON to avoid unnecessary row-count messages over the network, choose between temp tables and table variables deliberately based on data size, avoid dynamic SQL unless truly needed since it hurts plan reuse, keep transaction scope minimal, and when a procedure has multiple statements, I check the execution plan for each one individually — one slow statement can drag down the whole procedure."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What exactly is parameter sniffing and why does it sometimes help rather than hurt? — SQL Server "sniffs" the parameter value on first compilation and builds a plan optimized for it — this helps when parameter value distributions are similar, and hurts specifically when they vary wildly (e.g. one DepartmentId has 5 rows, another has 500,000).</div>
+      <div class="fq"><b>Q:</b> Have you used query hints beyond OPTIMIZE FOR? — Yes — occasionally OPTION (RECOMPILE) for genuinely highly variable parameters where a single cached plan can never be right, accepting the small recompilation cost each execution in exchange for a plan tailored to the actual input.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 23F -->
+<div class="section" id="23F">
+  <div class="section-title"><span class="num">23F</span> Production &amp; Scenario-Based Questions</div>
+
+  <div class="item" id="q37">
+    <div class="term">37. A query that normally runs in 2 seconds suddenly takes 2 minutes. How would you troubleshoot it? <span class="en">(STAR Scenario)</span></div>
+    <div class="tng"><b>Situation:</b> Production monitoring la, oru report query 2 seconds la irundhу suddenly 2 minutes ku pогिruккு nа alert vandhуchу. <b>Task:</b> Root cause find pannі, fast ah fix panна vேண்டியiருந்தуchу, business hours la impact иருந்தа. <b>Action:</b> First — recent deployment/schema change иருந்thа nа check pannінேன் (git log/deployment history). Apparam — <code>sys.dm_exec_query_stats</code> vачі, andha specific query current execution plan ah paакринேன் — plan Scan ah maарируந்தуchу, munна Seek ah irуkkும். Reason ah drill pannினேன் — statistics stale aагіруккு (recent bulk insert vachа), <code>UPDATE STATISTICS</code> pannினேன் immediate ah, plan force recompile aагுчу. <b>Result:</b> Query 2 seconds ku thiruмbi வந்துchу; root cause "auto-stats update threshold periya table ku slow ah trigger aагுрроадu" nа confirm pannі, adha specific table ku scheduled stats update job add pannினேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I once had a report query jump from 2 seconds to 2 minutes overnight. I first checked whether anything had deployed recently, then pulled the current execution plan via sys.dm_exec_query_stats and compared it against what I remembered — it had flipped from an Index Seek to a Scan. Digging further, a large overnight bulk insert had made the auto-statistics update threshold too slow to trigger for that table's size, leaving stale statistics behind. I ran UPDATE STATISTICS manually, which forced a plan recompile and brought it right back to 2 seconds, then set up a scheduled statistics update job for that specific high-volume table so it wouldn't recur."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How would you have caught this before a user reported it? — Query Store's regression detection, or an APM alert on a specific query's average duration crossing a threshold — proactive monitoring rather than waiting for a user complaint.</div>
+      <div class="fq"><b>Q:</b> Would you consider this a one-time fix or a systemic issue? — Systemic — I flagged it as a pattern to watch on all high-volume tables receiving large batch loads, not just a one-off fix for this single query.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q38">
+    <div class="term">38. How would you migrate a database with minimal downtime? <span class="en">(Migration Strategy)</span></div>
+    <div class="tng">Naan follow pannра approach (depend pannрроадு migration scope evнgе na, aana general strategy) — 1) <b>Backward-compatible schema changes</b> mattум் first deploy pannрроேன் (new nullable column add pannрроадu, existing column drop pannாma) — old and new app version rendும் ஒரே schema la work pannанும். 2) <b>Blue-Green / parallel run</b> — new schema ku data migrate pannі, oru period la rendும் sync ah vачி, verify pannрроேன். 3) <b>Backfill in batches</b> — periya data migration ah ஒரே shot la pannாma, off-peak hours la small batches ah pannрроேн். 4) <b>Feature flag</b> vачі, cutover ah instant ah pannலam், issue иருந்தа rollback um fast ah pannலаம். 5) Actual cutover — least-traffic window (late night) la, brief maintenance window announce pannі pannрроேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"My general strategy is to deploy backward-compatible schema changes first — additive changes like nullable new columns — so both the old and new application versions can run against the same schema simultaneously. For larger migrations, I do a parallel run where data is migrated and kept in sync for a verification period, backfilling large data volumes in small batches during off-peak hours rather than one big blocking operation. A feature flag lets me cut traffic over instantly and roll back just as fast if something's wrong, and I schedule the actual cutover for the lowest-traffic window with a brief announced maintenance window."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's the riskiest part of this process? — The cutover moment itself and any window where old and new systems might both be writing — I mitigate that with careful sequencing (stop writes to old, drain, verify, switch reads) rather than an instantaneous flip.</div>
+      <div class="fq"><b>Q:</b> Have you done a real production migration like this? — I've done schema-change deployments following this backward-compatible pattern in production; a full cross-database platform migration is something I understand the strategy for more than something I've personally executed end-to-end at large scale.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q39">
+    <div class="term">39. How do you investigate CPU spikes caused by SQL Server? <span class="en">(CPU Triage)</span></div>
+    <div class="tng">Naan step-by-step ah pannрроேн் — 1) <b>Confirm SQL Server thaan CPU consume pannрроadhu</b> — Task Manager/Resource Monitor la sqlservr.exe process ah check pannрроேн் (vera process ah irукkалाமும், adha rule out pannанும் first). 2) <code>sys.dm_exec_query_stats</code> ORDER BY <code>total_worker_time DESC</code> vачі, <b>top CPU-consuming queries</b> ah rank pannрроேн். 3) Andha query oda execution plan paакрроேн் — scans, missing indexes, expensive operators (sort/hash) irукkа nа. 4) <code>sys.dm_os_schedulers</code> vачі, runnable task queue periya ah irукkа nа check pannрроேн் (CPU pressure sign). 5) Root cause fix pannрроேன் (index add pannрроேн், query rewrite pannрроேன், illainа parallelism settings — <code>MAXDOP</code> — review pannрроேன்).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I start by confirming SQL Server's own process is actually the CPU consumer, not something else on the box. Then sys.dm_exec_query_stats ordered by total_worker_time descending gives me the top CPU-consuming queries. I check their execution plans for scans, missing indexes, or expensive operators like sorts and hash joins. sys.dm_os_schedulers tells me if there's a large runnable task queue, which is a sign of real CPU pressure versus a one-off spike. From there the fix is usually adding an index, rewriting the query, or in rarer cases reviewing MAXDOP/parallelism settings that might be causing excessive parallel CPU usage."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's MAXDOP and how does it relate to CPU spikes? — Max Degree of Parallelism controls how many CPU cores a single query can use — a misconfigured high MAXDOP on a server with many concurrent small queries can cause excessive CPU contention; tuning it down (often to a value tied to NUMA node core count) can reduce spikes.</div>
+      <div class="fq"><b>Q:</b> Could a CPU spike be caused by something other than a bad query? — Yes — outdated statistics causing bad plan choices, missing indexes forcing scans, excessive parallelism, or even an unrelated process/backup/maintenance job running concurrently on the same server.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q40">
+    <div class="term">40. Describe the most challenging SQL performance issue you've solved in production <span class="en">(Flagship STAR Story)</span></div>
+    <div class="tng"><b>Situation:</b> Zen Campus ERP la, month-end billing report — fee collection summary across ellaа students/departments — 40+ seconds edukku load aагудhу, business users complaint pannінaangа. <b>Task:</b> Report ah acceptable time-ku (5 seconds kீku) kொண்டு varaнும், aana underlying billing table structure ah break panна கூட்டாது (live transactions andha table ah continuously use pannуроadu). <b>Action:</b> Execution plan paакрினேன் — periya table scan + expensive hash aggregate irundhуchу; query la GROUP BY + multiple joins (Student, Department, Payment) irundhуchу, non-SARGable date filter кூда irundhуchу (function on date column). Naan — 1) Non-SARGable filter ah fix pannினேன் (range comparison ku maатрினேன்). 2) Covering composite index add pannினேன் (join + filter columns sேra). 3) Report-specific ah, nightly job vачі, pre-aggregated summary table (denormalized) maintain pannினேன் — live query andha summary table ah mattум் hit pannும். <b>Result:</b> 40 seconds la irundhу 2 seconds ku, adhуvும் live table ah touch pannாma summary table vачі — namba Part 5 la sொllra 40% overall query time reduction story-oda specific deep example idhу thaan.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"The month-end billing summary report in my ERP was taking over 40 seconds and business users were escalating it. I couldn't touch the underlying billing table structure since it's under continuous live transaction load, so I profiled the execution plan and found a full table scan feeding an expensive hash aggregate, driven by a non-SARGable date filter and several joins across Student, Department, and Payment. I rewrote the date filter as a proper range comparison, added a covering composite index for the join and filter columns, and — since this was a reporting workload, not a transactional one — built a nightly job that maintains a pre-aggregated summary table, so the report now reads from that instead of computing everything live. That took it from 40 seconds down to 2, without touching the live transactional schema at all."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why not just add indexes and stop there, without the summary table? — Indexing alone got it faster but still meant recomputing the same aggregation on every report request; since the underlying data only truly changes once a day for month-end reporting purposes, pre-aggregating nightly was a much bigger and more sustainable win.</div>
+      <div class="fq"><b>Q:</b> How do you keep the summary table from showing stale data? — The nightly job refresh is acceptable for this specific monthly report's business need, but for anything needing more real-time accuracy I'd consider an indexed view or triggering the refresh on the relevant write path instead of a fixed nightly schedule.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 23G -->
+<div class="section" id="23G">
+  <div class="section-title"><span class="num">23G</span> Bonus — Functions, Views &amp; Multi-Result-Set Stored Procedures</div>
+
+  <div class="item" id="q41">
+    <div class="term">41. Difference between CTE and Temp Table <span class="en">(Scope + Materialization)</span></div>
+    <div class="tng">CTE — query-scoped mattум் (ஒரே statement kூllா мattум் valid), <b>indexable illa</b>, referenced ஒவ்வொரு тடவையும் re-evaluate aагும். Temp Table — session/procedure-scoped (multiple statements вараіkkும் survive aагும்), <b>indexable</b>, statistics maintain aагும், once materialize aагுрроadhу reused aагும். Naan simple readability/single-use ku CTE, aana periya intermediate result ah multiple times reference panна vேண்டியiருந்thа or index venும்nа, Temp Table use pannрроேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"A CTE only lives for the single statement it's part of, can't be indexed, and gets re-evaluated each time it's referenced. A temp table persists across multiple statements within the session or procedure, can be indexed, and is materialized once and then reused. I reach for a CTE for readability on a single-use, moderate-size query, and a temp table when I need to reference an expensive intermediate result multiple times or need it indexed for a larger downstream operation."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can a CTE be recursive but a temp table can't? — Correct — recursive CTEs are a specific, well-supported pattern (WITH cte AS (... UNION ALL ...)); achieving the same with temp tables would require an explicit loop, which is far less elegant.</div>
+      <div class="fq"><b>Q:</b> Does a CTE ever get materialized by the optimizer anyway? — Sometimes, if the optimizer decides that's cheaper (a "spool"), but that's an internal decision — you can't force or rely on it the way you can with an explicit temp table.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q42">
+    <div class="term">42. What is a View? Can it be updated? <span class="en">(Virtual Table + Updatability Rules)</span></div>
+    <div class="tng">View na — oru saved SELECT query, virtual table madhiri behave pannும் — actual data store panнாthu (indexed view exception), query run pannும் pothு underlying tables ah live ah query pannும். Use cases — complex joins ah simplify pannі expose pannрроадु, security (sensitive columns hide pannі, view mattум் expose pannрроадு). <b>Update aагுрроадаal?</b> — simple view (single table, no aggregate/DISTINCT/GROUP BY/computed columns) na yes, direct ah UPDATE/INSERT/DELETE pannலाம். Multiple table join view, aggregate view — update panна mудியாthу (illainа <code>INSTEAD OF</code> trigger vачі custom logic define pannанும்).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"A view is a saved SELECT query that behaves like a virtual table — it doesn't store data itself, except for an indexed view, and queries against it run live against the underlying tables. I use views to simplify complex joins for consumers and to hide sensitive columns for security. Whether it's updatable depends on complexity — a simple single-table view without aggregates, DISTINCT, or computed columns can be directly updated; a view joining multiple tables or using aggregates generally can't, unless you add an INSTEAD OF trigger to define custom update logic."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What's an indexed view? — A view with a unique clustered index that physically materializes and stores the result, trading storage and write overhead for much faster reads — useful for expensive, frequently-queried aggregates.</div>
+      <div class="fq"><b>Q:</b> Have you used an INSTEAD OF trigger on a view? — I've used them conceptually to route an update on a multi-table view to the correct underlying tables, though in my projects I more often just update the base tables directly rather than through a view.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q43">
+    <div class="term">43. Can UPDATE be used inside a Function? <span class="en">(No — Scalar/Table-Valued Functions)</span></div>
+    <div class="tng">Illaiiye — SQL Server la, <b>scalar functions</b> and <b>table-valued functions</b> rendும் <b>data-modification statements</b> (INSERT/UPDATE/DELETE) contain panна mудியாthу — deterministic, side-effect-free ah irукkanum் nа design pannірукки. Function ah, query oda SELECT list/WHERE clause kூllа edhுvும் freely call panна mудியும் nа assume pannрроадаल் idhу — adhுла data modify pannрроadhу allow pannінா, unpredictable side effects vandhு, query optimizer confuse aаgும். Data modify panна vேண்டியiருந்тха, <b>Stored Procedure</b> use pannанும் — adhуkku andha restriction illa.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"No — neither scalar nor table-valued functions in SQL Server can contain INSERT, UPDATE, or DELETE statements. Functions are designed to be deterministic and side-effect-free, since they can be called freely inside a SELECT list or WHERE clause — allowing data modification there would create unpredictable side effects and confuse the query optimizer. If I need to modify data, I use a stored procedure instead, which doesn't have that restriction."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Is there any exception, like table variables inside the function itself? — You CAN declare and modify a local table variable inside a function — that's not modifying persisted database data, so it's allowed; modifying actual tables is what's blocked.</div>
+      <div class="fq"><b>Q:</b> Why does this restriction specifically help the optimizer? — The optimizer can safely reorder, skip, or call a function multiple times while planning a query only if it's guaranteed side-effect-free — allowing writes would break that guarantee and make query plans unsafe to optimize.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q44">
+    <div class="term">44. Can a Function call a Stored Procedure? Can a Stored Procedure call a Function? <span class="en">(One-Directional Rule)</span></div>
+    <div class="tng"><b>Function → Stored Procedure:</b> Illaiiye, mудியாthу — functions data-modification illaама, deterministic ah irукkanum் nа restriction irукка, adhу stored procedures ah call panна முடியாтхு (procedures data modify panна мудியும் aाgаikkё, arbitrary side effects иருkkаலаம் nа). <b>Stored Procedure → Function:</b> Aamа, mудியும் — procedure kூllа scalar function ah expression la call pannலam், illainа table-valued function ah <code>SELECT * FROM dbo.MyFunction(...)</code> madhiri query pannலaам். Idhу one-directional rule — procedures flexible ah irукка, functions strict ah restrict aагіruukku.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"It's a one-directional rule. A function cannot call a stored procedure — functions are required to be deterministic and side-effect-free, and a procedure could modify data or have other side effects, which would break that guarantee. A stored procedure absolutely can call a function — calling a scalar function in an expression, or querying a table-valued function like any other table source — since procedures don't have that same restriction."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can a function call another function? — Yes, freely — both scalar and table-valued functions can call other functions, as long as the whole chain stays free of data modification.</div>
+      <div class="fq"><b>Q:</b> Why would you choose a function over a procedure for reusable logic in the first place? — When the logic needs to be composable inside a larger SELECT statement — a function can be used inline in a query; a procedure can't be embedded in a SELECT the way a function can.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q45">
+    <div class="term">45. Can a Stored Procedure return multiple result sets? How do you read only the second table in C#? <span class="en">(Multiple SELECTs + ADO.NET/Dapper Handling)</span></div>
+    <div class="tng">Aamа, mудியும் — oru stored procedure kூllа multiple <code>SELECT</code> statements iருந்thа, ovvoru SELECT ஒரு separate result set ah kொடுкkும், caller andha ellame sequentially padikkалам். C# la — <b>ADO.NET</b> vача na, <code>SqlDataReader</code> vачі <code>reader.Read()</code> mூlама first result set padичі, apparam <code>reader.NextResult()</code> call pannінா, rендavадு result set ku poоguрроேன், apparam veண்டும்нா mattум் <code>reader.Read()</code> pannрроேன். <b>Dapper</b> vача na, <code>QueryMultipleAsync()</code> use pannрроேன் — adhу <code>GridReader</code> kொடுкkும், adhуla <code>.ReadAsync&lt;T&gt;()</code> ah multiple тடவை call pannі, ovvoru result set ah sequentially padikkalaам் (first call — first table, second call — second table).</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Yes — a stored procedure with multiple SELECT statements returns each as a separate result set, in order. In raw ADO.NET, I use a SqlDataReader — read the first result set with Read(), then call reader.NextResult() to move to the second, and Read() again from there. With Dapper, I use QueryMultipleAsync, which returns a GridReader — calling ReadAsync&lt;T&gt;() on it the first time gives the first result set, and calling it again gives the second, in the same order the procedure returned them."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What happens if you call ReadAsync&lt;T&gt;() a third time when there are only two result sets? — It throws, since there's no more data in the GridReader to read — you need to know or check how many result sets the procedure actually returns.</div>
+      <div class="fq"><b>Q:</b> When have you actually used a multi-result-set procedure in your project? — A dashboard load procedure returning both summary totals and a detail list in one round trip, avoiding two separate database calls for related data needed on the same screen.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q46">
+    <div class="term">46. How do you call a Stored Procedure from C#? <span class="en">(ADO.NET, Dapper, EF Core — Three Ways)</span></div>
+    <div class="tng">Naan mூnru approach follow pannрроேன், technology base ah. <b>Raw ADO.NET</b> — <code>SqlCommand</code> create pannі, <code>CommandType = CommandType.StoredProcedure</code> vачі, <code>SqlParameter</code> add pannі, <code>ExecuteReaderAsync()</code>/<code>ExecuteNonQueryAsync()</code> call pannрроேன். <b>Dapper</b> — <code>connection.QueryAsync&lt;T&gt;("sp_Name", parameters, commandType: CommandType.StoredProcedure)</code> — ஒரே line la clean ah. <b>EF Core</b> — <code>context.Database.ExecuteSqlInterpolatedAsync($"EXEC sp_Name {param}")</code> data modify pannுрроadhуkku, illainா raw SQL query mூlама result map pannலаம். En project la, CRUD-heavy simple operations ku EF Core, performance-critical/stored-procedure-heavy operations ku Dapper use pannрроேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I've done this three ways depending on the project's data-access layer. In raw ADO.NET, I create a SqlCommand, set CommandType to StoredProcedure, add SqlParameters, and call ExecuteReaderAsync or ExecuteNonQueryAsync. With Dapper, it's a single clean line — connection.QueryAsync&lt;T&gt;('sp_Name', parameters, commandType: CommandType.StoredProcedure). With EF Core, I use ExecuteSqlInterpolatedAsync for a procedure that modifies data, or map raw SQL query results for one that returns rows. In practice I lean on EF Core for straightforward CRUD and Dapper specifically for performance-sensitive, stored-procedure-heavy operations."</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why is Dapper often preferred specifically for stored procedure calls? — It maps parameters and results with minimal boilerplate compared to raw ADO.NET, while staying much closer to the metal than EF Core, which isn't really designed around stored-procedure-first workflows.</div>
+      <div class="fq"><b>Q:</b> How do you handle an output parameter from a stored procedure in Dapper? — DynamicParameters with a parameter added via .Add("ParamName", dbType: ..., direction: ParameterDirection.Output), then read back after execution with parameters.Get&lt;T&gt;("ParamName").</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  Prepared for Gurumoorthy M — .NET Developer Interview Prep, RAX Tech International, Chennai<br>
+  <a href="00_Index.html">← Back to Roadmap Home</a>
+</footer>
+
+</body>
+</html>

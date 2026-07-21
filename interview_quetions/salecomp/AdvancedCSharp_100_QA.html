@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced C# — Top 100 Interview Q&amp;A | Salcomp Interview Prep</title>
+<style>
+  :root{--accent:#7c3aed;--accent-dim:#5b21b6;--accent-subtle:rgba(124,58,237,0.14);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.75rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  nav .prog-badge{margin-left:auto;background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:999px;}
+  .hero{padding:2.6rem 1.5rem 1.8rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(124,58,237,.16) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.5rem,4vw,2.4rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;max-width:760px;margin-left:auto;margin-right:auto;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  .crosslinks{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;}
+  .crosslinks a{background:var(--card);border:1px solid var(--border);color:var(--info);text-decoration:none;padding:.4rem .9rem;border-radius:8px;font-size:.8rem;font-weight:600;}
+  .crosslinks a:hover{border-color:var(--accent);color:var(--accent);}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:2.6rem;}
+  h2{font-size:1.45rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.02rem;font-weight:700;color:var(--info);margin:1.1rem 0 .5rem;}
+  p{margin-bottom:.6rem;font-size:.92rem;}
+  code{font-family:'Cascadia Code',Consolas,monospace;background:var(--bg3);padding:.1rem .35rem;border-radius:4px;font-size:.85em;color:var(--info);}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  pre code{background:none;padding:0;color:var(--text);}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .thang{background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(124,58,237,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:.9rem 1.1rem;margin:.8rem 0;display:flex;gap:.7rem;}
+  .thang .ti{font-size:1.3rem;flex-shrink:0;}.thang .tt{color:var(--accent);font-weight:800;font-size:.85rem;}.thang .tb{color:var(--muted);font-size:.87rem;margin-top:.2rem;}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .warn-box{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .bad-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.35);border-radius:8px;padding:.7rem .9rem;margin:.5rem 0;font-size:.85rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.8rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.88rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:flex-start;gap:.55rem;font-size:.85rem;cursor:pointer;padding:.3rem .4rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;margin-top:.15rem;flex-shrink:0;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  .completion{text-align:center;padding:2.2rem;background:radial-gradient(ellipse at center,rgba(124,58,237,.22),transparent 70%);border:2px solid var(--accent);border-radius:16px;margin:2rem 0;}
+  .completion h2{color:var(--accent);font-size:1.7rem;border:none;}
+  .badge{display:inline-block;background:var(--accent);color:#fff;font-size:1.15rem;font-weight:900;padding:.7rem 1.7rem;border-radius:50px;margin:1rem 0;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .catbar{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem;}
+  .catbar a{background:var(--card);border:1px solid var(--border);color:var(--muted);text-decoration:none;padding:.25rem .7rem;border-radius:999px;font-size:.72rem;font-weight:600;}
+  .catbar a:hover{color:var(--accent);border-color:var(--accent);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">C# ADVANCED</span>
+  <a href="#overview">Overview</a><a href="#async">Async/Task</a><a href="#threading">Threading</a>
+  <a href="#worker">Worker/SignalR</a><a href="#delegates">Delegates/Generics</a><a href="#linq">LINQ/Memory</a>
+  <a href="#patterns">Patterns/DI</a><a href="#quiz">Quiz</a>
+  <span class="prog-badge" id="progBadge">0/0 done</span>
+</nav>
+<div class="hero">
+  <h1>Advanced C# — Top 100 Interview Q&amp;A (Salcomp, Tomorrow)</h1>
+  <p>Async/await, Threading, BackgroundService/IHostedService, SignalR, Delegates, Generics, LINQ, Memory/GC, Design Patterns &amp; DI. Explanation Thanglish-la irukku (Tamil + English mix) — fast revision-ku easy-a.</p>
+  <div class="tags">
+    <span class="tag">Async &amp; TPL</span><span class="tag">Threading</span><span class="tag">BackgroundService</span>
+    <span class="tag">SignalR</span><span class="tag">Generics/LINQ</span><span class="tag">DI &amp; Patterns</span><span class="tag">salcomp.com</span>
+  </div>
+  <div class="crosslinks">
+    <a href="ADO_NET_Guide.html">→ ADO.NET Guide</a>
+    <a href="EntityFramework_Guide.html">→ Entity Framework Guide</a>
+    <a href="WinForms_Guide.html">→ WinForms Guide</a>
+  </div>
+</div>
+<main>
+
+<section id="overview">
+  <h2>🎯 Overview — How to Use This Tonight</h2>
+  <div class="thang">
+    <div class="ti">💡</div>
+    <div><div class="tt">Thanglish la solradha na</div>
+    <div class="tb">Idhu 100 questions — ellame ore rate-la padikkanumnu nenaikaadheenga. Tomorrow interview-ku BackgroundService, SignalR, async/await ellame "advanced" nu keta sections-a mudhalla focus pannunga (Sections C, D, A). Threading and LINQ next. Patterns/DI last — basic level puriuchunna போதும். Ovvoru card-layum <strong>"Reveal Answer"</strong> button irukku — first yourself-a solli try pannunga, appuram check pannunga.</div></div>
+  </div>
+  <table>
+    <tr><th>Section</th><th>Topics</th><th>Priority Tonight</th></tr>
+    <tr><td>Async/Task</td><td>async/await, Task vs Task&lt;T&gt;, deadlocks, CancellationToken</td><td>🔴 High</td></tr>
+    <tr><td>Threading</td><td>lock, Monitor, Semaphore, race conditions, thread pool</td><td>🟡 Medium</td></tr>
+    <tr><td>Worker/SignalR</td><td>BackgroundService, IHostedService, SignalR Hubs/Groups</td><td>🔴 High</td></tr>
+    <tr><td>Delegates/Generics</td><td>delegates, events, Func/Action, generics, variance</td><td>🟡 Medium</td></tr>
+    <tr><td>LINQ/Memory</td><td>deferred execution, IQueryable, GC generations, Span&lt;T&gt;</td><td>🟡 Medium</td></tr>
+    <tr><td>Patterns/DI</td><td>Singleton/Factory/Repository, DI lifetimes, SOLID</td><td>🟢 Good-to-know</td></tr>
+  </table>
+  <div class="warn-box"><strong>Tomorrow morning:</strong> re-read only the cards you marked wrong/unsure. Say answers OUT LOUD once — interviewers judge fluency, not just correctness.</div>
+</section>
+
+<section id="async">
+  <h2>⚡ A. Async / Await &amp; Task Parallel Library (Q1–10)</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">Why does C# need async/await — what problem does it solve?</span><span class="st">Fundamentals</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Synchronous I/O (DB call, HTTP call, file read) blocks the calling thread until the operation finishes — that thread can't do anything else. async/await lets the thread return to the pool while the I/O completes in the background (via the OS), and resume execution on a thread from the pool once the result is ready. This means a web server can handle thousands of concurrent requests with a small thread pool instead of one blocked thread per request.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What does "await" actually do under the hood?</span><span class="st">Internals</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>The compiler rewrites the async method into a state machine (a struct/class implementing <code>IAsyncStateMachine</code>). When <code>await</code> hits an incomplete Task, the method returns control to its caller immediately (freeing the thread), and registers a continuation on the awaited Task. When the Task completes, the continuation resumes the state machine at the point right after the await — on a thread pool thread (or the captured SynchronizationContext, unless <code>ConfigureAwait(false)</code> is used).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">Difference between Task and Task&lt;T&gt;?</span><span class="st">Fundamentals</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>Task</code> represents an asynchronous operation that returns no value (like <code>void</code>, but awaitable). <code>Task&lt;T&gt;</code> represents an asynchronous operation that produces a result of type <code>T</code>, accessed via <code>.Result</code> (blocking) or <code>await</code> (non-blocking). Both expose <code>.IsCompleted</code>, <code>.Status</code>, continuations via <code>.ContinueWith</code>, etc.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What causes a deadlock with .Result / .Wait(), and how do you avoid it?</span><span class="st">Gotcha</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>In contexts with a captured <code>SynchronizationContext</code> (classic ASP.NET, WPF/WinForms UI thread), calling <code>.Result</code>/<code>.Wait()</code> synchronously blocks that thread while it waits for the async method to complete. But the async method's continuation needs to run back on that SAME captured context — which is blocked — so neither ever finishes: deadlock. Fix: use <code>await</code> all the way up ("async all the way"), or call <code>ConfigureAwait(false)</code> inside library code so the continuation doesn't need the original context. ASP.NET Core has no SynchronizationContext, so this specific deadlock is rarer there, but blocking async code is still bad practice (thread pool starvation).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">Task.Run vs Task.Factory.StartNew — which should you default to?</span><span class="st">API Choice</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>Task.Run</code> is a simplified, safe wrapper — always schedules on the thread pool and auto-unwraps nested Tasks. <code>Task.Factory.StartNew</code> has more options (custom TaskScheduler, TaskCreationOptions) but defaults can surprise you — e.g., it does NOT auto-unwrap a <code>Task&lt;Task&gt;</code>, and may run on the calling thread's context in some overloads. Default recommendation: use <code>Task.Run</code> unless you specifically need StartNew's extra control.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">Task.WhenAll vs Task.WhenAny — when do you use each?</span><span class="st">Composition</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>Task.WhenAll(tasks)</code> awaits until ALL tasks complete, running them concurrently — e.g., call 3 microservices in parallel and combine results. If any fail, it aggregates exceptions but waits for all to finish first. <code>Task.WhenAny(tasks)</code> completes as soon as the FIRST task finishes — useful for timeout patterns (race an operation against a delay task) or picking the fastest of several redundant calls.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">Why is "async void" dangerous, and when is it the only option?</span><span class="st">Best Practice</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>async void</code> methods can't be awaited by the caller, so the caller has no way to know when it finishes or catch its exceptions — an unhandled exception in an async void method crashes the process instead of propagating normally. Always prefer <code>async Task</code>. The one legitimate case for <code>async void</code> is a top-level UI event handler (e.g., a Button.Click handler) because the event signature requires void — even there, wrap the body in try/catch.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">How does exception handling work across multiple awaited/parallel tasks?</span><span class="st">Error Handling</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>A single <code>await</code> rethrows the original exception directly — you can try/catch it normally. But <code>Task.WhenAll</code> on multiple failing tasks wraps ALL of them into an <code>AggregateException</code> if you inspect <code>.Exception</code>; if you <code>await</code> the WhenAll task itself, only the FIRST exception is rethrown (though all tasks did fault) — so to see every failure, loop through <code>task.Exception.InnerExceptions</code> or check each task individually after WhenAll completes.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">What is a CancellationToken and how do you wire it into a long-running async operation?</span><span class="st">Cancellation</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public async Task ProcessLargeFileAsync(CancellationToken ct)
+{
+    foreach (var line in GetLines())
+    {
+        ct.ThrowIfCancellationRequested(); // cooperative cancellation
+        await ProcessLineAsync(line, ct);
+    }
+}
+// caller:
+var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+await ProcessLargeFileAsync(cts.Token);</code></pre>
+  <p>A <code>CancellationTokenSource</code> produces a <code>CancellationToken</code> that's passed down through the call chain. Cancellation is cooperative — the token doesn't forcibly kill anything; your code must check <code>IsCancellationRequested</code> or call <code>ThrowIfCancellationRequested()</code> periodically, and pass the token into any awaited APIs (HttpClient, EF Core queries, Task.Delay) that accept one so they self-cancel too.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">CPU-bound vs I/O-bound async work — how should each be implemented differently?</span><span class="st">Design</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>I/O-bound (DB call, HTTP call, file/network) — use <code>async</code>/<code>await</code> directly against the async API (e.g., <code>SqlCommand.ExecuteReaderAsync</code>); no thread is blocked while waiting, it's genuinely non-blocking at the OS level. CPU-bound (heavy computation, image processing) — there's no I/O to "wait" on, so wrap it in <code>Task.Run(() =&gt; ...)</code> to push it onto a thread-pool thread and free the calling thread (e.g., the UI thread), but it still consumes a real CPU core/thread while running. Using Task.Run for I/O-bound work wastes a thread pool thread for nothing; using plain await for CPU-bound work blocks whatever thread called it.</p></div></div>
+</section>
+
+<section id="threading">
+  <h2>🧵 B. Threading &amp; Concurrency (Q11–20)</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">11</div><div><span class="sq">Difference between Thread and Task?</span><span class="st">Fundamentals</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>Thread</code> is a raw OS-level thread — expensive to create (~1MB stack), no built-in way to return a result or compose with other work. <code>Task</code> is a higher-level abstraction representing a unit of work that runs (usually) on the thread pool, supports return values, composition (<code>ContinueWith</code>, <code>WhenAll</code>), cancellation, and exception propagation. In modern C#, you almost never create a raw <code>Thread</code> directly — use <code>Task.Run</code> instead, unless you need a dedicated long-lived foreground/background thread.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">12</div><div><span class="sq">What's a race condition, and how does "lock" prevent it?</span><span class="st">Concurrency</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>private readonly object _sync = new object();
+private int _counter;
+public void Increment()
+{
+    lock (_sync) { _counter++; } // only one thread inside at a time
+}</code></pre>
+  <p>A race condition happens when two or more threads read-modify-write shared state concurrently without coordination, producing a result that depends on unpredictable timing (e.g., two threads both read counter=5, both write 6, one increment is lost). <code>lock</code> (syntactic sugar over <code>Monitor.Enter</code>/<code>Exit</code>) ensures only one thread executes the critical section at a time, making the increment atomic relative to other locked access.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">13</div><div><span class="sq">lock vs Monitor vs Mutex — what's the difference?</span><span class="st">Synchronization</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>lock</code> is compiler sugar for <code>Monitor.Enter</code>/<code>Monitor.Exit</code> wrapped in try/finally — in-process only, fast. <code>Monitor</code> is the full API behind lock, also offering <code>Wait</code>/<code>Pulse</code> for signaling between threads. <code>Mutex</code> is a heavier, kernel-level synchronization object that can be named and shared ACROSS PROCESSES (e.g., ensure only one instance of an app runs system-wide) — but much slower than Monitor for in-process locking, so only use it when cross-process coordination is actually needed.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">14</div><div><span class="sq">What is SemaphoreSlim and when would you use it over lock?</span><span class="st">Synchronization</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>private readonly SemaphoreSlim _sem = new SemaphoreSlim(3); // max 3 concurrent
+public async Task CallExternalApiAsync()
+{
+    await _sem.WaitAsync();
+    try { await _httpClient.GetAsync(url); }
+    finally { _sem.Release(); }
+}</code></pre>
+  <p><code>lock</code> allows exactly ONE thread in at a time and has no async-friendly wait (you can't <code>await</code> inside a lock's acquire). <code>SemaphoreSlim</code> allows up to N concurrent callers (throttling — e.g., limit concurrent outbound API calls to avoid overwhelming a downstream service) and exposes <code>WaitAsync()</code>, making it safe to use in async code, unlike <code>lock</code>.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">15</div><div><span class="sq">Give an example of a thread-safe collection and when you'd reach for one.</span><span class="st">Collections</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>ConcurrentDictionary&lt;TKey,TValue&gt;</code> — safe for concurrent reads/writes from multiple threads without external locking (e.g., an in-memory cache updated by multiple request threads). Also <code>ConcurrentQueue</code>, <code>ConcurrentBag</code>, and <code>BlockingCollection&lt;T&gt;</code> (bounded producer/consumer queue, great for a background-worker pipeline). Regular <code>Dictionary&lt;TKey,TValue&gt;</code> is NOT thread-safe — concurrent writes can corrupt its internal structure or throw.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">16</div><div><span class="sq">What does the "volatile" keyword do, and when is it needed?</span><span class="st">Memory Model</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>volatile</code> tells the compiler/JIT/CPU not to cache a field's value in a register or reorder reads/writes around it — every read fetches the latest value, every write is immediately visible to other threads. It's needed for simple flags read/written by multiple threads without a lock (e.g., a <code>volatile bool _stopRequested</code> checked in a loop). It does NOT make compound operations (like <code>x++</code>) atomic — for that you still need <code>lock</code> or <code>Interlocked</code>.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">17</div><div><span class="sq">What is the Interlocked class used for?</span><span class="st">Atomics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>Interlocked.Increment(ref counter)</code>, <code>Interlocked.CompareExchange</code>, etc. perform simple operations (increment, add, exchange) as a single atomic CPU instruction — no lock needed, much faster than <code>lock</code> for simple counters. Use it for hit-counters, simple flags, or lock-free algorithms; for anything beyond a single-variable atomic operation, a proper lock is usually clearer and safer.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">18</div><div><span class="sq">Parallel.For / Parallel.ForEach vs a plain loop with Tasks — when to use which?</span><span class="st">Parallelism</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>Parallel.For/ForEach</code> is designed for CPU-bound, synchronous, data-parallel work (e.g., processing 10,000 in-memory records) — it automatically partitions the work across cores and manages the degree of parallelism. It is NOT async-friendly (the body should be synchronous). For async work per item (e.g., calling an API per record), use <code>Task.WhenAll</code> with a list of tasks, optionally throttled with <code>SemaphoreSlim</code>, instead of Parallel.ForEach.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">19</div><div><span class="sq">What causes a classic multi-lock deadlock, and how do you avoid it?</span><span class="st">Deadlocks</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Thread A locks Resource1 then waits for Resource2; Thread B locks Resource2 then waits for Resource1 — neither can proceed, deadlock. Avoid by always acquiring multiple locks in a single, consistent global order across the whole codebase, keeping lock scopes as small as possible, and preferring higher-level constructs (ConcurrentDictionary, a single coarser lock) over multiple fine-grained nested locks when possible.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">20</div><div><span class="sq">What is thread pool starvation, and how can blocking async code cause it?</span><span class="st">Performance</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>The thread pool has a limited number of worker threads (grows slowly under load). If many requests call blocking code (<code>.Result</code>, <code>Thread.Sleep</code>, synchronous DB calls) instead of truly async I/O, those threads sit idle-but-occupied waiting, and the pool can't service new incoming work fast enough — requests queue up and latency spikes even though CPU usage looks low. Fix: use async I/O APIs end-to-end so waiting threads are actually released back to the pool.</p></div></div>
+</section>
+
+<section id="worker">
+  <h2>🛠️ C. BackgroundService, IHostedService &amp; SignalR (Q21–40)</h2>
+  <div class="thang">
+    <div class="ti">🔥</div>
+    <div><div class="tt">Interviewer intha section-a specific-a kettu irukalam</div>
+    <div class="tb">"Background worker", "SignalR" nu specific-a mention pannirukanga nu sonninga — so idhu weightage max irukum. Q21–30 BackgroundService, Q31–40 SignalR. Rendume code snippet type-a practice pannunga.</div></div>
+  </div>
+
+  <div class="sc"><div class="sh"><div class="sn">21</div><div><span class="sq">What is IHostedService, and when do you implement it directly instead of using BackgroundService?</span><span class="st">Fundamentals</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>IHostedService</code> is the core interface (<code>StartAsync</code>/<code>StopAsync</code>) that the .NET Generic Host uses to run background tasks alongside the app (registered via <code>services.AddHostedService&lt;T&gt;()</code>). Implement it directly when you only need simple start/stop hooks (e.g., warm up a cache once at startup, open a message-bus connection) without a continuously running loop. For anything that needs to keep running in a loop, <code>BackgroundService</code> (which implements IHostedService for you) is simpler.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">22</div><div><span class="sq">What is BackgroundService, and how does it differ from raw IHostedService?</span><span class="st">Fundamentals</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public class EmailQueueWorker : BackgroundService
+{
+    private readonly ILogger&lt;EmailQueueWorker&gt; _logger;
+    public EmailQueueWorker(ILogger&lt;EmailQueueWorker&gt; logger) => _logger = logger;
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            _logger.LogInformation("Checking email queue at {time}", DateTimeOffset.Now);
+            await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+        }
+    }
+}</code></pre>
+  <p><code>BackgroundService</code> is an abstract base class that implements <code>IHostedService</code> for you — you just override <code>ExecuteAsync(CancellationToken stoppingToken)</code> with your long-running loop logic. It handles wiring StartAsync to kick off ExecuteAsync as a background Task, and StopAsync to signal the token and await graceful completion. Raw IHostedService requires you to manage that loop/Task bookkeeping yourself.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">23</div><div><span class="sq">How do you register a BackgroundService in Program.cs (minimal hosting)?</span><span class="st">Setup</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHostedService&lt;EmailQueueWorker&gt;();
+var app = builder.Build();
+app.Run();</code></pre>
+  <p><code>AddHostedService&lt;T&gt;()</code> registers the worker as a Singleton IHostedService — the host starts it automatically when the app starts, and calls StopAsync during graceful shutdown. Multiple hosted services can be registered; they all start/stop together with the app's lifetime.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">24</div><div><span class="sq">How would you implement a periodic job (e.g., run every 5 minutes) inside a BackgroundService?</span><span class="st">Timer Pattern</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+{
+    using var timer = new PeriodicTimer(TimeSpan.FromMinutes(5));
+    while (await timer.WaitForNextTickAsync(stoppingToken))
+    {
+        await ProcessOverdueFeesAsync(stoppingToken);
+    }
+}</code></pre>
+  <p><code>PeriodicTimer</code> (modern, .NET 6+) is the cleanest way — <code>WaitForNextTickAsync</code> is truly async and honors cancellation cleanly. Older style uses <code>Task.Delay(interval, stoppingToken)</code> in a while loop, or <code>System.Threading.Timer</code> with a callback (needs manual re-entrancy guarding since the callback can fire again before the previous run finishes).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">25</div><div><span class="sq">How do you gracefully stop a BackgroundService during app shutdown?</span><span class="st">Lifecycle</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>When the host shuts down, it calls <code>StopAsync(CancellationToken)</code> on every hosted service, which (in BackgroundService's base implementation) signals the <code>stoppingToken</code> passed into your ExecuteAsync loop and then awaits the ExecuteAsync Task up to the shutdown timeout (default 30s, configurable via <code>HostOptions.ShutdownTimeout</code>). Your loop should check <code>stoppingToken.IsCancellationRequested</code> (or pass it into awaited calls like <code>Task.Delay</code>) so it exits promptly instead of being forcibly abandoned.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">26</div><div><span class="sq">How do you access a Scoped service like DbContext from inside a BackgroundService (which is a Singleton)?</span><span class="st">DI Gotcha</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public class FeeReminderWorker : BackgroundService
+{
+    private readonly IServiceScopeFactory _scopeFactory;
+    public FeeReminderWorker(IServiceScopeFactory scopeFactory) => _scopeFactory = scopeFactory;
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService&lt;SchoolDbContext&gt;();
+                await db.SendOverdueFeeRemindersAsync(stoppingToken);
+            }
+            await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
+        }
+    }
+}</code></pre>
+  <p>You can never inject a Scoped service (like a DbContext) directly into a Singleton's constructor — that would create a "captive dependency" living far longer than intended. Instead inject <code>IServiceScopeFactory</code>, and create a new scope per iteration of the loop, resolving scoped services from that scope and disposing it each time.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">27</div><div><span class="sq">BackgroundService (in-process) vs a Windows Service / standalone Worker Service template — what's the real difference?</span><span class="st">Deployment</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>BackgroundService</code> is just a class that runs INSIDE your existing app's process (e.g., alongside your ASP.NET Core web app) — same deployment, same lifetime as the web host. The "Worker Service" project template creates a STANDALONE process (no web server) whose entire purpose is running hosted services — typically deployed as a Windows Service or Linux systemd daemon via <code>UseWindowsService()</code>/<code>UseSystemd()</code>. Choose standalone Worker Service when the background work needs to run independently of a web app (its own deployment/scaling/restart lifecycle).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">28</div><div><span class="sq">How do you keep an unhandled exception inside a BackgroundService from crashing the whole application?</span><span class="st">Resilience</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+{
+    while (!stoppingToken.IsCancellationRequested)
+    {
+        try
+        {
+            await DoWorkAsync(stoppingToken);
+        }
+        catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
+        {
+            _logger.LogError(ex, "Worker iteration failed, will retry");
+        }
+        await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+    }
+}</code></pre>
+  <p>By default, an exception that escapes ExecuteAsync stops that hosted service and (depending on <code>BackgroundServiceExceptionBehavior</code>, default in .NET 6+) can bring down the whole host. Wrap the per-iteration work in try/catch, log it, and continue the loop — so one bad iteration doesn't kill the whole background process.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">29</div><div><span class="sq">How would you build a queue-based background processor (e.g., process uploaded files asynchronously)?</span><span class="st">Producer/Consumer</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public class FileProcessingQueue
+{
+    private readonly Channel&lt;string&gt; _channel = Channel.CreateUnbounded&lt;string&gt;();
+    public ValueTask EnqueueAsync(string filePath) => _channel.Writer.WriteAsync(filePath);
+    public IAsyncEnumerable&lt;string&gt; DequeueAllAsync(CancellationToken ct) => _channel.Reader.ReadAllAsync(ct);
+}
+
+public class FileProcessorWorker : BackgroundService
+{
+    private readonly FileProcessingQueue _queue;
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        await foreach (var filePath in _queue.DequeueAllAsync(stoppingToken))
+            await ProcessFileAsync(filePath);
+    }
+}</code></pre>
+  <p><code>System.Threading.Channels.Channel&lt;T&gt;</code> is the modern producer/consumer primitive — a controller endpoint (producer) calls <code>EnqueueAsync</code>, and a singleton <code>BackgroundService</code> (consumer) drains it with <code>await foreach</code>. This decouples request handling (fast, returns immediately) from slow processing (runs in the background), and is far simpler than manually juggling <code>BlockingCollection</code> plus a dedicated thread.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">30</div><div><span class="sq">How do you unit test a BackgroundService?</span><span class="st">Testing</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Don't test the private ExecuteAsync loop directly — instead, extract the actual business logic into a separate injectable class/method that ExecuteAsync merely calls, and unit test THAT in isolation with mocked dependencies. For the worker itself, an integration-style test can construct it with test doubles, call <code>StartAsync</code> with a token that's cancelled shortly after (e.g., via <code>CancellationTokenSource(TimeSpan)</code>), and assert the expected side effects occurred (e.g., verify the mock repository's method was called).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">31</div><div><span class="sq">What is SignalR and what problem does it solve?</span><span class="st">Fundamentals</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>SignalR is an ASP.NET Core library for real-time, bidirectional communication between server and clients (browser, mobile, desktop) — the server can PUSH data to connected clients instantly (e.g., a new notification, live attendance update, chat message) instead of the client having to poll an API repeatedly. It abstracts away the underlying transport and connection management, so you write plain C# method calls instead of managing raw WebSocket frames yourself.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">32</div><div><span class="sq">What transports does SignalR use, and how does it pick one?</span><span class="st">Transports</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>SignalR negotiates the best available transport in order of preference: WebSockets (full-duplex, most efficient) → Server-Sent Events (SSE, server-to-client streaming over HTTP) → Long Polling (client repeatedly asks "any updates?", fallback for old browsers/proxies that block WebSockets). The negotiation happens automatically at connection start unless you force a specific transport via client configuration.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">33</div><div><span class="sq">What is a Hub in SignalR?</span><span class="st">Core Concept</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public class NotificationHub : Hub
+{
+    public async Task SendToAll(string message)
+    {
+        await Clients.All.SendAsync("ReceiveNotification", message);
+    }
+}
+// Program.cs: app.MapHub&lt;NotificationHub&gt;("/hubs/notifications");</code></pre>
+  <p>A <code>Hub</code> is the server-side pipeline endpoint that clients connect to — it's a high-level RPC abstraction: clients can invoke public methods on the Hub, and the Hub can invoke methods registered on connected clients via the <code>Clients</code> property (<code>Clients.All</code>, <code>Clients.Caller</code>, <code>Clients.Group(...)</code>, <code>Clients.User(...)</code>). Each Hub instance is transient — created per method call, so don't store per-connection state as instance fields; use a separate connection-tracking service instead.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">34</div><div><span class="sq">How does a client invoke a server Hub method, and how does the server push to the client?</span><span class="st">Two-Way</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>// JS client
+const connection = new signalR.HubConnectionBuilder().withUrl("/hubs/notifications").build();
+connection.on("ReceiveNotification", msg =&gt; console.log(msg)); // server -&gt; client
+await connection.start();
+await connection.invoke("SendToAll", "Attendance updated");   // client -&gt; server</code></pre>
+  <p>Client → Server: <code>connection.invoke("MethodName", args)</code> calls a public method on the Hub by name. Server → Client: inside the Hub, <code>await Clients.Caller.SendAsync("EventName", data)</code> invokes a named handler the client registered with <code>connection.on("EventName", handler)</code>. It's not strongly-typed by default (string method names), though you can use strongly-typed hubs (<code>Hub&lt;TClient&gt;</code>) for compile-time safety on the server-to-client direction.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">35</div><div><span class="sq">What are SignalR Groups, and how would you use them (e.g., notify only one class/room)?</span><span class="st">Groups</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public override async Task OnConnectedAsync()
+{
+    var classId = Context.GetHttpContext().Request.Query["classId"];
+    await Groups.AddToGroupAsync(Context.ConnectionId, $"class-{classId}");
+    await base.OnConnectedAsync();
+}
+public async Task NotifyClass(string classId, string message)
+    =&gt; await Clients.Group($"class-{classId}").SendAsync("ClassNotice", message);</code></pre>
+  <p>Groups let you organize connections into named buckets (e.g., "class-10A") so a message can target just that subset instead of everyone (<code>Clients.All</code>) or one connection. <code>Groups.AddToGroupAsync</code>/<code>RemoveFromGroupAsync</code> manage membership; group membership is NOT persisted — it's tied to the current connection, so a reconnect must re-join groups.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">36</div><div><span class="sq">How do you send a message to one specific logged-in user (not just one connection)?</span><span class="st">Targeting</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>Clients.User(userId)</code> sends to ALL connections belonging to that authenticated user identity (a user could have multiple tabs/devices open) — SignalR maps connections to users via the <code>ClaimTypes.NameIdentifier</code> claim by default (or a custom <code>IUserIdProvider</code>). Use <code>Clients.Client(connectionId)</code> instead when you specifically need to target one single connection rather than all of a user's sessions.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">37</div><div><span class="sq">How does SignalR scale across multiple server instances (load-balanced)?</span><span class="st">Scaling</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Out of the box, a Hub only knows about connections on its OWN server instance — if User A connects to Server 1 and you call <code>Clients.User(A)</code> from code running on Server 2, it won't reach them. A "backplane" solves this: a shared pub/sub layer (Redis backplane, or the managed Azure SignalR Service) that relays messages between all server instances, so any instance can broadcast to any connected client regardless of which server it's attached to. Azure SignalR Service also offloads the persistent client connections entirely from your app servers.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">38</div><div><span class="sq">How do you secure a SignalR Hub with authentication/authorization?</span><span class="st">Security</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>[Authorize]
+public class NotificationHub : Hub
+{
+    [Authorize(Roles = "Admin")]
+    public async Task BroadcastAnnouncement(string msg) =&gt; await Clients.All.SendAsync("Announcement", msg);
+}</code></pre>
+  <p>Standard ASP.NET Core <code>[Authorize]</code> attributes work directly on Hubs and individual Hub methods, same as controllers. The tricky part is the access token: browser WebSocket/SSE connections can't set an Authorization header, so SignalR's JS client sends the JWT as a query string parameter (<code>accessTokenFactory</code>) on the negotiate/connect request, which the server is configured to read via <code>OnMessageReceived</code> in the JWT bearer options for the Hub's path.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">39</div><div><span class="sq">How do you handle automatic reconnection when a SignalR connection drops?</span><span class="st">Resilience</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/hubs/notifications")
+    .withAutomaticReconnect([0, 2000, 5000, 10000])
+    .build();
+connection.onreconnected(connectionId =&gt; rejoinGroups(connectionId));</code></pre>
+  <p>The client's <code>.withAutomaticReconnect()</code> makes the JS client retry with the given backoff delays on connection loss. Server-side, on reconnect you get a brand-new <code>ConnectionId</code>, so any Group memberships are lost and must be re-established (typically by re-sending the "join group" call, or handling it again in <code>OnConnectedAsync</code> using info like a query-string classId).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">40</div><div><span class="sq">Give a concrete example: real-time attendance/notification system for a student management app using SignalR.</span><span class="st">Applied</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>When a teacher marks attendance via a controller action, after saving to the DB the controller resolves <code>IHubContext&lt;AttendanceHub&gt;</code> (not the Hub class itself, since controllers aren't Hub clients) and calls <code>await hubContext.Clients.Group($"class-{classId}").SendAsync("AttendanceMarked", studentId, status)</code>. Parents/students subscribed to that class group receive an instant push — no polling needed — updating their dashboard live. This is the standard pattern: business logic lives in controllers/services, they inject <code>IHubContext&lt;T&gt;</code> to push notifications, while the Hub class itself just handles direct client RPC and group membership.</p></div></div>
+</section>
+
+<section id="delegates">
+  <h2>🧩 D. Delegates, Events &amp; Generics (Q41–50)</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">41</div><div><span class="sq">What is a delegate in C#?</span><span class="st">Fundamentals</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>A delegate is a type-safe function pointer — an object that holds a reference to a method (or several, for multicast) matching a specific signature, which can be invoked, passed as a parameter, stored in a field, or returned from a method. It's the foundation for callbacks, events, and LINQ's functional-style APIs (Func/Action are just predefined generic delegates).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">42</div><div><span class="sq">Difference between delegate, Func, Action, and Predicate?</span><span class="st">Built-ins</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><table><tr><th>Type</th><th>Signature</th><th>Example</th></tr>
+  <tr><td>delegate</td><td>Custom, any signature you define</td><td><code>delegate int Calc(int a, int b);</code></td></tr>
+  <tr><td>Action&lt;T...&gt;</td><td>Takes params, returns void</td><td><code>Action&lt;string&gt; log = msg =&gt; Console.WriteLine(msg);</code></td></tr>
+  <tr><td>Func&lt;T...,TResult&gt;</td><td>Takes params, returns TResult (last type param)</td><td><code>Func&lt;int,int,int&gt; add = (a,b) =&gt; a+b;</code></td></tr>
+  <tr><td>Predicate&lt;T&gt;</td><td>Takes T, returns bool</td><td><code>Predicate&lt;int&gt; isEven = n =&gt; n % 2 == 0;</code></td></tr></table>
+  <p>Func/Action/Predicate are just generic delegate types the BCL already defines, so you rarely need to declare a custom <code>delegate</code> keyword type anymore — reach for a custom delegate mainly when you want a specifically named type for readability/domain clarity.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">43</div><div><span class="sq">What is a multicast delegate?</span><span class="st">Fundamentals</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>All C# delegates are inherently multicast — using <code>+=</code> you can attach multiple method targets to one delegate instance; invoking it calls each in the order added. If the delegate has a return value, only the LAST invoked method's return value is what you get back from a direct call (others' results are discarded) — this is a classic gotcha, so multicast is mainly useful for void-returning notification-style callbacks like events.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">44</div><div><span class="sq">What is an event, and how does it differ from a plain public delegate field?</span><span class="st">Encapsulation</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public class FeeService
+{
+    public event EventHandler&lt;FeePaidEventArgs&gt; FeePaid;
+    protected virtual void OnFeePaid(FeePaidEventArgs e) =&gt; FeePaid?.Invoke(this, e);
+}</code></pre>
+  <p>A plain public delegate field can be invoked, replaced entirely (<code>=</code>), or set to null from OUTSIDE the class — dangerous. An <code>event</code> restricts external code to only <code>+=</code>/<code>-=</code> (subscribe/unsubscribe) — only the declaring class can raise it (call <code>Invoke</code>) or clear it. This encapsulation is exactly why events exist instead of just using public delegate fields directly.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">45</div><div><span class="sq">How do C# events implement the Observer pattern?</span><span class="st">Design Pattern</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>The Observer pattern is: a subject notifies multiple interested observers when its state changes, without the subject needing to know concrete observer types. A C# <code>event</code> IS this pattern built into the language — the publishing class is the "subject," each <code>+=</code> subscriber is an "observer," and raising the event notifies all of them. It's a common interview point to connect this classic GoF pattern directly to a language feature you already use daily.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">46</div><div><span class="sq">Why use List&lt;T&gt; (generics) instead of the old non-generic ArrayList?</span><span class="st">Generics Basics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>ArrayList</code> stores everything as <code>object</code> — adding a value type causes boxing (heap allocation) and every read requires an unboxing cast, with no compile-time type safety (you could accidentally add mismatched types and only find out at runtime). <code>List&lt;T&gt;</code> is type-safe at compile time, avoids boxing for value types, and is faster because the JIT can generate specialized code per concrete type. There's essentially no reason to use ArrayList/Hashtable/etc. in new code.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">47</div><div><span class="sq">What are generic constraints, and why would you use "where T : IComparable&lt;T&gt;"?</span><span class="st">Constraints</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public class SortedBag&lt;T&gt; where T : IComparable&lt;T&gt;
+{
+    private readonly List&lt;T&gt; _items = new();
+    public void Add(T item)
+    {
+        int i = _items.BinarySearch(item);
+        _items.Insert(i &lt; 0 ? ~i : i, item);
+    }
+}</code></pre>
+  <p>Constraints (<code>where T : class</code>, <code>struct</code>, <code>new()</code>, a base class, or an interface) restrict which types can be substituted for T, which in turn UNLOCKS operations on T that wouldn't otherwise compile — e.g., without <code>where T : IComparable&lt;T&gt;</code>, you can't call <code>.CompareTo</code> on a generic T because the compiler only knows it's "some type," not that it's comparable.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">48</div><div><span class="sq">What is covariance/contravariance (in/out) in generics?</span><span class="st">Variance</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>IEnumerable&lt;Student&gt; students = GetStudents();
+IEnumerable&lt;object&gt; asObjects = students; // OK — covariant (out T)
+
+Action&lt;object&gt; logAny = obj =&gt; Console.WriteLine(obj);
+Action&lt;string&gt; logString = logAny;        // OK — contravariant (in T)</code></pre>
+  <p>Covariance (<code>out T</code>, e.g. <code>IEnumerable&lt;out T&gt;</code>) lets you use a MORE DERIVED type where a less derived one is expected — safe because the interface only produces/returns T, never accepts it as input. Contravariance (<code>in T</code>, e.g. <code>Action&lt;in T&gt;</code>) lets you use a LESS DERIVED type where a more derived one is expected — safe because the interface only consumes T as input. Both only apply to interface/delegate generic type parameters, not classes, and only in the direction that keeps type-safety intact.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">49</div><div><span class="sq">What is a lambda expression, and how does it relate to delegates?</span><span class="st">Syntax</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>A lambda (<code>x =&gt; x * 2</code>) is a concise inline syntax for defining a method body without formally declaring a named method — the compiler converts it into either a delegate instance (Func/Action/custom delegate) or an Expression Tree, depending on the target type expected (e.g., LINQ-to-Objects wants a delegate, LINQ-to-Entities/IQueryable wants an Expression Tree so it can translate it to SQL).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">50</div><div><span class="sq">Anonymous method vs lambda expression — is there any real difference today?</span><span class="st">History</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>Func&lt;int,int&gt; anon = delegate(int x) { return x * 2; }; // C# 2.0 style
+Func&lt;int,int&gt; lambda = x =&gt; x * 2;                        // C# 3.0+ style, preferred</code></pre>
+  <p>Anonymous methods (<code>delegate(...) { ... }</code>) were C# 2.0's way to write an inline method without a name. Lambdas (C# 3.0+) are strictly more capable and concise — they support expression-bodied syntax, can be converted to Expression Trees (anonymous methods cannot), and support implicit parameter typing. There's no reason to write anonymous-method syntax in new code; lambdas fully superseded it.</p></div></div>
+</section>
+
+<section id="linq">
+  <h2>🔎 E. LINQ, Expression Trees &amp; Memory/GC (Q51–70)</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">51</div><div><span class="sq">What is deferred execution in LINQ, and how can it "bite you"?</span><span class="st">Gotcha</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>var query = students.Where(s =&gt; s.IsActive); // NOT executed yet
+students.Add(new Student { IsActive = true }); // mutate source
+foreach (var s in query) { ... } // executes NOW — includes the new student!</code></pre>
+  <p>Most LINQ operators (Where, Select, OrderBy) build up a query definition but don't actually run until you enumerate it (foreach, ToList, etc.) — this is deferred execution. The gotcha: if the underlying source changes between defining the query and enumerating it, the results reflect the LATEST state, not a snapshot from when you wrote the query — surprising bugs if you assumed otherwise. Calling <code>.ToList()</code> immediately forces execution and captures a snapshot.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">52</div><div><span class="sq">IEnumerable vs IQueryable — what's the practical difference?</span><span class="st">Core</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>IEnumerable&lt;T&gt;</code> LINQ operators work against in-memory objects, compiling lambdas into actual delegates executed in .NET (LINQ-to-Objects). <code>IQueryable&lt;T&gt;</code> (used by EF Core) builds an Expression Tree instead of executing anything — the provider (EF Core) translates that expression tree into SQL and only queries the database when enumerated. Practical trap: calling <code>.AsEnumerable()</code> or <code>.ToList()</code> too early switches from IQueryable to IEnumerable, meaning subsequent filters run in application memory instead of in the database — potentially pulling the whole table across the wire first.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">53</div><div><span class="sq">First() vs FirstOrDefault() vs Single() vs SingleOrDefault() — when do you use each?</span><span class="st">API Choice</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>First()</code> throws if the sequence is empty, returns the first element otherwise (use when you're SURE at least one exists, and want a loud failure if that assumption breaks). <code>FirstOrDefault()</code> returns default(T)/null instead of throwing on empty — use for optional lookups. <code>Single()</code> throws if there's zero OR more than one match — use when exactly one is a business invariant (e.g., a primary key lookup). <code>SingleOrDefault()</code> returns default on zero matches but still throws on more than one — good for "should be unique if it exists" lookups like a user by unique email.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">54</div><div><span class="sq">How does GroupBy work in LINQ?</span><span class="st">Aggregation</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>var byClass = students.GroupBy(s =&gt; s.ClassId)
+    .Select(g =&gt; new { ClassId = g.Key, Count = g.Count(), Names = g.Select(s =&gt; s.Name) });</code></pre>
+  <p><code>GroupBy(keySelector)</code> produces a sequence of <code>IGrouping&lt;TKey,TElement&gt;</code> — each grouping acts like a mini-collection of the matching elements, keyed by <code>.Key</code>. It's the LINQ equivalent of SQL's <code>GROUP BY</code>; against IQueryable (EF Core) it translates into an actual SQL GROUP BY, but you must be careful — some complex GroupBy shapes don't translate well and EF may need to pull data client-side or throw a translation exception.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">55</div><div><span class="sq">What is the N+1 query problem, and how does it happen with LINQ-to-Entities?</span><span class="st">EF Performance</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>// BAD: N+1 — one query for students, then one query PER student for fees
+foreach (var s in db.Students.ToList())
+    Console.WriteLine(s.Fees.Count); // lazy-loads fees per student = N extra queries
+
+// GOOD: one query total
+var students = db.Students.Include(s =&gt; s.Fees).ToList();</code></pre>
+  <p>N+1 happens when you fetch N parent rows in one query, then lazily trigger a separate query for each row's related data inside a loop — 1 query becomes 1 + N queries total, which is disastrous for performance at scale. Fix with eager loading (<code>.Include()</code>) or a single projection that gets everything needed up front.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">56</div><div><span class="sq">What is an Expression Tree, and how is it different from a compiled delegate (Func&lt;T&gt;)?</span><span class="st">Advanced</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>Expression&lt;Func&lt;Student,bool&gt;&gt; expr = s =&gt; s.IsActive; // DATA describing the logic
+Func&lt;Student,bool&gt; compiled = expr.Compile();            // now it's runnable code</code></pre>
+  <p>A <code>Func&lt;T&gt;</code> lambda compiles directly to IL — it's executable code you can only call, not inspect. An <code>Expression&lt;Func&lt;T&gt;&gt;</code> instead builds a TREE OF OBJECTS describing the logic (a BinaryExpression, MemberExpression, etc.) that can be inspected, transformed, or translated to another language (like SQL) at runtime — this is exactly how EF Core turns your C# lambda into a SQL WHERE clause. You can call <code>.Compile()</code> on an expression tree to turn it into an invokable delegate if needed.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">57</div><div><span class="sq">How does "yield return" work internally?</span><span class="st">Iterators</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public IEnumerable&lt;int&gt; GetEvenNumbers(int max)
+{
+    for (int i = 0; i &lt;= max; i += 2)
+        yield return i; // pauses here, resumes on next MoveNext()
+}</code></pre>
+  <p>The compiler transforms a method using <code>yield return</code> into a hidden state-machine class implementing <code>IEnumerator&lt;T&gt;</code>. Each call to <code>MoveNext()</code> resumes execution exactly where the last <code>yield return</code> left off, runs until the next yield (or the method ends), and produces one value lazily — nothing runs until the caller actually iterates, which is why iterator methods support infinite sequences and avoid materializing a whole collection in memory upfront.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">58</div><div><span class="sq">Select vs SelectMany — what's the difference?</span><span class="st">Projection</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>var perClassLists = classes.Select(c =&gt; c.Students);       // IEnumerable&lt;List&lt;Student&gt;&gt; — nested
+var allStudentsFlat = classes.SelectMany(c =&gt; c.Students);  // IEnumerable&lt;Student&gt; — flattened</code></pre>
+  <p><code>Select</code> projects each item to a new shape 1-to-1, preserving the outer sequence structure — if each item maps to a collection, you get a sequence-of-sequences (nested). <code>SelectMany</code> projects each item to a collection AND flattens all those collections into one single flat sequence — the standard tool whenever you need "all X across all Y" in one flat list.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">59</div><div><span class="sq">How would you join two in-memory collections using LINQ?</span><span class="st">Joins</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>var result = students.Join(fees,
+    s =&gt; s.Id, f =&gt; f.StudentId,
+    (s, f) =&gt; new { s.Name, f.Amount });
+
+// or query syntax:
+var result2 = from s in students
+              join f in fees on s.Id equals f.StudentId
+              select new { s.Name, f.Amount };</code></pre>
+  <p><code>Enumerable.Join</code> performs an inner join between two sequences on matching keys, similar to SQL JOIN. For a LEFT JOIN equivalent, combine <code>GroupJoin</code> with <code>DefaultIfEmpty()</code> on the grouped results.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">60</div><div><span class="sq">Why does WHERE you call .ToList() in a LINQ chain matter for performance?</span><span class="st">Performance</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>// BAD (against EF): pulls ALL rows into memory, THEN filters in C#
+var bad = db.Students.ToList().Where(s =&gt; s.IsActive);
+
+// GOOD: filter translates to SQL WHERE, only matching rows come over the wire
+var good = db.Students.Where(s =&gt; s.IsActive).ToList();</code></pre>
+  <p>Calling <code>.ToList()</code> too early against an IQueryable source forces immediate execution of everything up to that point — any filtering/projection chained AFTER it now runs in application memory (LINQ-to-Objects) instead of being pushed down to the database as SQL. Always finish building the full IQueryable expression (Where/Select/OrderBy) and call ToList()/ToListAsync() LAST.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">61</div><div><span class="sq">How does the .NET Garbage Collector work (generations 0/1/2)?</span><span class="st">GC Fundamentals</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>The GC uses a generational model based on the observation that most objects die young. New objects start in Gen 0 (small, collected frequently and cheaply). Objects that survive a Gen 0 collection get promoted to Gen 1 (a buffer zone, collected less often), and survivors of that get promoted to Gen 2 (long-lived objects — collected rarely, but a Gen 2 collection is the most expensive since it scans everything). There's also a separate Large Object Heap (LOH) for objects &gt;85KB, collected only during Gen 2 collections.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">62</div><div><span class="sq">Value types vs reference types — how are they stored in memory?</span><span class="st">Memory Model</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Value types (struct, int, bool, enum, DateTime) hold their data directly — when declared as a local variable, they live on the STACK (fast to allocate/deallocate, no GC involvement) unless boxed or captured in a class/closure, in which case they move to the heap alongside their containing object. Reference types (class, string, array, delegate, interface-typed variable) always live on the HEAP, and the variable just holds a reference (pointer) to that heap location — assignment copies the reference, not the data, which is why mutating an object through one reference is visible through another.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">63</div><div><span class="sq">What is IDisposable and the Dispose pattern, and why does it matter?</span><span class="st">Resource Cleanup</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>The GC only knows how to reclaim managed memory — it has no idea how to release unmanaged resources (file handles, network sockets, database connections, OS handles). <code>IDisposable.Dispose()</code> gives a deterministic, explicit way to release those resources exactly when you're done, rather than waiting for an unpredictable GC pass (or never, if the object is long-lived). Always wrap disposable objects in <code>using</code> so Dispose runs even on exceptions.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">64</div><div><span class="sq">Dispose() vs a Finalizer (~ClassName) — what's the difference?</span><span class="st">Cleanup</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>Dispose()</code> is called explicitly (usually via <code>using</code>) — deterministic, immediate, cheap. A finalizer (<code>~MyClass()</code>) is called by the GC nondeterministically, only if the object wasn't already disposed — it exists as a safety net for unmanaged resources in case someone forgot to call Dispose, but finalization is expensive (objects with finalizers survive at least one extra GC generation) and delayed (runs on a dedicated finalizer thread, timing not guaranteed). Best practice: implement the full Dispose pattern (Dispose + finalizer + <code>GC.SuppressFinalize(this)</code> in Dispose) only for classes that directly own unmanaged handles; for everything else, just implement Dispose without a finalizer.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">65</div><div><span class="sq">Give an example of a "memory leak" in .NET even though it has a GC.</span><span class="st">Gotcha</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>publisher.SomethingHappened += subscriber.OnSomethingHappened; // subscribe
+// ... subscriber logically goes out of scope, but is never explicitly removed
+// publisher (long-lived) still holds a reference to subscriber via the event
+// -&gt; subscriber can NEVER be garbage collected while publisher is alive</code></pre>
+  <p>The GC only collects objects with NO reachable references — it can't tell the difference between a "real" reference and one you forgot about. The classic leak: a long-lived publisher object holds an event subscription to a short-lived object that never unsubscribes (<code>-=</code>) — the subscriber is kept alive forever by that reference, even though logically nobody "uses" it anymore. Same pattern with static collections that only ever get items added, never removed.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">66</div><div><span class="sq">What are weak references, and when would you use one?</span><span class="st">Advanced Memory</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>var weak = new WeakReference&lt;LargeCacheEntry&gt;(entry);
+if (weak.TryGetTarget(out var cached)) { /* still alive, use it */ }
+else { /* was collected, recreate it */ }</code></pre>
+  <p>A <code>WeakReference&lt;T&gt;</code> holds a reference to an object WITHOUT preventing the GC from collecting it — useful for caches where you want to reuse an object if it's still around, but don't want the cache itself to be the reason it never gets collected under memory pressure. Rare in everyday business code; mostly seen in caching layers or large-object pooling scenarios.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">67</div><div><span class="sq">What is boxing/unboxing, and why is it a performance concern?</span><span class="st">Performance</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>int i = 42;
+object boxed = i;        // boxing: heap allocation, copies the int into a new object
+int back = (int)boxed;   // unboxing: copies the value back out, with a type check</code></pre>
+  <p>Boxing wraps a value type in a heap-allocated object so it can be treated as <code>object</code> (or an implemented interface) — this costs a heap allocation and a memory copy every single time it happens, plus extra GC pressure. It commonly sneaks in via non-generic collections (ArrayList), <code>string.Format</code> with value-type args (mitigated in modern .NET), or passing a struct where an interface/object parameter is expected. Generics (List&lt;T&gt;, Func&lt;T&gt;) avoid this entirely for value types.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">68</div><div><span class="sq">Server GC vs Workstation GC — what's the difference?</span><span class="st">GC Modes</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Workstation GC is optimized for desktop apps — runs mostly on the same thread as the app with minimal pause impact on responsiveness, single heap. Server GC (used by default for ASP.NET Core web apps) creates one heap PER CPU CORE and collects them in parallel on dedicated GC threads — much higher throughput for multi-core server workloads at the cost of higher baseline memory usage. Configurable via <code>ServerGarbageCollection</code> in the project's runtime config.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">69</div><div><span class="sq">What is Span&lt;T&gt;, and why is it useful for performance?</span><span class="st">Modern Perf</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>ReadOnlySpan&lt;char&gt; span = "Hello, World".AsSpan(7, 5); // "World" — no new string allocated
+</code></pre>
+  <p><code>Span&lt;T&gt;</code> is a stack-only, type-safe view over a contiguous region of memory (an array, a string, or stack-allocated memory) that lets you slice/manipulate data WITHOUT allocating a new copy — e.g., substring-like operations without allocating new string objects. It's a big win in hot paths (parsing, string processing) for reducing GC pressure, though the "stack-only" restriction (it's a ref struct) means you can't store it in a field of a heap-allocated class or use it across await boundaries.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">70</div><div><span class="sq">How can a static collection cause an unintended memory leak?</span><span class="st">Gotcha</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>A <code>static</code> field lives for the entire lifetime of the application domain. If you keep adding items to a static <code>List&lt;T&gt;</code>/<code>Dictionary</code> (e.g., a "cache" that never expires or evicts) without ever removing entries, it grows unbounded — every item added is reachable forever via that static root, so the GC can never reclaim any of it, no matter how much memory pressure exists. Fix with bounded caches (e.g., <code>MemoryCache</code> with eviction/expiration policies) instead of raw static collections.</p></div></div>
+</section>
+
+<section id="patterns">
+  <h2>🏗️ F. Exception Handling, Design Patterns &amp; Dependency Injection (Q71–100)</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">71</div><div><span class="sq">"throw;" vs "throw ex;" — why does it matter?</span><span class="st">Gotcha</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>catch (Exception ex)
+{
+    LogError(ex);
+    throw;      // GOOD: preserves original stack trace
+    // throw ex;  BAD: resets stack trace to THIS line, losing where it actually happened
+}</code></pre>
+  <p><code>throw;</code> rethrows the current exception while preserving its original stack trace, so you can still see exactly where it was first thrown. <code>throw ex;</code> throws the SAME exception object but resets its stack trace to the current catch block's location — you lose the original failure location, making production debugging much harder.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">72</div><div><span class="sq">.NET doesn't have Java-style checked exceptions — how do you decide what to catch?</span><span class="st">Philosophy</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Since the compiler never forces you to declare or catch specific exceptions, the convention is: catch SPECIFIC exception types you can meaningfully recover from or add context to (e.g., <code>catch (SqlException ex) when (ex.Number == 2601)</code> for a duplicate key), and let everything else propagate up to a top-level/global handler (like ASP.NET Core's exception-handling middleware) that logs it and returns a generic error response. Avoid blanket <code>catch (Exception)</code> that silently swallows errors — that hides real bugs.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">73</div><div><span class="sq">How does "using" relate to exception safety for resource cleanup?</span><span class="st">Best Practice</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>using (var conn = new SqlConnection(connStr))
+{
+    conn.Open();
+    DoWork(conn); // if this throws...
+} // ...Dispose() STILL runs here, connection is still released</code></pre>
+  <p><code>using</code> compiles down to a try/finally block, guaranteeing <code>Dispose()</code> runs whether the block completes normally OR an exception is thrown partway through — this is the whole reason it exists: manual try/finally cleanup is easy to forget, <code>using</code> makes it automatic and impossible to skip accidentally.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">74</div><div><span class="sq">Explain the Singleton pattern and a thread-safe implementation in C#.</span><span class="st">Pattern</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public sealed class ConfigManager
+{
+    private static readonly Lazy&lt;ConfigManager&gt; _instance = new(() =&gt; new ConfigManager());
+    public static ConfigManager Instance =&gt; _instance.Value;
+    private ConfigManager() { }
+}</code></pre>
+  <p>Singleton ensures only ONE instance of a class ever exists, with a single global access point. The naive implementation (check-then-create in a getter) isn't thread-safe — two threads can both pass the null-check simultaneously and create two instances. <code>Lazy&lt;T&gt;</code> handles thread-safe lazy initialization for you (default mode uses a lock internally), which is far simpler and safer than hand-rolling double-checked locking.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">75</div><div><span class="sq">Explain the Repository and Unit of Work patterns.</span><span class="st">Pattern</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Repository abstracts data access behind an interface (e.g., <code>IStudentRepository.GetById</code>, <code>.Add</code>) so business logic doesn't depend directly on ADO.NET/EF Core specifics — easier to unit test with a fake/mock repository. Unit of Work coordinates multiple repository operations into a single atomic transaction/SaveChanges call (e.g., add a student AND their first fee record, commit both together or roll back both). In EF Core, <code>DbContext</code> itself already acts as a Unit of Work (its <code>SaveChanges()</code> commits all tracked changes together), which is why some teams consider a separate Repository layer over EF Core redundant — a valid interview talking point either way.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">76</div><div><span class="sq">Explain the Factory pattern and when you'd use it over direct "new".</span><span class="st">Pattern</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public interface INotificationSender { void Send(string to, string msg); }
+public class NotificationFactory
+{
+    public INotificationSender Create(string channel) =&gt; channel switch
+    {
+        "sms" =&gt; new SmsSender(),
+        "email" =&gt; new EmailSender(),
+        _ =&gt; throw new ArgumentException("Unknown channel")
+    };
+}</code></pre>
+  <p>Factory centralizes and encapsulates OBJECT CREATION LOGIC that depends on runtime conditions (config, input type) — the calling code depends only on the abstraction (<code>INotificationSender</code>), not on which concrete class gets constructed. Use it when the choice of concrete type isn't known until runtime, or construction requires nontrivial setup logic you don't want scattered across the codebase.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">77</div><div><span class="sq">Explain the Strategy pattern with an example (e.g., fee calculation).</span><span class="st">Pattern</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public interface IFeeDiscountStrategy { decimal Apply(decimal baseFee); }
+public class SiblingDiscount : IFeeDiscountStrategy { public decimal Apply(decimal f) =&gt; f * 0.9m; }
+public class NoDiscount : IFeeDiscountStrategy { public decimal Apply(decimal f) =&gt; f; }
+
+public class FeeCalculator
+{
+    private readonly IFeeDiscountStrategy _strategy;
+    public FeeCalculator(IFeeDiscountStrategy strategy) =&gt; _strategy = strategy;
+    public decimal Calculate(decimal baseFee) =&gt; _strategy.Apply(baseFee);
+}</code></pre>
+  <p>Strategy defines a family of interchangeable algorithms behind a common interface, letting you swap behavior at runtime (or via DI) without changing the calling code — here, different discount rules can be plugged into the same <code>FeeCalculator</code> without any if/else branching inside it. This is the OOP alternative to a big switch statement full of business rules.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">78</div><div><span class="sq">What is the Dependency Inversion Principle, and how does a DI container implement it?</span><span class="st">SOLID</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Dependency Inversion says: high-level modules should depend on ABSTRACTIONS (interfaces), not concrete low-level implementations — and concrete implementations should depend on those same abstractions too. A DI container (like the built-in <code>IServiceCollection</code> in ASP.NET Core) is the mechanical enforcement of this: you register "when someone asks for <code>IEmailSender</code>, give them a <code>SmtpEmailSender</code>," and classes declare only the interface in their constructor — the container resolves and injects the concrete instance at runtime, so no class ever directly instantiates its own dependencies.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">79</div><div><span class="sq">Briefly explain the SOLID principles.</span><span class="st">SOLID</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><table><tr><th>Letter</th><th>Principle</th><th>One-line meaning</th></tr>
+  <tr><td>S</td><td>Single Responsibility</td><td>A class should have exactly one reason to change</td></tr>
+  <tr><td>O</td><td>Open/Closed</td><td>Open for extension, closed for modification (add new behavior without editing existing tested code)</td></tr>
+  <tr><td>L</td><td>Liskov Substitution</td><td>A subclass must be usable anywhere its base type is expected, without breaking correctness</td></tr>
+  <tr><td>I</td><td>Interface Segregation</td><td>Prefer many small, focused interfaces over one large "god" interface</td></tr>
+  <tr><td>D</td><td>Dependency Inversion</td><td>Depend on abstractions, not concrete implementations</td></tr></table></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">80</div><div><span class="sq">What is the Decorator pattern, and how is ASP.NET Core middleware an example of it?</span><span class="st">Pattern</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>app.UseExceptionHandler("/error"); // wraps everything after it
+app.UseAuthentication();           // wraps everything after it
+app.UseAuthorization();
+app.MapControllers();</code></pre>
+  <p>Decorator wraps an object with another object implementing the same interface, adding behavior before/after delegating to the wrapped instance — without changing the wrapped object itself. ASP.NET Core middleware is exactly this: each <code>app.Use...()</code> registers a layer that can run logic before calling <code>next()</code> (the rest of the pipeline) and after it returns — each middleware "decorates" the request-handling pipeline of everything registered after it.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">81</div><div><span class="sq">What are the 3 built-in DI lifetimes in ASP.NET Core, and what's the difference?</span><span class="st">DI Lifetimes</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><table><tr><th>Lifetime</th><th>Behavior</th><th>Typical use</th></tr>
+  <tr><td>Transient</td><td>New instance every time it's requested</td><td>Lightweight, stateless services</td></tr>
+  <tr><td>Scoped</td><td>One instance per HTTP request (or per manually created scope)</td><td>DbContext, per-request unit of work</td></tr>
+  <tr><td>Singleton</td><td>One instance for the entire application lifetime</td><td>Config objects, in-memory caches, HttpClientFactory-managed clients</td></tr></table></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">82</div><div><span class="sq">What is the "captive dependency" problem when injecting a Scoped service into a Singleton?</span><span class="st">DI Gotcha</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>If a Singleton captures a Scoped service in its constructor, that Scoped instance (e.g., a DbContext meant to live only per-request) gets held onto for the ENTIRE APPLICATION LIFETIME instead of being released after its intended request — it becomes a de-facto singleton itself, leading to stale/shared state bugs and potential thread-safety issues since DbContext isn't thread-safe. ASP.NET Core's built-in container actually throws an <code>InvalidOperationException</code> at startup ("Cannot consume scoped service from singleton") in Development to catch this by default. Fix: inject <code>IServiceScopeFactory</code>/<code>IServiceProvider</code> into the singleton and create scopes on demand, same fix as with BackgroundService.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">83</div><div><span class="sq">What is Reflection, and give a practical use case.</span><span class="st">Reflection</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>var type = typeof(Student);
+foreach (var prop in type.GetProperties())
+    Console.WriteLine($"{prop.Name}: {prop.GetValue(studentInstance)}");</code></pre>
+  <p>Reflection lets you inspect and interact with types, methods, properties, and attributes AT RUNTIME rather than compile time — you can enumerate a type's members, read custom attributes, invoke methods by name, or even dynamically create instances. Practical uses: building a generic object-to-DataTable mapper, validation frameworks that read <code>[Required]</code>-style attributes, DI containers themselves (they use reflection to inspect constructor parameters), and serializers like System.Text.Json.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">84</div><div><span class="sq">What are Attributes in C#, and how do you create a custom one?</span><span class="st">Metadata</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>[AttributeUsage(AttributeTargets.Property)]
+public class MaxLengthAttribute : Attribute
+{
+    public int Length { get; }
+    public MaxLengthAttribute(int length) =&gt; Length = length;
+}
+
+public class Student
+{
+    [MaxLength(50)]
+    public string Name { get; set; }
+}</code></pre>
+  <p>Attributes attach declarative metadata to code elements (classes, methods, properties) without affecting their runtime behavior directly — the metadata is only meaningful to whatever reads it via Reflection (e.g., ASP.NET's <code>[Authorize]</code>, EF Core's <code>[Key]</code>, or your own validation framework checking a custom <code>[MaxLength]</code> at runtime). Custom attributes are just classes inheriting from <code>System.Attribute</code>.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">85</div><div><span class="sq">What is middleware in ASP.NET Core, and how is the request pipeline built?</span><span class="st">Pipeline</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>app.Use(async (context, next) =&gt;
+{
+    var sw = Stopwatch.StartNew();
+    await next(); // call the rest of the pipeline
+    Console.WriteLine($"Request took {sw.ElapsedMilliseconds}ms");
+});
+app.MapControllers();</code></pre>
+  <p>Middleware components are chained in the order registered, each one deciding whether to pass the request to the NEXT component (<code>await next()</code>) and what to do with the response on the way back out — forming a nested pipeline (like Russian dolls). Order matters a lot: e.g., <code>UseAuthentication()</code> must run before <code>UseAuthorization()</code>, and exception-handling middleware is usually registered FIRST so it can catch errors from everything after it.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">86</div><div><span class="sq">What is the IOptions&lt;T&gt; pattern for configuration, and why not just read appsettings.json directly everywhere?</span><span class="st">Config</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public class SmtpSettings { public string Host { get; set; } public int Port { get; set; } }
+builder.Services.Configure&lt;SmtpSettings&gt;(builder.Configuration.GetSection("Smtp"));
+
+public class EmailSender
+{
+    public EmailSender(IOptions&lt;SmtpSettings&gt; options) =&gt; _settings = options.Value;
+}</code></pre>
+  <p><code>IOptions&lt;T&gt;</code> binds a strongly-typed C# class to a configuration section, giving compile-time safety and IntelliSense instead of scattering magic strings (<code>Configuration["Smtp:Host"]</code>) across the codebase. Variants exist for different reload needs: <code>IOptionsSnapshot&lt;T&gt;</code> (re-reads per-scope, good for Scoped services if config can change), <code>IOptionsMonitor&lt;T&gt;</code> (live reload notifications, safe in Singletons).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">87</div><div><span class="sq">What is a record type, and how does it differ from a class?</span><span class="st">Modern C#</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public record StudentDto(int Id, string Name);
+var a = new StudentDto(1, "Kumar");
+var b = new StudentDto(1, "Kumar");
+Console.WriteLine(a == b); // True — value-based equality, unlike a normal class</code></pre>
+  <p>A <code>record</code> is reference type (by default) with compiler-generated VALUE-BASED equality (two records with the same property values are <code>==</code>/<code>Equals</code>), a generated <code>ToString()</code>, and built-in support for non-destructive mutation via <code>with</code> expressions (<code>var b = a with { Name = "New" }</code>). Ideal for immutable DTOs/data-carrier objects where identity doesn't matter, only the data does — a normal class defaults to reference equality unless you override Equals/GetHashCode yourself.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">88</div><div><span class="sq">What are nullable reference types (string? vs string), and why were they introduced?</span><span class="st">Null Safety</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>#nullable enable
+public class Student
+{
+    public string Name { get; set; } = ""; // never expected to be null
+    public string? MiddleName { get; set; } // may legitimately be null
+}</code></pre>
+  <p>With nullable reference types enabled, <code>string</code> means "the compiler expects this is never null" and <code>string?</code> means "this may be null, and you must null-check before using it" — the compiler emits WARNINGS (not runtime errors) when it detects a possible null dereference or an unchecked assignment mismatch. It's purely a compile-time static analysis aid to catch <code>NullReferenceException</code> bugs earlier — it doesn't change runtime behavior by itself.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">89</div><div><span class="sq">What is pattern matching (switch expressions, "is" patterns) in modern C#?</span><span class="st">Modern C#</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>string GetFeeCategory(Student s) =&gt; s switch
+{
+    { Age: &lt; 5 } =&gt; "Preschool",
+    { ClassId: &gt;= 1 and &lt;= 5 } =&gt; "Primary",
+    { IsScholarship: true } =&gt; "Scholarship",
+    _ =&gt; "Standard"
+};
+
+if (obj is Student { IsActive: true } activeStudent) { /* use activeStudent */ }</code></pre>
+  <p>Pattern matching lets you test a value against a shape/condition (type, property values, ranges, relational comparisons) concisely, often replacing chains of if/else or verbose switch statements. Switch EXPRESSIONS (<code>=&gt;</code> syntax, no <code>break</code> needed) return a value directly, and property patterns (<code>{ Age: &lt; 5 }</code>) let you match on nested property values in one line.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">90</div><div><span class="sq">.NET Framework vs .NET Core vs .NET 5+/8 — what should you say if asked?</span><span class="st">Ecosystem</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>.NET Framework is the original, Windows-only runtime (up to 4.8, now in maintenance mode, no new versions). .NET Core (1.0–3.1) was the ground-up rewrite: cross-platform (Windows/Linux/macOS), open-source, faster, and modular. Starting with .NET 5, Microsoft dropped the "Core" name and unified everything into one yearly-released platform (.NET 5, 6, 7, 8, 9...) — "Core" and "Framework" merged into a single forward-looking product line, with even-numbered releases (6, 8, 10...) being Long-Term-Support (LTS) versions recommended for production.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">91</div><div><span class="sq">== vs .Equals() — and why override both Equals AND GetHashCode together?</span><span class="st">Equality</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public class Money
+{
+    public decimal Amount { get; }
+    public override bool Equals(object? obj) =&gt; obj is Money m &amp;&amp; m.Amount == Amount;
+    public override int GetHashCode() =&gt; Amount.GetHashCode();
+}</code></pre>
+  <p>For reference types, <code>==</code> defaults to reference equality (same object in memory) unless overloaded; <code>.Equals()</code> is virtual and can be overridden per-class for value-based comparison. If you override <code>Equals</code> without also overriding <code>GetHashCode</code>, you break the contract that "equal objects must have equal hash codes" — hash-based collections like <code>Dictionary</code>/<code>HashSet</code> will then behave incorrectly (two "equal" objects can land in different buckets and appear as distinct entries).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">92</div><div><span class="sq">struct vs class — when would you actually choose struct?</span><span class="st">Type Design</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Choose <code>struct</code> for small (generally &lt;16-24 bytes), immutable, short-lived, value-semantic data (a Point, a Money amount, a coordinate) where avoiding heap allocation/GC pressure matters — structs live on the stack (or inline in containing objects) and are copied by value on assignment/passing. Default to <code>class</code> for everything else, especially anything with identity, mutable shared state, or that's larger — copying a large struct by value on every assignment/parameter pass is actually SLOWER than passing a reference.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">93</div><div><span class="sq">Abstract class vs interface — and what changed with default interface methods?</span><span class="st">OOP</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>An abstract class can hold state (fields), constructors, and a mix of implemented + abstract members, but a class can inherit from only ONE abstract class (single inheritance). An interface traditionally defined only a contract (no implementation, no fields) but a class can implement MANY interfaces. Since C# 8, interfaces can have default method implementations — narrowing the gap somewhat — but interfaces still can't hold instance fields/state, which remains the key practical distinction.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">94</div><div><span class="sq">What is Channel&lt;T&gt;, and how is it used for producer-consumer scenarios?</span><span class="st">Modern Concurrency</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>var channel = Channel.CreateBounded&lt;int&gt;(capacity: 100);
+// producer
+await channel.Writer.WriteAsync(42);
+// consumer
+await foreach (var item in channel.Reader.ReadAllAsync()) { /* process */ }</code></pre>
+  <p><code>Channel&lt;T&gt;</code> (System.Threading.Channels) is a modern, fully async-friendly queue for passing data between producer(s) and consumer(s) safely — bounded channels apply backpressure (writers await if the buffer is full), and <code>ReadAllAsync()</code> gives a clean <code>await foreach</code> consumption pattern. It's the go-to replacement for older patterns like <code>BlockingCollection</code> when you're already in an async codebase (BlockingCollection's API is synchronous/blocking).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">95</div><div><span class="sq">lock vs SemaphoreSlim.WaitAsync() — why can't you "await" inside a lock block?</span><span class="st">Async + Locking</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>lock</code> is built on <code>Monitor</code>, which is tied to the CURRENT THREAD — the thread that entered the lock must be the one that exits it. But an <code>await</code> can resume on a DIFFERENT thread pool thread after the awaited operation completes, which would violate that thread-affinity and the compiler flags it as an error (you literally can't write <code>await</code> inside a <code>lock</code> block). <code>SemaphoreSlim.WaitAsync()</code>/<code>Release()</code> has no such thread affinity — it's designed to be safely awaited and released from different threads, making it the correct choice for protecting a critical section that contains async work.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">96</div><div><span class="sq">How would you implement a simple in-memory cache with IMemoryCache?</span><span class="st">Caching</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>public class ClassRoster
+{
+    private readonly IMemoryCache _cache;
+    public ClassRoster(IMemoryCache cache) =&gt; _cache = cache;
+
+    public async Task&lt;List&lt;Student&gt;&gt; GetRosterAsync(int classId)
+    {
+        return await _cache.GetOrCreateAsync($"roster-{classId}", async entry =&gt;
+        {
+            entry.SlidingExpiration = TimeSpan.FromMinutes(10);
+            return await _db.Students.Where(s =&gt; s.ClassId == classId).ToListAsync();
+        });
+    }
+}</code></pre>
+  <p><code>IMemoryCache</code> (in-process, per-server) is registered via <code>AddMemoryCache()</code> and offers <code>GetOrCreateAsync</code> to fetch-or-populate a cache entry atomically, with expiration policies (absolute, sliding) so entries don't live forever. For a multi-server deployment where all instances need the same cached data, use a distributed cache (Redis via <code>IDistributedCache</code>) instead — IMemoryCache is per-instance and won't be consistent across servers.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">97</div><div><span class="sq">How do you implement global exception handling in ASP.NET Core?</span><span class="st">Error Handling</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>app.UseExceptionHandler(errApp =&gt;
+{
+    errApp.Run(async context =&gt;
+    {
+        var feature = context.Features.Get&lt;IExceptionHandlerFeature&gt;();
+        _logger.LogError(feature?.Error, "Unhandled exception");
+        context.Response.StatusCode = 500;
+        await context.Response.WriteAsJsonAsync(new { error = "Something went wrong" });
+    });
+});</code></pre>
+  <p><code>UseExceptionHandler</code> middleware (registered early in the pipeline) catches any unhandled exception thrown further down the pipeline, logs it centrally, and returns a consistent error response — instead of leaking a stack trace to the client or crashing the request. .NET 8 also introduced <code>IExceptionHandler</code> as a more testable, DI-friendly alternative to the inline delegate approach.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">98</div><div><span class="sq">Top-level statements / minimal hosting (Program.cs) vs the old Startup.cs — what changed?</span><span class="st">Hosting Model</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
+var app = builder.Build();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();</code></pre>
+  <p>Modern .NET (6+) collapses the old <code>Program.cs</code> (just calling <code>CreateHostBuilder</code>) plus separate <code>Startup.cs</code> (with <code>ConfigureServices</code>/<code>Configure</code> methods) into ONE file using top-level statements — <code>builder.Services.Add...()</code> replaces ConfigureServices, and the middleware pipeline (<code>app.Use...()</code>) replaces Configure. It's functionally equivalent, just less ceremony; the older Startup.cs style still works if you prefer it or are upgrading an existing project.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">99</div><div><span class="sq">Briefly, how would you secure an API with JWT authentication in ASP.NET Core?</span><span class="st">Security</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre><code>builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =&gt;
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = true, ValidateAudience = true, ValidateLifetime = true
+        };
+    });
+// ...
+app.UseAuthentication();
+app.UseAuthorization();
+
+[Authorize] // on controllers/actions that require a valid token</code></pre>
+  <p>On login, the server issues a signed JWT containing claims (user id, roles, expiry) after validating credentials. The client sends it as <code>Authorization: Bearer &lt;token&gt;</code> on subsequent requests. <code>AddJwtBearer</code> configures the middleware to validate the token's signature, issuer, audience, and expiry on every request — if valid, <code>HttpContext.User</code> is populated from its claims and <code>[Authorize]</code>/role checks work against it, all without a server-side session store.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">100</div><div><span class="sq">How would you debug a production .NET app with high CPU or a memory leak?</span><span class="st">Diagnostics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Use the <code>dotnet-counters</code> global tool for a live view of GC, thread pool, and request metrics without attaching a debugger. For high CPU, <code>dotnet-trace collect</code> captures a CPU profile you can open in a flame-graph viewer to see which methods are hot. For suspected memory leaks, <code>dotnet-gcdump</code>/<code>dotnet-dump collect</code> captures a memory snapshot analyzable in Visual Studio or PerfView to see which object types and roots are holding the most memory (often revealing exactly the "forgotten event subscription" or "unbounded static collection" pattern from Q65/Q70). Mentioning these specific tools by name signals hands-on production debugging experience, not just textbook knowledge.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quick Self-Check Quiz</h2>
+
+  <div class="qc"><div class="qq">1. What's wrong with calling ".Result" on a Task inside an ASP.NET (classic, with SynchronizationContext) request handler?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','It does run — the problem is HOW it can hang, not that it never executes.')">It simply doesn't compile</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Blocking on .Result while holding the captured context can deadlock, because the awaited continuation needs that same blocked context to resume.')">It can deadlock — the blocked thread holds the context the continuation needs to resume on</button>
+    <button class="qb" onclick="ans(this,'wrong','It doesn\'t change memory allocation behavior at all.')">It causes a memory leak in the Large Object Heap</button>
+    <button class="qb" onclick="ans(this,'wrong','No relation to JIT compilation.')">It disables JIT optimization for that method</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. Which class should a Singleton BackgroundService use to safely access a Scoped DbContext?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Injecting DbContext directly into a Singleton\'s constructor is exactly the captive-dependency bug to avoid.')">Inject SchoolDbContext directly in the constructor</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! IServiceScopeFactory lets you create a fresh scope per loop iteration and resolve scoped services from it safely.')">Inject IServiceScopeFactory and create a scope per iteration</button>
+    <button class="qb" onclick="ans(this,'wrong','Static fields don\'t solve the scoping problem and introduce thread-safety issues of their own.')">Store a static DbContext field</button>
+    <button class="qb" onclick="ans(this,'wrong','GC.Collect has nothing to do with DI scoping.')">Call GC.Collect() before each use</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. In SignalR, how do you push a message to every client in a specific class/room only?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Clients.All broadcasts to every connected client across all rooms/classes, not a targeted subset.')">Clients.All.SendAsync(...)</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Groups.AddToGroupAsync assigns connections to a named group, then Clients.Group(name) targets just that group.')">Groups.AddToGroupAsync(...) then Clients.Group(name).SendAsync(...)</button>
+    <button class="qb" onclick="ans(this,'wrong','Clients.Client targets one single connection, not a whole class/room of connections.')">Clients.Client(connectionId).SendAsync(...)</button>
+    <button class="qb" onclick="ans(this,'wrong','There\'s no such API — WebSocket rooms are not a raw SignalR primitive by that name.')">connection.joinRoom(roomName) on the server</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. Why does "lock" not allow "await" inside its block?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'correct','Correct! Monitor-based locks are thread-affine — the releasing thread must be the acquiring thread, which await can break by resuming on a different pool thread.')">Because lock/Monitor is thread-affine, but await can resume on a different thread</button>
+    <button class="qb" onclick="ans(this,'wrong','This isn\'t a syntax limitation of async/await keywords in general — it\'s specific to Monitor-based locking.')">Because async methods can't contain any blocking calls at all</button>
+    <button class="qb" onclick="ans(this,'wrong','lock has nothing to do with garbage collection pauses.')">Because it would pause the garbage collector</button>
+    <button class="qb" onclick="ans(this,'wrong','C# has always disallowed this — it\'s not a versioned/deprecated feature.')">It's allowed in .NET 8 but deprecated</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">5. What does calling .ToList() too early in an EF Core LINQ chain cause?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'correct','Correct! Once materialized, later Where/Select clauses run in-memory (LINQ-to-Objects) instead of being translated into SQL, often after pulling far more rows than needed.')">Later filters run in application memory instead of being translated to SQL</button>
+    <button class="qb" onclick="ans(this,'wrong','It doesn\'t change SQL Server\'s indexing at all — that\'s a database-side concern.')">It forces SQL Server to rebuild table indexes</button>
+    <button class="qb" onclick="ans(this,'wrong','.ToList() has no relation to connection pooling behavior.')">It permanently closes the database connection pool</button>
+    <button class="qb" onclick="ans(this,'wrong','.ToList() executes eagerly — deferred execution is what happens when you DON\'T call it.')">It has no effect — LINQ is always deferred regardless</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)" data-id="m-1"><input type="checkbox">I can explain what await does under the hood (state machine)</li>
+    <li onclick="ck(this)" data-id="m-2"><input type="checkbox">I know why .Result/.Wait() can deadlock and how ConfigureAwait(false) helps</li>
+    <li onclick="ck(this)" data-id="m-3"><input type="checkbox">I can write a BackgroundService with a periodic loop and graceful cancellation</li>
+    <li onclick="ck(this)" data-id="m-4"><input type="checkbox">I know how to safely resolve a Scoped service (DbContext) inside a Singleton/BackgroundService</li>
+    <li onclick="ck(this)" data-id="m-5"><input type="checkbox">I can explain a SignalR Hub, Groups, and how server code pushes via IHubContext</li>
+    <li onclick="ck(this)" data-id="m-6"><input type="checkbox">I can explain lock vs SemaphoreSlim and why await can't go inside a lock</li>
+    <li onclick="ck(this)" data-id="m-7"><input type="checkbox">I understand deferred execution and IEnumerable vs IQueryable</li>
+    <li onclick="ck(this)" data-id="m-8"><input type="checkbox">I can explain GC generations and one real memory-leak example (event subscription)</li>
+    <li onclick="ck(this)" data-id="m-9"><input type="checkbox">I can explain Singleton, Factory, Strategy, Repository patterns with a small example each</li>
+    <li onclick="ck(this)" data-id="m-10"><input type="checkbox">I know the 3 DI lifetimes and the captive dependency problem</li>
+  </ul>
+</section>
+
+<div class="completion">
+  <h2>🎉 Advanced C# Ready</h2>
+  <div class="badge">100 QUESTIONS COVERED ✓</div>
+  <p style="color:var(--muted);margin-top:1rem;font-size:.9rem;">Also revise: <a class="rlink" href="ADO_NET_Guide.html">ADO.NET Guide</a>, <a class="rlink" href="EntityFramework_Guide.html">Entity Framework Guide</a>, <a class="rlink" href="WinForms_Guide.html">WinForms Guide</a></p>
+</div>
+
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">Advanced C# — Top 100 Q&amp;A — Salcomp Interview Prep</p>
+  <p>Accent: Violet #7c3aed · Progress saves in this browser automatically</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+
+  const STORAGE_KEY='csharp100-guide-progress-v1';
+  const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const allBoxes = Array.from(document.querySelectorAll('.cl-list li[data-id]'));
+
+  function updateBadge(){
+    const doneCount = Object.values(state).filter(Boolean).length;
+    document.getElementById('progBadge').textContent = doneCount+'/'+allBoxes.length+' done';
+  }
+  function applyState(){
+    allBoxes.forEach(li=>{
+      const cb = li.querySelector('input');
+      const on = !!state[li.dataset.id];
+      cb.checked = on;
+      li.classList.toggle('done', on);
+    });
+    updateBadge();
+  }
+  function ck(li){
+    const cb = li.querySelector('input');
+    const id = li.dataset.id;
+    if(!id) return;
+    state[id] = !state[id];
+    cb.checked = state[id];
+    li.classList.toggle('done', state[id]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    updateBadge();
+  }
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':btn.textContent.replace('Hide','Reveal');}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+
+  applyState();
+</script>
+</body>
+</html>

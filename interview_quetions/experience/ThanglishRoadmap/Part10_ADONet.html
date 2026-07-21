@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 10: ADO.NET — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.realproj{background:#001a2e;border-left:3px solid #3b82f6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.88em;color:#bfdbfe}
+.realproj .lbl{color:#60a5fa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.realproj.honest{border-left-color:#f59e0b;background:#1a1100}
+.realproj.honest .lbl{color:#fbbf24}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox table{width:100%;border-collapse:collapse;font-size:0.85em}
+.cheatbox th,.cheatbox td{padding:6px 10px;border-bottom:1px solid #2a2a5a;text-align:left;color:#e0e0e0}
+.cheatbox th{color:#fbbf24;font-size:0.78em;text-transform:uppercase}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 10: ADO.NET</h1>
+  <p>15 Q&amp;A — Thanglish explanation + English answer script + real project implementation + follow-up questions</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html" class="active">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhu Part 10 — ADO.NET mattum focus panra file. Un resume la "ORM &amp; Data Access" section kulla Dapper, EF Core kூடa ADO.NET-um explicit ah irukku, so idhu skip pannakuda. Idhu la oru extra box irukku — 🏗️ "Project la eppadi implement pannirukeen" nu — adhu real ah bank locker OTP project la naan ADO.NET ah eppadi use pannirukken nu concrete story. Ovvoru item padinchu, answer script ah padinchu, apparam close pannitu un own words la sollikkanum practice pannunga.</p>
+</div>
+
+<div class="toc">
+  <h2>Idhu la irukka sections</h2>
+  <div class="toc-grid">
+    <a href="#10A">10A. ADO.NET Core Concepts (Items 1-8)</a>
+    <a href="#10B">10B. Real Usage, Comparison &amp; Best Practices (Items 9-15)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 10 Quick-Recall Cheat Sheet</h2>
+  <ul>
+    <li><b>1. ADO.NET architecture</b> — Connection (DB kூடa link) → Command (query/proc) → DataReader (fast forward-only read) or DataAdapter+DataSet (disconnected in-memory copy).</li>
+    <li><b>2. Connected vs Disconnected</b> — DataReader = connection open ah vechukkanum, live stream. DataSet = data eduthுட்டு connection close pannலாம், offline la work pannலாம்.</li>
+    <li><b>3. SqlConnection &amp; pooling</b> — <code>using(var conn=new SqlConnection(cs))</code> — .NET connection ah physically close pannாma, pool ku thirumba vidum, next request reuse pannும்.</li>
+    <li><b>4. ExecuteReader vs ExecuteNonQuery vs ExecuteScalar</b> — Reader=rows edukka, NonQuery=INSERT/UPDATE/DELETE (rows affected count), Scalar=single value (COUNT, MAX).</li>
+    <li><b>5. SqlDataReader</b> — forward-only, read-only "firehose" cursor — ஒரு direction mattum move pannும், back pogaadhu, memory la full data load pannாாthu.</li>
+    <li><b>6. DataSet vs DataTable vs DataAdapter</b> — DataTable=oru table's in-memory copy, DataSet=multiple DataTables' container, DataAdapter=DB-kum DataSet-kum idaiyila bridge (Fill/Update).</li>
+    <li><b>7. SqlParameter</b> — user input ah query string kூடa concatenate pannாma, <code>@param</code> placeholder வெச்சு bind pannுவோம் — SQL injection 100% block.</li>
+    <li><b>8. SqlTransaction</b> — <code>conn.BeginTransaction()</code> → multiple commands same transaction → all success na Commit(), edhavadhu fail na Rollback().</li>
+    <li><b>9. Stored proc call</b> — <code>cmd.CommandType=CommandType.StoredProcedure</code> + <code>cmd.Parameters.AddWithValue()</code> or explicit SqlParameter.</li>
+    <li><b>10. using/IDisposable</b> — connection ah manually Close() panna maranu poனா, connection pool la leak aagும், DB "too many connections" nu crash aagும் — <code>using</code> guarantee pannும் auto-dispose.</li>
+    <li><b>11. Async ADO.NET</b> — <code>ExecuteReaderAsync()</code>, <code>ExecuteNonQueryAsync()</code> — thread block pannாma, high concurrency ku essential.</li>
+    <li><b>12. Error handling/resiliency</b> — try-catch-finally, <code>SqlException</code> specific ah catch, transient errors ku retry logic (Polly illa manual retry).</li>
+    <li><b>13. ADO.NET vs Dapper vs EF Core</b> — ADO.NET=raw control full manual, Dapper=micro-ORM thin mapping layer mேlaே, EF Core=full ORM tracking+migrations. Namba OTP project la simple single-table audit insert ku ADO.NET, complex join validation query ku Dapper.</li>
+    <li><b>14. WinForms DataGridView binding</b> — DataAdapter.Fill(dataTable) → <code>dataGridView1.DataSource = dataTable</code> — direct bind, no extra mapping code.</li>
+    <li><b>15. En raw ADO.NET use pannுவேன்</b> — single-table, no-join, high-frequency write (audit trail insert) — ORM mapping overhead venam, straight SqlCommand thaan fastest &amp; simplest.</li>
+  </ul>
+  <div style="overflow-x:auto;margin-top:14px">
+  <table>
+    <tr><th>Point</th><th>ADO.NET (raw)</th><th>Dapper</th><th>EF Core</th></tr>
+    <tr><td>Abstraction level</td><td>Lowest — you write everything</td><td>Thin — SQL yours, mapping automatic</td><td>Highest — LINQ, tracking, migrations</td></tr>
+    <tr><td>Speed</td><td>Fastest — zero extra layer</td><td>Very fast — near-ADO.NET</td><td>Slower — tracking overhead</td></tr>
+    <tr><td>Boilerplate</td><td>High — manual connection/reader/mapping</td><td>Low — one-liner query+map</td><td>Lowest for CRUD — entities auto-tracked</td></tr>
+    <tr><td>Best for</td><td>Simple single-statement ops (audit insert, health-check ping)</td><td>Complex joins, reports, high-volume reads</td><td>Standard CRUD, business logic, entity relationships</td></tr>
+    <tr><td>My usage</td><td>OTP audit-trail INSERT</td><td>OTP validation query (joins)</td><td>Zen Campus CRUD modules</td></tr>
+  </table>
+  </div>
+</div>
+
+<div class="section" id="10A">
+  <div class="section-title"><span class="num">10A</span> ADO.NET Core Concepts</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. ADO.NET Architecture Overview <span class="en">(Connection/Command/DataReader/DataAdapter/DataSet)</span></div>
+    <div class="tng">ADO.NET na — .NET la irundhu SQL Server (illa edha DB venaalum) kூடa pேசrathukku base-level toolkit. Namba oru restaurant nu vechukka — <b>SqlConnection</b> na restaurant kூடa phone la call pannuvathu (link create pannுவathு), <b>SqlCommand</b> na order sollுவathு ("enna venum" — SELECT/INSERT/UPDATE), <b>SqlDataReader</b> na waiter neradhi neradhi ஒரு dish kொடுத்துட்டே irukkா (fast, one-way, streaming), <b>DataAdapter+DataSet</b> na full order ah oru "parcel" ah pack panni edுthுkittu poga mudியும் (connection close pannிட்டாலும் data கூடவே இருக்கும்). Dapper, EF Core ellame idhே ADO.NET-oda mேலே thaan build aagirukku — ADO.NET thaan foundation layer.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"ADO.NET is the foundational data-access layer in .NET — SqlConnection opens the link to the database, SqlCommand represents the SQL statement or stored procedure to execute, and then you either read results with a forward-only SqlDataReader for a connected, streaming approach, or use a DataAdapter to fill a disconnected DataSet/DataTable that you can work with even after the connection is closed. Every higher-level tool — Dapper, EF Core — is ultimately built on top of these same ADO.NET primitives."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>In the Bank Locker OTP system I directly used the connected model — a SqlConnection opened for the duration of the call, a SqlCommand carrying the SQL text or stored procedure name plus parameters, and either ExecuteNonQuery for writes like the audit-trail insert or a SqlDataReader for simple lookups — I didn't need the disconnected DataSet model since I wasn't showing that data in a grid, I just needed to hit the database and move on.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Is ADO.NET still relevant when we have EF Core and Dapper? — Yes, Dapper and EF Core both use ADO.NET internally (SqlConnection/SqlCommand) under the hood; knowing it helps you understand what's actually happening.</div>
+      <div class="fq"><b>Q:</b> What namespace is ADO.NET SQL Server code in? — <code>System.Data.SqlClient</code> (or <code>Microsoft.Data.SqlClient</code> in newer .NET).</div>
+      <div class="fq"><b>Q:</b> Can ADO.NET work with non-SQL-Server databases? — Yes, via provider-specific classes like OleDbConnection, OdbcConnection, or MySqlConnection — same pattern, different provider.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. Connected vs Disconnected Architecture <span class="en">(DataReader vs DataSet)</span></div>
+    <div class="tng">Connected architecture na — connection open ah irukkும் vareikkும் mattum data padikka mudiyும் (SqlDataReader). Namba call panniட்டு wait pannுрோம், waiter row-by-row data kொடுத்துட்டே irukkா. Disconnected architecture na — DataAdapter data ah full ah eduthுட்டு, connection ah close panniட்டு, apparam offline ah andha data vechு velai pannலாம் (DataSet/DataTable). Connected = fast but connection busy ah irukkும். Disconnected = slower/heavier but flexible — data ah UI la bind pannலாம், edit pannலாம், offline la kூடa vaikkலாம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"In the connected architecture, the connection stays open while you read — SqlDataReader streams rows one at a time and is the fastest option for simple read-and-move-on scenarios. In the disconnected architecture, a DataAdapter fills a DataSet or DataTable in memory, then the connection can be closed while you keep working with that in-memory copy — this is useful when you need to bind data to a UI grid, edit it, and later push changes back."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>For the OTP APIs I stuck to the connected model — open connection, ExecuteReader or ExecuteNonQuery, close immediately in a using block, because it was a stateless REST API call, not something that needed to hold data around. The disconnected DataSet approach I actually used on the WinForms admin-tool side of that project, where I filled a DataTable via a DataAdapter and bound it straight to a DataGridView so an operator could view and refresh OTP audit logs without keeping the connection open the whole time.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Why is DataReader considered "faster"? — No extra in-memory table build-up or change tracking, it just streams rows directly as you iterate.</div>
+      <div class="fq"><b>Q:</b> Can you use SqlDataReader after closing the connection? — No — DataReader needs the connection open the whole time you're reading; closing it early throws an exception.</div>
+      <div class="fq"><b>Q:</b> When would disconnected model be a bad choice? — For high-frequency API calls where you just need one value or a few rows — the DataSet overhead is unnecessary there.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. SqlConnection &amp; Connection Pooling <span class="en">(reuse, not recreate)</span></div>
+    <div class="tng">Ovvoru SQL Server connection open pannுрathு expensive operation — TCP handshake, authentication ellame aagும். So namba <code>conn.Close()</code> pannினalum, .NET andha physical connection ah actual ah kill pannாthu — oru "pool" la thirumba podும். Next time yaru vேணumalum putha connection kேttа, pool la irundhu already-open connection ah reuse pannும். Idhu vachu 1000+ concurrent users handle panna easy aagும் — puthu connection create panna time waste aagாthu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"Opening a physical database connection is expensive, so ADO.NET maintains a connection pool under the hood. When I call Close() or Dispose() on a SqlConnection, it doesn't actually tear down the TCP connection — it returns it to the pool keyed by the connection string, and the next request that needs a connection gets handed back an already-open one. This is what makes it feasible to serve high concurrent load without connection setup becoming a bottleneck."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>In the OTP APIs, every method opened a fresh SqlConnection inside a using block and closed it right after the query — I never held connections open longer than needed. Because pooling is on by default (Max Pool Size in the connection string), this pattern of open-use-close per call didn't cost real connection-setup time under load, the pool just handed back a live connection each time, which kept response times fast even during concurrent OTP validation bursts.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you configure pool size? — Via connection string keys like <code>Min Pool Size</code> and <code>Max Pool Size</code>.</div>
+      <div class="fq"><b>Q:</b> What happens if pool is exhausted? — New requests wait for a connection to free up, or time out with an exception if the wait exceeds Connect Timeout.</div>
+      <div class="fq"><b>Q:</b> Does connection pooling happen per connection string? — Yes — connections are pooled separately per distinct connection string (including things like different Application Name).</div>
+    </div>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. SqlCommand — ExecuteReader vs ExecuteNonQuery vs ExecuteScalar <span class="en">(when to use which)</span></div>
+    <div class="tng">SqlCommand oda 3 main execute methods irukku, ovvoru vேலைkku ovvondru. <b>ExecuteReader</b> — SELECT panni multiple rows/columns thirumba venum na (returns SqlDataReader). <b>ExecuteNonQuery</b> — INSERT/UPDATE/DELETE panna, thirumba varathு number of rows affected mattum (example: 3 rows update aachu). <b>ExecuteScalar</b> — result la first row first column ஒரே ஒரு value mattum venum na (example: COUNT(*), MAX(Id)) — over-kill ah full reader use pannாma, idhே fast.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I pick based on what I need back. ExecuteReader when I need to iterate over a result set with multiple rows and columns. ExecuteNonQuery for INSERT, UPDATE, DELETE statements where I only care about the number of rows affected. And ExecuteScalar when I just need a single value — like a count, a max ID, or checking if a row exists — it's the cheapest option because it doesn't build a full reader for one value."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>The OTP audit-trail insert used ExecuteNonQuery since I only needed to confirm the row got written — I checked the returned rows-affected count to make sure it wasn't zero before treating the audit log as successful. For a quick existence check like "does an active OTP already exist for this locker ID" I used ExecuteScalar with a <code>SELECT COUNT(1)</code> query — no need to open a full reader just to get one number back.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What does ExecuteNonQuery return for a SELECT statement? — Technically works but it's misused — it doesn't give you row data back, only ever an affected-rows-style count, so don't use it for SELECT.</div>
+      <div class="fq"><b>Q:</b> Is ExecuteScalar faster than ExecuteReader for a single value? — Yes — less overhead since it doesn't set up the full reader/cursor machinery.</div>
+      <div class="fq"><b>Q:</b> What does ExecuteNonQuery return for an INSERT with no matching WHERE affected rows? — Returns 0 — that's how I detect a failed/no-op write in code.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. SqlDataReader — Forward-Only, Read-Only Cursor <span class="en">(firehose)</span></div>
+    <div class="tng">SqlDataReader ah "firehose cursor" nu solலுவாrgal — edhுkkா na adhu ஒரே direction mattum move pannும் (forward-only), pinnal pogaadhu, and read-only (edit panna mudியாthு). Full result set ah memory la load pannாma, row-by-row ah stream pannும் — so million rows irundhalum, memory efficient ah irukும். <code>while(reader.Read())</code> loop la ஒரு row aprovm ஒரு row படிக்கனும், skip pannalam aana back pogaமுடியாது.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"SqlDataReader is a forward-only, read-only stream over the result set — often called a firehose cursor. You call Read() to advance one row at a time, and you can't go backward or randomly access a row. Because it doesn't materialize the entire result set in memory, it's very efficient for large result sets — you're processing data as it arrives instead of waiting for everything to load."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>I used SqlDataReader for lightweight single-row lookups in the OTP flow — like fetching the last generated OTP and its expiry timestamp for a given locker ID. The pattern was open connection, ExecuteReader, check <code>reader.Read()</code> once since I only expected one row, pull the OTP value and expiry with <code>reader.GetString()</code>/<code>GetDateTime()</code>, then let the using block close everything — no need for the full DataSet machinery for a single-row check.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Can you have multiple result sets in one reader? — Yes, if the command returns multiple SELECTs, use <code>reader.NextResult()</code> to move to the next result set.</div>
+      <div class="fq"><b>Q:</b> Why must the connection stay open with a DataReader? — It's streaming live from the server — closing the connection mid-read breaks the stream and throws an exception.</div>
+      <div class="fq"><b>Q:</b> How do you read a column safely if it might be NULL? — Check <code>reader.IsDBNull(ordinal)</code> before calling the typed getter, or use <code>reader["col"] as string</code>.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q6">
+    <div class="term">6. DataSet vs DataTable vs DataAdapter <span class="en">(in-memory data containers)</span></div>
+    <div class="tng"><b>DataTable</b> — oru single table oda in-memory copy, rows and columns irukும், Excel sheet madhiri. <b>DataSet</b> — multiple DataTables ah oru container la vechுkittu irukும் (relationships kூடa define pannலாம் between tables) — full "mini in-memory database" madhiri. <b>DataAdapter</b> — DataSet/DataTable-kum actual database-kum idaiyila bridge — <code>Fill()</code> panniна DB-la irundhu data eduthுட்டு varும், <code>Update()</code> panniна in-memory changes ah thirumba DB ku push pannும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"A DataTable holds one table's worth of data in memory — rows and columns, like a spreadsheet. A DataSet is a container that can hold multiple DataTables plus relationships between them, essentially an in-memory relational structure. A DataAdapter is the bridge between the database and these in-memory objects — SqlDataAdapter.Fill() populates a DataTable from a query, and Update() pushes any in-memory changes back to the database using auto-generated or custom insert/update/delete commands."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>On the WinForms admin utility for the locker project, I used a SqlDataAdapter with a SELECT query against the OTP audit-log table, called Fill() to populate a DataTable, and then bound that DataTable directly to a DataGridView so the support team could browse recent OTP attempts without me writing manual row-mapping code — I didn't use a full DataSet since I only needed one table, a plain DataTable was enough.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> When would you use DataSet over a plain DataTable? — When you need multiple related tables in memory together with parent-child relationships, like Master + Detail data pulled in one round trip.</div>
+      <div class="fq"><b>Q:</b> Does DataAdapter.Update() know what changed? — Yes — DataTable tracks row states (Added/Modified/Deleted) via DataRowState, and the adapter uses that to decide insert/update/delete.</div>
+      <div class="fq"><b>Q:</b> Is DataSet still relevant in modern .NET Core apps? — Rarely for new web APIs — it's more common in legacy WinForms/desktop apps or tools; modern web APIs return DTOs/JSON instead.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q7">
+    <div class="term">7. Parameterized Queries with SqlParameter <span class="en">(SQL injection prevention)</span></div>
+    <div class="tng">Namba user input ah direct ah SQL string kூடa <code>+</code> pannி join panniна, attacker adha misuse panni database ah hack pannலாம் — example <code>' OR 1=1 --</code> type input kொடுத்தா, whole table வெளியே varும். <code>SqlParameter</code> use panniна — input ah "pure data" ah mattum treat pannும், query structure ah maathாtu — so injection %100 block aagும். Idhu ADO.NET la basic rule — namba எப்போவும் <code>@paramName</code> placeholder use pannுவோm, string concatenation panna maاttேn.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I never build SQL by concatenating user input into the query string. Instead I use SqlParameter with placeholders like @LockerId — the database treats the parameter value purely as data, never as executable SQL, which eliminates SQL injection risk entirely. It also gives SQL Server a chance to reuse cached execution plans since the query shape stays constant across calls."</div>
+    <div class="realproj">
+      <span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>
+      Every single ADO.NET call in the OTP system — especially the audit-trail insert that fires after every OTP action — used SqlParameter for every value. Here's roughly how the audit insert looked:
+      <pre><code>using (var conn = new SqlConnection(connectionString))
+using (var cmd = new SqlCommand(
+    "INSERT INTO OtpAuditLog (LockerId, Action, OtpValue, Status, CreatedOn) " +
+    "VALUES (@LockerId, @Action, @OtpValue, @Status, GETDATE())", conn))
+{
+    cmd.Parameters.Add("@LockerId", SqlDbType.Int).Value = lockerId;
+    cmd.Parameters.Add("@Action", SqlDbType.VarChar, 50).Value = action;
+    cmd.Parameters.Add("@OtpValue", SqlDbType.VarChar, 10).Value = otpValue;
+    cmd.Parameters.Add("@Status", SqlDbType.VarChar, 20).Value = status;
+
+    conn.Open();
+    cmd.ExecuteNonQuery();
+}</code></pre>
+      Every value goes in as a typed SqlParameter, never string-concatenated, so there was zero SQL-injection surface on the audit path even though this table got hit after every generate/deliver/validate/expire action.
+    </div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> AddWithValue() vs Parameters.Add() — what's the difference? — AddWithValue infers the SqlDbType from the .NET value, which can cause implicit conversions/plan cache bloat; Add() with explicit SqlDbType and size is safer and more predictable.</div>
+      <div class="fq"><b>Q:</b> Does parameterization also help performance? — Yes — SQL Server can cache and reuse the execution plan since the query text doesn't change per call, only the parameter values.</div>
+      <div class="fq"><b>Q:</b> Is stored-procedure execution automatically safe from injection? — Only if the parameters passed into the proc are also parameterized — dynamic SQL built inside a proc can still be injectable.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q8">
+    <div class="term">8. Transactions in ADO.NET <span class="en">(SqlTransaction, Commit/Rollback)</span></div>
+    <div class="tng">Namba multiple related DB operations ஒரே unit ah success aaganum, illna எல்லாமே fail aaganum nu venum na, transaction use pannுрோம். Example: OTP validate pannумbodhu — "OTP status ah Used ah maathanum" + "audit log ah entry pannanum" rendும் ஒரே time la success aaganum, ஒண்ணு fail aana rendும் rollback aaganum. <code>conn.BeginTransaction()</code> panniна transaction start aagும், ovvoru command-கும் andha transaction ah assign pannуணும், எல்லாம் sari na <code>Commit()</code>, edhavadhu error na <code>Rollback()</code>.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"When multiple related operations must succeed or fail together, I wrap them in a SqlTransaction. I call BeginTransaction on the connection, assign that transaction to every SqlCommand involved, and if all operations succeed I call Commit — if any of them throws, I catch it and call Rollback so the database is left in a consistent state rather than half-updated."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>In the OTP validation flow, when a correct OTP came in, I needed to mark it "Used" in the OtpRequest table and write a corresponding audit-log row in the same operation — I wrapped both SqlCommands in one SqlTransaction so a crash or DB error between the two steps couldn't leave an OTP marked used without an audit trail, or vice versa. Wrapped in a try-catch, Commit() on success, Rollback() in the catch block, then dispose everything in the finally/using.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What happens if you forget to assign the transaction to a command? — You get a runtime exception — "ExecuteNonQuery requires the command to have a transaction" — because the connection has an active transaction pending.</div>
+      <div class="fq"><b>Q:</b> Can you nest transactions in ADO.NET? — Not directly with SqlTransaction — you'd use savepoints (Save()) for partial rollback points within one transaction.</div>
+      <div class="fq"><b>Q:</b> How is this different from TransactionScope? — TransactionScope is a higher-level, ambient transaction API that can span multiple connections/resources; SqlTransaction is tied to one SqlConnection.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="10B">
+  <div class="section-title"><span class="num">10B</span> Real Usage, Comparison &amp; Best Practices</div>
+
+  <div class="item" id="q9">
+    <div class="term">9. Executing Stored Procedures via ADO.NET <span class="en">(CommandType.StoredProcedure)</span></div>
+    <div class="tng">SQL text direct ah eludhுрathukku badhilா, database la already irukka stored procedure ah call pannலாம். <code>cmd.CommandType = CommandType.StoredProcedure</code> nு set pannிட்டு, <code>cmd.CommandText</code> la proc name mattum kொடுத்தா pothும். Parameters ah <code>SqlParameter</code> vाசி add pannуணும் (proc definition la irukka <code>@Param</code> names match aaganum). Idhu vachu complex logic DB level la irukும், reusable ஆகும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"To call a stored procedure with ADO.NET, I set CommandType to CommandType.StoredProcedure, set CommandText to just the procedure name, and add SqlParameters matching the procedure's declared parameter names. ADO.NET then handles building the RPC call to SQL Server instead of sending raw SQL text."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>Some of the reporting queries around OTP audit history — like "get all audit entries for a locker in a date range" — were wrapped in stored procedures so the logic lived close to the data and could be tuned by adjusting the proc without redeploying code. I called them with plain ADO.NET: <code>cmd.CommandType = CommandType.StoredProcedure; cmd.CommandText = "usp_GetOtpAuditByLocker";</code> then added SqlParameters for @LockerId, @FromDate, @ToDate, and read results with a SqlDataReader.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you get an output parameter back from a stored procedure? — Add a SqlParameter with <code>Direction = ParameterDirection.Output</code>, execute the command, then read <code>parameter.Value</code> afterward.</div>
+      <div class="fq"><b>Q:</b> Why prefer stored procedures for some queries? — Logic stays close to the data, can be tuned/indexed independently, and reduces network chatter for complex multi-step logic.</div>
+      <div class="fq"><b>Q:</b> Can a stored procedure return multiple result sets via ADO.NET? — Yes — use <code>reader.NextResult()</code> to step through each SELECT the proc returns.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q10">
+    <div class="term">10. Connection Lifecycle Management <span class="en">(using / IDisposable)</span></div>
+    <div class="tng">SqlConnection, SqlCommand, SqlDataReader ellame <code>IDisposable</code> implement pannукிறது — meaning idhுங்களை use panniட்டு, kடைசியில் clean ah dispose pannуணும். Namba manual ah <code>Close()</code> call panna maranu poனா — especially exception vandhu code andha line ku வராம போனா — connection open ah pool la stuck aagும். Loop kulla romba connections open panniட்டு close pannாமाл் இருந்தால், DB "max connections reached" nு error kொடுத்து whole system crash aagும். <code>using(...)</code> block use panniна, exception vandhalும் kூடa automatic ah Dispose() call aagும் guarantee — idhே correct pattern.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"SqlConnection, SqlCommand, and SqlDataReader all implement IDisposable, so I always wrap them in using statements or using declarations. That guarantees Dispose() runs even if an exception is thrown mid-query, returning the connection cleanly to the pool. If you skip that and rely on manual Close() calls, an exception before that line leaves the connection open, and under load that exhausts the pool and the database starts rejecting new connections."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>Every ADO.NET method I wrote in the OTP system followed the same nested-using pattern — <code>using (var conn = new SqlConnection(cs)) using (var cmd = new SqlCommand(sql, conn)) { ... }</code> — so regardless of whether the query succeeded, threw a SqlException, or the caller cancelled, the connection and command always got disposed. This mattered a lot for the audit-trail insert specifically because it fired after every single OTP action — generate, deliver, validate, expire — so any connection leak there would have exhausted the pool fast under real traffic.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> What actually happens on Dispose() for SqlConnection? — It returns the physical connection to the pool (or truly closes it if pooling is off) rather than necessarily terminating the TCP session immediately.</div>
+      <div class="fq"><b>Q:</b> Do you need to explicitly call Close() if you use using? — No — Dispose() calls Close() internally for SqlConnection, using is enough.</div>
+      <div class="fq"><b>Q:</b> What's the risk of a connection leak in production? — Pool exhaustion — new requests start timing out or throwing "Timeout expired, the connection pool is exhausted" errors, effectively an outage.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q11">
+    <div class="term">11. Async ADO.NET <span class="en">(ExecuteReaderAsync, ExecuteNonQueryAsync)</span></div>
+    <div class="tng">Namba DB call pannумbodhu, adhு network round-trip — konjam time eduthுkும். Andha wait time la thread ah block panniна, adhу thread vera velaikkும் use panna mudியாthு. <code>ExecuteReaderAsync()</code>, <code>ExecuteNonQueryAsync()</code>, <code>ExecuteScalarAsync()</code> — idhуngа use panniна, <code>await</code> pannும்bodhு thread free aagும், DB reply வந்தা thaan andha continuation resume aagும். High concurrency APIs ku idhு mandatory — illna thread pool exhaust aagும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"For any I/O-bound database call in an ASP.NET Core or high-concurrency context, I use the async variants — ExecuteReaderAsync, ExecuteNonQueryAsync, ExecuteScalarAsync — with await. That frees up the thread while waiting on the network round-trip to SQL Server instead of blocking it, which is essential for scaling to hundreds or thousands of concurrent requests without exhausting the thread pool."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>The OTP validate and deliver endpoints were REST APIs expected to handle bursts of concurrent requests, so I used the async ADO.NET methods there — <code>await cmd.ExecuteNonQueryAsync()</code> for the audit insert, <code>await cmd.ExecuteReaderAsync()</code> for the OTP lookup — instead of the blocking sync versions, so a slow database round-trip on one request didn't tie up a thread that could be serving another user's OTP request.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Does async make a single query faster? — No — it doesn't reduce query latency, it improves throughput/scalability by freeing threads during the wait.</div>
+      <div class="fq"><b>Q:</b> Should you mix sync and async ADO.NET calls in the same method? — No — stick to async all the way through (async all the way) to avoid deadlocks, especially avoid calling <code>.Result</code>/<code>.Wait()</code> on async calls.</div>
+      <div class="fq"><b>Q:</b> Is there an async equivalent for opening a connection? — Yes — <code>OpenAsync()</code> instead of <code>Open()</code>.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. Error Handling &amp; Connection Resiliency <span class="en">(SqlException, retries)</span></div>
+    <div class="tng">DB call panniна, palavidhamana errors varலாம் — connection timeout, deadlock, network blip, constraint violation. Namba <code>SqlException</code> ah specifically catch pannі, adhுla irukka <code>Number</code> property vечு andha error edhு specific type nு identify pannலாம் (example: 1205 = deadlock, -2 = timeout). Transient errors (temporary network issue) ku retry logic vेchுkondu, permanent errors (constraint violation) ku user ku proper error message kொடுக்கनum. <code>finally</code> block la connection dispose pannுрathு уறுதி pannуணும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"I catch SqlException specifically rather than a generic Exception, so I can inspect the error Number and distinguish transient issues — like a timeout or deadlock — from permanent ones like a constraint violation. For transient errors I add a bounded retry with a small backoff; for permanent ones I fail fast and surface a meaningful error instead of retrying something that will never succeed. And regardless of the outcome, the connection cleanup happens in a using block or finally, so a failed query never leaves a connection dangling."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>Around the audit-trail insert specifically, I wrapped the ExecuteNonQuery call in a try-catch for SqlException — since this insert fired after every OTP action, I didn't want a transient DB hiccup to bubble up and fail the actual OTP generate/validate response to the user. I logged the SqlException details and, for known-transient error numbers like timeouts, did a single retry before giving up and logging a failure, so a momentary DB blip on the audit path wouldn't break the core OTP flow.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you tell a transient error from a permanent one? — Check <code>SqlException.Number</code> against known transient codes (timeout, deadlock victim, connection broken) vs constraint/permission errors that won't resolve on retry.</div>
+      <div class="fq"><b>Q:</b> Would you use Polly for retries in ADO.NET code? — Yes, in a modern .NET app I'd wrap calls with a Polly retry/circuit-breaker policy rather than hand-rolling retry loops.</div>
+      <div class="fq"><b>Q:</b> What's a deadlock, in one line? — Two transactions each holding a lock the other needs — SQL Server kills one as the "deadlock victim" and it throws a SqlException.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. ADO.NET vs Dapper vs EF Core <span class="en">(the honest comparison)</span></div>
+    <div class="tng">Moonu um data access ku thaan, aana different levels of abstraction. ADO.NET — lowest level, full manual control, namba SqlConnection/SqlCommand ellame naame handle pannуணும் — verbose aana romba fast, zero overhead. Dapper — micro-ORM, ADO.NET-oda mேலே thin layer, SQL namba eludhуணும் aana result-mapping automatic — намба resume la irukka 40% query optimization, 50% OTP validation speedup ellame Dapper vечு achieve pannirukேn. EF Core — full ORM, change tracking, migrations, LINQ-to-SQL translation — fast development aana konjam heavy. Naan raw ADO.NET ah ippoவும் use pannுрேn — simple, single-table, high-frequency operations ku, ORM mapping overhead venaам் — example audit-trail insert.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"They're all valid, just at different abstraction levels. Raw ADO.NET gives full manual control with zero mapping overhead — best for simple, single-statement, high-frequency operations. Dapper sits on top of ADO.NET as a micro-ORM — I still write the SQL, but it maps results to objects for me, which is what I used for the complex join-heavy OTP validation queries to cut response time by 50%. EF Core is the full ORM — change tracking, migrations, LINQ — great for productivity on standard CRUD, which is what I used across most of the Zen Campus ERP. I don't treat this as 'pick one' — in the Bank Locker project I used all three in the parts where each one actually earns its place."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>Concretely: the OTP audit-trail insert — one table, one INSERT, fired constantly — went through raw ADO.NET with SqlCommand and SqlParameter because there was nothing to map back, no relationships, no tracking needed, just "write this row and move on" as fast as possible. The OTP validation logic — which needed to join the OTP request table with the locker/user tables and check status/expiry together — went through Dapper, and optimizing that path specifically is what got us the 50% response-time cut on OTP validation. EF Core handled the broader CRUD/business-entity side of that .NET Framework project where relationships and change tracking actually paid off.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Isn't raw ADO.NET for a single insert overkill compared to Dapper? — Not really — Dapper's overhead is small but non-zero (reflection/IL-mapping setup), and for something this hot-path and this simple, raw ADO.NET is marginally leaner and I already have full control over exact parameter types.</div>
+      <div class="fq"><b>Q:</b> Would you ever rewrite that audit insert in Dapper? — I could, it's a one-line <code>connection.Execute(sql, params)</code> — I just never needed to since the raw ADO.NET version was already simple, fast, and working fine.</div>
+      <div class="fq"><b>Q:</b> How do you decide which of the three to reach for on a new task? — Single simple statement, no mapping needed → ADO.NET. SQL-heavy report/join → Dapper. Standard CRUD with relationships/need for migrations → EF Core.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q14">
+    <div class="term">14. Binding ADO.NET Data to a WinForms DataGridView <span class="en">(bridge to Part 11)</span></div>
+    <div class="tng">WinForms desktop tools la, DataGridView oru grid control — Excel madhiri rows/columns kaatuрாthu. ADO.NET vечு data eduthுட்டு, direct ah <code>DataGridView.DataSource</code> ku assign panniна pothும் — grid automatic ah columns generate pannும், rows populate pannும். Namba DataAdapter vечு DataTable fill pannிட்டு, adha DataSource ah kொடுthா, minimal code la full grid ready aagும். Idhு thaan Part 11 WinForms la detail ah paakப்போрோm.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"For a WinForms admin tool, I fill a DataTable using a SqlDataAdapter's Fill() method, then set that DataTable directly as the DataGridView's DataSource. WinForms auto-generates the columns and rows from the DataTable's schema, so with just a few lines of ADO.NET code you get a fully working, editable grid — no manual row-by-row UI code needed."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>The internal support tool for the Bank Locker project had a WinForms screen where operators could review OTP audit logs by locker or date range — I used a SqlDataAdapter with a parameterized SELECT against the OtpAuditLog table, called Fill() into a DataTable, and bound it straight to a DataGridView. That gave the support team a sortable, filterable grid of who accessed which locker and when, without me writing any manual UI-population code — just the ADO.NET fetch and one DataSource assignment.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> How do you refresh the grid when data changes? — Re-run Fill() into the same DataTable (or a new one) and reassign DataSource, or call DataGridView.Refresh() if the underlying DataTable already updated.</div>
+      <div class="fq"><b>Q:</b> Can users edit data directly in the grid and save it back? — Yes — edits update the DataTable's row state, and calling DataAdapter.Update() pushes those changes back to the database.</div>
+      <div class="fq"><b>Q:</b> Would you use this DataTable-binding approach in a modern app? — For WinForms tooling, yes, it's still idiomatic; for a web app I'd never do this — that's what Web API + a JS grid or Razor view is for.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q15">
+    <div class="term">15. When I Personally Reach for Raw ADO.NET Over Dapper <span class="en">(the audit-trail-insert story)</span></div>
+    <div class="tng">Idhу romba specific question — interviewer "neenga Dapper иருக்கும்bodhு yeatуkku ADO.NET use panninga" nu kேttа, idhே story sollуணும். Bank locker OTP project la — OTP generate pannின apparam, deliver pannின apparam, validate pannின apparam, expire aana apparam — ஒவ்வொரு action-கும் apparam ஒரே ஒரு row "OtpAuditLog" table la insert pannуணும். Idhு single-table, no joins, no complex mapping — mattum "insert this row, confirm it wrote, move on" nu velai. Idhуkkா Dapper venам், straight <code>SqlConnection</code>+<code>SqlCommand</code>+<code>SqlParameter</code> thaan use pannினேn — konjam kூடa mapping overhead illama, code kூடa transparent ah irukும் — exactly enna query run aagுрathு nu clear ah теriуும். Dapper ah naan reserve pannினேn — OTP validate pannумbodhу locker table, user table, OTP table moonrayum join panни status/expiry check panна vேணும் — andha complex query ku thaan Dapper use panniна result mapping easy aagும், idhуnala thaan OTP validation response time 50% kammi aachu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>"In the Bank Locker OTP system, every OTP action — generate, deliver, validate, expire — triggers an audit-trail insert into a single table, no joins, no relationships, just 'write this row and confirm it landed.' For that I used raw ADO.NET — SqlConnection, SqlCommand, SqlParameter — because there's nothing to map back and Dapper's mapping layer, however lightweight, is overhead I simply don't need for a fire-and-forget single-table insert. I reserved Dapper for the OTP validation query, which joins the OTP, locker, and user tables to check status and expiry together — there, Dapper's automatic object mapping over that multi-table result actually saves real code and time, and optimizing that specific path with Dapper is what got us the 50% cut in OTP validation response time. So it's not 'ADO.NET vs Dapper' as a blanket choice — I match the tool to how simple or complex the query and its result shape are."</div>
+    <div class="realproj"><span class="lbl">🏗️ Project la eppadi implement pannirukeen</span>Concretely, the audit method looked like a small reusable helper — <code>LogOtpAudit(int lockerId, string action, string otpValue, string status)</code> — that opened a SqlConnection in a using block, built an INSERT with named SqlParameters for every value (never string-concatenated), called ExecuteNonQuery, and checked the rows-affected result. This helper got called from every stage of the OTP lifecycle — right after OTP generation, right after the SMS gateway confirmed delivery, right after validation succeeded or failed, and when an OTP expired unused — so it had to be lean and predictable, which is exactly what plain ADO.NET gave me over pulling in Dapper for a one-line insert.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Wouldn't Dapper's <code>Execute()</code> for that insert be just as simple? — Pretty close, yes — it's a judgment call on a very simple hot path; I kept it in raw ADO.NET partly because it was already there and working, and there was no measurable benefit to changing it.</div>
+      <div class="fq"><b>Q:</b> How did you verify the 50% improvement was real? — Compared before/after response times for the OTP validation endpoint using logged timestamps/APM data once the join query moved from the earlier approach to Dapper-optimized SQL with proper parameters and indexing.</div>
+      <div class="fq"><b>Q:</b> Did the audit-trail insert ever become a bottleneck itself? — No — single-table inserts with an indexed identity column are cheap; the real cost was in the multi-table validation join, which is why that's where the optimization effort went.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>Prepared for Gurumoorthy M — .NET Developer Interview Prep<br><a href="00_Index.html">← Back to Roadmap Home</a></footer>
+
+</body>
+</html>

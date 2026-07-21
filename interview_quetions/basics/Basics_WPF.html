@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WPF Basics — XAML, MVVM &amp; Data Binding | ZenCampus</title>
+<style>
+  :root{--accent:#c2410c;--accent-dim:#9a3412;--accent-subtle:rgba(194,65,12,0.09);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.78rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  .hero{padding:3rem 1.5rem 2rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(194,65,12,.12) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:3rem;}
+  h2{font-size:1.5rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.05rem;font-weight:700;color:var(--info);margin:1.2rem 0 .5rem;}
+  p{margin-bottom:.5rem;font-size:.92rem;}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  .kw{color:#c792ea;}.cl{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;font-style:italic;}.num{color:#f78c6c;}.prop{color:#f78c6c;}.tg{color:#ff8fab;}.at{color:#ffcb6b;}
+  .movie{background:linear-gradient(135deg,rgba(194,65,12,.12),rgba(194,65,12,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;display:flex;gap:.8rem;}
+  .mi{font-size:1.5rem;flex-shrink:0;}.mt{color:var(--accent);font-weight:800;font-size:.9rem;}.mb{color:var(--muted);font-size:.85rem;margin-top:.2rem;}
+  .pillar{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem;margin-bottom:.8rem;border-left:4px solid var(--accent);}
+  .pillar h3{color:var(--accent);margin-top:0;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.9rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer;padding:.25rem .35rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">WPF BASICS</span>
+  <a href="#xaml">XAML</a><a href="#binding">Binding</a><a href="#depprop">DependencyProperty</a>
+  <a href="#mvvm">MVVM</a><a href="#commands">Commands</a><a href="#layout">Layout</a>
+  <a href="#vswinforms">vs WinForms</a><a href="#scenarios">Interview Q</a><a href="#quiz">Quiz</a>
+</nav>
+<div class="hero">
+  <h1>WPF — Windows Presentation Foundation</h1>
+  <p>XAML · Data Binding · Dependency Properties · MVVM · Commands · Layout Panels</p>
+  <div class="tags">
+    <span class="tag">Desktop C#</span><span class="tag">MVVM</span><span class="tag">ZenCampus Desktop Examples</span>
+    <span class="tag" style="background:rgba(194,65,12,.2);border-color:#c2410c;color:#c2410c;">Burnt Orange #c2410c</span>
+  </div>
+</div>
+<main>
+
+<section id="xaml">
+  <h2>📐 What is XAML — and why WPF uses it</h2>
+  <div class="movie">
+    <div class="mi">🎭</div>
+    <div><div class="mt">Anniyan (2005) — ஒரே DNA, மூணு தோற்றம்</div>
+    <div class="mb">Ambi/Remo/Anniyan — ஒரே ஆளு (same underlying "data"), aana 3 வேற வேற தோற்றம் (appearance). WPF-la idhu exactly antha maari — <code>DataContext</code> (the person/data) same-a irukum, aana <code>DataTemplate</code> maathi different-a "render" pannalam. UI (XAML) = character makeup. Data (ViewModel) = the real person underneath. Same ViewModel-a, list view-la summary-a kaatalam, detail view-la full card-a kaatalam — template mathum change aagum, data mathala.</div></div>
+  </div>
+  <p>XAML (eXtensible Application Markup Language) is a declarative XML-based markup used to <strong>describe UI structure</strong> — layout, controls, styling — separately from the C# code that drives behaviour. Each <code>.xaml</code> file pairs with a <code>.xaml.cs</code> code-behind via a generated <code>partial class</code> and <code>InitializeComponent()</code>.</p>
+  <pre><code><span class="cm">&lt;!-- StudentSearchWindow.xaml --&gt;</span>
+<span class="tg">&lt;Window</span> <span class="at">x:Class</span>=<span class="str">"ZenCampus.Desktop.StudentSearchWindow"</span>
+        <span class="at">xmlns</span>=<span class="str">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
+        <span class="at">xmlns:x</span>=<span class="str">"http://schemas.microsoft.com/winfx/2006/xaml"</span>
+        <span class="at">Title</span>=<span class="str">"Student Search"</span> <span class="at">Height</span>=<span class="str">"450"</span> <span class="at">Width</span>=<span class="str">"700"</span><span class="tg">&gt;</span>
+    <span class="tg">&lt;Grid&gt;</span>
+        <span class="tg">&lt;TextBox</span> <span class="at">Text</span>=<span class="str">"{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"</span> <span class="at">Width</span>=<span class="str">"250"</span> <span class="tg">/&gt;</span>
+        <span class="tg">&lt;ListView</span> <span class="at">ItemsSource</span>=<span class="str">"{Binding Results}"</span> <span class="tg">/&gt;</span>
+    <span class="tg">&lt;/Grid&gt;</span>
+<span class="tg">&lt;/Window&gt;</span></code></pre>
+  <pre><code><span class="cm">// StudentSearchWindow.xaml.cs — code-behind, kept thin</span>
+<span class="kw">public partial class</span> <span class="cl">StudentSearchWindow</span> : <span class="cl">Window</span>
+{
+    <span class="kw">public</span> StudentSearchWindow()
+    {
+        InitializeComponent();               <span class="cm">// generated from the XAML above</span>
+        DataContext = <span class="kw">new</span> <span class="cl">StudentSearchViewModel</span>(); <span class="cm">// see MVVM section</span>
+    }
+}</code></pre>
+  <div class="good-box"><strong>Thanglish tip:</strong> Interview-la "Why XAML, why not just build UI in C# code?" kekalam. Answer: XAML declarative-a irukum (structure clear-a paaru mudiyum, like HTML), designer tools (Visual Studio/Blend) drag-drop generate pannalam, and it cleanly separates <em>look</em> (XAML) from <em>behaviour</em> (C#) — that separation is what makes MVVM possible.</div>
+</section>
+
+<section id="binding">
+  <h2>🔗 Data Binding — the heartbeat of WPF</h2>
+  <p>A binding connects a target property (e.g. <code>TextBox.Text</code>) to a source property (a ViewModel property) via a path. For the UI to react automatically when the source changes, the source class must implement <code>INotifyPropertyChanged</code>.</p>
+  <pre><code><span class="kw">public class</span> <span class="cl">StudentSearchViewModel</span> : <span class="cl">INotifyPropertyChanged</span>
+{
+    <span class="kw">private string</span> _searchText = <span class="str">""</span>;
+    <span class="kw">public string</span> SearchText
+    {
+        <span class="kw">get</span> =&gt; _searchText;
+        <span class="kw">set</span>
+        {
+            <span class="kw">if</span> (_searchText == value) <span class="kw">return</span>;
+            _searchText = value;
+            OnPropertyChanged();             <span class="cm">// tells the TextBox to update, and can trigger search</span>
+        }
+    }
+
+    <span class="kw">public</span> <span class="cl">ObservableCollection</span>&lt;<span class="cl">Student</span>&gt; Results { <span class="kw">get</span>; } = <span class="kw">new</span>();
+
+    <span class="kw">public event</span> <span class="cl">PropertyChangedEventHandler</span>? PropertyChanged;
+    <span class="kw">protected void</span> OnPropertyChanged([<span class="cl">CallerMemberName</span>] <span class="kw">string</span>? name = <span class="kw">null</span>)
+        =&gt; PropertyChanged?.Invoke(<span class="kw">this</span>, <span class="kw">new</span> <span class="cl">PropertyChangedEventArgs</span>(name));
+}</code></pre>
+  <table>
+    <tr><th>Binding Mode</th><th>Direction</th><th>ZenCampus Example</th></tr>
+    <tr><td>OneWay</td><td>Source → Target only</td><td>Label showing <code>Student.AdmissionNumber</code> (read-only display)</td></tr>
+    <tr><td>TwoWay</td><td>Source ↔ Target</td><td>TextBox editing <code>Student.Phone</code> in an edit form</td></tr>
+    <tr><td>OneWayToSource</td><td>Target → Source only</td><td>Rare — a slider that only writes a filter value, never reads it back</td></tr>
+    <tr><td>OneTime</td><td>Source → Target, once</td><td>A dropdown of <code>ClassSection</code> options loaded once at window open</td></tr>
+  </table>
+  <p><code>ObservableCollection&lt;T&gt;</code> is the collection-level equivalent of <code>INotifyPropertyChanged</code> — it raises <code>CollectionChanged</code> automatically on <code>Add</code>/<code>Remove</code>, so a bound <code>ListView</code> updates itself without you touching the UI directly. Ithu than the whole point — ViewModel-la data update pannunga, UI automatic-a refresh aagum, <code>listView.Items.Add(...)</code> nu manual-a nee sollave venaam.</p>
+</section>
+
+<section id="depprop">
+  <h2>🧩 Dependency Properties</h2>
+  <div class="movie">
+    <div class="mi">👻</div>
+    <div><div class="mt">Chandramukhi (2005) — Trigger vandha character மாறுது</div>
+    <div class="mb">Chandra character oru "trigger" condition vandha udane (night, palace room) transform aaguthu — same person, but behaviour/appearance changes based on a condition. WPF <code>Style Trigger</code> exactly idhu than: <code>AttendanceStatus</code> property "Absent" aana udane, badge color <em>automatic-a</em> red-a maarum — nee manual-a <code>if</code> vachu color set panna vendaam. That "automatic reaction to a property value" is only possible because the property is a <strong>DependencyProperty</strong>, not a plain C# field.</div></div>
+  </div>
+  <p>A regular CLR auto-property (<code>public int Foo { get; set; }</code>) is just a backing field. A <code>DependencyProperty</code> plugs into WPF's property system, unlocking things a plain property can't do: data binding, styling, animation, value coercion, and property-value inheritance down the visual tree.</p>
+  <pre><code><span class="cm">// AttendanceStatusBadge.xaml.cs — custom UserControl</span>
+<span class="kw">public partial class</span> <span class="cl">AttendanceStatusBadge</span> : <span class="cl">UserControl</span>
+{
+    <span class="kw">public static readonly</span> <span class="cl">DependencyProperty</span> StatusProperty =
+        <span class="cl">DependencyProperty</span>.Register(
+            <span class="kw">nameof</span>(Status), <span class="kw">typeof</span>(<span class="kw">string</span>), <span class="kw">typeof</span>(<span class="cl">AttendanceStatusBadge</span>),
+            <span class="kw">new</span> <span class="cl">PropertyMetadata</span>(<span class="str">"Present"</span>));
+
+    <span class="kw">public string</span> Status
+    {
+        <span class="kw">get</span> =&gt; (<span class="kw">string</span>)GetValue(StatusProperty);
+        <span class="kw">set</span> =&gt; SetValue(StatusProperty, value);
+    }
+
+    <span class="kw">public</span> AttendanceStatusBadge() =&gt; InitializeComponent();
+}</code></pre>
+  <pre><code><span class="cm">&lt;!-- Style trigger reacts to the DependencyProperty automatically --&gt;</span>
+<span class="tg">&lt;Style</span> <span class="at">TargetType</span>=<span class="str">"{x:Type local:AttendanceStatusBadge}"</span><span class="tg">&gt;</span>
+    <span class="tg">&lt;Style.Triggers&gt;</span>
+        <span class="tg">&lt;Trigger</span> <span class="at">Property</span>=<span class="str">"Status"</span> <span class="at">Value</span>=<span class="str">"Absent"</span><span class="tg">&gt;</span>
+            <span class="tg">&lt;Setter</span> <span class="at">Property</span>=<span class="str">"Background"</span> <span class="at">Value</span>=<span class="str">"Red"</span> <span class="tg">/&gt;</span>
+        <span class="tg">&lt;/Trigger&gt;</span>
+    <span class="tg">&lt;/Style.Triggers&gt;</span>
+<span class="tg">&lt;/Style&gt;</span></code></pre>
+  <div class="good-box"><strong>Attached properties</strong> are the cousin concept — <code>Grid.Row="1"</code>, <code>Grid.Column="0"</code> — a property defined by one class (<code>Grid</code>) but set on a completely different element (any child). Same <code>DependencyProperty</code> machinery underneath, just registered as <code>RegisterAttached</code> instead of a normal instance property.</div>
+</section>
+
+<section id="mvvm">
+  <h2>🏛️ MVVM — Model / View / ViewModel</h2>
+  <div class="movie">
+    <div class="mi">🎯</div>
+    <div><div class="mt">Thani Oruvan (2015) — Back office plan vs field execution</div>
+    <div class="mb">Mithran (hero) plan pannுவான் antha "logic" oru layer-la irukum, field-la execute panna weapon vera layer. MVVM-um idhu than: <strong>Model</strong> = raw truth (DB entity, no UI knowledge). <strong>ViewModel</strong> = the "planning room" — decides what to show, formats it, exposes Commands. <strong>View</strong> (XAML) = pure field execution — just renders whatever the ViewModel says, zero business logic inside. Testing venumna, ViewModel-a mattum test pannalam — no window open aaganum.</div></div>
+  </div>
+  <div class="pillar">
+    <h3>Model — the raw data / domain entity</h3>
+    <p>Plain class, no WPF types, no UI knowledge. Usually your EF entity or DTO.</p>
+    <pre><code><span class="kw">public class</span> <span class="cl">Student</span>
+{
+    <span class="kw">public int</span> Id { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public string</span> Name { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="str">""</span>;
+    <span class="kw">public string</span> AdmissionNumber { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="str">""</span>;
+}</code></pre>
+  </div>
+  <div class="pillar">
+    <h3>ViewModel — state + behaviour, zero UI types</h3>
+    <p>Implements <code>INotifyPropertyChanged</code>, exposes bindable properties and <code>ICommand</code>s. The View never appears here — no <code>MessageBox.Show</code>, no <code>Window</code> reference.</p>
+    <pre><code><span class="kw">public class</span> <span class="cl">StudentSearchViewModel</span> : <span class="cl">INotifyPropertyChanged</span>
+{
+    <span class="kw">private readonly</span> <span class="cl">IStudentRepository</span> _repo;
+    <span class="kw">public</span> StudentSearchViewModel(<span class="cl">IStudentRepository</span> repo)
+    {
+        _repo = repo;
+        SearchCommand = <span class="kw">new</span> <span class="cl">RelayCommand</span>(<span class="kw">async</span> () =&gt; <span class="kw">await</span> SearchAsync(), () =&gt; !<span class="kw">string</span>.IsNullOrWhiteSpace(SearchText));
+    }
+
+    <span class="kw">public</span> <span class="cl">ICommand</span> SearchCommand { <span class="kw">get</span>; }
+    <span class="kw">public</span> <span class="cl">ObservableCollection</span>&lt;<span class="cl">Student</span>&gt; Results { <span class="kw">get</span>; } = <span class="kw">new</span>();
+
+    <span class="kw">private async</span> <span class="cl">Task</span> SearchAsync()
+    {
+        Results.Clear();
+        <span class="kw">foreach</span> (<span class="kw">var</span> s <span class="kw">in await</span> _repo.SearchAsync(SearchText))
+            Results.Add(s);
+    }
+    <span class="cm">// SearchText property + INotifyPropertyChanged same as earlier example</span>
+}</code></pre>
+  </div>
+  <div class="pillar">
+    <h3>View — XAML only, binds to the ViewModel</h3>
+    <p>No business logic in code-behind. Just <code>DataContext = new StudentSearchViewModel(...)</code> and bindings do the rest (see the XAML section above).</p>
+  </div>
+  <div class="pillar">
+    <h3>RelayCommand — the glue that makes <code>ICommand</code> practical</h3>
+    <p>WPF doesn't ship a ready-made <code>ICommand</code> you can new-up with a lambda (unlike modern MVVM toolkits' <code>[RelayCommand]</code> generator) — you write this small wrapper once and reuse it everywhere.</p>
+    <pre><code><span class="kw">public class</span> <span class="cl">RelayCommand</span> : <span class="cl">ICommand</span>
+{
+    <span class="kw">private readonly</span> <span class="cl">Func</span>&lt;<span class="cl">Task</span>&gt; _execute;
+    <span class="kw">private readonly</span> <span class="cl">Func</span>&lt;<span class="kw">bool</span>&gt;? _canExecute;
+
+    <span class="kw">public</span> RelayCommand(<span class="cl">Func</span>&lt;<span class="cl">Task</span>&gt; execute, <span class="cl">Func</span>&lt;<span class="kw">bool</span>&gt;? canExecute = <span class="kw">null</span>)
+    {
+        _execute = execute;
+        _canExecute = canExecute;
+    }
+
+    <span class="kw">public bool</span> CanExecute(<span class="kw">object</span>? parameter) =&gt; _canExecute?.Invoke() ?? <span class="kw">true</span>;
+    <span class="kw">public async void</span> Execute(<span class="kw">object</span>? parameter) =&gt; <span class="kw">await</span> _execute();
+    <span class="kw">public event</span> <span class="cl">EventHandler</span>? CanExecuteChanged
+    {
+        <span class="kw">add</span> =&gt; <span class="cl">CommandManager</span>.RequerySuggested += value;
+        <span class="kw">remove</span> =&gt; <span class="cl">CommandManager</span>.RequerySuggested -= value;
+    }
+}</code></pre>
+  </div>
+</section>
+
+<section id="commands">
+  <h2>⚡ Commands &amp; Routed Events</h2>
+  <div class="movie">
+    <div class="mi">📻</div>
+    <div><div class="mt">Kaithi (2019) — Walkie-talkie message relay</div>
+    <div class="mb">Dilli oru message pass pannுவான், adhu station to station relay aaghi mele varaikum poyi serum — each checkpoint kekum, react pannalam, illana next-ku pass pannும். WPF <strong>Bubbling routed event</strong> exactly idhu than: Button click event andha button-la start aagi, parent Grid, parent Window varaikum "bubble" pannும் — every ancestor gets a chance to handle it. <strong>Tunneling</strong> (Preview events) reverse direction — root-ல start aagi kulla down pogum.</div></div>
+  </div>
+  <table>
+    <tr><th>Concept</th><th>Direction / Behaviour</th><th>Example</th></tr>
+    <tr><td>Bubbling event</td><td>Child → Parent, up the visual tree</td><td><code>Click</code>, <code>MouseDown</code></td></tr>
+    <tr><td>Tunneling event</td><td>Parent → Child, down the visual tree</td><td><code>PreviewMouseDown</code>, <code>PreviewKeyDown</code></td></tr>
+    <tr><td>Direct event</td><td>Fires only on the source element, no travel</td><td><code>MouseEnter</code>, <code>GotFocus</code></td></tr>
+    <tr><td><code>ICommand</code></td><td>Decoupled action — ViewModel owns <code>CanExecute</code> + <code>Execute</code></td><td><code>Command="{Binding SearchCommand}"</code></td></tr>
+  </table>
+  <pre><code><span class="cm">&lt;!-- Command binding — no Click event handler in code-behind at all --&gt;</span>
+<span class="tg">&lt;Button</span> <span class="at">Content</span>=<span class="str">"Search"</span> <span class="at">Command</span>=<span class="str">"{Binding SearchCommand}"</span> <span class="tg">/&gt;</span></code></pre>
+  <p>Why prefer <code>Command</code> over a <code>Click</code> event handler: the button's enabled state <em>and</em> its behaviour both live in the testable ViewModel — <code>CanExecute</code> automatically grays the button out when the search box is empty, with zero code-behind.</p>
+</section>
+
+<section id="layout">
+  <h2>🗺️ Layout Panels</h2>
+  <table>
+    <tr><th>Panel</th><th>Arranges Children</th><th>ZenCampus Example</th></tr>
+    <tr><td><code>Grid</code></td><td>Rows &amp; columns, like a table</td><td>Student edit form — label column + input column</td></tr>
+    <tr><td><code>StackPanel</code></td><td>Single row or column, one after another</td><td>Vertical toolbar of action buttons (Add, Edit, Delete)</td></tr>
+    <tr><td><code>DockPanel</code></td><td>Docks children to Top/Bottom/Left/Right, last fills remaining space</td><td>Main window shell — menu docked Top, status bar Bottom, content fills center</td></tr>
+    <tr><td><code>WrapPanel</code></td><td>Flows children left-to-right, wraps to next line when full</td><td>Tag-cloud of subjects/electives a student can pick</td></tr>
+    <tr><td><code>Canvas</code></td><td>Absolute X/Y positioning, no auto-arrange</td><td>A visual bus-route/seating-chart editor where exact pixel position matters</td></tr>
+  </table>
+  <div class="good-box">Interview trap: "Which panel is fastest?" — <code>Canvas</code> is cheapest to lay out since it does zero measurement logic, but that's rarely the right reason to pick it. Pick the panel that matches the layout <em>semantics</em> you need (table → Grid, shell → DockPanel) — performance only matters at a scale desktop apps rarely hit.</div>
+</section>
+
+<section id="vswinforms">
+  <h2>⚖️ WPF vs WinForms</h2>
+  <table>
+    <tr><th>Aspect</th><th>WPF</th><th>WinForms</th></tr>
+    <tr><td>Rendering</td><td>DirectX, vector-based, resolution independent</td><td>GDI+, wraps native Win32 controls</td></tr>
+    <tr><td>Layout</td><td>Panels (Grid/Dock/Stack) — resizes gracefully</td><td>Pixel/anchor/dock based — resizing is clunkier</td></tr>
+    <tr><td>Data binding</td><td>First-class, rich, two-way, template-driven</td><td>Basic, limited, mostly one-way</td></tr>
+    <tr><td>Styling/templating</td><td>Styles, Templates, Triggers, Animations</td><td>Very limited — mostly property tweaks</td></tr>
+    <tr><td>Learning curve</td><td>Steeper — XAML + MVVM + binding concepts</td><td>Shallow — drag a control, double-click, write code</td></tr>
+    <tr><td>Best fit</td><td>Complex, evolving UI — dense forms, live dashboards</td><td>Small internal tool, quick utility, legacy maintenance</td></tr>
+  </table>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 10 Interview Scenarios</h2>
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What is XAML and why does WPF use it instead of plain C# UI code?</span><span class="st">Basics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc">XAML is a declarative XML markup describing UI structure (controls, layout, styling) separately from behaviour code. WPF uses it because: 1) declarative structure is easier to read/scan than nested constructor calls, 2) design tools (Visual Studio/Blend) can generate and preview it visually, 3) it enforces separation between "look" and "logic," which is what makes MVVM practical. Every XAML file compiles to a partial class; <code>InitializeComponent()</code> wires it to the code-behind.</div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">What is data binding, and what binding modes exist?</span><span class="st">Binding</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc">Data binding wires a target UI property to a source (usually ViewModel) property via a path, resolved through <code>DataContext</code>. Modes: <code>OneWay</code> (source→target only), <code>TwoWay</code> (both directions, e.g. an editable TextBox), <code>OneWayToSource</code> (target→source only, rare), <code>OneTime</code> (read once, never again). Default mode depends on the property — <code>TextBox.Text</code> defaults to TwoWay, most others default to OneWay.</div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">What is INotifyPropertyChanged and why does the UI need it?</span><span class="st">Binding</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>An interface with a single event, <code>PropertyChanged</code>. WPF's binding engine subscribes to it — when your ViewModel property setter raises this event, every bound control refreshes automatically. Without it, a TextBox bound to a ViewModel property will show the initial value correctly but never update again after the ViewModel changes it from code. It's the single most common reason a "binding doesn't update" bug happens in interviews and in real code.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What is a DependencyProperty, and how is it different from a normal C# property?</span><span class="st">DependencyProperty</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>A DependencyProperty is registered with WPF's property system via <code>DependencyProperty.Register</code>, giving it capabilities a plain auto-property doesn't have: data binding as a target, styling/templating, animation, value coercion, and property-value inheritance down the element tree. The cost is boilerplate — a static field plus a CLR wrapper property. Use it whenever you build a custom control (like a NumericTextBox or a status badge) that needs to participate in styling or binding.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">What is MVVM, and why is it the standard pattern for WPF?</span><span class="st">MVVM</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Model (plain data), View (XAML, no logic), ViewModel (state + Commands, exposes what the View binds to, implements INotifyPropertyChanged). It's the standard because WPF's binding engine makes the connection nearly free — you don't need a framework to wire a TextBox to a property. The payoff: ViewModels are plain C# classes you can unit-test with zero UI involved, and designers/developers can work on XAML and logic somewhat independently.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">ICommand vs a Click event handler — what's actually different?</span><span class="st">Commands</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><pre style="font-size:.78rem"><code>&lt;!-- event handler approach — logic ends up in code-behind --&gt;
+&lt;Button Click="OnSearchClick" /&gt;
+
+&lt;!-- command approach — logic stays in the testable ViewModel --&gt;
+&lt;Button Command="{Binding SearchCommand}" /&gt;</code></pre><p>A Click handler lives in code-behind and has no way to disable the button declaratively. An <code>ICommand</code> bundles both the action (<code>Execute</code>) and its enabled state (<code>CanExecute</code>) in the ViewModel — WPF automatically grays out the button when <code>CanExecute</code> returns false, and none of that logic touches the View.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">Explain routed events — bubbling vs tunneling, with an example.</span><span class="st">Events</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Bubbling: the event starts at the source element and travels <em>up</em> through every ancestor in the visual tree (e.g. <code>Click</code> — a Button inside a Grid inside a Window; the Window can handle a click that happened on the Button). Tunneling: the event starts at the root and travels <em>down</em> to the source first (e.g. <code>PreviewMouseDown</code> fires on the Window before it fires on the Button beneath the cursor). Most tunneling events have a bubbling counterpart with the same name minus "Preview."</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">What is a DataTemplate and when would you use one?</span><span class="st">Templates</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>A DataTemplate defines how a bound data object should be visually rendered — e.g. how each <code>Student</code> in an <code>ItemsSource</code> should look inside a <code>ListView</code>, without changing the <code>Student</code> class itself. Use it whenever a list of plain data objects needs a custom visual layout (a photo + name + status badge per row) instead of the default <code>ToString()</code> rendering.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">StaticResource vs DynamicResource — what's the difference?</span><span class="st">Resources</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p><code>StaticResource</code> resolves the resource once, at load time — faster, but if the resource changes later (e.g. a runtime theme swap), the control won't pick up the change. <code>DynamicResource</code> resolves lazily and re-resolves whenever the resource value changes — slightly slower, but required for anything that needs to update live, like a light/dark theme toggle.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">You're asked to build a new internal desktop tool — WPF or WinForms?</span><span class="st">Decision</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Depends on scope. A throwaway internal utility with a couple of forms — WinForms is faster to bang out and has almost no learning curve. Anything with dense/evolving UI, live data updates, theming, or where you expect requirements to grow — WPF's binding and templating pay for their extra setup cost quickly. For a CAD/CAM-style product with rich property panels and live previews (the kind of product this interview guide is aimed at), WPF is the standard answer.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+  <div class="qc"><div class="qq">1. Which interface must a ViewModel property implement/raise to automatically notify a bound control of a change?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','IDisposable is about releasing unmanaged resources, unrelated to binding.')">IDisposable</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! INotifyPropertyChanged.PropertyChanged is what the WPF binding engine listens to. Without raising it, bound controls never refresh after the initial load.')">INotifyPropertyChanged</button>
+    <button class="qb" onclick="ans(this,'wrong','IComparable is for defining sort order, not for UI notification.')">IComparable</button>
+    <button class="qb" onclick="ans(this,'wrong','IEnumerable is for iteration; ObservableCollection uses CollectionChanged instead, a different mechanism.')">IEnumerable</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. Which markup extension connects a control property to a ViewModel property?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','StaticResource looks up a resource by key, not a data source property.')">{StaticResource}</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! {Binding Path} is the core binding markup extension — e.g. {Binding SearchText}.')">{Binding}</button>
+    <button class="qb" onclick="ans(this,'wrong','TemplateBinding is used inside a ControlTemplate to bind to the templated control\'s own properties.')">{TemplateBinding}</button>
+    <button class="qb" onclick="ans(this,'wrong','RelativeSource is a binding SOURCE option (e.g. bind to an ancestor), used alongside {Binding}, not standalone.')">{RelativeSource}</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. In the visual tree, which routed event strategy travels from the source element UP to its ancestors?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','Tunneling goes the opposite direction — root down to the source.')">Tunneling</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Bubbling starts at the element that raised the event and travels up through every ancestor — e.g. Click.')">Bubbling</button>
+    <button class="qb" onclick="ans(this,'wrong','Direct events fire only on the source element and don\'t travel at all.')">Direct</button>
+    <button class="qb" onclick="ans(this,'wrong','Not a real WPF routing strategy — only Bubbling, Tunneling, and Direct exist.')">Broadcasting</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. Which layout panel arranges its children in rows and columns like a table?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','StackPanel arranges children in a single row or column, one after another.')">StackPanel</button>
+    <button class="qb" onclick="ans(this,'wrong','WrapPanel flows children and wraps to the next line when it runs out of space.')">WrapPanel</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Grid is the table-like panel — define RowDefinitions/ColumnDefinitions and place children with Grid.Row/Grid.Column.')">Grid</button>
+    <button class="qb" onclick="ans(this,'wrong','Canvas positions children by absolute X/Y coordinates — no rows or columns at all.')">Canvas</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)"><input type="checkbox">I can explain XAML and how it links to code-behind via InitializeComponent</li>
+    <li onclick="ck(this)"><input type="checkbox">I can wire up TwoWay data binding with INotifyPropertyChanged</li>
+    <li onclick="ck(this)"><input type="checkbox">I know why ObservableCollection is needed for bound lists</li>
+    <li onclick="ck(this)"><input type="checkbox">I can register and use a custom DependencyProperty</li>
+    <li onclick="ck(this)"><input type="checkbox">I can explain Model / View / ViewModel and write a RelayCommand</li>
+    <li onclick="ck(this)"><input type="checkbox">I know the difference between bubbling, tunneling, and direct events</li>
+    <li onclick="ck(this)"><input type="checkbox">I know when to use Grid vs StackPanel vs DockPanel vs Canvas</li>
+    <li onclick="ck(this)"><input type="checkbox">I can justify choosing WPF over WinForms for a given project</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">WPF Basics Complete ✓ — XAML + MVVM Strong!</p>
+  <p>Accent: Burnt Orange #c2410c · Bonus module for the TRUMPF Metamation interview (WPF/WinForms bonus skill)</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':'Reveal Answer';}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+  function ck(li){const cb=li.querySelector('input');cb.checked=!cb.checked;li.classList.toggle('done',cb.checked);}
+</script>
+</body>
+</html>

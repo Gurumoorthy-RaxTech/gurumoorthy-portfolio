@@ -1,0 +1,1791 @@
+<title>C# Developer Interview Prep — TRUMPF Metamation</title>
+<style>
+  :root{
+    --ink:#11181f;
+    --ink-2:#1c2630;
+    --paper:#eef1ec;
+    --paper-2:#e2e8e2;
+    --paper-3:#d7ded7;
+    --text:#171f1a;
+    --text-dim:#4c5a54;
+    --accent:#d4611c;
+    --accent-ink:#8a3d0f;
+    --accent2:#2f6c8f;
+    --line:#c7d0c6;
+    --code-bg:#0f1720;
+    --code-text:#dce6e0;
+    --code-key:#e2661d;
+    --code-str:#7fb2c9;
+    --radius:10px;
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+    --sans: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --mono: Consolas, 'SF Mono', 'Cascadia Code', ui-monospace, monospace;
+  }
+  :root[data-theme="dark"]{
+    --paper:#0d1319;
+    --paper-2:#141c24;
+    --paper-3:#1b2530;
+    --text:#dfe6e1;
+    --text-dim:#8a9a92;
+    --line:#26323d;
+    --code-bg:#080d12;
+    --code-text:#d7e2dc;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0d1319;
+      --paper-2:#141c24;
+      --paper-3:#1b2530;
+      --text:#dfe6e1;
+      --text-dim:#8a9a92;
+      --line:#26323d;
+      --code-bg:#080d12;
+      --code-text:#d7e2dc;
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent2);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  a:focus-visible, summary:focus-visible, button:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+  .shell{display:flex; min-height:100vh;}
+
+  /* ---------- Sidebar ---------- */
+  .toc{
+    width:250px; flex:0 0 250px;
+    background:var(--ink);
+    color:#c9d3cd;
+    padding:28px 20px 40px;
+    position:sticky; top:0; align-self:flex-start; height:100vh;
+    overflow-y:auto;
+  }
+  :root[data-theme="dark"] .toc, :root:not([data-theme="light"]) .toc{background:#080b0f;}
+  @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]) .toc{background:var(--ink);} }
+  .toc .brand{
+    font-family:var(--serif); font-size:1.05rem; color:#f4ede4; letter-spacing:.02em;
+    margin:0 0 2px;
+  }
+  .toc .brand-sub{
+    font-size:.68rem; text-transform:uppercase; letter-spacing:.12em; color:var(--accent);
+    margin:0 0 26px;
+  }
+  .toc nav{display:flex; flex-direction:column; gap:2px;}
+  .toc-group{margin-bottom:16px;}
+  .toc-group-label{
+    font-size:.66rem; text-transform:uppercase; letter-spacing:.1em; color:#6d7c74;
+    margin:0 0 6px; padding-left:2px;
+  }
+  .toc a{
+    display:block; color:#b9c4be; font-size:.86rem; padding:5px 8px; border-radius:6px;
+    text-decoration:none;
+  }
+  .toc a:hover{background:#1c262f; color:#fff;}
+
+  /* ---------- Main ---------- */
+  main{flex:1; min-width:0; padding:44px clamp(20px,5vw,72px) 100px;}
+  .wrap{max-width:760px; margin:0 auto;}
+  .wrap.wide{max-width:860px;}
+
+  header.hero{max-width:760px; margin:0 auto 8px;}
+  h1.title{
+    font-family:var(--serif); font-weight:400; font-size:clamp(1.7rem,3.6vw,2.35rem);
+    margin:0 0 6px; text-wrap:balance; color:var(--text);
+  }
+  .role-line{color:var(--text-dim); font-size:.95rem; margin:0 0 18px;}
+  .chips{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:30px;}
+  .chip{
+    font-size:.72rem; padding:4px 10px; border-radius:999px; border:1px solid var(--line);
+    color:var(--text-dim); background:var(--paper-2); letter-spacing:.02em;
+  }
+  .chip.core{border-color:var(--accent); color:var(--accent-ink); background:color-mix(in srgb, var(--accent) 12%, var(--paper-2));}
+  :root:not([data-theme="light"]) .chip.core{ color:#f3b98c; }
+  @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]) .chip.core{ color:var(--accent-ink); } }
+
+  section{margin:0 auto 48px; max-width:760px; scroll-margin-top:20px;}
+  section h2{
+    font-family:var(--serif); font-weight:400; font-size:1.5rem; margin:0 0 4px;
+    border-bottom:1px solid var(--line); padding-bottom:10px;
+  }
+  section .section-note{color:var(--text-dim); font-size:.88rem; margin:6px 0 20px;}
+
+  h3.q-title{font-size:1.05rem; margin:0 0 4px; font-weight:600;}
+  .challenge{
+    background:var(--paper-2); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px 24px; margin-bottom:22px;
+  }
+  .challenge .qnum{
+    display:inline-block; font-family:var(--mono); font-size:.72rem; color:var(--accent-ink);
+    background:color-mix(in srgb, var(--accent) 16%, transparent); padding:2px 8px; border-radius:5px;
+    margin-bottom:10px;
+  }
+  :root:not([data-theme="light"]) .challenge .qnum{ color:#f3b98c; }
+  @media (prefers-color-scheme: light){ :root:not([data-theme="dark"]) .challenge .qnum{ color:var(--accent-ink); } }
+
+  .challenge p{margin:.5em 0;}
+  .note{
+    border-left:3px solid var(--accent2); padding:8px 14px; background:var(--paper-3);
+    font-size:.88rem; color:var(--text-dim); margin:12px 0; border-radius:0 6px 6px 0;
+  }
+
+  pre{
+    background:var(--code-bg); color:var(--code-text); font-family:var(--mono);
+    font-size:.82rem; line-height:1.55; padding:16px 18px; border-radius:8px;
+    overflow-x:auto; margin:10px 0 14px;
+  }
+  code{font-family:var(--mono); font-size:.9em;}
+  :not(pre) > code{
+    background:var(--paper-3); padding:.1em .35em; border-radius:4px; font-size:.85em;
+  }
+  pre .c{color:#7a8a83;} /* comment */
+  pre .k{color:var(--code-key); font-weight:600;} /* keyword */
+  pre .s{color:var(--code-str);} /* string */
+
+  /* Q&A accordion */
+  details.qa{
+    border:1px solid var(--line); border-radius:8px; margin-bottom:8px;
+    background:var(--paper-2);
+  }
+  details.qa + details.qa{margin-top:8px;}
+  details.qa summary{
+    cursor:pointer; list-style:none; padding:13px 16px; font-weight:600; font-size:.93rem;
+    display:flex; gap:10px; align-items:baseline;
+  }
+  details.qa summary::-webkit-details-marker{display:none;}
+  details.qa summary::before{
+    content:"+"; color:var(--accent); font-family:var(--mono); font-weight:700;
+    flex:0 0 auto; width:1em;
+  }
+  details.qa[open] summary::before{content:"–";}
+  details.qa .qa-body{padding:0 16px 16px 42px; color:var(--text); font-size:.92rem;}
+  details.qa .qa-body p{margin:.5em 0;}
+  details.qa .qa-body ul{margin:.4em 0; padding-left:1.2em;}
+  details.qa .qa-body li{margin:.25em 0;}
+
+  .qa-group-heading{
+    font-size:.7rem; text-transform:uppercase; letter-spacing:.1em; color:var(--text-dim);
+    margin:26px 0 10px;
+  }
+  .qa-group-heading:first-of-type{margin-top:6px;}
+
+  footer{max-width:760px; margin:60px auto 0; color:var(--text-dim); font-size:.8rem; border-top:1px solid var(--line); padding-top:18px;}
+
+  @media (max-width: 820px){
+    .toc{display:none;}
+    main{padding:32px 18px 80px;}
+  }
+</style>
+
+<div class="shell">
+  <aside class="toc">
+    <p class="brand">C# Interview Prep</p>
+    <p class="brand-sub">TRUMPF Metamation · Siruseri</p>
+    <nav>
+      <div class="toc-group">
+        <a href="#jd">Role brief</a>
+      </div>
+      <div class="toc-group">
+        <p class="toc-group-label">Written Test — Full Solutions</p>
+        <a href="#c1">1 · 2nd largest number</a>
+        <a href="#c2">2 · Swap, no temp var</a>
+        <a href="#c3">3 · Generic swap</a>
+        <a href="#c4">4 · Guessing game</a>
+        <a href="#c5">5 · Folder size browser</a>
+        <a href="#c6">6 · NumericTextBox</a>
+      </div>
+      <div class="toc-group">
+        <p class="toc-group-label">Extra Coding Practice</p>
+        <a href="#cp1">P1 · Reverse a string</a>
+        <a href="#cp2">P2 · Palindrome check</a>
+        <a href="#cp3">P3 · Anagram check</a>
+        <a href="#cp4">P4 · Word frequency</a>
+        <a href="#cp5">P5 · FizzBuzz</a>
+        <a href="#cp6">P6 · Find duplicates</a>
+        <a href="#cp7">P7 · Missing number</a>
+        <a href="#cp8">P8 · Two Sum</a>
+        <a href="#cp9">P9 · Fibonacci</a>
+        <a href="#cp10">P10 · Factorial (big N)</a>
+        <a href="#cp11">P11 · Prime check</a>
+        <a href="#cp12">P12 · Bubble &amp; Quick sort</a>
+        <a href="#cp13">P13 · Balanced parentheses</a>
+        <a href="#cp14">P14 · Generic Stack&lt;T&gt;</a>
+        <a href="#cp15">P15 · Thread-safe Singleton</a>
+        <a href="#cp16">P16 · LINQ grouping</a>
+        <a href="#cp17">P17 · First non-repeated char</a>
+        <a href="#cp18">P18 · String compression</a>
+        <a href="#cp19">P19 · Rotate array by k</a>
+        <a href="#cp20">P20 · Max subarray (Kadane)</a>
+        <a href="#cp21">P21 · Dedup sorted array</a>
+        <a href="#cp22">P22 · Binary search</a>
+        <a href="#cp23">P23 · Linked list cycle</a>
+        <a href="#cp24">P24 · Linked list middle</a>
+        <a href="#cp25">P25 · Queue from 2 stacks</a>
+        <a href="#cp26">P26 · Custom LinkedList&lt;T&gt;</a>
+        <a href="#cp27">P27 · IComparable/IComparer</a>
+        <a href="#cp28">P28 · Custom exception</a>
+        <a href="#cp29">P29 · Extension method</a>
+        <a href="#cp30">P30 · IEnumerable + yield</a>
+        <a href="#cp31">P31 · Deep vs shallow copy</a>
+        <a href="#cp32">P32 · Power of two</a>
+        <a href="#cp33">P33 · Count set bits</a>
+        <a href="#cp34">P34 · Array intersection</a>
+        <a href="#cp35">P35 · Email regex validation</a>
+        <a href="#cp36">P36 · Producer-consumer</a>
+      </div>
+      <div class="toc-group">
+        <p class="toc-group-label">Top 50 — Face to Face</p>
+        <a href="#g1">A · C# & OOP</a>
+        <a href="#g2">B · .NET & CLR</a>
+        <a href="#g3">C · WPF / WinForms</a>
+        <a href="#g4">D · SQL & Data</a>
+        <a href="#g5">E · Git</a>
+        <a href="#g6">F · Unit Testing</a>
+        <a href="#g7">G · C++ & Problem Solving</a>
+        <a href="#g0html">I · HTML5 Basics</a>
+        <a href="#g8">H · Domain & Fit</a>
+        <a href="#g9">J · Likely Variations</a>
+      </div>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="wrap">
+      <header class="hero" id="jd">
+        <h1 class="title">C# Developer — Written Test &amp; Interview Guide</h1>
+        <p class="role-line">TRUMPF Metamation Pvt. Ltd. (Trumpf Group) · Siruseri, Chennai · 3–5 yrs · CAD/CAM software for sheet-metal fabrication</p>
+        <div class="chips">
+          <span class="chip core">C# / .NET</span>
+          <span class="chip core">OOP design</span>
+          <span class="chip core">HTML5 basics</span>
+          <span class="chip">CAD/CAM domain</span>
+          <span class="chip">C++ exposure</span>
+          <span class="chip">SQL</span>
+          <span class="chip">Git / Mercurial</span>
+          <span class="chip">WPF / WinForms</span>
+          <span class="chip">Unit tests</span>
+          <span class="chip">Markdown / ASCIIDoc</span>
+        </div>
+      </header>
+
+      <!-- ============ WRITTEN TEST ANSWERS ============ -->
+
+      <section id="c1">
+        <h2>Written Test</h2>
+        <p class="section-note">Full worked solutions for the six challenges on the paper your colleague shared. Console apps target .NET (any recent version) unless noted.</p>
+
+        <div class="challenge">
+          <span class="qnum">CHALLENGE 1</span>
+          <h3 class="q-title">Print the 2nd largest of space-separated integers</h3>
+          <p>Single pass, O(n), tracks the top two values without sorting. <code>n != largest</code> guards against a duplicate of the max being mistaken for a distinct second value.</p>
+          <pre><span class="k">using</span> System;
+<span class="k">using</span> System.Linq;
+
+<span class="k">class</span> SecondLargest
+{
+    <span class="k">static</span> <span class="k">void</span> Main()
+    {
+        Console.Write(<span class="s">"Enter integers separated by space: "</span>);
+        <span class="k">var</span> numbers = Console.ReadLine()
+            .Split(<span class="s">' '</span>, StringSplitOptions.RemoveEmptyEntries)
+            .Select(int.Parse)
+            .ToArray();
+
+        <span class="k">int</span> largest = int.MinValue, second = int.MinValue;
+        <span class="k">foreach</span> (<span class="k">var</span> n <span class="k">in</span> numbers)
+        {
+            <span class="k">if</span> (n > largest)
+            {
+                second = largest;
+                largest = n;
+            }
+            <span class="k">else</span> <span class="k">if</span> (n > second && n != largest)
+            {
+                second = n;
+            }
+        }
+        Console.WriteLine(<span class="s">$"Second largest: {second}"</span>);
+    }
+}</pre>
+          <p><strong>Check:</strong> input <code>-10 200 9 25</code> → largest 200, second 25. Matches the worked example on the sheet.</p>
+          <div class="note">One-line LINQ alternative for a shorter answer if asked: <code>numbers.Distinct().OrderByDescending(x =&gt; x).Skip(1).First()</code>. It's O(n log n) and throws if there aren't 2 distinct values — mention both trade-offs out loud, interviewers like that.</div>
+        </div>
+
+        <div class="challenge" id="c2">
+          <span class="qnum">CHALLENGE 2</span>
+          <h3 class="q-title">Swap two integers without an intermediate variable</h3>
+          <p>Arithmetic trick — works for <code>int</code>, but <code>a + b</code> can overflow for values near <code>int.MaxValue</code>:</p>
+          <pre><span class="k">static</span> <span class="k">void</span> Swap(<span class="k">ref</span> <span class="k">int</span> a, <span class="k">ref</span> <span class="k">int</span> b)
+{
+    a = a + b;
+    b = a - b;
+    a = a - b;
+}</pre>
+          <p>Overflow-safe alternative — bitwise XOR:</p>
+          <pre><span class="k">static</span> <span class="k">void</span> Swap(<span class="k">ref</span> <span class="k">int</span> a, <span class="k">ref</span> <span class="k">int</span> b)
+{
+    a ^= b;
+    b ^= a;
+    a ^= b;
+}</pre>
+          <div class="note">Say out loud: XOR-swap breaks if <code>a</code> and <code>b</code> are the <em>same variable</em> (aliased) — it zeroes it out. Flag that as a known caveat; interviewers who ask this question are usually listening for it.</div>
+        </div>
+
+        <div class="challenge" id="c3">
+          <span class="qnum">CHALLENGE 3</span>
+          <h3 class="q-title">Same swap, using generics — for any numeric type</h3>
+          <p>Arithmetic and XOR don't compile against a generic <code>T</code> — the compiler has no idea it's numeric. The clean, idiomatic C# answer is tuple deconstruction, which needs no explicit temp in your source (the compiler manages storage under the hood, but nothing you write is a "variable"):</p>
+          <pre><span class="k">static</span> <span class="k">void</span> Swap&lt;T&gt;(<span class="k">ref</span> T a, <span class="k">ref</span> T b)
+{
+    (a, b) = (b, a);
+}
+
+<span class="c">// usage</span>
+<span class="k">int</span> x = 5, y = 9;
+Swap(<span class="k">ref</span> x, <span class="k">ref</span> y);
+
+<span class="k">double</span> p = 1.5, q = 3.25;
+Swap(<span class="k">ref</span> p, <span class="k">ref</span> q);</pre>
+          <p>If the interviewer explicitly disallows tuple sugar, fall back to <code>Interlocked.Exchange</code> shape or constrain <code>T</code> to a numeric interface (<code>INumber&lt;T&gt;</code> in .NET 7+) and reuse the arithmetic trick — but lead with the tuple version; it's what a working C# dev reaches for.</p>
+        </div>
+
+        <div class="challenge" id="c4">
+          <span class="qnum">CHALLENGE 4</span>
+          <h3 class="q-title">Number-guessing game — computer guesses, and detects cheating</h3>
+          <p>This is binary search dressed up as a game. Maintain the range <code>[low, high]</code> that is still consistent with every answer given so far. Guess the midpoint; narrow the range based on the reply. <strong>Cheat detection is free</strong>: if the range ever becomes empty (<code>low &gt; high</code>), the user's answers contradict each other — no number satisfies them all.</p>
+          <pre><span class="k">using</span> System;
+
+<span class="k">class</span> GuessingGame
+{
+    <span class="k">static</span> <span class="k">void</span> Main()
+    {
+        <span class="k">int</span> low = 1, high = 1000, attempts = 0;
+        Console.WriteLine(<span class="s">"Think of a number 1-1000. I'll guess it."</span>);
+
+        <span class="k">while</span> (<span class="k">true</span>)
+        {
+            <span class="k">if</span> (low > high)
+            {
+                Console.WriteLine(<span class="s">"Impossible — your answers contradict each other. You're cheating!"</span>);
+                <span class="k">return</span>;
+            }
+
+            <span class="k">int</span> guess = low + (high - low) / 2;
+            attempts++;
+            Console.Write(<span class="s">$"Attempt {attempts}: is it {guess}? (high/low/correct): "</span>);
+            <span class="k">string</span> reply = Console.ReadLine()?.Trim().ToLower();
+
+            <span class="k">switch</span> (reply)
+            {
+                <span class="k">case</span> <span class="s">"correct"</span>:
+                    Console.WriteLine(<span class="s">$"Got it in {attempts} attempts!"</span>);
+                    <span class="k">return</span>;
+                <span class="k">case</span> <span class="s">"high"</span>:   <span class="c">// secret is lower than guess</span>
+                    high = guess - 1;
+                    <span class="k">break</span>;
+                <span class="k">case</span> <span class="s">"low"</span>:    <span class="c">// secret is higher than guess</span>
+                    low = guess + 1;
+                    <span class="k">break</span>;
+                <span class="k">default</span>:
+                    Console.WriteLine(<span class="s">"Please answer high, low, or correct."</span>);
+                    attempts--;
+                    <span class="k">break</span>;
+            }
+        }
+    }
+}</pre>
+          <p><strong>Fewest attempts:</strong> binary search over 1000 values needs at most <code>⌈log₂ 1000⌉ = 10</code> guesses — say this number out loud, it's exactly the "bonus points" the sheet is fishing for.</p>
+        </div>
+
+        <div class="challenge" id="c5">
+          <span class="qnum">CHALLENGE 5</span>
+          <h3 class="q-title">Browse a folder, list files by ascending size (WinForms + LINQ)</h3>
+          <pre><span class="k">using</span> System;
+<span class="k">using</span> System.IO;
+<span class="k">using</span> System.Linq;
+<span class="k">using</span> System.Windows.Forms;
+
+<span class="k">public</span> <span class="k">class</span> MainForm : Form
+{
+    <span class="k">readonly</span> Button _browse = <span class="k">new</span>() { Text = <span class="s">"Browse Folder..."</span>, Dock = DockStyle.Top };
+    <span class="k">readonly</span> ListView _list = <span class="k">new</span>() { View = View.Details, Dock = DockStyle.Fill };
+
+    <span class="k">public</span> MainForm()
+    {
+        Text = <span class="s">"Folder File-Size Browser"</span>; Width = 600; Height = 420;
+        _list.Columns.Add(<span class="s">"File Name"</span>, 360);
+        _list.Columns.Add(<span class="s">"Size (bytes)"</span>, 140);
+        Controls.Add(_list);
+        Controls.Add(_browse);
+        _browse.Click += (s, e) => LoadFolder();
+    }
+
+    <span class="k">void</span> LoadFolder()
+    {
+        <span class="k">using</span> <span class="k">var</span> dlg = <span class="k">new</span> FolderBrowserDialog();
+        <span class="k">if</span> (dlg.ShowDialog() != DialogResult.OK) <span class="k">return</span>;
+
+        _list.Items.Clear();
+        <span class="k">var</span> rows = <span class="k">new</span> DirectoryInfo(dlg.SelectedPath)
+            .GetFiles()
+            .OrderBy(f => f.Length)                     <span class="c">// LINQ: ascending by size</span>
+            .Select(f => <span class="k">new</span> ListViewItem(<span class="k">new</span>[] { f.Name, f.Length.ToString(<span class="s">"N0"</span>) }));
+
+        _list.Items.AddRange(rows.ToArray());
+    }
+
+    [STAThread]
+    <span class="k">static</span> <span class="k">void</span> Main() => Application.Run(<span class="k">new</span> MainForm());
+}</pre>
+          <div class="note">WPF variant: same LINQ query, bind the result to an <code>ObservableCollection&lt;FileInfo&gt;</code> exposed by a view-model and render it in a <code>DataGrid</code> — keeps file-system access out of the view, which is the point of MVVM (see <a href="#g3">section C</a>).</div>
+        </div>
+
+        <div class="challenge" id="c6">
+          <span class="qnum">CHALLENGE 6</span>
+          <h3 class="q-title">NumericTextBox custom control — digits only, configurable range</h3>
+          <p>A WPF <code>UserControl</code> wrapping a <code>TextBox</code>, exposing <code>MinValue</code>/<code>MaxValue</code>/<code>Value</code> as dependency properties so it's bindable and settable from XAML like any built-in control. Default range is 0–9999 per the spec; consumers can widen it up to 999999.</p>
+          <pre><span class="c">// NumericTextBox.xaml.cs</span>
+<span class="k">public</span> <span class="k">partial</span> <span class="k">class</span> NumericTextBox : UserControl
+{
+    <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> DependencyProperty MinValueProperty =
+        DependencyProperty.Register(<span class="k">nameof</span>(MinValue), <span class="k">typeof</span>(<span class="k">int</span>), <span class="k">typeof</span>(NumericTextBox),
+            <span class="k">new</span> PropertyMetadata(0));
+
+    <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> DependencyProperty MaxValueProperty =
+        DependencyProperty.Register(<span class="k">nameof</span>(MaxValue), <span class="k">typeof</span>(<span class="k">int</span>), <span class="k">typeof</span>(NumericTextBox),
+            <span class="k">new</span> PropertyMetadata(9999));
+
+    <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> DependencyProperty ValueProperty =
+        DependencyProperty.Register(<span class="k">nameof</span>(Value), <span class="k">typeof</span>(<span class="k">int</span>), <span class="k">typeof</span>(NumericTextBox),
+            <span class="k">new</span> FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged));
+
+    <span class="k">public</span> <span class="k">int</span> MinValue { get => (<span class="k">int</span>)GetValue(MinValueProperty); set => SetValue(MinValueProperty, value); }
+    <span class="k">public</span> <span class="k">int</span> MaxValue { get => (<span class="k">int</span>)GetValue(MaxValueProperty); set => SetValue(MaxValueProperty, value); }
+    <span class="k">public</span> <span class="k">int</span> Value    { get => (<span class="k">int</span>)GetValue(ValueProperty);    set => SetValue(ValueProperty, value); }
+
+    <span class="k">public</span> NumericTextBox()
+    {
+        InitializeComponent();
+        InnerTextBox.Text = Value.ToString();
+        DataObject.AddPastingHandler(InnerTextBox, OnPaste);
+    }
+
+    <span class="c">// blocks any non-digit keystroke</span>
+    <span class="k">void</span> InnerTextBox_PreviewTextInput(<span class="k">object</span> sender, TextCompositionEventArgs e)
+        => e.Handled = !e.Text.All(<span class="k">char</span>.IsDigit);
+
+    <span class="c">// PreviewTextInput doesn't fire for paste — handle it separately</span>
+    <span class="k">void</span> OnPaste(<span class="k">object</span> sender, DataObjectPastingEventArgs e)
+    {
+        <span class="k">var</span> text = e.DataObject.GetData(<span class="k">typeof</span>(<span class="k">string</span>)) <span class="k">as</span> <span class="k">string</span>;
+        <span class="k">if</span> (text <span class="k">is</span> <span class="k">null</span> || !text.All(<span class="k">char</span>.IsDigit)) e.CancelCommand();
+    }
+
+    <span class="k">void</span> InnerTextBox_TextChanged(<span class="k">object</span> sender, TextChangedEventArgs e)
+    {
+        <span class="k">if</span> (int.TryParse(InnerTextBox.Text, <span class="k">out</span> <span class="k">int</span> typed))
+        {
+            <span class="k">int</span> clamped = Math.Clamp(typed, MinValue, MaxValue);
+            Value = clamped;
+            <span class="k">if</span> (clamped != typed)
+            {
+                InnerTextBox.Text = clamped.ToString();
+                InnerTextBox.CaretIndex = InnerTextBox.Text.Length;
+            }
+        }
+        <span class="k">else</span> <span class="k">if</span> (<span class="k">string</span>.IsNullOrEmpty(InnerTextBox.Text))
+        {
+            Value = MinValue;
+        }
+    }
+
+    <span class="k">static</span> <span class="k">void</span> OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        <span class="k">var</span> ctrl = (NumericTextBox)d;
+        <span class="k">if</span> (ctrl.InnerTextBox.Text != e.NewValue.ToString())
+            ctrl.InnerTextBox.Text = e.NewValue.ToString();
+    }
+}</pre>
+          <p>XAML usage, any range up to the required maximum:</p>
+          <pre>&lt;controls:NumericTextBox MinValue=<span class="s">"0"</span> MaxValue=<span class="s">"999999"</span> Value=<span class="s">"{Binding Quantity}"</span> /&gt;</pre>
+          <div class="note">Talking points if pushed further: this is functionally a poor man's <code>Spinner</code>/<code>NumericUpDown</code>; mention <code>IntegerUpDown</code> from the WPF Toolkit as the "don't reinvent it in production" answer, and that a WinForms version would override <code>OnKeyPress</code> instead of <code>PreviewTextInput</code>.</div>
+        </div>
+      </section>
+
+      <!-- ============ EXTRA CODING PRACTICE ============ -->
+
+      <section id="cp1">
+        <h2>Extra Coding Practice</h2>
+        <p class="section-note">Same format as the written test: the classic warm-up problems interviewers reach for when they want to see you think, not just recall. Say the time/space complexity out loud for each — that's usually the real thing being scored.</p>
+
+        <div class="challenge">
+          <span class="qnum">PRACTICE 1</span>
+          <h3 class="q-title">Reverse a string in place — no <code>Array.Reverse</code>, no <code>.Reverse()</code></h3>
+          <p>Two pointers closing in from both ends, O(n) time, O(1) extra space (on a <code>char[]</code>; strings themselves are immutable in C#, so you reverse a mutable copy):</p>
+          <pre><span class="k">static</span> <span class="k">string</span> ReverseString(<span class="k">string</span> input)
+{
+    <span class="k">var</span> chars = input.ToCharArray();
+    <span class="k">int</span> left = 0, right = chars.Length - 1;
+    <span class="k">while</span> (left &lt; right)
+    {
+        (chars[left], chars[right]) = (chars[right], chars[left]);
+        left++;
+        right--;
+    }
+    <span class="k">return</span> <span class="k">new</span> <span class="k">string</span>(chars);
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp2">
+          <span class="qnum">PRACTICE 2</span>
+          <h3 class="q-title">Check if a string is a palindrome — case- and punctuation-insensitive</h3>
+          <p>Interviewers usually mean <code>"A man, a plan, a canal: Panama"</code> should count — filter to letters/digits before comparing:</p>
+          <pre><span class="k">static</span> <span class="k">bool</span> IsPalindrome(<span class="k">string</span> input)
+{
+    <span class="k">var</span> cleaned = <span class="k">new</span> <span class="k">string</span>(input.Where(<span class="k">char</span>.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+    <span class="k">int</span> left = 0, right = cleaned.Length - 1;
+    <span class="k">while</span> (left &lt; right)
+    {
+        <span class="k">if</span> (cleaned[left] != cleaned[right]) <span class="k">return</span> <span class="k">false</span>;
+        left++;
+        right--;
+    }
+    <span class="k">return</span> <span class="k">true</span>;
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp3">
+          <span class="qnum">PRACTICE 3</span>
+          <h3 class="q-title">Check if two strings are anagrams of each other</h3>
+          <p>Count character frequency once, compare — O(n), avoids the O(n log n) cost of sorting both strings:</p>
+          <pre><span class="k">static</span> <span class="k">bool</span> AreAnagrams(<span class="k">string</span> a, <span class="k">string</span> b)
+{
+    a = a.Replace(<span class="s">" "</span>, <span class="s">""</span>).ToLowerInvariant();
+    b = b.Replace(<span class="s">" "</span>, <span class="s">""</span>).ToLowerInvariant();
+    <span class="k">if</span> (a.Length != b.Length) <span class="k">return</span> <span class="k">false</span>;
+
+    <span class="k">var</span> counts = <span class="k">new</span> Dictionary&lt;<span class="k">char</span>, <span class="k">int</span>&gt;();
+    <span class="k">foreach</span> (<span class="k">var</span> c <span class="k">in</span> a) counts[c] = counts.GetValueOrDefault(c) + 1;
+    <span class="k">foreach</span> (<span class="k">var</span> c <span class="k">in</span> b)
+    {
+        <span class="k">if</span> (!counts.ContainsKey(c) || --counts[c] &lt; 0) <span class="k">return</span> <span class="k">false</span>;
+    }
+    <span class="k">return</span> <span class="k">true</span>;
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp4">
+          <span class="qnum">PRACTICE 4</span>
+          <h3 class="q-title">Count word frequency in a block of text</h3>
+          <pre><span class="k">static</span> Dictionary&lt;<span class="k">string</span>, <span class="k">int</span>&gt; WordFrequency(<span class="k">string</span> text)
+{
+    <span class="k">return</span> text.Split(<span class="k">new</span>[] { <span class="s">' '</span>, <span class="s">'\n'</span>, <span class="s">'\r'</span>, <span class="s">'\t'</span>, <span class="s">'.'</span>, <span class="s">','</span> }, StringSplitOptions.RemoveEmptyEntries)
+        .GroupBy(w => w.ToLowerInvariant())
+        .OrderByDescending(g => g.Count())
+        .ToDictionary(g => g.Key, g => g.Count());
+}</pre>
+          <div class="note">LINQ's <code>GroupBy</code> here replaces what would otherwise be a manual <code>Dictionary&lt;string,int&gt;</code> with a hand-rolled loop — mention you know both and picked LINQ for readability.</div>
+        </div>
+
+        <div class="challenge" id="cp5">
+          <span class="qnum">PRACTICE 5</span>
+          <h3 class="q-title">FizzBuzz — the filter question, know it cold</h3>
+          <pre><span class="k">for</span> (<span class="k">int</span> i = 1; i &lt;= 100; i++)
+{
+    <span class="k">if</span> (i % 15 == 0) Console.WriteLine(<span class="s">"FizzBuzz"</span>);
+    <span class="k">else</span> <span class="k">if</span> (i % 3 == 0) Console.WriteLine(<span class="s">"Fizz"</span>);
+    <span class="k">else</span> <span class="k">if</span> (i % 5 == 0) Console.WriteLine(<span class="s">"Buzz"</span>);
+    <span class="k">else</span> Console.WriteLine(i);
+}</pre>
+          <p>Check <code>i % 15</code> first, not last — checking 3 then 5 separately without the combined case prints <code>"Fizz"</code> then falls through wrong on multiples of both.</p>
+        </div>
+
+        <div class="challenge" id="cp6">
+          <span class="qnum">PRACTICE 6</span>
+          <h3 class="q-title">Find all duplicate values in an array</h3>
+          <p>LINQ one-liner for the interview room, plus the manual O(n) version so you can explain what it's doing underneath:</p>
+          <pre><span class="c">// LINQ</span>
+<span class="k">var</span> duplicates = numbers.GroupBy(n => n).Where(g => g.Count() &gt; 1).Select(g => g.Key);
+
+<span class="c">// manual O(n) with a HashSet</span>
+<span class="k">static</span> IEnumerable&lt;<span class="k">int</span>&gt; FindDuplicates(<span class="k">int</span>[] numbers)
+{
+    <span class="k">var</span> seen = <span class="k">new</span> HashSet&lt;<span class="k">int</span>&gt;();
+    <span class="k">var</span> dupes = <span class="k">new</span> HashSet&lt;<span class="k">int</span>&gt;();
+    <span class="k">foreach</span> (<span class="k">var</span> n <span class="k">in</span> numbers)
+    {
+        <span class="k">if</span> (!seen.Add(n)) dupes.Add(n);
+    }
+    <span class="k">return</span> dupes;
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp7">
+          <span class="qnum">PRACTICE 7</span>
+          <h3 class="q-title">Find the missing number in an array containing 1..N with one gap</h3>
+          <p>The expected sum of <code>1..N</code> is <code>N*(N+1)/2</code> — subtract the actual sum and what's left is the missing number. O(n) time, O(1) space, no sorting needed:</p>
+          <pre><span class="k">static</span> <span class="k">int</span> FindMissing(<span class="k">int</span>[] numbers, <span class="k">int</span> n)
+{
+    <span class="k">int</span> expectedSum = n * (n + 1) / 2;
+    <span class="k">int</span> actualSum = numbers.Sum();
+    <span class="k">return</span> expectedSum - actualSum;
+}</pre>
+          <div class="note">If asked for the XOR variant (safer against <code>int</code> overflow on very large N): XOR all numbers 1..N with all array elements — every pair cancels except the missing one.</div>
+        </div>
+
+        <div class="challenge" id="cp8">
+          <span class="qnum">PRACTICE 8</span>
+          <h3 class="q-title">Two Sum — return the indices of two numbers that add up to a target</h3>
+          <p>Naive nested loop is O(n²). One pass with a dictionary mapping value → index gets it to O(n):</p>
+          <pre><span class="k">static</span> <span class="k">int</span>[] TwoSum(<span class="k">int</span>[] numbers, <span class="k">int</span> target)
+{
+    <span class="k">var</span> seen = <span class="k">new</span> Dictionary&lt;<span class="k">int</span>, <span class="k">int</span>&gt;(); <span class="c">// value -> index</span>
+    <span class="k">for</span> (<span class="k">int</span> i = 0; i &lt; numbers.Length; i++)
+    {
+        <span class="k">int</span> complement = target - numbers[i];
+        <span class="k">if</span> (seen.TryGetValue(complement, <span class="k">out</span> <span class="k">int</span> j))
+            <span class="k">return</span> <span class="k">new</span>[] { j, i };
+        seen[numbers[i]] = i;
+    }
+    <span class="k">throw</span> <span class="k">new</span> ArgumentException(<span class="s">"No two numbers sum to target"</span>);
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp9">
+          <span class="qnum">PRACTICE 9</span>
+          <h3 class="q-title">Fibonacci — naive recursion vs memoized vs iterative</h3>
+          <p>Lead with why naive recursion is bad (exponential re-computation), then show the fix:</p>
+          <pre><span class="c">// naive: O(2^n) — recomputes the same sub-values over and over</span>
+<span class="k">static</span> <span class="k">long</span> FibNaive(<span class="k">int</span> n) => n &lt;= 1 ? n : FibNaive(n - 1) + FibNaive(n - 2);
+
+<span class="c">// memoized: O(n) time, O(n) space</span>
+<span class="k">static</span> <span class="k">long</span> FibMemo(<span class="k">int</span> n, Dictionary&lt;<span class="k">int</span>, <span class="k">long</span>&gt; cache = <span class="k">null</span>)
+{
+    cache ??= <span class="k">new</span>();
+    <span class="k">if</span> (n &lt;= 1) <span class="k">return</span> n;
+    <span class="k">if</span> (cache.TryGetValue(n, <span class="k">out</span> <span class="k">var</span> hit)) <span class="k">return</span> hit;
+    <span class="k">var</span> result = FibMemo(n - 1, cache) + FibMemo(n - 2, cache);
+    cache[n] = result;
+    <span class="k">return</span> result;
+}
+
+<span class="c">// iterative: O(n) time, O(1) space — the answer to lead with in an interview</span>
+<span class="k">static</span> <span class="k">long</span> FibIterative(<span class="k">int</span> n)
+{
+    <span class="k">if</span> (n &lt;= 1) <span class="k">return</span> n;
+    <span class="k">long</span> a = 0, b = 1;
+    <span class="k">for</span> (<span class="k">int</span> i = 2; i &lt;= n; i++)
+    {
+        (a, b) = (b, a + b);
+    }
+    <span class="k">return</span> b;
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp10">
+          <span class="qnum">PRACTICE 10</span>
+          <h3 class="q-title">Factorial — including N large enough to overflow <code>long</code></h3>
+          <pre><span class="c">// standard recursive version — fine up to ~20!</span>
+<span class="k">static</span> <span class="k">long</span> Factorial(<span class="k">int</span> n) => n &lt;= 1 ? 1 : n * Factorial(n - 1);
+
+<span class="c">// 21! already overflows long — use BigInteger for arbitrary N</span>
+<span class="k">using</span> System.Numerics;
+
+<span class="k">static</span> BigInteger FactorialBig(<span class="k">int</span> n)
+{
+    BigInteger result = 1;
+    <span class="k">for</span> (<span class="k">int</span> i = 2; i &lt;= n; i++) result *= i;
+    <span class="k">return</span> result;
+}</pre>
+          <p>Knowing <code>long.MaxValue</code> is roughly 9.2×10¹⁸ and that <code>21!</code> already exceeds it is the kind of detail that separates "wrote code that compiles" from "understands what it computes."</p>
+        </div>
+
+        <div class="challenge" id="cp11">
+          <span class="qnum">PRACTICE 11</span>
+          <h3 class="q-title">Check if a number is prime — efficiently</h3>
+          <p>Only need to test divisors up to <code>√n</code> — if nothing up to there divides it, nothing above does either:</p>
+          <pre><span class="k">static</span> <span class="k">bool</span> IsPrime(<span class="k">int</span> n)
+{
+    <span class="k">if</span> (n &lt; 2) <span class="k">return</span> <span class="k">false</span>;
+    <span class="k">if</span> (n == 2) <span class="k">return</span> <span class="k">true</span>;
+    <span class="k">if</span> (n % 2 == 0) <span class="k">return</span> <span class="k">false</span>;
+
+    <span class="k">for</span> (<span class="k">int</span> i = 3; i * i &lt;= n; i += 2)
+    {
+        <span class="k">if</span> (n % i == 0) <span class="k">return</span> <span class="k">false</span>;
+    }
+    <span class="k">return</span> <span class="k">true</span>;
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp12">
+          <span class="qnum">PRACTICE 12</span>
+          <h3 class="q-title">Implement a sort by hand — bubble sort, then quicksort's partition</h3>
+          <p>Nobody wants you to out-perform <code>Array.Sort</code> — this checks you understand what O(n²) vs O(n log n) actually looks like in code:</p>
+          <pre><span class="c">// bubble sort — O(n^2), the "I understand the naive baseline" answer</span>
+<span class="k">static</span> <span class="k">void</span> BubbleSort(<span class="k">int</span>[] arr)
+{
+    <span class="k">for</span> (<span class="k">int</span> i = 0; i &lt; arr.Length - 1; i++)
+        <span class="k">for</span> (<span class="k">int</span> j = 0; j &lt; arr.Length - i - 1; j++)
+            <span class="k">if</span> (arr[j] &gt; arr[j + 1])
+                (arr[j], arr[j + 1]) = (arr[j + 1], arr[j]);
+}
+
+<span class="c">// quicksort — average O(n log n), the "I understand divide-and-conquer" answer</span>
+<span class="k">static</span> <span class="k">void</span> QuickSort(<span class="k">int</span>[] arr, <span class="k">int</span> low, <span class="k">int</span> high)
+{
+    <span class="k">if</span> (low &gt;= high) <span class="k">return</span>;
+    <span class="k">int</span> pivot = arr[high], i = low - 1;
+    <span class="k">for</span> (<span class="k">int</span> j = low; j &lt; high; j++)
+    {
+        <span class="k">if</span> (arr[j] &lt; pivot)
+        {
+            i++;
+            (arr[i], arr[j]) = (arr[j], arr[i]);
+        }
+    }
+    (arr[i + 1], arr[high]) = (arr[high], arr[i + 1]);
+    QuickSort(arr, low, i);
+    QuickSort(arr, i + 2, high);
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp13">
+          <span class="qnum">PRACTICE 13</span>
+          <h3 class="q-title">Check if brackets in an expression are balanced</h3>
+          <p>Classic stack problem — push openers, pop-and-match on closers:</p>
+          <pre><span class="k">static</span> <span class="k">bool</span> IsBalanced(<span class="k">string</span> expr)
+{
+    <span class="k">var</span> stack = <span class="k">new</span> Stack&lt;<span class="k">char</span>&gt;();
+    <span class="k">var</span> pairs = <span class="k">new</span> Dictionary&lt;<span class="k">char</span>, <span class="k">char</span>&gt; { [<span class="s">')'</span>] = <span class="s">'('</span>, [<span class="s">']'</span>] = <span class="s">'['</span>, [<span class="s">'}'</span>] = <span class="s">'{'</span> };
+
+    <span class="k">foreach</span> (<span class="k">var</span> c <span class="k">in</span> expr)
+    {
+        <span class="k">if</span> (c == <span class="s">'('</span> || c == <span class="s">'['</span> || c == <span class="s">'{'</span>)
+            stack.Push(c);
+        <span class="k">else</span> <span class="k">if</span> (pairs.ContainsKey(c))
+        {
+            <span class="k">if</span> (stack.Count == 0 || stack.Pop() != pairs[c]) <span class="k">return</span> <span class="k">false</span>;
+        }
+    }
+    <span class="k">return</span> stack.Count == 0;
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp14">
+          <span class="qnum">PRACTICE 14</span>
+          <h3 class="q-title">Implement a generic <code>Stack&lt;T&gt;</code> from scratch (array-backed)</h3>
+          <p>Ties generics, arrays, and basic data-structure design together — a common "show me you understand what's under <code>System.Collections.Generic</code>" question:</p>
+          <pre><span class="k">public</span> <span class="k">class</span> MyStack&lt;T&gt;
+{
+    <span class="k">private</span> T[] _items = <span class="k">new</span> T[4];
+    <span class="k">private</span> <span class="k">int</span> _count;
+
+    <span class="k">public</span> <span class="k">int</span> Count => _count;
+
+    <span class="k">public</span> <span class="k">void</span> Push(T item)
+    {
+        <span class="k">if</span> (_count == _items.Length)
+            Array.Resize(<span class="k">ref</span> _items, _items.Length * 2);
+        _items[_count++] = item;
+    }
+
+    <span class="k">public</span> T Pop()
+    {
+        <span class="k">if</span> (_count == 0) <span class="k">throw</span> <span class="k">new</span> InvalidOperationException(<span class="s">"Stack is empty"</span>);
+        <span class="k">return</span> _items[--_count];
+    }
+
+    <span class="k">public</span> T Peek()
+    {
+        <span class="k">if</span> (_count == 0) <span class="k">throw</span> <span class="k">new</span> InvalidOperationException(<span class="s">"Stack is empty"</span>);
+        <span class="k">return</span> _items[_count - 1];
+    }
+}</pre>
+          <p>Mention the amortized O(1) push: doubling the backing array on overflow means the average cost per push stays constant even though a resize itself is O(n).</p>
+        </div>
+
+        <div class="challenge" id="cp15">
+          <span class="qnum">PRACTICE 15</span>
+          <h3 class="q-title">Implement a thread-safe Singleton</h3>
+          <p>The modern, simplest correct answer uses <code>Lazy&lt;T&gt;</code>, which handles the double-checked locking for you:</p>
+          <pre><span class="k">public</span> <span class="k">sealed</span> <span class="k">class</span> MachineRegistry
+{
+    <span class="k">private</span> <span class="k">static</span> <span class="k">readonly</span> Lazy&lt;MachineRegistry&gt; _instance =
+        <span class="k">new</span>(() => <span class="k">new</span> MachineRegistry());
+
+    <span class="k">public</span> <span class="k">static</span> MachineRegistry Instance => _instance.Value;
+
+    <span class="k">private</span> MachineRegistry() { } <span class="c">// private ctor blocks outside instantiation</span>
+}</pre>
+          <div class="note">If asked to do it "manually" without <code>Lazy&lt;T&gt;</code>, show double-checked locking with a <code>lock</code> around the null-check — and be ready to explain <em>why</em> the check happens twice (avoid taking the lock on every access once the instance already exists).</div>
+        </div>
+
+        <div class="challenge" id="cp16">
+          <span class="qnum">PRACTICE 16</span>
+          <h3 class="q-title">LINQ: group a list of employees by department, get the top earner in each</h3>
+          <p>A realistic LINQ exercise — grouping plus a per-group aggregate, the shape of query you'd actually write against real data:</p>
+          <pre><span class="k">public</span> <span class="k">record</span> Employee(<span class="k">string</span> Name, <span class="k">string</span> Department, <span class="k">decimal</span> Salary);
+
+<span class="k">var</span> topEarnerByDept = employees
+    .GroupBy(e => e.Department)
+    .Select(g => <span class="k">new</span>
+    {
+        Department = g.Key,
+        TopEarner = g.OrderByDescending(e => e.Salary).First()
+    });
+
+<span class="k">foreach</span> (<span class="k">var</span> row <span class="k">in</span> topEarnerByDept)
+    Console.WriteLine(<span class="s">$"{row.Department}: {row.TopEarner.Name} ({row.TopEarner.Salary:C})"</span>);</pre>
+          <div class="note">If pushed on performance: this is fine in-memory, but against EF Core, prefer <code>GroupBy</code> patterns EF can translate to SQL — some shapes (like nested <code>OrderBy().First()</code> per group) force a client-side evaluation on older EF versions, which silently pulls the whole table into memory.</div>
+        </div>
+
+        <div class="challenge" id="cp17">
+          <span class="qnum">PRACTICE 17</span>
+          <h3 class="q-title">Find the first non-repeated character in a string</h3>
+          <p>Two passes, O(n): count frequencies, then scan again in original order for the first count of 1 (a <code>Dictionary</code> alone won't preserve order reliably enough to skip the second pass):</p>
+          <pre><span class="k">static</span> <span class="k">char</span>? FirstNonRepeatedChar(<span class="k">string</span> s)
+{
+    <span class="k">var</span> counts = <span class="k">new</span> Dictionary&lt;<span class="k">char</span>, <span class="k">int</span>&gt;();
+    <span class="k">foreach</span> (<span class="k">var</span> c <span class="k">in</span> s) counts[c] = counts.GetValueOrDefault(c) + 1;
+    <span class="k">foreach</span> (<span class="k">var</span> c <span class="k">in</span> s)
+        <span class="k">if</span> (counts[c] == 1) <span class="k">return</span> c;
+    <span class="k">return</span> <span class="k">null</span>;
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp18">
+          <span class="qnum">PRACTICE 18</span>
+          <h3 class="q-title">String compression — <code>"aabcccccaaa"</code> → <code>"a2b1c5a3"</code></h3>
+          <pre><span class="k">static</span> <span class="k">string</span> Compress(<span class="k">string</span> s)
+{
+    <span class="k">if</span> (<span class="k">string</span>.IsNullOrEmpty(s)) <span class="k">return</span> s;
+
+    <span class="k">var</span> sb = <span class="k">new</span> StringBuilder();
+    <span class="k">int</span> count = 1;
+    <span class="k">for</span> (<span class="k">int</span> i = 1; i &lt;= s.Length; i++)
+    {
+        <span class="k">if</span> (i &lt; s.Length && s[i] == s[i - 1])
+        {
+            count++;
+        }
+        <span class="k">else</span>
+        {
+            sb.Append(s[i - 1]).Append(count);
+            count = 1;
+        }
+    }
+    <span class="k">return</span> sb.ToString();
+}</pre>
+          <p>O(n) time; <code>StringBuilder</code> avoids the O(n²) blowup of repeated string concatenation (see <a href="#g2">section B, Q18</a>).</p>
+        </div>
+
+        <div class="challenge" id="cp19">
+          <span class="qnum">PRACTICE 19</span>
+          <h3 class="q-title">Rotate an array right by k positions — in place</h3>
+          <p>The reversal trick gets this to O(n) time, O(1) extra space, no second array needed: reverse the whole array, then reverse each of the two segments the rotation point splits it into.</p>
+          <pre><span class="k">static</span> <span class="k">void</span> RotateRight(<span class="k">int</span>[] arr, <span class="k">int</span> k)
+{
+    <span class="k">int</span> n = arr.Length;
+    k %= n;
+    Reverse(arr, 0, n - 1);
+    Reverse(arr, 0, k - 1);
+    Reverse(arr, k, n - 1);
+}
+
+<span class="k">static</span> <span class="k">void</span> Reverse(<span class="k">int</span>[] arr, <span class="k">int</span> start, <span class="k">int</span> end)
+{
+    <span class="k">while</span> (start &lt; end)
+    {
+        (arr[start], arr[end]) = (arr[end], arr[start]);
+        start++;
+        end--;
+    }
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp20">
+          <span class="qnum">PRACTICE 20</span>
+          <h3 class="q-title">Maximum subarray sum — Kadane's algorithm</h3>
+          <p>The naive approach checks every subarray in O(n²) or O(n³). Kadane's runs a single pass, tracking the best sum ending at each position:</p>
+          <pre><span class="k">static</span> <span class="k">int</span> MaxSubArraySum(<span class="k">int</span>[] nums)
+{
+    <span class="k">int</span> maxSoFar = nums[0], maxEndingHere = nums[0];
+    <span class="k">for</span> (<span class="k">int</span> i = 1; i &lt; nums.Length; i++)
+    {
+        maxEndingHere = Math.Max(nums[i], maxEndingHere + nums[i]);
+        maxSoFar = Math.Max(maxSoFar, maxEndingHere);
+    }
+    <span class="k">return</span> maxSoFar;
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp21">
+          <span class="qnum">PRACTICE 21</span>
+          <h3 class="q-title">Remove duplicates from a <em>sorted</em> array, in place</h3>
+          <p>Because it's sorted, duplicates are always adjacent — a single write-pointer walk does it without a <code>HashSet</code>:</p>
+          <pre><span class="k">static</span> <span class="k">int</span> RemoveDuplicates(<span class="k">int</span>[] nums)
+{
+    <span class="k">if</span> (nums.Length == 0) <span class="k">return</span> 0;
+
+    <span class="k">int</span> writeIndex = 1;
+    <span class="k">for</span> (<span class="k">int</span> i = 1; i &lt; nums.Length; i++)
+    {
+        <span class="k">if</span> (nums[i] != nums[writeIndex - 1])
+        {
+            nums[writeIndex] = nums[i];
+            writeIndex++;
+        }
+    }
+    <span class="k">return</span> writeIndex; <span class="c">// new logical length; nums[0..writeIndex) is the deduped array</span>
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp22">
+          <span class="qnum">PRACTICE 22</span>
+          <h3 class="q-title">Binary search, written by hand (not <code>Array.BinarySearch</code>)</h3>
+          <pre><span class="k">static</span> <span class="k">int</span> BinarySearch(<span class="k">int</span>[] sorted, <span class="k">int</span> target)
+{
+    <span class="k">int</span> low = 0, high = sorted.Length - 1;
+    <span class="k">while</span> (low &lt;= high)
+    {
+        <span class="k">int</span> mid = low + (high - low) / 2; <span class="c">// avoids overflow vs (low+high)/2</span>
+        <span class="k">if</span> (sorted[mid] == target) <span class="k">return</span> mid;
+        <span class="k">else</span> <span class="k">if</span> (sorted[mid] &lt; target) low = mid + 1;
+        <span class="k">else</span> high = mid - 1;
+    }
+    <span class="k">return</span> -1;
+}</pre>
+          <p>O(log n). This is the same halving idea as the guessing-game challenge earlier — worth pointing that out if the interviewer asks both.</p>
+        </div>
+
+        <div class="challenge" id="cp23">
+          <span class="qnum">PRACTICE 23</span>
+          <h3 class="q-title">Detect a cycle in a linked list — Floyd's tortoise and hare</h3>
+          <pre><span class="k">public</span> <span class="k">class</span> Node
+{
+    <span class="k">public</span> <span class="k">int</span> Value;
+    <span class="k">public</span> Node Next;
+}
+
+<span class="k">static</span> <span class="k">bool</span> HasCycle(Node head)
+{
+    Node slow = head, fast = head;
+    <span class="k">while</span> (fast != <span class="k">null</span> && fast.Next != <span class="k">null</span>)
+    {
+        slow = slow.Next;
+        fast = fast.Next.Next;
+        <span class="k">if</span> (slow == fast) <span class="k">return</span> <span class="k">true</span>; <span class="c">// fast lapped slow — only possible inside a loop</span>
+    }
+    <span class="k">return</span> <span class="k">false</span>;
+}</pre>
+          <p>O(n) time, O(1) space — no <code>HashSet</code> of visited nodes needed, which is the naive but memory-heavier alternative worth mentioning as the fallback.</p>
+        </div>
+
+        <div class="challenge" id="cp24">
+          <span class="qnum">PRACTICE 24</span>
+          <h3 class="q-title">Find the middle node of a linked list in a single pass</h3>
+          <p>Same two-pointer idea as the cycle check — fast moves twice as fast as slow, so when fast reaches the end, slow is at the midpoint:</p>
+          <pre><span class="k">static</span> Node FindMiddle(Node head)
+{
+    Node slow = head, fast = head;
+    <span class="k">while</span> (fast != <span class="k">null</span> && fast.Next != <span class="k">null</span>)
+    {
+        slow = slow.Next;
+        fast = fast.Next.Next;
+    }
+    <span class="k">return</span> slow;
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp25">
+          <span class="qnum">PRACTICE 25</span>
+          <h3 class="q-title">Implement a Queue using two Stacks</h3>
+          <p>Push always goes to <code>_in</code>. Dequeue drains <code>_in</code> into <code>_out</code> (reversing order) only when <code>_out</code> is empty — amortized O(1) per operation, not O(n) every time:</p>
+          <pre><span class="k">public</span> <span class="k">class</span> QueueFromStacks&lt;T&gt;
+{
+    <span class="k">private</span> Stack&lt;T&gt; _in = <span class="k">new</span>();
+    <span class="k">private</span> Stack&lt;T&gt; _out = <span class="k">new</span>();
+
+    <span class="k">public</span> <span class="k">void</span> Enqueue(T item) => _in.Push(item);
+
+    <span class="k">public</span> T Dequeue()
+    {
+        <span class="k">if</span> (_out.Count == 0)
+        {
+            <span class="k">while</span> (_in.Count &gt; 0) _out.Push(_in.Pop());
+        }
+        <span class="k">if</span> (_out.Count == 0) <span class="k">throw</span> <span class="k">new</span> InvalidOperationException(<span class="s">"Queue is empty"</span>);
+        <span class="k">return</span> _out.Pop();
+    }
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp26">
+          <span class="qnum">PRACTICE 26</span>
+          <h3 class="q-title">Build a minimal generic <code>LinkedList&lt;T&gt;</code> — node type plus traversal</h3>
+          <pre><span class="k">public</span> <span class="k">class</span> LinkedListNode&lt;T&gt;
+{
+    <span class="k">public</span> T Value;
+    <span class="k">public</span> LinkedListNode&lt;T&gt; Next;
+    <span class="k">public</span> LinkedListNode(T value) => Value = value;
+}
+
+<span class="k">public</span> <span class="k">class</span> SimpleLinkedList&lt;T&gt;
+{
+    <span class="k">private</span> LinkedListNode&lt;T&gt; _head;
+    <span class="k">private</span> LinkedListNode&lt;T&gt; _tail;
+
+    <span class="k">public</span> <span class="k">void</span> Add(T value)
+    {
+        <span class="k">var</span> node = <span class="k">new</span> LinkedListNode&lt;T&gt;(value);
+        <span class="k">if</span> (_head == <span class="k">null</span>) _head = _tail = node;
+        <span class="k">else</span> { _tail.Next = node; _tail = node; }
+    }
+
+    <span class="k">public</span> IEnumerable&lt;T&gt; Traverse()
+    {
+        <span class="k">var</span> current = _head;
+        <span class="k">while</span> (current != <span class="k">null</span>)
+        {
+            <span class="k">yield</span> <span class="k">return</span> current.Value;
+            current = current.Next;
+        }
+    }
+}</pre>
+          <p><code>Add</code> is O(1) because <code>_tail</code> is tracked separately — without it, appending would mean walking the whole list every time.</p>
+        </div>
+
+        <div class="challenge" id="cp27">
+          <span class="qnum">PRACTICE 27</span>
+          <h3 class="q-title">Custom sort order with <code>IComparable&lt;T&gt;</code> and <code>IComparer&lt;T&gt;</code></h3>
+          <p><code>IComparable&lt;T&gt;</code> gives a type <em>one</em> natural default order. <code>IComparer&lt;T&gt;</code> gives you as many alternate orderings as you need, without touching the class:</p>
+          <pre><span class="k">public</span> <span class="k">class</span> Employee : IComparable&lt;Employee&gt;
+{
+    <span class="k">public</span> <span class="k">string</span> Name;
+    <span class="k">public</span> <span class="k">decimal</span> Salary;
+
+    <span class="c">// default order: highest salary first</span>
+    <span class="k">public</span> <span class="k">int</span> CompareTo(Employee other) => other.Salary.CompareTo(Salary);
+}
+
+<span class="k">public</span> <span class="k">class</span> ByNameComparer : IComparer&lt;Employee&gt;
+{
+    <span class="k">public</span> <span class="k">int</span> Compare(Employee x, Employee y) => <span class="k">string</span>.Compare(x.Name, y.Name, StringComparison.Ordinal);
+}
+
+<span class="c">// usage</span>
+employees.Sort();                      <span class="c">// uses IComparable — by salary</span>
+employees.Sort(<span class="k">new</span> ByNameComparer());  <span class="c">// alternate order — by name</span></pre>
+        </div>
+
+        <div class="challenge" id="cp28">
+          <span class="qnum">PRACTICE 28</span>
+          <h3 class="q-title">Define and throw a custom exception</h3>
+          <p>Domain-specific exceptions carry information a generic <code>Exception</code> can't, and let callers <code>catch</code> selectively instead of string-matching a message:</p>
+          <pre><span class="k">public</span> <span class="k">class</span> InsufficientStockException : Exception
+{
+    <span class="k">public</span> <span class="k">string</span> PartNumber { get; }
+
+    <span class="k">public</span> InsufficientStockException(<span class="k">string</span> partNumber, <span class="k">string</span> message)
+        : <span class="k">base</span>(message)
+    {
+        PartNumber = partNumber;
+    }
+}
+
+<span class="c">// usage</span>
+<span class="k">if</span> (stock &lt; required)
+    <span class="k">throw</span> <span class="k">new</span> InsufficientStockException(<span class="s">"SH-2045"</span>, <span class="s">"Not enough sheet stock to complete the cut."</span>);</pre>
+        </div>
+
+        <div class="challenge" id="cp29">
+          <span class="qnum">PRACTICE 29</span>
+          <h3 class="q-title">Write an extension method</h3>
+          <p>A <code>static</code> method in a <code>static</code> class, first parameter marked <code>this</code> — lets you call it as if it were an instance member, even on types you don't own (like <code>string</code>):</p>
+          <pre><span class="k">public</span> <span class="k">static</span> <span class="k">class</span> StringExtensions
+{
+    <span class="k">public</span> <span class="k">static</span> <span class="k">string</span> Truncate(<span class="k">this</span> <span class="k">string</span> value, <span class="k">int</span> maxLength) =>
+        value.Length &lt;= maxLength ? value : value.Substring(0, maxLength) + <span class="s">"..."</span>;
+}
+
+<span class="c">// usage — reads like a built-in method</span>
+<span class="k">string</span> title = report.Title.Truncate(20);</pre>
+        </div>
+
+        <div class="challenge" id="cp30">
+          <span class="qnum">PRACTICE 30</span>
+          <h3 class="q-title">Make a custom type work in a <code>foreach</code> loop</h3>
+          <p>Implement <code>IEnumerable&lt;T&gt;</code> and use <code>yield return</code> — the compiler builds the state machine for you, so you never write an explicit <code>IEnumerator</code> class by hand:</p>
+          <pre><span class="k">public</span> <span class="k">class</span> Range : IEnumerable&lt;<span class="k">int</span>&gt;
+{
+    <span class="k">private</span> <span class="k">readonly</span> <span class="k">int</span> _start, _end;
+    <span class="k">public</span> Range(<span class="k">int</span> start, <span class="k">int</span> end) { _start = start; _end = end; }
+
+    <span class="k">public</span> IEnumerator&lt;<span class="k">int</span>&gt; GetEnumerator()
+    {
+        <span class="k">for</span> (<span class="k">int</span> i = _start; i &lt;= _end; i++)
+            <span class="k">yield</span> <span class="k">return</span> i;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+}
+
+<span class="c">// usage</span>
+<span class="k">foreach</span> (<span class="k">var</span> n <span class="k">in</span> <span class="k">new</span> Range(1, 5))
+    Console.WriteLine(n);</pre>
+        </div>
+
+        <div class="challenge" id="cp31">
+          <span class="qnum">PRACTICE 31</span>
+          <h3 class="q-title">Deep copy vs shallow copy — show the difference in code</h3>
+          <p><code>MemberwiseClone()</code> (and a naive hand-written <code>Clone</code>) copies value-type fields fully but only copies the <em>reference</em> for any field that's itself a reference type — both objects end up pointing at the same nested object:</p>
+          <pre><span class="k">public</span> <span class="k">class</span> Address { <span class="k">public</span> <span class="k">string</span> City; }
+
+<span class="k">public</span> <span class="k">class</span> Person
+{
+    <span class="k">public</span> <span class="k">string</span> Name;
+    <span class="k">public</span> Address Address;
+
+    <span class="c">// shallow: clone shares the SAME Address instance as the original</span>
+    <span class="k">public</span> Person ShallowClone() => <span class="k">new</span> Person { Name = Name, Address = Address };
+
+    <span class="c">// deep: clone gets its own independent Address</span>
+    <span class="k">public</span> Person DeepClone() => <span class="k">new</span> Person { Name = Name, Address = <span class="k">new</span> Address { City = Address.City } };
+}</pre>
+          <p>Prove it: mutate <code>clone.Address.City</code> after a shallow clone and the original's <code>Address.City</code> changes too — that's the bug this question is testing for.</p>
+        </div>
+
+        <div class="challenge" id="cp32">
+          <span class="qnum">PRACTICE 32</span>
+          <h3 class="q-title">Check if a number is a power of two — bitwise, O(1)</h3>
+          <p>A power of two has exactly one bit set (<code>0100</code>, <code>1000</code>, ...). Subtracting 1 flips every bit up to and including that one — ANDing the two together always gives zero, for any power of two and only for a power of two:</p>
+          <pre><span class="k">static</span> <span class="k">bool</span> IsPowerOfTwo(<span class="k">int</span> n) => n &gt; 0 && (n & (n - 1)) == 0;</pre>
+        </div>
+
+        <div class="challenge" id="cp33">
+          <span class="qnum">PRACTICE 33</span>
+          <h3 class="q-title">Count the number of set bits in an integer (Hamming weight)</h3>
+          <p>Brian Kernighan's trick: <code>n &amp; (n - 1)</code> clears the lowest set bit each time, so the loop runs once per <em>set</em> bit rather than once per bit position:</p>
+          <pre><span class="k">static</span> <span class="k">int</span> CountSetBits(<span class="k">int</span> n)
+{
+    <span class="k">int</span> count = 0;
+    <span class="k">while</span> (n != 0)
+    {
+        n &= (n - 1);
+        count++;
+    }
+    <span class="k">return</span> count;
+}</pre>
+        </div>
+
+        <div class="challenge" id="cp34">
+          <span class="qnum">PRACTICE 34</span>
+          <h3 class="q-title">Find the intersection of two arrays</h3>
+          <pre><span class="k">static</span> <span class="k">int</span>[] Intersect(<span class="k">int</span>[] a, <span class="k">int</span>[] b)
+{
+    <span class="k">var</span> setA = <span class="k">new</span> HashSet&lt;<span class="k">int</span>&gt;(a);
+    <span class="k">return</span> b.Where(setA.Contains).Distinct().ToArray();
+}</pre>
+          <p>Building the <code>HashSet</code> once makes each lookup O(1), so the whole thing is O(n + m) instead of the O(n·m) a nested-loop version would cost.</p>
+        </div>
+
+        <div class="challenge" id="cp35">
+          <span class="qnum">PRACTICE 35</span>
+          <h3 class="q-title">Validate an email address with a regular expression</h3>
+          <pre><span class="k">using</span> System.Text.RegularExpressions;
+
+<span class="k">static</span> <span class="k">bool</span> IsValidEmail(<span class="k">string</span> email) =>
+    Regex.IsMatch(email, <span class="s">@"^[^@\s]+@[^@\s]+\.[^@\s]+$"</span>);</pre>
+          <div class="note">Say out loud that this only catches gross shape errors — the only way to actually verify an email is deliverable is to send one and confirm. Also mention <code>System.Net.Mail.MailAddress</code>'s constructor as a built-in alternative to hand-rolling the regex.</div>
+        </div>
+
+        <div class="challenge" id="cp36">
+          <span class="qnum">PRACTICE 36</span>
+          <h3 class="q-title">Producer-consumer with <code>BlockingCollection&lt;T&gt;</code></h3>
+          <p>The concurrency question — one thread produces, another consumes, without either of you hand-rolling locks around a shared queue:</p>
+          <pre><span class="k">using</span> System.Collections.Concurrent;
+
+<span class="k">var</span> queue = <span class="k">new</span> BlockingCollection&lt;<span class="k">int</span>&gt;(boundedCapacity: 10);
+
+<span class="k">var</span> producer = Task.Run(() =>
+{
+    <span class="k">for</span> (<span class="k">int</span> i = 0; i &lt; 100; i++) queue.Add(i);
+    queue.CompleteAdding();
+});
+
+<span class="k">var</span> consumer = Task.Run(() =>
+{
+    <span class="k">foreach</span> (<span class="k">var</span> item <span class="k">in</span> queue.GetConsumingEnumerable())
+        Console.WriteLine(<span class="s">$"Processing {item}"</span>);
+});
+
+Task.WaitAll(producer, consumer);</pre>
+          <p><code>boundedCapacity</code> makes <code>Add</code> block once the queue is full, throttling a fast producer to match a slower consumer — that back-pressure is the whole reason to reach for this over a plain <code>Queue&lt;T&gt;</code> with manual locking.</p>
+        </div>
+      </section>
+
+      <!-- ============ TOP 50 ============ -->
+
+      <section id="g1">
+        <h2>A · C# &amp; OOP Fundamentals</h2>
+        <p class="section-note">The "basic skills" line in the JD is literally "programming and problem solving, .NET/C#, OOP design" — this section is the core of the face-to-face.</p>
+
+        <details class="qa"><summary>1. Value types vs reference types — what's the practical difference?</summary>
+          <div class="qa-body">
+            <p>Value types (<code>struct</code>, <code>int</code>, <code>bool</code>, <code>enum</code>) hold their data directly and get copied on assignment/passing. Reference types (<code>class</code>, arrays, strings, delegates) hold a pointer to data on the heap — assignment copies the reference, not the data. Practical consequence: mutate a struct you passed by value and the caller's copy is untouched; mutate a class instance and every reference sees it.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>2. What is boxing/unboxing, and why does it matter for performance?</summary>
+          <div class="qa-body">
+            <p>Boxing wraps a value type in an object on the heap (e.g. assigning an <code>int</code> to an <code>object</code>); unboxing casts it back. Every box is a heap allocation plus GC pressure — costly in a tight loop. Generics (<code>List&lt;int&gt;</code> vs old-style <code>ArrayList</code>) exist largely to avoid this.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>3. Walk through the four OOP pillars with a C# example each.</summary>
+          <div class="qa-body">
+            <ul>
+              <li><strong>Encapsulation</strong> — private fields exposed via properties, so invariants can be enforced (a <code>Machine</code> class rejecting a negative <code>FeedRate</code>).</li>
+              <li><strong>Abstraction</strong> — an <code>IExporter</code> interface hides whether you're writing DXF or G-code.</li>
+              <li><strong>Inheritance</strong> — <code>LaserCuttingJob : MachiningJob</code> reuses shared scheduling logic.</li>
+              <li><strong>Polymorphism</strong> — a list of <code>MachiningJob</code> where each <code>Run()</code> call dispatches to the correct override at runtime.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="qa"><summary>4. Abstract class vs interface — when do you reach for which?</summary>
+          <div class="qa-body">
+            <p>Abstract class: shared state and partial implementation, single inheritance only, models an "is-a" hierarchy. Interface: a contract with no state, a type can implement many, models "can-do" capability. Since C# 8, interfaces can carry default method bodies, narrowing the gap — but state still belongs in a base class.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>5. Method overloading vs overriding — compile-time vs runtime polymorphism.</summary>
+          <div class="qa-body">
+            <p>Overloading: same name, different signature, resolved by the compiler at compile time. Overriding: <code>virtual</code>/<code>abstract</code> base member replaced by a derived <code>override</code>, resolved at runtime via the object's actual type (v-table dispatch).</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>6. What do <code>virtual</code>, <code>override</code>, <code>new</code>, and <code>sealed</code> do on a method?</summary>
+          <div class="qa-body">
+            <p><code>virtual</code> marks a method as overridable; <code>override</code> replaces it polymorphically; <code>new</code> hides the base member instead of overriding it (no polymorphism — call through a base reference and you get the base version); <code>sealed</code> on an override stops further derived classes from overriding it again.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>7. <code>struct</code> vs <code>class</code> — beyond "one's a value type."</summary>
+          <div class="qa-body">
+            <p>Structs are cheap for small, immutable, short-lived data (a <code>Point3D</code> in a geometry kernel) — no heap allocation, no GC. They can't have a parameterless constructor pre-C# 10 in the way classes do, can't be null unless wrapped in <code>Nullable&lt;T&gt;</code>, and large structs are expensive to copy — that copy cost is the usual reason to switch to a class.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>8. Auto-implemented properties vs fields — why not just use public fields?</summary>
+          <div class="qa-body">
+            <p>Properties let you add validation, computed logic, or a breakpoint-friendly setter later without breaking binary/source compatibility with callers. <code>public int Speed { get; set; }</code> compiles to a backing field plus get/set methods — free encapsulation with field-like syntax.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>9. <code>readonly</code> vs <code>const</code>.</summary>
+          <div class="qa-body">
+            <p><code>const</code> is a compile-time constant, inlined at every call site, must be a primitive/string, implicitly static. <code>readonly</code> is assigned once at runtime (in the declaration or constructor), can be instance-level, and can hold any type including one computed at startup.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>10. <code>==</code> vs <code>.Equals()</code> vs <code>ReferenceEquals</code>.</summary>
+          <div class="qa-body">
+            <p><code>ReferenceEquals</code> always compares identity. <code>==</code> is operator-overloadable — value types compare by value, reference types by identity unless the class overloads it (like <code>string</code>, which compares content). <code>.Equals()</code> is virtual and is what you override to define custom value equality; overriding it without also overriding <code>GetHashCode()</code> breaks dictionaries and hash sets.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>11. How do you handle exceptions correctly in C#? What's the difference between <code>throw</code> and <code>throw ex</code>?</summary>
+          <div class="qa-body">
+            <p>Catch only what you can meaningfully handle; use <code>finally</code> (or better, <code>using</code>) for cleanup; create specific exception types instead of throwing generic <code>Exception</code>. <code>throw;</code> inside a catch re-throws preserving the original stack trace; <code>throw ex;</code> resets the stack trace to the current frame, hiding where it actually failed — always prefer bare <code>throw;</code>.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>12. Delegates vs events, and where do <code>Func</code>/<code>Action</code>/<code>Predicate</code> fit in?</summary>
+          <div class="qa-body">
+            <p>A delegate is a type-safe function pointer; an event is a delegate field with restricted access (outsiders can <code>+=</code>/<code>-=</code> but not invoke or reassign it directly) — the standard pattern for publish/subscribe, like a UI button's <code>Click</code>. <code>Func&lt;T,TResult&gt;</code>, <code>Action&lt;T&gt;</code>, and <code>Predicate&lt;T&gt;</code> are just pre-defined generic delegate shapes so you don't declare your own delegate type for common cases.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="g2">
+        <h2>B · .NET &amp; CLR</h2>
+
+        <details class="qa"><summary>13. What is the CLR, and what does JIT compilation actually do?</summary>
+          <div class="qa-body">
+            <p>The Common Language Runtime hosts execution: memory management, GC, type safety, exception handling. C# compiles to IL (intermediate language), and the JIT compiles that IL to native machine code the first time a method runs on the current CPU — trading a bit of startup cost for code tuned to the actual hardware.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>14. Explain GC generations, and when you actually need <code>IDisposable</code>.</summary>
+          <div class="qa-body">
+            <p>Gen 0 holds new, short-lived objects and is collected most often and cheaply; survivors promote to Gen 1, then Gen 2 for long-lived objects, collected less frequently since scanning is more expensive. GC only manages memory — it doesn't know about unmanaged resources (file handles, DB connections, GDI handles). Implement <code>IDisposable</code> to release those deterministically, and always consume it via <code>using</code> so <code>Dispose()</code> runs even on an exception.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>15. <code>IEnumerable</code> vs <code>IEnumerator</code> vs <code>IQueryable</code>.</summary>
+          <div class="qa-body">
+            <p><code>IEnumerable&lt;T&gt;</code> exposes <code>GetEnumerator()</code> — "this can be iterated." <code>IEnumerator&lt;T&gt;</code> is the cursor doing the iterating (<code>MoveNext</code>/<code>Current</code>). <code>IQueryable&lt;T&gt;</code> extends <code>IEnumerable&lt;T&gt;</code> but builds an expression tree instead of running immediately — that's how EF Core translates a LINQ query into SQL before anything executes.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>16. What is deferred execution in LINQ, and why does it trip people up?</summary>
+          <div class="qa-body">
+            <p><code>Where</code>/<code>Select</code>/<code>OrderBy</code> build a query but don't run it until enumerated (<code>foreach</code>, <code>.ToList()</code>, <code>.Count()</code>). Trap: if the underlying collection changes between defining the query and enumerating it, you'll see the mutated data — or a <code>InvalidOperationException</code> for "collection modified." Force immediate evaluation with <code>.ToList()</code>/<code>.ToArray()</code> when you need a snapshot.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>17. async/await — what problem does it solve, and how is it different from spinning up a new thread?</summary>
+          <div class="qa-body">
+            <p>It frees a thread while waiting on I/O (disk, network, DB) instead of blocking it — the thread returns to the pool and picks up other work, then resumes your method via a continuation when the awaited task completes. It's not automatically parallel — <code>await Task.Delay(1000)</code> uses zero extra threads while waiting. Use <code>Task.Run</code> only to offload genuine CPU-bound work onto a background thread.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>18. Why is <code>string</code> immutable, and when should you use <code>StringBuilder</code> instead?</summary>
+          <div class="qa-body">
+            <p>Every apparent mutation (<code>+=</code>, <code>.Replace()</code>) allocates a new string, since the original is fixed once created — that's what makes strings safe to share and hash. In a loop building up text, that means N allocations; <code>StringBuilder</code> mutates an internal buffer in place, so use it once you're concatenating more than a handful of times.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>19. Why use generics instead of <code>object</code>, and what do constraints like <code>where T : IComparable&lt;T&gt;</code> buy you?</summary>
+          <div class="qa-body">
+            <p>Generics give compile-time type safety and avoid boxing/casting that <code>object</code>-based code needs. A constraint restricts what <code>T</code> can be so the compiler lets you call members on it — <code>where T : IComparable&lt;T&gt;</code> lets a generic sort method call <code>CompareTo</code> without knowing the concrete type.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>20. .NET Framework vs .NET Core / modern .NET vs .NET Standard — do you need to know the difference today?</summary>
+          <div class="qa-body">
+            <p>.NET Framework is the legacy Windows-only runtime; .NET Core (now unified simply as ".NET 5" onward) is the cross-platform, actively developed runtime; .NET Standard was a compatibility spec for sharing libraries across both, largely superseded now that Framework is in maintenance mode. Worth knowing which one a WPF/WinForms desktop product targets, since older CAD/CAM codebases are frequently still on Framework.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="g3">
+        <h2>C · WPF / WinForms — GUI Programming</h2>
+        <p class="section-note">Explicit bonus skill in the JD, and challenges 5 &amp; 6 above are this in disguise.</p>
+
+        <details class="qa"><summary>21. How does data binding work in WPF at a mechanical level?</summary>
+          <div class="qa-body">
+            <p>A binding wires a target property (e.g. a <code>TextBox.Text</code>) to a source property via a path, resolved through the element's <code>DataContext</code> at runtime by reflection (or compiled bindings in newer WPF). For the UI to react to source changes, the source must raise <code>INotifyPropertyChanged</code>; for two-way sync, the binding's <code>Mode</code> must be <code>TwoWay</code>.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>22. Explain MVVM and why WPF leans on it so heavily.</summary>
+          <div class="qa-body">
+            <p>Model (data/business logic) → ViewModel (state + commands, no UI types) → View (XAML, binds to the ViewModel). It exists because WPF's binding engine makes it nearly free, and it keeps UI logic unit-testable — you can test a ViewModel's behavior with no window ever created.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>23. What's a <code>DependencyProperty</code>, and why not just use a normal CLR property?</summary>
+          <div class="qa-body">
+            <p>It plugs into WPF's property system, which gives you binding, styling/templating, animation, and value coercion/inheritance for free — none of that works on a plain auto-property. The cost is boilerplate: a static <code>DependencyProperty</code> field plus a CLR wrapper (exactly the pattern in the NumericTextBox answer above).</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>24. WPF vs WinForms — how do you actually choose?</summary>
+          <div class="qa-body">
+            <p>WinForms wraps GDI+/native Win32 controls — simple, fast to prototype, pixel-based layout, no real data-binding story. WPF renders itself via DirectX with a resolution-independent vector layout system, rich styling/templating/animation, and first-class binding — better for complex, evolving UI, at the cost of a steeper learning curve. For a CAD/CAM tool with dense property panels and live previews, WPF is the natural fit; a quick internal utility often isn't worth the overhead.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>25. How do you restrict a TextBox to numeric-only input, end to end (not just keystrokes)?</summary>
+          <div class="qa-body">
+            <p>Filter <code>PreviewTextInput</code> for keystrokes, but that alone misses paste (Ctrl+V) and drag-drop text — those bypass <code>TextInput</code> entirely. Also handle <code>DataObject.AddPastingHandler</code> to validate/cancel a paste, and validate again in the bound property setter as the last line of defense. See the full NumericTextBox solution above.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>26. What's an <code>ICommand</code>, and why not just wire a <code>Click</code> event handler?</summary>
+          <div class="qa-body">
+            <p><code>ICommand</code> (<code>Execute</code>/<code>CanExecute</code>) lets the ViewModel expose an action a View binds to via <code>Command="{Binding SaveCommand}"</code>, so the button's enabled state and behavior come from testable ViewModel logic rather than code-behind — the MVVM-friendly replacement for an event handler.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>27. Why does a bound WPF control not update, and how do you fix it?</summary>
+          <div class="qa-body">
+            <p>Usually the source class doesn't implement <code>INotifyPropertyChanged</code>, or the setter changes the backing field without firing <code>PropertyChanged</code>. Fix: raise <code>PropertyChanged(nameof(Property))</code> in every setter (or use <code>[ObservableProperty]</code> source generators in modern MVVM toolkits). Second most common cause: binding to a field instead of a property — WPF bindings require a property.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="g4">
+        <h2>D · SQL &amp; Database</h2>
+
+        <details class="qa"><summary>28. INNER vs LEFT vs RIGHT vs FULL JOIN — with a one-line example.</summary>
+          <div class="qa-body">
+            <p><code>INNER JOIN</code> keeps only matching rows on both sides; <code>LEFT JOIN</code> keeps every row from the left table, with <code>NULL</code>s where there's no right match; <code>RIGHT JOIN</code> is the mirror; <code>FULL JOIN</code> keeps unmatched rows from both sides.</p>
+            <pre><span class="k">SELECT</span> o.Id, c.Name
+<span class="k">FROM</span> Orders o
+<span class="k">LEFT JOIN</span> Customers c <span class="k">ON</span> o.CustomerId = c.Id;</pre>
+          </div>
+        </details>
+
+        <details class="qa"><summary>29. What is normalization, and when would you deliberately denormalize?</summary>
+          <div class="qa-body">
+            <p>1NF: atomic columns, no repeating groups. 2NF: every non-key column depends on the whole primary key (matters for composite keys). 3NF: no column depends on another non-key column (removes transitive dependency). Denormalize deliberately for read-heavy reporting tables where join cost outweighs the duplication/consistency risk.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>30. What does a database index actually speed up, and what does it cost?</summary>
+          <div class="qa-body">
+            <p>An index (typically a B-tree) lets the engine find rows by a lookup instead of a full table scan — huge win for <code>WHERE</code>/<code>JOIN</code>/<code>ORDER BY</code> on the indexed column. Cost: extra storage, and every <code>INSERT</code>/<code>UPDATE</code>/<code>DELETE</code> has to maintain the index too — over-indexing slows writes.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>31. <code>WHERE</code> vs <code>HAVING</code>.</summary>
+          <div class="qa-body">
+            <p><code>WHERE</code> filters individual rows before grouping/aggregation happens. <code>HAVING</code> filters groups after <code>GROUP BY</code> — use it when the filter condition itself is an aggregate, like <code>HAVING COUNT(*) &gt; 5</code>.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>32. Primary key vs foreign key vs unique constraint.</summary>
+          <div class="qa-body">
+            <p>Primary key uniquely identifies a row and disallows <code>NULL</code>; a table has exactly one (possibly composite). Foreign key enforces referential integrity, pointing to another table's primary/unique key. Unique constraint enforces no-duplicates on a column but, unlike a primary key, allows one <code>NULL</code> and a table can have several.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>33. How do you prevent SQL injection from C#?</summary>
+          <div class="qa-body">
+            <p>Never concatenate user input into SQL text. Use parameterized queries (<code>SqlCommand.Parameters.Add</code>) or an ORM like Entity Framework, which parameterizes automatically. Parameters ensure user input is always treated as data, never as executable SQL syntax.</p>
+            <pre><span class="k">using</span> <span class="k">var</span> cmd = <span class="k">new</span> SqlCommand(<span class="s">"SELECT * FROM Users WHERE Email = @email"</span>, conn);
+cmd.Parameters.AddWithValue(<span class="s">"@email"</span>, userInput);</pre>
+          </div>
+        </details>
+      </section>
+
+      <section id="g5">
+        <h2>E · Git (and Mercurial)</h2>
+
+        <details class="qa"><summary>34. <code>git merge</code> vs <code>git rebase</code> — what's the actual difference in history?</summary>
+          <div class="qa-body">
+            <p><code>merge</code> creates a new commit joining two histories, preserving exactly what happened, but the log gets a merge-commit graph. <code>rebase</code> replays your commits on top of the target branch one by one, producing a linear history — cleaner to read, but it rewrites commit hashes, so never rebase a branch someone else has already pulled.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>35. How do you resolve a merge conflict?</summary>
+          <div class="qa-body">
+            <p>Git marks the conflicting region in the file with <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>/<code>=======</code>/<code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> markers. Edit the file to the correct final content, remove the markers, <code>git add</code> the file, then continue the merge/rebase. For anything non-trivial, open the diff in a merge tool rather than eyeballing raw markers.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>36. The JD lists Mercurial alongside Git — what's the conceptual overlap?</summary>
+          <div class="qa-body">
+            <p>Both are distributed VCS: every clone has the full history, commits form a DAG, and you can work fully offline. Differences are mostly branching model and UX — Mercurial models a branch as a permanent named attribute on commits (plus lightweight "bookmarks" as a Git-branch analogue), while Git branches are just movable pointers. If you know Git well, say so plainly and note the concepts transfer even if the commands don't.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>37. Describe your day-to-day Git workflow.</summary>
+          <div class="qa-body">
+            <p>Feature branch off <code>main</code>/<code>develop</code>, small focused commits with descriptive messages, rebase or merge latest target branch in before opening a PR, code review, squash or merge on approval. Mention you keep commits atomic enough that <code>git bisect</code> or a revert doesn't take down unrelated work — that's the real signal of Git maturity.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="g6">
+        <h2>F · Unit Testing</h2>
+
+        <details class="qa"><summary>38. What makes a good unit test?</summary>
+          <div class="qa-body">
+            <p>Arrange–Act–Assert structure; tests one behavior; fast, isolated, repeatable, and self-verifying (FIRST). No hidden dependency on execution order, system clock, network, or file system — those belong behind an abstraction you can fake.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>39. Unit test vs integration test — where's the line?</summary>
+          <div class="qa-body">
+            <p>A unit test exercises one class/method in isolation, dependencies faked or mocked, no I/O. An integration test exercises multiple real components together — e.g. your repository class against an actual database — to verify they cooperate correctly. You want far more of the former than the latter; unit tests should catch most regressions cheaply.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>40. What is mocking, and how would you test a class with Moq?</summary>
+          <div class="qa-body">
+            <p>A mock is a fake implementation of a dependency (usually via an interface) that lets you control its behavior and assert how it was called, so the test isolates just the class under test.</p>
+            <pre><span class="k">var</span> repo = <span class="k">new</span> Mock&lt;IJobRepository&gt;();
+repo.Setup(r => r.GetById(<span class="k">1</span>)).Returns(<span class="k">new</span> Job { Id = <span class="k">1</span> });
+
+<span class="k">var</span> service = <span class="k">new</span> JobService(repo.Object);
+<span class="k">var</span> job = service.Load(<span class="k">1</span>);
+
+Assert.Equal(<span class="k">1</span>, job.Id);
+repo.Verify(r => r.GetById(<span class="k">1</span>), Times.Once);</pre>
+          </div>
+        </details>
+
+        <details class="qa"><summary>41. What is code coverage, and why isn't 100% coverage the goal?</summary>
+          <div class="qa-body">
+            <p>Coverage measures which lines/branches executed during tests — it tells you what wasn't tested, but says nothing about whether the assertions are meaningful. A test that calls a method with no assertions can hit 100% coverage and catch zero bugs. Use coverage to find untested gaps, not as a quality target in itself.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="g7">
+        <h2>G · C++ &amp; Problem Solving</h2>
+        <p class="section-note">Bonus skill, but a CAD/CAM shop's geometry kernel is plausibly C++ underneath a C# UI — expect at least one comparison question.</p>
+
+        <details class="qa"><summary>42. Key differences between C# and C++ you'd actually run into.</summary>
+          <div class="qa-body">
+            <p>Memory: C++ is manual (<code>new</code>/<code>delete</code>, RAII, smart pointers) vs C#'s garbage collector. Pointers: raw pointer arithmetic is normal in C++, restricted to <code>unsafe</code> blocks in C#. Generics vs templates: C++ templates are compile-time code generation (duck-typed), C# generics are a first-class CLR construct with runtime type identity. Compilation: C++ compiles to native machine code directly; C# compiles to IL, JITted at runtime.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>43. Where would C++ still make sense in a CAD/CAM product that's mostly C#?</summary>
+          <div class="qa-body">
+            <p>Performance-critical geometry/kernel code — mesh processing, toolpath computation, nesting algorithms on large parts — where deterministic, allocation-free, low-level memory control matters. The common pattern: a native C++ computation core wrapped and exposed to a C# WPF UI via P/Invoke or C++/CLI.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>44. Why does Big-O matter when your input is "a sheet-metal part's geometry file"?</summary>
+          <div class="qa-body">
+            <p>Because real parts can have thousands of entities, and an O(n²) nearest-neighbor or intersection check that's fine on a toy part becomes visibly slow — or hangs — on a dense production drawing. Know the complexity of the collection operations you reach for (e.g. <code>List.Contains</code> is O(n); a <code>HashSet</code> lookup is O(1)) before it's a customer-facing performance bug.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>45. How would you track down a memory leak in a long-running desktop app?</summary>
+          <div class="qa-body">
+            <p>In managed code it's almost always an event handler or subscription that's never unsubscribed, keeping an object alive via a reference chain the GC can't break. Take heap snapshots (dotMemory, Visual Studio's memory profiler, or <code>dotnet-gcdump</code>) at two points in time and diff retained object counts to find what's growing; check for missing <code>-=</code> unsubscribes and undisposed <code>IDisposable</code>s.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>46. Quick coding check: reverse a singly linked list, iteratively.</summary>
+          <div class="qa-body">
+            <p>O(n) time, O(1) space — walk the list once, flipping each <code>Next</code> pointer as you go.</p>
+            <pre><span class="k">public</span> Node Reverse(Node head)
+{
+    Node prev = <span class="k">null</span>;
+    <span class="k">while</span> (head != <span class="k">null</span>)
+    {
+        Node next = head.Next;
+        head.Next = prev;
+        prev = head;
+        head = next;
+    }
+    <span class="k">return</span> prev;
+}</pre>
+          </div>
+        </details>
+      </section>
+
+      <section id="g0html">
+        <h2>I · Basic HTML5 (explicit "Basic skill" in the JD — don't skip this)</h2>
+        <p class="section-note">Listed alongside C# and OOP as a required basic skill, not a bonus — likely a handful of MCQ questions plus maybe one "what's semantic HTML" conversational question face-to-face. Five minutes is enough to cover it.</p>
+
+        <details class="qa"><summary>51. What's new/different about HTML5 vs HTML4?</summary>
+          <div class="qa-body">
+            <p>Semantic structural tags (<code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;footer&gt;</code>) instead of generic <code>&lt;div&gt;</code> soup, native <code>&lt;audio&gt;</code>/<code>&lt;video&gt;</code>/<code>&lt;canvas&gt;</code> without plugins, new form input types (<code>email</code>, <code>date</code>, <code>number</code>, <code>range</code>) with built-in browser validation, and a simplified doctype: <code>&lt;!DOCTYPE html&gt;</code>.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>52. Why use semantic tags instead of just &lt;div&gt; everywhere?</summary>
+          <div class="qa-body">
+            <p>Screen readers and search engines understand the page's structure (accessibility + SEO), and it's more self-documenting for other developers reading the markup. Functionally a <code>&lt;div&gt;</code> and a <code>&lt;section&gt;</code> render the same by default — the difference is entirely meaning, not layout.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>53. Name a few HTML5 input types and why they're better than plain text.</summary>
+          <div class="qa-body">
+            <p><code>&lt;input type="number"&gt;</code>, <code>type="email"</code>, <code>type="date"</code>, <code>type="range"</code>, <code>type="tel"</code> — the browser gives free client-side validation and, on mobile, the right on-screen keyboard. Still validate again server-side; client-side HTML validation is a UX nicety, not a security boundary.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>54. What are data-* attributes used for?</summary>
+          <div class="qa-body">
+            <p>Custom attributes like <code>data-student-id="42"</code> let you attach app-specific data directly to an element, readable in JS via <code>element.dataset.studentId</code>. Common for hooking up behavior without polluting class names or needing a separate lookup.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>55. localStorage vs sessionStorage vs cookies — quick difference?</summary>
+          <div class="qa-body">
+            <p><code>localStorage</code> persists until explicitly cleared, <code>sessionStorage</code> clears when the tab closes — both are client-only, not sent to the server automatically. Cookies are small, sent with every HTTP request automatically, and are what server-side auth/session state traditionally relies on.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="g8">
+        <h2>H · Domain &amp; Fit</h2>
+        <p class="section-note">Live Connections flagged this is a low-turnover team (3–5 yrs, "not a lot of job switches") — expect them to probe stability and genuine interest, not just tech.</p>
+
+        <details class="qa"><summary>47. What do you know about CAD/CAM and sheet-metal fabrication software?</summary>
+          <div class="qa-body">
+            <p>CAM software (MetaCAM, MetaJET, MetaCUT, MetaBEND per Metamation's product line) takes a CAD design of a sheet-metal part and generates the machine instructions to actually cut/bend/laser it — nesting parts efficiently on a sheet, generating toolpaths, and driving laser/press-brake/punch hardware. It's a good sign to say plainly you're new to the domain but understand the CAD-to-machine pipeline conceptually and are keen to learn the specifics on the job — nobody expects prior CAD/CAM experience per the JD, it's explicitly a bonus, not a requirement.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>48. Why this role, and how do you address the "not a lot of job switches" expectation?</summary>
+          <div class="qa-body">
+            <p>Answer honestly with your actual tenure pattern. If your history is stable, say so directly with the numbers. Frame interest in TRUMPF Metamation specifically: an established German engineering group, a genuine engineering product (not a services shop), and a domain where the C#/WPF work has visible physical impact — not just CRUD screens.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>49. The JD mentions Markdown/ASCIIDoc — where would that actually come up?</summary>
+          <div class="qa-body">
+            <p>README files, architecture/design notes, PR descriptions, internal wikis, and often release notes or API docs generated from doc-comments. If you've kept any team documentation, design docs, or a personal engineering wiki in Markdown, mention it — it's a small bonus point that's easy to satisfy honestly.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>50. How do you approach a customer-reported bug in a WPF/WinForms desktop app you can't reproduce locally?</summary>
+          <div class="qa-body">
+            <p>Get exact repro steps, OS/screen-DPI/.NET version, and — critically for a desktop app — any logs or crash dumps; check for environment-specific factors (locale/number formatting is a classic WPF gotcha, high-DPI scaling is another). Add logging around the suspect path if it still won't reproduce, ship a diagnostic build, and narrow from there rather than guessing at the fix.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="g9">
+        <h2>J · Likely Variations — If the Actual Paper Differs Slightly</h2>
+        <p class="section-note">Same style as the 6 challenges you were shown, in case today's actual paper swaps in a close variant. Skim these fast — the pattern matters more than memorizing exact code.</p>
+
+        <details class="qa"><summary>56. Find the Nth largest number in a list (generalizing "2nd largest").</summary>
+          <div class="qa-body">
+            <p>Same single-pass idea doesn't scale cleanly past 2nd — for general N, sort descending and index, or keep a min-heap of size N for large inputs:</p>
+            <pre><span class="k">int</span> nth = numbers.Distinct().OrderByDescending(x => x).Skip(n - 1).First();
+<span class="c">// O(n log n); fine unless the interviewer asks you to avoid sorting for huge n</span></pre>
+          </div>
+        </details>
+
+        <details class="qa"><summary>57. Find the 2nd smallest number (mirror of the 2nd-largest question).</summary>
+          <div class="qa-body">
+            <pre><span class="k">int</span> smallest = <span class="k">int</span>.MaxValue, second = <span class="k">int</span>.MaxValue;
+<span class="k">foreach</span> (<span class="k">var</span> n <span class="k">in</span> numbers)
+{
+    <span class="k">if</span> (n < smallest) { second = smallest; smallest = n; }
+    <span class="k">else</span> <span class="k">if</span> (n < second && n != smallest) { second = n; }
+}</pre>
+          </div>
+        </details>
+
+        <details class="qa"><summary>58. Swap two elements of an array by index, without a temp variable.</summary>
+          <div class="qa-body">
+            <pre>(arr[i], arr[j]) = (arr[j], arr[i]); <span class="c">// tuple deconstruction — same trick as Challenge 3, works on array slots too</span></pre>
+          </div>
+        </details>
+
+        <details class="qa"><summary>59. Reverse guessing game — YOU guess a number the computer picked (instead of computer guessing yours).</summary>
+          <div class="qa-body">
+            <p>Same binary-search skeleton, roles flipped: computer picks a hidden number, user guesses, computer replies high/low/correct.</p>
+            <pre><span class="k">var</span> rnd = <span class="k">new</span> Random();
+<span class="k">int</span> secret = rnd.Next(1, 1001), guess;
+<span class="k">do</span>
+{
+    guess = <span class="k">int</span>.Parse(Console.ReadLine());
+    <span class="k">if</span> (guess < secret) Console.WriteLine(<span class="s">"low"</span>);
+    <span class="k">else</span> <span class="k">if</span> (guess > secret) Console.WriteLine(<span class="s">"high"</span>);
+} <span class="k">while</span> (guess != secret);
+Console.WriteLine(<span class="s">"correct!"</span>);</pre>
+          </div>
+        </details>
+
+        <details class="qa"><summary>60. Recursively compute the total size of a folder, including all subfolders.</summary>
+          <div class="qa-body">
+            <p>Natural follow-up to Challenge 5 — tests recursion, not just LINQ:</p>
+            <pre><span class="k">static</span> <span class="k">long</span> FolderSize(<span class="k">string</span> path)
+{
+    <span class="k">var</span> dir = <span class="k">new</span> DirectoryInfo(path);
+    <span class="k">long</span> total = dir.GetFiles().Sum(f => f.Length);
+    <span class="k">foreach</span> (<span class="k">var</span> sub <span class="k">in</span> dir.GetDirectories())
+        total += FolderSize(sub.FullName); <span class="c">// recurse into each subfolder</span>
+    <span class="k">return</span> total;
+}</pre>
+          </div>
+        </details>
+
+        <details class="qa"><summary>61. Sort the folder listing by last-modified date or filter by extension instead of size.</summary>
+          <div class="qa-body">
+            <p>Same LINQ shape as Challenge 5, different key/predicate — show you understand it's a pattern, not memorized code:</p>
+            <pre>dir.GetFiles(<span class="s">"*.txt"</span>)                       <span class="c">// filter by extension</span>
+   .OrderByDescending(f => f.LastWriteTime) <span class="c">// or sort by modified date</span>
+   .Select(f => f.Name);</pre>
+          </div>
+        </details>
+
+        <details class="qa"><summary>62. DecimalTextBox variant — accept decimals with configurable precision instead of integers only.</summary>
+          <div class="qa-body">
+            <p>Same dependency-property shape as Challenge 6's NumericTextBox; the input filter allows one decimal point and a configurable number of digits after it, and parsing switches from <code>int.TryParse</code> to <code>decimal.TryParse</code> plus a <code>Math.Round(value, DecimalPlaces)</code> clamp.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>63. OOP design check: model Shape → Circle/Rectangle with polymorphic Area().</summary>
+          <div class="qa-body">
+            <p>The JD lists "Object oriented design" as a basic skill by name — a live whiteboard version of this is a realistic ask:</p>
+            <pre><span class="k">abstract</span> <span class="k">class</span> Shape
+{
+    <span class="k">public</span> <span class="k">abstract</span> <span class="k">double</span> Area();
+}
+<span class="k">class</span> Circle : Shape
+{
+    <span class="k">public</span> <span class="k">double</span> Radius { get; set; }
+    <span class="k">public</span> <span class="k">override</span> <span class="k">double</span> Area() => Math.PI * Radius * Radius;
+}
+<span class="k">class</span> Rectangle : Shape
+{
+    <span class="k">public</span> <span class="k">double</span> Width { get; set; }, Height { get; set; }
+    <span class="k">public</span> <span class="k">override</span> <span class="k">double</span> Area() => Width * Height;
+}
+<span class="c">// List&lt;Shape&gt; shapes = ...; shapes.Sum(s => s.Area()); — same call site, no type checks needed</span></pre>
+            <p>Say out loud: this is polymorphism — the caller never checks "is this a Circle or Rectangle," it just calls <code>Area()</code> and the right implementation runs.</p>
+          </div>
+        </details>
+
+        <details class="qa"><summary>64. Employee → Manager hierarchy with method overriding (classic inheritance check).</summary>
+          <div class="qa-body">
+            <pre><span class="k">class</span> Employee
+{
+    <span class="k">public</span> <span class="k">string</span> Name { get; set; }
+    <span class="k">public</span> <span class="k">virtual</span> <span class="k">decimal</span> CalculateBonus() => 1000m;
+}
+<span class="k">class</span> Manager : Employee
+{
+    <span class="k">public</span> <span class="k">int</span> TeamSize { get; set; }
+    <span class="k">public</span> <span class="k">override</span> <span class="k">decimal</span> CalculateBonus() => <span class="k">base</span>.CalculateBonus() + TeamSize * 200m;
+}</pre>
+          </div>
+        </details>
+
+        <details class="qa"><summary>65. Simple calculator console app — the "basic problem solving" filter question.</summary>
+          <div class="qa-body">
+            <pre>Console.Write(<span class="s">"Enter expression (e.g. 5 + 3): "</span>);
+<span class="k">var</span> parts = Console.ReadLine().Split(<span class="s">' '</span>);
+<span class="k">double</span> a = <span class="k">double</span>.Parse(parts[0]), b = <span class="k">double</span>.Parse(parts[2]);
+<span class="k">double</span> result = parts[1] <span class="k">switch</span>
+{
+    <span class="s">"+"</span> => a + b, <span class="s">"-"</span> => a - b, <span class="s">"*"</span> => a * b,
+    <span class="s">"/"</span> => b != 0 ? a / b : <span class="k">throw</span> <span class="k">new</span> DivideByZeroException(),
+    _ => <span class="k">throw</span> <span class="k">new</span> ArgumentException(<span class="s">"Unknown operator"</span>)
+};</pre>
+          </div>
+        </details>
+
+        <details class="qa"><summary>66. Count vowels and consonants in a string.</summary>
+          <div class="qa-body">
+            <pre><span class="k">string</span> vowels = <span class="s">"aeiouAEIOU"</span>;
+<span class="k">int</span> vCount = text.Count(c => vowels.Contains(c));
+<span class="k">int</span> cCount = text.Count(<span class="k">char</span>.IsLetter) - vCount;</pre>
+          </div>
+        </details>
+
+        <details class="qa"><summary>67. Merge two already-sorted arrays into one sorted array (no full re-sort).</summary>
+          <div class="qa-body">
+            <p>Classic two-pointer merge — O(n+m), the same building block as merge sort's combine step:</p>
+            <pre><span class="k">static</span> <span class="k">int</span>[] Merge(<span class="k">int</span>[] a, <span class="k">int</span>[] b)
+{
+    <span class="k">var</span> result = <span class="k">new</span> <span class="k">int</span>[a.Length + b.Length];
+    <span class="k">int</span> i = 0, j = 0, k = 0;
+    <span class="k">while</span> (i < a.Length && j < b.Length)
+        result[k++] = a[i] <= b[j] ? a[i++] : b[j++];
+    <span class="k">while</span> (i < a.Length) result[k++] = a[i++];
+    <span class="k">while</span> (j < b.Length) result[k++] = b[j++];
+    <span class="k">return</span> result;
+}</pre>
+          </div>
+        </details>
+      </section>
+
+      <footer>
+        Prepared from the shared written-test photo and the Live Connections JD for TRUMPF Metamation (C# Developer, Siruseri). Practice saying the answers out loud, not just reading them — the written test is MCQ-based per the recruiter's note, but the face-to-face will ask you to reason through these live.
+      </footer>
+    </div>
+  </main>
+</div>

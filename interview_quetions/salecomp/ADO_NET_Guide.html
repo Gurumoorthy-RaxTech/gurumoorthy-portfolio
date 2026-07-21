@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADO.NET Complete Guide — Salcomp Interview Prep | Gurumoorthy</title>
+<style>
+  :root{--accent:#0e7490;--accent-dim:#155e63;--accent-subtle:rgba(14,116,148,0.12);--bg:#0d0d1a;--bg3:#181830;--card:#1a1a2e;--card2:#16213e;--border:#2a2a4a;--text:#e2e8f0;--muted:#94a3b8;--danger:#ef4444;--warn:#f59e0b;--good:#22c55e;--info:#38bdf8;}
+  *{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7;}
+  #pb{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,26,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;}
+  nav .db{background:var(--accent);color:#fff;font-weight:800;font-size:.8rem;padding:.2rem .7rem;border-radius:999px;}
+  nav a{color:var(--muted);font-size:.75rem;text-decoration:none;}nav a:hover{color:var(--accent);}
+  nav .prog-badge{margin-left:auto;background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:999px;}
+  .hero{padding:2.6rem 1.5rem 1.8rem;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse at top,rgba(14,116,148,.16) 0%,transparent 70%);}
+  .hero h1{font-size:clamp(1.5rem,4vw,2.4rem);font-weight:900;color:var(--accent);}
+  .hero p{color:var(--muted);margin-top:.4rem;max-width:760px;margin-left:auto;margin-right:auto;}
+  .tags{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem;}
+  .tag{background:var(--accent-subtle);border:1px solid var(--accent-dim);color:var(--accent);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+  .crosslinks{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;}
+  .crosslinks a{background:var(--card);border:1px solid var(--border);color:var(--info);text-decoration:none;padding:.4rem .9rem;border-radius:8px;font-size:.8rem;font-weight:600;}
+  .crosslinks a:hover{border-color:var(--accent);color:var(--accent);}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  section{margin-bottom:2.6rem;}
+  h2{font-size:1.45rem;font-weight:800;color:var(--accent);margin-bottom:1rem;padding-bottom:.3rem;border-bottom:2px solid var(--accent-dim);}
+  h3{font-size:1.02rem;font-weight:700;color:var(--info);margin:1.1rem 0 .5rem;}
+  p{margin-bottom:.6rem;font-size:.92rem;}
+  code{font-family:'Cascadia Code',Consolas,monospace;background:var(--bg3);padding:.1rem .35rem;border-radius:4px;font-size:.85em;color:var(--info);}
+  pre{background:#0a0a16;border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;overflow-x:auto;font-family:'Cascadia Code',Consolas,monospace;font-size:.8rem;line-height:1.6;margin:.7rem 0;}
+  pre code{background:none;padding:0;color:var(--text);}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0;}
+  th{background:var(--accent-subtle);color:var(--accent);padding:.6rem .8rem;text-align:left;border:1px solid var(--border);}
+  td{padding:.55rem .8rem;border:1px solid var(--border);}tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  .thang{background:linear-gradient(135deg,rgba(14,116,148,.14),rgba(14,116,148,.04));border:1px solid var(--accent-dim);border-radius:12px;padding:.9rem 1.1rem;margin:.8rem 0;display:flex;gap:.7rem;}
+  .thang .ti{font-size:1.3rem;flex-shrink:0;}.thang .tt{color:var(--accent);font-weight:800;font-size:.85rem;}.thang .tb{color:var(--muted);font-size:.87rem;margin-top:.2rem;}
+  .good-box{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .warn-box{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:8px;padding:.9rem 1.1rem;margin:.8rem 0;font-size:.9rem;}
+  .bad-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.35);border-radius:8px;padding:.7rem .9rem;margin:.5rem 0;font-size:.85rem;}
+  .sc{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .sh{display:flex;align-items:flex-start;gap:.7rem;}
+  .sn{background:var(--accent);color:#fff;font-weight:900;font-size:.85rem;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sq{font-weight:700;font-size:.92rem;}.st{font-size:.7rem;color:var(--accent);background:var(--accent-subtle);border:1px solid var(--accent-dim);padding:.1rem .45rem;border-radius:999px;margin-left:.3rem;font-weight:600;}
+  .rb{margin-top:.7rem;background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.35rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;}
+  .rb:hover{background:var(--accent);color:#fff;}
+  .rc{display:none;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);font-size:.88rem;}.rc.open{display:block;}
+  .qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem;}
+  .qq{font-weight:700;margin-bottom:.7rem;}.qo{display:flex;flex-direction:column;gap:.4rem;}
+  .qb{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s;}
+  .qb:hover{border-color:var(--accent);background:var(--accent-subtle);}
+  .qb.correct{border-color:var(--good);background:rgba(34,197,94,.1);color:var(--good);font-weight:700;}
+  .qb.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);}
+  .qf{font-size:.8rem;margin-top:.5rem;padding:.45rem .7rem;border-radius:6px;display:none;}
+  .qf.show{display:block;}.qf.good{background:rgba(34,197,94,.1);color:var(--good);}.qf.bad{background:rgba(239,68,68,.1);color:var(--danger);}
+  .cl-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.35rem;}
+  .cl-list li{display:flex;align-items:flex-start;gap:.55rem;font-size:.85rem;cursor:pointer;padding:.3rem .4rem;border-radius:6px;}
+  .cl-list li:hover{background:var(--accent-subtle);}.cl-list li input{accent-color:var(--accent);width:.9rem;height:.9rem;margin-top:.15rem;flex-shrink:0;}
+  .cl-list li.done{color:var(--muted);text-decoration:line-through;}
+  .completion{text-align:center;padding:2.2rem;background:radial-gradient(ellipse at center,rgba(14,116,148,.22),transparent 70%);border:2px solid var(--accent);border-radius:16px;margin:2rem 0;}
+  .completion h2{color:var(--accent);font-size:1.7rem;border:none;}
+  .badge{display:inline-block;background:var(--accent);color:#fff;font-size:1.15rem;font-weight:900;padding:.7rem 1.7rem;border-radius:50px;margin:1rem 0;}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);}
+</style>
+</head>
+<body>
+<div id="pb" style="width:0%"></div>
+<nav>
+  <span class="db">ADO.NET</span>
+  <a href="#overview">Overview</a><a href="#concepts">Concepts</a><a href="#coding">Coding</a>
+  <a href="#moreproblems">More Problems</a><a href="#assignment">Assignment</a><a href="#scenarios">Scenarios</a><a href="#quiz">Quiz</a>
+  <span class="prog-badge" id="progBadge">0/0 done</span>
+</nav>
+<div class="hero">
+  <h1>ADO.NET Complete Guide — Salcomp Interview (Wed)</h1>
+  <p>Concepts + coding problems + assignment-style challenges + interview Q&amp;A. Explanation Thanglish-la irukku (Tamil + English mix) easy-a puriyanumnu.</p>
+  <div class="tags">
+    <span class="tag">Connected Architecture</span><span class="tag">Disconnected Architecture</span>
+    <span class="tag">SqlCommand / SqlDataReader</span><span class="tag">Transactions</span><span class="tag">salcomp.com</span>
+  </div>
+  <div class="crosslinks">
+    <a href="EntityFramework_Guide.html">→ Entity Framework Guide</a>
+    <a href="WinForms_Guide.html">→ WinForms Guide</a>
+    <a href="SampleProjects/SampleProjects_Guide.html">→ Sample Projects (Code-First / Database-First)</a>
+  </div>
+</div>
+<main>
+
+<section id="overview">
+  <h2>🎯 Overview — Why ADO.NET Matters Even Though You Use Dapper</h2>
+  <div class="thang">
+    <div class="ti">💡</div>
+    <div><div class="tt">Thanglish la solradha na</div>
+    <div class="tb">Neenga already Dapper use pannitu irukkeenga, but Dapper is literally built ON TOP OF ADO.NET — <code>IDbConnection</code>, <code>SqlCommand</code> ellame ADO.NET classes thaan. Interviewer "Dapper eppadi work aagudhu?" nu kekkumbodhu, ADO.NET fundamentals theriyama answer pannamudiyadhu. So ADO.NET-a "basic" nu nenachu skip pannaadheenga — idhu thaan foundation.</div></div>
+  </div>
+  <table>
+    <tr><th>Concept</th><th>One-line meaning</th></tr>
+    <tr><td>Connected Architecture</td><td>Connection open-a vachu, data-va real-time-a padikardhu (SqlDataReader)</td></tr>
+    <tr><td>Disconnected Architecture</td><td>Connection close pannitu, memory-la data vachukardhu (DataSet/DataTable), later use pannalam</td></tr>
+    <tr><td>SqlCommand</td><td>SQL query or stored procedure-a execute pannura object</td></tr>
+    <tr><td>SqlDataAdapter</td><td>Connected and disconnected-ku bridge — Fill() DataSet fill pannum, Update() changes DB-ku push pannum</td></tr>
+  </table>
+  <div class="warn-box"><strong>2-Day Prep Priority:</strong> Day 1 (today) → Concepts + first 4 coding problems. Day 2 (tomorrow) → remaining coding problems + Assignment Simulation (timed) + Scenarios + Quiz, rehearsed out loud.</div>
+</section>
+
+<section id="concepts">
+  <h2>📚 Core Concepts</h2>
+
+  <h3>1. Connected vs Disconnected Architecture</h3>
+  <p>Connected: connection open pannitu irukkanum, appadiye read pannanum (SqlDataReader) — fast, but connection busy-a irukkum. Disconnected: data-va DataSet/DataTable-la load pannitu connection close pannidalam — connection free aagidum, but data stale aagalam (namba manually refresh pannanum).</p>
+  <table>
+    <tr><th>Aspect</th><th>Connected (SqlDataReader)</th><th>Disconnected (DataSet/DataAdapter)</th></tr>
+    <tr><td>Connection state</td><td>Open throughout read</td><td>Open only during Fill(), then closed</td></tr>
+    <tr><td>Direction</td><td>Forward-only, read-only</td><td>Can navigate any direction, editable in memory</td></tr>
+    <tr><td>Speed</td><td>Fastest — no extra memory overhead</td><td>Slower — builds in-memory tables</td></tr>
+    <tr><td>Best for</td><td>Simple read-and-bind, high-throughput APIs</td><td>Offline editing, multiple related tables, WinForms grids</td></tr>
+  </table>
+
+  <h3>2. SqlConnection & Connection Pooling</h3>
+  <pre><code>public class StudentRepository
+{
+    private readonly string _connStr;
+    public StudentRepository(string connStr) => _connStr = connStr;
+
+    public List&lt;Student&gt; GetActiveStudents(int schoolId)
+    {
+        var list = new List&lt;Student&gt;();
+        using (var conn = new SqlConnection(_connStr))
+        {
+            conn.Open();
+            using (var cmd = new SqlCommand(
+                "SELECT Id, Name, ClassId FROM Students WHERE SchoolId=@SchoolId AND IsActive=1", conn))
+            {
+                cmd.Parameters.AddWithValue("@SchoolId", schoolId);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new Student
+                        {
+                            Id = reader.GetInt32(0),
+                            Name = reader.GetString(1),
+                            ClassId = reader.GetInt32(2)
+                        });
+                    }
+                }
+            }
+        } // connection auto-closed and RETURNED TO POOL here, not destroyed
+        return list;
+    }
+}</code></pre>
+  <div class="thang">
+    <div class="ti">🔌</div>
+    <div><div class="tt">Connection Pooling — enna nu</div>
+    <div class="tb"><code>conn.Close()</code> or <code>using</code> block exit aagumbodhu, actual TCP connection destroy aagadhu — ADO.NET adha oru "pool"-la vachukum. Next time nee same connection string-oda open pannumbodhu, pool-la irundhu already-open connection-a reuse pannum. Idhu vera oru new TCP handshake pannradha vida ​romba fast. <code>Min Pool Size</code> / <code>Max Pool Size</code> connection string-la configure pannalam.</div></div>
+  </div>
+  <div class="bad-box"><strong>Common mistake:</strong> Forgetting <code>using</code> or not calling <code>Close()</code> — connections leak, pool exhausts, and you get "Timeout expired. The timeout period elapsed prior to obtaining a connection from the pool" in production under load.</div>
+
+  <h3>3. SqlCommand — ExecuteReader vs ExecuteScalar vs ExecuteNonQuery</h3>
+  <table>
+    <tr><th>Method</th><th>Returns</th><th>When to use</th></tr>
+    <tr><td>ExecuteReader()</td><td>SqlDataReader (row-by-row stream)</td><td>SELECT that returns multiple rows/columns</td></tr>
+    <tr><td>ExecuteScalar()</td><td>object (first column of first row)</td><td>SELECT COUNT(*), single aggregate value, SCOPE_IDENTITY()</td></tr>
+    <tr><td>ExecuteNonQuery()</td><td>int (rows affected)</td><td>INSERT / UPDATE / DELETE</td></tr>
+  </table>
+  <pre><code>// ExecuteScalar example — get total fee count
+using var cmd = new SqlCommand("SELECT COUNT(*) FROM Fees WHERE StudentId=@Id", conn);
+cmd.Parameters.AddWithValue("@Id", studentId);
+int count = (int)cmd.ExecuteScalar();
+
+// ExecuteNonQuery example — insert and return rows affected
+using var cmd2 = new SqlCommand(
+    "UPDATE Students SET IsActive=0 WHERE Id=@Id", conn);
+cmd2.Parameters.AddWithValue("@Id", studentId);
+int rowsAffected = cmd2.ExecuteNonQuery();</code></pre>
+
+  <h3>4. Parameterized Queries — SQL Injection Prevention</h3>
+  <div class="bad-box">❌ <strong>DANGEROUS:</strong> <code>"SELECT * FROM Students WHERE Name = '" + nameInput + "'"</code> — user types <code>' OR '1'='1</code> and gets every row, or worse, drops a table.</div>
+  <div class="good-box">✅ <strong>SAFE:</strong> <code>cmd.Parameters.AddWithValue("@Name", nameInput)</code> with <code>WHERE Name = @Name</code> in SQL — DB driver sends the value separately, never concatenated into the SQL text.</div>
+  <p>Interview la idhu almost guaranteed question — "how do you prevent SQL injection in ADO.NET" nu kekkalam. Always answer: parameterized queries, never string concatenation.</p>
+
+  <h3>5. SqlDataAdapter + DataSet/DataTable (Disconnected Architecture)</h3>
+  <pre><code>public DataTable GetStudentsTable(int schoolId)
+{
+    var dt = new DataTable();
+    using var conn = new SqlConnection(_connStr);
+    using var da = new SqlDataAdapter(
+        "SELECT Id, Name, ClassId FROM Students WHERE SchoolId=@SchoolId", conn);
+    da.SelectCommand.Parameters.AddWithValue("@SchoolId", schoolId);
+    da.Fill(dt);          // opens connection, fills DataTable, closes connection
+    return dt;             // dt can now be bound to a DataGridView, edited offline
+}
+
+// Pushing edits back to the database:
+public void SaveChanges(DataTable dt)
+{
+    using var conn = new SqlConnection(_connStr);
+    using var da = new SqlDataAdapter("SELECT Id, Name, ClassId FROM Students", conn);
+    using var builder = new SqlCommandBuilder(da);   // auto-generates Insert/Update/Delete
+    da.Update(dt);          // pushes only CHANGED rows back to DB
+}</code></pre>
+  <div class="thang">
+    <div class="ti">🖥️</div>
+    <div><div class="tt">WinForms bridge</div>
+    <div class="tb">Idhu exactly enga WinForms interview-oda connect aagudhu — <code>DataTable</code>-a <code>DataGridView.DataSource</code>-ku assign panra pattern romba common. Full details WinForms guide-la irukku.</div></div>
+  </div>
+
+  <h3>6. Transactions — SqlTransaction</h3>
+  <pre><code>using var conn = new SqlConnection(_connStr);
+conn.Open();
+using var txn = conn.BeginTransaction();
+try
+{
+    using (var cmd1 = new SqlCommand(
+        "INSERT INTO Students (Name, SchoolId) VALUES (@Name, @SchoolId); SELECT SCOPE_IDENTITY();",
+        conn, txn))
+    {
+        cmd1.Parameters.AddWithValue("@Name", "Arun");
+        cmd1.Parameters.AddWithValue("@SchoolId", 1);
+        int newStudentId = Convert.ToInt32(cmd1.ExecuteScalar());
+
+        using var cmd2 = new SqlCommand(
+            "INSERT INTO Fees (StudentId, Amount) VALUES (@StudentId, @Amount)", conn, txn);
+        cmd2.Parameters.AddWithValue("@StudentId", newStudentId);
+        cmd2.Parameters.AddWithValue("@Amount", 5000);
+        cmd2.ExecuteNonQuery();
+    }
+    txn.Commit();     // both inserts succeed together
+}
+catch
+{
+    txn.Rollback();   // if fee insert fails, student insert is undone too — no orphan student
+    throw;
+}</code></pre>
+  <p>Interview point: enna transaction venum-nu kekka, "atomicity" solradhu — multiple related writes ella-um succeed pannanum, illa ellam rollback aganum. ZenCampus example: admit student + create fee record — rendume ஒரே transaction-la.</p>
+
+  <h3>7. Stored Procedure Call with Output Parameter</h3>
+  <pre><code>using var cmd = new SqlCommand("sp_GetFeeSummary", conn)
+{
+    CommandType = CommandType.StoredProcedure
+};
+cmd.Parameters.AddWithValue("@SchoolId", schoolId);
+
+var totalParam = new SqlParameter("@TotalCount", SqlDbType.Int)
+{
+    Direction = ParameterDirection.Output
+};
+cmd.Parameters.Add(totalParam);
+
+using (var reader = cmd.ExecuteReader())
+{
+    while (reader.Read()) { /* read fee rows */ }
+}
+int total = (int)totalParam.Value;   // read AFTER reader is closed</code></pre>
+  <div class="warn-box">Common gotcha: output parameter value is only populated correctly <strong>after</strong> the SqlDataReader is fully read and closed — reading it too early gives garbage or DBNull.</div>
+
+  <h3>8. Async ADO.NET</h3>
+  <pre><code>public async Task&lt;List&lt;Student&gt;&gt; GetActiveStudentsAsync(int schoolId)
+{
+    var list = new List&lt;Student&gt;();
+    await using var conn = new SqlConnection(_connStr);
+    await conn.OpenAsync();
+    await using var cmd = new SqlCommand("SELECT Id, Name FROM Students WHERE SchoolId=@Id", conn);
+    cmd.Parameters.AddWithValue("@Id", schoolId);
+    await using var reader = await cmd.ExecuteReaderAsync();
+    while (await reader.ReadAsync())
+        list.Add(new Student { Id = reader.GetInt32(0), Name = reader.GetString(1) });
+    return list;
+}</code></pre>
+  <p>Async methods free up the thread while waiting for I/O (network round-trip to SQL Server) — important for Web API scalability under load. WinForms desktop apps use async too, to avoid freezing the UI thread (details in WinForms guide).</p>
+
+  <h3>9. SqlBulkCopy — Bulk Insert</h3>
+  <pre><code>// Instead of looping 5000 times with individual INSERTs (slow, 5000 round-trips):
+using var bulkCopy = new SqlBulkCopy(_connStr)
+{
+    DestinationTableName = "Attendance"
+};
+bulkCopy.ColumnMappings.Add("StudentId", "StudentId");
+bulkCopy.ColumnMappings.Add("Date", "Date");
+bulkCopy.ColumnMappings.Add("Status", "Status");
+bulkCopy.WriteToServer(attendanceDataTable);   // ONE round-trip, all 5000 rows</code></pre>
+
+  <h3>10. MARS — Multiple Active Result Sets</h3>
+  <p>By default one SqlConnection can only have ONE open SqlDataReader at a time. MARS (<code>MultipleActiveResultSets=True</code> in connection string) allows multiple open readers/commands on the same connection simultaneously — useful in some interleaved-read scenarios, but generally EF Core enables it by default; in raw ADO.NET, prefer opening a second connection or fully reading one result set before starting the next.</p>
+</section>
+
+<section id="coding">
+  <h2>💻 Coding Problems (Reveal Solution)</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">Write a method to fetch all active students for a school using ADO.NET (connected architecture).</span><span class="st">Basics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>public List&lt;Student&gt; GetActiveStudents(int schoolId)
+{
+    var list = new List&lt;Student&gt;();
+    const string sql = "SELECT Id, Name, ClassId FROM Students WHERE SchoolId=@SchoolId AND IsActive=1";
+    using var conn = new SqlConnection(_connStr);
+    using var cmd = new SqlCommand(sql, conn);
+    cmd.Parameters.AddWithValue("@SchoolId", schoolId);
+    conn.Open();
+    using var reader = cmd.ExecuteReader();
+    while (reader.Read())
+        list.Add(new Student { Id = reader.GetInt32(0), Name = reader.GetString(1), ClassId = reader.GetInt32(2) });
+    return list;
+}</code></pre>
+  <p>Key points to say out loud: parameterized query, <code>using</code> for auto-dispose, <code>ExecuteReader</code> because multiple rows expected.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">Insert a new student and return the newly generated identity value.</span><span class="st">Basics</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>public int InsertStudent(string name, int schoolId)
+{
+    const string sql = @"INSERT INTO Students (Name, SchoolId, IsActive)
+                          VALUES (@Name, @SchoolId, 1);
+                          SELECT CAST(SCOPE_IDENTITY() AS INT);";
+    using var conn = new SqlConnection(_connStr);
+    using var cmd = new SqlCommand(sql, conn);
+    cmd.Parameters.AddWithValue("@Name", name);
+    cmd.Parameters.AddWithValue("@SchoolId", schoolId);
+    conn.Open();
+    return (int)cmd.ExecuteScalar();   // ExecuteScalar, not ExecuteNonQuery, because we SELECT the new id
+}</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">Call a stored procedure that returns a fee summary and an output parameter for total count.</span><span class="st">Stored Proc</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>public (List&lt;Fee&gt; fees, int total) GetFeeSummary(int schoolId)
+{
+    var fees = new List&lt;Fee&gt;();
+    using var conn = new SqlConnection(_connStr);
+    using var cmd = new SqlCommand("sp_GetFeeSummary", conn) { CommandType = CommandType.StoredProcedure };
+    cmd.Parameters.AddWithValue("@SchoolId", schoolId);
+    var totalParam = new SqlParameter("@TotalCount", SqlDbType.Int) { Direction = ParameterDirection.Output };
+    cmd.Parameters.Add(totalParam);
+
+    conn.Open();
+    using (var reader = cmd.ExecuteReader())
+        while (reader.Read())
+            fees.Add(new Fee { StudentId = reader.GetInt32(0), Amount = reader.GetDecimal(1) });
+
+    return (fees, (int)totalParam.Value);
+}</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">Fill a DataTable and bind it to a DataGridView (disconnected architecture, bridge to WinForms).</span><span class="st">Disconnected</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>public DataTable GetStudentsTable(int schoolId)
+{
+    var dt = new DataTable();
+    using var conn = new SqlConnection(_connStr);
+    using var da = new SqlDataAdapter("SELECT Id, Name, ClassId FROM Students WHERE SchoolId=@Id", conn);
+    da.SelectCommand.Parameters.AddWithValue("@Id", schoolId);
+    da.Fill(dt);
+    return dt;
+}
+
+// In the WinForms form:
+dataGridView1.DataSource = repository.GetStudentsTable(schoolId);</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">Insert a student and a fee record in one transaction — rollback both if either fails.</span><span class="st">Transactions</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>public void AdmitStudentWithFee(string name, int schoolId, decimal feeAmount)
+{
+    using var conn = new SqlConnection(_connStr);
+    conn.Open();
+    using var txn = conn.BeginTransaction();
+    try
+    {
+        using var cmd1 = new SqlCommand(
+            "INSERT INTO Students (Name, SchoolId, IsActive) VALUES (@Name,@SchoolId,1); SELECT CAST(SCOPE_IDENTITY() AS INT);",
+            conn, txn);
+        cmd1.Parameters.AddWithValue("@Name", name);
+        cmd1.Parameters.AddWithValue("@SchoolId", schoolId);
+        int studentId = (int)cmd1.ExecuteScalar();
+
+        using var cmd2 = new SqlCommand(
+            "INSERT INTO Fees (StudentId, Amount) VALUES (@StudentId,@Amount)", conn, txn);
+        cmd2.Parameters.AddWithValue("@StudentId", studentId);
+        cmd2.Parameters.AddWithValue("@Amount", feeAmount);
+        cmd2.ExecuteNonQuery();
+
+        txn.Commit();
+    }
+    catch
+    {
+        txn.Rollback();
+        throw;
+    }
+}</code></pre></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">Spot the bugs — this code has 3 problems. Find them before revealing.</span><span class="st">Debugging</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Bugs</button>
+  <div class="rc">
+  <pre><code>public DataTable Search(string name)
+{
+    SqlConnection conn = new SqlConnection(_connStr);
+    conn.Open();
+    string sql = "SELECT * FROM Students WHERE Name = '" + name + "'";
+    SqlCommand cmd = new SqlCommand(sql, conn);
+    SqlDataReader reader = cmd.ExecuteReader();
+    DataTable dt = new DataTable();
+    dt.Load(reader);
+    return dt;
+}</code></pre>
+  <p><strong>Bug 1:</strong> SQL injection — <code>name</code> is string-concatenated directly into the query. Fix: parameterize with <code>@Name</code>.<br>
+  <strong>Bug 2:</strong> No <code>using</code>/<code>Dispose()</code> on <code>conn</code>, <code>cmd</code>, or <code>reader</code> — connection is never closed, leaks the pool. Fix: wrap each in <code>using</code>.<br>
+  <strong>Bug 3:</strong> No try/catch around <code>conn.Open()</code> or execution — if it throws, the connection is left open forever (compounds Bug 2). Fix: <code>using</code> blocks handle this automatically even on exception, so fixing Bug 2 also fixes Bug 3.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">7</div><div><span class="sq">Bulk-insert 5000 attendance records efficiently instead of looping row-by-row.</span><span class="st">Performance</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>public void BulkInsertAttendance(DataTable attendanceRows)
+{
+    using var conn = new SqlConnection(_connStr);
+    conn.Open();
+    using var bulkCopy = new SqlBulkCopy(conn) { DestinationTableName = "Attendance" };
+    bulkCopy.ColumnMappings.Add("StudentId", "StudentId");
+    bulkCopy.ColumnMappings.Add("Date", "Date");
+    bulkCopy.ColumnMappings.Add("Status", "Status");
+    bulkCopy.WriteToServer(attendanceRows);
+}</code></pre>
+  <p>Why: row-by-row <code>INSERT</code> in a loop = 5000 network round-trips. <code>SqlBulkCopy</code> streams all rows in one round-trip using the TDS bulk protocol — orders of magnitude faster.</p></div></div>
+</section>
+
+<section id="moreproblems">
+  <h2>➕ More Practice Problems</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">8</div><div><span class="sq">Check if a student's email already exists before inserting (avoid duplicates).</span><span class="st">Validation</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>public bool EmailExists(string email)
+{
+    const string sql = "SELECT COUNT(*) FROM Students WHERE Email = @Email";
+    using var conn = new SqlConnection(_connStr);
+    using var cmd = new SqlCommand(sql, conn);
+    cmd.Parameters.AddWithValue("@Email", email);
+    conn.Open();
+    return (int)cmd.ExecuteScalar() > 0;
+}
+
+public int InsertStudent(string name, string email, int schoolId)
+{
+    if (EmailExists(email))
+        throw new InvalidOperationException("A student with this email already exists.");
+
+    const string sql = @"INSERT INTO Students (Name, Email, SchoolId)
+                          VALUES (@Name, @Email, @SchoolId);
+                          SELECT CAST(SCOPE_IDENTITY() AS INT);";
+    using var conn = new SqlConnection(_connStr);
+    using var cmd = new SqlCommand(sql, conn);
+    cmd.Parameters.AddWithValue("@Name", name);
+    cmd.Parameters.AddWithValue("@Email", email);
+    cmd.Parameters.AddWithValue("@SchoolId", schoolId);
+    conn.Open();
+    return (int)cmd.ExecuteScalar();
+}</code></pre>
+  <p>Note: this two-step check-then-insert has a small race-condition window under heavy concurrency — the bulletproof fix is a UNIQUE constraint on the Email column in SQL Server, and catching the resulting SqlException (error 2601/2627) instead of relying only on the pre-check.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">9</div><div><span class="sq">Implement paging — return page 3 of students, 20 per page, without loading the whole table.</span><span class="st">Performance</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>public List&lt;Student&gt; GetPage(int pageNumber, int pageSize)
+{
+    var list = new List&lt;Student&gt;();
+    const string sql = @"SELECT Id, Name, ClassId FROM Students
+                          ORDER BY Name
+                          OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY";
+
+    using var conn = new SqlConnection(_connStr);
+    using var cmd = new SqlCommand(sql, conn);
+    cmd.Parameters.AddWithValue("@Skip", (pageNumber - 1) * pageSize);
+    cmd.Parameters.AddWithValue("@Take", pageSize);
+    conn.Open();
+    using var reader = cmd.ExecuteReader();
+    while (reader.Read())
+        list.Add(new Student { Id = reader.GetInt32(0), Name = reader.GetString(1), ClassId = reader.GetInt32(2) });
+    return list;
+}</code></pre>
+  <p><code>OFFSET ... FETCH NEXT</code> requires an <code>ORDER BY</code> clause — SQL Server needs a defined order before it can skip/take rows deterministically.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">10</div><div><span class="sq">Read two result sets from ONE stored procedure call using plain SqlDataReader (no QueryMultiple helper).</span><span class="st">Advanced</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>// Stored procedure returns: 1) student details, 2) their fee records
+using var conn = new SqlConnection(_connStr);
+using var cmd = new SqlCommand("sp_GetStudentWithFees", conn) { CommandType = CommandType.StoredProcedure };
+cmd.Parameters.AddWithValue("@StudentId", studentId);
+conn.Open();
+
+using var reader = cmd.ExecuteReader();
+Student student = null;
+if (reader.Read())
+    student = new Student { Id = reader.GetInt32(0), Name = reader.GetString(1) };
+
+var fees = new List&lt;Fee&gt;();
+if (reader.NextResult())               // move to the SECOND result set
+{
+    while (reader.Read())
+        fees.Add(new Fee { StudentId = reader.GetInt32(0), Amount = reader.GetDecimal(1) });
+}</code></pre>
+  <p><code>reader.NextResult()</code> is the raw ADO.NET building block that Dapper's <code>QueryMultiple</code> wraps internally — good to know what's actually happening underneath.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">11</div><div><span class="sq">Distinguish a SQL-specific error (e.g., duplicate key) from a generic exception when inserting.</span><span class="st">Error Handling</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>try
+{
+    InsertStudent(name, email, schoolId);
+}
+catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+{
+    // 2627 = PK/unique constraint violation, 2601 = duplicate key on unique index
+    MessageBox.Show("A student with this email already exists.", "Duplicate", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+}
+catch (SqlException ex)
+{
+    // any other SQL Server error (timeout, connection, permissions, etc.)
+    MessageBox.Show("Database error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+}
+catch (Exception ex)
+{
+    MessageBox.Show("Unexpected error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+}</code></pre>
+  <p>Catching <code>SqlException</code> specifically (before the generic <code>Exception</code> catch) lets you give the user a precise, actionable message instead of a raw stack trace — <code>ex.Number</code> is SQL Server's error code.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">12</div><div><span class="sq">Write an UPSERT — insert the student if new, update if the email already exists — in one round-trip using MERGE.</span><span class="st">Advanced</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>const string sql = @"
+    MERGE Students AS target
+    USING (SELECT @Email AS Email) AS source
+    ON target.Email = source.Email
+    WHEN MATCHED THEN
+        UPDATE SET Name = @Name, ClassId = @ClassId
+    WHEN NOT MATCHED THEN
+        INSERT (Name, Email, ClassId) VALUES (@Name, @Email, @ClassId);";
+
+using var conn = new SqlConnection(_connStr);
+using var cmd = new SqlCommand(sql, conn);
+cmd.Parameters.AddWithValue("@Name", name);
+cmd.Parameters.AddWithValue("@Email", email);
+cmd.Parameters.AddWithValue("@ClassId", classId);
+conn.Open();
+cmd.ExecuteNonQuery();</code></pre>
+  <p>One round-trip instead of "SELECT to check, then INSERT or UPDATE" (two round-trips plus a race-condition window). Interview point: mention MERGE has had subtle concurrency edge cases in some SQL Server versions under very high concurrency — for simple single-row upserts like this it's fine and commonly used.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">13</div><div><span class="sq">Add simple retry logic for a transient connection failure (e.g., brief network blip to 192.168.1.52).</span><span class="st">Resilience</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Solution</button>
+  <div class="rc"><pre><code>public List&lt;Student&gt; GetAllWithRetry(int maxAttempts = 3)
+{
+    for (int attempt = 1; attempt &lt;= maxAttempts; attempt++)
+    {
+        try
+        {
+            return GetActiveStudents(1);
+        }
+        catch (SqlException) when (attempt &lt; maxAttempts)
+        {
+            System.Threading.Thread.Sleep(500 * attempt);   // simple backoff: 500ms, 1000ms, ...
+        }
+    }
+    throw new Exception("Could not reach the database after " + maxAttempts + " attempts.");
+}</code></pre>
+  <p>Say out loud: transient faults (brief network blips, DB failover) are common enough in real systems that a small retry-with-backoff is a reasonable, low-risk safety net — but it should NOT retry non-transient errors like a permission failure or a bad query, which is why this only retries <code>SqlException</code>, not every exception type.</p></div></div>
+</section>
+
+<section id="assignment">
+  <h2>📋 Mock Assignment — What HR Might Give You</h2>
+  <div class="warn-box"><strong>Simulated brief:</strong> "Build a small console or WinForms app that manages Employee records (Add, Search by name, Update, Delete, List all) against SQL Server, using ADO.NET only — no Entity Framework, no Dapper. You have 45-60 minutes."</div>
+  <p>This is a very typical assignment style for a role that lists ADO.NET as the main focus — they want to see you write raw connection/command code cleanly, not lean on an ORM.</p>
+  <h3>What they're actually grading</h3>
+  <ul class="cl-list">
+    <li data-id="asg-1"><input type="checkbox" onclick="event.stopPropagation()">Parameterized queries everywhere — zero string concatenation</li>
+    <li data-id="asg-2"><input type="checkbox" onclick="event.stopPropagation()">Every SqlConnection/SqlCommand/SqlDataReader wrapped in <code>using</code></li>
+    <li data-id="asg-3"><input type="checkbox" onclick="event.stopPropagation()">Correct method choice: ExecuteReader / ExecuteScalar / ExecuteNonQuery used appropriately</li>
+    <li data-id="asg-4"><input type="checkbox" onclick="event.stopPropagation()">A single reusable connection-string/config source, not hardcoded in every method</li>
+    <li data-id="asg-5"><input type="checkbox" onclick="event.stopPropagation()">Basic validation before hitting the DB (empty name, negative id, etc.)</li>
+    <li data-id="asg-6"><input type="checkbox" onclick="event.stopPropagation()">Clean separation — a Repository/DataAccess class, not SQL scattered in the UI/Form code-behind</li>
+  </ul>
+  <h3>Skeleton to start from (adapt fast under time pressure)</h3>
+  <pre><code>public class EmployeeRepository
+{
+    private readonly string _connStr;
+    public EmployeeRepository(string connStr) => _connStr = connStr;
+
+    public List&lt;Employee&gt; GetAll() { /* SELECT * FROM Employees, ExecuteReader */ return null; }
+    public Employee GetById(int id) { /* SELECT ... WHERE Id=@Id, ExecuteReader, read 0 or 1 row */ return null; }
+    public int Insert(Employee e) { /* INSERT ...; SELECT SCOPE_IDENTITY();  ExecuteScalar */ return 0; }
+    public void Update(Employee e) { /* UPDATE ... WHERE Id=@Id, ExecuteNonQuery */ }
+    public void Delete(int id) { /* DELETE ... WHERE Id=@Id, ExecuteNonQuery */ }
+    public List&lt;Employee&gt; SearchByName(string name) { /* WHERE Name LIKE @Name, ExecuteReader */ return null; }
+}</code></pre>
+  <div class="good-box">Practice tip: actually type out the full CRUD repository above from scratch, cold, with a stopwatch. If it takes more than 30 minutes the first time, do it again tomorrow morning before the interview — muscle memory matters more than reading it.</div>
+</section>
+
+<section id="scenarios">
+  <h2>🎯 Interview Scenarios</h2>
+
+  <div class="sc"><div class="sh"><div class="sn">1</div><div><span class="sq">What's the difference between DataReader and DataSet — when would you use each?</span><span class="st">Core</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>DataReader: connected, forward-only, read-only, streams row-by-row — fastest, lowest memory, but connection must stay open. Use for a quick read-and-map-to-list operation, like an API endpoint. DataSet: disconnected, holds full data in memory, editable, connection closes after Fill() — use when you need to edit data offline, bind to a WinForms grid, or work with multiple related tables together (DataSet can hold multiple DataTables with relations).</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">2</div><div><span class="sq">How does connection pooling work, and what happens if you forget to close a connection?</span><span class="st">Performance</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>ADO.NET maintains a pool of open physical connections per unique connection string. Calling Close()/Dispose() doesn't destroy the connection — it returns it to the pool for reuse, avoiding the cost of a new TCP handshake + login each time. If you forget to close/dispose, the connection is never returned to the pool — under load, the pool exhausts (hits Max Pool Size, default 100) and new requests throw "Timeout expired waiting for a connection from the pool." Always use <code>using</code> to guarantee disposal even on exceptions.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">3</div><div><span class="sq">How do you prevent SQL injection in ADO.NET?</span><span class="st">Security</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Always use parameterized queries — <code>@ParamName</code> placeholders with <code>cmd.Parameters.AddWithValue()</code> or <code>cmd.Parameters.Add(new SqlParameter(...))</code>. The database driver sends the SQL text and parameter values separately over the wire — user input is never interpreted as part of the SQL syntax, so it can't break out of the query. Never build SQL with string concatenation or interpolation of raw user input.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">4</div><div><span class="sq">What isolation levels are available in ADO.NET transactions, and what's the default?</span><span class="st">Transactions</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Common levels: Read Uncommitted (dirty reads allowed, fastest, least safe), Read Committed (default in SQL Server — can't read uncommitted data, but non-repeatable reads possible), Repeatable Read (locks read rows until transaction ends), Serializable (strictest, fully isolated, most locking/blocking), Snapshot (row-versioning based, no blocking). Set via <code>conn.BeginTransaction(IsolationLevel.ReadCommitted)</code>. Most business apps stay on the default Read Committed unless there's a specific concurrency problem to solve.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">5</div><div><span class="sq">Why is the "using" statement so important for SqlConnection, SqlCommand, and SqlDataReader?</span><span class="st">Best Practice</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>All three implement IDisposable — <code>using</code> guarantees Dispose() runs even if an exception is thrown mid-method, releasing the connection back to the pool and freeing unmanaged resources (network handles). Without it, a single unhandled exception between Open() and Close() permanently leaks that connection for the app's lifetime, silently degrading the app until the pool exhausts.</p></div></div>
+
+  <div class="sc"><div class="sh"><div class="sn">6</div><div><span class="sq">Command Timeout vs Connection Timeout — what's the difference?</span><span class="st">Config</span></div></div>
+  <button class="rb" onclick="t(this)">Reveal Answer</button>
+  <div class="rc"><p>Connection Timeout (set in the connection string, e.g. <code>Connection Timeout=30</code>) is how long to wait while trying to establish the initial connection to SQL Server before giving up. Command Timeout (<code>cmd.CommandTimeout = 30</code>, in seconds, default 30) is how long to wait for a specific query/command to finish executing once connected — a long-running report query might need this raised, independently of the connection timeout.</p></div></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Quiz</h2>
+
+  <div class="qc"><div class="qq">1. Which method should you use to get the count of rows from "SELECT COUNT(*) FROM Students"?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','ExecuteReader is for multi-row/multi-column results — overkill for one scalar value.')">ExecuteReader()</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! ExecuteScalar() returns just the first column of the first row — perfect for COUNT(*), SUM(), or SCOPE_IDENTITY().')">ExecuteScalar()</button>
+    <button class="qb" onclick="ans(this,'wrong','ExecuteNonQuery returns rows affected for INSERT/UPDATE/DELETE, not a SELECT result.')">ExecuteNonQuery()</button>
+    <button class="qb" onclick="ans(this,'wrong','Fill() belongs to SqlDataAdapter, not SqlCommand directly.')">Fill()</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">2. What happens when a SqlConnection is disposed via "using"?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','The physical TCP connection is usually kept alive and returned to the pool, not destroyed.')">The physical connection is permanently destroyed</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Dispose()/Close() returns the connection to the ADO.NET connection pool for reuse — avoiding the overhead of a fresh TCP handshake next time.')">The connection is returned to the connection pool for reuse</button>
+    <button class="qb" onclick="ans(this,'wrong','SQL Server has no knowledge of client-side pooling behavior in this way.')">SQL Server automatically restarts the connection pool</button>
+    <button class="qb" onclick="ans(this,'wrong','Disposing has no relation to open transactions being committed automatically — an open transaction should be explicitly committed or rolled back.')">Any pending transaction is automatically committed</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">3. Which is the SAFE way to filter by a user-supplied name?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','String interpolation embeds raw user input into SQL — classic SQL injection vector.')">$"SELECT * FROM Students WHERE Name='{name}'"</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! Parameterized query — the value is sent separately from the SQL text, so it can never be interpreted as SQL syntax.')">"SELECT * FROM Students WHERE Name=@Name" + cmd.Parameters.AddWithValue("@Name", name)</button>
+    <button class="qb" onclick="ans(this,'wrong','Same injection risk as interpolation — string concatenation either way.')">"SELECT * FROM Students WHERE Name='" + name + "'"</button>
+    <button class="qb" onclick="ans(this,'wrong','ADO.NET does not auto-sanitize inputs for you — you must parameterize explicitly.')">ADO.NET auto-escapes any string passed to CommandText</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">4. In a DataAdapter workflow, which object auto-generates the INSERT/UPDATE/DELETE commands from a SELECT?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','DataTable just holds the in-memory rows — it doesn\'t generate SQL.')">DataTable</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! SqlCommandBuilder inspects the SelectCommand and auto-generates matching Insert/Update/Delete commands for the DataAdapter, used when calling da.Update(dt).')">SqlCommandBuilder</button>
+    <button class="qb" onclick="ans(this,'wrong','SqlTransaction groups commands atomically — it doesn\'t generate CRUD SQL.')">SqlTransaction</button>
+    <button class="qb" onclick="ans(this,'wrong','SqlDataReader is connected/read-only streaming — unrelated to DataAdapter\'s CRUD generation.')">SqlDataReader</button>
+  </div><div class="qf"></div></div>
+
+  <div class="qc"><div class="qq">5. Why use SqlBulkCopy instead of a loop of 5000 individual INSERT statements?</div>
+  <div class="qo">
+    <button class="qb" onclick="ans(this,'wrong','SqlBulkCopy doesn\'t change SQL Server storage engine behavior — the gain is on the network/round-trip side.')">It changes how SQL Server stores data on disk</button>
+    <button class="qb" onclick="ans(this,'correct','Correct! SqlBulkCopy streams all rows to SQL Server in one round-trip using the TDS bulk protocol, instead of 5000 separate round-trips — dramatically faster for large inserts.')">It sends all rows in one network round-trip instead of thousands</button>
+    <button class="qb" onclick="ans(this,'wrong','It has nothing to do with SQL injection protection.')">It automatically parameterizes queries for you</button>
+    <button class="qb" onclick="ans(this,'wrong','It doesn\'t require a stored procedure — it writes directly to a target table.')">It requires wrapping every insert in its own stored procedure</button>
+  </div><div class="qf"></div></div>
+</section>
+
+<section>
+  <h2>✅ Mastery Checklist</h2>
+  <ul class="cl-list">
+    <li onclick="ck(this)" data-id="m-1"><input type="checkbox">I can explain connected vs disconnected architecture with an example each</li>
+    <li onclick="ck(this)" data-id="m-2"><input type="checkbox">I know when to use ExecuteReader / ExecuteScalar / ExecuteNonQuery</li>
+    <li onclick="ck(this)" data-id="m-3"><input type="checkbox">I always use parameterized queries, never string concatenation</li>
+    <li onclick="ck(this)" data-id="m-4"><input type="checkbox">I wrap every SqlConnection/SqlCommand/SqlDataReader in "using"</li>
+    <li onclick="ck(this)" data-id="m-5"><input type="checkbox">I can write a transaction with Commit/Rollback from memory</li>
+    <li onclick="ck(this)" data-id="m-6"><input type="checkbox">I can call a stored procedure with input and output parameters</li>
+    <li onclick="ck(this)" data-id="m-7"><input type="checkbox">I can fill a DataTable via SqlDataAdapter and explain when to prefer it over DataReader</li>
+    <li onclick="ck(this)" data-id="m-8"><input type="checkbox">I can explain connection pooling and what breaks it</li>
+    <li onclick="ck(this)" data-id="m-9"><input type="checkbox">I typed the full mock-assignment CRUD repository from scratch at least once</li>
+  </ul>
+</section>
+
+<div class="completion">
+  <h2>🎉 ADO.NET Ready</h2>
+  <div class="badge">CONCEPTS + CODING + ASSIGNMENT ✓</div>
+  <p style="color:var(--muted);margin-top:1rem;font-size:.9rem;">Next: <a class="rlink" href="EntityFramework_Guide.html">Entity Framework Guide</a> and <a class="rlink" href="WinForms_Guide.html">WinForms Guide</a></p>
+</div>
+
+</main>
+<footer>
+  <p style="color:var(--accent);font-weight:700;">ADO.NET Guide — Salcomp Interview Prep, Wednesday</p>
+  <p>Accent: Teal #0e7490 · Progress saves in this browser automatically</p>
+</footer>
+<script>
+  window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('pb').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+
+  const STORAGE_KEY='adonet-guide-progress-v1';
+  const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const allBoxes = Array.from(document.querySelectorAll('.cl-list li[data-id]'));
+
+  function updateBadge(){
+    const doneCount = Object.values(state).filter(Boolean).length;
+    document.getElementById('progBadge').textContent = doneCount+'/'+allBoxes.length+' done';
+  }
+  function applyState(){
+    allBoxes.forEach(li=>{
+      const cb = li.querySelector('input');
+      const on = !!state[li.dataset.id];
+      cb.checked = on;
+      li.classList.toggle('done', on);
+    });
+    updateBadge();
+  }
+  function ck(li){
+    const cb = li.querySelector('input');
+    const id = li.dataset.id;
+    if(!id) return;
+    state[id] = !state[id];
+    cb.checked = state[id];
+    li.classList.toggle('done', state[id]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    updateBadge();
+  }
+  function t(btn){const c=btn.nextElementSibling;const o=c.classList.toggle('open');btn.textContent=o?'Hide Answer':btn.textContent.replace('Hide','Reveal');}
+  function ans(btn,r,fb){const card=btn.closest('.qc');if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qb').forEach(o=>o.style.pointerEvents='none');btn.classList.add(r);const f=card.querySelector('.qf');f.textContent=(r==='correct'?'✓ ':'✗ ')+fb;f.className='qf show '+(r==='correct'?'good':'bad');}
+
+  applyState();
+</script>
+</body>
+</html>

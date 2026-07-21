@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 6: Dapper & EF Core — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox table{width:100%;border-collapse:collapse;font-size:0.85em}
+.cheatbox th,.cheatbox td{padding:6px 10px;border-bottom:1px solid #2a2a5a;text-align:left;color:#e0e0e0}
+.cheatbox th{color:#fbbf24;font-size:0.78em;text-transform:uppercase}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+.resume-block{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:18px 20px;margin:14px 0}
+.resume-block .rtitle{color:#fff;font-weight:700;font-size:1em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.resume-block .rquote{background:#1a1a2e;border-left:3px solid #6b7280;padding:8px 12px;border-radius:0 6px 6px 0;font-size:0.85em;color:#9ca3af;font-style:italic;margin-bottom:10px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 6: Dapper &amp; EF Core</h1>
+  <p>15 Q&amp;A — Thanglish explanation + English answer script + follow-up questions</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html" class="active">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhu Part 6 — Dapper &amp; EF Core mattum focus panra file. Naan Zen Campus la rendayum use pannirukken, so idhu la "eppo edha use pannuvinga" nu real story kூடa irukku. Ovvoru item padinchu, "Interview la eppadi sollanum" box ah padinchu, apparam close pannitu un own words la sollikkanum practice pannunga. Follow-up questions ah kூடa paathukonga — interviewer usually first answer kேttuttu, andha follow-up thaan real depth check pannுவாru.</p>
+</div>
+
+<div class="toc">
+  <h2>Idhu la irukka sections</h2>
+  <div class="toc-grid">
+    <a href="#6A">6A. Dapper Deep-Dive (Items 1-8)</a>
+    <a href="#6B">6B. EF Core Deep-Dive (Items 9-15)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 6 Quick-Recall Cheat Sheet</h2>
+  <ul>
+    <li><b>1. Dapper</b> — micro-ORM, ADO.NET mேlayே lightweight object mapper, raw SQL namba eludhanum.</li>
+    <li><b>2. Dapper vs EF Core</b> — simple CRUD ku EF Core, high-volume reports ku Dapper (attendance report: 5s → 2-3s).</li>
+    <li><b>3. Result mapping</b> — column name = property name (case-insensitive), IL-generated fast mapping.</li>
+    <li><b>4. Multi-mapping</b> — join result ah rendு nested objects ah split panna, <code>splitOn</code> use pannுவோம்.</li>
+    <li><b>5. QueryMultiple</b> — ஒரே round trip la palapadi SELECT, <code>GridReader.Read&lt;T&gt;()</code> vecha edukkalaam.</li>
+    <li><b>6. Stored proc call</b> — <code>CommandType.StoredProcedure</code> + anonymous object params.</li>
+    <li><b>7. Dapper transaction</b> — <code>BeginTransaction()</code>, ovvoru call kூடaவும் pass, Commit/Rollback.</li>
+    <li><b>8. Is Dapper ORM?</b> — Micro-ORM — mapping mattum, no tracking/migrations/LINQ translation.</li>
+    <li><b>9. Migrations</b> — <code>Add-Migration</code> → <code>Update-Database</code>; production la script generate panni review panniட்டு run pannுவோம், auto-migrate panna maاttேn.</li>
+    <li><b>10. AsNoTracking()</b> — read-only query ku change-tracking snapshot skip, memory/speed improve.</li>
+    <li><b>11. N+1 problem</b> — loop kulla lazy access = per-row query; <code>Include()</code> illa <code>Select()</code> projection fix pannும்.</li>
+    <li><b>12. Lazy/Eager/Explicit loading</b> — auto-on-access / upfront-Include / manual context.Entry().Load().</li>
+    <li><b>13. DbContext lifecycle</b> — Scoped (per request) — thread-safe illa, Singleton panninom na race condition/memory leak.</li>
+    <li><b>14. Optimistic concurrency</b> — RowVersion column, mismatch aana <code>DbUpdateConcurrencyException</code>.</li>
+    <li><b>15. Fluent API vs Data Annotations</b> — simple validation ku annotation, composite keys/relationships/indexes ku Fluent API.</li>
+  </ul>
+  <div style="overflow-x:auto;margin-top:14px">
+  <table>
+    <tr><th>Point</th><th>Dapper</th><th>EF Core</th></tr>
+    <tr><td>Speed</td><td>Very fast — thin layer over ADO.NET</td><td>Slower — tracking + LINQ translation overhead</td></tr>
+    <tr><td>Control</td><td>Full control — you write every SQL query</td><td>Abstracted — EF generates the SQL for you</td></tr>
+    <tr><td>Learning curve</td><td>Easy if you already know SQL</td><td>Steeper — LINQ, tracking, migrations, conventions</td></tr>
+    <tr><td>Change tracking</td><td>None — you manage state yourself</td><td>Built-in — SaveChanges() figures out the diff</td></tr>
+    <tr><td>Migrations</td><td>Not supported — manage schema manually</td><td>Built-in Add-Migration/Update-Database</td></tr>
+    <tr><td>Best for</td><td>Reports, dashboards, high-volume/complex queries, stored-proc calls</td><td>Standard CRUD, business logic, entity relationships</td></tr>
+  </table>
+  </div>
+</div>
+
+<!-- 6A -->
+<div class="section" id="6A">
+  <div class="section-title"><span class="num">6A</span> Dapper Deep-Dive</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. Dapper — Ithu enna, "micro-ORM" nu ஏன் sollுவோம் <span class="en">(What is Dapper)</span></div>
+    <div class="tng">Dapper ah oru "micro-ORM" nu sollுவோம் — edhukku nu na, full ORM (EF Core madhiri) automatic ah entities track pannradhu, migrations kudukradhu, LINQ ah SQL ah convert pannradhu — idhellam Dapper panradhu illa. Dapper basically <code>IDbConnection</code> mela irukka konjam extension methods (<code>Query&lt;T&gt;()</code>, <code>Execute()</code>) — namma raw SQL eludhanum, Dapper adha run panni result ah C# object ku fast ah map pannikkodukkும். ADO.NET mேlaye thaan build aagi irukku, so extra abstraction layer kammi — adhான Dapper fast.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Dapper is a lightweight object mapper built directly on top of ADO.NET. Unlike a full ORM, it doesn't do change tracking, query translation, or migrations — I write the raw SQL myself, and Dapper's only job is to map the result set to my C# POCOs efficiently, using IL-generated code close to ADO.NET speed. That's why it's called a micro-ORM.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Dapper ஏன் EF Core-a vida fast? — It skips the heavy machinery — change tracking, LINQ-to-SQL translation — and maps results with compiled IL code, nearly as fast as raw ADO.NET.</div>
+      <div class="fq"><b>Q:</b> Dapper install pannanuma separate ah? — Yes, it's just a NuGet package that adds extension methods onto IDbConnection — no context, no configuration classes.</div>
+      <div class="fq"><b>Q:</b> Connection open/close pannradhu yaaru? — Namba thaan responsible — Dapper doesn't manage connection lifecycle, we open and dispose the connection ourselves (usually in a using block).</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. Dapper vs EF Core — eppo edha pick pannுவேன் <span class="en">(when to use which)</span></div>
+    <div class="tng">Idhu enakku romba common ah varra question, edhukku na naan project la rendayும் use panniருக்கேன். Naan clear ah sollுவேன் — simple CRUD, entity relationships automatic ah manage pannanum na EF Core easy, productivity fast. Aana high-volume dashboard/report queries, complex joins, aggregate calculations irukka idangal la Dapper mattum use pannுவேன், edhукки na andha idangal la EF Core oda overhead (change tracking, LINQ translation) namakku venaam. Real example — Zen Campus la attendance report page irundhичи, EF Core vecha load panna almost 5 seconds edhுthuchu, multiple tables join aagi, unnecessary tracking kூடa panniрундhichu. Naan andha logic ah stored procedure ku maathi, required indexes add panni, Dapper vecha adha call panna — result 2-3 seconds ku vandhuchu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I use EF Core for standard CRUD modules where productivity and maintainability matter more than raw speed — LINQ, change tracking, and migrations save a lot of boilerplate there. But for performance-critical, high-volume queries — like our attendance dashboard — I switch to Dapper with a tuned stored procedure. That one change, along with proper indexing, took that report from about 5 seconds down to 2 to 3 seconds.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> EF Core ah completely replace pannalaama Dapper ah vecha? — No — for simple CRUD, EF Core is actually faster to build and safer to maintain, so I keep both and choose per use case.</div>
+      <div class="fq"><b>Q:</b> Evvளவு complexity irundha Dapper ku switch pannுவீங்க? — Once a query profiles slow, has multiple joins/aggregations, or runs frequently on a dashboard, I first check the execution plan, then move it to Dapper if EF's overhead is the actual bottleneck.</div>
+      <div class="fq"><b>Q:</b> Same project la rendayும் together use pannalaama? — Yes — that's exactly what I did, EF Core for CRUD modules, Dapper for reports, billing, and payroll hot paths.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. Dapper query result ah C# objects ku eppadi map pannும் <span class="en">(result-to-object mapping)</span></div>
+    <div class="tng">Dapper query run panni edukkra <code>DataReader</code> result ah, namma specify pannina C# class ku automatic ah map pannikkodukkும் — condition enna na, column name um property name um match aaganum (case-insensitive ah check pannும்). Example: SQL la "StudentName" column irundha, class la "StudentName" property irundha, adha direct ah assign pannிடும். Column name match aagalana, SQL la <code>AS</code> alias vecha match pannலாம், illa manual mapping pannலாம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Dapper maps each row to my POCO by matching column names to property names case-insensitively, using reflection-backed IL generation under the hood for speed. If a column name doesn't line up with a property, I alias it in SQL with AS, or map it manually — there's no separate mapping configuration file needed like EF Core's fluent API.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Column name property name match aagalana enna aagும்? — That property just stays at its default value — Dapper doesn't throw an error unless you configure strict mapping.</div>
+      <div class="fq"><b>Q:</b> Dapper dynamic objects ah return panna mudியுமா? — Yes, calling connection.Query(sql) without a generic type returns dynamic rows — handy for quick ad-hoc queries.</div>
+      <div class="fq"><b>Q:</b> Nested object (Address inside Student madhiri) ah eppadi map pannுவீங்க? — For a real join with two tables I use multi-mapping instead of trying to force it into a single flat class.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. Dapper Multi-Mapping <span class="en">(join two tables into nested objects)</span></div>
+    <div class="tng">Namma oru query la rendு tables ah join panni, result ah rendு separate C# objects ah nested ah map pannanum na — example: Student oda Fee details ah ஒரே query la eduthu, Student object kulla Fee object ah nest panni vaikkanum na — Dapper multi-mapping use pannுவோம். <code>Query&lt;TFirst, TSecond, TReturn&gt;()</code> generic overload irukku, adhula <code>splitOn</code> parameter kudukkanum — andha column irundhu next object oda columns start aagும் nu Dapper ku sollradhு.</div>
+    <pre><code>string sql = @"SELECT s.Id, s.Name, s.Class,
+                      f.Id, f.Amount, f.DueDate
+               FROM Students s
+               INNER JOIN Fees f ON f.StudentId = s.Id
+               WHERE s.Id = @Id";
+
+var student = connection.Query&lt;Student, Fee, Student&gt;(
+    sql,
+    (s, f) => { s.Fee = f; return s; },
+    param: new { Id = studentId },
+    splitOn: "Id"   // Fee's "Id" column is where the second object starts
+).FirstOrDefault();</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>When a join query returns columns from two tables, Dapper's multi-mapping overload lets me map them into two separate objects and stitch them together in a callback — for example joining Students and Fees, and setting student.Fee = fee. I tell Dapper where the second object's columns begin using the splitOn parameter, which usually maps to that table's Id column.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> splitOn default value enna? — It defaults to "Id" — so if both tables' split column is literally named Id, you don't even need to pass it explicitly.</div>
+      <div class="fq"><b>Q:</b> Multi-mapping evlo tables varaikkum support pannும்? — Overloads go up to TFirst..TSeventh, so up to 7 types in a single query — beyond that I'd usually restructure or use QueryMultiple.</div>
+      <div class="fq"><b>Q:</b> Rendு tables kூடaவும் "Id" column irundha confusion varாதா? — I alias each table's Id column uniquely in the SQL, or make sure the splitOn value matches exactly where the second table's columns genuinely start.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. QueryMultiple — ஒரே round trip la palapadi result sets <span class="en">(multiple result sets, one call)</span></div>
+    <div class="tng">Oru dashboard page ku palapadi different queries venum na (example: total students count, total fee collected, recent admissions list) — idha ellam separate ah database ku call panna, network round trip pala thadava serum. <code>QueryMultiple()</code> vecha, ஒரே database call la multiple SELECT statements ah semicolon vecha ஒரே batch ah run panni, result ah oru "grid" (GridReader) object ah thirumba vaangalाம், apparam <code>Read&lt;T&gt;()</code> call panni ovvoru result set ah order ah edukkalாம்.</div>
+    <pre><code>string sql = @"SELECT COUNT(*) FROM Students;
+               SELECT SUM(Amount) FROM Fees WHERE Paid = 1;
+               SELECT TOP 5 * FROM Students ORDER BY AdmissionDate DESC;";
+
+using var grid = connection.QueryMultiple(sql);
+int totalStudents   = grid.Read&lt;int&gt;().Single();
+decimal totalFee     = grid.Read&lt;decimal&gt;().Single();
+var recentAdmissions = grid.Read&lt;Student&gt;().ToList();</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>QueryMultiple lets me send several SELECT statements in one database round trip and read each result set back sequentially with grid.Read&lt;T&gt;(). I use this heavily for dashboard endpoints — instead of five separate queries and five round trips, it's one connection open, one network hop, and I pull counts, lists, and summaries out of the same GridReader.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Read() call order matter aagுமா? — Yes — you must call Read&lt;T&gt;() in the exact same order the SELECT statements appear in the SQL, otherwise you get the wrong result set.</div>
+      <div class="fq"><b>Q:</b> QueryMultiple stored procedure kூடa use pannலாமா? — Yes — a stored procedure that returns multiple result sets works identically with CommandType.StoredProcedure.</div>
+      <div class="fq"><b>Q:</b> Transaction kூடa combine pannலாமா? — Yes, you can pass the same IDbTransaction into QueryMultiple like any other Dapper call.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q6">
+    <div class="term">6. Stored Procedures Dapper vecha call pannradhu <span class="en">(CommandType.StoredProcedure)</span></div>
+    <div class="tng">Namba heavy report/billing logic ah database level la stored procedure ah eludhi vachirukkும் na, adha Dapper la call panna easy — <code>connection.Query&lt;T&gt;()</code> ku procedure name kudukkanum, parameters ah anonymous object ah pass pannanum, <code>commandType: CommandType.StoredProcedure</code> nu explicit ah sollanum. Idhu thaan naan attendance report optimization la panna main change — raw complex SQL ah application layer la eludhradhுkku pathila, stored proc ku move panni, Dapper adha call pannradhu mattum pannuchu.</div>
+    <pre><code>var result = connection.Query&lt;AttendanceReportDto&gt;(
+    "usp_GetAttendanceReport",
+    new { ClassId = classId, FromDate = from, ToDate = to },
+    commandType: CommandType.StoredProcedure,
+    commandTimeout: 60
+).ToList();</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>For anything heavy — reports, payroll calculations — I move the logic into a stored procedure and call it from Dapper with CommandType.StoredProcedure, passing parameters as an anonymous object. That keeps the complex logic close to the data so the DB engine can optimize execution, and Dapper's job is just sending parameters and mapping the result back.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Output parameters eppadi handle pannுவீங்க? — I use a DynamicParameters object, add an output parameter to it, call Execute, then read the value back afterward.</div>
+      <div class="fq"><b>Q:</b> Long-running proc timeout aayidumo? — Dapper accepts a commandTimeout argument I bump up for long reports instead of hitting the default 30-second SQL timeout.</div>
+      <div class="fq"><b>Q:</b> SQL injection risk irukkுமா stored proc call la? — No — parameters go through Dapper's proper parameterization, never string-concatenated, so it's safe by default.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q7">
+    <div class="term">7. Transactions in Dapper <span class="en">(IDbTransaction)</span></div>
+    <div class="tng">Namba multiple INSERT/UPDATE ஒரே operation ah part ah pannanum na (example: fee payment record pannradhu + student balance update pannradhu) — rendும் succeed aaganum illa rendும் fail aaganum nu ensure pannanum na, <code>IDbTransaction</code> use pannுவோம். Connection open panni, <code>BeginTransaction()</code> call panni, andha transaction object ah ovvoru Dapper call kூடaவும் (<code>Execute</code>, <code>Query</code>) pass pannanum, ellам success ah irundha <code>Commit()</code>, edhavadhு fail ah irundha <code>Rollback()</code> pannанум்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>For multi-step writes that must succeed or fail together — like recording a fee payment and updating the student's balance — I open a connection, call BeginTransaction(), and pass that transaction object into every Dapper Execute call. If everything succeeds I commit; if any step throws, I catch it and roll back so the database never ends up in a half-updated state.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> try-catch illama transaction use pannலாமா? — Technically yes but risky — I always wrap it in try-catch-finally so rollback fires on any exception and the connection is disposed properly.</div>
+      <div class="fq"><b>Q:</b> TransactionScope um IDbTransaction um difference enna? — TransactionScope is ambient and can span multiple connections/resources including distributed transactions; IDbTransaction is tied to one connection — simpler, and what I use for single-DB Dapper work.</div>
+      <div class="fq"><b>Q:</b> Nested transactions Dapper la supported aa? — Not directly — SQL Server has savepoints but there's no special nested-transaction API in Dapper, so I keep transactions flat and tightly scoped.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q8">
+    <div class="term">8. Dapper oru ORM-a? — nuanced answer <span class="en">(Is Dapper an ORM)</span></div>
+    <div class="tng">Idhu oru tricky question — interviewer "Dapper ORM-a illa illaya" nu directly kேkkலாம். Naan clear ah sollுவேன் — Dapper ah "micro-ORM" nu classify pannுவோம், edhukku nu na adhu object mapping (query result → C# object) mattum panрadhு, aana oru full ORM panra veрey velaigal — change tracking, LINQ-to-SQL query generation, migrations, lazy loading — idhellam Dapper panрadhு illa. So "ORM" nu strict ah sollradhுkku pathila, "it's an object mapper, not a full ORM" nu sollradhு correct answer.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I'd call Dapper a micro-ORM rather than a full ORM. It does one thing — mapping query results to objects — really well and fast, but it doesn't do query generation from LINQ, change tracking, or schema migrations the way EF Core does. You write the SQL, Dapper hands you back typed objects. That's a deliberate trade-off for speed and control over convenience.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Enga full ORM venum, enga micro-ORM podhும்? — Full ORM when I want productivity and don't want to hand-write SQL for every CRUD operation; micro-ORM when I need maximum control and performance on specific hot-path queries.</div>
+      <div class="fq"><b>Q:</b> Dapper la LINQ query eludhலாமா? — No, Dapper never translates LINQ to SQL — you always write raw SQL yourself; that's actually the core design choice that keeps it fast and predictable.</div>
+      <div class="fq"><b>Q:</b> Dapper vera micro-ORMs irukkா? — Yes — PetaPoco and ServiceStack.OrmLite follow a similar philosophy, but Dapper is by far the most widely adopted in the .NET ecosystem.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 6B -->
+<div class="section" id="6B">
+  <div class="section-title"><span class="num">6B</span> EF Core Deep-Dive</div>
+
+  <div class="item" id="q9">
+    <div class="term">9. EF Core Migrations — Add-Migration/Update-Database workflow <span class="en">(schema versioning)</span></div>
+    <div class="tng">Namba DB schema ah code la version control pannுவathukku migrations use pannுவோம். Model class la field add panninen na, <code>Add-Migration &lt;Name&gt;</code> command run pannினா, EF Core andha changes ah detect panni oru migration file (Up/Down methods கூடa) generate pannும். Apparam <code>Update-Database</code> run pannினா andha migration ah actual DB ku apply panni column/table create pannும். Aana production la app start aagும்bodhu neraaga <code>Migrate()</code> call panрадhu naan pannmatten — edhukku na adhu automatic ah run aaguthu, review pannாma edhavadhு destructive change (column drop madhiri) accidentally apply aaidum bhayam irukку. Adhukku pathila, migration ah SQL script ah generate panni, team review panni, apparam controlled ah deployment pipeline la run pannுрோம்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I generate migrations locally with Add-Migration, review the generated Up and Down methods, and apply them to dev with Update-Database. In production I never call context.Database.Migrate() at app startup — instead I generate an idempotent SQL script from the migration, get it reviewed, and run it as a controlled step in the deployment pipeline. That avoids an accidental destructive change silently running the moment the app boots.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Migration rollback pannанum na enna pannுவீங்க? — The Down() method reverses that specific migration, or I apply an earlier migration name with Update-Database &lt;PreviousMigrationName&gt;.</div>
+      <div class="fq"><b>Q:</b> Team la migration conflict aana enna pannுவீங்க? — I rebase against the latest model, regenerate the migration, and manually reconcile if two people added migrations in parallel.</div>
+      <div class="fq"><b>Q:</b> Seed data eppadi handle pannுவீங்க migrations la? — Either via HasData() in OnModelCreating for static reference data, or a separate seeding script run after migration for larger datasets.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q10">
+    <div class="term">10. Change Tracking &amp; AsNoTracking() <span class="en">(read-only query optimization)</span></div>
+    <div class="tng">EF Core query run panna, default ah andha entity ah "track" panни vaikkும் — adhு na, oru internal snapshot vachiруkkும், apparam <code>SaveChanges()</code> call pannினா andha entity la enna maari irukku nu compare panни UPDATE query generate pannும். Idhு update/insert/delete panna venum na useful, aana read-only report/list page ku idhு waste — unnecessary memory, CPU overhead. Adhukku <code>AsNoTracking()</code> add pannினா, EF andha snapshot ah maintain pannாdhு, query fast aagும், memory kammi aagும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>By default EF Core keeps a change-tracking snapshot of every entity it loads, so SaveChanges knows what changed. That's essential when I'm going to modify and save an entity, but for read-only endpoints — a report, a listing page — I add AsNoTracking(), which skips that snapshot entirely and noticeably reduces memory usage and query time.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> AsNoTracking() panна entity ah edit panна mudியுமா? — You can modify it in memory but SaveChanges won't pick up the change automatically — you'd need to re-attach it and mark it modified explicitly.</div>
+      <div class="fq"><b>Q:</b> Default tracking behavior globally off panна mudியுமா? — Yes — set context.ChangeTracker.QueryTrackingBehavior = NoTracking at the DbContext level if most queries in that context are read-only.</div>
+      <div class="fq"><b>Q:</b> AsNoTrackingWithIdentityResolution() enna? — It's a variant that still avoids full tracking overhead but ensures the same entity instance is reused for a repeated key within one query result — useful when a join produces duplicate related entities.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q11">
+    <div class="term">11. N+1 Query Problem &amp; Include()/Select() Fix <span class="en">(eager loading / projection)</span></div>
+    <div class="tng">N+1 problem na — namba oru list eduthu, andha list kulla loop pannி, ovvoru item கூடaவும் related data ah lazy ah access pannினா, ovvoru iteration கூடaவும் separate ah DB ku query pogும். Example: 50 students eduthaa (1 query), apparam ovvoru student oda Fees ah loop la access pannினா — 50 more queries = 51 total. Idha fix panna rendு vazhi — <code>Include()</code> vecha eager loading pannி, related data ah single JOIN query la munnadiye eduthுkkalaam, illa <code>Select()</code> vecha exactly required fields ah oru projection ah single query la fetch pannலாம் (idhу best — unnecessary columns கூடa varாdhு).</div>
+    <pre><code>// N+1 problem — bad, fires 1 + N queries
+var students = context.Students.ToList();
+foreach (var s in students)
+    Console.WriteLine(s.Fees.Count); // lazy load per student = separate query
+
+// Fixed with eager loading — 1 query total
+var students = context.Students
+    .Include(s =&gt; s.Fees)
+    .AsNoTracking()
+    .ToList();
+
+// Even better with projection — only needed columns, 1 query
+var summary = context.Students
+    .Select(s =&gt; new { s.Name, FeeCount = s.Fees.Count })
+    .ToList();</code></pre>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>N+1 happens when you access a navigation property inside a loop with lazy loading on — one query for the parent list, then one more per item for the related data. I avoid it by eager-loading with Include() when I genuinely need the full related entity, or better, projecting exactly the fields I need with Select() into a DTO — that turns N+1 queries into a single query with a join.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Include() um Select() um edhு better? — Select() projection is usually better for read paths since it fetches only needed columns and avoids over-fetching; Include() is simpler when I genuinely need the full related entity graph.</div>
+      <div class="fq"><b>Q:</b> N+1 eppadi kandupidikkuவீங்க production la? — I check SQL Server Profiler or EF Core's logging/Application Insights dependency calls — a burst of near-identical queries per request is the giveaway.</div>
+      <div class="fq"><b>Q:</b> ThenInclude() use panрадhு eppo? — When I need to eager-load a second level of nested relationship, like Student → Fees → Payments.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. Lazy vs Eager vs Explicit Loading <span class="en">(loading strategies)</span></div>
+    <div class="tng">Moonu vazhi related data ah load pannலாம் EF Core la. Lazy loading na — navigation property access panрадhு varaikkும் query fire aagாdhு, first access pannும்bodhu automatic ah background la query pogும் (idhு thaan N+1 ku root cause, careful ah use pannанும், proxy package வேணும்). Eager loading na — <code>Include()</code> vecha, main query கூடaவே related data ah முன்னாடியே JOIN pannி fetch pannுவோம். Explicit loading na — entity ah first load pannிட்டு, apparam explicit ah <code>context.Entry(entity).Collection(x =&gt; x.Fees).Load()</code> nu manual ah trigger pannுவோம், on-demand mattum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Lazy loading fetches related data automatically the first time you touch the navigation property — convenient but the classic source of N+1 if you're not careful. Eager loading with Include() fetches everything upfront in one query, which is what I default to for known access patterns. Explicit loading is when I load the main entity first and then deliberately call context.Entry().Collection().Load() only when I actually need that related data — useful when loading it depends on a runtime condition.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Lazy loading default ah on ah irukkுமா EF Core la? — No, it's off by default — you need Microsoft.EntityFrameworkCore.Proxies and virtual navigation properties to enable it.</div>
+      <div class="fq"><b>Q:</b> Neenga lazy loading use pannுவீங்களா production la? — Rarely — I prefer explicit Include()/Select() because lazy loading hides DB calls and makes performance unpredictable.</div>
+      <div class="fq"><b>Q:</b> Explicit loading eppo useful aagும்? — When loading the related data depends on a runtime condition, so I don't want to always eager-load it in the base query.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. DbContext Lifecycle — ஏன் Scoped <span class="en">(DI lifetime, Singleton risk)</span></div>
+    <div class="tng">DbContext ah <code>Program.cs</code> la <code>AddDbContext()</code> pannும்bodhு default ah "Scoped" lifetime la register aaguது — idhு oru artham na, ஒரு HTTP request ku ஒரு DbContext instance mattum create aagும், request முடிஞ்சவுடனே dispose aagும். Idhு edhுkки correct nu na, DbContext thread-safe illa — same instance ah multiple threads/requests share pannினா, change tracker corrupt aagும், data race varும். Singleton ah panнинோm na enna aagும் nu kேkkலாம் — andha same context instance ellா requests கூடaவும் share aagும், memory la ellா entities um accumulate aagும் (memory leak), concurrent requests same context ah touch pannினா exceptions/data corruption varும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>AddDbContext registers the context as Scoped by default, so a new instance is created per HTTP request and disposed at the end of it. That matters because DbContext isn't thread-safe — if it were Singleton, every concurrent request would share the same context and change tracker, causing race conditions, stale tracked entities piling up in memory, and unpredictable exceptions when two requests touch it at once. Scoped keeps each request isolated with its own unit of work.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Transient ah panнинா enna difference? — Transient creates a new instance every time it's injected, even multiple times within the same request — usually unnecessary overhead compared to Scoped for a typical web request.</div>
+      <div class="fq"><b>Q:</b> Background service la DbContext eppadi use pannுவீங்க, adhு Singleton alavаа? — I inject IServiceScopeFactory into the singleton background service and create a new scope (and DbContext) per unit of work instead of holding one context long-term.</div>
+      <div class="fq"><b>Q:</b> DbContextPool enna, edhுkки use pannுவீங்க? — AddDbContextPool reuses context instances from a pool instead of allocating new ones each request, reducing allocation overhead in high-throughput scenarios — I'd consider it if context construction became a measurable bottleneck.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q14">
+    <div class="term">14. Optimistic Concurrency — RowVersion/Concurrency Tokens <span class="en">(handling concurrent edits)</span></div>
+    <div class="tng">Rendு users ஒரே record ah ஒரே time la edit panнинанга na, யாروடa change last ah save aagும் nu problem varும் (namba data silently overwrite aagும் risk). Idha handle panна, table la oru "RowVersion" (timestamp) column vaikkும், EF Core model la adha <code>[Timestamp]</code> attribute illa Fluent API la <code>IsRowVersion()</code> nu configure pannுவோம். Update pannும்bodhu, EF andha WHERE clause la old RowVersion value ah include pannும் — DB la andha row already வேрே யாராவது update pannிருந்தா, RowVersion match aagாdhு, 0 rows affected aagும், EF adha <code>DbUpdateConcurrencyException</code> ah throw pannும் — apparam namba latest data ah reload panнி, user ku "வேрே யாராவது already update pannிருக்காங்க, refresh pannுங்க" nu kaatalaam.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>For scenarios where two users might edit the same record concurrently, I add a RowVersion column and mark it as a concurrency token in EF Core. On update, EF includes the original RowVersion value in the WHERE clause — if someone else already changed that row, zero rows match, and EF throws a DbUpdateConcurrencyException. I catch that, reload the latest data, and let the user decide whether to overwrite or merge instead of silently losing someone else's change.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> RowVersion illama concurrency check pannலாமா? — Yes, you can mark any column as a concurrency token with Fluent API's IsConcurrencyToken(), but a dedicated rowversion/timestamp column is the standard SQL Server approach since it auto-updates on every write.</div>
+      <div class="fq"><b>Q:</b> Optimistic um pessimistic concurrency um difference enna? — Optimistic assumes conflicts are rare and checks at save time; pessimistic locks the row upfront so no one else can touch it until you're done — I use optimistic since it doesn't block other users.</div>
+      <div class="fq"><b>Q:</b> DbUpdateConcurrencyException vandha exact ah enna pannுவீங்க? — I reload the current database values, show the conflict to the caller (or merge non-conflicting fields), and let them resubmit with the fresh RowVersion.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q15">
+    <div class="term">15. Fluent API vs Data Annotations <span class="en">(model configuration approaches)</span></div>
+    <div class="tng">Model configuration rendு vazhi pannலாம் — Data Annotations na, entity class மேலேயே attribute pottுடுவோம் (example <code>[Required]</code>, <code>[MaxLength(100)]</code>, <code>[Key]</code>) — simple, quick, aana konjam limited (complex relationships, composite keys, indexes ellам attribute la full ah panна mudியாdhு). Fluent API na, DbContext oda <code>OnModelCreating()</code> method la, <code>modelBuilder.Entity&lt;Student&gt;()</code> vecha explicit ah configure pannுவோம் — idhு la every option available, complex composite keys, many-to-many custom join tables, check constraints, indexes ellам full control கிடைக்கும். Naan simple validation ku Data Annotations, real relationship/constraint configuration ku Fluent API use pannுவேன்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Data Annotations are quick attributes right on the entity — Required, MaxLength, Key — good for simple, obvious rules. Fluent API in OnModelCreating gives full control — composite keys, precise relationship configuration, indexes, check constraints, things Data Annotations can't express at all. I generally use Data Annotations for basic validation and Fluent API for anything relational or database-specific, since it also keeps the entity classes clean of infrastructure concerns.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Rendayும் together use pannலாமா? — Yes, they combine — Fluent API always wins if there's a conflict between the two on the same property.</div>
+      <div class="fq"><b>Q:</b> Composite key eppadi configure pannுவீங்க? — Only through Fluent API — modelBuilder.Entity&lt;T&gt;().HasKey(x =&gt; new { x.Prop1, x.Prop2 }) — Data Annotations can't define composite keys at all.</div>
+      <div class="fq"><b>Q:</b> Entity class ah "clean" ah vaikkanum nu solringale, adhு edhுkки matter aagும்? — Keeping DB-specific config out of the entity class follows separation of concerns — the entity stays a plain POCO, and all persistence details live in configuration classes (IEntityTypeConfiguration&lt;T&gt;), which is easier to maintain as the schema grows.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  Prepared for Gurumoorthy M — .NET Developer Interview Prep<br>
+  <a href="00_Index.html">← Back to Roadmap Home</a>
+</footer>
+
+</body>
+</html>

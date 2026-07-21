@@ -1,0 +1,61 @@
+@model UnitBarcodeScanner.Web.Models.UnitScanViewModel
+@{
+    ViewData["Title"] = "Unit Barcode Scanner";
+}
+
+<h1 class="display-6">Unit Barcode Scanner</h1>
+<p class="text-muted">
+    Scan (or type) a barcode below. This posts to the Web API's
+    <code>api/unit/save</code> endpoint, which creates the Unit if it
+    doesn't exist yet and always logs a ScanHistory row.
+</p>
+
+<div class="card mb-4" style="max-width: 500px;">
+    <div class="card-body">
+        <form asp-controller="Home" asp-action="ScanUnit" method="post">
+            <div class="mb-3">
+                <label for="barcode" class="form-label">Barcode</label>
+                <input type="text" class="form-control" id="barcode" name="barcode" value="@Model.Barcode" required autofocus />
+            </div>
+            <div class="mb-3">
+                <label for="operatorName" class="form-label">Operator Name</label>
+                <input type="text" class="form-control" id="operatorName" name="operatorName" value="@Model.OperatorName" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Save Scan</button>
+        </form>
+    </div>
+</div>
+
+<h2 class="h4">Scan History</h2>
+<p class="text-muted">Most recent first. Refresh the page to pull the latest rows (shared with the WinForms scanner via the same database).</p>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>History Id</th>
+            <th>Barcode</th>
+            <th>Operator Name</th>
+            <th>Scan Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.History.Count == 0)
+        {
+            <tr>
+                <td colspan="4" class="text-center text-muted">No scans yet.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var item in Model.History)
+            {
+                <tr>
+                    <td>@item.HistoryId</td>
+                    <td>@item.Barcode</td>
+                    <td>@item.OperatorName</td>
+                    <td>@item.ScanTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 19: TCP Socket &amp; SMS OTP MFA — Thanglish Interview Roadmap</title>
+<style>
+html{scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0d0d1a;color:#e0e0e0;line-height:1.75}
+header{background:linear-gradient(135deg,#120020,#0d0d1a,#120020);padding:36px 20px;text-align:center;border-bottom:3px solid #8b5cf6}
+header h1{font-size:1.8em;color:#a78bfa;text-shadow:0 0 20px #8b5cf655}
+header p{color:#c4b5fd;margin-top:8px;font-size:0.95em}
+.badge{display:inline-block;background:#8b5cf622;border:1px solid #8b5cf655;color:#a78bfa;padding:3px 12px;border-radius:20px;font-size:0.76em;margin:3px}
+.linkbar{background:#0a0a1a;text-align:center;padding:10px;border-bottom:1px solid #1e1e3a;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.linkbar a{color:#a78bfa;text-decoration:none;font-size:0.82em;padding:4px 10px;border:1px solid #1e1e3a;border-radius:6px}
+.linkbar a:hover{background:#0d0020}
+.linkbar a.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+.container{max-width:1050px;margin:0 auto;padding:24px 16px}
+.toc{background:#13132a;border-radius:12px;padding:18px 22px;margin:22px 0;border:1px solid #1e1e3a}
+.toc h2{color:#a78bfa;font-size:1em;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.toc-grid a{color:#c4b5fd;text-decoration:none;font-size:0.85em;padding:5px 8px;border-radius:5px}
+.toc-grid a:hover{background:#0d0020;color:#fff}
+.section{background:#13132a;border-radius:12px;padding:22px;margin:22px 0;border:1px solid #1e1e3a}
+.section-title{font-size:1.15em;font-weight:bold;color:#a78bfa;margin-bottom:16px;scroll-margin-top:20px;display:flex;align-items:center;gap:10px}
+.section-title .num{background:#8b5cf6;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:bold;flex-shrink:0}
+.item{background:#0f0f20;border:1px solid #1e1e3a;border-radius:10px;padding:15px 18px;margin:12px 0;scroll-margin-top:20px}
+.item .term{color:#fff;font-weight:700;font-size:0.98em;margin-bottom:6px}
+.item .term .en{color:#7a7a9a;font-weight:400;font-size:0.82em;margin-left:6px}
+.item .tng{color:#c0c8e0;font-size:0.92em}
+.item .tng b{color:#f0dc82}
+code{background:#1a1a2e;color:#8b5cf6;padding:2px 7px;border-radius:4px;font-family:'Consolas',monospace;font-size:0.85em}
+pre{background:#1a1a2e;border:1px solid #2a2a5a;border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:Consolas,monospace;font-size:0.82em;color:#c4b5fd;margin-top:8px}
+.answer-script{background:#0d0020;border-left:3px solid #8b5cf6;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:0.88em;color:#c4b5fd}
+.answer-script .lbl{color:#a78bfa;font-weight:bold;font-size:0.78em;display:block;margin-bottom:4px}
+.followup{background:#0f1a12;border-left:3px solid #22c55e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:8px;font-size:0.87em;color:#bbf7d0}
+.followup .lbl{color:#4ade80;font-weight:bold;font-size:0.78em;display:block;margin-bottom:6px}
+.followup .fq{margin-bottom:6px}
+.followup .fq b{color:#86efac}
+.tip{background:#001500;border-left:4px solid #22c55e;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.tip .t-label{color:#22c55e;font-weight:bold;font-size:0.8em;margin-bottom:4px}
+.tip p{color:#bbf7d0;font-size:0.9em}
+.cheatbox{background:#161022;border:1px solid #3b2a5c;border-radius:12px;padding:18px 22px;margin:22px 0}
+.cheatbox h2{color:#fbbf24;font-size:1.05em;margin-bottom:12px}
+.cheatbox table{width:100%;border-collapse:collapse;font-size:0.85em}
+.cheatbox th,.cheatbox td{padding:6px 10px;border-bottom:1px solid #2a2a5a;text-align:left;color:#e0e0e0}
+.cheatbox th{color:#fbbf24;font-size:0.78em;text-transform:uppercase}
+.cheatbox ul{padding-left:18px;color:#e0e0e0;font-size:0.88em}
+.cheatbox li{margin-bottom:5px}
+.resume-block{background:#0f0f20;border:1px solid #2a2a5a;border-radius:10px;padding:18px 20px;margin:14px 0}
+.resume-block .rtitle{color:#fff;font-weight:700;font-size:1em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.resume-block .rquote{background:#1a1a2e;border-left:3px solid #6b7280;padding:8px 12px;border-radius:0 6px 6px 0;font-size:0.85em;color:#9ca3af;font-style:italic;margin-bottom:10px}
+footer{text-align:center;padding:28px;color:#444;border-top:1px solid #1e1e3a;margin-top:40px;font-size:0.85em}
+footer a{color:#8b5cf6}
+</style>
+</head>
+<body>
+<header>
+  <div style="color:#a78bfa;font-size:0.85em;margin-bottom:6px">Gurumoorthy M — Full Interview Roadmap</div>
+  <h1>Part 19: TCP Socket &amp; SMS OTP MFA</h1>
+  <p>~16 Q&amp;A — Thanglish explanation + English answer script + follow-up questions</p>
+</header>
+<div class="linkbar">
+  <a href="00_Index.html">🏠 Roadmap Home</a>
+  <a href="Part1_CSharp.html">1️⃣ C#</a>
+  <a href="Part2_OOP_SOLID.html">2️⃣ OOP &amp; SOLID</a>
+  <a href="Part3_AspNetCore.html">3️⃣ ASP.NET Core</a>
+  <a href="Part4_WebAPI.html">4️⃣ Web API</a>
+  <a href="Part5_SQLServer.html">5️⃣ SQL Server</a>
+  <a href="Part6_Dapper_EFCore.html">6️⃣ Dapper &amp; EF Core</a>
+  <a href="Part7_Microservices_Ocelot.html">7️⃣ Microservices &amp; Ocelot</a>
+  <a href="Part8_JWT_Docker_Logging_Deployment.html">8️⃣ JWT/Docker/Deploy</a>
+  <a href="Part9_HR_Project.html">9️⃣ HR &amp; Project</a>
+  <a href="Part10_ADONet.html">🔟 ADO.NET</a>
+  <a href="Part11_WinForms.html">1️⃣1️⃣ WinForms</a>
+  <a href="Part12_WPF.html">1️⃣2️⃣ WPF</a>
+  <a href="Part13_FrequentlyAsked.html">1️⃣3️⃣ FAQ Rapid-Fire</a>
+  <a href="Part14_CSharpCodingChallenges.html">1️⃣4️⃣ C# Coding</a>
+  <a href="Part15_SQLCodingChallenges.html">1️⃣5️⃣ SQL Coding</a>
+  <a href="Part16_SampleProjectPlaybook.html">1️⃣6️⃣ Sample Project</a>
+  <a href="Part17_SpeedBuildPlaybook.html">1️⃣7️⃣ Speed-Build</a>
+  <a href="Part18_MongoDB_NoSQL.html">1️⃣8️⃣ MongoDB &amp; NoSQL</a>
+  <a href="Part19_TCPSocket_SMS_OTP.html" class="active">1️⃣9️⃣ TCP Socket &amp; SMS OTP</a>
+  <a href="Part20_PerformanceLoggingProduction.html">2️⃣0️⃣ Perf/Logging/Prod</a>
+  <a href="Part21_Infosys_Prep_Guide.html">🎯 Infosys Prep Guide</a>
+</div>
+<div class="container">
+
+<div class="tip">
+  <div class="t-label">💡 Eppadi use pannanum</div>
+  <p>Idhu bank locker access-control project oda TCP socket + SMS OTP MFA part — persistent hardware connection and multi-factor auth rendu piece-um sernthu ~16 questions. Thanglish la puriinjuko first, apparam "🗣️ Interview la eppadi sollanum" box padichu andha exact confident, plain-spoken tone ah practice pannunga. Ovvoru item kitta 2-3 follow-up questions irukku — interviewer ovvoru answer kekka udane next kekkura common questions idhu, adhukum ready ah irukkanum. Interview ku 5 nimisham munnadi, keezha irukka Cheat Sheet ah mattum ஒரு தடவை பாருங்க.</p>
+</div>
+
+<div class="toc">
+  <h2>Sections</h2>
+  <div class="toc-grid">
+    <a href="#19A">19A. TCP Socket &amp; Hardware Communication (Q1–Q5)</a>
+    <a href="#19B">19B. OTP Lifecycle &amp; SMS Gateway (Q6–Q10)</a>
+    <a href="#19C">19C. Security, Audit, Concurrency &amp; Testing (Q11–Q16)</a>
+  </div>
+</div>
+
+<div class="cheatbox">
+  <h2>⚡ Part 19 Quick-Recall Cheat Sheet</h2>
+  <table>
+    <tr><th>#</th><th>Concept</th><th>Punchy fact</th></tr>
+    <tr><td>1</td><td>TCP vs UDP</td><td>TCP = handshake + ack + retransmit = guaranteed ordered delivery; UDP = fire-and-forget — chose TCP for every locker command</td></tr>
+    <tr><td>2</td><td>.NET Socket sync vs async</td><td>Sync blocks a thread per connection; async (SendAsync/ReceiveAsync) frees the thread — used for multiple concurrent locker connections</td></tr>
+    <tr><td>3</td><td>Bidirectional comm</td><td>Persistent duplex socket, not request-response — hardware pushes acks/sensor events on its own</td></tr>
+    <tr><td>4</td><td>Reconnection / heartbeat</td><td>Periodic heartbeat ping + backoff retry — detects silently-dead connections and self-heals</td></tr>
+    <tr><td>5</td><td>Message framing</td><td>Length-prefix framing stops partial/merged reads — fixed a real intermittent parsing bug</td></tr>
+    <tr><td>6</td><td>OTP lifecycle</td><td>Generate → Deliver → Validate → Expire, each stage its own failure mode; validate double-checks timestamp too</td></tr>
+    <tr><td>7</td><td>Secure OTP generation</td><td>RandomNumberGenerator (crypto-secure), never Random.Next(); store a hash, not the raw code</td></tr>
+    <tr><td>8</td><td>Expiry &amp; rate limiting</td><td>2–5 min expiry + 3–5 attempt cap + log every failed attempt = practical anti brute-force</td></tr>
+    <tr><td>9</td><td>SMS gateway integration</td><td>"Accepted" ≠ "delivered" — needs delivery callbacks, retries, timeouts, error mapping</td></tr>
+    <tr><td>10</td><td>Sub-3s SMS delivery</td><td>Pulled the DB audit write out of the critical path (after/parallel to SMS send) + picked a fast gateway</td></tr>
+    <tr><td>11</td><td>Audit trail</td><td>Log every stage — generate/deliver/validate/expire/unlock/ack — with locker ID, masked phone, timestamp, status</td></tr>
+    <tr><td>12</td><td>Gateway failover</td><td>Timeout + retry with backoff; no secondary gateway was the one gap worth flagging in hindsight</td></tr>
+    <tr><td>13</td><td>Secure TCP channel</td><td>SslStream/TLS wraps NetworkStream + validate hardware cert — no plaintext commands on the wire</td></tr>
+    <tr><td>14</td><td>Concurrency</td><td>Per-locker request-state lock rejects a second request racing for the same physical locker</td></tr>
+    <tr><td>15</td><td>Testing hardware system</td><td>Mock TCP server drives logic/edge-case tests in CI; small hardware-in-the-loop pass for physical verification</td></tr>
+    <tr><td>16</td><td>Toughest bug</td><td>Framing bug first blamed on hardware — packet capture revealed two messages concatenated in one read</td></tr>
+  </table>
+</div>
+
+<!-- 19A -->
+<div class="section" id="19A">
+  <div class="section-title"><span class="num">19A</span> TCP Socket &amp; Hardware Communication</div>
+
+  <div class="item" id="q1">
+    <div class="term">1. TCP vs UDP <span class="en">(why TCP for locker hardware)</span></div>
+    <div class="tng">TCP na connection-oriented — handshake pannitu, ella packet-um acknowledge pannitu, lost aana retransmit pannும், order guarantee pannுрோம். UDP na fire panni "poidum" nu vidura maadhiri — fast aana reliability illa, video streaming/gaming ku pothum. Locker system la, unlock command or hardware ack silent ah drop aana, locker open aagaama poidும் allathு worse ah clean audit trail illaama open aagidும் — idhு security system la accept panna mudியாthு risk. So andha guaranteed, ordered delivery ku TCP thaan correct choice — UDP "lighter" nu early discussion vandhalும், andha risk pesina udane TCP ku vandhu vittom.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>TCP is connection-oriented — it does a handshake and guarantees every packet is acknowledged and retransmitted if lost, in order. UDP just fires packets with no such guarantee, which is fine for video streaming but not for a security system. On the locker project every command between our server and the IoT board — open request, OTP validation result, hardware ack — went over TCP, because a silently dropped unlock ack could mean a locker that never opens, or worse, one that opens without a clean audit trail. We discussed UDP briefly for being "lighter," but the moment we talked through a missing-ack scenario, TCP was the obvious call.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> UDP eppo actually use pannalam? — Speed correctness ah vida mukkiyam nu irundha mattум் — video streaming, gaming, adhula frame drop aanalum periya problem illa.</div>
+      <div class="fq"><b>Q:</b> TCP handshake eppadi work aagum? — SYN, SYN-ACK, ACK moondru-step process, rendu side-um connection ready nu confirm pannikara varaikkum data pogaathu.</div>
+      <div class="fq"><b>Q:</b> TCP-oda guarantee vaangura cost enna? — Konjam extra latency and overhead (ack, retransmit) — aana locker madhiri correctness-critical system ku andha cost worth it.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q2">
+    <div class="term">2. .NET Socket Class <span class="en">(sync vs async)</span></div>
+    <div class="tng">System.Net.Sockets.Socket class vachu low-level ah Connect pannitu Send/Receive bytes directly pannலாம். Synchronous call na, data varra varaikkum thread block aagi nikkும் — oru quick script ku pothும் aana multiple lockers same server ku connect aana andha approach mudியாthு. Async — BeginReceive/EndReceive (pazhaya style) allathு ippo Task-based SendAsync/ReceiveAsync — vachu thread ah wait pannாma vidura, wire la data varra varaikkும் vera velai pannikittu irukkalாம். Oru thread per locker connection nu block panna, konjam lockers active aana udane thread pool exhaust aagi app choke aagidும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I used the Socket class directly for low-level control — connect, then send and receive bytes with the hardware's protocol. Synchronous calls block the thread until data arrives, which works for a quick prototype but doesn't scale once multiple lockers are connected at once. So in production I used async socket calls so the backend could keep several locker connections open without dedicating a thread to each one — I started with a simpler synchronous version just to nail the byte format with the hardware vendor, then swapped to async once the protocol was confirmed working.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Synchronous eppo ok? — One-off diagnostic tool or quick test client ku fine, production multi-connection system ku illa.</div>
+      <div class="fq"><b>Q:</b> Async vacha thread eppadi save aagum? — Wait panra neram thread pool thread ah release pannidும், data ready aana mattும் thaan thirும்ba pick pannும் — so oru thread pannirundhalும் pathhu connections handle pannலாம்.</div>
+      <div class="fq"><b>Q:</b> BeginReceive/EndReceive vs Task-based async — enna difference? — Rendум் same idea, aana Task-based (SendAsync/ReceiveAsync) modern C# la cleaner, async/await vachu readable ah eludhalாம்.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q3">
+    <div class="term">3. Bidirectional Real-Time Communication <span class="en">(persistent duplex socket)</span></div>
+    <div class="tng">Idhு straight ah REST madhiri request-response illa. Server "locker 14 open pannு" nu command push pannும், aana hardware kூடa tamper alert allathு door-open sensor trip madhiri events ah thaan aaga push pannанும் — server kekkatha nerathula kூடa. Adhukaaga socket ah open ah vachikkonde irukanum, rendு side-um edhு venалும் nerathула write pannலாம். Ella nerathum server hardware ah poll panni state kekkанும் na wasteful and latency adhigam aagும் — persistent duplex connection irundha, hardware change aana udane thaanaa sollும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>This isn't a plain request-response pattern like REST — it's a persistent, duplex socket where both sides can write whenever something happens. On the locker board, once OTP validation passed, our server pushed the unlock command down that open socket, and the hardware pushed back a physical-state ack — like "door actually opened" — on the same connection, which we logged for the audit trail. That ack mattered a lot, because without it we'd only know we sent the command, not that the locker actually responded.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Polling vachu idha replace panna mudiyுmа? — Technically mudiyும் aana server ovvoru second-um hardware ah kekkанும் — wasteful and slow, persistent socket better.</div>
+      <div class="fq"><b>Q:</b> Idhு WebSocket madhiri thaanaa? — Concept similar — duplex, persistent — aana idhு raw TCP socket, custom protocol namba design pannirukkом், WebSocket illa.</div>
+      <div class="fq"><b>Q:</b> Ack varaama poyina enna pannுрீнgа? — Andha command "pending/unconfirmed" nu mark pannitu, retry or alert flow ku pogும்.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q4">
+    <div class="term">4. Connection Drops &amp; Reconnection <span class="en">(heartbeat)</span></div>
+    <div class="tng">TCP connection permanent-a irukkathு — flaky network switch, locker unit power blip, edhு venалும் socket ah clean close notification illама kollidும். Adhukaaga heartbeat mechanism venும் — periodic ah chinna ping packet anுppுрோம், oru window kulla response varாma na connection dead nu assume pannitu reconnect pannuрோம். Heartbeat illама na, server "socket fine" nu nenachikittu irukkும் aana adhு 10 minutes ah dead ah irundhirукkும் — customer complaint varra varaikkும் theriyாthு.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>TCP connections can silently die without a clean close — a network blip or a power issue on the locker unit is enough. So we built a periodic heartbeat ping, and if a locker missed a couple of beats in a row, the server flagged it and reconnected with a backoff instead of hammering it every second. I remember one locker unit kept flapping every few hours, which turned out to be a router issue on-site, not our code — but the reconnect logic meant it self-healed instead of needing someone to manually restart the service.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Backoff nu edhு, en use pannirukeenga? — Retry interval ovvoru failure-kum konjam konjam increase pannuрathу — network ah spam pannாma, gradually recover panna vidுрathு.</div>
+      <div class="fq"><b>Q:</b> Heartbeat interval eppadi decide pannுрீнgа? — Too frequent na unnecessary traffic, too rare na dead connection detect panna late aagும் — balance ah test pannitu set pannанும்.</div>
+      <div class="fq"><b>Q:</b> Reconnect aana apparam pending commands enna aagும்? — Andha state ah track pannitu, reconnect aana udane pending/unconfirmed commands ah retry allathு re-check pannанும்.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q5">
+    <div class="term">5. Message Framing <span class="en">(partial &amp; merged reads)</span></div>
+    <div class="tng">TCP bytes ah order-la, uncorrupted ah kudukkும் guarantee tharும் — aana oru Receive call ku full "message" kidaikkும் nu guarantee tharாthு. 50-byte command anுppina, OS adha 30+20 nu rendு reads ah kudukkalாм், allathு rendு chinna messages ah oru read ah batch pannikkalாм். Idha "one Receive = one message" nu assume pannina, message split aanadhalும், rendு messages merge aanadhalும் garbage parse pannுрோம். Fix — fixed length-prefix: first few bytes payload length sollும், appuram exact andha bytes count varaikkும் wait pannitu thaan complete message nu treat pannанும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>TCP guarantees ordered, uncorrupted bytes, but not that one Receive call equals one complete message — a single send can get split across two reads, or two small sends can get batched into one. On the locker protocol we hit exactly this — intermittent parsing failures that looked random until a packet capture showed two commands concatenated in a single read. We fixed it by adding a length-prefix — read the length first, then buffer until we have the full frame — and that class of bug basically disappeared after that.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Length-prefix eppadi implement pannுрீнgа? — First N bytes (example 4 bytes) la payload length store pannுрோм், appuram exact andha count bytes varaikkும் read loop la wait pannுрோம்.</div>
+      <div class="fq"><b>Q:</b> Nagle's algorithm idhoda eppadi related? — Chinna sends ah OS batch panni anுppலாம் (Nagle), adhுnaale rendு messages oru read ah vandhurும் — framing illама idhு confusing aagும்.</div>
+      <div class="fq"><b>Q:</b> WebSocket use pannirundhaa idhு problem varுmа? — Illa, WebSocket already message framing built-in ah handle pannும் — raw TCP socket la namba manual ah handle pannанும்.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 19B -->
+<div class="section" id="19B">
+  <div class="section-title"><span class="num">19B</span> OTP Lifecycle &amp; SMS Gateway</div>
+
+  <div class="item" id="q6">
+    <div class="term">6. OTP Lifecycle Design <span class="en">(Generate → Deliver → Validate → Expire)</span></div>
+    <div class="tng">Nаngu stages — Generate: random code create pannitu, user session + locker request ku tie pannitu, hashed ah store pannанும், plaintext ah log pannакூடाthு. Deliver: SMS gateway mூlама push pannанும். Validate: user keypad/app la code type panna, stored value oda compare pannанும் — code mattум் illама request ID kூடa match aaganum (replay avoid panna). Expire: fixed window (2-5 nimisham) kazhichu allathு ஒரே use ku apparam, OTP automatically dead — use pannalaiyo pannirundhalும் sari.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>I structured it as four stages — generate, deliver, validate, expire — each writing a row into a SQL Server audit table. We built this as REST endpoints, and validate wasn't dependent purely on a background cleanup job — it re-checked the OTP's own timestamp on every attempt, so even if the expiry job lagged, a stale OTP still got rejected. That double-check saved us at least once when the cleanup job fell behind under load.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Generate stage la enna precaution edukanum? — Cryptographically secure random use pannанும், plaintext ah store pannакூடाthு — hash pannitu vachukanum.</div>
+      <div class="fq"><b>Q:</b> Validate stage la code mattум் check panna pothумa? — Illa, request ID kூடa match pannанும், illana oru valid OTP ah vera request ku replay panna mudiyும்.</div>
+      <div class="fq"><b>Q:</b> Expire background job mattум் nambalामா? — Illa, validate call itself timestamp check pannанும் — background job lag aanalும் security hole varaккூடाthு.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q7">
+    <div class="term">7. Secure OTP Generation <span class="en">(RandomNumberGenerator vs Random.Next())</span></div>
+    <div class="tng">Random.Next() cryptographically secure illa — seed predictable ah irukkалாம், attacker seed ah guess pannina "random" numbers ah predict pannலாம். Security-sensitive edhуkkும் System.Security.Cryptography la irukka RandomNumberGenerator use pannанும் — OS oda crypto-secure random source la irundhு edukkும். OTP oda whole security value "unguessable ah irukkанும்" nu adhула thaan irukkு — predictable pattern irundha, OTP vachirukka point-e illама poidum.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Random.Next() isn't cryptographically secure — it's seeded predictably enough that an attacker could potentially predict values. For the locker OTPs I used RandomNumberGenerator to produce a 6-digit code, and stored a hash of it rather than the raw code, so even read access to that table wouldn't give usable OTPs. I'll be honest — I didn't get this right in the very first pass, we were storing it plaintext during early dev, and a code review flagged that we needed to hash it before it went anywhere near production.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Random.Next() eppo use pannalாм்? — UI list shuffle pannuрathу madhiri non-security cases ku fine, auth-related edhуkumе kூடाthு.</div>
+      <div class="fq"><b>Q:</b> OTP ah hash pannுрathு enna benefit? — Table read access kidaichalும், raw OTP illама hash mattум் irukkும் — usable illa, adhуvும் short expiry vachirukkும்.</div>
+      <div class="fq"><b>Q:</b> 6-digit numeric code pothумa, athigama venumaa? — Expiry + rate limiting kூடavе irundha 6-digit pothும் — adhуkkு mela pona user experience affect aagும், security marginal ah mattум் improve aagும்.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q8">
+    <div class="term">8. OTP Expiry &amp; Rate Limiting <span class="en">(anti brute-force)</span></div>
+    <div class="tng">Expiry na attack window ah chinna ah vachirukkுрathу — 2-5 nimisham apparam OTP database la dead, evlo attempts irundhaलும் sari. Rate limiting na oru OTP ku evlo guesses (3-5 tries) nu cap pannuрathу — andha limit mudinja, request lock pannitu pudhу OTP generate panna sollанும். 6-digit OTP ku million possible values irukkு nu tonna, rate limiting illама attacker script vachு fast ah try pannலாம் — expiry + attempt limit rendும் sernthu thaan 6-digit code ah practically safe ah aakkும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Expiry keeps the attack window small — a few minutes — and rate limiting caps failed attempts before we invalidate the OTP and force a fresh one. On the bank locker system we capped it at a handful of failed attempts, and every failed try got logged with the locker ID and timestamp, which turned out to be as useful as the rate limit itself — it gave us a clean signal if someone was probing a specific locker repeatedly. Combined with the short expiry window, that's a big part of why we had zero unauthorized access incidents after go-live.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Rate limit exceed aana apparam enna aagும்? — Andha OTP invalidate pannitu, user pudhу OTP request pannанும் — same code ku thirும்ba try panna vida maatom.</div>
+      <div class="fq"><b>Q:</b> Failed attempts log pannuрathу edhуkku? — Same locker mela repeated probing irukka nu pattern kaanamudiyும் — potential attack early ah spot pannலாம்.</div>
+      <div class="fq"><b>Q:</b> Expiry window evlo perfect ah irukkанும்? — Too long na attack window athigam, too short na legit user OTP miss pannitu retry panna vendiyathу varும் — 2-5 nimisham balance ah irukkும்.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q9">
+    <div class="term">9. Integrating a Third-Party SMS Gateway</div>
+    <div class="tng">Send endpoint call panradhу thaan easy 10% — bakki ellам் response codes properly handle pannuрadhula irukkு. "Success" nu vandha, adhу "delivered" nu artham illa, chila gateways "accepted for delivery" nu mattум் artham — delivery status callback allathு polling venும். Retry logic transient failures ku, timeout handling slow gateway namba flow ah hang panna vidாma irukka, and error codes ah namba oda meaningful logging ku map pannанும். API call succeed aachu nu "SMS delivered" nu assume pannina, user OTP kidaikkாma poyirukka, namакkு edhуkkு nu debug panna vazhiyும் illама poidும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Calling the send endpoint is the easy part — the real work is handling their response codes properly, since a success response often just means "accepted", not "delivered". For the locker system I made sure every send call's response — including their message ID and status — got written to our audit log, not just a generic "sent" flag. That mattered later when we needed to trace a specific delayed-message complaint back to the gateway's own reference ID instead of just guessing.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Delivery status eppadi confirm pannுрீнgа actual ah? — Gateway kudukura delivery callback webhook or status polling API vachু — "accepted" and "delivered" rendு vera state nu track pannанும்.</div>
+      <div class="fq"><b>Q:</b> Timeout handle pannाlaa na enna aagும்? — Slow gateway namba whole OTP generation flow ah block pannidும் — so outbound call ku explicit timeout vachு fail-fast pannанும்.</div>
+      <div class="fq"><b>Q:</b> Gateway error code namакkு eppadi useful? — Andha error ah namba oda audit log la meaningful reason ah map pannitu vachukanum — "invalid number", "gateway down" nu clear ah theriyanum, generic failure illama.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q10">
+    <div class="term">10. Getting SMS Delivery Under 3 Seconds</div>
+    <div class="tng">Delivery slow aaguрadhуkkу palah factors sera venும் — gateway ku network latency, namba code queue pannura request eludukka edukka neram, send call ku munnadi edhachум் synchronous blocking irukka, and gateway oda own processing time (namba control panna mudiyaathு). Namba control panna mudiya part — OTP generation, hashing, DB audit write ellам் SMS call ku munnadi slow blocking chain ah irundhuchaa nu check pannuрadhу. Profile pannina — DB audit write, SMS call ku munnadi nadakkuрadhу extra latency add pannirundhуchு.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>A few things stack up before an SMS actually sends — our own code's queueing time, any blocking work before the call, and the gateway's own processing. We profiled the generate-to-send path and found the DB audit write was happening before the SMS call rather than in parallel or after, adding unnecessary latency. Reordering so the SMS request fired first and the audit logging happened right after — plus picking a gateway with decent response times — got us consistently under 3 seconds. It wasn't one big fix, honestly, it was trimming a handful of small things that added up.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Audit write ah SMS call apparam pannina data loss risk illaiyaa? — Namba andha write ah immediate ah, SMS response kitta oda pannом் — so risk minimal, aana benefit periyathу.</div>
+      <div class="fq"><b>Q:</b> Async ah SMS call fire panna mudiyуmа? — Mudiyum, aana user ku confirmation venும் na konjam wait pannанும் — namba critical path mattум் trim pannom, full fire-and-forget pannala.</div>
+      <div class="fq"><b>Q:</b> User "resend" multiple times click pannina enna aagும்? — Duplicate OTPs and gateway load athigam aagும் — adhуkaaga fast delivery mukkiyam, resend button ah konjam delay vachு rate-limit pannанும்.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 19C -->
+<div class="section" id="19C">
+  <div class="section-title"><span class="num">19C</span> Security, Audit, Concurrency &amp; Testing</div>
+
+  <div class="item" id="q11">
+    <div class="term">11. Audit Trail Logging <span class="en">(why it's not optional)</span></div>
+    <div class="tng">Idhு "nice to have" logging illa — bank locker ku "yaru edha access panna try panninanga, eppo, enna nadanthuchu" nu answer pannuрa record venும், success mattум் illама every event ku. Adhула OTP generation, delivery attempt + gateway response, ovvoru validation attempt (pass/fail), expiry events, actual unlock command and hardware ack ellам் varும். Dispute vandha — customer "enakku access kidaikala" nu solli, allathு "vera yaro locker ku access aachу" nu solli — audit trail thaan namma source of truth.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Every stage of the OTP lifecycle wrote a row to a SQL Server audit table — locker ID, masked phone number, timestamp, status, and for failures, the specific reason like expired or wrong code. If there's ever a dispute — a customer says they never got access — that audit trail is the only source of truth we have. Honestly, that level of detail is a big reason we could say zero unauthorized access incidents with confidence — we had logs to back it up, not just an assumption nothing bad happened.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Masked phone number nu edhу, en mask pannுрீнgа? — Full mobile number log pannाma, last few digits mattум் kaatti privacy protect pannuрadhу — compliance angle-um irukkु.</div>
+      <div class="fq"><b>Q:</b> Failure reason specific ah log pannuрadhу edhуkkу mukkiyam? — "Failed" nu mattум் irundha debug panna mudiyaathу — "expired" vs "wrong code" vs "rate limited" nu theriyanум், pattern spot panna.</div>
+      <div class="fq"><b>Q:</b> Audit table kூடa security risk aagумаа? — Aama, adhуve sensitive data — so access control vachு, raw OTP illама hash/masked data mattум் store pannанும்.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q12">
+    <div class="term">12. SMS Gateway Downtime &amp; Failover</div>
+    <div class="tng">Gateway unreachable aana, OTP generation call hang aagavo unhandled exception throw pannavo கூடாthு. Outbound call ku timeout vachு fail-fast pannанум், transient blips ku short backoff-oda konjam retries pannанும், ideal ah oru secondary gateway irukkanum, illaна user ku clear failure state kaatanum, silent ah hang aagaккூடாthு. Fallback illama na, third-party vendor outage aana mattум் namba system-oda availability kூடa direct ah affect aagidும் — users literally locked out.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>We put a timeout and retry-with-backoff around the SMS send call, and if it still failed after retries, the user got a clear "try again" message instead of the request hanging silently. We didn't have a full secondary gateway provider on that project — budget and vendor contracts didn't allow it at the time. Looking back, that's honestly the one gap I'd push harder on if I did it again — a proper failover provider would've made it more resilient, and it's something I'd flag now in a design review.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Retry evlo times pannுрீнgа, edhуkaaga backoff? — Konjam times mattум் (2-3), backoff vachு — gateway already struggling irundha, spam pannाma recover panna vidанум்.</div>
+      <div class="fq"><b>Q:</b> Secondary gateway illама enna risk irukkу? — Single point of failure — andha vendor down aana namba locker access completely stop aagidum.</div>
+      <div class="fq"><b>Q:</b> User ku enna message kaatuрீнgа failure aana? — Generic "system error" illама, "SMS anுppa mudiyala, konjam neram kazhichu try pannunga" nu clear, actionable message.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q13">
+    <div class="term">13. Securing a Raw TCP Channel <span class="en">(TLS via SslStream)</span></div>
+    <div class="tng">Plain socket na plaintext bytes thaan wire mela pogும் — encryption illa, other end authenticate pannuрa vazhi illa. Secure panna, TLS layer pannанும் — .NET la SslStream vachு underlying NetworkStream ah wrap pannுрோம், adhу certificate handshake pannitu, apparam ella data-um encrypt pannும். Hardware oda certificate ah validate pannанும், blind ah accept pannaккூடாthு — illaна man-in-the-middle vandhu network segment la sit pannitu commands sniff/replay panna mudiyум்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Plain sockets are just unencrypted bytes on the wire, so we layered TLS on top using SslStream wrapping the underlying NetworkStream, which handles the certificate handshake and encrypts everything after that. For a bank locker, an unlock command or OTP result going over the wire in plaintext is an obvious attack surface, so this was part of the stack alongside HTTPS for the REST side. Getting the hardware vendor's firmware to play nice with our TLS setup took some back-and-forth — their side had cert format quirks — but once sorted, no plaintext commands went over the wire.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Certificate validate pannalaama enna risk? — Blind ah accept pannina, man-in-the-middle vera cert vachு impersonate panna mudiyум் — validation mandatory.</div>
+      <div class="fq"><b>Q:</b> SslStream eppadi NetworkStream vera? — SslStream adha wrap pannikittu, adhуkkு mela encryption layer add pannum் — application code same Send/Receive pattern thaan use pannும்.</div>
+      <div class="fq"><b>Q:</b> TLS handshake overhead socket connection ku affect aagумаа? — Connection establish panna oru chinna one-time cost irukkு, aana ongoing data transfer speed mela periya impact illa.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q14">
+    <div class="term">14. Concurrent Requests to the Same Locker</div>
+    <div class="tng">Vera vera lockers ku simultaneous requests vandha, adhu mostly fine — each socket connection independent, async I/O adha naturally handle pannும். Kashtaмa irukka case — rendு requests ஒரே locker ku race pannuрadhу — adhуkkு lock venும், DB-level check on request state, allathு locker ID vachு in-memory lock — so rendaavadhு request first one already in-progress nu paathu reject/queue aagум். Illaна, rendும் valid OTP-um ஒரே physical locker ah unlock panna try pannலாம் — audit trail confuse aagும், "yaru actual ah open pannanga" nu security ambiguity varும்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>Requests to different lockers are fine on their own, since async I/O handles them independently. The trickier case is two requests racing for the same locker — we tracked each locker's active request state, so if a second OTP validation came in while one was already mid-flow, it got rejected with a clear "request already in progress" instead of silently racing. We didn't hit this often in practice, but we tested it deliberately by firing near-simultaneous requests in a test harness to make sure it behaved correctly rather than just hoping.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> In-memory lock vs DB-level lock — edhу use pannirukeenga? — Locker ID key ah vachு request state track pannom் — in-memory fast, aana multiple server instances irundha DB-level check kூடa venும்.</div>
+      <div class="fq"><b>Q:</b> Idha test pannuрadhу eppadi? — Test harness la near-simultaneous requests fire pannitu, second one clean ah reject aaguthaa nu deliberately verify pannom்.</div>
+      <div class="fq"><b>Q:</b> Race condition namba miss pannirundha enna aagirundhум்? — Rendு unlock command-um hardware ku pogும், audit trail la rendு "valid" entries — yaru actual ah open pannanga nu clarity illама poyirukkும்.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q15">
+    <div class="term">15. Testing a Hardware-Integrated System</div>
+    <div class="tng">Concerns ah separate pannанும் — socket protocol and OTP/business logic ah real hardware illama test pannலாம், oru mock TCP server vachு locker oda expected responses ah mimic pannitu — partial reads, delayed acks, dropped connections madhiri edge cases kூடa reproduce pannலாம், adhு real hardware la on-demand reproduce panna kashtam். Appuram chinna set of tests actual hardware mela — locker really open aaguthaa, sensor really report pannuthaa nu check panna. Ellamе physical hardware presence mela depend aana, CI pipeline and test coverage basically stop aagidум்.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>We separated concerns — the protocol and OTP logic got tested with a mock TCP listener that simulated the hardware's responses, including bad ones like a truncated packet or no response at all, so we could test reconnect and framing logic without a locker unit sitting on someone's desk. We kept a smaller, separate pass of manual tests against the actual hardware for things like verifying the physical door sensor truly reported back — that's not something a mock can honestly verify for you.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Mock server la enna edge cases simulate pannirukeenga? — Partial packet, delayed ack, connection drop mid-message, garbled/merged payload — real hardware la on-demand reproduce panna kashtaмa irukka cases.</div>
+      <div class="fq"><b>Q:</b> CI pipeline la real hardware venumаа? — Illa, logic layer CI la mock vachு automated ah run aagும் — hardware-in-the-loop tests separate, smaller, manual pass.</div>
+      <div class="fq"><b>Q:</b> Mock server test panna enna miss aagும், real hardware mattум் kaata mudiyaathு? — Physical sensor accuracy, actual electro-mechanical response — mock adha simulate pannலாம் aana "genuinely verify" panna mudiyaathு.</div>
+    </div>
+  </div>
+
+  <div class="item" id="q16">
+    <div class="term">16. Toughest Bug <span class="en">(socket framing incident)</span></div>
+    <div class="tng">Munnadi sonna framing issue thaan best example — incoming hardware messages intermittent ah parse aagaama poidும், first look la totally random ah tonnும். First instinct hardware firmware bug nu — reproduce panna mudiyaama irundhathunala hardware vendor kூடa konjam neram pesi, appuram thaan namba oda receive-buffer handling ah seriously paathom். Rendு command messages ஒரே TCP read buffer la landing aagi, oru garbled message ah parse aagiduchu — length-prefix framing day-1 la illама poyadhула problem irundhuchu. Packet capture vachு raw bytes ah paathu, rendு JSON payloads concatenated ah irukka paathu clicked aachu.</div>
+    <div class="answer-script"><span class="lbl">🗣️ Interview la eppadi sollanum</span>This was intermittent parsing failures on incoming hardware messages that looked totally random at first — my first instinct was a hardware firmware bug since I couldn't reproduce it on demand, so I spent time going back and forth with the vendor before really digging into our own socket code. A packet capture showed two of our command messages had landed in the same TCP read buffer and gotten parsed as one garbled message, since we hadn't put length-prefix framing in from day one. Adding the length-prefix and a proper buffering loop that waits for the full frame fixed it completely — but yeah, I blamed the wrong thing first before looking at our own code.</div>
+    <div class="followup"><span class="lbl">🔁 Follow-up Qs they might fire next</span>
+      <div class="fq"><b>Q:</b> Idha eppadi debug panninga, logs mattум் vechு theriyaathaa? — Illa, packet capture vachு raw bytes ah paakanum pattuchu — logs la application-level parse failure mattум் theriyум், actual byte-level issue kaanaathு.</div>
+      <div class="fq"><b>Q:</b> Idhு munnadiye predict pannirukka mudiyуmа? — Raw socket use panna aarambichadhula irundhe length-prefix framing design pannirundha idhу varave varaathு — hindsight la clear.</div>
+      <div class="fq"><b>Q:</b> Idhு vendor kூடa relationship mela enna impact pannuchu? — Konjam trust cost aachu initially (vendor bug nu blame panna aarambichom), aana root cause namba side nu clear ah proof panni sonna apparam nalla ah resolve aachu.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  Prepared for Gurumoorthy M — .NET Developer Interview Prep<br>
+  <a href="Part20_PerformanceLoggingProduction.html">Next: Part 20 — Performance/Logging/Prod →</a><br>
+  <a href="00_Index.html">← Back to Roadmap Home</a>
+</footer>
+
+</body>
+</html>
